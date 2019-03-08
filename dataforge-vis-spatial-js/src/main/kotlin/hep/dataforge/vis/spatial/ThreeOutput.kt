@@ -12,8 +12,10 @@ import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.geometries.BoxBufferGeometry
+import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.math.ColorConstants
+import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Element
@@ -82,6 +84,8 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
                     material = box["color"].material()
                 }
                 Mesh(geometry, obj["color"].material()).also { mesh ->
+                    //TODO replace by edges after adding it to three.kt
+                    mesh.add(LineSegments(WireframeGeometry(geometry),Materials.DEFAULT))
                     obj.onChange(this) { _, _, _ ->
                         mesh.updateProperties(obj)
                         mesh.update(obj)
@@ -98,7 +102,9 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
     }
 
     override fun render(obj: DisplayObject, meta: Meta) {
-        buildNode(obj)?.let { scene.add(it) }
+        buildNode(obj)?.let {
+            scene.add(it)
+        }
     }
 
 //    init {
