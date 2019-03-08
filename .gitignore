@@ -1,0 +1,10 @@
+
+.idea/
+*.iws
+out/
+.gradle
+build/
+
+
+!gradle-wrapper.jar
+gradle.properties
