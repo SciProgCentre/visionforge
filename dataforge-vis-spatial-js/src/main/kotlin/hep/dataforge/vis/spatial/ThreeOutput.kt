@@ -5,18 +5,13 @@ import hep.dataforge.io.Output
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.get
-import hep.dataforge.vis.onChange
+import hep.dataforge.vis.spatial.three.Group
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.external.controls.OrbitControls
-import info.laht.threekt.geometries.BoxBufferGeometry
-import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.math.ColorConstants
-import info.laht.threekt.objects.LineSegments
-import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Element
 import kotlin.browser.window
@@ -66,46 +61,23 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
 
 
     private fun buildNode(obj: DisplayObject): Object3D? {
-
-        // general properties updater
-        val updateProperties: Object3D.(DisplayObject) -> Unit = {
-            position.set(obj.x, obj.y, obj.z)
-            setRotationFromEuler(obj.euler)
-            scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
-            visible = obj.visible
-        }
-
         return when (obj) {
-            is DisplayGroup -> Group(obj.children.mapNotNull { buildNode(it) })
-            is Box -> {
-                val geometry = BoxBufferGeometry(obj.xSize, obj.ySize, obj.zSize)
-                val update: Mesh.(Box) -> Unit = { box ->
-                    this.geometry = BoxBufferGeometry(box.xSize, box.ySize, box.zSize)
-                    material = box["color"].material()
-                }
-                Mesh(geometry, obj["color"].material()).also { mesh ->
-                    //TODO replace by edges after adding it to three.kt
-                    mesh.add(LineSegments(WireframeGeometry(geometry),Materials.DEFAULT))
-                    obj.onChange(this) { _, _, _ ->
-                        mesh.updateProperties(obj)
-                        mesh.update(obj)
-                    }
-                }
+            is DisplayGroup -> Group(obj.children.mapNotNull { buildNode(it) }).apply {
+                ThreeObjectBuilder.updatePosition(obj, this)
             }
-            else -> {
-                logger.error { "No renderer defined for ${obj::class}" }
-                return null
-            }
-        }.apply {
-            updateProperties(obj)
+            is Box -> ThreeBoxBuilder(obj)
+            //is Convex -> ThreeConvexBuilder(obj)
+            else -> null
         }
     }
 
     override fun render(obj: DisplayObject, meta: Meta) {
         buildNode(obj)?.let {
             scene.add(it)
-        }
+        } ?: error("Renderer for ${obj::class} not found")
     }
+
+}
 
 //    init {
 //        val cube: Mesh
@@ -143,5 +115,3 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
 //        // Create the final object to add to the scene
 //        Line(geometry, material).apply(scene::add)
 //    }
-
-}

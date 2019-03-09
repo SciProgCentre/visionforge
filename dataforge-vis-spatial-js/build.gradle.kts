@@ -18,8 +18,8 @@ configure<KotlinFrontendExtension> {
     downloadNodeJsVersion = "latest"
 
     configure<NpmExtension> {
-        dependency("three")
-        dependency("three-orbitcontrols")
+        dependency("three-full")
+        //dependency("three-orbitcontrols")
         dependency("style-loader")
         devDependency("karma")
     }

@@ -18,6 +18,9 @@ class ThreeDemoApp : ApplicationBase() {
     override val stateKeys: List<String> = emptyList()
 
     override fun start(state: Map<String, Any>) {
+        //require("three-full")
+        //require("three/examples/js/geometries/ConvexGeometry")
+
         val renderer = ThreeOutput(Global)
         renderer.start(document.getElementById("canvas")!!)
         println("started")
@@ -38,6 +41,17 @@ class ThreeDemoApp : ApplicationBase() {
                     zSize = 100.0
                     properties.style["color"] = 1530
                 }
+            }
+            convex {
+                point(50,50,-50)
+                point(50,-50,-50)
+                point(-50,-50,-50)
+                point(-50,50,-50)
+                point(50,50,50)
+                point(50,-50,50)
+                point(-50,-50,50)
+                point(-50,50,50)
+
             }
         }
 
