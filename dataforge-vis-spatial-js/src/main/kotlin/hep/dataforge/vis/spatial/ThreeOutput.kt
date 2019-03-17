@@ -5,6 +5,8 @@ import hep.dataforge.io.Output
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.spatial.gdml.GDMLObject
+import hep.dataforge.vis.spatial.gdml.ThreeGDMLBuilder
 import hep.dataforge.vis.spatial.three.Group
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -66,6 +68,7 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
                 ThreeObjectBuilder.updatePosition(obj, this)
             }
             is Box -> ThreeBoxBuilder(obj)
+            is GDMLObject -> ThreeGDMLBuilder(obj)
             //is Convex -> ThreeConvexBuilder(obj)
             else -> null
         }

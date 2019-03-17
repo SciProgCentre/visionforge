@@ -1,6 +1,5 @@
 package hep.dataforge.vis
 
-import hep.dataforge.vis.hmr.module
 import hep.dataforge.vis.spatial.ThreeDemoApp
 import kotlin.browser.document
 import kotlin.dom.hasClass

@@ -77,6 +77,9 @@ fun DisplayObject.int(default: Int? = null, key: String? = null, inherited: Bool
 fun DisplayObject.node(key: String? = null, inherited: Boolean = true) =
     DisplayObjectDelegateWrapper(key?.toName(), null, inherited) { it.node }
 
+fun DisplayObject.item(key: String? = null, inherited: Boolean = true) =
+    DisplayObjectDelegateWrapper(key?.toName(), null, inherited) { it }
+
 //fun <T : Configurable> Configurable.spec(spec: Specification<T>, key: String? = null) = ChildConfigDelegate<T>(key) { spec.wrap(this) }
 
 @JvmName("safeString")
@@ -94,6 +97,10 @@ fun DisplayObject.number(default: Number, key: String? = null, inherited: Boolea
 @JvmName("safeDouble")
 fun DisplayObject.double(default: Double, key: String? = null, inherited: Boolean = true) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.double }
+
+@JvmName("safeInt")
+fun DisplayObject.int(default: Int, key: String? = null, inherited: Boolean = true) =
+    DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.int }
 
 inline fun <reified E : Enum<E>> DisplayObject.enum(default: E, key: String? = null, inherited: Boolean = true) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { item -> item.string?.let { enumValueOf<E>(it) } }

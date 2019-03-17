@@ -11,7 +11,7 @@ plugins {
 
 dependencies {
     api(project(":dataforge-vis-spatial"))
-    implementation("info.laht.threekt:threejs-wrapper:0.88-npm-1")
+    implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
 }
 
 configure<KotlinFrontendExtension> {
@@ -19,7 +19,6 @@ configure<KotlinFrontendExtension> {
 
     configure<NpmExtension> {
         dependency("three-full")
-        //dependency("three-orbitcontrols")
         dependency("style-loader")
         devDependency("karma")
     }
@@ -45,6 +44,7 @@ tasks{
             sourceMap = true
             moduleKind = "umd"
             main = "call"
+            kotlinOptions.sourceMapEmbedSources = "always"
         }
     }
 
@@ -54,6 +54,7 @@ tasks{
             outputFile = "${project.buildDir.path}/js/${project.name}-test.js"
             sourceMap = true
             moduleKind = "umd"
+            kotlinOptions.sourceMapEmbedSources = "always"
         }
     }
 }

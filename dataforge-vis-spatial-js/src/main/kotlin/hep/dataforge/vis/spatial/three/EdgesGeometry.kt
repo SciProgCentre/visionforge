@@ -1,4 +1,4 @@
-@file:JsModule("three")
+@file:JsModule("three-full")
 @file:JsNonModule
 
 package hep.dataforge.vis.spatial.three

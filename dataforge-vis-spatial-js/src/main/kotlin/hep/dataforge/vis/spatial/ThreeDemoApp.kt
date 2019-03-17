@@ -1,10 +1,13 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
+import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.number
 import hep.dataforge.meta.set
 import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.DisplayGroup
+import hep.dataforge.vis.require
+import hep.dataforge.vis.spatial.gdml.gdml
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -18,8 +21,7 @@ class ThreeDemoApp : ApplicationBase() {
     override val stateKeys: List<String> = emptyList()
 
     override fun start(state: Map<String, Any>) {
-        //require("three-full")
-        //require("three/examples/js/geometries/ConvexGeometry")
+        require("JSRootGeoBase.js")
 
         val renderer = ThreeOutput(Global)
         renderer.start(document.getElementById("canvas")!!)
@@ -42,16 +44,24 @@ class ThreeDemoApp : ApplicationBase() {
                     properties.style["color"] = 1530
                 }
             }
-            convex {
-                point(50,50,-50)
-                point(50,-50,-50)
-                point(-50,-50,-50)
-                point(-50,50,-50)
-                point(50,50,50)
-                point(50,-50,50)
-                point(-50,-50,50)
-                point(-50,50,50)
-
+//            convex {
+//                point(50, 50, -50)
+//                point(50, -50, -50)
+//                point(-50, -50, -50)
+//                point(-50, 50, -50)
+//                point(50, 50, 50)
+//                point(50, -50, 50)
+//                point(-50, -50, 50)
+//                point(-50, 50, 50)
+//            }
+            gdml {
+                y = 110.0
+                shape = buildMeta {
+                    "_typename" to "TGeoBBox"
+                    "fDX" to 50.0
+                    "fDY" to 50.0
+                    "fDZ" to 50.0
+                }
             }
         }
 
@@ -76,5 +86,5 @@ class ThreeDemoApp : ApplicationBase() {
 //        }
     }
 
-    override fun dispose() = emptyMap<String,Any>()//mapOf("lines" to presenter.dispose())
+    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" to presenter.dispose())
 }

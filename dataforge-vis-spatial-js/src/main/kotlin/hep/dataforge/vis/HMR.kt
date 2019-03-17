@@ -1,4 +1,4 @@
-package hep.dataforge.vis.hmr
+package hep.dataforge.vis
 
 external val module: Module
 

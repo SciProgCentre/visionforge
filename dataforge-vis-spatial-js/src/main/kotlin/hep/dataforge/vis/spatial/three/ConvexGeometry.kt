@@ -1,4 +1,5 @@
-@file:JsQualifier("THREE")
+@file:JsModule("three-full")
+@file:JsNonModule
 package hep.dataforge.vis.spatial.three
 
 import info.laht.threekt.core.BufferGeometry
