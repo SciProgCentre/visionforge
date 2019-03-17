@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial.gdml
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.buildMeta
 import hep.dataforge.vis.*
 import hep.dataforge.vis.spatial.GenericThreeBuilder
 import hep.dataforge.vis.spatial.Materials
@@ -18,6 +19,37 @@ class GDMLObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE,
     var color by item()
 
     var facesLimit by int(0)
+
+    fun box(xSize: Number, ySize: Number, zSize: Number) = buildMeta {
+        "_typename" to "TGeoBBox"
+        "fDX" to xSize
+        "fDY" to ySize
+        "fDZ" to zSize
+    }
+
+    /**
+     * Create a GDML union
+     */
+    operator fun Meta.plus(other: Meta) = buildMeta {
+        "fNode.fLeft" to this
+        "fNode.fRight" to other
+        "fNode._typename" to "TGeoUnion"
+    }
+
+    /**
+     * Create a GDML subtraction
+     */
+    operator fun Meta.minus(other: Meta)  = buildMeta {
+        "fNode.fLeft" to this
+        "fNode.fRight" to other
+        "fNode._typename" to "TGeoSubtraction"
+    }
+
+    infix fun Meta.intersect(other: Meta) = buildMeta {
+        "fNode.fLeft" to this
+        "fNode.fRight" to other
+        "fNode._typename" to "TGeoIntersection"
+    }
 
     companion object {
         const val TYPE = "geometry.spatial.gdml"

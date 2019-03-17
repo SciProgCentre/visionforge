@@ -1,7 +1,6 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
-import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.number
 import hep.dataforge.meta.set
 import hep.dataforge.vis.ApplicationBase
@@ -56,12 +55,7 @@ class ThreeDemoApp : ApplicationBase() {
 //            }
             gdml {
                 y = 110.0
-                shape = buildMeta {
-                    "_typename" to "TGeoBBox"
-                    "fDX" to 50.0
-                    "fDY" to 50.0
-                    "fDZ" to 50.0
-                }
+                shape = box(50, 50, 50)
             }
         }
 
