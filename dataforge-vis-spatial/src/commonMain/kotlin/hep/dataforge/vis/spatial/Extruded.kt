@@ -11,7 +11,7 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, m
     val shape get() = shape(properties["shape"] ?: error("Shape not defined"))
 
     companion object {
-        const val TYPE = "geometry.spatial.extruded"
+        const val TYPE = "geometry.3d.extruded"
 
         fun shape(item: MetaItem<*>): Shape2D {
             return item.node?.getAll("xyPoint".toName())?.map { (_, value) ->

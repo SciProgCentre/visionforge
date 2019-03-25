@@ -11,7 +11,7 @@ class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, met
     val points = points(properties["points"] ?: error("Vertices not defined"))
 
     companion object {
-        const val TYPE = "geometry.spatial.convex"
+        const val TYPE = "geometry.3d.convex"
 
         fun points(item: MetaItem<*>): List<Point3D> {
             return item.node?.getAll("point".toName())?.map { (_, value) ->

@@ -15,7 +15,7 @@ class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) 
     //TODO add helper for color configuration
 
     companion object {
-        const val TYPE = "geometry.spatial.box"
+        const val TYPE = "geometry.3d.box"
     }
 }
 

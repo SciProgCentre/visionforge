@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.Output
 import hep.dataforge.meta.*
+import hep.dataforge.output.Output
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayNode
 import hep.dataforge.vis.DisplayObject

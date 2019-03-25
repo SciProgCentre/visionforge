@@ -1,12 +1,11 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.io.Output
+import hep.dataforge.context.members
 import hep.dataforge.meta.Meta
+import hep.dataforge.output.Output
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.spatial.gdml.GDMLObject
-import hep.dataforge.vis.spatial.gdml.ThreeGDMLBuilder
 import hep.dataforge.vis.spatial.three.Group
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -17,6 +16,7 @@ import info.laht.threekt.math.ColorConstants
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Element
 import kotlin.browser.window
+import kotlin.reflect.KClass
 
 class ThreeOutput(override val context: Context) : Output<DisplayObject> {
 
@@ -65,13 +65,17 @@ class ThreeOutput(override val context: Context) : Output<DisplayObject> {
     private fun buildNode(obj: DisplayObject): Object3D? {
         return when (obj) {
             is DisplayGroup -> Group(obj.children.mapNotNull { buildNode(it) }).apply {
-                ThreeObjectBuilder.updatePosition(obj, this)
+                ThreeFactory.updatePosition(obj, this)
             }
-            is Box -> ThreeBoxBuilder(obj)
-            is GDMLObject -> ThreeGDMLBuilder(obj)
-            //is Convex -> ThreeConvexBuilder(obj)
-            else -> null
+            //is Box -> ThreeBoxFactory(obj)
+            //is JSRootObject -> ThreeJSRootFactory(obj)
+            //is Convex -> ThreeConvexFactory(obj)
+            else -> findFactory(obj::class)?.invoke(obj)?: error("Factory not found")
         }
+    }
+
+    private fun <T : DisplayObject> findFactory(type: KClass<out T>): ThreeFactory<T>? {
+        return context.members<ThreeFactory<*>>(ThreeFactory.TYPE).find { it.type == type } as? ThreeFactory<T>?
     }
 
     override fun render(obj: DisplayObject, meta: Meta) {

@@ -1,18 +1,14 @@
-package hep.dataforge.vis.spatial.gdml
+package hep.dataforge.vis.spatial.jsroot
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.vis.*
-import hep.dataforge.vis.spatial.GenericThreeBuilder
-import hep.dataforge.vis.spatial.Materials
-import hep.dataforge.vis.spatial.material
-import hep.dataforge.vis.spatial.three.EdgesGeometry
-import info.laht.threekt.objects.LineSegments
-import info.laht.threekt.objects.Mesh
+import hep.dataforge.vis.spatial.MeshThreeFactory
+import info.laht.threekt.core.BufferGeometry
 
-class GDMLObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
+class JSRootObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
 
     var shape by node()
 
@@ -45,6 +41,9 @@ class GDMLObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE,
         "fNode._typename" to "TGeoSubtraction"
     }
 
+    /**
+     * Intersect two GDML geometries
+     */
     infix fun Meta.intersect(other: Meta) = buildMeta {
         "fNode.fLeft" to this
         "fNode.fRight" to other
@@ -52,13 +51,12 @@ class GDMLObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE,
     }
 
     companion object {
-        const val TYPE = "geometry.spatial.gdml"
+        const val TYPE = "geometry.spatial.jsRoot"
     }
 }
 
-//TODO add Zelenyy GDML builder here
-fun DisplayGroup.gdml(meta: Meta = EmptyMeta, action: GDMLObject.() -> Unit = {}) =
-    GDMLObject(this, meta).apply(action).also { addChild(it) }
+fun DisplayGroup.jsRoot(meta: Meta = EmptyMeta, action: JSRootObject.() -> Unit = {}) =
+    JSRootObject(this, meta).apply(action).also { addChild(it) }
 
 fun Meta.toDynamic(): dynamic {
     fun MetaItem<*>.toDynamic(): dynamic = when (this) {
@@ -78,19 +76,9 @@ fun Meta.toDynamic(): dynamic {
 }
 
 
-object ThreeGDMLBuilder : GenericThreeBuilder<GDMLObject, Mesh>() {
-    override fun build(obj: GDMLObject): Mesh {
+object ThreeJSRootFactory : MeshThreeFactory<JSRootObject>(JSRootObject::class) {
+    override fun buildGeometry(obj: JSRootObject): BufferGeometry {
         val shapeMeta = obj.shape?.toDynamic() ?: error("The shape not defined")
-        println(shapeMeta)
-        val geometry = createGeometry(shapeMeta, obj.facesLimit)
-        return Mesh(geometry, obj.color.material()).also { mesh ->
-            mesh.add(LineSegments(EdgesGeometry(geometry), Materials.DEFAULT))
-        }
-    }
-
-    override fun update(obj: GDMLObject, target: Mesh) {
-        val shapeMeta: dynamic = obj.shape?.toDynamic()
-        target.geometry = createGeometry(shapeMeta, obj.facesLimit)
-        target.material = obj.color.material()
+        return createGeometry(shapeMeta, obj.facesLimit)
     }
 }

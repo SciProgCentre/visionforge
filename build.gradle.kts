@@ -9,7 +9,7 @@ buildscript {
     val dokkaVersion: String by rootProject.extra("0.9.17")
     val serializationVersion: String by rootProject.extra("0.10.0")
     
-    val dataforgeVersion: String by rootProject.extra("0.1.1-dev-5")
+    val dataforgeVersion: String by rootProject.extra("0.1.2-dev-1")
 
     repositories {
         jcenter()
@@ -40,6 +40,7 @@ allprojects {
         jcenter()
         maven("https://kotlin.bintray.com/kotlinx")
         maven("http://npm.mipt.ru:8081/artifactory/gradle-dev")
+        mavenLocal()
     }
 
     group = "hep.dataforge"

@@ -1,12 +1,14 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
+import hep.dataforge.context.members
 import hep.dataforge.meta.number
 import hep.dataforge.meta.set
 import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.require
-import hep.dataforge.vis.spatial.gdml.gdml
+import hep.dataforge.vis.spatial.jsroot.JSRootPlugin
+import hep.dataforge.vis.spatial.jsroot.jsRoot
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -21,6 +23,23 @@ class ThreeDemoApp : ApplicationBase() {
 
     override fun start(state: Map<String, Any>) {
         require("JSRootGeoBase.js")
+
+
+        //TODO remove after DI fix
+        Global.plugins.load(ThreePlugin())
+        Global.plugins.load(JSRootPlugin())
+
+//        Global.plugins.load(JSRootPlugin)
+
+        println(Global.plugins.count())
+
+        Global.plugins.forEach {
+            println(it)
+        }
+
+        Global.members<ThreeFactory<*>>(ThreeFactory.TYPE).forEach {
+            println(it)
+        }
 
         val renderer = ThreeOutput(Global)
         renderer.start(document.getElementById("canvas")!!)
@@ -53,7 +72,7 @@ class ThreeDemoApp : ApplicationBase() {
 //                point(-50, -50, 50)
 //                point(-50, 50, 50)
 //            }
-            gdml {
+            jsRoot {
                 y = 110.0
                 shape = box(50, 50, 50)
             }

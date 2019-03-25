@@ -11,19 +11,19 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("hep.dataforge:dataforge-io:$dataforgeVersion")
-                api("hep.dataforge:dataforge-io-metadata:$dataforgeVersion")
+                api("hep.dataforge:dataforge-output:$dataforgeVersion")
+                //api("hep.dataforge:dataforge-output-metadata:$dataforgeVersion")
             }
         }
         val jvmMain by getting {
             dependencies {
-                api("hep.dataforge:dataforge-io-jvm:$dataforgeVersion")
+                api("hep.dataforge:dataforge-output-jvm:$dataforgeVersion")
                 //api("no.tornado:tornadofx:1.7.18")
             }
         }
         val jsMain by getting {
             dependencies {
-                api("hep.dataforge:dataforge-io-js:$dataforgeVersion")
+                api("hep.dataforge:dataforge-output-js:$dataforgeVersion")
             }
         }
     }
