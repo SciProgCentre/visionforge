@@ -33,6 +33,6 @@ class ThreePlugin : AbstractPlugin() {
     companion object : PluginFactory<ThreePlugin> {
         override val tag = PluginTag("vis.three", "hep.dataforge")
         override val type = ThreePlugin::class
-        override fun build()  = ThreePlugin()
+        override fun invoke()  = ThreePlugin()
     }
 }

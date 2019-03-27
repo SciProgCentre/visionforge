@@ -20,6 +20,6 @@ class JSRootPlugin : AbstractPlugin() {
     companion object: PluginFactory<JSRootPlugin> {
         override val tag = PluginTag("vis.jsroot", "hep.dataforge")
         override val type = JSRootPlugin::class
-        override fun build() = JSRootPlugin()
+        override fun invoke() = JSRootPlugin()
     }
 }

@@ -1,4 +1,8 @@
+import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.npm.NpmTask
+import com.moowork.gradle.node.task.NodeTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -9,7 +13,7 @@ buildscript {
     val dokkaVersion: String by rootProject.extra("0.9.17")
     val serializationVersion: String by rootProject.extra("0.10.0")
     
-    val dataforgeVersion: String by rootProject.extra("0.1.2-dev-1")
+    val dataforgeVersion: String by rootProject.extra("0.1.2-dev-2")
 
     repositories {
         jcenter()
@@ -28,6 +32,7 @@ buildscript {
 
 plugins {
     id("com.jfrog.artifactory") version "4.8.1" apply false
+    id("com.moowork.node") version "1.3.1" apply false
 //    id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
@@ -86,6 +91,7 @@ subprojects {
 
     afterEvaluate {
         extensions.findByType<KotlinMultiplatformExtension>()?.apply {
+            apply(plugin = "com.moowork.node")
             jvm {
                 compilations.all {
                     kotlinOptions {
@@ -111,6 +117,75 @@ subprojects {
                         kotlinOptions {
                             main = "call"
                         }
+                    }
+                }
+
+                configure<NodeExtension>{
+                    nodeModulesDir = file("$buildDir/node_modules")
+                }
+
+                val compileKotlinJs by tasks.getting(Kotlin2JsCompile::class)
+                val compileTestKotlinJs by tasks.getting(Kotlin2JsCompile::class)
+
+                val populateNodeModules by tasks.registering(Copy::class) {
+                    dependsOn(compileKotlinJs)
+                    from(compileKotlinJs.destinationDir)
+
+                    compilations["test"].runtimeDependencyFiles.forEach {
+                        if (it.exists() && !it.isDirectory) {
+                            from(zipTree(it.absolutePath).matching { include("*.js") })
+                        }
+                    }
+
+                    into("$buildDir/node_modules")
+                }
+
+                val installMocha by tasks.registering(NpmTask::class) {
+                    setWorkingDir(buildDir)
+                    setArgs(listOf("install", "mocha"))
+                }
+
+                val runMocha by tasks.registering(NodeTask::class) {
+                    dependsOn(compileTestKotlinJs, populateNodeModules, installMocha)
+                    setScript(file("$buildDir/node_modules/mocha/bin/mocha"))
+                    setArgs(listOf(compileTestKotlinJs.outputFile))
+                }
+
+                tasks["jsTest"].dependsOn(runMocha)
+            }
+
+            sourceSets {
+
+                val commonMain by getting {
+                    dependencies {
+                        api(kotlin("stdlib"))
+                    }
+                }
+                val commonTest by getting {
+                    dependencies {
+                        implementation(kotlin("test-common"))
+                        implementation(kotlin("test-annotations-common"))
+                    }
+                }
+                val jvmMain by getting {
+                    dependencies {
+                        api(kotlin("stdlib-jdk8"))
+                    }
+                }
+                val jvmTest by getting {
+                    dependencies {
+                        implementation(kotlin("test"))
+                        implementation(kotlin("test-junit"))
+                    }
+                }
+                val jsMain by getting {
+                    dependencies {
+                        api(kotlin("stdlib-js"))
+                    }
+                }
+                val jsTest by getting {
+                    dependencies {
+                        implementation(kotlin("test-js"))
                     }
                 }
             }

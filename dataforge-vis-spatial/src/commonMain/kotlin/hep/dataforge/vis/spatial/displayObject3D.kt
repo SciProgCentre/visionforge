@@ -6,6 +6,7 @@ import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayNode
 import hep.dataforge.vis.DisplayObject
 import hep.dataforge.vis.DisplayObject.Companion.DEFAULT_TYPE
+import hep.dataforge.vis.get
 
 fun DisplayGroup.group(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit = {}) =
     DisplayNode(this, DEFAULT_TYPE, meta).apply(action).also { addChild(it) }
@@ -18,26 +19,38 @@ fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.()
 
 // Common properties
 
+/**
+ * Visibility property. Inherited from parent
+ */
 var DisplayObject.visible
-    get() = properties["visible"].boolean ?: true
+    get() = this["visible"].boolean ?: true
     set(value) {
         properties.style["visible"] = value
     }
 
 // 3D Object position
 
+/**
+ * x position property relative to parent. Not inherited
+ */
 var DisplayObject.x
     get() = properties["pos.x"].number ?: 0.0
     set(value) {
         properties.style["pos.x"] = value
     }
 
+/**
+ * y position property. Not inherited
+ */
 var DisplayObject.y
     get() = properties["pos.y"].number ?: 0.0
     set(value) {
         properties.style["pos.y"] = value
     }
 
+/**
+ * z position property. Not inherited
+ */
 var DisplayObject.z
     get() = properties["pos.z"].number ?: 0.0
     set(value) {
@@ -46,18 +59,27 @@ var DisplayObject.z
 
 // 3D Object rotation
 
+/**
+ * x rotation relative to parent. Not inherited
+ */
 var DisplayObject.rotationX
     get() = properties["rotation.x"].number ?: 0.0
     set(value) {
         properties.style["rotation.x"] = value
     }
 
+/**
+ * y rotation relative to parent. Not inherited
+ */
 var DisplayObject.rotationY
     get() = properties["rotation.y"].number ?: 0.0
     set(value) {
         properties.style["rotation.y"] = value
     }
 
+/**
+ * z rotation relative to parent. Not inherited
+ */
 var DisplayObject.rotationZ
     get() = properties["rotation.z"].number ?: 0.0
     set(value) {
@@ -73,6 +95,9 @@ enum class RotationOrder {
     ZYX
 }
 
+/**
+ * Rotation order. Not inherited
+ */
 var DisplayObject.rotationOrder: RotationOrder
     get() = properties["rotation.order"].enum<RotationOrder>() ?: RotationOrder.XYZ
     set(value) {
@@ -81,23 +106,49 @@ var DisplayObject.rotationOrder: RotationOrder
 
 // 3D object scale
 
+/**
+ * X scale. Not inherited
+ */
 var DisplayObject.scaleX
     get() = properties["scale.x"].number ?: 1.0
     set(value) {
         properties.style["scale.x"] = value
     }
 
+/**
+ * Y scale. Not inherited
+ */
 var DisplayObject.scaleY
     get() = properties["scale.y"].number ?: 1.0
     set(value) {
         properties.style["scale.y"] = value
     }
 
+/**
+ * Z scale. Not inherited
+ */
 var DisplayObject.scaleZ
     get() = properties["scale.z"].number ?: 1.0
     set(value) {
         properties.style["scale.z"] = value
     }
+
+fun DisplayObject.color(rgb: Int){
+    this.properties.style["color"]  = rgb
+}
+
+fun DisplayObject.color(meta: Meta){
+    this.properties.style["color"]  = meta
+}
+
+fun DisplayObject.color(r: Int, g: Int, b: Int) = color(buildMeta {
+    "red" to r
+    "green" to g
+    "blue" to b
+})
+
+
+//TODO add inherited scale
 
 object World {
     const val CAMERA_INITIAL_DISTANCE = -500.0

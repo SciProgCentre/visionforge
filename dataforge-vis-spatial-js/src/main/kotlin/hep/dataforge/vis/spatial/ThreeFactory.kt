@@ -8,7 +8,7 @@ import hep.dataforge.vis.onChange
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.TYPE
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.buildMesh
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.updateMesh
-import hep.dataforge.vis.spatial.three.ConvexGeometry
+import hep.dataforge.vis.spatial.three.ConvexBufferGeometry
 import hep.dataforge.vis.spatial.three.EdgesGeometry
 import hep.dataforge.vis.spatial.three.euler
 import info.laht.threekt.core.BufferGeometry
@@ -77,6 +77,9 @@ abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out
 
     override fun invoke(obj: T): Mesh {
         val geometry = buildGeometry(obj)
+
+        @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
+
         val mesh = buildMesh(obj, geometry)
         ThreeFactory.updatePosition(obj, mesh)
         obj.onChange(this) { _, _, _ ->
@@ -92,9 +95,11 @@ object ThreeBoxFactory : MeshThreeFactory<Box>(Box::class) {
         BoxBufferGeometry(obj.xSize, obj.ySize, obj.zSize)
 }
 
-fun Point3D.asVector(): Vector3 = this.asDynamic() as Vector3
+fun Point3D.asVector(): Vector3 = Vector3(this.x, this.y, this.z)
 
 object ThreeConvexFactory : MeshThreeFactory<Convex>(Convex::class) {
-    override fun buildGeometry(obj: Convex) =
-        ConvexGeometry(obj.points.map { it.asVector() }.toTypedArray())
+    override fun buildGeometry(obj: Convex): ConvexBufferGeometry {
+        val vectors = obj.points.map { it.asVector() }.toTypedArray()
+        return ConvexBufferGeometry(vectors)
+    }
 }

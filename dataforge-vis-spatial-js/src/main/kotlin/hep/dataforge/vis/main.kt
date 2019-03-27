@@ -1,6 +1,6 @@
 package hep.dataforge.vis
 
-import hep.dataforge.vis.spatial.ThreeDemoApp
+import hep.dataforge.vis.spatial.jsroot.JSRootDemoApp
 import kotlin.browser.document
 import kotlin.dom.hasClass
 
@@ -37,7 +37,7 @@ fun main() {
 
 fun start(state: dynamic): ApplicationBase? {
     return if (document.body?.hasClass("testApp") == true) {
-        val application = ThreeDemoApp()
+        val application = JSRootDemoApp()
 
         @Suppress("UnsafeCastFromDynamic")
         application.start(state?.appState ?: emptyMap())

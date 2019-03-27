@@ -1,9 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
-import hep.dataforge.context.members
 import hep.dataforge.meta.number
-import hep.dataforge.meta.set
 import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.require
@@ -26,20 +24,10 @@ class ThreeDemoApp : ApplicationBase() {
 
 
         //TODO remove after DI fix
-        Global.plugins.load(ThreePlugin())
-        Global.plugins.load(JSRootPlugin())
+//        Global.plugins.load(ThreePlugin())
+//        Global.plugins.load(JSRootPlugin())
 
-//        Global.plugins.load(JSRootPlugin)
-
-        println(Global.plugins.count())
-
-        Global.plugins.forEach {
-            println(it)
-        }
-
-        Global.members<ThreeFactory<*>>(ThreeFactory.TYPE).forEach {
-            println(it)
-        }
+        Global.plugins.load(JSRootPlugin)
 
         val renderer = ThreeOutput(Global)
         renderer.start(document.getElementById("canvas")!!)
@@ -50,31 +38,37 @@ class ThreeDemoApp : ApplicationBase() {
         renderer.render {
             group = group {
                 box {
+                    z = 110.0
                     xSize = 100.0
                     ySize = 100.0
                     zSize = 100.0
                 }
                 box {
+                    visible = false
                     x = 110.0
                     xSize = 100.0
                     ySize = 100.0
                     zSize = 100.0
-                    properties.style["color"] = 1530
+                    color(1530)
+
+                    GlobalScope.launch {
+                        while (isActive) {
+                            delay(500)
+                            visible = !visible
+                        }
+                    }
                 }
             }
-//            convex {
-//                point(50, 50, -50)
-//                point(50, -50, -50)
-//                point(-50, -50, -50)
-//                point(-50, 50, -50)
-//                point(50, 50, 50)
-//                point(50, -50, 50)
-//                point(-50, -50, 50)
-//                point(-50, 50, 50)
-//            }
+            convex {
+                point(50,50,50)
+                point(-50,-50,50)
+                point(-50,50,-50)
+                point(50,-50,-50)
+            }
             jsRoot {
                 y = 110.0
                 shape = box(50, 50, 50)
+                color(12285)
             }
         }
 

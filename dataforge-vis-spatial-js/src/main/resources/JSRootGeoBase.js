@@ -3398,7 +3398,7 @@
             process(toplevel, 0, 1, 1000000);
     };
 
-    GEO.build = function (obj, opt, call_back) {
+    GEO.build = function (obj, opt) {
         // function can be used to build three.js model for TGeo object
 
         if (!obj) return;
@@ -3510,7 +3510,7 @@
             //   mesh.renderOrder = clones.maxdepth - entry.stack.length;
         }
 
-        JSROOT.CallBack(call_back, toplevel);
+        //JSROOT.CallBack(call_back, toplevel);
 
         return toplevel;
     };

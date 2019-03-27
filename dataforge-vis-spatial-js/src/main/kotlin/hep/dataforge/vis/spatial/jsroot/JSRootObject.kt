@@ -1,84 +1,37 @@
 package hep.dataforge.vis.spatial.jsroot
 
+import hep.dataforge.meta.DynamicMeta
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.buildMeta
-import hep.dataforge.vis.*
-import hep.dataforge.vis.spatial.MeshThreeFactory
-import info.laht.threekt.core.BufferGeometry
+import hep.dataforge.meta.toDynamic
+import hep.dataforge.vis.DisplayGroup
+import hep.dataforge.vis.DisplayLeaf
+import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.node
+import hep.dataforge.vis.spatial.ThreeFactory
+import info.laht.threekt.core.Object3D
 
 class JSRootObject(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
 
-    var shape by node()
-
-    var color by item()
-
-    var facesLimit by int(0)
-
-    fun box(xSize: Number, ySize: Number, zSize: Number) = buildMeta {
-        "_typename" to "TGeoBBox"
-        "fDX" to xSize
-        "fDY" to ySize
-        "fDZ" to zSize
-    }
-
-    /**
-     * Create a GDML union
-     */
-    operator fun Meta.plus(other: Meta) = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoUnion"
-    }
-
-    /**
-     * Create a GDML subtraction
-     */
-    operator fun Meta.minus(other: Meta)  = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoSubtraction"
-    }
-
-    /**
-     * Intersect two GDML geometries
-     */
-    infix fun Meta.intersect(other: Meta) = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoIntersection"
-    }
+    var data by node()
+    var options by node()
 
     companion object {
-        const val TYPE = "geometry.spatial.jsRoot"
+        const val TYPE = "geometry.spatial.jsRoot.object"
     }
 }
 
-fun DisplayGroup.jsRoot(meta: Meta = EmptyMeta, action: JSRootObject.() -> Unit = {}) =
-    JSRootObject(this, meta).apply(action).also { addChild(it) }
+object JSRootObjectFactory : ThreeFactory<JSRootObject> {
 
-fun Meta.toDynamic(): dynamic {
-    fun MetaItem<*>.toDynamic(): dynamic = when (this) {
-        is MetaItem.ValueItem -> this.value.value.asDynamic()
-        is MetaItem.NodeItem -> this.node.toDynamic()
-    }
+    override val type = JSRootObject::class
 
-    val res = js("{}")
-    this.items.entries.groupBy { it.key.body }.forEach { (key, value) ->
-        val list = value.map { it.value }
-        res[key] = when (list.size) {
-            1 -> list.first().toDynamic()
-            else -> list.map { it.toDynamic() }
-        }
+    override fun invoke(obj: JSRootObject): Object3D {
+        return build(obj.data?.toDynamic(), obj.options?.toDynamic())
     }
-    return res
 }
 
-
-object ThreeJSRootFactory : MeshThreeFactory<JSRootObject>(JSRootObject::class) {
-    override fun buildGeometry(obj: JSRootObject): BufferGeometry {
-        val shapeMeta = obj.shape?.toDynamic() ?: error("The shape not defined")
-        return createGeometry(shapeMeta, obj.facesLimit)
-    }
+fun DisplayGroup.jsRoot(path: String) {
+    JSRootObject(this, EmptyMeta).apply{
+        data = DynamicMeta(hep.dataforge.vis.require(path))
+    }.also { addChild(it) }
 }

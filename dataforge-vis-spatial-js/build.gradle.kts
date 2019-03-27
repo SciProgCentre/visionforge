@@ -8,10 +8,12 @@ plugins {
     id("org.jetbrains.kotlin.frontend")
 }
 
+val kotlinVersion: String by rootProject.extra
 
 dependencies {
     api(project(":dataforge-vis-spatial"))
     implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
+    testCompile("org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion")
 }
 
 configure<KotlinFrontendExtension> {

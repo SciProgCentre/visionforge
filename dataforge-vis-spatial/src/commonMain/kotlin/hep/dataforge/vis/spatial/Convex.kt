@@ -32,10 +32,12 @@ class ConvexBuilder {
     }
 
     fun build(parent: DisplayObject?, meta: Meta): Convex {
-        val builder = meta.builder()
-        points.forEachIndexed { index, value ->
-            builder["points.point[$index]"] = value.toMeta()
-        }
-        return Convex(parent, builder.seal())
+        val points = buildMeta {
+            points.forEachIndexed { index, value ->
+                "points.point[$index]" to value.toMeta()
+            }
+        }.seal()
+
+        return Convex(parent, points)
     }
 }
