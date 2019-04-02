@@ -14,7 +14,18 @@ class JSRootPlugin : AbstractPlugin() {
 
     override fun attach(context: Context) {
         super.attach(context)
-        context.plugins.get<ThreePlugin>()?.factories?.set("ThreeJSRootFactory".toName(), ThreeJSRootFactory)
+        context.plugins.get<ThreePlugin>()?.factories?.apply {
+            this["jsRoot.geometry".toName()] = ThreeJSRootGeometryFactory
+            this["jsRoot.object".toName()] = ThreeJSRootObjectFactory
+        }
+    }
+
+    override fun detach() {
+        context.plugins.get<ThreePlugin>()?.factories?.apply {
+            remove("jsRoot.geometry".toName())
+            remove("jsRoot.object".toName())
+        }
+        super.detach()
     }
 
     companion object: PluginFactory<JSRootPlugin> {

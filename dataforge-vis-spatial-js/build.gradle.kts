@@ -8,11 +8,16 @@ plugins {
     id("org.jetbrains.kotlin.frontend")
 }
 
+repositories{
+    maven ("https://dl.bintray.com/orangy/maven" )
+}
+
 val kotlinVersion: String by rootProject.extra
 
 dependencies {
-    api(project(":dataforge-vis-spatial"))
+    implementation(project(":dataforge-vis-spatial"))
     implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
+    //implementation("org.jetbrains.kotlinx:kotlinx-files-js:0.1.0-dev-27")
     testCompile("org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion")
 }
 
@@ -22,6 +27,9 @@ configure<KotlinFrontendExtension> {
     configure<NpmExtension> {
         dependency("three-full")
         dependency("style-loader")
+//        dependency("fs-remote")
+//        dependency("path")
+//        dependency("text-encoding")
         devDependency("karma")
     }
 

@@ -6,7 +6,8 @@ import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.require
 import hep.dataforge.vis.spatial.jsroot.JSRootPlugin
-import hep.dataforge.vis.spatial.jsroot.jsRoot
+import hep.dataforge.vis.spatial.jsroot.jsRootGeometry
+
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -60,12 +61,12 @@ class ThreeDemoApp : ApplicationBase() {
                 }
             }
             convex {
-                point(50,50,50)
-                point(-50,-50,50)
-                point(-50,50,-50)
-                point(50,-50,-50)
+                point(50, 50, 50)
+                point(-50, -50, 50)
+                point(-50, 50, -50)
+                point(50, -50, -50)
             }
-            jsRoot {
+            jsRootGeometry {
                 y = 110.0
                 shape = box(50, 50, 50)
                 color(12285)

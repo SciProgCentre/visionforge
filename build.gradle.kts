@@ -13,7 +13,7 @@ buildscript {
     val dokkaVersion: String by rootProject.extra("0.9.17")
     val serializationVersion: String by rootProject.extra("0.10.0")
     
-    val dataforgeVersion: String by rootProject.extra("0.1.2-dev-2")
+    val dataforgeVersion: String by rootProject.extra("0.1.2-dev-3")
 
     repositories {
         jcenter()

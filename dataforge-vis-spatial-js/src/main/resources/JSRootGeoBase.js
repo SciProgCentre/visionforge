@@ -3428,7 +3428,7 @@
             obj = null;
         }
 
-        if (opt.composite && shape && (shape._typename == 'TGeoCompositeShape') && shape.fNode)
+        if (opt.composite && shape && (shape._typename === 'TGeoCompositeShape') && shape.fNode)
             obj = GEO.buildCompositeVolume(shape);
 
         if (!obj && shape)

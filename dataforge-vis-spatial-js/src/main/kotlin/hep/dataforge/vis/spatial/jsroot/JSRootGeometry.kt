@@ -53,7 +53,7 @@ class JSRootGeometry(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, T
     }
 }
 
-fun DisplayGroup.jsRoot(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
+fun DisplayGroup.jsRootGeometry(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
     JSRootGeometry(this, meta).apply(action).also { addChild(it) }
 
 //fun Meta.toDynamic(): dynamic {
@@ -74,7 +74,7 @@ fun DisplayGroup.jsRoot(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Uni
 //}
 
 
-object ThreeJSRootFactory : MeshThreeFactory<JSRootGeometry>(JSRootGeometry::class) {
+object ThreeJSRootGeometryFactory : MeshThreeFactory<JSRootGeometry>(JSRootGeometry::class) {
     override fun buildGeometry(obj: JSRootGeometry): BufferGeometry {
         val shapeMeta = obj.shape?.toDynamic() ?: error("The shape not defined")
         return createGeometry(shapeMeta, obj.facesLimit)

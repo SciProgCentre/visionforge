@@ -25,3 +25,5 @@ include(
     ":dataforge-vis-spatial-fx",
     ":dataforge-vis-spatial-js"
 )
+
+includeBuild("../dataforge-core")
