@@ -1,6 +1,8 @@
 package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 sealed class GDMLNode(override val config: Config) : Specification {
     var pName by string()
@@ -13,6 +15,10 @@ class GDMLPosition(config: Config) : GDMLDefine(config) {
     var y by number(0f).float
     var z by number(0f).float
     var unit by string("cm")
+
+    companion object : SpecificationCompanion<GDMLPosition> {
+        override fun wrap(config: Config) = GDMLPosition(config)
+    }
 }
 
 class GDMLRotation(config: Config) : GDMLDefine(config) {
@@ -20,9 +26,11 @@ class GDMLRotation(config: Config) : GDMLDefine(config) {
     var y by number(0f).float
     var z by number(0f).float
     var unit by string("deg")
+
+    companion object : SpecificationCompanion<GDMLRotation> {
+        override fun wrap(config: Config) = GDMLRotation(config)
+    }
 }
-
-
 
 sealed class GDMLSolid(config: Config) : GDMLNode(config) {
     abstract val type: String
@@ -93,14 +101,64 @@ class GDMLXtru(config: Config) : GDMLSolid(config) {
     }
 }
 
-class GDMLUnion(config: Config) : GDMLSolid(config) {
-    override val type: String = "union"
+internal class GDMLRefDelegate(val key: String?) : ReadWriteProperty<GDMLNode, String?> {
+    override fun getValue(thisRef: GDMLNode, property: KProperty<*>): String? {
+        val realKey = key ?: property.name
+        return thisRef.config["$realKey.ref"].string
+    }
 
-    val first by node()
-    val second by node()
+    override fun setValue(thisRef: GDMLNode, property: KProperty<*>, value: String?) {
+        val realKey = key ?: property.name
+        if (value == null) {
+            thisRef.config.remove(realKey)
+        } else {
+            thisRef.config["$realKey.ref"] = value
+        }
+    }
+}
+
+internal fun GDMLNode.ref(key: String? = null) = GDMLRefDelegate(key)
+
+
+sealed class GDMLBoolSolid(config: Config) : GDMLSolid(config) {
+    var first by ref()
+
+    var second by ref()
+
+    var position by spec(GDMLPosition)
+
+    var positionref by ref()
+
+    var rotation by spec(GDMLRotation)
+
+    var rotationref by ref()
+
+    var firstposition by spec(GDMLPosition)
+
+    var firstrotation by spec(GDMLRotation)
+}
+
+
+class GDMLUnion(config: Config) : GDMLBoolSolid(config) {
+    override val type: String = "union"
 
     companion object : SpecificationCompanion<GDMLUnion> {
         override fun wrap(config: Config): GDMLUnion = GDMLUnion(config)
     }
 }
 
+class GDMLSubtraction(config: Config) : GDMLBoolSolid(config) {
+    override val type: String = "subtraction"
+
+    companion object : SpecificationCompanion<GDMLUnion> {
+        override fun wrap(config: Config) = GDMLUnion(config)
+    }
+}
+
+class GDMLIntersection(config: Config) : GDMLBoolSolid(config) {
+    override val type: String = "intersection"
+
+    companion object : SpecificationCompanion<GDMLIntersection> {
+        override fun wrap(config: Config) = GDMLIntersection(config)
+    }
+}

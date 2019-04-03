@@ -37,20 +37,20 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
     override fun buildGeometry(obj: GDMLShape): BufferGeometry {
         return when (obj.shape) {
             is GDMLBox -> createTubeBuffer(
-                obj.shape.config.toJsRoot(),
+                obj.shape.config.toJsRoot()?.toDynamic(),
                 obj.facesLimit
             )
             is GDMLTube -> createTubeBuffer(
-                obj.shape.config.toJsRoot(),
+                obj.shape.config.toJsRoot()?.toDynamic(),
                 obj.facesLimit
             )
             is GDMLXtru -> {
                 val meta = buildMeta {
+                    "_typename" to "TGeoXtru"
                     val vertices = obj.shape.verteces
                     val zs = obj.shape.sections.sortedBy { it.zOrder!! }
                     "fNz" to zs.size
                     "fNvert" to vertices.size
-                    "_typename" to "TGeoXtru"
                     "fX" to vertices.map { it.x }
                     "fY" to vertices.map { it.y }
                     "fX0" to zs.map { it.xOffsset }
@@ -60,6 +60,9 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
                 }
                 createGeometry(meta.toDynamic(), obj.facesLimit)
             }
+            is GDMLUnion -> TODO()
+            is GDMLSubtraction -> TODO()
+            is GDMLIntersection -> TODO()
 //            is GDMLUnion -> {
 //                val meta = buildMeta {
 //                           "fNode.fLeft" to obj.shape.first.toJsRoot()
@@ -68,6 +71,7 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
 //                }
 //                createGeometry(meta.toDynamic(), obj.facesLimit)
 //            }
+
         }
     }
 }

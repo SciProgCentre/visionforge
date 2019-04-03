@@ -26,4 +26,6 @@ include(
     ":dataforge-vis-spatial-js"
 )
 
-includeBuild("../dataforge-core")
+if(file("../dataforge-core").exists()) {
+    includeBuild("../dataforge-core")
+}
