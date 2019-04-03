@@ -27,5 +27,9 @@ include(
 )
 
 if(file("../dataforge-core").exists()) {
-    includeBuild("../dataforge-core")
+    includeBuild("../dataforge-core"){
+        dependencySubstitution {
+            substitute(module("hep.dataforge:dataforge-output")).with(project(":dataforge-output"))
+        }
+    }
 }

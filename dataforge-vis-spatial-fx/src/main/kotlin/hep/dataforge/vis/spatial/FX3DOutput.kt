@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.io.Output
 import hep.dataforge.meta.Meta
+import hep.dataforge.output.Output
 import hep.dataforge.vis.*
 import javafx.scene.Group
 import javafx.scene.Node

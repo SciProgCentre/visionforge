@@ -3,9 +3,9 @@
 
 (function (factory) {
     if (typeof define === "function" && define.amd) {
-        define(['three-full', 'ThreeCSG'], factory);
+        define(['three-full', 'ThreeCSG', 'JSRoot'], factory);
     } else if (typeof exports === 'object' && typeof module !== 'undefined') {
-        factory(require("three-full"), require("./ThreeCSG.js"));
+        factory(require("three-full"), require("./ThreeCSG.js"), require("./JSRoot.js"));
     } else {
         if (typeof THREE == 'undefined')
             throw new Error('THREE is not defined', 'JSRootGeoBase.js');
@@ -13,49 +13,15 @@
         if (typeof ThreeBSP == 'undefined')
             throw new Error('ThreeBSP is not defined', 'JSRootGeoBase.js');
 
-        factory(THREE, ThreeBSP);
+        if (typeof JSROOT == 'undefined')
+            throw new Error('JSROOT is not defined', 'JSRootGeoBase.js');
+
+
+        factory(THREE, ThreeBSP, JSROOT);
     }
-}(function (THREE, ThreeBSP) {
+}(function (THREE, ThreeBSP, JSROOT) {
 
     "use strict";
-
-    var JSROOT = {};
-
-    /** Generate mask for given bit
-     *
-     * @param {number} n bit number
-     * @returns {Number} produced make
-     * @private */
-    JSROOT.BIT = function (n) {
-        return 1 << (n);
-    };
-
-    /**
-     * @summary Generic method to invoke callback function.
-     *
-     * @param {object|function} func either normal function or container like
-     * { obj: object_pointer, func: name of method to call }
-     * @param arg1 first optional argument of callback
-     * @param arg2 second optional argument of callback
-     *
-     * @private
-     */
-    JSROOT.CallBack = function (func, arg1, arg2) {
-
-        if (typeof func == 'string') func = JSROOT.findFunction(func);
-
-        if (!func) return;
-
-        if (typeof func == 'function') return func(arg1, arg2);
-
-        if (typeof func != 'object') return;
-
-        if (('obj' in func) && ('func' in func) &&
-            (typeof func.obj == 'object') && (typeof func.func == 'string') &&
-            (typeof func.obj[func.func] == 'function')) {
-            return func.obj[func.func](arg1, arg2);
-        }
-    };
 
     /** @namespace GEO */
         /// Holder of all TGeo-related functions and classes
@@ -1650,7 +1616,7 @@
         } else if (('fMatrix' in node) && (node.fMatrix !== null))
             matrix = GEO.createMatrix(node.fMatrix);
         else if ((node._typename == "TGeoNodeOffset") && (node.fFinder !== null)) {
-            var kPatternReflected = GEO.BITS.kVisBranch;
+            let kPatternReflected = GEO.BITS.kVisBranch;
             if ((node.fFinder.fBits & kPatternReflected) !== 0)
                 GEO.warn('Unsupported reflected pattern ' + node.fFinder._typename);
 
@@ -2279,12 +2245,12 @@
                 if (obj.fVolume.fNodes) chlds = obj.fVolume.fNodes.arr;
             }
 
-            var matrix = GEO.getNodeMatrix(kind, obj);
+            const matrix = GEO.getNodeMatrix(kind, obj);
             if (matrix) {
                 clone.matrix = matrix.elements; // take only matrix elements, matrix will be constructed in worker
                 if (clone.matrix[0] === 1) {
                     var issimple = true;
-                    for (var k = 1; (k < clone.matrix.length) && issimple; ++k)
+                    for (let k = 1; (k < clone.matrix.length) && issimple; ++k)
                         issimple = (clone.matrix[k] === ((k === 5) || (k === 10) || (k === 15) ? 1 : 0));
                     if (issimple) delete clone.matrix;
                 }
@@ -3513,6 +3479,11 @@
         //JSROOT.CallBack(call_back, toplevel);
 
         return toplevel;
+    };
+
+    GEO.buildFromJson = function (obj, opt) {
+        var unrefed = JSROOT.JSONR_unref(obj);
+        return GEO.build(unrefed, opt)
     };
 
     GEO.getBoundingBox = function (node, box3) {

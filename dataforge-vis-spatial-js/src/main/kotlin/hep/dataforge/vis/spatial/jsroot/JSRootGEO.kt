@@ -15,3 +15,5 @@ external fun createTubeBuffer(shape: dynamic, limit: Int): BufferGeometry
 external fun createXtruBuffer(shape: dynamic, limit: Int): BufferGeometry
 
 external fun build(obj: dynamic, opt: dynamic): Object3D
+
+external fun buildFromJson(obj:dynamic, opt: dynamic): Object3D
