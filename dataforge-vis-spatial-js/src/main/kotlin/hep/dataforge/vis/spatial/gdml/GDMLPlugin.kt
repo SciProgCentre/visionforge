@@ -4,6 +4,7 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
+import hep.dataforge.names.toName
 import hep.dataforge.vis.spatial.ThreePlugin
 
 class GDMLPlugin : AbstractPlugin() {
@@ -13,10 +14,9 @@ class GDMLPlugin : AbstractPlugin() {
 
     override fun attach(context: Context) {
         super.attach(context)
-//        context.plugins.get<ThreePlugin>()?.factories?.apply {
-//            this["jsRoot.geometry".toName()] = ThreeJSRootGeometryFactory
-//            this["jsRoot.object".toName()] = ThreeJSRootObjectFactory
-//        }
+        context.plugins.get<ThreePlugin>()?.factories?.apply {
+            this["gdml".toName()] = ThreeGDMLFactory
+        }
     }
 
     override fun detach() {

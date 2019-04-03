@@ -60,17 +60,31 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
                 }
                 createGeometry(meta.toDynamic(), obj.facesLimit)
             }
-            is GDMLUnion -> TODO()
-            is GDMLSubtraction -> TODO()
-            is GDMLIntersection -> TODO()
-//            is GDMLUnion -> {
-//                val meta = buildMeta {
-//                           "fNode.fLeft" to obj.shape.first.toJsRoot()
-//                    "fNode.fRight" to obj.shape.second.toJsRoot()
-//                    "fNode._typename" to "TGeoUnion"
-//                }
-//                createGeometry(meta.toDynamic(), obj.facesLimit)
-//            }
+            is GDMLUnion -> {
+                val meta = buildMeta {
+                    "fNode.fLeft" to obj.shape.first()?.config.toJsRoot()
+                    "fNode.fRight" to obj.shape.second()?.config.toJsRoot()
+                    "fNode._typename" to "TGeoUnion"
+                }
+                createGeometry(meta.toDynamic(), obj.facesLimit)
+            }
+            is GDMLSubtraction -> {
+                val meta = buildMeta {
+                    "fNode.fLeft" to obj.shape.first()?.config.toJsRoot()
+                    "fNode.fRight" to obj.shape.second()?.config.toJsRoot()
+                    "fNode._typename" to "TGeoSubtraction"
+                }
+                createGeometry(meta.toDynamic(), obj.facesLimit)
+            }
+            is GDMLIntersection -> {
+                val meta = buildMeta {
+                    "fNode.fLeft" to obj.shape.first()?.config.toJsRoot()
+                    "fNode.fRight" to obj.shape.second()?.config.toJsRoot()
+                    "fNode._typename" to "TGeoIntersection"
+                }
+                createGeometry(meta.toDynamic(), obj.facesLimit)
+            }
+
 
         }
     }

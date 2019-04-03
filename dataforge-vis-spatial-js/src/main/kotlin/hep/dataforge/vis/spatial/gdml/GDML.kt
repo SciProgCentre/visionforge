@@ -2,39 +2,53 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Config
 
+@DslMarker
+annotation class GDMLApi
+
+@GDMLApi
 class GDML {
-    private var defines: List<GDMLDefine> = emptyList()
-    private var solids: Map<String, GDMLSolid> = emptyMap()
+    private val defines = GDMLDefineContainer()
+    private var solids = GDMLSolidContainer()
 
-    fun define(block: GDMLDefineBuilder.() -> Unit) {
-        defines = GDMLDefineBuilder().apply(block).defines
+    fun define(block: GDMLDefineContainer.() -> Unit) {
+        defines.apply(block).map
     }
 
-    fun solids(block: GDMLSolidBuilder.() -> Unit) {
-        solids = GDMLSolidBuilder().apply(block).solids
+    fun solids(block: GDMLSolidContainer.() -> Unit) {
+        solids.apply(block).map
+    }
+
+    fun getPosition(ref: String) = defines.map[ref] as? GDMLPosition
+    fun getRotation(ref: String) = defines.map[ref] as? GDMLRotation
+    fun getSolid(ref:String) = solids.map[ref]
+}
+
+@GDMLApi
+class GDMLDefineContainer {
+    internal val map =  HashMap<String, GDMLDefine>()
+
+    fun position(name: String, block: GDMLPosition.() -> Unit) {
+        map[name] = GDMLPosition(Config()).apply(block).apply { this.pName = name }
+    }
+
+    fun rotation(name: String, block: GDMLRotation.() -> Unit) {
+        map[name] = GDMLRotation(Config()).apply(block).apply { this.pName = name }
     }
 }
 
-class GDMLDefineBuilder {
-    internal val defines = ArrayList<GDMLDefine>()
+@GDMLApi
+class GDMLSolidContainer {
+    internal val map = HashMap<String, GDMLSolid>()
 
-    fun position(block: GDMLPosition.() -> Unit) {
-        defines.add(GDMLPosition(Config()).apply(block))
+    operator fun get(ref: String) = map[ref]
+
+    fun box(name: String, block: GDMLBox.() -> Unit) {
+        map[name] = GDMLBox.build(block).apply{this.pName = name}
     }
-
-    fun rotation(block: GDMLRotation.() -> Unit) {
-        defines.add(GDMLRotation(Config()).apply(block))
+    fun tube(name: String, block: GDMLTube.() -> Unit){
+        map[name] = GDMLTube.build(block).apply{this.pName = name}
     }
-}
-
-class GDMLSolidBuilder {
-    internal val solids = HashMap<String, GDMLSolid>()
-
-    private fun put(solid: GDMLSolid) {
-        solids[solid.pName!!] = solid
+    fun xtru(name: String, block: GDMLXtru.() -> Unit) {
+        map[name] = GDMLXtru.build(block).apply{this.pName = name}
     }
-
-    fun box(block: GDMLBox.() -> Unit) = put(GDMLBox.build(block))
-    fun tube(block: GDMLTube.() -> Unit) = put(GDMLTube.build(block))
-    fun xtru(block: GDMLXtru.() -> Unit) = put(GDMLXtru.build(block))
 }

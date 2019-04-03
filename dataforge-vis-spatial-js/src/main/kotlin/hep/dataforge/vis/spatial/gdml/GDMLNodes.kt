@@ -120,18 +120,36 @@ internal class GDMLRefDelegate(val key: String?) : ReadWriteProperty<GDMLNode, S
 internal fun GDMLNode.ref(key: String? = null) = GDMLRefDelegate(key)
 
 
-sealed class GDMLBoolSolid(config: Config) : GDMLSolid(config) {
+sealed class GDMLBoolSolid(config: Config, var root: GDML? = null) : GDMLSolid(config) {
     var first by ref()
 
+    @JsName("resolveFirst")
+    fun first() = first?.let{ref -> root?.getSolid(ref)}
+
     var second by ref()
+
+    @JsName("resolveSecond")
+    fun second() = second?.let{ref -> root?.getSolid(ref)}
 
     var position by spec(GDMLPosition)
 
     var positionref by ref()
 
+    /**
+     * Get the position from either position block or reference (if root is provided)
+     */
+    @JsName("resolvePosition")
+    fun position() = position ?: positionref?.let{ref -> root?.getPosition(ref)}
+
     var rotation by spec(GDMLRotation)
 
     var rotationref by ref()
+
+    /**
+     * Get the rotation from either position block or reference (if root is provided)
+     */
+    @JsName("resolveRotation")
+    fun rotation() = rotation ?: rotationref?.let{ref -> root?.getRotation(ref)}
 
     var firstposition by spec(GDMLPosition)
 
