@@ -8,8 +8,10 @@ import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
 import hep.dataforge.vis.int
 import hep.dataforge.vis.spatial.MeshThreeFactory
+import hep.dataforge.vis.spatial.jsroot.createCubeBuffer
 import hep.dataforge.vis.spatial.jsroot.createGeometry
 import hep.dataforge.vis.spatial.jsroot.createTubeBuffer
+import hep.dataforge.vis.spatial.jsroot.createXtruBuffer
 import info.laht.threekt.core.BufferGeometry
 
 
@@ -36,7 +38,7 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
 
     override fun buildGeometry(obj: GDMLShape): BufferGeometry {
         return when (obj.shape) {
-            is GDMLBox -> createTubeBuffer(
+            is GDMLBox -> createCubeBuffer(
                 obj.shape.config.toJsRoot()?.toDynamic(),
                 obj.facesLimit
             )
@@ -46,7 +48,6 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
             )
             is GDMLXtru -> {
                 val meta = buildMeta {
-                    "_typename" to "TGeoXtru"
                     val vertices = obj.shape.verteces
                     val zs = obj.shape.sections.sortedBy { it.zOrder!! }
                     "fNz" to zs.size
@@ -58,7 +59,7 @@ object ThreeGDMLFactory : MeshThreeFactory<GDMLShape>(GDMLShape::class) {
                     "fZ" to zs.map { it.zPosition!! }
                     "fScale" to zs.map { it.scalingFactor }
                 }
-                createGeometry(meta.toDynamic(), obj.facesLimit)
+                createXtruBuffer(meta.toDynamic(), obj.facesLimit)
             }
             is GDMLUnion -> {
                 val meta = buildMeta {

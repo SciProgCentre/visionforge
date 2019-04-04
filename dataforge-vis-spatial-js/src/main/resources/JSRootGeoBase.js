@@ -3,9 +3,9 @@
 
 (function (factory) {
     if (typeof define === "function" && define.amd) {
-        define(['three-full', 'ThreeCSG', 'JSRoot'], factory);
+        define(['three-full', 'ThreeCSG', 'JSRootCore'], factory);
     } else if (typeof exports === 'object' && typeof module !== 'undefined') {
-        factory(require("three-full"), require("./ThreeCSG.js"), require("./JSRoot.js"));
+        factory(require("three-full"), require("./ThreeCSG.js"), require("./JSRootCore.js"));
     } else {
         if (typeof THREE == 'undefined')
             throw new Error('THREE is not defined', 'JSRootGeoBase.js');
@@ -23,16 +23,16 @@
 
     "use strict";
 
-    /** @namespace GEO */
+    /** @namespace JSROOT.GEO */
         /// Holder of all TGeo-related functions and classes
-    var GEO = {
+    JSROOT.GEO = {
             GradPerSegm: 6,     // grad per segment in cylinder/spherical symmetry shapes
             CompressComp: true,  // use faces compression in composite shapes
             CompLimit: 20        // maximal number of components in composite shape
         };
 
-    /** @memberOf GEO */
-    GEO.BITS = {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.BITS = {
         kVisOverride: JSROOT.BIT(0),           // volume's vis. attributes are overwritten
         kVisNone: JSROOT.BIT(1),           // the volume/node is invisible, as well as daughters
         kVisThis: JSROOT.BIT(2),           // this volume/node is visible
@@ -47,53 +47,53 @@
         kVisRaytrace: JSROOT.BIT(15)           // raytracing flag
     };
 
-    /** @memberOf GEO */
-    GEO.TestBit = function (volume, f) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.TestBit = function (volume, f) {
         var att = volume.fGeoAtt;
         return att === undefined ? false : ((att & f) !== 0);
     };
 
-    /** @memberOf GEO */
-    GEO.SetBit = function (volume, f, value) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.SetBit = function (volume, f, value) {
         if (volume.fGeoAtt === undefined) return;
         volume.fGeoAtt = value ? (volume.fGeoAtt | f) : (volume.fGeoAtt & ~f);
     };
 
-    /** @memberOf GEO */
-    GEO.ToggleBit = function (volume, f) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.ToggleBit = function (volume, f) {
         if (volume.fGeoAtt !== undefined)
             volume.fGeoAtt = volume.fGeoAtt ^ (f & 0xffffff);
     };
 
-    /** @memberOf GEO
+    /** @memberOf JSROOT.GEO
      * implementation of TGeoVolume::InvisibleAll */
-    GEO.InvisibleAll = function (flag) {
+    JSROOT.GEO.InvisibleAll = function (flag) {
         if (flag === undefined) flag = true;
 
-        GEO.SetBit(this, GEO.BITS.kVisThis, !flag);
-        GEO.SetBit(this, GEO.BITS.kVisDaughters, !flag);
-        GEO.SetBit(this, GEO.BITS.kVisOneLevel, false);
+        JSROOT.GEO.SetBit(this, JSROOT.GEO.BITS.kVisThis, !flag);
+        JSROOT.GEO.SetBit(this, JSROOT.GEO.BITS.kVisDaughters, !flag);
+        JSROOT.GEO.SetBit(this, JSROOT.GEO.BITS.kVisOneLevel, false);
 
         if (this.fNodes)
             for (var n = 0; n < this.fNodes.arr.length; ++n) {
                 var sub = this.fNodes.arr[n].fVolume;
-                GEO.SetBit(sub, GEO.BITS.kVisThis, !flag);
-                // GEO.SetBit(sub, GEO.BITS.kVisDaughters, !flag);
-                //GEO.SetBit(sub, GEO.BITS.kVisOneLevel, false);
+                JSROOT.GEO.SetBit(sub, JSROOT.GEO.BITS.kVisThis, !flag);
+                // JSROOT.GEO.SetBit(sub, JSROOT.GEO.BITS.kVisDaughters, !flag);
+                //JSROOT.GEO.SetBit(sub, JSROOT.GEO.BITS.kVisOneLevel, false);
             }
     };
 
     /** method used to avoid duplication of warnings
-     * @memberOf GEO */
-    GEO.warn = function (msg) {
-        if (GEO._warn_msgs === undefined) GEO._warn_msgs = {};
-        if (GEO._warn_msgs[msg] !== undefined) return;
-        GEO._warn_msgs[msg] = true;
+     * @memberOf JSROOT.GEO */
+    JSROOT.GEO.warn = function (msg) {
+        if (JSROOT.GEO._warn_msgs === undefined) JSROOT.GEO._warn_msgs = {};
+        if (JSROOT.GEO._warn_msgs[msg] !== undefined) return;
+        JSROOT.GEO._warn_msgs[msg] = true;
         console.warn(msg);
     };
 
-    /** @memberOf GEO */
-    GEO.NodeKind = function (obj) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.NodeKind = function (obj) {
         // return kind of the geo nodes
         // 0 - TGeoNode
         // 1 - TEveGeoNode
@@ -104,15 +104,15 @@
         return ('fShape' in obj) && ('fTrans' in obj) ? 1 : 0;
     };
 
-    GEO.CountNumShapes = function (shape) {
+    JSROOT.GEO.CountNumShapes = function (shape) {
         if (!shape) return 0;
         if (shape._typename !== 'TGeoCompositeShape') return 1;
-        return GEO.CountNumShapes(shape.fNode.fLeft) + GEO.CountNumShapes(shape.fNode.fRight);
+        return JSROOT.GEO.CountNumShapes(shape.fNode.fLeft) + JSROOT.GEO.CountNumShapes(shape.fNode.fRight);
     };
 
     // ==========================================================================
 
-    GEO.GeometryCreator = function (numfaces) {
+    JSROOT.GEO.GeometryCreator = function (numfaces) {
         this.nfaces = numfaces;
         this.indx = 0;
         this.pos = new Float32Array(numfaces * 9);
@@ -121,7 +121,7 @@
         return this;
     };
 
-    GEO.GeometryCreator.prototype.AddFace3 = function (x1, y1, z1,
+    JSROOT.GEO.GeometryCreator.prototype.AddFace3 = function (x1, y1, z1,
                                                        x2, y2, z2,
                                                        x3, y3, z3) {
         var indx = this.indx, pos = this.pos;
@@ -138,12 +138,12 @@
         this.indx = indx + 9;
     };
 
-    GEO.GeometryCreator.prototype.StartPolygon = function () {
+    JSROOT.GEO.GeometryCreator.prototype.StartPolygon = function () {
     };
-    GEO.GeometryCreator.prototype.StopPolygon = function () {
+    JSROOT.GEO.GeometryCreator.prototype.StopPolygon = function () {
     };
 
-    GEO.GeometryCreator.prototype.AddFace4 = function (x1, y1, z1,
+    JSROOT.GEO.GeometryCreator.prototype.AddFace4 = function (x1, y1, z1,
                                                        x2, y2, z2,
                                                        x3, y3, z3,
                                                        x4, y4, z4,
@@ -184,7 +184,7 @@
         this.indx = indx;
     };
 
-    GEO.GeometryCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
+    JSROOT.GEO.GeometryCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
                                                          nx2, ny2, nz2,
                                                          nx3, ny3, nz3,
                                                          nx4, ny4, nz4,
@@ -223,7 +223,7 @@
         }
     };
 
-    GEO.GeometryCreator.prototype.RecalcZ = function (func) {
+    JSROOT.GEO.GeometryCreator.prototype.RecalcZ = function (func) {
         var pos = this.pos,
             last = this.indx,
             indx = last - (this.last4 ? 18 : 9);
@@ -234,7 +234,7 @@
         }
     };
 
-    GEO.GetNormal = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+    JSROOT.GEO.GetNormal = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 
         var pA = new THREE.Vector3(x1, y1, z1),
             pB = new THREE.Vector3(x2, y2, z2),
@@ -249,7 +249,7 @@
         return cb;
     };
 
-    GEO.GeometryCreator.prototype.CalcNormal = function () {
+    JSROOT.GEO.GeometryCreator.prototype.CalcNormal = function () {
         var indx = this.indx, norm = this.norm;
 
         if (!this.cb) {
@@ -271,7 +271,7 @@
         this.SetNormal(this.cb.x, this.cb.y, this.cb.z);
     };
 
-    GEO.GeometryCreator.prototype.SetNormal = function (nx, ny, nz) {
+    JSROOT.GEO.GeometryCreator.prototype.SetNormal = function (nx, ny, nz) {
         var indx = this.indx - 9, norm = this.norm;
 
         norm[indx] = norm[indx + 3] = norm[indx + 6] = nx;
@@ -286,7 +286,7 @@
         }
     };
 
-    GEO.GeometryCreator.prototype.SetNormal_12_34 = function (nx12, ny12, nz12, nx34, ny34, nz34, reduce) {
+    JSROOT.GEO.GeometryCreator.prototype.SetNormal_12_34 = function (nx12, ny12, nz12, nx34, ny34, nz34, reduce) {
         // special shortcut, when same normals can be applied for 1-2 point and 3-4 point
         if (reduce === undefined) reduce = 0;
 
@@ -319,7 +319,7 @@
         }
     };
 
-    GEO.GeometryCreator.prototype.Create = function () {
+    JSROOT.GEO.GeometryCreator.prototype.Create = function () {
         if (this.nfaces !== this.indx / 9)
             console.error('Mismatch with created ' + this.nfaces + ' and filled ' + this.indx / 9 + ' number of faces');
 
@@ -333,29 +333,29 @@
 
     // same methods as GeometryCreator, but with different implementation
 
-    GEO.PolygonsCreator = function () {
+    JSROOT.GEO.PolygonsCreator = function () {
         this.polygons = [];
     };
 
-    GEO.PolygonsCreator.prototype.StartPolygon = function (normal) {
+    JSROOT.GEO.PolygonsCreator.prototype.StartPolygon = function (normal) {
         this.multi = 1;
         this.mnormal = normal;
     };
 
-    GEO.PolygonsCreator.prototype.StopPolygon = function () {
+    JSROOT.GEO.PolygonsCreator.prototype.StopPolygon = function () {
         if (!this.multi) return;
         this.multi = 0;
         console.error('Polygon should be already closed at this moment');
     };
 
-    GEO.PolygonsCreator.prototype.AddFace3 = function (x1, y1, z1,
+    JSROOT.GEO.PolygonsCreator.prototype.AddFace3 = function (x1, y1, z1,
                                                        x2, y2, z2,
                                                        x3, y3, z3) {
         this.AddFace4(x1, y1, z1, x2, y2, z2, x3, y3, z3, x3, y3, z3, 2);
     };
 
 
-    GEO.PolygonsCreator.prototype.AddFace4 = function (x1, y1, z1,
+    JSROOT.GEO.PolygonsCreator.prototype.AddFace4 = function (x1, y1, z1,
                                                        x2, y2, z2,
                                                        x3, y3, z3,
                                                        x4, y4, z4,
@@ -427,7 +427,7 @@
         this.polygons.push(polygon);
     };
 
-    GEO.PolygonsCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
+    JSROOT.GEO.PolygonsCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
                                                          nx2, ny2, nz2,
                                                          nx3, ny3, nz3,
                                                          nx4, ny4, nz4,
@@ -438,7 +438,7 @@
         if (this.v4) this.v4.setnormal(nx4, ny4, nz4);
     };
 
-    GEO.PolygonsCreator.prototype.SetNormal_12_34 = function (nx12, ny12, nz12, nx34, ny34, nz34, reduce) {
+    JSROOT.GEO.PolygonsCreator.prototype.SetNormal_12_34 = function (nx12, ny12, nz12, nx34, ny34, nz34, reduce) {
         // special shortcut, when same normals can be applied for 1-2 point and 3-4 point
         this.v1.setnormal(nx12, ny12, nz12);
         if (this.v2) this.v2.setnormal(nx12, ny12, nz12);
@@ -446,7 +446,7 @@
         if (this.v4) this.v4.setnormal(nx34, ny34, nz34);
     };
 
-    GEO.PolygonsCreator.prototype.CalcNormal = function () {
+    JSROOT.GEO.PolygonsCreator.prototype.CalcNormal = function () {
 
         if (!this.cb) {
             this.pA = new THREE.Vector3();
@@ -474,34 +474,34 @@
     };
 
 
-    GEO.PolygonsCreator.prototype.SetNormal = function (nx, ny, nz) {
+    JSROOT.GEO.PolygonsCreator.prototype.SetNormal = function (nx, ny, nz) {
         this.v1.setnormal(nx, ny, nz);
         if (this.v2) this.v2.setnormal(nx, ny, nz);
         this.v3.setnormal(nx, ny, nz);
         if (this.v4) this.v4.setnormal(nx, ny, nz);
     };
 
-    GEO.PolygonsCreator.prototype.RecalcZ = function (func) {
+    JSROOT.GEO.PolygonsCreator.prototype.RecalcZ = function (func) {
         this.v1.z = func(this.v1.x, this.v1.y, this.v1.z);
         if (this.v2) this.v2.z = func(this.v2.x, this.v2.y, this.v2.z);
         this.v3.z = func(this.v3.x, this.v3.y, this.v3.z);
         if (this.v4) this.v4.z = func(this.v4.x, this.v4.y, this.v4.z);
     };
 
-    GEO.PolygonsCreator.prototype.Create = function () {
+    JSROOT.GEO.PolygonsCreator.prototype.Create = function () {
         return {polygons: this.polygons};
     };
 
     // ================= all functions to create geometry ===================================
 
-    /** @memberOf GEO */
-    GEO.createCubeBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createCubeBuffer = function (shape, faces_limit) {
 
         if (faces_limit < 0) return 12;
 
         var dx = shape.fDX, dy = shape.fDY, dz = shape.fDZ;
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(12);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(12);
 
         creator.AddFace4(dx, dy, dz, dx, -dy, dz, dx, -dy, -dz, dx, dy, -dz);
         creator.SetNormal(1, 0, 0);
@@ -524,12 +524,12 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.create8edgesBuffer = function (v, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.create8edgesBuffer = function (v, faces_limit) {
 
         var indicies = [4, 7, 6, 5, 0, 3, 7, 4, 4, 5, 1, 0, 6, 2, 1, 5, 7, 3, 2, 6, 1, 2, 3, 0];
 
-        var creator = (faces_limit > 0) ? new GEO.PolygonsCreator : new GEO.GeometryCreator(12);
+        var creator = (faces_limit > 0) ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(12);
 
         for (var n = 0; n < indicies.length; n += 4) {
             var i1 = indicies[n] * 3,
@@ -544,8 +544,8 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createParaBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createParaBuffer = function (shape, faces_limit) {
 
         if (faces_limit < 0) return 12;
 
@@ -561,11 +561,11 @@
             shape.fZ * txz + txy * shape.fY + shape.fX, shape.fY + shape.fZ * tyz, shape.fZ,
             shape.fZ * txz - txy * shape.fY + shape.fX, -shape.fY + shape.fZ * tyz, shape.fZ];
 
-        return GEO.create8edgesBuffer(v, faces_limit);
+        return JSROOT.GEO.create8edgesBuffer(v, faces_limit);
     };
 
-    /** @memberOf GEO */
-    GEO.createTrapezoidBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createTrapezoidBuffer = function (shape, faces_limit) {
 
         if (faces_limit < 0) return 12;
 
@@ -588,12 +588,12 @@
             -shape.fDx2, -y2, shape.fDZ
         ];
 
-        return GEO.create8edgesBuffer(v, faces_limit);
+        return JSROOT.GEO.create8edgesBuffer(v, faces_limit);
     };
 
 
-    /** @memberOf GEO */
-    GEO.createArb8Buffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createArb8Buffer = function (shape, faces_limit) {
 
         if (faces_limit < 0) return 12;
 
@@ -641,9 +641,9 @@
             }
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
-        // var creator = new GEO.GeometryCreator(numfaces);
+        // var creator = new JSROOT.GEO.GeometryCreator(numfaces);
 
         for (var n = 0; n < indicies.length; n += 6) {
             var i1 = indicies[n] * 3,
@@ -657,13 +657,13 @@
             if ((i1 >= 0) && (i4 >= 0) && faces_limit) {
                 // try to identify two faces with same normal - very useful if one can create face4
                 if (n === 0) norm = new THREE.Vector3(0, 0, 1); else if (n === 30) norm = new THREE.Vector3(0, 0, -1); else {
-                    var norm1 = GEO.GetNormal(vertices[i1], vertices[i1 + 1], vertices[i1 + 2],
+                    var norm1 = JSROOT.GEO.GetNormal(vertices[i1], vertices[i1 + 1], vertices[i1 + 2],
                         vertices[i2], vertices[i2 + 1], vertices[i2 + 2],
                         vertices[i3], vertices[i3 + 1], vertices[i3 + 2]);
 
                     norm1.normalize();
 
-                    var norm2 = GEO.GetNormal(vertices[i4], vertices[i4 + 1], vertices[i4 + 2],
+                    var norm2 = JSROOT.GEO.GetNormal(vertices[i4], vertices[i4 + 1], vertices[i4 + 2],
                         vertices[i5], vertices[i5 + 1], vertices[i5 + 2],
                         vertices[i6], vertices[i6 + 1], vertices[i6 + 2]);
 
@@ -698,8 +698,8 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createSphereBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createSphereBuffer = function (shape, faces_limit) {
         var radius = [shape.fRmax, shape.fRmin],
             phiStart = shape.fPhi1,
             phiLength = shape.fPhi2 - shape.fPhi1,
@@ -759,9 +759,9 @@
 
         var numfaces = numoutside * (noInside ? 1 : 2) + numtop + numbottom + numcut;
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
-        // var creator = new GEO.GeometryCreator(numfaces);
+        // var creator = new JSROOT.GEO.GeometryCreator(numfaces);
 
         for (var side = 0; side < 2; ++side) {
             if ((side === 1) && noInside) break;
@@ -832,8 +832,8 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createTubeBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createTubeBuffer = function (shape, faces_limit) {
         var outerR, innerR; // inner/outer tube radius
         if ((shape._typename == "TGeoCone") || (shape._typename == "TGeoConeSeg")) {
             outerR = [shape.fRmax2, shape.fRmax1];
@@ -851,7 +851,7 @@
             thetaLength = shape.fPhi2 - shape.fPhi1;
         }
 
-        var radiusSegments = Math.max(4, Math.round(thetaLength / GEO.GradPerSegm));
+        var radiusSegments = Math.max(4, Math.round(thetaLength / JSROOT.GEO.GradPerSegm));
 
         // external surface
         var numfaces = radiusSegments * (((outerR[0] <= 0) || (outerR[1] <= 0)) ? 1 : 2);
@@ -880,9 +880,9 @@
             _sin[seg] = Math.sin(phi0 + seg * dphi);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
-        // var creator = new GEO.GeometryCreator(numfaces);
+        // var creator = new JSROOT.GEO.GeometryCreator(numfaces);
 
         var calcZ;
 
@@ -977,9 +977,9 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createEltuBuffer = function (shape, faces_limit) {
-        var radiusSegments = Math.max(4, Math.round(360 / GEO.GradPerSegm));
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createEltuBuffer = function (shape, faces_limit) {
+        var radiusSegments = Math.max(4, Math.round(360 / JSROOT.GEO.GradPerSegm));
 
         if (faces_limit < 0) return radiusSegments * 4;
 
@@ -992,7 +992,7 @@
             y[seg] = shape.fRmax * Math.sin(phi);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(radiusSegments * 4),
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(radiusSegments * 4),
             nx1 = 1, ny1 = 0, nx2 = 1, ny2 = 0;
 
         // create tube faces
@@ -1028,11 +1028,11 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createTorusBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createTorusBuffer = function (shape, faces_limit) {
         var radius = shape.fR,
-            radialSegments = Math.max(6, Math.round(360 / GEO.GradPerSegm)),
-            tubularSegments = Math.max(8, Math.round(shape.fDphi / GEO.GradPerSegm));
+            radialSegments = Math.max(6, Math.round(360 / JSROOT.GEO.GradPerSegm)),
+            tubularSegments = Math.max(8, Math.round(shape.fDphi / JSROOT.GEO.GradPerSegm));
 
         var numfaces = (shape.fRmin > 0 ? 4 : 2) * radialSegments * (tubularSegments + (shape.fDphi !== 360 ? 1 : 0));
 
@@ -1060,7 +1060,7 @@
             _cost[t] = Math.cos(angle);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
         // use vectors for normals calculation
         var p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3(), p4 = new THREE.Vector3(),
@@ -1130,8 +1130,8 @@
     };
 
 
-    /** @memberOf GEO */
-    GEO.createPolygonBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createPolygonBuffer = function (shape, faces_limit) {
         var thetaStart = shape.fPhi1,
             thetaLength = shape.fDphi,
             radiusSegments = 60;
@@ -1139,7 +1139,7 @@
         if (shape._typename == "TGeoPgon")
             radiusSegments = shape.fNedges;
         else
-            radiusSegments = Math.max(5, Math.round(thetaLength / GEO.GradPerSegm));
+            radiusSegments = Math.max(5, Math.round(thetaLength / JSROOT.GEO.GradPerSegm));
 
         var usage = new Int16Array(2 * shape.fNz), numusedlayers = 0, hasrmin = false;
 
@@ -1218,15 +1218,15 @@
         // calculate all sin/cos tables in advance
         var _sin = new Float32Array(radiusSegments + 1),
             _cos = new Float32Array(radiusSegments + 1);
-        for (var seg = 0; seg <= radiusSegments; ++seg) {
+        for (let seg = 0; seg <= radiusSegments; ++seg) {
             _cos[seg] = Math.cos(phi0 + seg * dphi);
             _sin[seg] = Math.sin(phi0 + seg * dphi);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
         // add sides
-        for (var side = 0; side < 2; ++side) {
+        for (let side = 0; side < 2; ++side) {
             var rside = (side === 0) ? 'fRmax' : 'fRmin',
                 z1 = shape.fZ[0], r1 = shape[rside][0],
                 d1 = 1 - side, d2 = side;
@@ -1306,8 +1306,8 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createXtruBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createXtruBuffer = function (shape, faces_limit) {
         var nfaces = (shape.fNz - 1) * shape.fNvert * 2;
 
         if (faces_limit < 0) return nfaces + shape.fNvert * 3;
@@ -1320,13 +1320,13 @@
         // console.log('triangulate Xtru ' + shape.fShapeId);
         var faces = THREE.ShapeUtils.triangulateShape(pnts, []);
         if (faces.length < pnts.length - 2) {
-            GEO.warn('Problem with XTRU shape ' + shape.fName + ' with ' + pnts.length + ' vertices');
+            JSROOT.GEO.warn('Problem with XTRU shape ' + shape.fName + ' with ' + pnts.length + ' vertices');
             faces = [];
         } else {
             nfaces += faces.length * 2;
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(nfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(nfaces);
 
         for (var layer = 0; layer < shape.fNz - 1; ++layer) {
             var z1 = shape.fZ[layer], scale1 = shape.fScale[layer],
@@ -1361,10 +1361,10 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createParaboloidBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createParaboloidBuffer = function (shape, faces_limit) {
 
-        var radiusSegments = Math.max(4, Math.round(360 / GEO.GradPerSegm)),
+        var radiusSegments = Math.max(4, Math.round(360 / JSROOT.GEO.GradPerSegm)),
             heightSegments = 30;
 
         if (faces_limit > 0) {
@@ -1400,7 +1400,7 @@
             _sin[seg] = Math.sin(seg / radiusSegments * 2 * Math.PI);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
         var lastz = zmin, lastr = 0, lastnxy = 0, lastnz = -1;
 
@@ -1466,13 +1466,13 @@
         return creator.Create();
     };
 
-    /** @memberOf GEO */
-    GEO.createHypeBuffer = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createHypeBuffer = function (shape, faces_limit) {
 
         if ((shape.fTin === 0) && (shape.fTout === 0))
-            return GEO.createTubeBuffer(shape, faces_limit);
+            return JSROOT.GEO.createTubeBuffer(shape, faces_limit);
 
-        var radiusSegments = Math.max(4, Math.round(360 / GEO.GradPerSegm)),
+        var radiusSegments = Math.max(4, Math.round(360 / JSROOT.GEO.GradPerSegm)),
             heightSegments = 30;
 
         var numfaces = radiusSegments * (heightSegments + 1) * ((shape.fRmin > 0) ? 4 : 2);
@@ -1492,7 +1492,7 @@
             _sin[seg] = Math.sin(seg / radiusSegments * 2 * Math.PI);
         }
 
-        var creator = faces_limit ? new GEO.PolygonsCreator : new GEO.GeometryCreator(numfaces);
+        var creator = faces_limit ? new JSROOT.GEO.PolygonsCreator : new JSROOT.GEO.GeometryCreator(numfaces);
 
         // in-out side
         for (var side = 0; side < 2; ++side) {
@@ -1540,8 +1540,8 @@
     };
 
 
-    /** @memberOf GEO */
-    GEO.createMatrix = function (matrix) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createMatrix = function (matrix) {
 
         if (!matrix) return null;
 
@@ -1593,8 +1593,8 @@
         return res;
     };
 
-    /** @memberOf GEO */
-    GEO.getNodeMatrix = function (kind, node) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.getNodeMatrix = function (kind, node) {
         // returns transformation matrix for the node
         // created after node visibility flag is checked and volume cut is performed
 
@@ -1614,11 +1614,11 @@
                 matrix.setPosition({x: node.fTrans[12], y: node.fTrans[13], z: node.fTrans[14]});
             }
         } else if (('fMatrix' in node) && (node.fMatrix !== null))
-            matrix = GEO.createMatrix(node.fMatrix);
+            matrix = JSROOT.GEO.createMatrix(node.fMatrix);
         else if ((node._typename == "TGeoNodeOffset") && (node.fFinder !== null)) {
-            let kPatternReflected = GEO.BITS.kVisBranch;
+            let kPatternReflected = JSROOT.GEO.BITS.kVisBranch;
             if ((node.fFinder.fBits & kPatternReflected) !== 0)
-                GEO.warn('Unsupported reflected pattern ' + node.fFinder._typename);
+                JSROOT.GEO.warn('Unsupported reflected pattern ' + node.fFinder._typename);
 
             // if (node.fFinder._typename === 'TGeoPatternCylR') { }
             // if (node.fFinder._typename === 'TGeoPatternSphR') { }
@@ -1673,7 +1673,7 @@
                     break;
 
                 default:
-                    GEO.warn('Unsupported pattern type ' + node.fFinder._typename);
+                    JSROOT.GEO.warn('Unsupported pattern type ' + node.fFinder._typename);
                     break;
             }
         }
@@ -1681,22 +1681,22 @@
         return matrix;
     };
 
-    /** @memberOf GEO */
-    GEO.createComposite = function (shape, faces_limit) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.createComposite = function (shape, faces_limit) {
 
         /*
       if ((faces_limit === -1) || (faces_limit === 0))  {
-         var cnt = GEO.CountNumShapes(shape);
+         var cnt = JSROOT.GEO.CountNumShapes(shape);
 
-         if (cnt > GEO.CompLimit) {
-            GEO.warn("composite shape " + shape.fShapeId + " has " + cnt + " components, replace by most left");
+         if (cnt > JSROOT.GEO.CompLimit) {
+            JSROOT.GEO.warn("composite shape " + shape.fShapeId + " has " + cnt + " components, replace by most left");
             var matrix = new THREE.Matrix4();
             while (shape.fNode && shape.fNode.fLeft) {
-               var m1 = GEO.createMatrix(shape.fNode.fLeftMat);
+               var m1 = JSROOT.GEO.createMatrix(shape.fNode.fLeftMat);
                if (m1) matrix.multiply(m1);
                shape = shape.fNode.fLeft;
             }
-            var res = GEO.createGeometry(shape, faces_limit);
+            var res = JSROOT.GEO.createGeometry(shape, faces_limit);
             if (res && (faces_limit===0)) res.applyMatrix(matrix);
             return res;
          }
@@ -1704,38 +1704,38 @@
       */
 
         if (faces_limit < 0)
-            return GEO.createGeometry(shape.fNode.fLeft, -10) +
-                GEO.createGeometry(shape.fNode.fRight, -10);
+            return JSROOT.GEO.createGeometry(shape.fNode.fLeft, -10) +
+                JSROOT.GEO.createGeometry(shape.fNode.fRight, -10);
 
         var geom1, geom2, bsp1, bsp2, return_bsp = false,
-            matrix1 = GEO.createMatrix(shape.fNode.fLeftMat),
-            matrix2 = GEO.createMatrix(shape.fNode.fRightMat);
+            matrix1 = JSROOT.GEO.createMatrix(shape.fNode.fLeftMat),
+            matrix2 = JSROOT.GEO.createMatrix(shape.fNode.fRightMat);
 
         // seems to be, IE has smaller stack for functions calls and ThreeCSG fails with large shapes
         if (faces_limit === 0) faces_limit = (JSROOT.browser && JSROOT.browser.isIE) ? 2000 : 4000;
         else return_bsp = true;
 
         if (matrix1 && (matrix1.determinant() < -0.9))
-            GEO.warn('Axis reflection in left composite shape - not supported');
+            JSROOT.GEO.warn('Axis reflection in left composite shape - not supported');
 
         if (matrix2 && (matrix2.determinant() < -0.9))
-            GEO.warn('Axis reflections in right composite shape - not supported');
+            JSROOT.GEO.warn('Axis reflections in right composite shape - not supported');
 
-        geom1 = GEO.createGeometry(shape.fNode.fLeft, faces_limit);
+        geom1 = JSROOT.GEO.createGeometry(shape.fNode.fLeft, faces_limit);
         if (!geom1) return null;
 
-        var n1 = GEO.numGeometryFaces(geom1), n2 = 0;
+        var n1 = JSROOT.GEO.numGeometryFaces(geom1), n2 = 0;
         if (geom1._exceed_limit) n1 += faces_limit;
 
         if (n1 < faces_limit) {
-            geom2 = GEO.createGeometry(shape.fNode.fRight, faces_limit);
-            n2 = GEO.numGeometryFaces(geom2);
+            geom2 = JSROOT.GEO.createGeometry(shape.fNode.fRight, faces_limit);
+            n2 = JSROOT.GEO.numGeometryFaces(geom2);
         }
 
         if ((n1 + n2 >= faces_limit) || !geom2) {
             if (geom1.polygons) {
                 geom1 = ThreeBSP.CreateBufferGeometry(geom1.polygons);
-                n1 = GEO.numGeometryFaces(geom1);
+                n1 = JSROOT.GEO.numGeometryFaces(geom1);
             }
             if (matrix1) geom1.applyMatrix(matrix1);
             // if (!geom1._exceed_limit) console.log('reach faces limit', faces_limit, 'got', n1, n2);
@@ -1743,7 +1743,7 @@
             return geom1;
         }
 
-        bsp1 = new ThreeBSP.Geometry(geom1, matrix1, GEO.CompressComp ? 0 : undefined);
+        bsp1 = new ThreeBSP.Geometry(geom1, matrix1, JSROOT.GEO.CompressComp ? 0 : undefined);
 
         bsp2 = new ThreeBSP.Geometry(geom2, matrix2, bsp1.maxid);
 
@@ -1761,13 +1761,13 @@
                 bsp1.direct_subtract(bsp2);
                 break; // "/"
             default:
-                GEO.warn('unsupported bool operation ' + shape.fNode._typename + ', use first geom');
+                JSROOT.GEO.warn('unsupported bool operation ' + shape.fNode._typename + ', use first geom');
         }
 
-        if (GEO.numGeometryFaces(bsp1) === 0) {
-            GEO.warn('Zero faces in comp shape'
-                + ' left: ' + shape.fNode.fLeft._typename + ' ' + GEO.numGeometryFaces(geom1) + ' faces'
-                + ' right: ' + shape.fNode.fRight._typename + ' ' + GEO.numGeometryFaces(geom2) + ' faces'
+        if (JSROOT.GEO.numGeometryFaces(bsp1) === 0) {
+            JSROOT.GEO.warn('Zero faces in comp shape'
+                + ' left: ' + shape.fNode.fLeft._typename + ' ' + JSROOT.GEO.numGeometryFaces(geom1) + ' faces'
+                + ' right: ' + shape.fNode.fRight._typename + ' ' + JSROOT.GEO.numGeometryFaces(geom2) + ' faces'
                 + '  use first');
             bsp1 = new ThreeBSP.Geometry(geom1, matrix1);
         }
@@ -1775,8 +1775,8 @@
         return return_bsp ? {polygons: bsp1.toPolygons()} : bsp1.toBufferGeometry();
     };
 
-    /** @memberOf GEO */
-    GEO.projectGeometry = function (geom, matrix, projection, position, flippedMesh) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.projectGeometry = function (geom, matrix, projection, position, flippedMesh) {
 
         if (!geom.boundingBox) geom.computeBoundingBox();
 
@@ -1818,61 +1818,61 @@
 
     /**
      * Creates geometry model for the provided shape
-     * @memberOf GEO
+     * @memberOf JSROOT.GEO
      *
      * If @par limit === 0 (or undefined) returns THREE.BufferGeometry
      * If @par limit < 0 just returns estimated number of faces
      * If @par limit > 0 return list of ThreeBSP polygons (used only for composite shapes)
      * */
-    GEO.createGeometry = function (shape, limit) {
+    JSROOT.GEO.createGeometry = function (shape, limit) {
         if (limit === undefined) limit = 0;
 
         try {
             switch (shape._typename) {
                 case "TGeoBBox":
-                    return GEO.createCubeBuffer(shape, limit);
+                    return JSROOT.GEO.createCubeBuffer(shape, limit);
                 case "TGeoPara":
-                    return GEO.createParaBuffer(shape, limit);
+                    return JSROOT.GEO.createParaBuffer(shape, limit);
                 case "TGeoTrd1":
                 case "TGeoTrd2":
-                    return GEO.createTrapezoidBuffer(shape, limit);
+                    return JSROOT.GEO.createTrapezoidBuffer(shape, limit);
                 case "TGeoArb8":
                 case "TGeoTrap":
                 case "TGeoGtra":
-                    return GEO.createArb8Buffer(shape, limit);
+                    return JSROOT.GEO.createArb8Buffer(shape, limit);
                 case "TGeoSphere":
-                    return GEO.createSphereBuffer(shape, limit);
+                    return JSROOT.GEO.createSphereBuffer(shape, limit);
                 case "TGeoCone":
                 case "TGeoConeSeg":
                 case "TGeoTube":
                 case "TGeoTubeSeg":
                 case "TGeoCtub":
-                    return GEO.createTubeBuffer(shape, limit);
+                    return JSROOT.GEO.createTubeBuffer(shape, limit);
                 case "TGeoEltu":
-                    return GEO.createEltuBuffer(shape, limit);
+                    return JSROOT.GEO.createEltuBuffer(shape, limit);
                 case "TGeoTorus":
-                    return GEO.createTorusBuffer(shape, limit);
+                    return JSROOT.GEO.createTorusBuffer(shape, limit);
                 case "TGeoPcon":
                 case "TGeoPgon":
-                    return GEO.createPolygonBuffer(shape, limit);
+                    return JSROOT.GEO.createPolygonBuffer(shape, limit);
                 case "TGeoXtru":
-                    return GEO.createXtruBuffer(shape, limit);
+                    return JSROOT.GEO.createXtruBuffer(shape, limit);
                 case "TGeoParaboloid":
-                    return GEO.createParaboloidBuffer(shape, limit);
+                    return JSROOT.GEO.createParaboloidBuffer(shape, limit);
                 case "TGeoHype":
-                    return GEO.createHypeBuffer(shape, limit);
+                    return JSROOT.GEO.createHypeBuffer(shape, limit);
                 case "TGeoCompositeShape":
-                    return GEO.createComposite(shape, limit);
+                    return JSROOT.GEO.createComposite(shape, limit);
                 case "TGeoShapeAssembly":
                     break;
                 case "TGeoScaledShape": {
-                    var res = GEO.createGeometry(shape.fShape, limit);
+                    var res = JSROOT.GEO.createGeometry(shape.fShape, limit);
                     if (shape.fScale && (limit >= 0) && (typeof res === 'object') && (typeof res.scale === 'function'))
                         res.scale(shape.fScale.fScale[0], shape.fScale.fScale[1], shape.fScale.fScale[2]);
                     return res;
                 }
                 default:
-                    GEO.warn('unsupported shape type ' + shape._typename);
+                    JSROOT.GEO.warn('unsupported shape type ' + shape._typename);
             }
         } catch (e) {
             var place = "";
@@ -1881,14 +1881,14 @@
                 if (place.indexOf(e.message) >= 0) place = e.stack.split("\n")[1];
                 else place = " at: " + place;
             }
-            GEO.warn(shape._typename + " err: " + e.message + place);
+            JSROOT.GEO.warn(shape._typename + " err: " + e.message + place);
         }
 
         return limit < 0 ? 0 : null;
     };
 
     /** Provides info about geo object, used for tooltip info */
-    GEO.provideInfo = function (obj) {
+    JSROOT.GEO.provideInfo = function (obj) {
         var info = [], shape = null;
 
         if (obj.fVolume !== undefined) shape = obj.fVolume.fShape; else if (obj.fShape !== undefined) shape = obj.fShape; else if ((obj.fShapeBits !== undefined) && (obj.fShapeId !== undefined)) shape = obj;
@@ -1968,7 +1968,7 @@
             case "TGeoShapeAssembly":
                 break;
             case "TGeoScaledShape":
-                info = GEO.provideInfo(shape.fShape);
+                info = JSROOT.GEO.provideInfo(shape.fShape);
                 if (shape.fScale)
                     info.unshift('Scale X=' + shape.fScale.fScale[0] + " Y=" + shape.fScale.fScale[1] + " Z=" + shape.fScale.fScale[2]);
                 break;
@@ -1977,8 +1977,8 @@
         return info;
     };
 
-    /** @memberOf GEO */
-    GEO.CreateProjectionMatrix = function (camera) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.CreateProjectionMatrix = function (camera) {
         var cameraProjectionMatrix = new THREE.Matrix4();
 
         camera.updateMatrixWorld();
@@ -1988,12 +1988,12 @@
         return cameraProjectionMatrix;
     };
 
-    /** @memberOf GEO */
-    GEO.CreateFrustum = function (source) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.CreateFrustum = function (source) {
         if (!source) return null;
 
         if (source instanceof THREE.PerspectiveCamera)
-            source = GEO.CreateProjectionMatrix(source);
+            source = JSROOT.GEO.CreateProjectionMatrix(source);
 
         var frustum = new THREE.Frustum();
         frustum.setFromMatrix(source);
@@ -2049,8 +2049,8 @@
         return frustum;
     };
 
-    /** @memberOf GEO */
-    GEO.VisibleByCamera = function (camera, matrix, shape) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.VisibleByCamera = function (camera, matrix, shape) {
         var frustum = new THREE.Frustum();
         var cameraProjectionMatrix = new THREE.Matrix4();
 
@@ -2076,8 +2076,8 @@
         return false;
     };
 
-    /** @memberOf GEO */
-    GEO.numGeometryFaces = function (geom) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.numGeometryFaces = function (geom) {
         if (!geom) return 0;
 
         if (geom instanceof ThreeBSP.Geometry)
@@ -2094,8 +2094,8 @@
         return geom.faces.length;
     };
 
-    /** @memberOf GEO */
-    GEO.numGeometryVertices = function (geom) {
+    /** @memberOf JSROOT.GEO */
+    JSROOT.GEO.numGeometryVertices = function (geom) {
         if (!geom) return 0;
 
         if (geom instanceof ThreeBSP.Geometry)
@@ -2112,9 +2112,9 @@
     };
 
     /** Compares two stacks. Returns length where stacks are the same
-     * @memberOf GEO
+     * @memberOf JSROOT.GEO
      * @private */
-    GEO.CompareStacks = function (stack1, stack2) {
+    JSROOT.GEO.CompareStacks = function (stack1, stack2) {
         if (!stack1 || !stack2) return 0;
         if (stack1 === stack2) return stack1.length;
         var len = Math.min(stack1.length, stack2.length);
@@ -2124,9 +2124,9 @@
     };
 
     /** Checks if two stack arrays are identical
-     * @memberOf GEO
+     * @memberOf JSROOT.GEO
      * @private */
-    GEO.IsSameStack = function (stack1, stack2) {
+    JSROOT.GEO.IsSameStack = function (stack1, stack2) {
         if (!stack1 || !stack2) return false;
         if (stack1 === stack2) return true;
         if (stack1.length !== stack2.length) return false;
@@ -2140,7 +2140,7 @@
 
     // class for working with cloned nodes
 
-    GEO.ClonedNodes = function (obj, clones) {
+    JSROOT.GEO.ClonedNodes = function (obj, clones) {
         this.toplevel = true; // indicate if object creates top-level structure with Nodes and Volumes folder
         this.name_prefix = ""; // name prefix used for nodes names
         this.maxdepth = 1; // maximal hierarchy depth, required for transparency
@@ -2151,7 +2151,7 @@
         } else if (clones) this.nodes = clones;
     };
 
-    GEO.ClonedNodes.prototype.GetNodeShape = function (indx) {
+    JSROOT.GEO.ClonedNodes.prototype.GetNodeShape = function (indx) {
         if (!this.origin || !this.nodes) return null;
         var obj = this.origin[indx], clone = this.nodes[indx];
         if (!obj || !clone) return null;
@@ -2163,7 +2163,7 @@
         return null;
     };
 
-    GEO.ClonedNodes.prototype.Cleanup = function (drawnodes, drawshapes) {
+    JSROOT.GEO.ClonedNodes.prototype.Cleanup = function (drawnodes, drawshapes) {
         // function to cleanup as much as possible structures
         // drawnodes and drawshapes are arrays created during building of geometry
 
@@ -2192,11 +2192,11 @@
 
     };
 
-    GEO.ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
+    JSROOT.GEO.ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
         if (!sublevel) {
             this.origin = [];
             sublevel = 1;
-            kind = GEO.NodeKind(obj);
+            kind = JSROOT.GEO.NodeKind(obj);
         }
 
         if ((kind < 0) || !obj || ('_refid' in obj)) return;
@@ -2212,7 +2212,7 @@
             chlds = obj.fElements ? obj.fElements.arr : null;
 
         if (chlds !== null) {
-            GEO.CheckDuplicates(obj, chlds);
+            JSROOT.GEO.CheckDuplicates(obj, chlds);
             for (var i = 0; i < chlds.length; ++i)
                 this.CreateClones(chlds[i], sublevel + 1, kind);
         }
@@ -2245,7 +2245,7 @@
                 if (obj.fVolume.fNodes) chlds = obj.fVolume.fNodes.arr;
             }
 
-            const matrix = GEO.getNodeMatrix(kind, obj);
+            const matrix = JSROOT.GEO.getNodeMatrix(kind, obj);
             if (matrix) {
                 clone.matrix = matrix.elements; // take only matrix elements, matrix will be constructed in worker
                 if (clone.matrix[0] === 1) {
@@ -2261,7 +2261,7 @@
                 clone.fDZ = shape.fDZ;
                 clone.vol = shape.fDX * shape.fDY * shape.fDZ;
                 if (shape.$nfaces === undefined)
-                    shape.$nfaces = GEO.createGeometry(shape, -1);
+                    shape.$nfaces = JSROOT.GEO.createGeometry(shape, -1);
                 clone.nfaces = shape.$nfaces;
                 if (clone.nfaces <= 0) clone.vol = 0;
 
@@ -2294,7 +2294,7 @@
     };
 
 
-    GEO.ClonedNodes.prototype.MarkVisisble = function (on_screen, copy_bits, cloning) {
+    JSROOT.GEO.ClonedNodes.prototype.MarkVisisble = function (on_screen, copy_bits, cloning) {
         if (!this.nodes) return 0;
 
         var res = 0, simple_copy = cloning && (cloning.length === this.nodes.length);
@@ -2321,17 +2321,17 @@
             if (clone.kind === 0) {
                 if (obj.fVolume) {
                     if (on_screen) {
-                        clone.vis = GEO.TestBit(obj.fVolume, GEO.BITS.kVisOnScreen);
+                        clone.vis = JSROOT.GEO.TestBit(obj.fVolume, JSROOT.GEO.BITS.kVisOnScreen);
                         if (copy_bits) {
-                            GEO.SetBit(obj.fVolume, GEO.BITS.kVisNone, false);
-                            GEO.SetBit(obj.fVolume, GEO.BITS.kVisThis, clone.vis);
-                            GEO.SetBit(obj.fVolume, GEO.BITS.kVisDaughters, true);
+                            JSROOT.GEO.SetBit(obj.fVolume, JSROOT.GEO.BITS.kVisNone, false);
+                            JSROOT.GEO.SetBit(obj.fVolume, JSROOT.GEO.BITS.kVisThis, clone.vis);
+                            JSROOT.GEO.SetBit(obj.fVolume, JSROOT.GEO.BITS.kVisDaughters, true);
                         }
                     } else {
-                        clone.vis = !GEO.TestBit(obj.fVolume, GEO.BITS.kVisNone) &&
-                            GEO.TestBit(obj.fVolume, GEO.BITS.kVisThis) && !obj.fFinder;
-                        if (!GEO.TestBit(obj.fVolume, GEO.BITS.kVisDaughters))
-                            clone.depth = GEO.TestBit(obj.fVolume, GEO.BITS.kVisOneLevel) ? 1 : 0;
+                        clone.vis = !JSROOT.GEO.TestBit(obj.fVolume, JSROOT.GEO.BITS.kVisNone) &&
+                            JSROOT.GEO.TestBit(obj.fVolume, JSROOT.GEO.BITS.kVisThis) && !obj.fFinder;
+                        if (!JSROOT.GEO.TestBit(obj.fVolume, JSROOT.GEO.BITS.kVisDaughters))
+                            clone.depth = JSROOT.GEO.TestBit(obj.fVolume, JSROOT.GEO.BITS.kVisOneLevel) ? 1 : 0;
                     }
                 }
             } else {
@@ -2350,7 +2350,7 @@
         return res;
     };
 
-    GEO.ClonedNodes.prototype.GetVisibleFlags = function () {
+    JSROOT.GEO.ClonedNodes.prototype.GetVisibleFlags = function () {
         // function extract only visibility flags, used to transfer them to the worker
         var res = [];
         for (var n = 0; n < this.nodes.length; ++n) {
@@ -2361,7 +2361,7 @@
         return res;
     };
 
-    GEO.ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
+    JSROOT.GEO.ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
         // Scan visible nodes in hierarchy, starting from nodeid
         // Each entry in hierarchy get its unique id, which is not changed with visibility flags
 
@@ -2454,16 +2454,16 @@
     /** Return node name with given id.
      * Either original object or description is used
      * @private */
-    GEO.ClonedNodes.prototype.GetNodeName = function (nodeid) {
+    JSROOT.GEO.ClonedNodes.prototype.GetNodeName = function (nodeid) {
         if (this.origin) {
             var obj = this.origin[nodeid];
-            return obj ? GEO.ObjectName(obj) : "";
+            return obj ? JSROOT.GEO.ObjectName(obj) : "";
         }
         var node = this.nodes[nodeid];
         return node ? node.name : "";
     };
 
-    GEO.ClonedNodes.prototype.ResolveStack = function (stack, withmatrix) {
+    JSROOT.GEO.ClonedNodes.prototype.ResolveStack = function (stack, withmatrix) {
 
         var res = {id: 0, obj: null, node: this.nodes[0], name: this.name_prefix};
 
@@ -2503,7 +2503,7 @@
 
     /** Create stack array based on nodes ids array.
      * Ids list should correspond to existing nodes hierarchy */
-    GEO.ClonedNodes.prototype.MakeStackByIds = function (ids) {
+    JSROOT.GEO.ClonedNodes.prototype.MakeStackByIds = function (ids) {
         var stack = [];
 
         if (ids[0] !== 0) {
@@ -2529,7 +2529,7 @@
     };
 
     /** Returns true if stack includes at any place provided nodeid */
-    GEO.ClonedNodes.prototype.IsNodeInStack = function (nodeid, stack) {
+    JSROOT.GEO.ClonedNodes.prototype.IsNodeInStack = function (nodeid, stack) {
 
         if (!nodeid) return true;
 
@@ -2545,7 +2545,7 @@
     };
 
     /** find stack by name which include names of all parents */
-    GEO.ClonedNodes.prototype.FindStackByName = function (fullname) {
+    JSROOT.GEO.ClonedNodes.prototype.FindStackByName = function (fullname) {
 
         var names = fullname.split('/'), currid = 0, stack = [];
 
@@ -2572,7 +2572,7 @@
     };
 
     /** returns different properties of draw entry nodeid */
-    GEO.ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
+    JSROOT.GEO.ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
         // function return different properties for specified node
         // Only if node visible, material will be created
 
@@ -2605,8 +2605,8 @@
             // special handling for EVE nodes
 
             var prop = {
-                name: GEO.ObjectName(node),
-                nname: GEO.ObjectName(node),
+                name: JSROOT.GEO.ObjectName(node),
+                nname: JSROOT.GEO.ObjectName(node),
                 shape: node.fShape,
                 material: null,
                 chlds: null
@@ -2632,8 +2632,8 @@
         var volume = node.fVolume;
 
         var prop = {
-            name: GEO.ObjectName(volume),
-            nname: GEO.ObjectName(node),
+            name: JSROOT.GEO.ObjectName(volume),
+            nname: JSROOT.GEO.ObjectName(node),
             volume: node.fVolume,
             shape: volume.fShape,
             material: null,
@@ -2675,7 +2675,7 @@
         return prop;
     };
 
-    GEO.ClonedNodes.prototype.CreateObject3D = function (stack, toplevel, options) {
+    JSROOT.GEO.ClonedNodes.prototype.CreateObject3D = function (stack, toplevel, options) {
         // create hierarchy of Object3D for given stack entry
         // such hierarchy repeats hierarchy of TGeoNodes and set matrix for the objects drawing
         // also set renderOrder, required to handle transparency
@@ -2761,7 +2761,7 @@
         return three_prnt;
     };
 
-    GEO.ClonedNodes.prototype.GetVolumeBoundary = function (viscnt, facelimit, nodeslimit) {
+    JSROOT.GEO.ClonedNodes.prototype.GetVolumeBoundary = function (viscnt, facelimit, nodeslimit) {
 
         var result = {min: 0, max: 1, sortidcut: 0};
 
@@ -2793,7 +2793,7 @@
         return result;
     };
 
-    GEO.ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumnodes) {
+    JSROOT.GEO.ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumnodes) {
         // function collects visible nodes, using maxlimit
         // one can use map to define cut based on the volume or serious of cuts
 
@@ -2875,7 +2875,7 @@
         return {lst: arg.items, complete: minVol === 0};
     };
 
-    GEO.ClonedNodes.prototype.MergeVisibles = function (current, prev) {
+    JSROOT.GEO.ClonedNodes.prototype.MergeVisibles = function (current, prev) {
         // merge list of drawn objects
         // in current list we should mark if object already exists
         // from previous list we should collect objects which are not there
@@ -2900,7 +2900,7 @@
         return del; //
     };
 
-    GEO.ClonedNodes.prototype.CollectShapes = function (lst) {
+    JSROOT.GEO.ClonedNodes.prototype.CollectShapes = function (lst) {
         // based on list of visible nodes, collect all uniques shapes which should be build
 
         var shapes = [];
@@ -2959,7 +2959,7 @@
         return shapes;
     };
 
-    GEO.ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
+    JSROOT.GEO.ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
 
         if (!oldlst) return newlst;
 
@@ -3001,7 +3001,7 @@
         return newlst;
     };
 
-    GEO.ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
+    JSROOT.GEO.ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
 
         var created = 0,
             tm1 = new Date().getTime(),
@@ -3018,10 +3018,10 @@
 
             if (!item.ready) {
                 if (item.geom === undefined) {
-                    item.geom = GEO.createGeometry(item.shape);
+                    item.geom = JSROOT.GEO.createGeometry(item.shape);
                     if (item.geom) created++; // indicate that at least one shape was created
                 }
-                item.nfaces = GEO.numGeometryFaces(item.geom);
+                item.nfaces = JSROOT.GEO.numGeometryFaces(item.geom);
                 item.ready = true;
             }
 
@@ -3042,12 +3042,12 @@
         return res;
     };
 
-    GEO.ObjectName = function (obj) {
+    JSROOT.GEO.ObjectName = function (obj) {
         if (!obj || !obj.fName) return "";
         return obj.fName + (obj.$geo_suffix ? obj.$geo_suffix : "");
     };
 
-    GEO.CheckDuplicates = function (parent, chlds) {
+    JSROOT.GEO.CheckDuplicates = function (parent, chlds) {
         if (parent) {
             if (parent.$geo_checked) return;
             parent.$geo_checked = true;
@@ -3066,11 +3066,11 @@
                     cnts[indx] = cnt + 1;
                 }
             }
-            names.push(GEO.ObjectName(chld));
+            names.push(JSROOT.GEO.ObjectName(chld));
         }
     };
 
-    GEO.createFlippedMesh = function (parent, shape, material) {
+    JSROOT.GEO.createFlippedMesh = function (parent, shape, material) {
         // when transformation matrix includes one or several inversion of axis,
         // one should inverse geometry object, otherwise THREE.js cannot correctly draw it
 
@@ -3162,7 +3162,7 @@
 
     /** Cleanup shape entity
      * @private */
-    GEO.cleanupShape = function (shape) {
+    JSROOT.GEO.cleanupShape = function (shape) {
         if (!shape) return;
 
         if (shape.geom && (typeof shape.geom.dispose == 'funciton'))
@@ -3175,7 +3175,7 @@
         delete shape.geomZ;
     };
 
-    GEO.produceRenderOrder = function (toplevel, origin, method, clones) {
+    JSROOT.GEO.produceRenderOrder = function (toplevel, origin, method, clones) {
         // function scans throug hierarchy of objects and try to set renderOrder
         // algorithm is not perfect, but better then nothing
 
@@ -3228,7 +3228,7 @@
                     box3 = mesh.$jsroot_box3;
 
                 if (!box3)
-                    mesh.$jsroot_box3 = box3 = GEO.getBoundingBox(mesh);
+                    mesh.$jsroot_box3 = box3 = JSROOT.GEO.getBoundingBox(mesh);
 
                 if (method === 'size') {
                     mesh.$jsroot_distance = box3.getSize(new THREE.Vector3());
@@ -3364,7 +3364,7 @@
             process(toplevel, 0, 1, 1000000);
     };
 
-    GEO.build = function (obj, opt) {
+    JSROOT.GEO.build = function (obj, opt) {
         // function can be used to build three.js model for TGeo object
 
         if (!obj) return;
@@ -3386,7 +3386,7 @@
             shape = obj.fShape;
         } else if (obj._typename === 'TGeoManager') {
             obj = obj.fMasterVolume;
-            GEO.SetBit(obj, GEO.BITS.kVisThis, false);
+            JSROOT.GEO.SetBit(obj, JSROOT.GEO.BITS.kVisThis, false);
             shape = obj.fShape;
         } else if ('fVolume' in obj) {
             if (obj.fVolume) shape = obj.fVolume.fShape;
@@ -3395,7 +3395,7 @@
         }
 
         if (opt.composite && shape && (shape._typename === 'TGeoCompositeShape') && shape.fNode)
-            obj = GEO.buildCompositeVolume(shape);
+            obj = JSROOT.GEO.buildCompositeVolume(shape);
 
         if (!obj && shape)
             obj = JSROOT.extend(JSROOT.Create("TEveGeoShapeExtract"),
@@ -3406,7 +3406,7 @@
         if (obj._typename.indexOf('TGeoVolume') === 0)
             obj = {_typename: "TGeoNode", fVolume: obj, fName: obj.fName, $geoh: obj.$geoh, _proxy: true};
 
-        var clones = new GEO.ClonedNodes(obj);
+        var clones = new JSROOT.GEO.ClonedNodes(obj);
 
         var uniquevis = clones.MarkVisisble(true);
 
@@ -3465,7 +3465,7 @@
             if (obj3d.matrixWorld.determinant() > -0.9) {
                 mesh = new THREE.Mesh(shape.geom, prop.material);
             } else {
-                mesh = GEO.createFlippedMesh(obj3d, shape, prop.material);
+                mesh = JSROOT.GEO.createFlippedMesh(obj3d, shape, prop.material);
             }
 
             obj3d.add(mesh);
@@ -3481,12 +3481,7 @@
         return toplevel;
     };
 
-    GEO.buildFromJson = function (obj, opt) {
-        var unrefed = JSROOT.JSONR_unref(obj);
-        return GEO.build(unrefed, opt)
-    };
-
-    GEO.getBoundingBox = function (node, box3) {
+    JSROOT.GEO.getBoundingBox = function (node, box3) {
 
         // extract code of Box3.expandByObject
         // Major difference - do not traverse hierarchy
@@ -3525,7 +3520,7 @@
     };
 
 
-    return GEO;
+    return JSROOT.GEO;
 
 }));
 

@@ -24,7 +24,7 @@ object ThreeJSRootObjectFactory : ThreeFactory<JSRootObject> {
     override val type = JSRootObject::class
 
     override fun invoke(obj: JSRootObject): Object3D {
-        return buildFromJson(obj.data, obj.options?.toDynamic())
+        return build(obj.data, obj.options?.toDynamic())
     }
 }
 

@@ -3,7 +3,6 @@ package hep.dataforge.vis.spatial.jsroot
 import hep.dataforge.context.Global
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.vis.ApplicationBase
-import hep.dataforge.vis.require
 import hep.dataforge.vis.spatial.ThreeOutput
 import hep.dataforge.vis.spatial.render
 import org.w3c.dom.HTMLDivElement
@@ -20,7 +19,8 @@ class JSRootDemoApp : ApplicationBase() {
     override val stateKeys: List<String> = emptyList()
 
     override fun start(state: Map<String, Any>) {
-        require("JSRootGeoBase.js")
+//        require("JSRootGeoBase.js")
+//        require("JSRootCore.js")
 
 
         //TODO remove after DI fix
@@ -68,9 +68,8 @@ class JSRootDemoApp : ApplicationBase() {
                 println("started")
 
                 renderer.render {
-                    val json = JSON.parse<Any>(string).asDynamic()
-                    val obj = json.fVolumes.arr[0]
-                    JSRootObject(this, EmptyMeta, obj).also { addChild(it) }
+                    val json = parse(string)
+                    JSRootObject(this, EmptyMeta, json).also { addChild(it) }
                 }
             }
             readAsText(file)

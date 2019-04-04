@@ -4,7 +4,12 @@
     } else if (typeof exports === 'object' && typeof module !== 'undefined') {
         factory(exports);
     } else {
-        JSROOT = factory();
+        if (typeof JSROOT != 'undefined')
+            throw new Error("JSROOT is already defined", "JSRootCore.js");
+
+        JSROOT = {};
+
+        factory(JSROOT);
     }
 }(function (JSROOT) {
     "use strict";
@@ -479,7 +484,7 @@
      */
     JSROOT.parse = function (json) {
         if (!json) return null;
-        var obj = JSON.parse(json);
+        let obj = JSON.parse(json);
         if (obj) obj = this.JSONR_unref(obj);
         return obj;
     };
