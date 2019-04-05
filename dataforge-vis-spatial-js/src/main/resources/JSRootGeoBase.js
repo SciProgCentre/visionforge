@@ -3046,7 +3046,7 @@ ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
         res = {done: false, shapes: 0, faces: 0, notusedshapes: 0};
 
     for (var n = 0; n < lst.length; ++n) {
-        var item = lst[n];
+        let item = lst[n];
 
         // if enough faces are produced, nothing else is required
         if (res.done) {
@@ -3070,7 +3070,7 @@ ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
         if (res.faces >= limit) {
             res.done = true;
         } else if ((created > 0.01 * lst.length) && (timelimit !== undefined)) {
-            var tm2 = new Date().getTime();
+            let tm2 = new Date().getTime();
             if (tm2 - tm1 > timelimit) return res;
         }
     }
@@ -3415,7 +3415,7 @@ export function build(obj, opt) {
 
     opt.res_mesh = opt.res_faces = 0;
 
-    var shape = null;
+    let shape = null;
 
     if (('fShapeBits' in obj) && ('fShapeId' in obj)) {
         shape = obj;
@@ -3434,8 +3434,9 @@ export function build(obj, opt) {
         obj = null;
     }
 
-    if (opt.composite && shape && (shape._typename === 'TGeoCompositeShape') && shape.fNode)
+    if (opt.composite && shape && (shape._typename === 'TGeoCompositeShape') && shape.fNode) {
         obj = buildCompositeVolume(shape);
+    }
 
     // if (!obj && shape)
     //     obj = extend(JSROOT.Create("TEveGeoShapeExtract"),
@@ -3469,13 +3470,13 @@ export function build(obj, opt) {
 
     clones.BuildShapes(shapes, opt.numfaces);
 
-    var toplevel = new THREE.Object3D();
+    let toplevel = new THREE.Object3D();
 
-    for (var n = 0; n < draw_nodes.length; ++n) {
-        var entry = draw_nodes[n];
+    for (let n = 0; n < draw_nodes.length; ++n) {
+        let entry = draw_nodes[n];
         if (entry.done) continue;
 
-        var shape = shapes[entry.shapeid];
+        let shape = shapes[entry.shapeid];
         if (!shape.ready) {
             console.warn('shape marked as not ready when should');
             break;
