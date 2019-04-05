@@ -1,4 +1,4 @@
-@file:JsModule("JSRootCore.js")
+@file:JsModule("JSRootUtils")
 @file:JsNonModule
 
 package hep.dataforge.vis.spatial.jsroot

@@ -1,0 +1,1886 @@
+const System = {};
+
+System.version = "dev 25/03/2019";
+
+System.source_dir = "";
+System.source_min = false;
+System.source_fullpath = ""; // full name of source script
+System.bower_dir = null; // when specified, use standard libs from bower location
+System.nocache = false;
+System.sources = ['core']; // indicates which major sources were loaded
+
+System.id_counter = 0;
+
+//openuicfg // DO NOT DELETE, used to configure openui5 usage like openui5src = "nojsroot";
+
+// use_full_libs = true;
+
+System.touches = false;
+System.browser = {isOpera: false, isFirefox: true, isSafari: false, isChrome: false, isIE: false, isWin: false};
+
+
+/** Initialize
+ * Called when script is loaded. Process URL parameters, supplied with JSRootCore.js script
+ * @private
+ */
+System.Initialize = function() {
+
+    if (BatchMode === undefined)
+        System.BatchMode = false; // when true, disables all kind of interactive features
+
+    if ((typeof document !== "undefined") && (typeof window !== "undefined")) {
+        let scripts = document.getElementsByTagName('script');
+        for (var n = 0; n < scripts.length; ++n) {
+            if (!scripts[n].src || (typeof scripts[n].src !== 'string')) continue;
+
+            var pos = scripts[n].src.indexOf("scripts/JSRootCore.");
+            if (pos < 0) continue;
+
+            System.source_dir = scripts[n].src.substr(0, pos);
+            System.source_min = scripts[n].src.indexOf("scripts/JSRootCore.min.js") >= 0;
+            System.source_fullpath = scripts[n].src;
+
+            if ((console !== undefined) && (typeof console.log == 'function'))
+                console.log("Set source_dir to " + source_dir + ", " + version);
+            break;
+        }
+
+        System.touches = ('ontouchend' in document); // identify if touch events are supported
+        browser.isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        browser.isFirefox = typeof InstallTrigger !== 'undefined';
+        browser.isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+        browser.isChrome = !!window.chrome && !browser.isOpera;
+        browser.isIE = !!document.documentMode;
+        browser.isWin = navigator.platform.indexOf('Win') >= 0;
+        browser.isChromeHeadless = navigator.userAgent.indexOf('HeadlessChrome') >= 0;
+    }
+
+    System.browser.isWebKit = browser.isChrome || browser.isSafari || browser.isOpera;
+
+    if (source_fullpath.length === 0) return System;
+
+    function window_on_load(func) {
+        if (func != null) {
+            if (document.attachEvent ? document.readyState === 'complete' : document.readyState !== 'loading')
+                func();
+            else
+                window.onload = func;
+        }
+        return System;
+    }
+
+    var src = source_fullpath;
+
+    if (GetUrlOption('nocache', src) != null) System.nocache = (new Date).getTime(); // use timestamp to overcome cache limitation
+
+    if (GetUrlOption('gui', src) !== null)
+        return window_on_load(function () {
+            BuildSimpleGUI();
+        });
+
+    if (typeof define === "function" && define.amd)
+        return window_on_load(function () {
+            BuildSimpleGUI('check_existing_elements');
+        });
+
+    var prereq = "";
+    if (GetUrlOption('io', src) != null) prereq += "io;";
+    if (GetUrlOption('tree', src) != null) prereq += "tree;";
+    if (GetUrlOption('2d', src) != null) prereq += "2d;";
+    if (GetUrlOption('v7', src) != null) prereq += "v7;";
+    if (GetUrlOption('hist', src) != null) prereq += "2d;hist;";
+    if (GetUrlOption('hierarchy', src) != null) prereq += "2d;hierarchy;";
+    if (GetUrlOption('jq2d', src) != null) prereq += "2d;hierarchy;jq2d;";
+    if (GetUrlOption('more2d', src) != null) prereq += "more2d;";
+    if (GetUrlOption('geom', src) != null) prereq += "geom;";
+    if (GetUrlOption('3d', src) != null) prereq += "3d;";
+    if (GetUrlOption('math', src) != null) prereq += "math;";
+    if (GetUrlOption('mathjax', src) != null) prereq += "mathjax;";
+    if (GetUrlOption('openui5', src) != null) prereq += "openui5;";
+    var user = GetUrlOption('load', src),
+        onload = GetUrlOption('onload', src),
+        bower = GetUrlOption('bower', src);
+
+    if (user) prereq += "io;2d;load:" + user;
+    if ((bower === null) && (source_dir.indexOf("bower_components/jsroot/") >= 0)) bower = "";
+    if (bower !== null) {
+        if (bower.length > 0) System.bower_dir = bower; else if (source_dir.indexOf("jsroot/") === source_dir.length - 7)
+            System.bower_dir = source_dir.substr(0, source_dir.length - 7);
+        if (System.bower_dir !== null) console.log("Set bower_dir to " + bower_dir);
+    }
+
+    if ((prereq.length > 0) || (onload != null))
+        window_on_load(function () {
+            if (prereq.length > 0) AssertPrerequisites(prereq, onload); else if (onload != null) {
+                onload = System.findFunction(onload);
+                if (typeof onload == 'function') onload();
+            }
+        });
+
+    return System;
+};
+
+
+// connect to the TWebWindow instance
+System.ConnectWebWindow = arg => {
+    if (typeof arg == 'function') arg = {callback: arg};
+
+    if (arg.openui5src) this.openui5src = arg.openui5src;
+    if (arg.openui5libs) this.openui5libs = arg.openui5libs;
+    AssertPrerequisites("2d;" + (arg && arg.prereq ? arg.prereq : ""), function () {
+        if (arg && arg.prereq) delete arg.prereq;
+        ConnectWebWindow(arg);
+    }, (arg ? arg.prereq_logdiv : undefined));
+};
+
+// default draw styles, can be changed after loading of JSRootCore.js
+// this style also can be changed providing style=itemname in the URL
+const gStyle = {
+    Tooltip: 1, // 0 - off, 1 - on
+    TooltipAnimation: 500, // time in msec for appearance of tooltips, 0 - no animation
+    ContextMenu: true,
+    Zooming: true,  // global zooming flag, enable/disable any kind of interactive zooming
+    ZoomMouse: true,  // Zooming with the mouse events
+    ZoomWheel: true,  // Zooming with mouse wheel
+    ZoomTouch: true,  // Zooming with the touch devices
+    MoveResize: true,   // enable move and resize of elements like statbox, title, pave, colz
+    DragAndDrop: true,  // enables drag and drop functionality
+    ToolBar: 'popup',  // show additional tool buttons on the canvas, false - disabled, true - enabled, 'popup' - only toggle button
+    ToolBarSide: 'left', // 'left' left-bottom corner on canvas, 'right' - right-bottom corner on canvas, opposite on sub-pads
+    ToolBarVert: false,  // display tool bar vertical (default false)
+    CanEnlarge: true,  // if drawing inside particular div can be enlarged on full window
+    CanAdjustFrame: false,  // if frame position can be adjusted to let show axis or colz labels
+    ApproxTextSize: false,  // calculation of text size consumes time and can be skipped to improve performance (but with side effects on text adjustments)
+    OptimizeDraw: 1, // drawing optimization: 0 - disabled, 1 - only for large (>5000 1d bins, >50 2d bins) histograms, 2 - always
+    AutoStat: true,
+    FrameNDC: {fX1NDC: 0.07, fY1NDC: 0.12, fX2NDC: 0.95, fY2NDC: 0.88},
+    Palette: 57,
+    Latex: 2,    // 0 - never, 1 - only latex symbols, 2 - normal TLatex processing (default), 3 - use MathJax for complex case, 4 - use MathJax always
+    // MathJax : 0,  // depricated, will be supported till JSROOT 6.0, use Latex variable  0 - never, 1 - only for complex cases, 2 - always
+    ProgressBox: true,  // show progress box
+    Embed3DinSVG: 2,  // 0 - no embed, only 3D plot, 1 - overlay over SVG (IE/WebKit), 2 - embed into SVG (only Firefox)
+//    ImageSVG: !nodejs, // when producing SVG images, use <image> elements to insert 3D drawings from three.js,
+                              // To enable on nodejs, one should call "npm install canvas"
+    NoWebGL: false, // if true, WebGL will be disabled
+    GeoGradPerSegm: 6, // amount of grads per segment in TGeo spherical shapes like tube
+    GeoCompressComp: true, // if one should compress faces after creation of composite shape,
+    IgnoreUrlOptions: false, // if true, ignore all kind of URL options in the browser URL
+    HierarchyLimit: 250,   // how many items shown on one level of hierarchy
+    SmallPad: {width: 150, height: 100},   // size of pad, where many features will be deactivated like text draw or zooming
+
+    // XValuesFormat : "6.4g",   // custom format for all X values
+    // YValuesFormat : "6.4g",   // custom format for all Y values
+    // ZValuesFormat : "6.4g",   // custom format for all Z values
+
+    // these are TStyle attributes, which can be changed via URL 'style' parameter or delivered by TWebCanvas
+
+    fOptLogx: 0,
+    fOptLogy: 0,
+    fOptLogz: 0,
+    fOptDate: 0,
+    fOptFile: 0,
+    fOptTitle: 1,
+    fPadBottomMargin: 0.1,
+    fPadTopMargin: 0.1,
+    fPadLeftMargin: 0.1,
+    fPadRightMargin: 0.1,
+    fPadGridX: false,
+    fPadGridY: false,
+    fPadTickX: 0,
+    fPadTickY: 0,
+    fStatColor: 0,
+    fStatTextColor: 1,
+    fStatBorderSize: 1,
+    fStatFont: 42,
+    fStatFontSize: 0,
+    fStatStyle: 1001,
+    fStatFormat: "6.4g",
+    fStatX: 0.98,
+    fStatY: 0.935,
+    fStatW: 0.2,
+    fStatH: 0.16,
+    fTitleAlign: 23,
+    fTitleColor: 0,
+    fTitleTextColor: 1,
+    fTitleBorderSize: 0,
+    fTitleFont: 42,
+    fTitleFontSize: 0.05,
+    fTitleStyle: 0,
+    fTitleX: 0.5,
+    fTitleY: 0.995,
+    fTitleW: 0,
+    fTitleH: 0,
+    fFitFormat: "5.4g",
+    fOptStat: 1111,
+    fOptFit: 0,
+    fNumberContours: 20,
+    fGridColor: 0,
+    fGridStyle: 3,
+    fGridWidth: 1,
+    fFrameFillColor: 0,
+    fFrameFillStyle: 1001,
+    fFrameLineColor: 1,
+    fFrameLineWidth: 1,
+    fFrameLineStyle: 1,
+    fFrameBorderSize: 1,
+    fFrameBorderMode: 0,
+    fEndErrorSize: 2,   // size in pixels of end error for E1 draw options
+    fErrorX: 0.5,   // X size of the error marks for the histogram drawings
+    fHistMinimumZero: false,   // when true, BAR and LEGO drawing using base = 0
+    fPaintTextFormat: "g",
+    fTimeOffset: 788918400 // UTC time at 01/01/95
+};
+
+/** Generate mask for given bit
+ *
+ * @param {number} n bit number
+ * @returns {Number} produced make
+ * @private */
+export function BIT(n) {
+    return 1 << (n);
+}
+
+/** TH1 status bits
+ * @private */
+const TH1StatusBits = {
+    kNoStats: BIT(9),  // don't draw stats box
+    kUserContour: BIT(10), // user specified contour levels
+    kCanRebin: BIT(11), // can rebin axis
+    kLogX: BIT(15), // X-axis in log scale
+    kIsZoomed: BIT(16), // bit set when zooming on Y axis
+    kNoTitle: BIT(17), // don't draw the histogram title
+    kIsAverage: BIT(18)  // Bin contents are average (used by Add)
+};
+
+
+/** Wrapper for console.log, let redirect output to specified div element
+ * @private */
+function console(value, divid) {
+    if ((typeof divid == 'string') && document.getElementById(divid))
+        document.getElementById(divid).innerHTML = value;
+    else if ((typeof console != 'undefined') && (typeof console.log == 'function'))
+        console.log(value);
+}
+
+/** @summary Wrapper for alert, throws Error in Node.js
+ * @private */
+alert = function (msg) {
+    if (this.nodeis) throw new Error(msg);
+    if (typeof alert === 'function') alert(msg);
+    else console('ALERT: ' + msg);
+};
+
+
+/**
+ * @summary Seed simple random generator
+ *
+ * @private
+ * @param {number} i seed value
+ */
+export function seed(i) {
+    i = Math.abs(i);
+    if (i > 1e8) i = Math.abs(1e8 * Math.sin(i)); else if (i < 1) i *= 1e8;
+    this.m_w = Math.round(i);
+    this.m_z = 987654321;
+}
+
+/**
+ * @summary Simple random generator
+ *
+ * @desc Works like Math.random(), but with configurable seed - see {@link seed}
+ * @private
+ * @returns {number} random value between 0 (inclusive) and 1.0 (exclusive)
+ */
+export function random() {
+    if (this.m_z === undefined) return Math.random();
+    this.m_z = (36969 * (this.m_z & 65535) + (this.m_z >> 16)) & 0xffffffff;
+    this.m_w = (18000 * (this.m_w & 65535) + (this.m_w >> 16)) & 0xffffffff;
+    var result = ((this.m_z << 16) + this.m_w) & 0xffffffff;
+    result /= 4294967296;
+    return result + 0.5;
+}
+
+/** @summary Should be used to reintroduce objects references, produced by TBufferJSON.
+ *
+ * @desc Replace all references inside object, object should not be null
+ * Idea of the code taken from JSON-R code, found on
+ * https://github.com/graniteds/jsonr
+ * Only unref part was used, arrays are not accounted as objects
+ * @param {object} obj  object where references will be replaced
+ * @returns {object} same object with replaced references
+ * @private */
+function JSONR_unref(obj) {
+
+    var map = [], newfmt = undefined;
+
+    function unref_value(value) {
+        if ((value === null) || (value === undefined)) return;
+
+        if (typeof value === 'string') {
+            if (newfmt || (value.length < 6) || (value.indexOf("$ref:") !== 0)) return;
+            var ref = parseInt(value.substr(5));
+            if (isNaN(ref) || (ref < 0) || (ref >= map.length)) return;
+            newfmt = false;
+            return map[ref];
+        }
+
+        if (typeof value !== 'object') return;
+
+        var i, k, res, proto = Object.prototype.toString.apply(value);
+
+        // scan array - it can contain other objects
+        if ((proto.indexOf('[object') === 0) && (proto.indexOf('Array]') > 0)) {
+            for (i = 0; i < value.length; ++i) {
+                res = unref_value(value[i]);
+                if (res !== undefined) value[i] = res;
+            }
+            return;
+        }
+
+        var ks = Object.keys(value), len = ks.length;
+
+        if ((newfmt !== false) && (len === 1) && (ks[0] === '$ref')) {
+            var ref = parseInt(value['$ref']);
+            if (isNaN(ref) || (ref < 0) || (ref >= map.length)) return;
+            newfmt = true;
+            return map[ref];
+        }
+
+        if ((newfmt !== false) && (len > 1) && (ks[0] === '$arr') && (ks[1] === 'len')) {
+            // this is ROOT-coded array
+            var arr = null, dflt = (value.$arr === "Bool") ? false : 0;
+            switch (value.$arr) {
+                case "Int8" :
+                    arr = new Int8Array(value.len);
+                    break;
+                case "Uint8" :
+                    arr = new Uint8Array(value.len);
+                    break;
+                case "Int16" :
+                    arr = new Int16Array(value.len);
+                    break;
+                case "Uint16" :
+                    arr = new Uint16Array(value.len);
+                    break;
+                case "Int32" :
+                    arr = new Int32Array(value.len);
+                    break;
+                case "Uint32" :
+                    arr = new Uint32Array(value.len);
+                    break;
+                case "Float32" :
+                    arr = new Float32Array(value.len);
+                    break;
+                case "Int64" :
+                case "Uint64" :
+                case "Float64" :
+                    arr = new Float64Array(value.len);
+                    break;
+                default :
+                    arr = new Array(value.len);
+                    break;
+            }
+            for (let k = 0; k < value.len; ++k) arr[k] = dflt;
+
+            var nkey = 2, p = 0;
+            while (nkey < len) {
+                if (ks[nkey][0] === "p") p = value[ks[nkey++]]; // position
+                if (ks[nkey][0] !== 'v') throw new Error('Unexpected member ' + ks[nkey] + ' in array decoding');
+                var v = value[ks[nkey++]]; // value
+                if (typeof v === 'object') {
+                    for (let k = 0; k < v.length; ++k) arr[p++] = v[k];
+                } else {
+                    arr[p++] = v;
+                    if ((nkey < len) && (ks[nkey][0] === 'n')) {
+                        var cnt = value[ks[nkey++]]; // counter
+                        while (--cnt) arr[p++] = v;
+                    }
+                }
+            }
+
+            return arr;
+        }
+
+        if ((newfmt !== false) && (len === 3) && (ks[0] === '$pair') && (ks[1] === 'first') && (ks[2] === 'second')) {
+            newfmt = true;
+            var f1 = unref_value(value.first),
+                s1 = unref_value(value.second);
+            if (f1 !== undefined) value.first = f1;
+            if (s1 !== undefined) value.second = s1;
+            value._typename = value['$pair'];
+            delete value['$pair'];
+            return; // pair object is not counted in the objects map
+        }
+
+        // debug code, can be commented out later
+        if (map.indexOf(value) >= 0) {
+            console('should never happen - object already in the map');
+            return;
+        }
+
+        // add object to object map
+        map.push(value);
+
+        // add methods to all objects, where _typename is specified
+        if ('_typename' in value) System.addMethods(value);
+
+        for (k = 0; k < len; ++k) {
+            i = ks[k];
+            res = unref_value(value[i]);
+            if (res !== undefined) value[i] = res;
+        }
+    }
+
+    unref_value(obj);
+
+    return obj;
+}
+
+/** @summary Just copies (not clone) all fields from source to the target object
+ * @desc This is simple replacement of jQuery.extend method
+ * @private */
+export function extend(tgt, src) {
+    if ((src === null) || (typeof src !== 'object')) return tgt;
+    if ((tgt === null) || (typeof tgt !== 'object')) tgt = {};
+
+    for (var k in src)
+        tgt[k] = src[k];
+
+    return tgt;
+}
+
+/** @summary Make deep clone of the object, including all sub-objects
+ * @private */
+function clone(src, map, nofunc) {
+    if (src === null) return null;
+
+    if (!map) {
+        map = {obj: [], clones: [], nofunc: nofunc};
+    } else {
+        var i = map.obj.indexOf(src);
+        if (i >= 0) return map.clones[i];
+    }
+
+    var proto = Object.prototype.toString.apply(src);
+
+    // process normal array
+    if (proto === '[object Array]') {
+        var tgt = [];
+        map.obj.push(src);
+        map.clones.push(tgt);
+        for (var i = 0; i < src.length; ++i)
+            if (typeof src[i] === 'object')
+                tgt.push(clone(src[i], map));
+            else
+                tgt.push(src[i]);
+
+        return tgt;
+    }
+
+    // process typed array
+    if ((proto.indexOf('[object ') === 0) && (proto.indexOf('Array]') === proto.length - 6)) {
+        var tgt = [];
+        map.obj.push(src);
+        map.clones.push(tgt);
+        for (var i = 0; i < src.length; ++i)
+            tgt.push(src[i]);
+
+        return tgt;
+    }
+
+    var tgt = {};
+    map.obj.push(src);
+    map.clones.push(tgt);
+
+    for (var k in src) {
+        if (typeof src[k] === 'object')
+            tgt[k] = clone(src[k], map);
+        else if (!map.nofunc || (typeof src[k] !== 'function'))
+            tgt[k] = src[k];
+    }
+
+    return tgt;
+}
+
+/**
+ * @summary Clear all functions from the contained objects
+ *
+ * Only such objects can be cloned when transfer to Worker or converted into JSON
+ * @param {object} src  object where functions will be removed
+ * @returns {object} same object after all functions are removed
+ * @private
+ */
+function clear_func(src, map) {
+    if (src === null) return src;
+
+    var proto = Object.prototype.toString.apply(src);
+
+    if (proto === '[object Array]') {
+        for (var n = 0; n < src.length; n++)
+            if (typeof src[n] === 'object')
+                clear_func(src[n], map);
+        return src;
+    }
+
+    if ((proto.indexOf('[object ') === 0) && (proto.indexOf('Array]') === proto.length - 6)) return src;
+
+    if (!map) map = [];
+    var nomap = (map.length === 0);
+    if ('__clean_func__' in src) return src;
+
+    map.push(src);
+    src['__clean_func__'] = true;
+
+    for (var k in src) {
+        if (typeof src[k] === 'object')
+            clear_func(src[k], map);
+        else if (typeof src[k] === 'function') delete src[k];
+    }
+
+    if (nomap)
+        for (var n = 0; n < map.length; ++n)
+            delete map[n]['__clean_func__'];
+
+    return src;
+}
+
+/**
+ * @summary Parse JSON code produced with TBufferJSON.
+ *
+ * @param {string} json string to parse
+ * @return {object|null} returns parsed object
+ */
+export function parse(json) {
+    if (!json) return null;
+    let obj = JSON.parse(json);
+    if (obj) obj = JSONR_unref(obj);
+    return obj;
+}
+
+/**
+ * @summary Parse multi.json request results
+ * @desc Method should be used to parse JSON code, produced by multi.json request of THttpServer
+ *
+ * @param {string} json string to parse
+ * @return {Array|null} returns array of parsed elements
+ */
+export function parse_multi(json) {
+    if (!json) return null;
+    var arr = JSON.parse(json);
+    if (arr && arr.length)
+        for (var i = 0; i < arr.length; ++i)
+            arr[i] = JSONR_unref(arr[i]);
+    return arr;
+}
+
+/**
+ * @summary Method converts JavaScript object into ROOT-like JSON
+ *
+ * @desc Produced JSON can be used in parse() again
+ * When performed properly, JSON can be used in TBufferJSON to read data back with C++
+ */
+export function toJSON(obj) {
+    if (!obj || typeof obj !== 'object') return "";
+
+    var map = []; // map of stored objects
+
+    function copy_value(value) {
+        if (typeof value === "function") return undefined;
+
+        if ((value === undefined) || (value === null) || (typeof value !== 'object')) return value;
+
+        var proto = Object.prototype.toString.apply(value);
+
+        // typed array need to be converted into normal array, otherwise looks strange
+        if ((proto.indexOf('[object ') === 0) && (proto.indexOf('Array]') === proto.length - 6)) {
+            var arr = new Array(value.length);
+            for (var i = 0; i < value.length; ++i)
+                arr[i] = copy_value(value[i]);
+            return arr;
+        }
+
+        // this is how reference is code
+        var refid = map.indexOf(value);
+        if (refid >= 0) return {$ref: refid};
+
+        var ks = Object.keys(value), len = ks.length, tgt = {};
+
+        if ((len === 3) && (ks[0] === '$pair') && (ks[1] === 'first') && (ks[2] === 'second')) {
+            // special handling of pair objects which does not included into objects map
+            tgt.$pair = value.$pair;
+            tgt.first = copy_value(value.first);
+            tgt.second = copy_value(value.second);
+            return tgt;
+        }
+
+        map.push(value);
+
+        for (var k = 0; k < len; ++k) {
+            var name = ks[k];
+            tgt[name] = copy_value(value[name]);
+        }
+
+        return tgt;
+    }
+
+    var tgt = copy_value(obj);
+
+    return JSON.stringify(tgt);
+}
+
+/**
+ * @summary Analyzes document.URL and extracts options after '?' mark
+ *
+ * @desc Following options supported ?opt1&opt2=3
+ * In case of opt1 empty string will be returned, in case of opt2 '3'
+ * If option not found, null is returned (or default value value is provided)
+ *
+ * @param {string} opt option to search
+ * @param {string} full URL with options, document.URL will be used when not specified
+ * @returns {string|null} found value
+ * @private
+ */
+function GetUrlOption(opt, url, dflt) {
+
+    if (dflt === undefined) dflt = null;
+    if ((opt === null) || (typeof opt != 'string') || (opt.length === 0)) return dflt;
+
+    if (!url) {
+        if (gStyle.IgnoreUrlOptions || (typeof document === 'undefined')) return dflt;
+        url = document.URL;
+    }
+
+    var pos = url.indexOf("?"), nquotes;
+    if (pos < 0) return dflt;
+    url = decodeURI(url.slice(pos + 1));
+
+    while (url.length > 0) {
+
+        if (url === opt) return "";
+
+        // try to correctly handle quotes in the URL
+        pos = 0;
+        nquotes = 0;
+        while ((pos < url.length) && ((nquotes !== 0) || (url[pos] !== "&"))) {
+            switch (url[pos]) {
+                case "'":
+                    if (nquotes >= 0) nquotes = (nquotes + 1) % 2;
+                    break;
+                case '"':
+                    if (nquotes <= 0) nquotes = (nquotes - 1) % 2;
+                    break;
+            }
+            pos++;
+        }
+
+        if (url.indexOf(opt) === 0) {
+            if (url[opt.length] === "&") return "";
+
+            if (url[opt.length] === "=") {
+                url = url.slice(opt.length + 1, pos);
+                if (((url[0] === "'") || (url[0] === '"')) && (url[0] === url[url.length - 1])) url = url.substr(1, url.length - 2);
+                return url;
+            }
+        }
+
+        url = url.substr(pos + 1);
+    }
+    return dflt;
+}
+
+/**
+ * @summary Parse string value as array.
+ *
+ * @desc It could be just simple string:  "value" or
+ * array with or without string quotes:  [element], ['elem1',elem2]
+ *
+ * @private
+ */
+function ParseAsArray(val) {
+
+    var res = [];
+
+    if (typeof val != 'string') return res;
+
+    val = val.trim();
+    if (val === "") return res;
+
+    // return as array with single element
+    if ((val.length < 2) || (val[0] !== '[') || (val[val.length - 1] !== ']')) {
+        res.push(val);
+        return res;
+    }
+
+    // try to split ourself, checking quotes and brackets
+    var nbr = 0, nquotes = 0, ndouble = 0, last = 1;
+
+    for (var indx = 1; indx < val.length; ++indx) {
+        if (nquotes > 0) {
+            if (val[indx] === "'") nquotes--;
+            continue;
+        }
+        if (ndouble > 0) {
+            if (val[indx] === '"') ndouble--;
+            continue;
+        }
+        switch (val[indx]) {
+            case "'":
+                nquotes++;
+                break;
+            case '"':
+                ndouble++;
+                break;
+            case "[":
+                nbr++;
+                break;
+            case "]":
+                if (indx < val.length - 1) {
+                    nbr--;
+                    break;
+                }
+            case ",":
+                if (nbr === 0) {
+                    var sub = val.substring(last, indx).trim();
+                    if ((sub.length > 1) && (sub[0] === sub[sub.length - 1]) && ((sub[0] === '"') || (sub[0] === "'")))
+                        sub = sub.substr(1, sub.length - 2);
+                    res.push(sub);
+                    last = indx + 1;
+                }
+                break;
+        }
+    }
+
+    if (res.length === 0)
+        res.push(val.substr(1, val.length - 2).trim());
+
+    return res;
+}
+
+/**
+ * @summary Special handling of URL options to produce array.
+ *
+ * @desc If normal option is specified ...?opt=abc, than array with single element will be created
+ * one could specify normal JSON array ...?opts=['item1','item2']
+ * but also one could skip quotes ...?opts=[item1,item2]
+ * @private
+ */
+function GetUrlOptionAsArray(opt, url) {
+
+    var res = [];
+
+    while (opt.length > 0) {
+        var separ = opt.indexOf(";");
+        var part = (separ > 0) ? opt.substr(0, separ) : opt;
+
+        if (separ > 0) opt = opt.substr(separ + 1); else opt = "";
+
+        var canarray = true;
+        if (part[0] === '#') {
+            part = part.substr(1);
+            canarray = false;
+        }
+
+        var val = GetUrlOption(part, url, null);
+
+        if (canarray) res = res.concat(ParseAsArray(val));
+        else if (val !== null) res.push(val);
+    }
+    return res;
+}
+
+/**
+ * @summary Find function with given name.
+ *
+ * @desc Function name may include several namespaces like 'Painter.drawFrame'
+ *
+ * @private
+ */
+System.findFunction = function (name) {
+    if (typeof name === 'function') return name;
+    if (typeof name !== 'string') return null;
+    var names = name.split('.'), elem = null;
+    if (typeof window === 'object') elem = window;
+    if (names[0] === 'JSROOT') {
+        elem = this;
+        names.shift();
+    }
+
+    for (var n = 0; elem && (n < names.length); ++n)
+        elem = elem[names[n]];
+
+    return (typeof elem == 'function') ? elem : null;
+};
+
+/**
+ * @summary Generic method to invoke callback function.
+ *
+ * @param {object|function} func either normal function or container like
+ * { obj: object_pointer, func: name of method to call }
+ * @param arg1 first optional argument of callback
+ * @param arg2 second optional argument of callback
+ *
+ * @private
+ */
+System.CallBack = (func, arg1, arg2) => {
+
+    if (typeof func == 'string') func = findFunction(func);
+
+    if (!func) return;
+
+    if (typeof func == 'function') return func(arg1, arg2);
+
+    if (typeof func != 'object') return;
+
+    if (('obj' in func) && ('func' in func) &&
+        (typeof func.obj == 'object') && (typeof func.func == 'string') &&
+        (typeof func.obj[func.func] == 'function')) {
+        return func.obj[func.func](arg1, arg2);
+    }
+};
+
+
+// // function can be used to open ROOT file, I/O functionality will be loaded when missing
+// function OpenFile(filename, callback) {
+//     AssertPrerequisites("io", function () {
+//         OpenFile(filename, callback);
+//     });
+// }
+
+// // function can be used to draw supported ROOT classes,
+// // required functionality will be loaded automatically
+// // if painter pointer required, one should load '2d' functionality itself
+// // or use callback function which provides painter pointer as first argument
+// // defined in JSRootPainter.js
+// function draw(divid, obj, opt, callback) {
+//     AssertPrerequisites("2d", function () {
+//         draw(divid, obj, opt, callback);
+//     });
+// }
+//
+// // redraw object on given element
+// // defined in JSRootPainter.js
+// function redraw(divid, obj, opt, callback) {
+//     AssertPrerequisites("2d", function () {
+//         redraw(divid, obj, opt, callback);
+//     });
+// }
+//
+// // Create SVG, defined in JSRootPainter.js
+// function MakeSVG(args, callback) {
+//     AssertPrerequisites("2d", function () {
+//         MakeSVG(args, callback);
+//     });
+// }
+
+/** @summary Method to build JSROOT GUI with browser
+ * @private
+ */
+function BuildSimpleGUI(user_scripts, andThen) {
+    if (typeof user_scripts == 'function') {
+        andThen = user_scripts;
+        user_scripts = null;
+    }
+
+    var debugout = null,
+        nobrowser = GetUrlOption('nobrowser') != null,
+        requirements = "2d;hierarchy;",
+        simplegui = document.getElementById('simpleGUI');
+
+    //if (GetUrlOption('libs') !== null) use_full_libs = true;
+
+    if (simplegui) {
+        debugout = 'simpleGUI';
+        if (GetUrlOption('file') || GetUrlOption('files')) requirements += "io;";
+        if (simplegui.getAttribute('nobrowser') && (simplegui.getAttribute('nobrowser') !== "false")) nobrowser = true;
+    } else if (document.getElementById('onlineGUI')) {
+        debugout = 'onlineGUI';
+    } else if (document.getElementById('drawGUI')) {
+        debugout = 'drawGUI';
+        nobrowser = true;
+    } else {
+        requirements += "io;";
+    }
+
+    if (user_scripts === 'check_existing_elements') {
+        user_scripts = null;
+        if (debugout == null) return;
+    }
+
+    if (!nobrowser) requirements += 'jq2d;';
+
+    if (!user_scripts) user_scripts = GetUrlOption("autoload") || GetUrlOption("load");
+
+    if (user_scripts) requirements += "load:" + user_scripts + ";";
+
+    AssertPrerequisites(requirements, function () {
+        CallBack(findFunction(nobrowser ? 'BuildNobrowserGUI' : 'BuildGUI'));
+        CallBack(andThen);
+    }, debugout);
+}
+
+/** @summary Create some ROOT classes
+ *
+ * @param {string} typename - ROOT class name
+ * @example
+ * var obj = Create("TNamed");
+ * obj.fName = "name";
+ * obj.fTitle = "title";
+ */
+function create(typename, target) {
+    var obj = target || {};
+
+    switch (typename) {
+        case 'TObject':
+            extend(obj, {fUniqueID: 0, fBits: 0x3000008});
+            break;
+        case 'TNamed':
+            extend(obj, {fUniqueID: 0, fBits: 0x3000008, fName: "", fTitle: ""});
+            break;
+        case 'TList':
+        case 'THashList':
+            extend(obj, {name: typename, arr: [], opt: []});
+            break;
+        case 'TAttAxis':
+            extend(obj, {
+                fNdivisions: 510, fAxisColor: 1,
+                fLabelColor: 1, fLabelFont: 42, fLabelOffset: 0.005, fLabelSize: 0.035, fTickLength: 0.03,
+                fTitleOffset: 1, fTitleSize: 0.035, fTitleColor: 1, fTitleFont: 42
+            });
+            break;
+        case 'TAxis':
+            create("TNamed", obj);
+            create("TAttAxis", obj);
+            extend(obj, {
+                fNbins: 0, fXmin: 0, fXmax: 0, fXbins: [], fFirst: 0, fLast: 0,
+                fBits2: 0, fTimeDisplay: false, fTimeFormat: "", fLabels: null, fModLabs: null
+            });
+            break;
+        case 'TAttLine':
+            extend(obj, {fLineColor: 1, fLineStyle: 1, fLineWidth: 1});
+            break;
+        case 'TAttFill':
+            extend(obj, {fFillColor: 0, fFillStyle: 0});
+            break;
+        case 'TAttMarker':
+            extend(obj, {fMarkerColor: 1, fMarkerStyle: 1, fMarkerSize: 1.});
+            break;
+        case 'TLine':
+            create("TObject", obj);
+            create("TAttLine", obj);
+            extend(obj, {fX1: 0, fX2: 1, fY1: 0, fY2: 1});
+            break;
+        case 'TBox':
+            create("TObject", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            extend(obj, {fX1: 0, fX2: 1, fY1: 0, fY2: 1});
+            break;
+        case 'TPave':
+            create("TBox", obj);
+            extend(obj, {
+                fX1NDC: 0., fY1NDC: 0, fX2NDC: 1, fY2NDC: 1,
+                fBorderSize: 0, fInit: 1, fShadowColor: 1,
+                fCornerRadius: 0, fOption: "blNDC", fName: "title"
+            });
+            break;
+        case 'TAttText':
+            extend(obj, {fTextAngle: 0, fTextSize: 0, fTextAlign: 22, fTextColor: 1, fTextFont: 42});
+            break;
+        case 'TPaveText':
+            create("TPave", obj);
+            create("TAttText", obj);
+            extend(obj, {fLabel: "", fLongest: 27, fMargin: 0.05, fLines: create("TList")});
+            break;
+        case 'TPaveStats':
+            create("TPaveText", obj);
+            extend(obj, {fOptFit: 0, fOptStat: 0, fFitFormat: "", fStatFormat: "", fParent: null});
+            break;
+        case 'TLegend':
+            create("TPave", obj);
+            create("TAttText", obj);
+            extend(obj, {
+                fColumnSeparation: 0,
+                fEntrySeparation: 0.1,
+                fMargin: 0.25,
+                fNColumns: 1,
+                fPrimitives: create("TList")
+            });
+            break;
+        case 'TLegendEntry':
+            create("TObject", obj);
+            create("TAttText", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            create("TAttMarker", obj);
+            extend(obj, {fLabel: "", fObject: null, fOption: ""});
+            break;
+        case 'TText':
+            create("TNamed", obj);
+            create("TAttText", obj);
+            extend(obj, {fLimitFactorSize: 3, fOriginSize: 0.04});
+            break;
+        case 'TLatex':
+            create("TText", obj);
+            create("TAttLine", obj);
+            extend(obj, {fX: 0, fY: 0});
+            break;
+        case 'TObjString':
+            create("TObject", obj);
+            extend(obj, {fString: ""});
+            break;
+        case 'TH1':
+            create("TNamed", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            create("TAttMarker", obj);
+
+            extend(obj, {
+                fNcells: 0,
+                fXaxis: create("TAxis"),
+                fYaxis: create("TAxis"),
+                fZaxis: create("TAxis"),
+                fBarOffset: 0, fBarWidth: 1000, fEntries: 0.,
+                fTsumw: 0., fTsumw2: 0., fTsumwx: 0., fTsumwx2: 0.,
+                fMaximum: -1111., fMinimum: -1111, fNormFactor: 0., fContour: [],
+                fSumw2: [], fOption: "",
+                fFunctions: create("TList"),
+                fBufferSize: 0, fBuffer: [], fBinStatErrOpt: 0, fStatOverflows: 2
+            });
+            break;
+        case 'TH1I':
+        case 'TH1F':
+        case 'TH1D':
+        case 'TH1S':
+        case 'TH1C':
+            create("TH1", obj);
+            obj.fArray = [];
+            break;
+        case 'TH2':
+            create("TH1", obj);
+            extend(obj, {fScalefactor: 1., fTsumwy: 0., fTsumwy2: 0, fTsumwxy: 0});
+            break;
+        case 'TH2I':
+        case 'TH2F':
+        case 'TH2D':
+        case 'TH2S':
+        case 'TH2C':
+            create("TH2", obj);
+            obj.fArray = [];
+            break;
+        case 'TH3':
+            create("TH1", obj);
+            extend(obj, {
+                fTsumwy: 0.,
+                fTsumwy2: 0,
+                fTsumwz: 0.,
+                fTsumwz2: 0,
+                fTsumwxy: 0,
+                fTsumwxz: 0,
+                fTsumwyz: 0
+            });
+            break;
+        case 'TH3I':
+        case 'TH3F':
+        case 'TH3D':
+        case 'TH3S':
+        case 'TH3C':
+            create("TH3", obj);
+            obj.fArray = [];
+            break;
+        case 'THStack':
+            create("TNamed", obj);
+            extend(obj, {
+                fHists: create("TList"),
+                fHistogram: null,
+                fMaximum: -1111,
+                fMinimum: -1111
+            });
+            break;
+        case 'TGraph':
+            create("TNamed", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            create("TAttMarker", obj);
+            extend(obj, {
+                fFunctions: create("TList"), fHistogram: null,
+                fMaxSize: 0, fMaximum: -1111, fMinimum: -1111, fNpoints: 0, fX: [], fY: []
+            });
+            break;
+        case 'TGraphAsymmErrors':
+            create("TGraph", obj);
+            extend(obj, {fEXlow: [], fEXhigh: [], fEYlow: [], fEYhigh: []});
+            break;
+        case 'TMultiGraph':
+            create("TNamed", obj);
+            extend(obj, {
+                fFunctions: create("TList"), fGraphs: create("TList"),
+                fHistogram: null, fMaximum: -1111, fMinimum: -1111
+            });
+            break;
+        case 'TGraphPolargram':
+            create("TNamed", obj);
+            create("TAttText", obj);
+            create("TAttLine", obj);
+            extend(obj, {
+                fRadian: true,
+                fDegree: false,
+                fGrad: false,
+                fPolarLabelColor: 1,
+                fRadialLabelColor: 1,
+                fAxisAngle: 0,
+                fPolarOffset: 0.04,
+                fPolarTextSize: 0.04,
+                fRadialOffset: 0.025,
+                fRadialTextSize: 0.035,
+                fRwrmin: 0,
+                fRwrmax: 1,
+                fRwtmin: 0,
+                fRwtmax: 2 * Math.PI,
+                fTickpolarSize: 0.02,
+                fPolarLabelFont: 62,
+                fRadialLabelFont: 62,
+                fCutRadial: 0,
+                fNdivRad: 508,
+                fNdivPol: 508
+            });
+            break;
+        case 'TPolyLine':
+            create("TObject", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            extend(obj, {fLastPoint: -1, fN: 0, fOption: "", fX: null, fY: null});
+            break;
+        case 'TGaxis':
+            create("TLine", obj);
+            create("TAttText", obj);
+            extend(obj, {
+                fChopt: "", fFunctionName: "", fGridLength: 0,
+                fLabelColor: 1, fLabelFont: 42, fLabelOffset: 0.005, fLabelSize: 0.035,
+                fName: "", fNdiv: 12, fTickSize: 0.02, fTimeFormat: "",
+                fTitle: "", fTitleOffset: 1, fTitleSize: 0.035,
+                fWmax: 100, fWmin: 0
+            });
+            break;
+        case 'TAttPad':
+            extend(obj, {
+                fLeftMargin: gStyle.fPadLeftMargin,
+                fRightMargin: gStyle.fPadRightMargin,
+                fBottomMargin: gStyle.fPadBottomMargin,
+                fTopMargin: gStyle.fPadTopMargin,
+                fXfile: 2, fYfile: 2, fAfile: 1, fXstat: 0.99, fYstat: 0.99, fAstat: 2,
+                fFrameFillColor: gStyle.fFrameFillColor,
+                fFrameFillStyle: gStyle.fFrameFillStyle,
+                fFrameLineColor: gStyle.fFrameLineColor,
+                fFrameLineWidth: gStyle.fFrameLineWidth,
+                fFrameLineStyle: gStyle.fFrameLineStyle,
+                fFrameBorderSize: gStyle.fFrameBorderSize,
+                fFrameBorderMode: gStyle.fFrameBorderMode
+            });
+            break;
+        case 'TPad':
+            create("TObject", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            create("TAttPad", obj);
+            extend(obj, {
+                fX1: 0,
+                fY1: 0,
+                fX2: 1,
+                fY2: 1,
+                fXtoAbsPixelk: 1,
+                fXtoPixelk: 1,
+                fXtoPixel: 1,
+                fYtoAbsPixelk: 1,
+                fYtoPixelk: 1,
+                fYtoPixel: 1,
+                fUtoAbsPixelk: 1,
+                fUtoPixelk: 1,
+                fUtoPixel: 1,
+                fVtoAbsPixelk: 1,
+                fVtoPixelk: 1,
+                fVtoPixel: 1,
+                fAbsPixeltoXk: 1,
+                fPixeltoXk: 1,
+                fPixeltoX: 1,
+                fAbsPixeltoYk: 1,
+                fPixeltoYk: 1,
+                fPixeltoY: 1,
+                fXlowNDC: 0,
+                fYlowNDC: 0,
+                fXUpNDC: 0,
+                fYUpNDC: 0,
+                fWNDC: 1,
+                fHNDC: 1,
+                fAbsXlowNDC: 0,
+                fAbsYlowNDC: 0,
+                fAbsWNDC: 1,
+                fAbsHNDC: 1,
+                fUxmin: 0,
+                fUymin: 0,
+                fUxmax: 0,
+                fUymax: 0,
+                fTheta: 30,
+                fPhi: 30,
+                fAspectRatio: 0,
+                fNumber: 0,
+                fLogx: gStyle.fOptLogx,
+                fLogy: gStyle.fOptLogy,
+                fLogz: gStyle.fOptLogz,
+                fTickx: gStyle.fPadTickX,
+                fTicky: gStyle.fPadTickY,
+                fPadPaint: 0,
+                fCrosshair: 0,
+                fCrosshairPos: 0,
+                fBorderSize: 2,
+                fBorderMode: 0,
+                fModified: false,
+                fGridx: gStyle.fPadGridX,
+                fGridy: gStyle.fPadGridY,
+                fAbsCoord: false,
+                fEditable: true,
+                fFixedAspectRatio: false,
+                fPrimitives: create("TList"),
+                fExecs: null,
+                fName: "pad",
+                fTitle: "canvas"
+            });
+
+            break;
+        case 'TAttCanvas':
+            extend(obj, {
+                fXBetween: 2, fYBetween: 2, fTitleFromTop: 1.2,
+                fXdate: 0.2, fYdate: 0.3, fAdate: 1
+            });
+            break;
+        case 'TCanvas':
+            create("TPad", obj);
+            extend(obj, {
+                fNumPaletteColor: 0, fNextPaletteColor: 0, fDISPLAY: "$DISPLAY",
+                fDoubleBuffer: 0, fRetained: true, fXsizeUser: 0,
+                fYsizeUser: 0, fXsizeReal: 20, fYsizeReal: 10,
+                fWindowTopX: 0, fWindowTopY: 0, fWindowWidth: 0, fWindowHeight: 0,
+                fCw: 500, fCh: 300, fCatt: create("TAttCanvas"),
+                kMoveOpaque: true, kResizeOpaque: true, fHighLightColor: 5,
+                fBatch: true, kShowEventStatus: false, kAutoExec: true, kMenuBar: true
+            });
+            break;
+        case 'TGeoVolume':
+            create("TNamed", obj);
+            create("TAttLine", obj);
+            create("TAttFill", obj);
+            extend(obj, {
+                fGeoAtt: 0,
+                fFinder: null,
+                fMedium: null,
+                fNodes: null,
+                fNtotal: 0,
+                fNumber: 0,
+                fRefCount: 0,
+                fShape: null,
+                fVoxels: null
+            });
+            break;
+        case 'TGeoNode':
+            create("TNamed", obj);
+            extend(obj, {fGeoAtt: 0, fMother: null, fNovlp: 0, fNumber: 0, fOverlaps: null, fVolume: null});
+            break;
+        case 'TGeoNodeMatrix':
+            create("TGeoNode", obj);
+            extend(obj, {fMatrix: null});
+            break;
+        case 'TGeoTrack':
+            create("TObject", obj);
+            create("TAttLine", obj);
+            create("TAttMarker", obj);
+            extend(obj, {fGeoAtt: 0, fNpoints: 0, fPoints: []});
+            break;
+    }
+
+    obj._typename = typename;
+    addMethods(obj);
+    return obj;
+}
+
+/** @summary Create histogram object
+ * @param {string} typename - histogram typename like TH1I or TH2F
+ * @param {number} nbinsx - number of bins on X-axis
+ * @param {number} [nbinsy] - number of bins on Y-axis (for 2D/3D histograms)
+ * @param {number} [nbinsz] - number of bins on Z-axis (for 3D histograms)
+ */
+function CreateHistogram(typename, nbinsx, nbinsy, nbinsz) {
+    // create histogram object of specified type
+    // if bins numbers are specified, appropriate typed array will be created
+    var histo = create(typename);
+    if (!histo.fXaxis || !histo.fYaxis || !histo.fZaxis) return null;
+    histo.fName = "hist";
+    histo.fTitle = "title";
+    if (nbinsx) extend(histo.fXaxis, {fNbins: nbinsx, fXmin: 0, fXmax: nbinsx});
+    if (nbinsy) extend(histo.fYaxis, {fNbins: nbinsy, fXmin: 0, fXmax: nbinsy});
+    if (nbinsz) extend(histo.fZaxis, {fNbins: nbinsz, fXmin: 0, fXmax: nbinsz});
+    switch (parseInt(typename[2])) {
+        case 1:
+            if (nbinsx) histo.fNcells = nbinsx + 2;
+            break;
+        case 2:
+            if (nbinsx && nbinsy) histo.fNcells = (nbinsx + 2) * (nbinsy + 2);
+            break;
+        case 3:
+            if (nbinsx && nbinsy && nbinsz) histo.fNcells = (nbinsx + 2) * (nbinsy + 2) * (nbinsz + 2);
+            break;
+    }
+    if (histo.fNcells > 0) {
+        switch (typename[3]) {
+            case "C" :
+                histo.fArray = new Int8Array(histo.fNcells);
+                break;
+            case "S" :
+                histo.fArray = new Int16Array(histo.fNcells);
+                break;
+            case "I" :
+                histo.fArray = new Int32Array(histo.fNcells);
+                break;
+            case "F" :
+                histo.fArray = new Float32Array(histo.fNcells);
+                break;
+            case "L" :
+                histo.fArray = new Float64Array(histo.fNcells);
+                break;
+            case "D" :
+                histo.fArray = new Float64Array(histo.fNcells);
+                break;
+            default:
+                histo.fArray = new Array(histo.fNcells);
+                break;
+        }
+        for (var i = 0; i < histo.fNcells; ++i) histo.fArray[i] = 0;
+    }
+    return histo;
+}
+
+/** @summary Creates TPolyLine object
+ * @param {number} npoints - number of points
+ * @param {boolean} [use_int32] - use Int32Array type for points, default is Float32Array */
+function CreateTPolyLine(npoints, use_int32) {
+    var poly = create("TPolyLine");
+    if (npoints) {
+        poly.fN = npoints;
+        if (use_int32) {
+            poly.fX = new Int32Array(npoints);
+            poly.fY = new Int32Array(npoints);
+        } else {
+            poly.fX = new Float32Array(npoints);
+            poly.fY = new Float32Array(npoints);
+        }
+    }
+
+    return poly;
+}
+
+/** @summary Creates TGraph object
+ * @param {number} npoints - number of points in TGraph
+ * @param {array} [xpts] - array with X coordinates
+ * @param {array} [ypts] - array with Y coordinates */
+function CreateTGraph(npoints, xpts, ypts) {
+    let graph = extend(create("TGraph"), {fBits: 0x3000408, fName: "graph", fTitle: "title"});
+
+    if (npoints > 0) {
+        graph.fMaxSize = graph.fNpoints = npoints;
+
+        let usex = (typeof xpts == 'object') && (xpts.length === npoints);
+        let usey = (typeof ypts == 'object') && (ypts.length === npoints);
+
+        for (var i = 0; i < npoints; ++i) {
+            graph.fX.push(usex ? xpts[i] : i / npoints);
+            graph.fY.push(usey ? ypts[i] : i / npoints);
+        }
+    }
+
+    return graph;
+}
+
+/** @summary Creates THStack object
+ * @desc
+ * As arguments one could specify any number of histograms objects
+ * @example
+ * var nbinsx = 20;
+ * var h1 = CreateHistogram("TH1F", nbinsx);
+ * var h2 = CreateHistogram("TH1F", nbinsx);
+ * var h3 = CreateHistogram("TH1F", nbinsx);
+ * var stack = CreateTHStack(h1, h2, h3);
+ * */
+function CreateTHStack() {
+    var stack = create("THStack");
+    for (var i = 0; i < arguments.length; ++i)
+        stack.fHists.Add(arguments[i], "");
+    return stack;
+}
+
+/** @summary Creates TMultiGraph object
+ * @desc
+ * As arguments one could specify any number of TGraph objects */
+function CreateTMultiGraph() {
+    var mgraph = create("TMultiGraph");
+    for (var i = 0; i < arguments.length; ++i)
+        mgraph.fGraphs.Add(arguments[i], "");
+    return mgraph;
+}
+
+System.methodsCache = {}; // variable used to keep methods for known classes
+
+/** @summary Returns methods for given typename
+ * @private
+ */
+System.getMethods = function (typename, obj) {
+
+    let m = System.methodsCache[typename],
+        has_methods = (m !== undefined);
+
+    if (!has_methods) m = {};
+
+    // Due to binary I/O such TObject methods may not be set for derived classes
+    // Therefore when methods requested for given object, check also that basic methods are there
+    if ((typename === "TObject") || (typename === "TNamed") || (obj && (obj.fBits !== undefined)))
+        if (m.TestBit === undefined) {
+            m.TestBit = function (f) {
+                return (this.fBits & f) !== 0;
+            };
+            m.InvertBit = function (f) {
+                this.fBits = this.fBits ^ (f & 0xffffff);
+            };
+        }
+
+    if (has_methods) return m;
+
+    if ((typename === 'TList') || (typename === 'THashList')) {
+        m.Clear = function () {
+            this.arr = [];
+            this.opt = [];
+        };
+        m.Add = function (obj, opt) {
+            this.arr.push(obj);
+            this.opt.push((opt && typeof opt == 'string') ? opt : "");
+        };
+        m.AddFirst = function (obj, opt) {
+            this.arr.unshift(obj);
+            this.opt.unshift((opt && typeof opt == 'string') ? opt : "");
+        };
+        m.RemoveAt = function (indx) {
+            this.arr.splice(indx, 1);
+            this.opt.splice(indx, 1);
+        }
+    }
+
+    if ((typename === "TPaveText") || (typename === "TPaveStats")) {
+        m.AddText = function (txt) {
+            // this.fLines.Add({ _typename: 'TLatex', fTitle: txt, fTextColor: 1 });
+            var line = create("TLatex");
+            line.fTitle = txt;
+            this.fLines.Add(line);
+        };
+        m.Clear = function () {
+            this.fLines.Clear();
+        }
+    }
+
+    if ((typename.indexOf("TF1") === 0) || (typename === "TF2")) {
+        m.addFormula = function (obj) {
+            if (!obj) return;
+            if (this.formulas === undefined) this.formulas = [];
+            this.formulas.push(obj);
+        };
+
+        m.evalPar = function (x, y) {
+            if (!('_func' in this) || (this._title !== this.fTitle)) {
+
+                var _func = this.fTitle, isformula = false, pprefix = "[";
+                if (_func === "gaus") _func = "gaus(0)";
+                if (this.fFormula && typeof this.fFormula.fFormula == "string") {
+                    if (this.fFormula.fFormula.indexOf("[](double*x,double*p)") === 0) {
+                        isformula = true;
+                        pprefix = "p[";
+                        _func = this.fFormula.fFormula.substr(21);
+                    } else {
+                        _func = this.fFormula.fFormula;
+                        pprefix = "[p";
+                    }
+                    if (this.fFormula.fClingParameters && this.fFormula.fParams) {
+                        for (var i = 0; i < this.fFormula.fParams.length; ++i) {
+                            var regex = new RegExp('(\\[' + this.fFormula.fParams[i].first + '\\])', 'g'),
+                                parvalue = this.fFormula.fClingParameters[this.fFormula.fParams[i].second];
+                            _func = _func.replace(regex, (parvalue < 0) ? "(" + parvalue + ")" : parvalue);
+                        }
+                    }
+                }
+
+                if ('formulas' in this)
+                    for (var i = 0; i < this.formulas.length; ++i)
+                        while (_func.indexOf(this.formulas[i].fName) >= 0)
+                            _func = _func.replace(this.formulas[i].fName, this.formulas[i].fTitle);
+                _func = _func.replace(/\b(abs)\b/g, 'TMath::Abs')
+                    .replace(/TMath::Exp\(/g, 'Math.exp(')
+                    .replace(/TMath::Abs\(/g, 'Math.abs(');
+                if (typeof Math == 'object') {
+                    this._math = Math;
+                    _func = _func.replace(/TMath::Prob\(/g, 'this._math.Prob(')
+                        .replace(/TMath::Gaus\(/g, 'this._math.Gaus(')
+                        .replace(/TMath::BreitWigner\(/g, 'this._math.BreitWigner(')
+                        .replace(/xygaus\(/g, 'this._math.gausxy(this, x, y, ')
+                        .replace(/gaus\(/g, 'this._math.gaus(this, x, ')
+                        .replace(/gausn\(/g, 'this._math.gausn(this, x, ')
+                        .replace(/expo\(/g, 'this._math.expo(this, x, ')
+                        .replace(/landau\(/g, 'this._math.landau(this, x, ')
+                        .replace(/landaun\(/g, 'this._math.landaun(this, x, ')
+                        .replace(/ROOT::Math::/g, 'this._math.');
+                }
+                for (var i = 0; i < this.fNpar; ++i) {
+                    var parname = pprefix + i + "]";
+                    while (_func.indexOf(parname) !== -1)
+                        _func = _func.replace(parname, '(' + this.GetParValue(i) + ')');
+                }
+                _func = _func.replace(/\b(sin)\b/gi, 'Math.sin')
+                    .replace(/\b(cos)\b/gi, 'Math.cos')
+                    .replace(/\b(tan)\b/gi, 'Math.tan')
+                    .replace(/\b(exp)\b/gi, 'Math.exp')
+                    .replace(/\b(pow)\b/gi, 'Math.pow')
+                    .replace(/pi/g, 'Math.PI');
+                for (var n = 2; n < 10; ++n)
+                    _func = _func.replace('x^' + n, 'Math.pow(x,' + n + ')');
+
+                if (isformula) {
+                    _func = _func.replace(/x\[0\]/g, "x");
+                    if (this._typename === "TF2") {
+                        _func = _func.replace(/x\[1\]/g, "y");
+                        this._func = new Function("x", "y", _func).bind(this);
+                    } else {
+                        this._func = new Function("x", _func).bind(this);
+                    }
+                } else if (this._typename === "TF2")
+                    this._func = new Function("x", "y", "return " + _func).bind(this);
+                else
+                    this._func = new Function("x", "return " + _func).bind(this);
+
+                this._title = this.fTitle;
+            }
+
+            return this._func(x, y);
+        };
+        m.GetParName = function (n) {
+            if (this.fFormula && this.fFormula.fParams) return this.fFormula.fParams[n].first;
+            if (this.fNames && this.fNames[n]) return this.fNames[n];
+            return "p" + n;
+        };
+        m.GetParValue = function (n) {
+            if (this.fFormula && this.fFormula.fClingParameters) return this.fFormula.fClingParameters[n];
+            if (this.fParams) return this.fParams[n];
+            return undefined;
+        };
+        m.GetParError = function (n) {
+            return this.fParErrors ? this.fParErrors[n] : undefined;
+        };
+        m.GetNumPars = function () {
+            return this.fNpar;
+        }
+    }
+
+    if (((typename.indexOf("TGraph") === 0) || (typename === "TCutG")) && (typename !== "TGraphPolargram") && (typename !== "TGraphTime")) {
+        // check if point inside figure specified by the TGraph
+        m.IsInside = function (xp, yp) {
+            var i, j = this.fNpoints - 1, x = this.fX, y = this.fY, oddNodes = false;
+
+            for (i = 0; i < this.fNpoints; ++i) {
+                if ((y[i] < yp && y[j] >= yp) || (y[j] < yp && y[i] >= yp)) {
+                    if (x[i] + (yp - y[i]) / (y[j] - y[i]) * (x[j] - x[i]) < xp) {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        };
+    }
+
+    if (typename.indexOf("TH1") === 0 ||
+        typename.indexOf("TH2") === 0 ||
+        typename.indexOf("TH3") === 0) {
+        m.getBinError = function (bin) {
+            //   -*-*-*-*-*Return value of error associated to bin number bin*-*-*-*-*
+            //    if the sum of squares of weights has been defined (via Sumw2),
+            //    this function returns the sqrt(sum of w2).
+            //    otherwise it returns the sqrt(contents) for this bin.
+            if (bin >= this.fNcells) bin = this.fNcells - 1;
+            if (bin < 0) bin = 0;
+            if (bin < this.fSumw2.length)
+                return Math.sqrt(this.fSumw2[bin]);
+            return Math.sqrt(Math.abs(this.fArray[bin]));
+        };
+        m.setBinContent = function (bin, content) {
+            // Set bin content - only trivial case, without expansion
+            this.fEntries++;
+            this.fTsumw = 0;
+            if ((bin >= 0) && (bin < this.fArray.length))
+                this.fArray[bin] = content;
+        };
+    }
+
+    if (typename.indexOf("TH1") === 0) {
+        m.getBin = function (x) {
+            return x;
+        };
+        m.getBinContent = function (bin) {
+            return this.fArray[bin];
+        };
+        m.Fill = function (x, weight) {
+            var axis = this.fXaxis,
+                bin = 1 + Math.floor((x - axis.fXmin) / (axis.fXmax - axis.fXmin) * axis.fNbins);
+            if (bin < 0) bin = 0; else if (bin > axis.fNbins + 1) bin = axis.fNbins + 1;
+            this.fArray[bin] += ((weight === undefined) ? 1 : weight);
+        }
+    }
+
+    if (typename.indexOf("TH2") === 0) {
+        m.getBin = function (x, y) {
+            return (x + (this.fXaxis.fNbins + 2) * y);
+        };
+        m.getBinContent = function (x, y) {
+            return this.fArray[this.getBin(x, y)];
+        };
+        m.Fill = function (x, y, weight) {
+            var axis1 = this.fXaxis, axis2 = this.fYaxis,
+                bin1 = 1 + Math.floor((x - axis1.fXmin) / (axis1.fXmax - axis1.fXmin) * axis1.fNbins),
+                bin2 = 1 + Math.floor((y - axis2.fXmin) / (axis2.fXmax - axis2.fXmin) * axis2.fNbins);
+            if (bin1 < 0) bin1 = 0; else if (bin1 > axis1.fNbins + 1) bin1 = axis1.fNbins + 1;
+            if (bin2 < 0) bin2 = 0; else if (bin2 > axis2.fNbins + 1) bin2 = axis2.fNbins + 1;
+            this.fArray[bin1 + (axis1.fNbins + 2) * bin2] += ((weight === undefined) ? 1 : weight);
+        }
+    }
+
+    if (typename.indexOf("TH3") === 0) {
+        m.getBin = function (x, y, z) {
+            return (x + (this.fXaxis.fNbins + 2) * (y + (this.fYaxis.fNbins + 2) * z));
+        };
+        m.getBinContent = function (x, y, z) {
+            return this.fArray[this.getBin(x, y, z)];
+        };
+        m.Fill = function (x, y, z, weight) {
+            var axis1 = this.fXaxis, axis2 = this.fYaxis, axis3 = this.fZaxis,
+                bin1 = 1 + Math.floor((x - axis1.fXmin) / (axis1.fXmax - axis1.fXmin) * axis1.fNbins),
+                bin2 = 1 + Math.floor((y - axis2.fXmin) / (axis2.fXmax - axis2.fXmin) * axis2.fNbins),
+                bin3 = 1 + Math.floor((z - axis3.fXmin) / (axis3.fXmax - axis3.fXmin) * axis3.fNbins);
+            if (bin1 < 0) bin1 = 0; else if (bin1 > axis1.fNbins + 1) bin1 = axis1.fNbins + 1;
+            if (bin2 < 0) bin2 = 0; else if (bin2 > axis2.fNbins + 1) bin2 = axis2.fNbins + 1;
+            if (bin3 < 0) bin3 = 0; else if (bin3 > axis3.fNbins + 1) bin3 = axis3.fNbins + 1;
+            this.fArray[bin1 + (axis1.fNbins + 2) * (bin2 + (axis2.fNbins + 2) * bin3)] += ((weight === undefined) ? 1 : weight);
+        }
+    }
+
+    if (typename.indexOf("TProfile") === 0) {
+        if (typename.indexOf("TProfile2D") === 0) {
+            m.getBin = function (x, y) {
+                return (x + (this.fXaxis.fNbins + 2) * y);
+            };
+            m.getBinContent = function (x, y) {
+                var bin = this.getBin(x, y);
+                if (bin < 0 || bin >= this.fNcells) return 0;
+                if (this.fBinEntries[bin] < 1e-300) return 0;
+                if (!this.fArray) return 0;
+                return this.fArray[bin] / this.fBinEntries[bin];
+            };
+            m.getBinEntries = function (x, y) {
+                var bin = this.getBin(x, y);
+                if (bin < 0 || bin >= this.fNcells) return 0;
+                return this.fBinEntries[bin];
+            }
+        } else {
+            m.getBin = function (x) {
+                return x;
+            };
+            m.getBinContent = function (bin) {
+                if (bin < 0 || bin >= this.fNcells) return 0;
+                if (this.fBinEntries[bin] < 1e-300) return 0;
+                if (!this.fArray) return 0;
+                return this.fArray[bin] / this.fBinEntries[bin];
+            };
+        }
+        m.getBinEffectiveEntries = function (bin) {
+            if (bin < 0 || bin >= this.fNcells) return 0;
+            var sumOfWeights = this.fBinEntries[bin];
+            if (!this.fBinSumw2 || this.fBinSumw2.length !== this.fNcells) {
+                // this can happen  when reading an old file
+                return sumOfWeights;
+            }
+            var sumOfWeightsSquare = this.fBinSumw2[bin];
+            return (sumOfWeightsSquare > 0) ? sumOfWeights * sumOfWeights / sumOfWeightsSquare : 0;
+        };
+        m.getBinError = function (bin) {
+            if (bin < 0 || bin >= this.fNcells) return 0;
+            var cont = this.fArray[bin],               // sum of bin w *y
+                sum = this.fBinEntries[bin],          // sum of bin weights
+                err2 = this.fSumw2[bin],               // sum of bin w * y^2
+                neff = this.getBinEffectiveEntries(bin);  // (sum of w)^2 / (sum of w^2)
+            if (sum < 1e-300) return 0;                  // for empty bins
+            var EErrorType = {kERRORMEAN: 0, kERRORSPREAD: 1, kERRORSPREADI: 2, kERRORSPREADG: 3};
+            // case the values y are gaussian distributed y +/- sigma and w = 1/sigma^2
+            if (this.fErrorMode === EErrorType.kERRORSPREADG)
+                return 1.0 / Math.sqrt(sum);
+            // compute variance in y (eprim2) and standard deviation in y (eprim)
+            var contsum = cont / sum, eprim = Math.sqrt(Math.abs(err2 / sum - contsum * contsum));
+            if (this.fErrorMode === EErrorType.kERRORSPREADI) {
+                if (eprim !== 0) return eprim / Math.sqrt(neff);
+                // in case content y is an integer (so each my has an error +/- 1/sqrt(12)
+                // when the std(y) is zero
+                return 1.0 / Math.sqrt(12 * neff);
+            }
+            // if approximate compute the sums (of w, wy and wy2) using all the bins
+            //  when the variance in y is zero
+            // case option "S" return standard deviation in y
+            if (this.fErrorMode === EErrorType.kERRORSPREAD) return eprim;
+            // default case : fErrorMode = kERRORMEAN
+            // return standard error on the mean of y
+            return (eprim / Math.sqrt(neff));
+        };
+    }
+
+    if (typename === "TAxis") {
+        m.GetBinLowEdge = function (bin) {
+            if (this.fNbins <= 0) return 0;
+            if ((this.fXbins.length > 0) && (bin > 0) && (bin <= this.fNbins)) return this.fXbins[bin - 1];
+            return this.fXmin + (bin - 1) * (this.fXmax - this.fXmin) / this.fNbins;
+        };
+        m.GetBinCenter = function (bin) {
+            if (this.fNbins <= 0) return 0;
+            if ((this.fXbins.length > 0) && (bin > 0) && (bin < this.fNbins)) return (this.fXbins[bin - 1] + this.fXbins[bin]) / 2;
+            return this.fXmin + (bin - 0.5) * (this.fXmax - this.fXmin) / this.fNbins;
+        }
+    }
+
+    if (typeof getMoreMethods == "function")
+        getMoreMethods(m, typename, obj);
+
+    System.methodsCache[typename] = m;
+    return m;
+};
+
+/** @summary Returns true if object represents basic ROOT collections
+ * @private */
+function isRootCollection(lst, typename) {
+    if (lst && (typeof lst === 'object')) {
+        if ((lst.$kind === "TList") || (lst.$kind === "TObjArray")) return true;
+        if (!typename) typename = lst._typename;
+    }
+    if (!typename) return false;
+    return (typename === 'TList') || (typename === 'THashList') || (typename === 'TMap') ||
+        (typename === 'TObjArray') || (typename === 'TClonesArray');
+}
+
+/** @summary Adds specific methods to the object.
+ *
+ * JSROOT implements some basic methods for different ROOT classes.
+ * @param {object} obj - object where methods are assigned
+ * @param {string} typename - optional typename, if not specified, obj._typename will be used
+ * @private
+ */
+System.addMethods = function (obj, typename) {
+    System.extend(obj, System.getMethods(typename || obj._typename, obj));
+};
+
+let lastFFormat = "";
+
+/** @summary Converts numeric value to string according to specified format.
+ *
+ * @param {number} value - value to convert
+ * @param {string} fmt - format can be like 5.4g or 4.2e or 6.4f
+ * @returns {string} - converted value
+ * @private
+ */
+function FFormat(value, fmt) {
+    if (!fmt) fmt = "6.4g";
+
+    lastFFormat = "";
+
+    fmt = fmt.trim();
+    var len = fmt.length;
+    if (len < 2) return value.toFixed(4);
+    var last = fmt[len - 1];
+    fmt = fmt.slice(0, len - 1);
+    var isexp = null;
+    var prec = fmt.indexOf(".");
+    if (prec < 0) prec = 4; else prec = Number(fmt.slice(prec + 1));
+    if (isNaN(prec) || (prec < 0) || (prec == null)) prec = 4;
+
+    var significance = false;
+    if ((last === 'e') || (last === 'E')) {
+        isexp = true;
+    } else if (last === 'Q') {
+        isexp = true;
+        significance = true;
+    } else if ((last === 'f') || (last === 'F')) {
+        isexp = false;
+    } else if (last === 'W') {
+        isexp = false;
+        significance = true;
+    } else if ((last === 'g') || (last === 'G')) {
+        var se = FFormat(value, fmt + 'Q'),
+            _fmt = lastFFormat,
+            sg = FFormat(value, fmt + 'W');
+
+        if (se.length < sg.length) {
+            lastFFormat = _fmt;
+            return se;
+        }
+        return sg;
+    } else {
+        isexp = false;
+        prec = 4;
+    }
+
+    if (isexp) {
+        // for exponential representation only one significant digit befor point
+        if (significance) prec--;
+        if (prec < 0) prec = 0;
+
+        lastFFormat = '5.' + prec + 'e';
+
+        return value.toExponential(prec);
+    }
+
+    var sg = value.toFixed(prec);
+
+    if (significance) {
+
+        // when using fixed representation, one could get 0.0
+        if ((value !== 0) && (Number(sg) === 0.) && (prec > 0)) {
+            prec = 20;
+            sg = value.toFixed(prec);
+        }
+
+        var l = 0;
+        while ((l < sg.length) && (sg[l] === '0' || sg[l] === '-' || sg[l] === '.')) l++;
+
+        var diff = sg.length - l - prec;
+        if (sg.indexOf(".") > l) diff--;
+
+        if (diff !== 0) {
+            prec -= diff;
+            if (prec < 0) prec = 0; else if (prec > 20) prec = 20;
+            sg = value.toFixed(prec);
+        }
+    }
+
+    lastFFormat = '5.' + prec + 'f';
+
+    return sg;
+}
+
+/** @summary Implements log10
+ * @private */
+function log10(n) {
+    return Math.log(n) / Math.log(10);
+}
+
+// Dummy function, will be redefined when JSRootPainter is loaded
+function progress(msg, tmout) {
+    if ((msg !== undefined) && (typeof msg == "string")) console(msg);
+}
+
+export {System};

@@ -19,8 +19,6 @@ class JSRootDemoApp : ApplicationBase() {
     override val stateKeys: List<String> = emptyList()
 
     override fun start(state: Map<String, Any>) {
-//        require("JSRootGeoBase.js")
-//        require("JSRootCore.js")
 
 
         //TODO remove after DI fix
