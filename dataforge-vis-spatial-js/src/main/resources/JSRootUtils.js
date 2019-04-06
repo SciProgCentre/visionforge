@@ -67,22 +67,26 @@ export function random() {
  * @private */
 function JSONR_unref(obj) {
 
-    var map = [], newfmt = undefined;
+    let map = [], newfmt = undefined;
 
     function unref_value(value) {
         if ((value === null) || (value === undefined)) return;
 
+        /*
+            if object is a reference string in "old format"
+            Old format seems to be single string with "$ref:" prefix. New format is an object
+         */
         if (typeof value === 'string') {
-            if (newfmt || (value.length < 6) || (value.indexOf("$ref:") !== 0)) return;
-            let ref = parseInt(value.substr(5));
-            if (isNaN(ref) || (ref < 0) || (ref >= map.length)) return;
+            if (newfmt || (value.length < 6) || (value.indexOf("$ref:") !== 0)) return; //switch to "new format" if needed
+            let ref = parseInt(value.substr(5)); // get ref number
+            if (isNaN(ref) || (ref < 0) || (ref >= map.length)) return; //skip if not a ref
             newfmt = false;
-            return map[ref];
+            return map[ref]; //return an object from cache
         }
 
         if (typeof value !== 'object') return;
 
-        var i, k, res, proto = Object.prototype.toString.apply(value);
+        let i, k, res, proto = Object.prototype.toString.apply(value);
 
         // scan array - it can contain other objects
         if ((proto.indexOf('[object') === 0) && (proto.indexOf('Array]') > 0)) {
@@ -93,10 +97,10 @@ function JSONR_unref(obj) {
             return;
         }
 
-        var ks = Object.keys(value), len = ks.length;
+        let ks = Object.keys(value), len = ks.length;
 
         if ((newfmt !== false) && (len === 1) && (ks[0] === '$ref')) {
-            var ref = parseInt(value['$ref']);
+            let ref = parseInt(value['$ref']);
             if (isNaN(ref) || (ref < 0) || (ref >= map.length)) return;
             newfmt = true;
             return map[ref];
@@ -136,19 +140,19 @@ function JSONR_unref(obj) {
                     arr = new Array(value.len);
                     break;
             }
-            for (var k = 0; k < value.len; ++k) arr[k] = dflt;
+            for (let k = 0; k < value.len; ++k) arr[k] = dflt;
 
             var nkey = 2, p = 0;
             while (nkey < len) {
                 if (ks[nkey][0] === "p") p = value[ks[nkey++]]; // position
                 if (ks[nkey][0] !== 'v') throw new Error('Unexpected member ' + ks[nkey] + ' in array decoding');
-                var v = value[ks[nkey++]]; // value
+                let v = value[ks[nkey++]]; // value
                 if (typeof v === 'object') {
-                    for (var k = 0; k < v.length; ++k) arr[p++] = v[k];
+                    for (let k = 0; k < v.length; ++k) arr[p++] = v[k];
                 } else {
                     arr[p++] = v;
                     if ((nkey < len) && (ks[nkey][0] === 'n')) {
-                        var cnt = value[ks[nkey++]]; // counter
+                        let cnt = value[ks[nkey++]]; // counter
                         while (--cnt) arr[p++] = v;
                     }
                 }
@@ -159,7 +163,7 @@ function JSONR_unref(obj) {
 
         if ((newfmt !== false) && (len === 3) && (ks[0] === '$pair') && (ks[1] === 'first') && (ks[2] === 'second')) {
             newfmt = true;
-            var f1 = unref_value(value.first),
+            let f1 = unref_value(value.first),
                 s1 = unref_value(value.second);
             if (f1 !== undefined) value.first = f1;
             if (s1 !== undefined) value.second = s1;
@@ -180,7 +184,7 @@ function JSONR_unref(obj) {
         // add methods to all objects, where _typename is specified
         //if ('_typename' in value) JSROOT.addMethods(value);
 
-        for (k = 0; k < len; ++k) {
+        for (let k = 0; k < len; ++k) {
             i = ks[k];
             res = unref_value(value[i]);
             if (res !== undefined) value[i] = res;

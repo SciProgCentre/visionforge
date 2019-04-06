@@ -2,8 +2,7 @@ import * as JSROOT from "JSRootUtils"
 import * as THREE from "three-full"
 import * as ThreeBSP from "ThreeCSG"
 
-/** @namespace GEO */
-    /// Holder of all TGeo-related functions and classes
+// Holder of all TGeo-related functions and classes
 const GradPerSegm = 6;     // grad per segment in cylinder/spherical symmetry shapes
 const CompressComp = true;  // use faces compression in composite shapes
 const CompLimit = 20;        // maximal number of components in composite shape
@@ -11,7 +10,7 @@ const CompLimit = 20;        // maximal number of components in composite shape
 let _warn_msgs = {};
 
 
-/** @memberOf GEO */
+/**  */
 const BITS = {
     kVisOverride: JSROOT.BIT(0),           // volume's vis. attributes are overwritten
     kVisNone: JSROOT.BIT(1),           // the volume/node is invisible, as well as daughters
@@ -27,26 +26,26 @@ const BITS = {
     kVisRaytrace: JSROOT.BIT(15)           // raytracing flag
 };
 
-/** @memberOf GEO */
-function TestBit(volume, f) {
-    var att = volume.fGeoAtt;
+/**  */
+function testBit(volume, f) {
+    const att = volume.fGeoAtt;
     return att === undefined ? false : ((att & f) !== 0);
 }
 
 
-/** @memberOf GEO */
+/**  */
 function SetBit(volume, f, value) {
     if (volume.fGeoAtt === undefined) return;
     volume.fGeoAtt = value ? (volume.fGeoAtt | f) : (volume.fGeoAtt & ~f);
 }
 
-/** @memberOf GEO */
+/**  */
 function ToggleBit(volume, f) {
     if (volume.fGeoAtt !== undefined)
         volume.fGeoAtt = volume.fGeoAtt ^ (f & 0xffffff);
 }
 
-/** @memberOf GEO
+/**
  * implementation of TGeoVolume::InvisibleAll */
 function InvisibleAll(flag) {
     if (flag === undefined) flag = true;
@@ -56,8 +55,8 @@ function InvisibleAll(flag) {
     SetBit(this, BITS.kVisOneLevel, false);
 
     if (this.fNodes)
-        for (var n = 0; n < this.fNodes.arr.length; ++n) {
-            var sub = this.fNodes.arr[n].fVolume;
+        for (let n = 0; n < this.fNodes.arr.length; ++n) {
+            const sub = this.fNodes.arr[n].fVolume;
             SetBit(sub, BITS.kVisThis, !flag);
             // SetBit(sub, BITS.kVisDaughters, !flag);
             //SetBit(sub, BITS.kVisOneLevel, false);
@@ -65,7 +64,7 @@ function InvisibleAll(flag) {
 }
 
 /** method used to avoid duplication of warnings
- * @memberOf GEO */
+ *  */
 function warn(msg) {
     if (_warn_msgs === undefined) _warn_msgs = {};
     if (_warn_msgs[msg] !== undefined) return;
@@ -73,7 +72,7 @@ function warn(msg) {
     console.warn(msg);
 }
 
-/** @memberOf GEO */
+/**  */
 function NodeKind(obj) {
     // return kind of the geo nodes
     // 0 - TGeoNode
@@ -105,7 +104,7 @@ class GeometryCreator {
 GeometryCreator.prototype.AddFace3 = function (x1, y1, z1,
                                                x2, y2, z2,
                                                x3, y3, z3) {
-    var indx = this.indx, pos = this.pos;
+    const indx = this.indx, pos = this.pos;
     pos[indx] = x1;
     pos[indx + 1] = y1;
     pos[indx + 2] = z1;
@@ -133,7 +132,8 @@ GeometryCreator.prototype.AddFace4 = function (x1, y1, z1,
     // if (reduce==1), first face is reduced
     // if (reduce==2), second face is reduced
 
-    var indx = this.indx, pos = this.pos;
+    let indx = this.indx;
+    const pos = this.pos;
 
     if (reduce !== 1) {
         pos[indx] = x1;
@@ -176,7 +176,8 @@ GeometryCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
     if (this.last4 && reduce)
         return console.error('missmatch between AddFace4 and SetNormal4 calls');
 
-    var indx = this.indx - (this.last4 ? 18 : 9), norm = this.norm;
+    let indx = this.indx - (this.last4 ? 18 : 9);
+    const norm = this.norm;
 
     if (reduce !== 1) {
         norm[indx] = nx1;
@@ -205,9 +206,9 @@ GeometryCreator.prototype.SetNormal4 = function (nx1, ny1, nz1,
 };
 
 GeometryCreator.prototype.RecalcZ = function (func) {
-    var pos = this.pos,
-        last = this.indx,
-        indx = last - (this.last4 ? 18 : 9);
+    const pos = this.pos,
+        last = this.indx;
+    let indx = last - (this.last4 ? 18 : 9);
 
     while (indx < last) {
         pos[indx + 2] = func(pos[indx], pos[indx + 1], pos[indx + 2]);
@@ -217,7 +218,7 @@ GeometryCreator.prototype.RecalcZ = function (func) {
 
 function GetNormal(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 
-    var pA = new THREE.Vector3(x1, y1, z1),
+    const pA = new THREE.Vector3(x1, y1, z1),
         pB = new THREE.Vector3(x2, y2, z2),
         pC = new THREE.Vector3(x3, y3, z3),
         cb = new THREE.Vector3(),
@@ -231,7 +232,7 @@ function GetNormal(x1, y1, z1, x2, y2, z2, x3, y3, z3) {
 }
 
 GeometryCreator.prototype.CalcNormal = function () {
-    var indx = this.indx, norm = this.norm;
+    const indx = this.indx, norm = this.norm;
 
     if (!this.cb) {
         this.pA = new THREE.Vector3();
@@ -253,7 +254,8 @@ GeometryCreator.prototype.CalcNormal = function () {
 };
 
 GeometryCreator.prototype.SetNormal = function (nx, ny, nz) {
-    var indx = this.indx - 9, norm = this.norm;
+    let indx = this.indx - 9;
+    const norm = this.norm;
 
     norm[indx] = norm[indx + 3] = norm[indx + 6] = nx;
     norm[indx + 1] = norm[indx + 4] = norm[indx + 7] = ny;
@@ -271,7 +273,8 @@ GeometryCreator.prototype.SetNormal_12_34 = function (nx12, ny12, nz12, nx34, ny
     // special shortcut, when same normals can be applied for 1-2 point and 3-4 point
     if (reduce === undefined) reduce = 0;
 
-    var indx = this.indx - ((reduce > 0) ? 9 : 18), norm = this.norm;
+    let indx = this.indx - ((reduce > 0) ? 9 : 18);
+    const norm = this.norm;
 
     if (reduce !== 1) {
         norm[indx] = nx12;
@@ -304,7 +307,7 @@ GeometryCreator.prototype.Create = function () {
     if (this.nfaces !== this.indx / 9)
         console.error('Mismatch with created ' + this.nfaces + ' and filled ' + this.indx / 9 + ' number of faces');
 
-    var geometry = new THREE.BufferGeometry();
+    const geometry = new THREE.BufferGeometry();
     geometry.addAttribute('position', new THREE.BufferAttribute(this.pos, 3));
     geometry.addAttribute('normal', new THREE.BufferAttribute(this.norm, 3));
     return geometry;
@@ -360,7 +363,7 @@ PolygonsCreator.prototype.AddFace4 = function (x1, y1, z1,
 
         if (reduce !== 2) console.error('polygon not supported for not-reduced faces');
 
-        var polygon;
+        let polygon;
 
         if (this.multi++ === 1) {
             polygon = new ThreeBSP.Polygon;
@@ -370,14 +373,14 @@ PolygonsCreator.prototype.AddFace4 = function (x1, y1, z1,
         } else {
             polygon = this.polygons[this.polygons.length - 1];
             // check that last vertice equals to v2
-            var last = this.mnormal ? polygon.vertices[polygon.vertices.length - 1] : polygon.vertices[0],
+            const last = this.mnormal ? polygon.vertices[polygon.vertices.length - 1] : polygon.vertices[0],
                 comp = this.mnormal ? this.v2 : this.v3;
 
             if (comp.diff(last) > 1e-12)
                 console.error('vertex missmatch when building polygon');
         }
 
-        var first = this.mnormal ? polygon.vertices[0] : polygon.vertices[polygon.vertices.length - 1],
+        const first = this.mnormal ? polygon.vertices[0] : polygon.vertices[polygon.vertices.length - 1],
             next = this.mnormal ? this.v3 : this.v2;
 
         if (next.diff(first) < 1e-12) {
@@ -393,7 +396,7 @@ PolygonsCreator.prototype.AddFace4 = function (x1, y1, z1,
 
     }
 
-    var polygon = new ThreeBSP.Polygon;
+    let polygon = new ThreeBSP.Polygon;
 
     switch (reduce) {
         case 0:
@@ -477,14 +480,14 @@ PolygonsCreator.prototype.Create = function () {
 
 // ================= all functions to create geometry ===================================
 
-/** @memberOf GEO */
+/**  */
 export function createCubeBuffer(shape, faces_limit) {
 
     if (faces_limit < 0) return 12;
 
-    var dx = shape.fDX, dy = shape.fDY, dz = shape.fDZ;
+    const dx = shape.fDX, dy = shape.fDY, dz = shape.fDZ;
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(12);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(12);
 
     creator.AddFace4(dx, dy, dz, dx, -dy, dz, dx, -dy, -dz, dx, dy, -dz);
     creator.SetNormal(1, 0, 0);
@@ -507,15 +510,15 @@ export function createCubeBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function create8edgesBuffer(v, faces_limit) {
 
-    var indicies = [4, 7, 6, 5, 0, 3, 7, 4, 4, 5, 1, 0, 6, 2, 1, 5, 7, 3, 2, 6, 1, 2, 3, 0];
+    const indicies = [4, 7, 6, 5, 0, 3, 7, 4, 4, 5, 1, 0, 6, 2, 1, 5, 7, 3, 2, 6, 1, 2, 3, 0];
 
-    var creator = (faces_limit > 0) ? new PolygonsCreator : new GeometryCreator(12);
+    const creator = (faces_limit > 0) ? new PolygonsCreator : new GeometryCreator(12);
 
-    for (var n = 0; n < indicies.length; n += 4) {
-        var i1 = indicies[n] * 3,
+    for (let n = 0; n < indicies.length; n += 4) {
+        const i1 = indicies[n] * 3,
             i2 = indicies[n + 1] * 3,
             i3 = indicies[n + 2] * 3,
             i4 = indicies[n + 3] * 3;
@@ -527,14 +530,14 @@ export function create8edgesBuffer(v, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createParaBuffer(shape, faces_limit) {
 
     if (faces_limit < 0) return 12;
 
-    var txy = shape.fTxy, txz = shape.fTxz, tyz = shape.fTyz;
+    const txy = shape.fTxy, txz = shape.fTxz, tyz = shape.fTyz;
 
-    var v = [
+    const v = [
         -shape.fZ * txz - txy * shape.fY - shape.fX, -shape.fY - shape.fZ * tyz, -shape.fZ,
         -shape.fZ * txz + txy * shape.fY - shape.fX, shape.fY - shape.fZ * tyz, -shape.fZ,
         -shape.fZ * txz + txy * shape.fY + shape.fX, shape.fY - shape.fZ * tyz, -shape.fZ,
@@ -547,12 +550,12 @@ export function createParaBuffer(shape, faces_limit) {
     return create8edgesBuffer(v, faces_limit);
 }
 
-/** @memberOf GEO */
+/**  */
 export function createTrapezoidBuffer(shape, faces_limit) {
 
     if (faces_limit < 0) return 12;
 
-    var y1, y2;
+    let y1, y2;
     if (shape._typename === "TGeoTrd1") {
         y1 = y2 = shape.fDY;
     } else {
@@ -560,7 +563,7 @@ export function createTrapezoidBuffer(shape, faces_limit) {
         y2 = shape.fDy2;
     }
 
-    var v = [
+    const v = [
         -shape.fDx1, y1, -shape.fDZ,
         shape.fDx1, y1, -shape.fDZ,
         shape.fDx1, -y1, -shape.fDZ,
@@ -575,12 +578,12 @@ export function createTrapezoidBuffer(shape, faces_limit) {
 }
 
 
-/** @memberOf GEO */
+/**  */
 export function createArb8Buffer(shape, faces_limit) {
 
     if (faces_limit < 0) return 12;
 
-    var vertices = [
+    const vertices = [
             shape.fXY[0][0], shape.fXY[0][1], -shape.fDZ,
             shape.fXY[1][0], shape.fXY[1][1], -shape.fDZ,
             shape.fXY[2][0], shape.fXY[2][1], -shape.fDZ,
@@ -596,22 +599,23 @@ export function createArb8Buffer(shape, faces_limit) {
             7, 3, 2, 2, 6, 7, 1, 2, 3, 3, 0, 1];
 
     // detect same vertices on both Z-layers
-    for (var side = 0; side < vertices.length; side += vertices.length / 2)
-        for (var n1 = side; n1 < side + vertices.length / 2 - 3; n1 += 3)
-            for (var n2 = n1 + 3; n2 < side + vertices.length / 2; n2 += 3)
+    for (let side = 0; side < vertices.length; side += vertices.length / 2)
+        for (let n1 = side; n1 < side + vertices.length / 2 - 3; n1 += 3)
+            for (let n2 = n1 + 3; n2 < side + vertices.length / 2; n2 += 3)
                 if ((vertices[n1] === vertices[n2]) &&
                     (vertices[n1 + 1] === vertices[n2 + 1]) &&
                     (vertices[n1 + 2] === vertices[n2 + 2])) {
-                    for (var k = 0; k < indicies.length; ++k)
+                    for (let k = 0; k < indicies.length; ++k)
                         if (indicies[k] === n2 / 3) indicies[k] = n1 / 3;
                 }
 
 
-    var map = [], // list of existing faces (with all rotations)
+    const map = [];
+    let // list of existing faces (with all rotations)
         numfaces = 0;
 
-    for (var k = 0; k < indicies.length; k += 3) {
-        var id1 = indicies[k] * 100 + indicies[k + 1] * 10 + indicies[k + 2],
+    for (let k = 0; k < indicies.length; k += 3) {
+        const id1 = indicies[k] * 100 + indicies[k + 1] * 10 + indicies[k + 2],
             id2 = indicies[k + 1] * 100 + indicies[k + 2] * 10 + indicies[k],
             id3 = indicies[k + 2] * 100 + indicies[k] * 10 + indicies[k + 1];
 
@@ -624,29 +628,29 @@ export function createArb8Buffer(shape, faces_limit) {
         }
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // var creator = new GeometryCreator(numfaces);
 
-    for (var n = 0; n < indicies.length; n += 6) {
-        var i1 = indicies[n] * 3,
+    for (let n = 0; n < indicies.length; n += 6) {
+        const i1 = indicies[n] * 3,
             i2 = indicies[n + 1] * 3,
             i3 = indicies[n + 2] * 3,
             i4 = indicies[n + 3] * 3,
             i5 = indicies[n + 4] * 3,
-            i6 = indicies[n + 5] * 3,
-            norm = null;
+            i6 = indicies[n + 5] * 3;
+        let norm = null;
 
         if ((i1 >= 0) && (i4 >= 0) && faces_limit) {
             // try to identify two faces with same normal - very useful if one can create face4
             if (n === 0) norm = new THREE.Vector3(0, 0, 1); else if (n === 30) norm = new THREE.Vector3(0, 0, -1); else {
-                var norm1 = GetNormal(vertices[i1], vertices[i1 + 1], vertices[i1 + 2],
+                const norm1 = GetNormal(vertices[i1], vertices[i1 + 1], vertices[i1 + 2],
                     vertices[i2], vertices[i2 + 1], vertices[i2 + 2],
                     vertices[i3], vertices[i3 + 1], vertices[i3 + 2]);
 
                 norm1.normalize();
 
-                var norm2 = GetNormal(vertices[i4], vertices[i4 + 1], vertices[i4 + 2],
+                const norm2 = GetNormal(vertices[i4], vertices[i4 + 1], vertices[i4 + 2],
                     vertices[i5], vertices[i5 + 1], vertices[i5 + 2],
                     vertices[i6], vertices[i6 + 1], vertices[i6 + 2]);
 
@@ -681,7 +685,7 @@ export function createArb8Buffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createSphereBuffer(shape, faces_limit) {
     let radius = [shape.fRmax, shape.fRmin],
         phiStart = shape.fPhi1,
@@ -696,7 +700,7 @@ export function createSphereBuffer(shape, faces_limit) {
     // phiStart = 0; phiLength = 360; thetaStart = 0;  thetaLength = 180;
 
     if (faces_limit > 0) {
-        var fact = (noInside ? 2 : 4) * widthSegments * heightSegments / faces_limit;
+        const fact = (noInside ? 2 : 4) * widthSegments * heightSegments / faces_limit;
 
         if (fact > 1.) {
             widthSegments = Math.max(4, Math.floor(widthSegments / Math.sqrt(fact)));
@@ -704,29 +708,29 @@ export function createSphereBuffer(shape, faces_limit) {
         }
     }
 
-    var numoutside = widthSegments * heightSegments * 2,
+    let numoutside = widthSegments * heightSegments * 2,
         numtop = widthSegments * 2,
-        numbottom = widthSegments * 2,
-        numcut = phiLength === 360 ? 0 : heightSegments * (noInside ? 2 : 4),
+        numbottom = widthSegments * 2;
+    const numcut = phiLength === 360 ? 0 : heightSegments * (noInside ? 2 : 4),
         epsilon = 1e-10;
 
     if (noInside) numbottom = numtop = widthSegments;
 
     if (faces_limit < 0) return numoutside * (noInside ? 1 : 2) + numtop + numbottom + numcut;
 
-    var _sinp = new Float32Array(widthSegments + 1),
+    const _sinp = new Float32Array(widthSegments + 1),
         _cosp = new Float32Array(widthSegments + 1),
         _sint = new Float32Array(heightSegments + 1),
         _cost = new Float32Array(heightSegments + 1);
 
-    for (var n = 0; n <= heightSegments; ++n) {
-        var theta = (thetaStart + thetaLength / heightSegments * n) * Math.PI / 180;
+    for (let n = 0; n <= heightSegments; ++n) {
+        const theta = (thetaStart + thetaLength / heightSegments * n) * Math.PI / 180;
         _sint[n] = Math.sin(theta);
         _cost[n] = Math.cos(theta);
     }
 
-    for (var n = 0; n <= widthSegments; ++n) {
-        var phi = (phiStart + phiLength / widthSegments * n) * Math.PI / 180;
+    for (let n = 0; n <= widthSegments; ++n) {
+        const phi = (phiStart + phiLength / widthSegments * n) * Math.PI / 180;
         _sinp[n] = Math.sin(phi);
         _cosp[n] = Math.cos(phi);
     }
@@ -740,28 +744,28 @@ export function createSphereBuffer(shape, faces_limit) {
         numbottom = 0;
     }
 
-    var numfaces = numoutside * (noInside ? 1 : 2) + numtop + numbottom + numcut;
+    const numfaces = numoutside * (noInside ? 1 : 2) + numtop + numbottom + numcut;
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // var creator = new GeometryCreator(numfaces);
 
-    for (var side = 0; side < 2; ++side) {
+    for (let side = 0; side < 2; ++side) {
         if ((side === 1) && noInside) break;
 
-        var r = radius[side],
+        let r = radius[side],
             s = (side === 0) ? 1 : -1,
             d1 = 1 - side, d2 = 1 - d1;
 
         // use direct algorithm for the sphere - here normals and position can be calculated directly
-        for (var k = 0; k < heightSegments; ++k) {
+        for (let k = 0; k < heightSegments; ++k) {
 
-            var k1 = k + d1, k2 = k + d2;
+            const k1 = k + d1, k2 = k + d2;
 
-            var skip = 0;
+            let skip = 0;
             if (Math.abs(_sint[k1]) <= epsilon) skip = 1; else if (Math.abs(_sint[k2]) <= epsilon) skip = 2;
 
-            for (var n = 0; n < widthSegments; ++n) {
+            for (let n = 0; n < widthSegments; ++n) {
                 creator.AddFace4(
                     r * _sint[k1] * _cosp[n], r * _sint[k1] * _sinp[n], r * _cost[k1],
                     r * _sint[k1] * _cosp[n + 1], r * _sint[k1] * _sinp[n + 1], r * _cost[k1],
@@ -779,11 +783,11 @@ export function createSphereBuffer(shape, faces_limit) {
     }
 
     // top/bottom
-    for (var side = 0; side <= heightSegments; side += heightSegments)
+    for (let side = 0; side <= heightSegments; side += heightSegments)
         if (Math.abs(_sint[side]) >= epsilon) {
-            var ss = _sint[side], cc = _cost[side],
+            let ss = _sint[side], cc = _cost[side],
                 d1 = (side === 0) ? 0 : 1, d2 = 1 - d1;
-            for (var n = 0; n < widthSegments; ++n) {
+            for (let n = 0; n < widthSegments; ++n) {
                 creator.AddFace4(
                     radius[1] * ss * _cosp[n + d1], radius[1] * ss * _sinp[n + d1], radius[1] * cc,
                     radius[0] * ss * _cosp[n + d1], radius[0] * ss * _sinp[n + d1], radius[0] * cc,
@@ -796,8 +800,8 @@ export function createSphereBuffer(shape, faces_limit) {
 
     // cut left/right sides
     if (phiLength < 360) {
-        for (var side = 0; side <= widthSegments; side += widthSegments) {
-            var ss = _sinp[side], cc = _cosp[side],
+        for (let side = 0; side <= widthSegments; side += widthSegments) {
+            let ss = _sinp[side], cc = _cosp[side],
                 d1 = (side === 0) ? 1 : 0, d2 = 1 - d1;
 
             for (var k = 0; k < heightSegments; ++k) {
@@ -815,9 +819,9 @@ export function createSphereBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createTubeBuffer(shape, faces_limit) {
-    var outerR, innerR; // inner/outer tube radius
+    let outerR, innerR; // inner/outer tube radius
     if ((shape._typename === "TGeoCone") || (shape._typename === "TGeoConeSeg")) {
         outerR = [shape.fRmax2, shape.fRmax1];
         innerR = [shape.fRmin2, shape.fRmin1];
@@ -826,18 +830,18 @@ export function createTubeBuffer(shape, faces_limit) {
         innerR = [shape.fRmin, shape.fRmin];
     }
 
-    var hasrmin = (innerR[0] > 0) || (innerR[1] > 0),
-        thetaStart = 0, thetaLength = 360;
+    const hasrmin = (innerR[0] > 0) || (innerR[1] > 0);
+    let thetaStart = 0, thetaLength = 360;
 
     if ((shape._typename === "TGeoConeSeg") || (shape._typename === "TGeoTubeSeg") || (shape._typename === "TGeoCtub")) {
         thetaStart = shape.fPhi1;
         thetaLength = shape.fPhi2 - shape.fPhi1;
     }
 
-    var radiusSegments = Math.max(4, Math.round(thetaLength / GradPerSegm));
+    const radiusSegments = Math.max(4, Math.round(thetaLength / GradPerSegm));
 
     // external surface
-    var numfaces = radiusSegments * (((outerR[0] <= 0) || (outerR[1] <= 0)) ? 1 : 2);
+    let numfaces = radiusSegments * (((outerR[0] <= 0) || (outerR[1] <= 0)) ? 1 : 2);
 
     // internal surface
     if (hasrmin)
@@ -853,37 +857,37 @@ export function createTubeBuffer(shape, faces_limit) {
 
     if (faces_limit < 0) return numfaces;
 
-    var phi0 = thetaStart * Math.PI / 180,
+    const phi0 = thetaStart * Math.PI / 180,
         dphi = thetaLength / radiusSegments * Math.PI / 180,
         _sin = new Float32Array(radiusSegments + 1),
         _cos = new Float32Array(radiusSegments + 1);
 
-    for (var seg = 0; seg <= radiusSegments; ++seg) {
+    for (let seg = 0; seg <= radiusSegments; ++seg) {
         _cos[seg] = Math.cos(phi0 + seg * dphi);
         _sin[seg] = Math.sin(phi0 + seg * dphi);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // var creator = new GeometryCreator(numfaces);
 
-    var calcZ;
+    let calcZ;
 
     if (shape._typename === "TGeoCtub")
         calcZ = function (x, y, z) {
-            var arr = (z < 0) ? shape.fNlow : shape.fNhigh;
+            const arr = (z < 0) ? shape.fNlow : shape.fNhigh;
             return ((z < 0) ? -shape.fDz : shape.fDz) - (x * arr[0] + y * arr[1]) / arr[2];
         };
 
     // create outer/inner tube
-    for (var side = 0; side < 2; ++side) {
+    for (let side = 0; side < 2; ++side) {
         if ((side === 1) && !hasrmin) break;
 
-        var R = (side === 0) ? outerR : innerR,
+        let R = (side === 0) ? outerR : innerR,
             d1 = side, d2 = 1 - side, nxy = 1., nz = 0;
 
         if (R[0] !== R[1]) {
-            var angle = Math.atan2((R[1] - R[0]), 2 * shape.fDZ);
+            const angle = Math.atan2((R[1] - R[0]), 2 * shape.fDZ);
             nxy = Math.cos(angle);
             nz = Math.sin(angle);
         }
@@ -892,10 +896,10 @@ export function createTubeBuffer(shape, faces_limit) {
             nxy *= -1;
             nz *= -1;
         }
-        var reduce = 0;
+        let reduce = 0;
         if (R[0] <= 0) reduce = 2; else if (R[1] <= 0) reduce = 1;
 
-        for (var seg = 0; seg < radiusSegments; ++seg) {
+        for (let seg = 0; seg < radiusSegments; ++seg) {
             creator.AddFace4(
                 R[0] * _cos[seg + d1], R[0] * _sin[seg + d1], shape.fDZ,
                 R[1] * _cos[seg + d1], R[1] * _sin[seg + d1], -shape.fDZ,
@@ -912,14 +916,14 @@ export function createTubeBuffer(shape, faces_limit) {
     }
 
     // create upper/bottom part
-    for (var side = 0; side < 2; ++side) {
+    for (let side = 0; side < 2; ++side) {
         if (outerR[side] <= 0) continue;
 
-        var d1 = side, d2 = 1 - side,
+        let d1 = side, d2 = 1 - side,
             sign = (side === 0) ? 1 : -1,
             reduce = (innerR[side] <= 0) ? 2 : 0;
         if ((reduce === 2) && (thetaLength === 360) && !calcZ) creator.StartPolygon(side === 0);
-        for (var seg = 0; seg < radiusSegments; ++seg) {
+        for (let seg = 0; seg < radiusSegments; ++seg) {
             creator.AddFace4(
                 innerR[side] * _cos[seg + d1], innerR[side] * _sin[seg + d1], sign * shape.fDZ,
                 outerR[side] * _cos[seg + d1], outerR[side] * _sin[seg + d1], sign * shape.fDZ,
@@ -960,26 +964,26 @@ export function createTubeBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createEltuBuffer(shape, faces_limit) {
-    var radiusSegments = Math.max(4, Math.round(360 / GradPerSegm));
+    const radiusSegments = Math.max(4, Math.round(360 / GradPerSegm));
 
     if (faces_limit < 0) return radiusSegments * 4;
 
     // calculate all sin/cos tables in advance
-    var x = new Float32Array(radiusSegments + 1),
+    const x = new Float32Array(radiusSegments + 1),
         y = new Float32Array(radiusSegments + 1);
-    for (var seg = 0; seg <= radiusSegments; ++seg) {
-        var phi = seg / radiusSegments * 2 * Math.PI;
+    for (let seg = 0; seg <= radiusSegments; ++seg) {
+        const phi = seg / radiusSegments * 2 * Math.PI;
         x[seg] = shape.fRmin * Math.cos(phi);
         y[seg] = shape.fRmax * Math.sin(phi);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(radiusSegments * 4),
-        nx1 = 1, ny1 = 0, nx2 = 1, ny2 = 0;
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(radiusSegments * 4);
+    let nx1 = 1, ny1 = 0, nx2 = 1, ny2 = 0;
 
     // create tube faces
-    for (var seg = 0; seg < radiusSegments; ++seg) {
+    for (let seg = 0; seg < radiusSegments; ++seg) {
         creator.AddFace4(x[seg], y[seg], +shape.fDZ,
             x[seg], y[seg], -shape.fDZ,
             x[seg + 1], y[seg + 1], -shape.fDZ,
@@ -990,7 +994,7 @@ export function createEltuBuffer(shape, faces_limit) {
         ny1 = ny2;
         nx2 = x[seg + 1] * shape.fRmax / shape.fRmin;
         ny2 = y[seg + 1] * shape.fRmin / shape.fRmax;
-        var dist = Math.sqrt(nx2 * nx2 + ny2 * ny2);
+        const dist = Math.sqrt(nx2 * nx2 + ny2 * ny2);
         nx2 = nx2 / dist;
         ny2 = ny2 / dist;
 
@@ -998,9 +1002,9 @@ export function createEltuBuffer(shape, faces_limit) {
     }
 
     // create top/bottom sides
-    for (var side = 0; side < 2; ++side) {
-        var sign = (side === 0) ? 1 : -1, d1 = side, d2 = 1 - side;
-        for (var seg = 0; seg < radiusSegments; ++seg) {
+    for (let side = 0; side < 2; ++side) {
+        const sign = (side === 0) ? 1 : -1, d1 = side, d2 = 1 - side;
+        for (let seg = 0; seg < radiusSegments; ++seg) {
             creator.AddFace3(0, 0, sign * shape.fDZ,
                 x[seg + d1], y[seg + d1], sign * shape.fDZ,
                 x[seg + d2], y[seg + d2], sign * shape.fDZ);
@@ -1011,13 +1015,13 @@ export function createEltuBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createTorusBuffer(shape, faces_limit) {
-    var radius = shape.fR,
-        radialSegments = Math.max(6, Math.round(360 / GradPerSegm)),
+    const radius = shape.fR;
+    let radialSegments = Math.max(6, Math.round(360 / GradPerSegm)),
         tubularSegments = Math.max(8, Math.round(shape.fDphi / GradPerSegm));
 
-    var numfaces = (shape.fRmin > 0 ? 4 : 2) * radialSegments * (tubularSegments + (shape.fDphi !== 360 ? 1 : 0));
+    let numfaces = (shape.fRmin > 0 ? 4 : 2) * radialSegments * (tubularSegments + (shape.fDphi !== 360 ? 1 : 0));
 
     if (faces_limit < 0) return numfaces;
 
@@ -1027,42 +1031,42 @@ export function createTorusBuffer(shape, faces_limit) {
         numfaces = (shape.fRmin > 0 ? 4 : 2) * radialSegments * (tubularSegments + (shape.fDphi !== 360 ? 1 : 0));
     }
 
-    var _sinr = new Float32Array(radialSegments + 1),
+    const _sinr = new Float32Array(radialSegments + 1),
         _cosr = new Float32Array(radialSegments + 1),
         _sint = new Float32Array(tubularSegments + 1),
         _cost = new Float32Array(tubularSegments + 1);
 
-    for (var n = 0; n <= radialSegments; ++n) {
+    for (let n = 0; n <= radialSegments; ++n) {
         _sinr[n] = Math.sin(n / radialSegments * 2 * Math.PI);
         _cosr[n] = Math.cos(n / radialSegments * 2 * Math.PI);
     }
 
-    for (var t = 0; t <= tubularSegments; ++t) {
-        var angle = (shape.fPhi1 + shape.fDphi * t / tubularSegments) / 180 * Math.PI;
+    for (let t = 0; t <= tubularSegments; ++t) {
+        const angle = (shape.fPhi1 + shape.fDphi * t / tubularSegments) / 180 * Math.PI;
         _sint[t] = Math.sin(angle);
         _cost[t] = Math.cos(angle);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // use vectors for normals calculation
-    var p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3(), p4 = new THREE.Vector3(),
+    const p1 = new THREE.Vector3(), p2 = new THREE.Vector3(), p3 = new THREE.Vector3(), p4 = new THREE.Vector3(),
         n1 = new THREE.Vector3(), n2 = new THREE.Vector3(), n3 = new THREE.Vector3(), n4 = new THREE.Vector3(),
         center1 = new THREE.Vector3(), center2 = new THREE.Vector3();
 
-    for (var side = 0; side < 2; ++side) {
+    for (let side = 0; side < 2; ++side) {
         if ((side > 0) && (shape.fRmin <= 0)) break;
-        var tube = (side > 0) ? shape.fRmin : shape.fRmax,
+        let tube = (side > 0) ? shape.fRmin : shape.fRmax,
             d1 = 1 - side, d2 = 1 - d1, ns = side > 0 ? -1 : 1;
 
-        for (var t = 0; t < tubularSegments; ++t) {
-            var t1 = t + d1, t2 = t + d2;
+        for (let t = 0; t < tubularSegments; ++t) {
+            const t1 = t + d1, t2 = t + d2;
             center1.x = radius * _cost[t1];
             center1.y = radius * _sint[t1];
             center2.x = radius * _cost[t2];
             center2.y = radius * _sint[t2];
 
-            for (var n = 0; n < radialSegments; ++n) {
+            for (let n = 0; n < radialSegments; ++n) {
                 p1.x = (radius + tube * _cosr[n]) * _cost[t1];
                 p1.y = (radius + tube * _cosr[n]) * _sint[t1];
                 p1.z = tube * _sinr[n];
@@ -1095,8 +1099,8 @@ export function createTorusBuffer(shape, faces_limit) {
     }
 
     if (shape.fDphi !== 360)
-        for (var t = 0; t <= tubularSegments; t += tubularSegments) {
-            var tube1 = shape.fRmax, tube2 = shape.fRmin,
+        for (let t = 0; t <= tubularSegments; t += tubularSegments) {
+            let tube1 = shape.fRmax, tube2 = shape.fRmin,
                 d1 = (t > 0) ? 0 : 1, d2 = 1 - d1,
                 skip = (shape.fRmin) > 0 ? 0 : 1,
                 nsign = t > 0 ? 1 : -1;
@@ -1112,31 +1116,32 @@ export function createTorusBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createPolygonBuffer(shape, faces_limit) {
-    var thetaStart = shape.fPhi1,
-        thetaLength = shape.fDphi,
-        radiusSegments = 60;
+    const thetaStart = shape.fPhi1,
+        thetaLength = shape.fDphi;
+    let radiusSegments = 60;
 
     if (shape._typename === "TGeoPgon")
         radiusSegments = shape.fNedges;
     else
         radiusSegments = Math.max(5, Math.round(thetaLength / GradPerSegm));
 
-    var usage = new Int16Array(2 * shape.fNz), numusedlayers = 0, hasrmin = false;
+    const usage = new Int16Array(2 * shape.fNz);
+    let numusedlayers = 0, hasrmin = false;
 
-    for (var layer = 0; layer < shape.fNz; ++layer)
+    for (let layer = 0; layer < shape.fNz; ++layer)
         if (shape.fRmin[layer] > 0) hasrmin = true;
 
     // return very rough estimation, number of faces may be much less
     if (faces_limit < 0) return (hasrmin ? 4 : 2) * radiusSegments * (shape.fNz - 1);
 
     // coordinate of point on cut edge (x,z)
-    var pnts = (thetaLength === 360) ? null : [];
+    const pnts = (thetaLength === 360) ? null : [];
 
     // first analyse levels - if we need to create all of them
-    for (var side = 0; side < 2; ++side) {
-        var rside = (side === 0) ? 'fRmax' : 'fRmin';
+    for (let side = 0; side < 2; ++side) {
+        let rside = (side === 0) ? 'fRmax' : 'fRmin';
 
         for (var layer = 0; layer < shape.fNz; ++layer) {
 
@@ -1170,11 +1175,11 @@ export function createPolygonBuffer(shape, faces_limit) {
         }
     }
 
-    var numfaces = numusedlayers * radiusSegments * 2;
+    let numfaces = numusedlayers * radiusSegments * 2;
     if (shape.fRmin[0] !== shape.fRmax[0]) numfaces += radiusSegments * (hasrmin ? 2 : 1);
     if (shape.fRmin[shape.fNz - 1] !== shape.fRmax[shape.fNz - 1]) numfaces += radiusSegments * (hasrmin ? 2 : 1);
 
-    var cut_faces = null;
+    let cut_faces = null;
 
     if (pnts !== null) {
         if (pnts.length === shape.fNz * 2) {
@@ -1182,7 +1187,7 @@ export function createPolygonBuffer(shape, faces_limit) {
             cut_faces = [];
             for (var layer = shape.fNz - 1; layer > 0; --layer) {
                 if (shape.fZ[layer] === shape.fZ[layer - 1]) continue;
-                var right = 2 * shape.fNz - 1 - layer;
+                const right = 2 * shape.fNz - 1 - layer;
                 cut_faces.push([right, layer - 1, layer]);
                 cut_faces.push([right, right + 1, layer - 1]);
             }
@@ -1195,21 +1200,21 @@ export function createPolygonBuffer(shape, faces_limit) {
         numfaces += cut_faces.length * 2;
     }
 
-    var phi0 = thetaStart * Math.PI / 180, dphi = thetaLength / radiusSegments * Math.PI / 180;
+    const phi0 = thetaStart * Math.PI / 180, dphi = thetaLength / radiusSegments * Math.PI / 180;
 
     // calculate all sin/cos tables in advance
-    var _sin = new Float32Array(radiusSegments + 1),
+    const _sin = new Float32Array(radiusSegments + 1),
         _cos = new Float32Array(radiusSegments + 1);
     for (let seg = 0; seg <= radiusSegments; ++seg) {
         _cos[seg] = Math.cos(phi0 + seg * dphi);
         _sin[seg] = Math.sin(phi0 + seg * dphi);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // add sides
     for (let side = 0; side < 2; ++side) {
-        var rside = (side === 0) ? 'fRmax' : 'fRmin',
+        let rside = (side === 0) ? 'fRmax' : 'fRmin',
             z1 = shape.fZ[0], r1 = shape[rside][0],
             d1 = 1 - side, d2 = side;
 
@@ -1217,11 +1222,11 @@ export function createPolygonBuffer(shape, faces_limit) {
 
             if (usage[layer * 2 + side] === 0) continue;
 
-            var z2 = shape.fZ[layer], r2 = shape[rside][layer],
-                nxy = 1, nz = 0;
+            const z2 = shape.fZ[layer], r2 = shape[rside][layer];
+            let nxy = 1, nz = 0;
 
             if ((r2 !== r1)) {
-                var angle = Math.atan2((r2 - r1), (z2 - z1));
+                const angle = Math.atan2((r2 - r1), (z2 - z1));
                 nxy = Math.cos(angle);
                 nz = Math.sin(angle);
             }
@@ -1245,13 +1250,13 @@ export function createPolygonBuffer(shape, faces_limit) {
     }
 
     // add top/bottom
-    for (var layer = 0; layer < shape.fNz; layer += (shape.fNz - 1)) {
+    for (let layer = 0; layer < shape.fNz; layer += (shape.fNz - 1)) {
 
-        var rmin = shape.fRmin[layer], rmax = shape.fRmax[layer];
+        const rmin = shape.fRmin[layer], rmax = shape.fRmax[layer];
 
         if (rmin === rmax) continue;
 
-        var layerz = shape.fZ[layer],
+        let layerz = shape.fZ[layer],
             d1 = (layer === 0) ? 1 : 0, d2 = 1 - d1,
             normalz = (layer === 0) ? -1 : 1;
 
@@ -1270,10 +1275,10 @@ export function createPolygonBuffer(shape, faces_limit) {
     }
 
     if (cut_faces)
-        for (var seg = 0; seg <= radiusSegments; seg += radiusSegments) {
-            var d1 = (seg === 0) ? 1 : 2, d2 = 3 - d1;
-            for (var n = 0; n < cut_faces.length; ++n) {
-                var a = pnts[cut_faces[n][0]],
+        for (let seg = 0; seg <= radiusSegments; seg += radiusSegments) {
+            let d1 = (seg === 0) ? 1 : 2, d2 = 3 - d1;
+            for (let n = 0; n < cut_faces.length; ++n) {
+                const a = pnts[cut_faces[n][0]],
                     b = pnts[cut_faces[n][d1]],
                     c = pnts[cut_faces[n][d2]];
 
@@ -1288,7 +1293,7 @@ export function createPolygonBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createXtruBuffer(shape, faces_limit) {
     let nfaces = (shape.fNz - 1) * shape.fNvert * 2;
 
@@ -1330,7 +1335,7 @@ export function createXtruBuffer(shape, faces_limit) {
         let z = shape.fZ[layer], scale = shape.fScale[layer],
             x0 = shape.fX0[layer], y0 = shape.fY0[layer];
 
-        for (var n = 0; n < faces.length; ++n) {
+        for (let n = 0; n < faces.length; ++n) {
             let face = faces[n],
                 pnt1 = pnts[face[0]],
                 pnt2 = pnts[face[(layer === 0) ? 2 : 1]],
@@ -1346,21 +1351,22 @@ export function createXtruBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createParaboloidBuffer(shape, faces_limit) {
 
-    var radiusSegments = Math.max(4, Math.round(360 / GradPerSegm)),
+    let radiusSegments = Math.max(4, Math.round(360 / GradPerSegm)),
         heightSegments = 30;
 
     if (faces_limit > 0) {
-        var fact = 2 * radiusSegments * (heightSegments + 1) / faces_limit;
+        const fact = 2 * radiusSegments * (heightSegments + 1) / faces_limit;
         if (fact > 1.) {
             radiusSegments = Math.max(5, Math.floor(radiusSegments / Math.sqrt(fact)));
             heightSegments = Math.max(5, Math.floor(heightSegments / Math.sqrt(fact)));
         }
     }
 
-    var zmin = -shape.fDZ, zmax = shape.fDZ, rmin = shape.fRlo, rmax = shape.fRhi;
+    let zmin = -shape.fDZ, zmax = shape.fDZ;
+    const rmin = shape.fRlo, rmax = shape.fRhi;
 
     // if no radius at -z, find intersection
     if (shape.fA >= 0) {
@@ -1369,29 +1375,29 @@ export function createParaboloidBuffer(shape, faces_limit) {
         if (shape.fB < zmax) zmax = shape.fB;
     }
 
-    var ttmin = Math.atan2(zmin, rmin), ttmax = Math.atan2(zmax, rmax);
+    const ttmin = Math.atan2(zmin, rmin), ttmax = Math.atan2(zmax, rmax);
 
-    var numfaces = (heightSegments + 1) * radiusSegments * 2;
+    let numfaces = (heightSegments + 1) * radiusSegments * 2;
     if (rmin === 0) numfaces -= radiusSegments * 2; // complete layer
     if (rmax === 0) numfaces -= radiusSegments * 2; // complete layer
 
     if (faces_limit < 0) return numfaces;
 
     // calculate all sin/cos tables in advance
-    var _sin = new Float32Array(radiusSegments + 1),
+    const _sin = new Float32Array(radiusSegments + 1),
         _cos = new Float32Array(radiusSegments + 1);
     for (var seg = 0; seg <= radiusSegments; ++seg) {
         _cos[seg] = Math.cos(seg / radiusSegments * 2 * Math.PI);
         _sin[seg] = Math.sin(seg / radiusSegments * 2 * Math.PI);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
-    var lastz = zmin, lastr = 0, lastnxy = 0, lastnz = -1;
+    let lastz = zmin, lastr = 0, lastnxy = 0, lastnz = -1;
 
-    for (var layer = 0; layer <= heightSegments + 1; ++layer) {
+    for (let layer = 0; layer <= heightSegments + 1; ++layer) {
 
-        var layerz = 0, radius = 0, nxy = 0, nz = -1;
+        let layerz = 0, radius = 0, nxy = 0, nz = -1;
 
         if ((layer === 0) && (rmin === 0)) continue;
 
@@ -1411,8 +1417,8 @@ export function createParaboloidBuffer(shape, faces_limit) {
                 radius = 0;
                 break;
             default: {
-                var tt = Math.tan(ttmin + (ttmax - ttmin) * layer / heightSegments);
-                var delta = tt * tt - 4 * shape.fA * shape.fB; // should be always positive (a*b<0)
+                const tt = Math.tan(ttmin + (ttmax - ttmin) * layer / heightSegments);
+                const delta = tt * tt - 4 * shape.fA * shape.fB; // should be always positive (a*b<0)
                 radius = 0.5 * (tt + Math.sqrt(delta)) / shape.fA;
                 if (radius < 1e-6) radius = 0;
                 layerz = radius * tt;
@@ -1422,10 +1428,10 @@ export function createParaboloidBuffer(shape, faces_limit) {
         nxy = shape.fA * radius;
         nz = (shape.fA > 0) ? -1 : 1;
 
-        var skip = 0;
+        let skip = 0;
         if (lastr === 0) skip = 1; else if (radius === 0) skip = 2;
 
-        for (var seg = 0; seg < radiusSegments; ++seg) {
+        for (let seg = 0; seg < radiusSegments; ++seg) {
             creator.AddFace4(radius * _cos[seg], radius * _sin[seg], layerz,
                 lastr * _cos[seg], lastr * _sin[seg], lastz,
                 lastr * _cos[seg + 1], lastr * _sin[seg + 1], lastz,
@@ -1451,16 +1457,16 @@ export function createParaboloidBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 export function createHypeBuffer(shape, faces_limit) {
 
     if ((shape.fTin === 0) && (shape.fTout === 0))
         return createTubeBuffer(shape, faces_limit);
 
-    var radiusSegments = Math.max(4, Math.round(360 / GradPerSegm)),
+    let radiusSegments = Math.max(4, Math.round(360 / GradPerSegm)),
         heightSegments = 30;
 
-    var numfaces = radiusSegments * (heightSegments + 1) * ((shape.fRmin > 0) ? 4 : 2);
+    let numfaces = radiusSegments * (heightSegments + 1) * ((shape.fRmin > 0) ? 4 : 2);
 
     if (faces_limit < 0) return numfaces;
 
@@ -1471,30 +1477,30 @@ export function createHypeBuffer(shape, faces_limit) {
     }
 
     // calculate all sin/cos tables in advance
-    var _sin = new Float32Array(radiusSegments + 1), _cos = new Float32Array(radiusSegments + 1);
-    for (var seg = 0; seg <= radiusSegments; ++seg) {
+    const _sin = new Float32Array(radiusSegments + 1), _cos = new Float32Array(radiusSegments + 1);
+    for (let seg = 0; seg <= radiusSegments; ++seg) {
         _cos[seg] = Math.cos(seg / radiusSegments * 2 * Math.PI);
         _sin[seg] = Math.sin(seg / radiusSegments * 2 * Math.PI);
     }
 
-    var creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
+    const creator = faces_limit ? new PolygonsCreator : new GeometryCreator(numfaces);
 
     // in-out side
-    for (var side = 0; side < 2; ++side) {
+    for (let side = 0; side < 2; ++side) {
         if ((side > 0) && (shape.fRmin <= 0)) break;
 
-        var r0 = (side > 0) ? shape.fRmin : shape.fRmax,
+        let r0 = (side > 0) ? shape.fRmin : shape.fRmax,
             tsq = (side > 0) ? shape.fTinsq : shape.fToutsq,
             d1 = 1 - side, d2 = 1 - d1;
 
         // vertical layers
-        for (var layer = 0; layer < heightSegments; ++layer) {
-            var z1 = -shape.fDz + layer / heightSegments * 2 * shape.fDz,
+        for (let layer = 0; layer < heightSegments; ++layer) {
+            let z1 = -shape.fDz + layer / heightSegments * 2 * shape.fDz,
                 z2 = -shape.fDz + (layer + 1) / heightSegments * 2 * shape.fDz,
                 r1 = Math.sqrt(r0 * r0 + tsq * z1 * z1),
                 r2 = Math.sqrt(r0 * r0 + tsq * z2 * z2);
 
-            for (var seg = 0; seg < radiusSegments; ++seg) {
+            for (let seg = 0; seg < radiusSegments; ++seg) {
                 creator.AddFace4(r1 * _cos[seg + d1], r1 * _sin[seg + d1], z1,
                     r2 * _cos[seg + d1], r2 * _sin[seg + d1], z2,
                     r2 * _cos[seg + d2], r2 * _sin[seg + d2], z2,
@@ -1505,8 +1511,8 @@ export function createHypeBuffer(shape, faces_limit) {
     }
 
     // add caps
-    for (var layer = 0; layer < 2; ++layer) {
-        var z = (layer === 0) ? shape.fDz : -shape.fDz,
+    for (let layer = 0; layer < 2; ++layer) {
+        let z = (layer === 0) ? shape.fDz : -shape.fDz,
             r1 = Math.sqrt(shape.fRmax * shape.fRmax + shape.fToutsq * z * z),
             r2 = (shape.fRmin > 0) ? Math.sqrt(shape.fRmin * shape.fRmin + shape.fTinsq * z * z) : 0,
             skip = (shape.fRmin > 0) ? 0 : 1,
@@ -1524,12 +1530,12 @@ export function createHypeBuffer(shape, faces_limit) {
     return creator.Create();
 }
 
-/** @memberOf GEO */
+/**  */
 function createMatrix(matrix) {
 
     if (!matrix) return null;
 
-    var translation = null, rotation = null, scale = null;
+    let translation = null, rotation = null, scale = null;
 
     switch (matrix._typename) {
         case 'TGeoTranslation':
@@ -1560,7 +1566,7 @@ function createMatrix(matrix) {
 
     if (!translation && !rotation && !scale) return null;
 
-    var res = new THREE.Matrix4();
+    const res = new THREE.Matrix4();
 
     if (rotation)
         res.set(rotation[0], rotation[1], rotation[2], 0,
@@ -1577,12 +1583,12 @@ function createMatrix(matrix) {
     return res;
 }
 
-/** @memberOf GEO */
+/**  */
 function getNodeMatrix(kind, node) {
     // returns transformation matrix for the node
     // created after node visibility flag is checked and volume cut is performed
 
-    var matrix = null;
+    let matrix = null;
 
     if (kind === 1) {
         // special handling for EVE nodes
@@ -1616,7 +1622,7 @@ function getNodeMatrix(kind, node) {
             case 'TGeoPatternParaX':
             case 'TGeoPatternParaY':
             case 'TGeoPatternParaZ':
-                var _shift = node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep;
+                const _shift = node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep;
 
                 matrix = new THREE.Matrix4();
 
@@ -1634,7 +1640,7 @@ function getNodeMatrix(kind, node) {
                 break;
 
             case 'TGeoPatternCylPhi':
-                var phi = (Math.PI / 180) * (node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep),
+                const phi = (Math.PI / 180) * (node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep),
                     _cos = Math.cos(phi), _sin = Math.sin(phi);
 
                 matrix = new THREE.Matrix4();
@@ -1651,7 +1657,7 @@ function getNodeMatrix(kind, node) {
                 break;
 
             case 'TGeoPatternTrapZ':
-                var dz = node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep;
+                const dz = node.fFinder.fStart + (node.fIndex + 0.5) * node.fFinder.fStep;
                 matrix = new THREE.Matrix4();
                 matrix.setPosition(new THREE.Vector3(node.fFinder.fTxz * dz, node.fFinder.fTyz * dz, dz));
                 break;
@@ -1665,7 +1671,7 @@ function getNodeMatrix(kind, node) {
     return matrix;
 }
 
-/** @memberOf GEO */
+/**  */
 function createComposite(shape, faces_limit) {
 
     /*
@@ -1691,13 +1697,13 @@ function createComposite(shape, faces_limit) {
         return createGeometry(shape.fNode.fLeft, -10) +
             createGeometry(shape.fNode.fRight, -10);
 
-    var geom1, geom2, bsp1, bsp2, return_bsp = false,
-        matrix1 = createMatrix(shape.fNode.fLeftMat),
+    let geom1, geom2, bsp1, bsp2, return_bsp = false;
+    const matrix1 = createMatrix(shape.fNode.fLeftMat),
         matrix2 = createMatrix(shape.fNode.fRightMat);
 
     // seems to be, IE has smaller stack for functions calls and ThreeCSG fails with large shapes
     //if (faces_limit === 0) faces_limit = (JSROOT.browser && JSROOT.browser.isIE) ? 2000 : 4000;
-    if(faces_limit ===0) faces_limit = 4000;
+    if (faces_limit === 0) faces_limit = 4000;
     else return_bsp = true;
 
     if (matrix1 && (matrix1.determinant() < -0.9))
@@ -1709,7 +1715,7 @@ function createComposite(shape, faces_limit) {
     geom1 = createGeometry(shape.fNode.fLeft, faces_limit);
     if (!geom1) return null;
 
-    var n1 = numGeometryFaces(geom1), n2 = 0;
+    let n1 = numGeometryFaces(geom1), n2 = 0;
     if (geom1._exceed_limit) n1 += faces_limit;
 
     if (n1 < faces_limit) {
@@ -1760,12 +1766,12 @@ function createComposite(shape, faces_limit) {
     return return_bsp ? {polygons: bsp1.toPolygons()} : bsp1.toBufferGeometry();
 }
 
-/** @memberOf GEO */
+/**  */
 function projectGeometry(geom, matrix, projection, position, flippedMesh) {
 
     if (!geom.boundingBox) geom.computeBoundingBox();
 
-    var box = geom.boundingBox.clone();
+    const box = geom.boundingBox.clone();
 
     box.applyMatrix4(matrix);
 
@@ -1776,11 +1782,11 @@ function projectGeometry(geom, matrix, projection, position, flippedMesh) {
         return null; // not interesting
     }
 
-    var bsp1 = new ThreeBSP.Geometry(geom, matrix, 0, flippedMesh),
+    const bsp1 = new ThreeBSP.Geometry(geom, matrix, 0, flippedMesh),
         sizex = 2 * Math.max(Math.abs(box.min.x), Math.abs(box.max.x)),
         sizey = 2 * Math.max(Math.abs(box.min.y), Math.abs(box.max.y)),
-        sizez = 2 * Math.max(Math.abs(box.min.z), Math.abs(box.max.z)),
-        size = 10000;
+        sizez = 2 * Math.max(Math.abs(box.min.z), Math.abs(box.max.z));
+    let size = 10000;
 
     switch (projection) {
         case "x":
@@ -1794,7 +1800,7 @@ function projectGeometry(geom, matrix, projection, position, flippedMesh) {
             break;
     }
 
-    var bsp2 = ThreeBSP.CreateNormal(projection, position, size);
+    const bsp2 = ThreeBSP.CreateNormal(projection, position, size);
 
     bsp1.cut_from_plane(bsp2);
 
@@ -1804,7 +1810,7 @@ function projectGeometry(geom, matrix, projection, position, flippedMesh) {
 
 /**
  * Creates geometry model for the provided shape
- * @memberOf GEO
+ *
  *
  * If @par limit === 0 (or undefined) returns THREE.BufferGeometry
  * If @par limit < 0 just returns estimated number of faces
@@ -1852,7 +1858,7 @@ export function createGeometry(shape, limit) {
             case "TGeoShapeAssembly":
                 break;
             case "TGeoScaledShape": {
-                var res = createGeometry(shape.fShape, limit);
+                const res = createGeometry(shape.fShape, limit);
                 if (shape.fScale && (limit >= 0) && (typeof res === 'object') && (typeof res.scale === 'function'))
                     res.scale(shape.fScale.fScale[0], shape.fScale.fScale[1], shape.fScale.fScale[2]);
                 return res;
@@ -1861,7 +1867,7 @@ export function createGeometry(shape, limit) {
                 warn('unsupported shape type ' + shape._typename);
         }
     } catch (e) {
-        var place = "";
+        let place = "";
         if (e.stack !== undefined) {
             place = e.stack.split("\n")[0];
             if (place.indexOf(e.message) >= 0) place = e.stack.split("\n")[1];
@@ -1875,7 +1881,7 @@ export function createGeometry(shape, limit) {
 
 /** Provides info about geo object, used for tooltip info */
 function provideInfo(obj) {
-    var info = [], shape = null;
+    let info = [], shape = null;
 
     if (obj.fVolume !== undefined) shape = obj.fVolume.fShape; else if (obj.fShape !== undefined) shape = obj.fShape; else if ((obj.fShapeBits !== undefined) && (obj.fShapeId !== undefined)) shape = obj;
 
@@ -1884,8 +1890,8 @@ function provideInfo(obj) {
         return info;
     }
 
-    var sz = Math.max(shape.fDX, shape.fDY, shape.fDZ);
-    var useexp = (sz > 1e7) || (sz < 1e-7);
+    const sz = Math.max(shape.fDX, shape.fDY, shape.fDZ);
+    const useexp = (sz > 1e7) || (sz < 1e-7);
 
     function conv(v) {
         if (v === undefined) return "???";
@@ -1963,9 +1969,9 @@ function provideInfo(obj) {
     return info;
 }
 
-/** @memberOf GEO */
-function CreateProjectionMatrix(camera) {
-    var cameraProjectionMatrix = new THREE.Matrix4();
+/**  */
+function createProjectionMatrix(camera) {
+    const cameraProjectionMatrix = new THREE.Matrix4();
 
     camera.updateMatrixWorld();
     camera.matrixWorldInverse.getInverse(camera.matrixWorld);
@@ -1974,14 +1980,14 @@ function CreateProjectionMatrix(camera) {
     return cameraProjectionMatrix;
 }
 
-/** @memberOf GEO */
-function CreateFrustum(source) {
+/**  */
+function createFrustum(source) {
     if (!source) return null;
 
     if (source instanceof THREE.PerspectiveCamera)
-        source = CreateProjectionMatrix(source);
+        source = createProjectionMatrix(source);
 
-    var frustum = new THREE.Frustum();
+    const frustum = new THREE.Frustum();
     frustum.setFromMatrix(source);
 
     frustum.corners = new Float32Array([
@@ -1999,7 +2005,8 @@ function CreateFrustum(source) {
     frustum.test = new THREE.Vector3(0, 0, 0);
 
     frustum.CheckShape = function (matrix, shape) {
-        var pnt = this.test, len = this.corners.length, corners = this.corners, i;
+        const pnt = this.test, len = this.corners.length, corners = this.corners;
+        let i;
 
         for (i = 0; i < len; i += 3) {
             pnt.x = corners[i] * shape.fDX;
@@ -2012,7 +2019,8 @@ function CreateFrustum(source) {
     };
 
     frustum.CheckBox = function (box) {
-        var pnt = this.test, cnt = 0;
+        const pnt = this.test;
+        let cnt = 0;
         pnt.set(box.min.x, box.min.y, box.min.z);
         if (this.containsPoint(pnt)) cnt++;
         pnt.set(box.min.x, box.min.y, box.max.z);
@@ -2035,17 +2043,17 @@ function CreateFrustum(source) {
     return frustum;
 }
 
-/** @memberOf GEO */
-function VisibleByCamera(camera, matrix, shape) {
-    var frustum = new THREE.Frustum();
-    var cameraProjectionMatrix = new THREE.Matrix4();
+/**  */
+function visibleByCamera(camera, matrix, shape) {
+    const frustum = new THREE.Frustum();
+    const cameraProjectionMatrix = new THREE.Matrix4();
 
     camera.updateMatrixWorld();
     camera.matrixWorldInverse.getInverse(camera.matrixWorld);
     cameraProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     frustum.setFromMatrix(cameraProjectionMatrix);
 
-    var corners = [
+    const corners = [
         new THREE.Vector3(shape.fDX / 2.0, shape.fDY / 2.0, shape.fDZ / 2.0),
         new THREE.Vector3(shape.fDX / 2.0, shape.fDY / 2.0, -shape.fDZ / 2.0),
         new THREE.Vector3(shape.fDX / 2.0, -shape.fDY / 2.0, shape.fDZ / 2.0),
@@ -2055,14 +2063,14 @@ function VisibleByCamera(camera, matrix, shape) {
         new THREE.Vector3(-shape.fDX / 2.0, -shape.fDY / 2.0, shape.fDZ / 2.0),
         new THREE.Vector3(-shape.fDX / 2.0, -shape.fDY / 2.0, -shape.fDZ / 2.0)
     ];
-    for (var i = 0; i < corners.length; i++) {
+    for (let i = 0; i < corners.length; i++) {
         if (frustum.containsPoint(corners[i].applyMatrix4(matrix))) return true;
     }
 
     return false;
 }
 
-/** @memberOf GEO */
+/**  */
 function numGeometryFaces(geom) {
     if (!geom) return 0;
 
@@ -2070,7 +2078,7 @@ function numGeometryFaces(geom) {
         return geom.tree.numPolygons();
 
     if (geom.type === 'BufferGeometry') {
-        var attr = geom.getAttribute('position');
+        const attr = geom.getAttribute('position');
         return attr ? attr.count / 3 : 0;
     }
 
@@ -2080,7 +2088,7 @@ function numGeometryFaces(geom) {
     return geom.faces.length;
 }
 
-/** @memberOf GEO */
+/**  */
 function numGeometryVertices(geom) {
     if (!geom) return 0;
 
@@ -2088,7 +2096,7 @@ function numGeometryVertices(geom) {
         return geom.tree.numPolygons() * 3;
 
     if (geom.type === 'BufferGeometry') {
-        var attr = geom.getAttribute('position');
+        const attr = geom.getAttribute('position');
         return attr ? attr.count : 0;
     }
 
@@ -2098,25 +2106,25 @@ function numGeometryVertices(geom) {
 }
 
 /** Compares two stacks. Returns length where stacks are the same
- * @memberOf GEO
+ *
  * @private */
-function CompareStacks(stack1, stack2) {
+function compareStacks(stack1, stack2) {
     if (!stack1 || !stack2) return 0;
     if (stack1 === stack2) return stack1.length;
-    var len = Math.min(stack1.length, stack2.length);
-    for (var k = 0; k < len; ++k)
+    const len = Math.min(stack1.length, stack2.length);
+    for (let k = 0; k < len; ++k)
         if (stack1[k] !== stack2[k]) return k;
     return len;
 }
 
 /** Checks if two stack arrays are identical
- * @memberOf GEO
+ *
  * @private */
-function IsSameStack(stack1, stack2) {
+function isSameStack(stack1, stack2) {
     if (!stack1 || !stack2) return false;
     if (stack1 === stack2) return true;
     if (stack1.length !== stack2.length) return false;
-    for (var k = 0; k < stack1.length; ++k)
+    for (let k = 0; k < stack1.length; ++k)
         if (stack1[k] !== stack2[k]) return false;
     return true;
 }
@@ -2134,7 +2142,7 @@ class ClonedNodes {
 
         if (obj) {
             if (obj.$geoh) this.toplevel = false;
-            this.CreateClones(obj);
+            this.createClones(obj);
         } else if (clones) this.nodes = clones;
     };
 }
@@ -2147,13 +2155,13 @@ ClonedNodes = function (obj, clones) {
 
     if (obj) {
         if (obj.$geoh) this.toplevel = false;
-        this.CreateClones(obj);
+        this.createClones(obj);
     } else if (clones) this.nodes = clones;
 };
 
-ClonedNodes.prototype.GetNodeShape = function (indx) {
+ClonedNodes.prototype.getNodeShape = function (indx) {
     if (!this.origin || !this.nodes) return null;
-    var obj = this.origin[indx], clone = this.nodes[indx];
+    const obj = this.origin[indx], clone = this.nodes[indx];
     if (!obj || !clone) return null;
     if (clone.kind === 0) {
         if (obj.fVolume) return obj.fVolume.fShape;
@@ -2192,7 +2200,7 @@ ClonedNodes.prototype.Cleanup = function (drawnodes, drawshapes) {
 
 };
 
-ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
+ClonedNodes.prototype.createClones = function (obj, sublevel, kind) {
     if (!sublevel) {
         this.origin = [];
         sublevel = 1;
@@ -2213,20 +2221,20 @@ ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
 
     if (chlds !== null) {
         CheckDuplicates(obj, chlds);
-        for (var i = 0; i < chlds.length; ++i)
-            this.CreateClones(chlds[i], sublevel + 1, kind);
+        for (let i = 0; i < chlds.length; ++i)
+            this.createClones(chlds[i], sublevel + 1, kind);
     }
 
     if (sublevel > 1) return;
 
     this.nodes = [];
 
-    var sortarr = [];
+    const sortarr = [];
 
     // first create nodes objects
     for (var n = 0; n < this.origin.length; ++n) {
         var obj = this.origin[n];
-        var node = {id: n, kind: kind, vol: 0, nfaces: 0, numvischld: 1, idshift: 0};
+        const node = {id: n, kind: kind, vol: 0, nfaces: 0, numvischld: 1, idshift: 0};
         this.nodes.push(node);
         sortarr.push(node); // array use to produce sortmap
     }
@@ -2249,7 +2257,7 @@ ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
         if (matrix) {
             clone.matrix = matrix.elements; // take only matrix elements, matrix will be constructed in worker
             if (clone.matrix[0] === 1) {
-                var issimple = true;
+                let issimple = true;
                 for (let k = 1; (k < clone.matrix.length) && issimple; ++k)
                     issimple = (clone.matrix[k] === ((k === 5) || (k === 10) || (k === 15) ? 1 : 0));
                 if (issimple) delete clone.matrix;
@@ -2294,15 +2302,16 @@ ClonedNodes.prototype.CreateClones = function (obj, sublevel, kind) {
 };
 
 
-ClonedNodes.prototype.MarkVisisble = function (on_screen, copy_bits, cloning) {
+ClonedNodes.prototype.markVisisble = function (on_screen, copy_bits, cloning) {
     if (!this.nodes) return 0;
 
-    var res = 0, simple_copy = cloning && (cloning.length === this.nodes.length);
+    let res = 0;
+    const simple_copy = cloning && (cloning.length === this.nodes.length);
 
     if (!simple_copy && !this.origin) return 0;
 
-    for (var n = 0; n < this.nodes.length; ++n) {
-        var clone = this.nodes[n];
+    for (let n = 0; n < this.nodes.length; ++n) {
+        const clone = this.nodes[n];
 
         clone.vis = false;
         clone.numvischld = 1; // reset vis counter, will be filled with next scan
@@ -2316,22 +2325,22 @@ ClonedNodes.prototype.MarkVisisble = function (on_screen, copy_bits, cloning) {
             continue;
         }
 
-        var obj = this.origin[n];
+        const obj = this.origin[n];
 
         if (clone.kind === 0) {
             if (obj.fVolume) {
                 if (on_screen) {
-                    clone.vis = TestBit(obj.fVolume, BITS.kVisOnScreen);
+                    clone.vis = testBit(obj.fVolume, BITS.kVisOnScreen);
                     if (copy_bits) {
                         SetBit(obj.fVolume, BITS.kVisNone, false);
                         SetBit(obj.fVolume, BITS.kVisThis, clone.vis);
                         SetBit(obj.fVolume, BITS.kVisDaughters, true);
                     }
                 } else {
-                    clone.vis = !TestBit(obj.fVolume, BITS.kVisNone) &&
-                        TestBit(obj.fVolume, BITS.kVisThis) && !obj.fFinder;
-                    if (!TestBit(obj.fVolume, BITS.kVisDaughters))
-                        clone.depth = TestBit(obj.fVolume, BITS.kVisOneLevel) ? 1 : 0;
+                    clone.vis = !testBit(obj.fVolume, BITS.kVisNone) &&
+                        testBit(obj.fVolume, BITS.kVisThis) && !obj.fFinder;
+                    if (!testBit(obj.fVolume, BITS.kVisDaughters))
+                        clone.depth = testBit(obj.fVolume, BITS.kVisOneLevel) ? 1 : 0;
                 }
             }
         } else {
@@ -2350,18 +2359,18 @@ ClonedNodes.prototype.MarkVisisble = function (on_screen, copy_bits, cloning) {
     return res;
 };
 
-ClonedNodes.prototype.GetVisibleFlags = function () {
+ClonedNodes.prototype.getVisibleFlags = function () {
     // function extract only visibility flags, used to transfer them to the worker
-    var res = [];
-    for (var n = 0; n < this.nodes.length; ++n) {
-        var elem = {vis: this.nodes[n].vis};
+    const res = [];
+    for (let n = 0; n < this.nodes.length; ++n) {
+        const elem = {vis: this.nodes[n].vis};
         if ('depth' in this.nodes[n]) elem.depth = this.nodes[n].depth;
         res.push(elem);
     }
     return res;
 };
 
-ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
+ClonedNodes.prototype.scanVisible = function (arg, vislvl) {
     // Scan visible nodes in hierarchy, starting from nodeid
     // Each entry in hierarchy get its unique id, which is not changed with visibility flags
 
@@ -2375,13 +2384,13 @@ ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
         arg.counter = 0; // sequence ID of the node, used to identify it later
         arg.last = 0;
         arg.CopyStack = function (factor) {
-            var entry = {
+            const entry = {
                 nodeid: this.nodeid,
                 seqid: this.counter,
                 stack: (this.last > 10) ? new Int32Array(this.last) : new Array(this.last)
             };
             if (factor) entry.factor = factor; // factor used to indicate importance of entry, will be build as first
-            for (var n = 0; n < this.last; ++n) entry.stack[n] = this.stack[n + 1]; // copy stack
+            for (let n = 0; n < this.last; ++n) entry.stack[n] = this.stack[n + 1]; // copy stack
             return entry;
         };
 
@@ -2394,13 +2403,14 @@ ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
         }
     }
 
-    var res = 0, node = this.nodes[arg.nodeid];
+    let res = 0;
+    const node = this.nodes[arg.nodeid];
 
     if (arg.domatrix) {
         if (!arg.mpool[arg.last + 1])
             arg.mpool[arg.last + 1] = new THREE.Matrix4();
 
-        var prnt = (arg.last > 0) ? arg.matrices[arg.last - 1] : new THREE.Matrix4();
+        const prnt = (arg.last > 0) ? arg.matrices[arg.last - 1] : new THREE.Matrix4();
         if (node.matrix) {
             arg.matrices[arg.last] = arg.mpool[arg.last].fromArray(prnt.elements);
             arg.matrices[arg.last].multiply(arg.mpool[arg.last + 1].fromArray(node.matrix));
@@ -2418,15 +2428,16 @@ ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
     if ((node.depth !== undefined) && (vislvl > node.depth)) vislvl = node.depth;
 
     //if (arg.last > arg.stack.length - 2)
-    //   throw 'ScanVisible: stack capacity ' + arg.stack.length + ' is not enough';
+    //   throw 'scanVisible: stack capacity ' + arg.stack.length + ' is not enough';
 
     if (node.chlds && (node.numvischld > 0)) {
-        var currid = arg.counter, numvischld = 0;
+        const currid = arg.counter;
+        let numvischld = 0;
         arg.last++;
-        for (var i = 0; i < node.chlds.length; ++i) {
+        for (let i = 0; i < node.chlds.length; ++i) {
             arg.nodeid = node.chlds[i];
             arg.stack[arg.last] = i; // in the stack one store index of child, it is path in the hierarchy
-            numvischld += this.ScanVisible(arg, vislvl - 1);
+            numvischld += this.scanVisible(arg, vislvl - 1);
         }
         arg.last--;
         res += numvischld;
@@ -2454,18 +2465,18 @@ ClonedNodes.prototype.ScanVisible = function (arg, vislvl) {
 /** Return node name with given id.
  * Either original object or description is used
  * @private */
-ClonedNodes.prototype.GetNodeName = function (nodeid) {
+ClonedNodes.prototype.getNodeName = function (nodeid) {
     if (this.origin) {
-        var obj = this.origin[nodeid];
-        return obj ? ObjectName(obj) : "";
+        const obj = this.origin[nodeid];
+        return obj ? objectName(obj) : "";
     }
-    var node = this.nodes[nodeid];
+    const node = this.nodes[nodeid];
     return node ? node.name : "";
 };
 
 ClonedNodes.prototype.ResolveStack = function (stack, withmatrix) {
 
-    var res = {id: 0, obj: null, node: this.nodes[0], name: this.name_prefix};
+    const res = {id: 0, obj: null, node: this.nodes[0], name: this.name_prefix};
 
     // if (!this.toplevel || (this.nodes.length === 1) || (res.node.kind === 1)) res.name = "";
 
@@ -2478,17 +2489,17 @@ ClonedNodes.prototype.ResolveStack = function (stack, withmatrix) {
         res.obj = this.origin[0];
 
     //if (!res.name)
-    //   res.name = this.GetNodeName(0);
+    //   res.name = this.getNodeName(0);
 
     if (stack)
-        for (var lvl = 0; lvl < stack.length; ++lvl) {
+        for (let lvl = 0; lvl < stack.length; ++lvl) {
             res.id = res.node.chlds[stack[lvl]];
             res.node = this.nodes[res.id];
 
             if (this.origin)
                 res.obj = this.origin[res.id];
 
-            var subname = this.GetNodeName(res.id);
+            const subname = this.getNodeName(res.id);
             if (subname) {
                 if (res.name) res.name += "/";
                 res.name += subname;
@@ -2503,19 +2514,19 @@ ClonedNodes.prototype.ResolveStack = function (stack, withmatrix) {
 
 /** Create stack array based on nodes ids array.
  * Ids list should correspond to existing nodes hierarchy */
-ClonedNodes.prototype.MakeStackByIds = function (ids) {
-    var stack = [];
+ClonedNodes.prototype.makeStackByIds = function (ids) {
+    const stack = [];
 
     if (ids[0] !== 0) {
         console.error('wrong ids - first should be 0');
         return null;
     }
 
-    var node = this.nodes[0];
+    let node = this.nodes[0];
 
-    for (var k = 1; k < ids.length; ++k) {
-        var nodeid = ids[k];
-        var chindx = node.chlds.indexOf(nodeid);
+    for (let k = 1; k < ids.length; ++k) {
+        const nodeid = ids[k];
+        const chindx = node.chlds.indexOf(nodeid);
         if (chindx < 0) {
             console.error('wrong nodes ids ' + ids[k] + ' is not child of ' + ids[k - 1]);
             return null;
@@ -2529,13 +2540,13 @@ ClonedNodes.prototype.MakeStackByIds = function (ids) {
 };
 
 /** Returns true if stack includes at any place provided nodeid */
-ClonedNodes.prototype.IsNodeInStack = function (nodeid, stack) {
+ClonedNodes.prototype.isNodeInStack = function (nodeid, stack) {
 
     if (!nodeid) return true;
 
-    var node = this.nodes[0], id = 0;
+    let node = this.nodes[0], id = 0;
 
-    for (var lvl = 0; lvl < stack.length; ++lvl) {
+    for (let lvl = 0; lvl < stack.length; ++lvl) {
         id = node.chlds[stack[lvl]];
         if (id === nodeid) return true;
         node = this.nodes[id];
@@ -2545,19 +2556,21 @@ ClonedNodes.prototype.IsNodeInStack = function (nodeid, stack) {
 };
 
 /** find stack by name which include names of all parents */
-ClonedNodes.prototype.FindStackByName = function (fullname) {
+ClonedNodes.prototype.findStackByName = function (fullname) {
 
-    var names = fullname.split('/'), currid = 0, stack = [];
+    const names = fullname.split('/');
+    let currid = 0;
+    const stack = [];
 
-    if (this.GetNodeName(currid) !== names[0]) return null;
+    if (this.getNodeName(currid) !== names[0]) return null;
 
-    for (var n = 1; n < names.length; ++n) {
-        var node = this.nodes[currid];
+    for (let n = 1; n < names.length; ++n) {
+        const node = this.nodes[currid];
         if (!node.chlds) return null;
 
-        for (var k = 0; k < node.chlds.length; ++k) {
-            var chldid = node.chlds[k];
-            if (this.GetNodeName(chldid) === names[n]) {
+        for (let k = 0; k < node.chlds.length; ++k) {
+            const chldid = node.chlds[k];
+            if (this.getNodeName(chldid) === names[n]) {
                 stack.push(k);
                 currid = chldid;
                 break;
@@ -2572,10 +2585,10 @@ ClonedNodes.prototype.FindStackByName = function (fullname) {
 };
 
 function createRootColors() {
-    var colorMap = ['white', 'black', 'red', 'green', 'blue', 'yellow', 'magenta', 'cyan', 'rgb(89,212,84)', 'rgb(89,84,217)', 'white'];
+    const colorMap = ['white', 'black', 'red', 'green', 'blue', 'yellow', 'magenta', 'cyan', 'rgb(89,212,84)', 'rgb(89,84,217)', 'white'];
     colorMap[110] = 'white';
 
-    var moreCol = [
+    const moreCol = [
         {
             col: 11,
             str: 'c1b7ad4d4d4d6666668080809a9a9ab3b3b3cdcdcde6e6e6f3f3f3cdc8accdc8acc3c0a9bbb6a4b3a697b8a49cae9a8d9c8f83886657b1cfc885c3a48aa9a1839f8daebdc87b8f9a768a926983976e7b857d9ad280809caca6c0d4cf88dfbb88bd9f83c89a7dc08378cf5f61ac8f94a6787b946971d45a549300ff7b00ff6300ff4b00ff3300ff1b00ff0300ff0014ff002cff0044ff005cff0074ff008cff00a4ff00bcff00d4ff00ecff00fffd00ffe500ffcd00ffb500ff9d00ff8500ff6d00ff5500ff3d00ff2600ff0e0aff0022ff003aff0052ff006aff0082ff009aff00b1ff00c9ff00e1ff00f9ff00ffef00ffd700ffbf00ffa700ff8f00ff7700ff6000ff4800ff3000ff1800ff0000'
@@ -2596,10 +2609,10 @@ function createRootColors() {
         },
         {col: 920, str: 'cdcdcd9a9a9a666666333333'}];
 
-    for (var indx = 0; indx < moreCol.length; ++indx) {
-        var entry = moreCol[indx];
-        for (var n = 0; n < entry.str.length; n += 6) {
-            var num = parseInt(entry.col) + parseInt(n / 6);
+    for (let indx = 0; indx < moreCol.length; ++indx) {
+        const entry = moreCol[indx];
+        for (let n = 0; n < entry.str.length; n += 6) {
+            const num = parseInt(entry.col) + parseInt(n / 6);
             colorMap[num] = 'rgb(' + parseInt("0x" + entry.str.slice(n, n + 2)) + "," + parseInt("0x" + entry.str.slice(n + 2, n + 4)) + "," + parseInt("0x" + entry.str.slice(n + 4, n + 6)) + ")";
         }
     }
@@ -2614,12 +2627,12 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
     // function return different properties for specified node
     // Only if node visible, material will be created
 
-    var clone = this.nodes[entry.nodeid];
-    var visible = true;
+    const clone = this.nodes[entry.nodeid];
+    const visible = true;
 
     if (clone.kind === 2) {
-        var prop = {name: clone.name, nname: clone.name, shape: null, material: null, chlds: null};
-        var _opacity = entry.opacity;
+        let prop = {name: clone.name, nname: clone.name, shape: null, material: null, chlds: null};
+        let _opacity = entry.opacity;
         prop.fillcolor = new THREE.Color(entry.color ? "rgb(" + entry.color + ")" : "blue");
         prop.material = new THREE.MeshLambertMaterial({
             transparent: _opacity < 1,
@@ -2637,14 +2650,14 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
         return null;
     }
 
-    var node = this.origin[entry.nodeid];
+    const node = this.origin[entry.nodeid];
 
     if (clone.kind === 1) {
         // special handling for EVE nodes
 
-        var prop = {
-            name: ObjectName(node),
-            nname: ObjectName(node),
+        let prop = {
+            name: objectName(node),
+            nname: objectName(node),
             shape: node.fShape,
             material: null,
             chlds: null
@@ -2653,7 +2666,7 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
         if (node.fElements !== null) prop.chlds = node.fElements.arr;
 
         if (visible) {
-            var _opacity = Math.min(1, node.fRGBA[3]);
+            let _opacity = Math.min(1, node.fRGBA[3]);
             prop.fillcolor = new THREE.Color(node.fRGBA[0], node.fRGBA[1], node.fRGBA[2]);
             prop.material = new THREE.MeshLambertMaterial({
                 transparent: _opacity < 1,
@@ -2667,11 +2680,11 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
         return prop;
     }
 
-    var volume = node.fVolume;
+    const volume = node.fVolume;
 
-    var prop = {
-        name: ObjectName(volume),
-        nname: ObjectName(node),
+    let prop = {
+        name: objectName(volume),
+        nname: objectName(node),
         volume: node.fVolume,
         shape: volume.fShape,
         material: null,
@@ -2683,15 +2696,15 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
     if (volume) prop.linewidth = volume.fLineWidth;
 
     if (visible) {
-        var _opacity = 1.0;
+        let _opacity = 1.0;
         if ((volume.fFillColor > 1) && (volume.fLineColor === 1))
             prop.fillcolor = colors[volume.fFillColor];
         else if (volume.fLineColor >= 0)
             prop.fillcolor = colors[volume.fLineColor];
 
         if (volume.fMedium && volume.fMedium.fMaterial) {
-            var fillstyle = volume.fMedium.fMaterial.fFillStyle;
-            var transparency = (fillstyle < 3000 || fillstyle > 3100) ? 0 : fillstyle - 3000;
+            const fillstyle = volume.fMedium.fMaterial.fFillStyle;
+            const transparency = (fillstyle < 3000 || fillstyle > 3100) ? 0 : fillstyle - 3000;
             if (transparency > 0)
                 _opacity = (100.0 - transparency) / 100.0;
             if (prop.fillcolor === undefined)
@@ -2713,23 +2726,23 @@ ClonedNodes.prototype.getDrawEntryProperties = function (entry) {
     return prop;
 };
 
-ClonedNodes.prototype.CreateObject3D = function (stack, toplevel, options) {
+ClonedNodes.prototype.createObject3D = function (stack, toplevel, options) {
     // create hierarchy of Object3D for given stack entry
     // such hierarchy repeats hierarchy of TGeoNodes and set matrix for the objects drawing
     // also set renderOrder, required to handle transparency
 
-    var node = this.nodes[0], three_prnt = toplevel, draw_depth = 0,
-        force = (typeof options == 'object') || (options === 'force');
+    let node = this.nodes[0], three_prnt = toplevel, draw_depth = 0;
+    const force = (typeof options == 'object') || (options === 'force');
 
-    for (var lvl = 0; lvl <= stack.length; ++lvl) {
-        var nchld = (lvl > 0) ? stack[lvl - 1] : 0;
+    for (let lvl = 0; lvl <= stack.length; ++lvl) {
+        const nchld = (lvl > 0) ? stack[lvl - 1] : 0;
         // extract current node
         if (lvl > 0) node = this.nodes[node.chlds[nchld]];
 
-        var obj3d = undefined;
+        let obj3d = undefined;
 
         if (three_prnt.children)
-            for (var i = 0; i < three_prnt.children.length; ++i) {
+            for (let i = 0; i < three_prnt.children.length; ++i) {
                 if (three_prnt.children[i].nchld === nchld) {
                     obj3d = three_prnt.children[i];
                     break;
@@ -2772,16 +2785,16 @@ ClonedNodes.prototype.CreateObject3D = function (stack, toplevel, options) {
     }
 
     if ((options === 'mesh') || (options === 'delete_mesh')) {
-        var mesh = null;
+        let mesh = null;
         if (three_prnt)
-            for (var n = 0; (n < three_prnt.children.length) && !mesh; ++n) {
-                var chld = three_prnt.children[n];
+            for (let n = 0; (n < three_prnt.children.length) && !mesh; ++n) {
+                const chld = three_prnt.children[n];
                 if ((chld.type === 'Mesh') && (chld.nchld === undefined)) mesh = chld;
             }
 
         if ((options === 'mesh') || !mesh) return mesh;
 
-        var res = three_prnt;
+        const res = three_prnt;
         while (mesh && (mesh !== toplevel)) {
             three_prnt = mesh.parent;
             three_prnt.remove(mesh);
@@ -2801,17 +2814,17 @@ ClonedNodes.prototype.CreateObject3D = function (stack, toplevel, options) {
 
 ClonedNodes.prototype.GetVolumeBoundary = function (viscnt, facelimit, nodeslimit) {
 
-    var result = {min: 0, max: 1, sortidcut: 0};
+    const result = {min: 0, max: 1, sortidcut: 0};
 
     if (!this.sortmap) {
         console.error('sorting map do not exist');
         return result;
     }
 
-    var maxNode, currNode, cnt = 0, facecnt = 0;
+    let maxNode, currNode, cnt = 0, facecnt = 0;
 
-    for (var n = 0; (n < this.sortmap.length) && (cnt < nodeslimit) && (facecnt < facelimit); ++n) {
-        var id = this.sortmap[n];
+    for (let n = 0; (n < this.sortmap.length) && (cnt < nodeslimit) && (facecnt < facelimit); ++n) {
+        const id = this.sortmap[n];
         if (viscnt[id] === 0) continue;
         currNode = this.nodes[id];
         if (!maxNode) maxNode = currNode;
@@ -2837,7 +2850,7 @@ ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumno
 
     if (!maxnumnodes) maxnumnodes = maxnumfaces / 100;
 
-    var arg = {
+    const arg = {
         facecnt: 0,
         viscnt: new Int32Array(this.nodes.length), // counter for each node
         // nodes: this.nodes,
@@ -2848,20 +2861,21 @@ ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumno
         }
     };
 
-    for (var n = 0; n < arg.viscnt.length; ++n) arg.viscnt[n] = 0;
+    for (let n = 0; n < arg.viscnt.length; ++n) arg.viscnt[n] = 0;
 
-    var total = this.ScanVisible(arg), minVol = 0, maxVol = 0, camVol = -1, camFact = 10,
+    const total = this.scanVisible(arg);
+    let minVol = 0, maxVol = 0, camVol = -1, camFact = 10,
         sortidcut = this.nodes.length + 1;
 
     // console.log('Total visible nodes ' + total + ' numfaces ' + arg.facecnt);
 
     if (arg.facecnt > maxnumfaces) {
 
-        var bignumfaces = maxnumfaces * (frustum ? 0.8 : 1.0),
+        const bignumfaces = maxnumfaces * (frustum ? 0.8 : 1.0),
             bignumnodes = maxnumnodes * (frustum ? 0.8 : 1.0);
 
         // define minimal volume, which always to shown
-        var boundary = this.GetVolumeBoundary(arg.viscnt, bignumfaces, bignumnodes);
+        const boundary = this.GetVolumeBoundary(arg.viscnt, bignumfaces, bignumnodes);
 
         minVol = boundary.min;
         maxVol = boundary.max;
@@ -2881,9 +2895,9 @@ ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumno
                 return true;
             };
 
-            for (var n = 0; n < arg.viscnt.length; ++n) arg.viscnt[n] = 0;
+            for (let n = 0; n < arg.viscnt.length; ++n) arg.viscnt[n] = 0;
 
-            this.ScanVisible(arg);
+            this.scanVisible(arg);
 
             if (arg.totalcam > maxnumfaces * 0.2)
                 camVol = this.GetVolumeBoundary(arg.viscnt, maxnumfaces * 0.2, maxnumnodes * 0.2).min;
@@ -2908,7 +2922,7 @@ ClonedNodes.prototype.CollectVisibles = function (maxnumfaces, frustum, maxnumno
         return true;
     };
 
-    this.ScanVisible(arg);
+    this.scanVisible(arg);
 
     return {lst: arg.items, complete: minVol === 0};
 };
@@ -2918,8 +2932,9 @@ ClonedNodes.prototype.MergeVisibles = function (current, prev) {
     // in current list we should mark if object already exists
     // from previous list we should collect objects which are not there
 
-    var indx2 = 0, del = [];
-    for (var indx1 = 0; (indx1 < current.length) && (indx2 < prev.length); ++indx1) {
+    let indx2 = 0;
+    const del = [];
+    for (let indx1 = 0; (indx1 < current.length) && (indx2 < prev.length); ++indx1) {
 
         while ((indx2 < prev.length) && (prev[indx2].seqid < current[indx1].seqid)) {
             del.push(prev[indx2++]); // this entry should be removed
@@ -2941,11 +2956,11 @@ ClonedNodes.prototype.MergeVisibles = function (current, prev) {
 ClonedNodes.prototype.CollectShapes = function (lst) {
     // based on list of visible nodes, collect all uniques shapes which should be build
 
-    var shapes = [];
+    const shapes = [];
 
     for (var i = 0; i < lst.length; ++i) {
-        var entry = lst[i];
-        var shape = this.GetNodeShape(entry.nodeid);
+        let entry = lst[i];
+        let shape = this.getNodeShape(entry.nodeid);
 
         if (!shape) continue; // strange, but avoid misleading
 
@@ -2979,15 +2994,15 @@ ClonedNodes.prototype.CollectShapes = function (lst) {
     });
 
     // now set new shape ids according to the sorted order and delete temporary field
-    for (var n = 0; n < shapes.length; ++n) {
-        var item = shapes[n];
+    for (let n = 0; n < shapes.length; ++n) {
+        const item = shapes[n];
         item.id = n; // set new ID
         delete item.shape._id; // remove temporary field
     }
 
     // as last action set current shape id to each entry
-    for (var i = 0; i < lst.length; ++i) {
-        var entry = lst[i];
+    for (let i = 0; i < lst.length; ++i) {
+        let entry = lst[i];
         if (entry.shape) {
             entry.shapeid = entry.shape.id; // keep only id for the entry
             delete entry.shape; // remove direct references
@@ -3002,8 +3017,8 @@ ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
     if (!oldlst) return newlst;
 
     // set geometry to shape object itself
-    for (var n = 0; n < oldlst.length; ++n) {
-        var item = oldlst[n];
+    for (let n = 0; n < oldlst.length; ++n) {
+        let item = oldlst[n];
 
         item.shape._geom = item.geom;
         delete item.geom;
@@ -3015,8 +3030,8 @@ ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
     }
 
     // take from shape (if match)
-    for (var n = 0; n < newlst.length; ++n) {
-        var item = newlst[n];
+    for (let n = 0; n < newlst.length; ++n) {
+        let item = newlst[n];
 
         if (item.shape._geom !== undefined) {
             item.geom = item.shape._geom;
@@ -3030,8 +3045,8 @@ ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
     }
 
     // now delete all unused geometries
-    for (var n = 0; n < oldlst.length; ++n) {
-        var item = oldlst[n];
+    for (let n = 0; n < oldlst.length; ++n) {
+        let item = oldlst[n];
         delete item.shape._geom;
         delete item.shape._geomZ;
     }
@@ -3041,11 +3056,11 @@ ClonedNodes.prototype.MergeShapesLists = function (oldlst, newlst) {
 
 ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
 
-    var created = 0,
-        tm1 = new Date().getTime(),
+    let created = 0;
+    const tm1 = new Date().getTime(),
         res = {done: false, shapes: 0, faces: 0, notusedshapes: 0};
 
-    for (var n = 0; n < lst.length; ++n) {
+    for (let n = 0; n < lst.length; ++n) {
         let item = lst[n];
 
         // if enough faces are produced, nothing else is required
@@ -3080,12 +3095,10 @@ ClonedNodes.prototype.BuildShapes = function (lst, limit, timelimit) {
     return res;
 };
 
-function ObjectName(obj) {
+function objectName(obj) {
     if (!obj || !obj.fName) return "";
     return obj.fName + (obj.$geo_suffix ? obj.$geo_suffix : "");
 }
-
-CheckDuplicates = CheckDuplicates;
 
 function CheckDuplicates(parent, chlds) {
     if (parent) {
@@ -3093,20 +3106,20 @@ function CheckDuplicates(parent, chlds) {
         parent.$geo_checked = true;
     }
 
-    var names = [], cnts = [], obj = null;
-    for (var k = 0; k < chlds.length; ++k) {
-        var chld = chlds[k];
+    const names = [], cnts = [], obj = null;
+    for (let k = 0; k < chlds.length; ++k) {
+        const chld = chlds[k];
         if (!chld || !chld.fName) continue;
         if (!chld.$geo_suffix) {
-            var indx = names.indexOf(chld.fName);
+            const indx = names.indexOf(chld.fName);
             if (indx >= 0) {
-                var cnt = cnts[indx] || 1;
+                let cnt = cnts[indx] || 1;
                 while (names.indexOf(chld.fName + "#" + cnt) >= 0) ++cnt;
                 chld.$geo_suffix = "#" + cnt;
                 cnts[indx] = cnt + 1;
             }
         }
-        names.push(ObjectName(chld));
+        names.push(objectName(chld));
     }
 }
 
@@ -3114,27 +3127,27 @@ function createFlippedMesh(parent, shape, material) {
     // when transformation matrix includes one or several inversion of axis,
     // one should inverse geometry object, otherwise THREE.js cannot correctly draw it
 
-    var flip = new THREE.Vector3(1, 1, -1);
+    const flip = new THREE.Vector3(1, 1, -1);
 
     if (shape.geomZ === undefined) {
 
         if (shape.geom.type === 'BufferGeometry') {
 
-            var pos = shape.geom.getAttribute('position').array,
+            let pos = shape.geom.getAttribute('position').array,
                 norm = shape.geom.getAttribute('normal').array;
 
-            var index = shape.geom.getIndex();
+            const index = shape.geom.getIndex();
 
             if (index) {
                 // we need to unfold all points to
-                var arr = index.array,
-                    i0 = shape.geom.drawRange.start,
-                    ilen = shape.geom.drawRange.count;
+                const arr = index.array,
+                    i0 = shape.geom.drawRange.start;
+                let ilen = shape.geom.drawRange.count;
                 if (i0 + ilen > arr.length) ilen = arr.length - i0;
 
-                var dpos = new Float32Array(ilen * 3), dnorm = new Float32Array(ilen * 3);
-                for (var ii = 0; ii < ilen; ++ii) {
-                    var k = arr[i0 + ii];
+                const dpos = new Float32Array(ilen * 3), dnorm = new Float32Array(ilen * 3);
+                for (let ii = 0; ii < ilen; ++ii) {
+                    const k = arr[i0 + ii];
                     if ((k < 0) || (k * 3 >= pos.length)) console.log('strange index', k * 3, pos.length);
                     dpos[ii * 3] = pos[k * 3];
                     dpos[ii * 3 + 1] = pos[k * 3 + 1];
@@ -3191,7 +3204,7 @@ function createFlippedMesh(parent, shape, material) {
         }
     }
 
-    var mesh = new THREE.Mesh(shape.geomZ, material);
+    const mesh = new THREE.Mesh(shape.geomZ, material);
     mesh.scale.copy(flip);
     mesh.updateMatrix();
 
@@ -3219,7 +3232,7 @@ function produceRenderOrder(toplevel, origin, method, clones) {
     // function scans throug hierarchy of objects and try to set renderOrder
     // algorithm is not perfect, but better then nothing
 
-    var raycast = new THREE.Raycaster();
+    const raycast = new THREE.Raycaster();
 
     function setdefaults(top) {
         if (!top) return;
@@ -3235,8 +3248,8 @@ function produceRenderOrder(toplevel, origin, method, clones) {
 
         if (!obj.children) return;
 
-        for (var k = 0; k < obj.children.length; ++k) {
-            var chld = obj.children[k];
+        for (let k = 0; k < obj.children.length; ++k) {
+            const chld = obj.children[k];
             if (chld.$jsroot_order === lvl) {
                 if (chld.material) {
                     if (chld.material.transparent) {
@@ -3280,9 +3293,9 @@ function produceRenderOrder(toplevel, origin, method, clones) {
                 continue;
             }
 
-            var dist = Math.min(dist, origin.distanceTo(box3.min), origin.distanceTo(box3.max));
+            let dist = Math.min(dist, origin.distanceTo(box3.min), origin.distanceTo(box3.max));
 
-            var pnt = new THREE.Vector3(box3.min.x, box3.min.y, box3.max.z);
+            const pnt = new THREE.Vector3(box3.min.x, box3.min.y, box3.max.z);
             dist = Math.min(dist, origin.distanceTo(pnt));
             pnt.set(box3.min.x, box3.max.y, box3.min.z);
             dist = Math.min(dist, origin.distanceTo(pnt));
@@ -3305,7 +3318,7 @@ function produceRenderOrder(toplevel, origin, method, clones) {
             return a.$jsroot_distance - b.$jsroot_distance;
         });
 
-        var resort = new Array(arr.length);
+        const resort = new Array(arr.length);
 
         for (var i = 0; i < arr.length; ++i) {
             arr[i].$jsroot_index = i;
@@ -3318,7 +3331,7 @@ function produceRenderOrder(toplevel, origin, method, clones) {
                     box3 = mesh.$jsroot_box3,
                     direction = box3.getCenter();
 
-                for (var ntry = 0; ntry < 2; ++ntry) {
+                for (let ntry = 0; ntry < 2; ++ntry) {
 
                     direction.sub(origin).normalize();
 
@@ -3326,7 +3339,7 @@ function produceRenderOrder(toplevel, origin, method, clones) {
 
                     var intersects = raycast.intersectObjects(arr, false); // only plain array
 
-                    var unique = [];
+                    const unique = [];
 
                     for (var k1 = 0; k1 < intersects.length; ++k1) {
                         if (unique.indexOf(intersects[k1].object) < 0) unique.push(intersects[k1].object);
@@ -3340,7 +3353,7 @@ function produceRenderOrder(toplevel, origin, method, clones) {
 
                     if ((intersects.indexOf(mesh) >= 0) || (ntry > 0)) break;
 
-                    var pos = mesh.geometry.attributes.position.array;
+                    const pos = mesh.geometry.attributes.position.array;
 
                     direction = new THREE.Vector3((pos[0] + pos[3] + pos[6]) / 3, (pos[1] + pos[4] + pos[7]) / 3, (pos[2] + pos[5] + pos[8]) / 3);
 
@@ -3349,10 +3362,10 @@ function produceRenderOrder(toplevel, origin, method, clones) {
 
                 // now push first object in intersects to the front
                 for (var k1 = 0; k1 < intersects.length - 1; ++k1) {
-                    var mesh1 = intersects[k1], mesh2 = intersects[k1 + 1],
+                    const mesh1 = intersects[k1], mesh2 = intersects[k1 + 1],
                         i1 = mesh1.$jsroot_index, i2 = mesh2.$jsroot_index;
                     if (i1 < i2) continue;
-                    for (var ii = i2; ii < i1; ++ii) {
+                    for (let ii = i2; ii < i1; ++ii) {
                         resort[ii] = resort[ii + 1];
                         resort[ii].$jsroot_index = ii;
                     }
@@ -3372,7 +3385,8 @@ function produceRenderOrder(toplevel, origin, method, clones) {
     }
 
     function process(obj, lvl, minorder, maxorder) {
-        var arr = [], did_sort = false;
+        const arr = [];
+        let did_sort = false;
 
         traverse(obj, lvl, arr);
 
@@ -3387,7 +3401,8 @@ function produceRenderOrder(toplevel, origin, method, clones) {
         }
 
         for (var k = 0; k < arr.length; ++k) {
-            var next = arr[k].parent, min = minorder, max = maxorder;
+            const next = arr[k].parent;
+            let min = minorder, max = maxorder;
 
             if (did_sort) {
                 max = arr[k].renderOrder;
@@ -3447,26 +3462,26 @@ export function build(obj, opt) {
     if (obj._typename.indexOf('TGeoVolume') === 0)
         obj = {_typename: "TGeoNode", fVolume: obj, fName: obj.fName, $geoh: obj.$geoh, _proxy: true};
 
-    var clones = new ClonedNodes(obj);
+    const clones = new ClonedNodes(obj);
 
-    var uniquevis = clones.MarkVisisble(true);
+    let uniquevis = clones.markVisisble(true);
 
     if (uniquevis <= 0)
-        uniquevis = clones.MarkVisisble(false);
+        uniquevis = clones.markVisisble(false);
     else
-        uniquevis = clones.MarkVisisble(true, true); // copy bits once and use normal visibility bits
+        uniquevis = clones.markVisisble(true, true); // copy bits once and use normal visibility bits
 
-    var numvis = clones.MarkVisisble();
+    const numvis = clones.markVisisble();
 
-    var frustum = null;
+    const frustum = null;
 
     // collect visible nodes
-    var res = clones.CollectVisibles(opt.numfaces, frustum, opt.numnodes);
+    const res = clones.CollectVisibles(opt.numfaces, frustum, opt.numnodes);
 
-    var draw_nodes = res.lst;
+    const draw_nodes = res.lst;
 
     // collect shapes
-    var shapes = clones.CollectShapes(draw_nodes);
+    const shapes = clones.CollectShapes(draw_nodes);
 
     clones.BuildShapes(shapes, opt.numfaces);
 
@@ -3486,22 +3501,22 @@ export function build(obj, opt) {
 
         if (!shape.geom || (shape.nfaces === 0)) {
             // node is visible, but shape does not created
-            clones.CreateObject3D(entry.stack, toplevel, 'delete_mesh');
+            clones.createObject3D(entry.stack, toplevel, 'delete_mesh');
             continue;
         }
 
-        var prop = clones.getDrawEntryProperties(entry);
+        const prop = clones.getDrawEntryProperties(entry);
 
         opt.res_mesh++;
         opt.res_faces += shape.nfaces;
 
-        var obj3d = clones.CreateObject3D(entry.stack, toplevel, opt);
+        const obj3d = clones.createObject3D(entry.stack, toplevel, opt);
 
         prop.material.wireframe = opt.wireframe;
 
         prop.material.side = opt.doubleside ? THREE.DoubleSide : THREE.FrontSide;
 
-        var mesh = null;
+        let mesh = null;
 
         if (obj3d.matrixWorld.determinant() > -0.9) {
             mesh = new THREE.Mesh(shape.geom, prop.material);
@@ -3536,20 +3551,20 @@ function getBoundingBox(node, box3) {
 
     node.updateMatrixWorld();
 
-    var v1 = new THREE.Vector3(),
+    const v1 = new THREE.Vector3(),
         geometry = node.geometry;
 
     if (geometry.isGeometry) {
-        var vertices = geometry.vertices;
-        for (var i = 0, l = vertices.length; i < l; i++) {
+        const vertices = geometry.vertices;
+        for (let i = 0, l = vertices.length; i < l; i++) {
             v1.copy(vertices[i]);
             v1.applyMatrix4(node.matrixWorld);
             box3.expandByPoint(v1);
         }
     } else if (geometry.isBufferGeometry) {
-        var attribute = geometry.attributes.position;
+        const attribute = geometry.attributes.position;
         if (attribute !== undefined) {
-            for (var i = 0, l = attribute.count; i < l; i++) {
+            for (let i = 0, l = attribute.count; i < l; i++) {
                 // v1.fromAttribute( attribute, i ).applyMatrix4( node.matrixWorld );
                 v1.fromBufferAttribute(attribute, i).applyMatrix4(node.matrixWorld);
                 box3.expandByPoint(v1);
