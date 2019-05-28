@@ -4,6 +4,7 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.toName
 import hep.dataforge.vis.spatial.ThreePlugin
 
@@ -30,6 +31,6 @@ class GDMLPlugin : AbstractPlugin() {
     companion object : PluginFactory<GDMLPlugin> {
         override val tag = PluginTag("vis.gdml", "hep.dataforge")
         override val type = GDMLPlugin::class
-        override fun invoke() = GDMLPlugin()
+        override fun invoke(meta: Meta) = GDMLPlugin()
     }
 }

@@ -4,7 +4,7 @@ import hep.dataforge.meta.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-sealed class GDMLNode(override val config: Config) : Specification {
+sealed class GDMLNode(override val config: Config) : Specific {
     var pName by string()
 }
 
@@ -16,7 +16,7 @@ class GDMLPosition(config: Config) : GDMLDefine(config) {
     var z by number(0f).float
     var unit by string("cm")
 
-    companion object : SpecificationCompanion<GDMLPosition> {
+    companion object : Specification<GDMLPosition> {
         override fun wrap(config: Config) = GDMLPosition(config)
     }
 }
@@ -27,7 +27,7 @@ class GDMLRotation(config: Config) : GDMLDefine(config) {
     var z by number(0f).float
     var unit by string("deg")
 
-    companion object : SpecificationCompanion<GDMLRotation> {
+    companion object : Specification<GDMLRotation> {
         override fun wrap(config: Config) = GDMLRotation(config)
     }
 }
@@ -43,7 +43,7 @@ class GDMLBox(config: Config) : GDMLSolid(config) {
     var pDy by number().double
     var pDz by number().double
 
-    companion object : SpecificationCompanion<GDMLBox> {
+    companion object : Specification<GDMLBox> {
         override fun wrap(config: Config): GDMLBox = GDMLBox(config)
     }
 }
@@ -57,7 +57,7 @@ class GDMLTube(config: Config) : GDMLSolid(config) {
     var pSPhi by number().double
     var pDPhi by number().double
 
-    companion object : SpecificationCompanion<GDMLTube> {
+    companion object : Specification<GDMLTube> {
         override fun wrap(config: Config): GDMLTube = GDMLTube(config)
     }
 }
@@ -67,14 +67,14 @@ class GDMLXtru(config: Config) : GDMLSolid(config) {
 
     class TwoDimVertex(val x: Double, val y: Double)
 
-    class Section(override val config: Config) : Specification {
+    class Section(override val config: Config) : Specific {
         var zOrder by number().int
         var zPosition by number().double
         var xOffsset by number(0.0).double
         var yOffset by number(0.0).double
         var scalingFactor by number(1.0).double
 
-        companion object : SpecificationCompanion<Section> {
+        companion object : Specification<Section> {
             override fun wrap(config: Config): Section = Section(config)
         }
     }
@@ -96,7 +96,7 @@ class GDMLXtru(config: Config) : GDMLSolid(config) {
         config["section[$index]"] = Section.build(block).apply { zOrder = index; zPosition = z }
     }
 
-    companion object : SpecificationCompanion<GDMLXtru> {
+    companion object : Specification<GDMLXtru> {
         override fun wrap(config: Config): GDMLXtru = GDMLXtru(config)
     }
 }
@@ -160,7 +160,7 @@ sealed class GDMLBoolSolid(config: Config, var root: GDML? = null) : GDMLSolid(c
 class GDMLUnion(config: Config) : GDMLBoolSolid(config) {
     override val type: String = "union"
 
-    companion object : SpecificationCompanion<GDMLUnion> {
+    companion object : Specification<GDMLUnion> {
         override fun wrap(config: Config): GDMLUnion = GDMLUnion(config)
     }
 }
@@ -168,7 +168,7 @@ class GDMLUnion(config: Config) : GDMLBoolSolid(config) {
 class GDMLSubtraction(config: Config) : GDMLBoolSolid(config) {
     override val type: String = "subtraction"
 
-    companion object : SpecificationCompanion<GDMLUnion> {
+    companion object : Specification<GDMLUnion> {
         override fun wrap(config: Config) = GDMLUnion(config)
     }
 }
@@ -176,7 +176,7 @@ class GDMLSubtraction(config: Config) : GDMLBoolSolid(config) {
 class GDMLIntersection(config: Config) : GDMLBoolSolid(config) {
     override val type: String = "intersection"
 
-    companion object : SpecificationCompanion<GDMLIntersection> {
+    companion object : Specification<GDMLIntersection> {
         override fun wrap(config: Config) = GDMLIntersection(config)
     }
 }

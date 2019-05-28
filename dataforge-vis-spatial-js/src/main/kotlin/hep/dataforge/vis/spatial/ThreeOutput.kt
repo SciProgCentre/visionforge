@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.context.members
+import hep.dataforge.context.content
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.DisplayGroup
@@ -75,7 +75,7 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
     }
 
     private fun <T : DisplayObject> findFactory(type: KClass<out T>): ThreeFactory<T>? {
-        return context.members<ThreeFactory<*>>(ThreeFactory.TYPE).find { it.type == type } as? ThreeFactory<T>?
+        return context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type } as? ThreeFactory<T>?
     }
 
     override fun render(obj: DisplayObject, meta: Meta) {

@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 
@@ -16,10 +17,12 @@ class ThreePlugin : AbstractPlugin() {
         factories["convex".toName()] = ThreeConvexFactory
     }
 
-    override fun listTop(target: String): Sequence<Name> {
+
+
+    override fun listNames(target: String): Sequence<Name> {
         return when (target) {
             ThreeFactory.TYPE -> factories.keys.asSequence()
-            else -> return super.listTop(target)
+            else -> return super.listNames(target)
         }
     }
 
@@ -33,6 +36,6 @@ class ThreePlugin : AbstractPlugin() {
     companion object : PluginFactory<ThreePlugin> {
         override val tag = PluginTag("vis.three", "hep.dataforge")
         override val type = ThreePlugin::class
-        override fun invoke()  = ThreePlugin()
+        override fun invoke(meta: Meta)  = ThreePlugin()
     }
 }
