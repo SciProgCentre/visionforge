@@ -19,6 +19,7 @@ pluginManagement {
 enableFeaturePreview("GRADLE_METADATA")
 
 rootProject.name = "dataforge-vis"
+
 include(
     ":dataforge-vis-common",
     ":dataforge-vis-spatial",

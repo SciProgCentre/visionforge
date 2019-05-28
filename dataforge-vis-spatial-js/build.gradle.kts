@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.frontend.KotlinFrontendExtension
 import org.jetbrains.kotlin.gradle.frontend.npm.NpmExtension
 import org.jetbrains.kotlin.gradle.frontend.webpack.WebPackExtension
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     id("kotlin2js")
@@ -12,9 +13,9 @@ plugins {
 val kotlinVersion: String by rootProject.extra
 
 dependencies {
-    api(project(":dataforge-vis-spatial"))
+    implementation(project(":dataforge-vis-spatial"))
     implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
-    testCompile("org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion")
+    testCompile("org.jetbrains.kotlin:kotlin-test-js:1.3.21")
 }
 
 configure<KotlinFrontendExtension> {
@@ -39,24 +40,24 @@ configure<KotlinFrontendExtension> {
     }
 }
 
-tasks{
-    compileKotlin2Js{
-        kotlinOptions{
+tasks {
+    "compileKotlin2Js"(Kotlin2JsCompile::class) {
+        kotlinOptions {
             metaInfo = true
             outputFile = "${project.buildDir.path}/js/${project.name}.js"
             sourceMap = true
-            moduleKind = "umd"
+            moduleKind = "commonjs"
             main = "call"
             kotlinOptions.sourceMapEmbedSources = "always"
         }
     }
 
-    compileTestKotlin2Js{
-        kotlinOptions{
+    "compileTestKotlin2Js"(Kotlin2JsCompile::class) {
+        kotlinOptions {
             metaInfo = true
             outputFile = "${project.buildDir.path}/js/${project.name}-test.js"
             sourceMap = true
-            moduleKind = "umd"
+            moduleKind = "commonjs"
             kotlinOptions.sourceMapEmbedSources = "always"
         }
     }
