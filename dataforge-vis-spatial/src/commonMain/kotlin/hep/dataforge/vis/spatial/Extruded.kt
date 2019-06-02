@@ -2,9 +2,8 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.DisplayObjectList
 
 class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
 
@@ -22,5 +21,5 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, m
 }
 
 
-fun DisplayGroup.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
+fun DisplayObjectList.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
     Extruded(this, meta).apply(action).also { addChild(it) }

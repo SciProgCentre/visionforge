@@ -7,6 +7,7 @@ import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.toName
 import hep.dataforge.vis.spatial.ThreePlugin
+import kotlin.reflect.KClass
 
 class GDMLPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = GDMLPlugin.tag
@@ -30,7 +31,7 @@ class GDMLPlugin : AbstractPlugin() {
 
     companion object : PluginFactory<GDMLPlugin> {
         override val tag = PluginTag("vis.gdml", "hep.dataforge")
-        override val type = GDMLPlugin::class
+        override val type: KClass<GDMLPlugin> = GDMLPlugin::class
         override fun invoke(meta: Meta) = GDMLPlugin()
     }
 }

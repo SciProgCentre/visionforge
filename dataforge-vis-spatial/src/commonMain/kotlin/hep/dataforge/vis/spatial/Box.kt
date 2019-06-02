@@ -2,10 +2,8 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
-import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.double
+import hep.dataforge.vis.DisplayObjectList
 
 class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
     var xSize by double(1.0)
@@ -19,5 +17,5 @@ class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) 
     }
 }
 
-fun DisplayGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
+fun DisplayObjectList.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
     Box(this, meta).apply(action).also { addChild(it) }

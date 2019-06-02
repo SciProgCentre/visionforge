@@ -22,15 +22,16 @@ rootProject.name = "dataforge-vis"
 
 include(
     ":dataforge-vis-common",
+    ":dataforge-vis-fx",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-fx",
     ":dataforge-vis-spatial-js"
 )
 
-if(file("../dataforge-core").exists()) {
-    includeBuild("../dataforge-core"){
-        dependencySubstitution {
-            substitute(module("hep.dataforge:dataforge-output")).with(project(":dataforge-output"))
-        }
-    }
-}
+//if(file("../dataforge-core").exists()) {
+//    includeBuild("../dataforge-core"){
+//        dependencySubstitution {
+//            substitute(module("hep.dataforge:dataforge-output")).with(project(":dataforge-output"))
+//        }
+//    }
+//}

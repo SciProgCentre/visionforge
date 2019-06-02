@@ -1,17 +1,14 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.get
-import hep.dataforge.meta.getAll
-import hep.dataforge.meta.node
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayNode
+import hep.dataforge.vis.DisplayObjectList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConvexTest {
     @Test
     fun testConvexBuilder() {
-        val group = DisplayNode().apply {
+        val group = DisplayObjectList().apply {
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)

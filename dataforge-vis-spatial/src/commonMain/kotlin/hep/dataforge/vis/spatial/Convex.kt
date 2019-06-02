@@ -2,9 +2,8 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.DisplayObjectList
 
 class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
 
@@ -21,7 +20,7 @@ class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, met
     }
 }
 
-fun DisplayGroup.convex(meta: Meta = EmptyMeta, action: ConvexBuilder.() -> Unit = {}) =
+fun DisplayObjectList.convex(meta: Meta = EmptyMeta, action: ConvexBuilder.() -> Unit = {}) =
     ConvexBuilder().apply(action).build(this, meta).also { addChild(it) }
 
 class ConvexBuilder {

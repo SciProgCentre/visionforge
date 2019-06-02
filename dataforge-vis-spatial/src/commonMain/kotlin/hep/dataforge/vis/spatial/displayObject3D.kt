@@ -3,17 +3,17 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayNode
 import hep.dataforge.vis.DisplayObject
 import hep.dataforge.vis.DisplayObject.Companion.DEFAULT_TYPE
-import hep.dataforge.vis.get
+import hep.dataforge.vis.DisplayObjectList
+import hep.dataforge.vis.getProperty
 
-fun DisplayGroup.group(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit = {}) =
-    DisplayNode(this, DEFAULT_TYPE, meta).apply(action).also { addChild(it) }
+fun DisplayObjectList.group(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit = {}): DisplayGroup =
+    DisplayObjectList(this, DEFAULT_TYPE, meta).apply(action).also { addChild(it) }
 
 
-fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit) =
-    render(DisplayNode(null, DEFAULT_TYPE, EmptyMeta).apply(action), meta)
+fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit) =
+    render(DisplayObjectList(null, DEFAULT_TYPE, EmptyMeta).apply(action), meta)
 
 //TODO replace properties by containers?
 
@@ -23,9 +23,9 @@ fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.()
  * Visibility property. Inherited from parent
  */
 var DisplayObject.visible
-    get() = this["visible"].boolean ?: true
+    get() = getProperty("visible").boolean ?: true
     set(value) {
-        properties.style["visible"] = value
+        properties["visible"] = value
     }
 
 // 3D Object position
@@ -36,7 +36,7 @@ var DisplayObject.visible
 var DisplayObject.x
     get() = properties["pos.x"].number ?: 0.0
     set(value) {
-        properties.style["pos.x"] = value
+        properties["pos.x"] = value
     }
 
 /**
@@ -45,7 +45,7 @@ var DisplayObject.x
 var DisplayObject.y
     get() = properties["pos.y"].number ?: 0.0
     set(value) {
-        properties.style["pos.y"] = value
+        properties["pos.y"] = value
     }
 
 /**
@@ -54,7 +54,7 @@ var DisplayObject.y
 var DisplayObject.z
     get() = properties["pos.z"].number ?: 0.0
     set(value) {
-        properties.style["pos.z"] = value
+        properties["pos.z"] = value
     }
 
 // 3D Object rotation
@@ -65,7 +65,7 @@ var DisplayObject.z
 var DisplayObject.rotationX
     get() = properties["rotation.x"].number ?: 0.0
     set(value) {
-        properties.style["rotation.x"] = value
+        properties["rotation.x"] = value
     }
 
 /**
@@ -74,7 +74,7 @@ var DisplayObject.rotationX
 var DisplayObject.rotationY
     get() = properties["rotation.y"].number ?: 0.0
     set(value) {
-        properties.style["rotation.y"] = value
+        properties["rotation.y"] = value
     }
 
 /**
@@ -83,7 +83,7 @@ var DisplayObject.rotationY
 var DisplayObject.rotationZ
     get() = properties["rotation.z"].number ?: 0.0
     set(value) {
-        properties.style["rotation.z"] = value
+        properties["rotation.z"] = value
     }
 
 enum class RotationOrder {
@@ -101,7 +101,7 @@ enum class RotationOrder {
 var DisplayObject.rotationOrder: RotationOrder
     get() = properties["rotation.order"].enum<RotationOrder>() ?: RotationOrder.XYZ
     set(value) {
-        properties.style["rotation.order"] = value
+        properties["rotation.order"] = value
     }
 
 // 3D object scale
@@ -112,7 +112,7 @@ var DisplayObject.rotationOrder: RotationOrder
 var DisplayObject.scaleX
     get() = properties["scale.x"].number ?: 1.0
     set(value) {
-        properties.style["scale.x"] = value
+        properties["scale.x"] = value
     }
 
 /**
@@ -121,7 +121,7 @@ var DisplayObject.scaleX
 var DisplayObject.scaleY
     get() = properties["scale.y"].number ?: 1.0
     set(value) {
-        properties.style["scale.y"] = value
+        properties["scale.y"] = value
     }
 
 /**
@@ -130,15 +130,15 @@ var DisplayObject.scaleY
 var DisplayObject.scaleZ
     get() = properties["scale.z"].number ?: 1.0
     set(value) {
-        properties.style["scale.z"] = value
+        properties["scale.z"] = value
     }
 
-fun DisplayObject.color(rgb: Int){
-    this.properties.style["color"]  = rgb
+fun DisplayObject.color(rgb: Int) {
+    this.properties["color"] = rgb
 }
 
-fun DisplayObject.color(meta: Meta){
-    this.properties.style["color"]  = meta
+fun DisplayObject.color(meta: Meta) {
+    this.properties["color"] = meta
 }
 
 fun DisplayObject.color(r: Int, g: Int, b: Int) = color(buildMeta {

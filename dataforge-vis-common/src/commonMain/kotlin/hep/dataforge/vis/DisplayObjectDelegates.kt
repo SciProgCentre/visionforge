@@ -20,7 +20,7 @@ class DisplayObjectDelegate(
     override fun getValue(thisRef: DisplayObject, property: KProperty<*>): MetaItem<*>? {
         val name = key ?: property.name.toName()
         return if (inherited) {
-            thisRef[name]
+            thisRef.getProperty(name)
         } else {
             thisRef.properties[name]
         } ?: default
@@ -28,7 +28,7 @@ class DisplayObjectDelegate(
 
     override fun setValue(thisRef: DisplayObject, property: KProperty<*>, value: MetaItem<*>?) {
         val name = key ?: property.name.toName()
-        thisRef.properties.style[name] = value
+        thisRef.properties[name] = value
     }
 }
 
@@ -42,7 +42,7 @@ class DisplayObjectDelegateWrapper<T>(
     override fun getValue(thisRef: DisplayObject, property: KProperty<*>): T {
         val name = key ?: property.name.toName()
         return if (inherited) {
-            read(thisRef[name])
+            read(thisRef.getProperty(name))
         } else {
             read(thisRef.properties[name])
         } ?: default
@@ -50,7 +50,7 @@ class DisplayObjectDelegateWrapper<T>(
 
     override fun setValue(thisRef: DisplayObject, property: KProperty<*>, value: T) {
         val name = key ?: property.name.toName()
-        thisRef.properties.style.write(name, value)
+        thisRef.properties[name] = value
     }
 }
 
