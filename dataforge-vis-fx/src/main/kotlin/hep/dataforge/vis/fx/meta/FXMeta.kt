@@ -1,9 +1,13 @@
 package hep.dataforge.vis.fx.meta
 
+import hep.dataforge.descriptors.ItemDescriptor
 import hep.dataforge.descriptors.NodeDescriptor
+import hep.dataforge.descriptors.ValueDescriptor
 import hep.dataforge.meta.*
+import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
+import hep.dataforge.values.Null
 import hep.dataforge.values.Value
 import javafx.beans.binding.ListBinding
 import javafx.beans.binding.ObjectBinding
@@ -13,67 +17,129 @@ import javafx.beans.value.ObservableStringValue
 import javafx.collections.ObservableList
 import tornadofx.*
 
-sealed class FXMeta {
+/**
+ * A display for meta and descriptor
+ */
+sealed class FXMeta<M : MetaNode<M>> : Comparable<FXMeta<*>> {
     abstract val name: NameToken
-    abstract val parent: FXMetaNode<*>?
+    abstract val parent: FXMetaNode<M>?
     abstract val descriptionProperty: ObservableStringValue
+    abstract val descriptor: ItemDescriptor?
 
     abstract val hasValue: ObservableBooleanValue
 
-    companion object {
-        fun <M : MetaNode<M>> root(node: M, descriptor: NodeDescriptor? = null): FXMetaNode<M> =
-            FXMetaNode(NameToken("root"), null, node, descriptor)
+    override fun compareTo(other: FXMeta<*>): Int {
+        return if (this.hasValue.get() == other.hasValue.get()) {
+            this.name.toString().compareTo(other.name.toString())
+        } else {
+            this.hasValue.get().compareTo(other.hasValue.get())
+        }
+    }
 
-        fun root(node: Meta, descriptor: NodeDescriptor? = null): FXMetaNode<SealedMeta> =
-            root(node.seal(), descriptor)
+    companion object {
+        fun <M : MetaNode<M>> root(
+            node: M,
+            descriptor: NodeDescriptor? = null,
+            rootName: String = "root"
+        ): FXMetaNode<M> =
+            FXMetaNode(NameToken(rootName), null, node, descriptor)
+
+        fun root(node: Meta, descriptor: NodeDescriptor? = null, rootName: String = "root"): FXMetaNode<SealedMeta> =
+            root(node.seal(), descriptor, rootName)
     }
 }
 
 class FXMetaNode<M : MetaNode<M>>(
     override val name: NameToken,
     override val parent: FXMetaNode<M>?,
-    node: M? = null,
-    descriptor: NodeDescriptor? = null
-) : FXMeta() {
+    nodeValue: M? = null,
+    descriptorValue: NodeDescriptor? = null
+) : FXMeta<M>() {
 
     /**
      * A descriptor that could be manually set to the node
      */
-    val descriptorProperty = SimpleObjectProperty(descriptor)
+    private val innerDescriptorProperty = SimpleObjectProperty(descriptorValue)
 
     /**
      * Actual descriptor which holds value inferred from parrent
      */
-    private val actualDescriptorProperty = objectBinding(descriptorProperty) {
+    val descriptorProperty = objectBinding(innerDescriptorProperty) {
         value ?: parent?.descriptor?.nodes?.get(this@FXMetaNode.name.body)
     }
 
-    val descriptor: NodeDescriptor? by actualDescriptorProperty
+    override val descriptor: NodeDescriptor? by descriptorProperty
 
-    private val innerNodeProperty = SimpleObjectProperty(node)
+    private val innerNodeProperty = SimpleObjectProperty(nodeValue)
 
     val nodeProperty: ObjectBinding<M?> = objectBinding(innerNodeProperty) {
-        value ?: parent?.node?.get(this@FXMetaNode.name.asName()).node
+        value ?: parent?.node?.get(this@FXMetaNode.name).node
     }
 
     val node: M? by nodeProperty
 
-    override val descriptionProperty = descriptorProperty.stringBinding { it?.info ?: "" }
+    override val descriptionProperty = innerDescriptorProperty.stringBinding { it?.info ?: "" }
 
     override val hasValue: ObservableBooleanValue = nodeProperty.booleanBinding { it != null }
 
-    val children = object : ListBinding<FXMeta>() {
-        override fun computeValue(): ObservableList<FXMeta> {
-            TODO()
+    private val filter: (FXMeta<M>) -> Boolean = { cfg ->
+        !(cfg.descriptor?.tags?.contains(ConfigEditor.NO_CONFIGURATOR_TAG) ?: false)
+    }
+
+    val children = object : ListBinding<FXMeta<M>>() {
+
+        init {
+            bind(nodeProperty, descriptorProperty)
+
+            val listener: (Name, MetaItem<*>?, MetaItem<*>?) -> Unit = { name, _, _ ->
+                if (name.length == 1) invalidate()
+            }
+
+            (node as? MutableMeta<*>)?.onChange(this, listener)
+
+            nodeProperty.addListener { _, oldValue, newValue ->
+                if (newValue == null) {
+                    (oldValue as? MutableMeta<*>)?.removeListener(this)
+                }
+
+                if (newValue is MutableMeta<*>) {
+                    newValue.onChange(this, listener)
+                }
+            }
+        }
+
+        override fun computeValue(): ObservableList<FXMeta<M>> {
+            val nodeKeys = node?.items?.keys?.toSet() ?: emptySet()
+            val descriptorKeys = descriptor?.items?.keys?.map { NameToken(it) } ?: emptyList()
+            val keys: Set<NameToken> = nodeKeys + descriptorKeys
+
+            val items = keys.map { token ->
+                val actualItem = node?.items?.get(token)
+                val actualDescriptor = descriptor?.items?.get(token.body)
+
+                if (actualItem is MetaItem.NodeItem || actualDescriptor is NodeDescriptor) {
+                    FXMetaNode(token, this@FXMetaNode)
+                } else {
+                    FXMetaValue(token, this@FXMetaNode)
+                }
+            }
+
+            return items.filter(filter).observable()
+        }
+    }
+
+    init {
+        if (parent != null) {
+            parent.descriptorProperty.onChange { descriptorProperty.invalidate() }
+            parent.nodeProperty.onChange { nodeProperty.invalidate() }
         }
     }
 }
 
-class FXMetaValue(
+class FXMetaValue<M : MetaNode<M>>(
     override val name: NameToken,
-    override val parent: FXMetaNode<*>,
-    value: Value? = null
-) : FXMeta() {
+    override val parent: FXMetaNode<M>
+) : FXMeta<M>() {
 
     val descriptorProperty = parent.descriptorProperty.objectBinding {
         it?.values?.get(name.body)
@@ -82,15 +148,15 @@ class FXMetaValue(
     /**
      * A descriptor that could be manually set to the node
      */
-    val descriptor by descriptorProperty
+    override val descriptor: ValueDescriptor? by descriptorProperty
 
-    private val innerValueProperty = SimpleObjectProperty(value)
+    //private val innerValueProperty = SimpleObjectProperty(value)
 
     val valueProperty = descriptorProperty.objectBinding { descriptor ->
         parent.node[name].value ?: descriptor?.default
     }
 
-    override val hasValue: ObservableBooleanValue = valueProperty.booleanBinding { it != null }
+    override val hasValue: ObservableBooleanValue = parent.nodeProperty.booleanBinding { it[name] != null }
 
     val value by valueProperty
 
@@ -102,18 +168,36 @@ fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
     children.invalidate()
 }
 
-fun FXMeta.remove() {
-    (parent?.node as? MutableMeta<*>)?.remove(name.asName())
+private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken): M {
+    this.setNode(token.asName(), EmptyMeta)
+    //FIXME possible concurrency bug
+    return get(token).node!!
 }
 
-fun <M : MutableMeta<M>> FXMetaNode<M>.addValue(key: String){
-    TODO()
+fun <M : MutableMeta<M>> FXMetaNode<out M>.getOrCreateNode(): M {
+    val node = node
+    return when {
+        node != null -> node
+        parent != null -> parent.getOrCreateNode().createEmptyNode(this.name).also {
+            parent.children.invalidate()
+        }
+        else -> kotlin.error("Orphan empty node is not allowed")
+    }
+
 }
 
-fun <M : MutableMeta<M>> FXMetaNode<M>.addNode(key: String){
-    TODO()
+fun <M : MutableMeta<M>> FXMeta<M>.remove() {
+    parent?.node?.remove(name.asName())
 }
 
-fun FXMetaValue.set(value: Value?){
-    TODO()
+fun <M : MutableMeta<M>> FXMetaNode<M>.addValue(key: String) {
+    getOrCreateNode()[key] = Null
+}
+
+fun <M : MutableMeta<M>> FXMetaNode<M>.addNode(key: String) {
+    getOrCreateNode()[key] = EmptyMeta
+}
+
+fun <M : MutableMeta<M>> FXMetaValue<M>.set(value: Value?) {
+    parent.getOrCreateNode()[this.name] = value
 }

@@ -17,7 +17,6 @@
 package hep.dataforge.vis.fx.meta
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.seal
 import hep.dataforge.vis.fx.dfIconView
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TreeItem
@@ -25,15 +24,17 @@ import javafx.scene.control.TreeSortMode
 import javafx.scene.control.TreeTableView
 import tornadofx.*
 
-open class MetaViewer(val meta: Meta, title: String = "Meta viewer") : Fragment(title, dfIconView) {
+class MetaViewer(val rootNode: FXMetaNode<*>, title: String = "Meta viewer") : Fragment(title, dfIconView) {
+    constructor(meta: Meta, title: String = "Meta viewer"): this(FXMeta.root(meta))
+
     override val root = borderpane {
         center {
-            treetableview<FXMeta> {
+            treetableview<FXMeta<*>> {
                 isShowRoot = false
-                root = TreeItem(FXMeta.root(meta.seal()))
+                root = TreeItem(rootNode)
                 populate {
                     when (val fxMeta = it.value) {
-                        is FXMetaNode<*> -> {
+                        is FXMetaNode -> {
                             fxMeta.children
                         }
                         is FXMetaValue -> null
@@ -42,11 +43,11 @@ open class MetaViewer(val meta: Meta, title: String = "Meta viewer") : Fragment(
                 root.isExpanded = true
                 sortMode = TreeSortMode.ALL_DESCENDANTS
                 columnResizePolicy = TreeTableView.CONSTRAINED_RESIZE_POLICY
-                column("Name", FXMeta::name)
-                column<FXMeta, String>("Value"){
-                    when(val item = it.value.value){
-                        is FXMetaValue -> item.valueProperty.stringBinding{it?.string?: ""}
-                        is FXMetaNode<*> -> SimpleStringProperty("[node]")
+                column("Name", FXMeta<*>::name)
+                column<FXMeta<*>, String>("Value") { cellDataFeatures ->
+                    when (val item = cellDataFeatures.value.value) {
+                        is FXMetaValue -> item.valueProperty.stringBinding { it?.string ?: "" }
+                        is FXMetaNode -> SimpleStringProperty("[node]")
                     }
                 }
             }

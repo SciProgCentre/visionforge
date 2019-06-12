@@ -24,27 +24,30 @@ import tornadofx.*
  * @author Alexander Nozik
  */
 class ConfigEditor(
-    val configuration: Config,
-    title: String = "Configuration editor",
-    val descriptor: NodeDescriptor? = null
+    val rootNode: FXMetaNode<Config>,
+    title: String = "Configuration editor"
 ) : Fragment(title = title, icon = dfIconView) {
 
-    val filter: (FXMeta) -> Boolean = { cfg ->
-        when (cfg) {
-            is FXMetaNode<*> -> !(cfg.descriptor?.tags?.contains(NO_CONFIGURATOR_TAG) ?: false)
-            is FXMetaValue -> !(cfg.descriptor?.tags?.contains(NO_CONFIGURATOR_TAG) ?: false)
-        }
-    }
+    constructor(config: Config, descriptor: NodeDescriptor, title: String = "Configuration editor") :
+            this(FXMeta.root(config, descriptor = descriptor))
 
     override val root = borderpane {
-        center = treetableview<FXMeta> {
-            root = TreeItem(FXMeta.root(configuration, descriptor))
+        center = treetableview<FXMeta<Config>> {
+            root = TreeItem(rootNode)
             root.isExpanded = true
             sortMode = TreeSortMode.ALL_DESCENDANTS
             columnResizePolicy = TreeTableView.CONSTRAINED_RESIZE_POLICY
-            column("Name", FXMeta::name) {
+            populate {
+                when (val fxMeta = it.value) {
+                    is FXMetaNode -> {
+                        fxMeta.children
+                    }
+                    is FXMetaValue -> null
+                }
+            }
+            column("Name", FXMeta<Config>::name) {
                 setCellFactory {
-                    object : TextFieldTreeTableCell<FXMeta, NameToken>() {
+                    object : TextFieldTreeTableCell<FXMeta<Config>, NameToken>() {
                         override fun updateItem(item: NameToken?, empty: Boolean) {
                             super.updateItem(item, empty)
                             contextMenu?.items?.removeIf { it.text == "Remove" }
@@ -57,7 +60,7 @@ class ConfigEditor(
                                             Color.GRAY
                                         }
                                     })
-                                    if (treeTableRow.treeItem.value.hasValue.get()) {
+                                    if (treeTableRow.treeItem.value.parent != null && treeTableRow.treeItem.value.hasValue.get()) {
                                         contextmenu {
                                             item("Remove") {
                                                 action {
@@ -73,15 +76,15 @@ class ConfigEditor(
                 }
             }
 
-            column("Value") { param: TreeTableColumn.CellDataFeatures<FXMeta, FXMeta> ->
+            column("Value") { param: TreeTableColumn.CellDataFeatures<FXMeta<Config>, FXMeta<Config>> ->
                 param.value.valueProperty()
             }.setCellFactory {
                 ValueCell()
             }
 
-            column("Description") { param: TreeTableColumn.CellDataFeatures<FXMeta, String> -> param.value.value.descriptionProperty }
-                .setCellFactory { param: TreeTableColumn<FXMeta, String> ->
-                    val cell = TreeTableCell<FXMeta, String>()
+            column("Description") { param: TreeTableColumn.CellDataFeatures<FXMeta<Config>, String> -> param.value.value.descriptionProperty }
+                .setCellFactory { param: TreeTableColumn<FXMeta<Config>, String> ->
+                    val cell = TreeTableCell<FXMeta<Config>, String>()
                     val text = Text()
                     cell.graphic = text
                     cell.prefHeight = Control.USE_COMPUTED_SIZE
@@ -112,22 +115,20 @@ class ConfigEditor(
         return result.orElse(null)
     }
 
-    private inner class ValueCell : TreeTableCell<FXMeta, FXMeta?>() {
+    private inner class ValueCell : TreeTableCell<FXMeta<Config>, FXMeta<Config>?>() {
 
-        public override fun updateItem(item: FXMeta?, empty: Boolean) {
+        public override fun updateItem(item: FXMeta<Config>?, empty: Boolean) {
             if (!empty) {
                 if (item != null) {
                     when (item) {
-                        is FXMetaValue -> {
+                        is FXMetaValue<Config> -> {
                             text = null
                             val chooser = ValueChooser.build(item.valueProperty, item.descriptor) {
                                 item.set(it)
                             }
                             graphic = chooser.node
                         }
-                        is FXMetaNode<*> -> {
-                            item as FXMetaNode<Config>
-
+                        is FXMetaNode<Config> -> {
                             text = null
                             graphic = hbox {
                                 button("node", Glyph("FontAwesome", "PLUS_CIRCLE")) {

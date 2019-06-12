@@ -1,7 +1,8 @@
-val dataforgeVersion by extra("0.1.3-dev-2")
+val dataforgeVersion by extra("0.1.3-dev-5")
 
 allprojects {
     repositories {
+        mavenLocal()
         jcenter()
         maven("https://kotlin.bintray.com/kotlinx")
         maven("http://npm.mipt.ru:8081/artifactory/gradle-dev-local")
