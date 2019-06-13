@@ -2,10 +2,11 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.toName
+import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
 import hep.dataforge.vis.DisplayObjectList
 
-class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
+class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
 
     val shape get() = shape(properties["shape"] ?: error("Shape not defined"))
 

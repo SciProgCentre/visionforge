@@ -1,8 +1,11 @@
-package hep.dataforge.vis
+package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
+import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.getProperty
+import hep.dataforge.vis.onChange
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 
@@ -21,7 +24,7 @@ class DisplayObjectFXListener(val obj: DisplayObject) {
     operator fun get(key: Name): ObjectBinding<MetaItem<*>?> {
         return binndings.getOrPut(key) {
             object : ObjectBinding<MetaItem<*>?>() {
-                override fun computeValue(): MetaItem<*>? = obj.get(key)
+                override fun computeValue(): MetaItem<*>? = obj.getProperty(key)
             }
         }
     }

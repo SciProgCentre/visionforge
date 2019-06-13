@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.boolean
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.get
+import hep.dataforge.vis.getProperty
 import hep.dataforge.vis.onChange
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.TYPE
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.buildMesh
@@ -20,7 +20,7 @@ import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
 
-internal val DisplayObject.material get() = this["color"].material()
+internal val DisplayObject.material get() = getProperty("color").material()
 
 /**
  * Builder and updater for three.js object
@@ -49,13 +49,13 @@ interface ThreeFactory<T : DisplayObject> {
 
         internal fun buildMesh(obj: DisplayObject, geometry: BufferGeometry): Mesh {
             val mesh = Mesh(geometry, obj.material)
-            if (obj["edges.enabled"]?.boolean != false) {
-                val material = obj["edges.material"]?.material() ?: Materials.DEFAULT
+            if (obj.getProperty("edges.enabled")?.boolean != false) {
+                val material = obj.getProperty("edges.material")?.material() ?: Materials.DEFAULT
                 mesh.add(LineSegments(EdgesGeometry(mesh.geometry as BufferGeometry), material))
             }
 
-            if (obj["wireframe.enabled"]?.boolean == true) {
-                val material = obj["edges.material"]?.material() ?: Materials.DEFAULT
+            if (obj.getProperty("wireframe.enabled")?.boolean == true) {
+                val material = obj.getProperty("edges.material")?.material() ?: Materials.DEFAULT
                 mesh.add(LineSegments(WireframeGeometry(mesh.geometry as BufferGeometry), material))
             }
             return mesh

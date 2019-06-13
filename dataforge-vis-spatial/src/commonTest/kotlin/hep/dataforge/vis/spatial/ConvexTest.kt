@@ -1,5 +1,8 @@
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.meta.get
+import hep.dataforge.meta.getAll
+import hep.dataforge.meta.node
 import hep.dataforge.names.toName
 import hep.dataforge.vis.DisplayObjectList
 import kotlin.test.Test

@@ -64,7 +64,7 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
 
     private fun buildNode(obj: DisplayObject): Object3D? {
         return when (obj) {
-            is DisplayGroup -> Group(obj.children.mapNotNull { buildNode(it) }).apply {
+            is DisplayGroup -> Group(obj.mapNotNull { buildNode(it) }).apply {
                 ThreeFactory.updatePosition(obj, this)
             }
             //is Box -> ThreeBoxFactory(obj)

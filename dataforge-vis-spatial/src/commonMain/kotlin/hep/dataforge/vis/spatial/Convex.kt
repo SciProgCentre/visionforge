@@ -2,10 +2,11 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.toName
+import hep.dataforge.vis.DisplayLeaf
 import hep.dataforge.vis.DisplayObject
 import hep.dataforge.vis.DisplayObjectList
 
-class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, TYPE, meta) {
+class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
 
     val points = points(properties["points"] ?: error("Vertices not defined"))
 

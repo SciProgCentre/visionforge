@@ -4,16 +4,15 @@ import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.DisplayGroup
 import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.DisplayObject.Companion.DEFAULT_TYPE
 import hep.dataforge.vis.DisplayObjectList
 import hep.dataforge.vis.getProperty
 
 fun DisplayObjectList.group(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit = {}): DisplayGroup =
-    DisplayObjectList(this, DEFAULT_TYPE, meta).apply(action).also { addChild(it) }
+    DisplayObjectList(this, meta).apply(action).also { addChild(it) }
 
 
 fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit) =
-    render(DisplayObjectList(null, DEFAULT_TYPE, EmptyMeta).apply(action), meta)
+    render(DisplayObjectList(null, EmptyMeta).apply(action), meta)
 
 //TODO replace properties by containers?
 

@@ -3,7 +3,8 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Output
-import hep.dataforge.vis.*
+import hep.dataforge.vis.DisplayGroup
+import hep.dataforge.vis.DisplayObject
 import javafx.scene.Group
 import javafx.scene.Node
 import org.fxyz3d.shapes.primitives.CuboidMesh
@@ -26,7 +27,7 @@ class FX3DOutput(override val context: Context) : Output<DisplayObject> {
             org.fxyz3d.geometry.Point3D(x.value ?: 0f, y.value ?: 0f, z.value ?: 0f)
         }
         return when (obj) {
-            is DisplayGroup -> Group(obj.children.map { buildNode(it) }).apply {
+            is DisplayGroup -> Group(obj.map { buildNode(it) }).apply {
                 this.translateXProperty().bind(x)
                 this.translateYProperty().bind(y)
                 this.translateZProperty().bind(z)

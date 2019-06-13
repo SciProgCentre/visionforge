@@ -16,7 +16,7 @@ import info.laht.threekt.core.BufferGeometry
 
 
 class GDMLShape(parent: DisplayObject?, meta: Meta, val shape: GDMLSolid) :
-    DisplayLeaf(parent, "$TYPE.${shape.type}", meta) {
+    DisplayLeaf(parent, meta) {
 
     var facesLimit by int(0)
 

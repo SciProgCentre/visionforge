@@ -20,7 +20,7 @@ class MetaEditorDemo : View("Meta editor demo") {
             "innerNode" to {
                 "innerValue" to true
             }
-            "b" to 22
+            "b" to 223
             "c" to "StringValue"
         }
     }.toConfig()
@@ -39,6 +39,10 @@ class MetaEditorDemo : View("Meta editor demo") {
                     info = "default value"
                 }
             }
+        }
+        value("multiple"){
+            info = "A sns value"
+            multiple = true
         }
     }
 

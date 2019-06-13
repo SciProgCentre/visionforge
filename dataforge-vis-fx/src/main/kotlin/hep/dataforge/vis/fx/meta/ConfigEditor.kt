@@ -19,12 +19,13 @@ import org.controlsfx.glyphfont.Glyph
 import tornadofx.*
 
 /**
- * FXML Controller class
+ * A configuration editor fragment
  *
  * @author Alexander Nozik
  */
 class ConfigEditor(
     val rootNode: FXMetaNode<Config>,
+    val allowNew: Boolean = true,
     title: String = "Configuration editor"
 ) : Fragment(title = title, icon = dfIconView) {
 
@@ -129,26 +130,30 @@ class ConfigEditor(
                             graphic = chooser.node
                         }
                         is FXMetaNode<Config> -> {
-                            text = null
-                            graphic = hbox {
-                                button("node", Glyph("FontAwesome", "PLUS_CIRCLE")) {
-                                    hgrow = Priority.ALWAYS
-                                    maxWidth = Double.POSITIVE_INFINITY
-                                    action {
-                                        showNodeDialog()?.let {
-                                            item.addNode(it)
+                            if(allowNew) {
+                                text = null
+                                graphic = hbox {
+                                    button("node", Glyph("FontAwesome", "PLUS_CIRCLE")) {
+                                        hgrow = Priority.ALWAYS
+                                        maxWidth = Double.POSITIVE_INFINITY
+                                        action {
+                                            showNodeDialog()?.let {
+                                                item.addNode(it)
+                                            }
+                                        }
+                                    }
+                                    button("value", Glyph("FontAwesome", "PLUS_SQUARE")) {
+                                        hgrow = Priority.ALWAYS
+                                        maxWidth = Double.POSITIVE_INFINITY
+                                        action {
+                                            showValueDialog()?.let {
+                                                item.addValue(it)
+                                            }
                                         }
                                     }
                                 }
-                                button("value", Glyph("FontAwesome", "PLUS_SQUARE")) {
-                                    hgrow = Priority.ALWAYS
-                                    maxWidth = Double.POSITIVE_INFINITY
-                                    action {
-                                        showValueDialog()?.let {
-                                            item.addValue(it)
-                                        }
-                                    }
-                                }
+                            } else {
+                                text = ""
                             }
                         }
                     }

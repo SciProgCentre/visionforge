@@ -168,7 +168,7 @@ fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
     children.invalidate()
 }
 
-private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken): M {
+private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boolean): M {
     this.setNode(token.asName(), EmptyMeta)
     //FIXME possible concurrency bug
     return get(token).node!!
@@ -178,7 +178,7 @@ fun <M : MutableMeta<M>> FXMetaNode<out M>.getOrCreateNode(): M {
     val node = node
     return when {
         node != null -> node
-        parent != null -> parent.getOrCreateNode().createEmptyNode(this.name).also {
+        parent != null -> parent.getOrCreateNode().createEmptyNode(this.name, descriptor?.multiple == true).also {
             parent.children.invalidate()
         }
         else -> kotlin.error("Orphan empty node is not allowed")
@@ -191,13 +191,27 @@ fun <M : MutableMeta<M>> FXMeta<M>.remove() {
 }
 
 fun <M : MutableMeta<M>> FXMetaNode<M>.addValue(key: String) {
-    getOrCreateNode()[key] = Null
+    val parent = getOrCreateNode()
+    if(descriptor?.multiple == true){
+        parent.append(key, Null)
+    } else{
+        parent[key] = Null
+    }
 }
 
 fun <M : MutableMeta<M>> FXMetaNode<M>.addNode(key: String) {
-    getOrCreateNode()[key] = EmptyMeta
+    val parent = getOrCreateNode()
+    if(descriptor?.multiple == true){
+        parent.append(key, EmptyMeta)
+    } else{
+        parent[key] = EmptyMeta
+    }
 }
 
 fun <M : MutableMeta<M>> FXMetaValue<M>.set(value: Value?) {
-    parent.getOrCreateNode()[this.name] = value
+    if(descriptor?.multiple == true){
+        parent.getOrCreateNode().append(this.name.body, value)
+    } else {
+        parent.getOrCreateNode()[this.name] = value
+    }
 }

@@ -21,7 +21,7 @@ interface DisplayObject {
 //     */
 //    val type: String
 
-    val properties: MutableMeta<*>
+    val properties: Styled
 
     companion object {
         const val DEFAULT_TYPE = ""
@@ -63,15 +63,14 @@ val DisplayObject.meta: Meta get() = properties[META_KEY]?.node ?: EmptyMeta
 
 val DisplayObject.tags: List<String> get() = properties[TAGS_KEY].stringList
 
-///**
-// * Basic [DisplayObject] leaf element
-// */
-//open class DisplayLeaf(
-//    override val parent: DisplayObject?,
-////    override val type: String,
-//    meta: Meta = EmptyMeta
-//) : DisplayObject {
-//    final override val properties = Styled(meta)
-//}
+/**
+ * Basic [DisplayObject] leaf element
+ */
+open class DisplayLeaf(
+    override val parent: DisplayObject?,
+    meta: Meta = EmptyMeta
+) : DisplayObject {
+    final override val properties = Styled(meta)
+}
 
 interface DisplayGroup: DisplayObject, Iterable<DisplayObject>
