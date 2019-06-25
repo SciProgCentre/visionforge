@@ -4,7 +4,7 @@ import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
-import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.spatial.rotationOrder
 import hep.dataforge.vis.spatial.rotationX
 import hep.dataforge.vis.spatial.rotationY

@@ -2,9 +2,9 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.boolean
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.getProperty
-import hep.dataforge.vis.onChange
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.getProperty
+import hep.dataforge.vis.common.onChange
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.TYPE
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.buildMesh
 import hep.dataforge.vis.spatial.ThreeFactory.Companion.updateMesh

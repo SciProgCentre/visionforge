@@ -1,10 +1,10 @@
-package hep.dataforge.vis
+package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayObject.Companion.META_KEY
-import hep.dataforge.vis.DisplayObject.Companion.TAGS_KEY
+import hep.dataforge.vis.common.DisplayObject.Companion.META_KEY
+import hep.dataforge.vis.common.DisplayObject.Companion.TAGS_KEY
 
 /**
  * A root type for display hierarchy

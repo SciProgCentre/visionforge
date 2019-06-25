@@ -2,10 +2,10 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
-import hep.dataforge.vis.DisplayLeaf
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.DisplayObjectList
-import hep.dataforge.vis.double
+import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.DisplayObjectList
+import hep.dataforge.vis.common.double
 
 class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
     var xSize by double(1.0)

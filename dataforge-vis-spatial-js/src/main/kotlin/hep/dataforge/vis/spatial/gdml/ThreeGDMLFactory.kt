@@ -4,9 +4,9 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.toDynamic
 import hep.dataforge.meta.values
-import hep.dataforge.vis.DisplayLeaf
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.int
+import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.int
 import hep.dataforge.vis.spatial.MeshThreeFactory
 import hep.dataforge.vis.spatial.jsroot.createCubeBuffer
 import hep.dataforge.vis.spatial.jsroot.createGeometry

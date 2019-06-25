@@ -7,8 +7,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":dataforge-vis-spatial"))
-    api("no.tornado:tornadofx:1.7.18")
+    implementation(project(":dataforge-vis-spatial"))
+    implementation(project(":dataforge-vis-fx"))
     implementation("org.fxyz3d:fxyz3d:0.4.0")
 }
 

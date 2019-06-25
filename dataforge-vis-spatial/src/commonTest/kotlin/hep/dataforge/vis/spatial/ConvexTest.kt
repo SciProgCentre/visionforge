@@ -4,7 +4,7 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.getAll
 import hep.dataforge.meta.node
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayObjectList
+import hep.dataforge.vis.common.DisplayObjectList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

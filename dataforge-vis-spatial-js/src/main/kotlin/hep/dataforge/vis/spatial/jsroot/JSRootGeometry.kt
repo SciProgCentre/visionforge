@@ -5,6 +5,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.toDynamic
 import hep.dataforge.vis.*
+import hep.dataforge.vis.common.*
 import hep.dataforge.vis.spatial.MeshThreeFactory
 import info.laht.threekt.core.BufferGeometry
 

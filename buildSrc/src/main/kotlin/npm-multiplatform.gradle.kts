@@ -1,8 +1,3 @@
-import org.gradle.kotlin.dsl.`maven-publish`
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.kotlin
-
 plugins {
     kotlin("multiplatform")
     `maven-publish`

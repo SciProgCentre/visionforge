@@ -30,7 +30,7 @@ class ConfigEditor(
 ) : Fragment(title = title, icon = dfIconView) {
 
     constructor(config: Config, descriptor: NodeDescriptor, title: String = "Configuration editor") :
-            this(FXMeta.root(config, descriptor = descriptor))
+            this(FXMeta.root(config, descriptor = descriptor),title = title)
 
     override val root = borderpane {
         center = treetableview<FXMeta<Config>> {

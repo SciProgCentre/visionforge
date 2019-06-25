@@ -25,7 +25,7 @@ import javafx.scene.control.TreeTableView
 import tornadofx.*
 
 class MetaViewer(val rootNode: FXMetaNode<*>, title: String = "Meta viewer") : Fragment(title, dfIconView) {
-    constructor(meta: Meta, title: String = "Meta viewer"): this(FXMeta.root(meta))
+    constructor(meta: Meta, title: String = "Meta viewer"): this(FXMeta.root(meta),title = title)
 
     override val root = borderpane {
         center {

@@ -9,12 +9,17 @@ plugins {
     id("org.jetbrains.kotlin.frontend")
 }
 
+repositories {
+    maven("https://kotlin.bintray.com/kotlin-js-wrappers")
+}
 
 val kotlinVersion: String by rootProject.extra
 
 dependencies {
-    implementation(project(":dataforge-vis-spatial"))
-    implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
+    implementation(kotlin("stdlib-js"))
+    implementation(project(":dataforge-vis-common"))
+    implementation("org.jetbrains:kotlin-react:16.6.0-pre.73-kotlin-1.3.40")
+    implementation("org.jetbrains:kotlin-react-dom:16.6.0-pre.73-kotlin-1.3.40")
     testCompile(kotlin("test-js"))
 }
 
@@ -22,8 +27,10 @@ configure<KotlinFrontendExtension> {
     downloadNodeJsVersion = "latest"
 
     configure<NpmExtension> {
-        dependency("three-full")
-        dependency("style-loader")
+        dependency("core-js", "3.1.4")
+        dependency("cp-react-tree-table","1.0.0-beta.6")
+        dependency("react")
+        dependency("react-dom")
         devDependency("karma")
     }
 

@@ -3,9 +3,9 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.getProperty
-import hep.dataforge.vis.onChange
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.getProperty
+import hep.dataforge.vis.common.onChange
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 

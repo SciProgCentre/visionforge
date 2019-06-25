@@ -14,6 +14,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Stage
 import tornadofx.*
+import kotlin.concurrent.thread
 import kotlin.reflect.KClass
 
 /**
@@ -45,12 +46,9 @@ class FXPlugin(meta: Meta = EmptyMeta) : AbstractPlugin(meta) {
         super.attach(context)
         if (FX.getApplication(FX.defaultScope) == null) {
             if (consoleMode) {
-                Thread {
+                thread(name = "${context.name} FX application thread") {
                     context.logger.debug("Starting FX application surrogate")
                     launch<ApplicationSurrogate>()
-                }.apply {
-                    name = "${context.name} FX application thread"
-                    start()
                 }
 
                 while (!FX.initialized.get()) {

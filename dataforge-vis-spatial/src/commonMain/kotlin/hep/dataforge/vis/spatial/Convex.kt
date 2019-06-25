@@ -2,9 +2,9 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.toName
-import hep.dataforge.vis.DisplayLeaf
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.DisplayObjectList
+import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.DisplayObjectList
 
 class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
 

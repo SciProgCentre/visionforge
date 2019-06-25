@@ -2,10 +2,10 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
-import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.DisplayObjectList
-import hep.dataforge.vis.getProperty
+import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.DisplayObjectList
+import hep.dataforge.vis.common.getProperty
 
 fun DisplayObjectList.group(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit = {}): DisplayGroup =
     DisplayObjectList(this, meta).apply(action).also { addChild(it) }

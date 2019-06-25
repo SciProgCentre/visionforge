@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api(project(":dataforge-vis-common"))
-    api("no.tornado:tornadofx:1.7.18")
+    api("no.tornado:tornadofx:1.7.19")
     api("no.tornado:tornadofx-controlsfx:0.1")
 }
 

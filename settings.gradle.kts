@@ -25,7 +25,8 @@ include(
     ":dataforge-vis-fx",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-fx",
-    ":dataforge-vis-spatial-js"
+    ":dataforge-vis-spatial-js",
+    ":dataforge-vis-js-tree"
 )
 
 //if(file("../dataforge-core").exists()) {

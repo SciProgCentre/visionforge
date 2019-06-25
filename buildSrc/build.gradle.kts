@@ -8,7 +8,7 @@ repositories {
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
-val kotlinVersion = "1.3.21"
+val kotlinVersion = "1.3.40"
 
 // Add plugins used in buildSrc as dependencies, also we should specify version only here
 dependencies {

@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.context.Global
 import hep.dataforge.meta.number
 import hep.dataforge.vis.ApplicationBase
-import hep.dataforge.vis.DisplayGroup
+import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.require
 import hep.dataforge.vis.spatial.jsroot.JSRootPlugin
 import hep.dataforge.vis.spatial.jsroot.jsRootGeometry

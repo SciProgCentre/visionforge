@@ -4,8 +4,8 @@ import hep.dataforge.context.Context
 import hep.dataforge.context.content
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
-import hep.dataforge.vis.DisplayGroup
-import hep.dataforge.vis.DisplayObject
+import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.spatial.three.Group
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera

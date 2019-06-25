@@ -3,10 +3,10 @@ package hep.dataforge.vis.spatial.jsroot
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.toDynamic
-import hep.dataforge.vis.DisplayLeaf
-import hep.dataforge.vis.DisplayObject
-import hep.dataforge.vis.DisplayObjectList
-import hep.dataforge.vis.node
+import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.DisplayObjectList
+import hep.dataforge.vis.common.node
 import hep.dataforge.vis.spatial.ThreeFactory
 import info.laht.threekt.core.Object3D
 

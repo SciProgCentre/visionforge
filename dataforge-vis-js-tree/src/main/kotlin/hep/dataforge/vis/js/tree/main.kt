@@ -1,6 +1,7 @@
-package hep.dataforge.vis
+package hep.dataforge.vis.js.tree
 
-import hep.dataforge.vis.spatial.ThreeDemoApp
+import hep.dataforge.vis.js.tree.demo.TreeDemoApp
+import hep.dataforge.vis.js.tree.demo.module
 import kotlin.browser.document
 import kotlin.dom.hasClass
 
@@ -31,13 +32,15 @@ fun main() {
         application = start(state)
     } else {
         application = null
-        document.addEventListener("DOMContentLoaded", { application = start(state) })
+        document.addEventListener("DOMContentLoaded", {
+            application = start(state) }
+        )
     }
 }
 
 fun start(state: dynamic): ApplicationBase? {
     return if (document.body?.hasClass("testApp") == true) {
-        val application = ThreeDemoApp()
+        val application = TreeDemoApp()
 
         @Suppress("UnsafeCastFromDynamic")
         application.start(state?.appState ?: emptyMap<String, Any>())

@@ -1,4 +1,4 @@
-package hep.dataforge.vis
+package hep.dataforge.vis.common
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken

@@ -7,6 +7,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
+import hep.dataforge.names.withIndex
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
 import javafx.beans.binding.ListBinding
@@ -124,7 +125,7 @@ class FXMetaNode<M : MetaNode<M>>(
                 }
             }
 
-            return items.filter(filter).observable()
+            return items.filter(filter).asObservable()
         }
     }
 
@@ -169,9 +170,17 @@ fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
 }
 
 private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boolean): M {
-    this.setNode(token.asName(), EmptyMeta)
-    //FIXME possible concurrency bug
-    return get(token).node!!
+    return if (append && token.index.isNotEmpty()) {
+        val name = token.asName()
+        val index = (getAll(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
+        val newName = name.withIndex(index.toString())
+        set(newName, EmptyMeta)
+        get(newName).node!!
+    } else {
+        this.setNode(token.asName(), EmptyMeta)
+        //FIXME possible concurrency bug
+        get(token).node!!
+    }
 }
 
 fun <M : MutableMeta<M>> FXMetaNode<out M>.getOrCreateNode(): M {
@@ -192,24 +201,24 @@ fun <M : MutableMeta<M>> FXMeta<M>.remove() {
 
 fun <M : MutableMeta<M>> FXMetaNode<M>.addValue(key: String) {
     val parent = getOrCreateNode()
-    if(descriptor?.multiple == true){
+    if (descriptor?.multiple == true) {
         parent.append(key, Null)
-    } else{
+    } else {
         parent[key] = Null
     }
 }
 
 fun <M : MutableMeta<M>> FXMetaNode<M>.addNode(key: String) {
     val parent = getOrCreateNode()
-    if(descriptor?.multiple == true){
+    if (descriptor?.multiple == true) {
         parent.append(key, EmptyMeta)
-    } else{
+    } else {
         parent[key] = EmptyMeta
     }
 }
 
 fun <M : MutableMeta<M>> FXMetaValue<M>.set(value: Value?) {
-    if(descriptor?.multiple == true){
+    if (descriptor?.multiple == true) {
         parent.getOrCreateNode().append(this.name.body, value)
     } else {
         parent.getOrCreateNode()[this.name] = value
