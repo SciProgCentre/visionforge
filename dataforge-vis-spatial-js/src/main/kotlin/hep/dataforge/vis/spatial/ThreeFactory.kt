@@ -11,6 +11,7 @@ import hep.dataforge.vis.spatial.ThreeFactory.Companion.updateMesh
 import hep.dataforge.vis.spatial.three.ConvexBufferGeometry
 import hep.dataforge.vis.spatial.three.EdgesGeometry
 import hep.dataforge.vis.spatial.three.euler
+import hep.dataforge.vis.spatial.three.toBufferGeometry
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
@@ -68,6 +69,14 @@ interface ThreeFactory<T : DisplayObject> {
     }
 }
 
+operator fun <T : DisplayObject> ThreeFactory<T>.invoke(obj: Any): Object3D {
+    if (type.isInstance(obj)) {
+        return invoke(obj as T)
+    } else {
+        error("The object of type ${obj::class} could not be rendered by this factory")
+    }
+}
+
 abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out T>) : ThreeFactory<T> {
     /**
      * Build an object
@@ -87,6 +96,17 @@ abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out
             updateMesh(obj, buildGeometry(obj), mesh)
         }
         return mesh
+    }
+}
+
+/**
+ * Generic factory for elements which provide inside geometry builder
+ */
+object ThreeShapeFactory : MeshThreeFactory<Shape>(Shape::class) {
+    override fun buildGeometry(obj: Shape): BufferGeometry {
+        return obj.run {
+            ThreeGeometryBuilder().apply { buildGeometry() }.build()
+        }.toBufferGeometry()
     }
 }
 

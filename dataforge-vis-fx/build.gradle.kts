@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openjfx.gradle.JavaFXOptions
 
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") 
     id("org.openjfx.javafxplugin")
 }
 

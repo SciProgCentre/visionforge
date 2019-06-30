@@ -1,4 +1,4 @@
-package hep.dataforge.vis.js.tree.demo
+package hep.dataforge.vis.spatial.demo
 
 external val module: Module
 

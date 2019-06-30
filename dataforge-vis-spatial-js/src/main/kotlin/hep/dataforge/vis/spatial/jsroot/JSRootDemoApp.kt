@@ -2,8 +2,8 @@ package hep.dataforge.vis.spatial.jsroot
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.EmptyMeta
-import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.spatial.ThreeOutput
+import hep.dataforge.vis.spatial.demo.ApplicationBase
 import hep.dataforge.vis.spatial.render
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
@@ -62,7 +62,7 @@ class JSRootDemoApp : ApplicationBase() {
                 val renderer = ThreeOutput(Global)
                 val canvas = document.getElementById("canvas")!!
                 canvas.clear()
-                renderer.start(canvas)
+                renderer.attach(canvas)
                 println("started")
 
                 renderer.render {

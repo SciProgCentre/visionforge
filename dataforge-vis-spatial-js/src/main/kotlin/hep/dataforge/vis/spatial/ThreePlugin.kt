@@ -13,11 +13,9 @@ class ThreePlugin : AbstractPlugin() {
     val factories = HashMap<Name, ThreeFactory<*>>()
 
     init {
-        factories["box".toName()] = ThreeBoxFactory
+        //factories["box".toName()] = ThreeBoxFactory
         factories["convex".toName()] = ThreeConvexFactory
     }
-
-
 
     override fun listNames(target: String): Sequence<Name> {
         return when (target) {

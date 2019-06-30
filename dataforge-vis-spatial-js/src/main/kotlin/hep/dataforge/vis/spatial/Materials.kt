@@ -5,14 +5,15 @@ import hep.dataforge.meta.double
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
+import hep.dataforge.vis.common.Colors
 import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
-import info.laht.threekt.math.ColorConstants
+
 
 object Materials {
     val DEFAULT = MeshPhongMaterial().apply {
-        this.color.set(ColorConstants.darkgreen)
+        this.color.set(Colors.darkgreen)
     }
 }
 

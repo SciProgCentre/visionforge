@@ -14,6 +14,7 @@ val kotlinVersion: String by rootProject.extra
 
 dependencies {
     implementation(project(":dataforge-vis-spatial"))
+    //implementation("ch.viseon.threejs:wrapper:105.0.0")
     implementation("info.laht.threekt:threejs-wrapper:0.88-npm-2")
     testCompile(kotlin("test-js"))
 }

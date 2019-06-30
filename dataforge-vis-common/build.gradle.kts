@@ -1,5 +1,5 @@
 plugins {
-    `npm-multiplatform`
+    id("scientifik.mpp")
 }
 
 val dataforgeVersion: String by rootProject.extra
@@ -19,6 +19,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
+                api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
 //                api("hep.dataforge:dataforge-output-js:$dataforgeVersion")
             }
         }
