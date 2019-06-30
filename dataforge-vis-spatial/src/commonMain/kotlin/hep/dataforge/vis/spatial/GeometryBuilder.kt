@@ -8,8 +8,6 @@ import hep.dataforge.vis.common.DisplayObject
 
 data class Point2D(val x: Number, val y: Number)
 
-typealias Shape2D = List<Point2D>
-
 data class Point3D(val x: Number, val y: Number, val z: Number) : MetaRepr {
     override fun toMeta(): Meta = buildMeta {
         "x" to x

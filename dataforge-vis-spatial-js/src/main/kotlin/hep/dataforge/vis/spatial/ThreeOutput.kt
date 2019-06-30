@@ -6,6 +6,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.spatial.demo.require
 import hep.dataforge.vis.spatial.three.Group
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -17,6 +18,8 @@ import info.laht.threekt.math.ColorConstants
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Element
 import kotlin.browser.window
+
+private val elementResizeEvent = require("element-resize-event")
 
 class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : Output<DisplayObject> {
 
@@ -41,7 +44,6 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
     }
 
     fun attach(element: Element, computeWidth: Element.() -> Int = { element.clientWidth }) {
-
         val width by meta.number(computeWidth(element)).int
 
         val height: Int = (width / aspectRatio).toInt()
@@ -60,13 +62,11 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
             renderer.render(scene, camera)
         }
 
-        window.addEventListener("resize", {
+        elementResizeEvent(element) {
             camera.updateProjectionMatrix()
-
-            val width by meta.number(computeWidth(element)).int
-
-            renderer.setSize(width, (width / aspectRatio).toInt())
-        }, false)
+            val newWidth = computeWidth(element)
+            renderer.setSize(newWidth, (newWidth / aspectRatio).toInt())
+        }
 
         element.replaceWith(renderer.domElement)
         animate()

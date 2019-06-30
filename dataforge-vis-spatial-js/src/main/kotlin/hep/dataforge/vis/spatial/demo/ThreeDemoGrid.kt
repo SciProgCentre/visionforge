@@ -52,8 +52,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
                     div("col-4") {
                         h2 { +(meta["title"].string ?: name.toString()) }
                         hr()
-                        val id = "output-$name"
-                        output.attach(div { this.id = id }) { 300 }
+                        output.attach(div { id = "output-$name" })
                     }
                 }
             }

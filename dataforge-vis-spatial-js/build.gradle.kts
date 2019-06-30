@@ -25,6 +25,7 @@ configure<KotlinFrontendExtension> {
     configure<NpmExtension> {
         dependency("three-full")
         dependency("style-loader")
+        dependency("element-resize-event")
         devDependency("karma")
     }
 
