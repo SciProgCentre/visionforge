@@ -11,7 +11,6 @@ import hep.dataforge.vis.spatial.ThreeFactory.Companion.updateMesh
 import hep.dataforge.vis.spatial.three.ConvexBufferGeometry
 import hep.dataforge.vis.spatial.three.EdgesGeometry
 import hep.dataforge.vis.spatial.three.euler
-import hep.dataforge.vis.spatial.three.toBufferGeometry
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
@@ -106,7 +105,7 @@ object ThreeShapeFactory : MeshThreeFactory<Shape>(Shape::class) {
     override fun buildGeometry(obj: Shape): BufferGeometry {
         return obj.run {
             ThreeGeometryBuilder().apply { buildGeometry() }.build()
-        }.toBufferGeometry()
+        }
     }
 }
 
