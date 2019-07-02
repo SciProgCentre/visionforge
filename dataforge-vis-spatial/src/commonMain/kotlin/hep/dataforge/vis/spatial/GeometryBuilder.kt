@@ -6,7 +6,12 @@ import hep.dataforge.meta.MetaRepr
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.vis.common.DisplayObject
 
-data class Point2D(val x: Number, val y: Number)
+data class Point2D(val x: Number, val y: Number): MetaRepr{
+    override fun toMeta(): Meta = buildMeta {
+        "x" to x
+        "y" to y
+    }
+}
 
 data class Point3D(val x: Number, val y: Number, val z: Number) : MetaRepr {
     override fun toMeta(): Meta = buildMeta {

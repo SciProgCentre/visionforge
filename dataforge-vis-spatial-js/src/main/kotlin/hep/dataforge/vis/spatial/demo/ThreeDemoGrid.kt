@@ -50,9 +50,9 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
             gridRoot.append {
                 span("border") {
                     div("col-4") {
-                        h2 { +(meta["title"].string ?: name.toString()) }
+                        output.attach(div { id = "output-$name" }){300}
                         hr()
-                        output.attach(div { id = "output-$name" })
+                        h2 { +(meta["title"].string ?: name.toString()) }
                     }
                 }
             }

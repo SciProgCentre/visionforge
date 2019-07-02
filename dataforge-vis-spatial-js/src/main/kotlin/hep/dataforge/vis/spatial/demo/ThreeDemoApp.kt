@@ -9,6 +9,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 
@@ -61,11 +64,22 @@ class ThreeDemoApp : ApplicationBase() {
                 }
             }
 
-            demo("jsroot", "JSROOT cube"){
+            demo("jsroot", "JSROOT cube") {
                 jsRootGeometry {
                     y = 110.0
                     shape = box(50, 50, 50)
                     color(12285)
+                }
+            }
+
+            demo("extrude", "extruded shape") {
+                extrude {
+                    shape {
+                        polygon(8, 50)
+                    }
+                    for(i in 0..100) {
+                        layer(i*5, 20*sin(2*PI/100*i), 20*cos(2*PI/100*i))
+                    }
                 }
             }
         }
