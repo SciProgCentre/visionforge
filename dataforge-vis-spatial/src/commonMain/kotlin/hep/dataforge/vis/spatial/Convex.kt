@@ -1,10 +1,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
-import hep.dataforge.names.toName
+import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayLeaf
 import hep.dataforge.vis.common.DisplayObject
-import hep.dataforge.vis.common.DisplayObjectList
 
 class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
 
@@ -14,15 +13,15 @@ class Convex(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
         const val TYPE = "geometry.3d.convex"
 
         fun points(item: MetaItem<*>): List<Point3D> {
-            return item.node?.getAll("point".toName())?.map { (_, value) ->
-                Point3D(value.node["x"].number ?: 0, value.node["y"].number ?: 0, value.node["y"].number ?: 0)
+            return item.node?.getAll("point")?.map { (_, value) ->
+                Point3D.from(value.node?: error("Point definition is not a node"))
             } ?: emptyList()
         }
     }
 }
 
-fun DisplayObjectList.convex(meta: Meta = EmptyMeta, action: ConvexBuilder.() -> Unit = {}) =
-    ConvexBuilder().apply(action).build(this, meta).also { addChild(it) }
+fun DisplayGroup.convex(meta: Meta = EmptyMeta, action: ConvexBuilder.() -> Unit = {}) =
+    ConvexBuilder().apply(action).build(this, meta).also { add(it) }
 
 class ConvexBuilder {
     private val points = ArrayList<Point3D>()

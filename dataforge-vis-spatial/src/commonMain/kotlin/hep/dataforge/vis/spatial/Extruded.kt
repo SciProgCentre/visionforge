@@ -1,9 +1,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
+import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayLeaf
 import hep.dataforge.vis.common.DisplayObject
-import hep.dataforge.vis.common.DisplayObjectList
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -46,7 +46,7 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
 
     val shape
         get() = properties.getAll("shape.point").map { (_, value) ->
-            Point2D(value.node["x"].number ?: 0, value.node["y"].number ?: 0)
+            Point2D.from(value.node ?: error("Point definition is not a node"))
         }
 
     fun shape(block: Shape2DBuilder.() -> Unit) {
@@ -70,7 +70,7 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
         return layer
     }
 
-    override fun <T : Any> GeometryBuilder<T>.buildGeometry() {
+    override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
 
         if (shape.size < 3) error("Extruded shape requires more than points per layer")
@@ -95,7 +95,7 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
             upperLayer = layers[i]
             for (j in (0 until shape.size - 1)) {
                 //counter clockwise
-                face4(
+                geometryBuilder.face4(
                     lowerLayer[j],
                     lowerLayer[j + 1],
                     upperLayer[j + 1],
@@ -104,7 +104,7 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
             }
 
             // final face
-            face4(
+            geometryBuilder.face4(
                 lowerLayer[shape.size - 1],
                 lowerLayer[0],
                 upperLayer[0],
@@ -119,5 +119,5 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
     }
 }
 
-fun DisplayObjectList.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
-    Extruded(this, meta).apply(action).also { addChild(it) }
+fun DisplayGroup.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
+    Extruded(this, meta).apply(action).also { add(it) }

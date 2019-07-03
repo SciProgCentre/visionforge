@@ -27,7 +27,7 @@ class ThreeDemoApp : ApplicationBase() {
             plugin(JSRootPlugin())
         }.build()
 
-        val grid = context.plugins.load(ThreeDemoGrid()).apply {
+        context.plugins.load(ThreeDemoGrid()).run {
             demo("group", "Group demo") {
                 val group = group {
                     box {
@@ -77,8 +77,8 @@ class ThreeDemoApp : ApplicationBase() {
                     shape {
                         polygon(8, 50)
                     }
-                    for(i in 0..100) {
-                        layer(i*5, 20*sin(2*PI/100*i), 20*cos(2*PI/100*i))
+                    for (i in 0..100) {
+                        layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
                     }
                 }
             }

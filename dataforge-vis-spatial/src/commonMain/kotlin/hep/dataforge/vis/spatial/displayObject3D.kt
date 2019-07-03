@@ -4,15 +4,14 @@ import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayObject
-import hep.dataforge.vis.common.DisplayObjectList
 import hep.dataforge.vis.common.getProperty
 
-fun DisplayObjectList.group(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit = {}): DisplayGroup =
-    DisplayObjectList(this, meta).apply(action).also { addChild(it) }
+fun DisplayGroup.group(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit = {}): DisplayGroup =
+    DisplayGroup(this, meta).apply(action).also { add(it) }
 
 
-fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayObjectList.() -> Unit) =
-    render(DisplayObjectList(null, EmptyMeta).apply(action), meta)
+fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit) =
+    render(DisplayGroup(null, EmptyMeta).apply(action), meta)
 
 //TODO replace properties by containers?
 
@@ -133,11 +132,11 @@ var DisplayObject.scaleZ
     }
 
 fun DisplayObject.color(rgb: Int) {
-    this.properties["color"] = rgb
+    this.properties["material"] = rgb
 }
 
 fun DisplayObject.color(meta: Meta) {
-    this.properties["color"] = meta
+    this.properties["material"] = meta
 }
 
 fun DisplayObject.color(r: Int, g: Int, b: Int) = color(buildMeta {

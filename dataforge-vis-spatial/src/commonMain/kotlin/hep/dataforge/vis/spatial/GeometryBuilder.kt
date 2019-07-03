@@ -1,15 +1,18 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.EmptyMeta
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaRepr
-import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.*
 import hep.dataforge.vis.common.DisplayObject
 
-data class Point2D(val x: Number, val y: Number): MetaRepr{
+data class Point2D(val x: Number, val y: Number) : MetaRepr {
     override fun toMeta(): Meta = buildMeta {
         "x" to x
         "y" to y
+    }
+
+    companion object{
+        fun from(meta: Meta): Point2D{
+            return Point2D(meta["x"].number ?: 0, meta["y"].number ?: 0)
+        }
     }
 }
 
@@ -19,12 +22,18 @@ data class Point3D(val x: Number, val y: Number, val z: Number) : MetaRepr {
         "y" to y
         "z" to z
     }
+
+    companion object{
+        fun from(meta: Meta): Point3D{
+            return Point3D(meta["x"].number ?: 0, meta["y"].number ?: 0, meta["y"].number ?: 0)
+        }
+    }
 }
 
 /**
  * @param T the type of resulting geometry
  */
-interface GeometryBuilder<T: Any> {
+interface GeometryBuilder<T : Any> {
     /**
      * Add a face to 3D model. If one of the vertices is not present in the current geometry model list of vertices,
      * it is added automatically.
@@ -35,7 +44,6 @@ interface GeometryBuilder<T: Any> {
     fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D? = null, meta: Meta = EmptyMeta)
 
     fun build(): T
-
 }
 
 fun GeometryBuilder<*>.face4(
@@ -50,6 +58,6 @@ fun GeometryBuilder<*>.face4(
     face(vertex1, vertex3, vertex4, normal, meta)
 }
 
-interface Shape: DisplayObject {
-    fun <T: Any> GeometryBuilder<T>.buildGeometry()
+interface Shape : DisplayObject {
+    fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>)
 }

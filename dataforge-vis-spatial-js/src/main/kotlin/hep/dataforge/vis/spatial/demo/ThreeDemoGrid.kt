@@ -12,8 +12,8 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.output.Output
 import hep.dataforge.output.OutputManager
+import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayObject
-import hep.dataforge.vis.common.DisplayObjectList
 import hep.dataforge.vis.spatial.ThreeOutput
 import hep.dataforge.vis.spatial.render
 import kotlinx.html.dom.append
@@ -24,6 +24,7 @@ import kotlinx.html.id
 import kotlinx.html.js.div
 import kotlinx.html.span
 import kotlin.browser.document
+import kotlin.dom.clear
 import kotlin.reflect.KClass
 
 class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
@@ -36,6 +37,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
         super.attach(context)
         val elementId = meta["elementID"].string ?: "canvas"
         val element = document.getElementById(elementId) ?: error("Element with id $elementId not found on page")
+        element.clear()
         element.append(gridRoot)
     }
 
@@ -47,10 +49,11 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
                     "size" to 500
                 }
             }
+            //TODO calculate cell width here using jquery
             gridRoot.append {
                 span("border") {
                     div("col-4") {
-                        output.attach(div { id = "output-$name" }){300}
+                        output.attach(div { id = "output-$name" }){ 300}
                         hr()
                         h2 { +(meta["title"].string ?: name.toString()) }
                     }
@@ -70,7 +73,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     }
 }
 
-fun ThreeDemoGrid.demo(name: String, title: String = name, block: DisplayObjectList.() -> Unit) {
+fun ThreeDemoGrid.demo(name: String, title: String = name, block: DisplayGroup.() -> Unit) {
     val meta = buildMeta {
         "title" to title
     }

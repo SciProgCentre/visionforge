@@ -4,7 +4,6 @@ import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.toDynamic
-import hep.dataforge.vis.*
 import hep.dataforge.vis.common.*
 import hep.dataforge.vis.spatial.MeshThreeFactory
 import info.laht.threekt.core.BufferGeometry
@@ -54,8 +53,8 @@ class JSRootGeometry(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, m
     }
 }
 
-fun DisplayObjectList.jsRootGeometry(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
-    JSRootGeometry(this, meta).apply(action).also { addChild(it) }
+fun DisplayGroup.jsRootGeometry(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
+    JSRootGeometry(this, meta).apply(action).also { add(it) }
 
 //fun Meta.toDynamic(): dynamic {
 //    fun MetaItem<*>.toDynamic(): dynamic = when (this) {

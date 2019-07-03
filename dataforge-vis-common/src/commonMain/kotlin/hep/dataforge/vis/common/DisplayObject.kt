@@ -16,14 +16,11 @@ interface DisplayObject {
      */
     val parent: DisplayObject?
 
-//    /**
-//     * The type of this object. Uses `.` notation. Empty type means untyped group
-//     */
-//    val type: String
-
     val properties: Styled
 
     companion object {
+        const val TARGET = "display"
+
         const val DEFAULT_TYPE = ""
         //const val TYPE_KEY = "@type"
         //const val CHILDREN_KEY = "@children"
@@ -73,4 +70,11 @@ open class DisplayLeaf(
     final override val properties = Styled(meta)
 }
 
-interface DisplayGroup: DisplayObject, Iterable<DisplayObject>
+///**
+// * A group that could contain both named and unnamed children. Unnamed children could be accessed only via
+// */
+//interface DisplayGroup : DisplayObject, Iterable<DisplayObject>, Provider {
+//    override val defaultTarget: String get() = DisplayObject.TARGET
+//
+//    val children
+//}

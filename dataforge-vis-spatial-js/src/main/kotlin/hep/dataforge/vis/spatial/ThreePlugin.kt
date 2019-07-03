@@ -5,7 +5,7 @@ import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
-import hep.dataforge.names.toName
+import hep.dataforge.names.set
 
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = ThreePlugin.tag
@@ -13,8 +13,8 @@ class ThreePlugin : AbstractPlugin() {
     val factories = HashMap<Name, ThreeFactory<*>>()
 
     init {
-        //factories["box".toName()] = ThreeBoxFactory
-        factories["convex".toName()] = ThreeConvexFactory
+        factories["box"] = ThreeBoxFactory
+        factories["convex"] = ThreeConvexFactory
     }
 
     override fun listNames(target: String): Sequence<Name> {

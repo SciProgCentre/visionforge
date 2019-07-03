@@ -10,6 +10,9 @@ import info.laht.threekt.core.Geometry
 import info.laht.threekt.math.Color
 import info.laht.threekt.math.Vector3
 
+// TODO use unsafe cast instead
+fun Point3D.asVector(): Vector3 = Vector3(this.x, this.y, this.z)
+
 class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
 
     private val vertices = ArrayList<Point3D>()

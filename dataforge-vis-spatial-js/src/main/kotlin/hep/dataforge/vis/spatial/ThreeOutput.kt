@@ -73,9 +73,12 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
     }
 
     private fun buildNode(obj: DisplayObject): Object3D? {
-        return if (obj is DisplayGroup) Group(obj.mapNotNull { buildNode(it) }).apply {
-            ThreeFactory.updatePosition(obj, this)
+        return if (obj is DisplayGroup) {
+            Group(obj.mapNotNull { buildNode(it) }).apply {
+                updatePosition(obj)
+            }
         } else {
+            //find specialized factory for this type if it is present
             val factory = context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == obj::class }
             when {
                 factory != null -> factory(obj)
@@ -94,6 +97,6 @@ class ThreeOutput(override val context: Context, val meta: Meta = EmptyMeta) : O
 
     companion object {
         fun build(context: Context, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit) =
-            ThreeOutput(context, buildMeta(meta,override))
+            ThreeOutput(context, buildMeta(meta, override))
     }
 }

@@ -14,6 +14,7 @@ allprojects {
         jcenter()
         maven("https://kotlin.bintray.com/kotlinx")
         maven("http://npm.mipt.ru:8081/artifactory/gradle-dev-local")
+        maven("https://kotlin.bintray.com/js-externals")
     }
 
     group = "hep.dataforge"

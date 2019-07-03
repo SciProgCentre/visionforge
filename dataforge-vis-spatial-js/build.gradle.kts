@@ -9,7 +9,6 @@ plugins {
     id("org.jetbrains.kotlin.frontend")
 }
 
-
 val kotlinVersion: String by rootProject.extra
 
 dependencies {
@@ -24,6 +23,7 @@ configure<KotlinFrontendExtension> {
 
     configure<NpmExtension> {
         dependency("three-full")
+        dependency("@hi-level/three-csg")
         dependency("style-loader")
         dependency("element-resize-event")
         devDependency("karma")

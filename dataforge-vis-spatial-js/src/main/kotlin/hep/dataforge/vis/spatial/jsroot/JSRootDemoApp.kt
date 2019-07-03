@@ -67,7 +67,7 @@ class JSRootDemoApp : ApplicationBase() {
 
                 renderer.render {
                     val json = parse(string)
-                    JSRootObject(this, EmptyMeta, json).also { addChild(it) }
+                    JSRootObject(this, EmptyMeta, json).also { add(it) }
                 }
             }
             readAsText(file)
