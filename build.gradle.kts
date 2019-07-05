@@ -1,4 +1,4 @@
-val dataforgeVersion by extra("0.1.3-dev-7")
+val dataforgeVersion by extra("0.1.3-dev-9")
 
 plugins{
     kotlin("jvm") version "1.3.40" apply false

@@ -7,7 +7,7 @@ import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayLeaf
 import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.common.node
-import hep.dataforge.vis.spatial.ThreeFactory
+import hep.dataforge.vis.spatial.three.ThreeFactory
 import info.laht.threekt.core.Object3D
 
 class JSRootObject(parent: DisplayObject?, meta: Meta, val data: dynamic) : DisplayLeaf(parent, meta) {

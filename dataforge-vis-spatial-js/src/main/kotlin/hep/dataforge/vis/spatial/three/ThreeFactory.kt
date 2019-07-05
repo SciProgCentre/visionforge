@@ -1,4 +1,4 @@
-package hep.dataforge.vis.spatial
+package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
 import hep.dataforge.names.startsWith
@@ -7,14 +7,14 @@ import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.common.onChange
-import hep.dataforge.vis.spatial.ThreeFactory.Companion.TYPE
-import hep.dataforge.vis.spatial.ThreeFactory.Companion.buildMesh
-import hep.dataforge.vis.spatial.three.ConvexBufferGeometry
-import hep.dataforge.vis.spatial.three.EdgesGeometry
-import hep.dataforge.vis.spatial.three.euler
+import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
+import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.buildMesh
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
+import info.laht.threekt.external.geometries.ConvexBufferGeometry
 import info.laht.threekt.geometries.BoxBufferGeometry
+import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
@@ -35,7 +35,12 @@ interface ThreeFactory<T : DisplayObject> {
     companion object {
         const val TYPE = "threeFactory"
 
-        internal fun buildMesh(obj: DisplayObject, geometry: BufferGeometry): Mesh {
+        fun <T : DisplayObject> buildMesh(obj: T, geometryBuilder: (T) -> BufferGeometry): Mesh {
+            val geometry = geometryBuilder(obj)
+
+            //JS sometimes tries to pass Geometry as BufferGeometry
+            @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
+
             val mesh = Mesh(geometry, obj.material)
 
             //inherited edges definition, enabled by default
@@ -48,6 +53,29 @@ interface ThreeFactory<T : DisplayObject> {
             if (obj.getProperty("wireframe.enabled").boolean == true) {
                 val material = obj.getProperty("edges.material")?.material() ?: Materials.DEFAULT
                 mesh.add(LineSegments(WireframeGeometry(mesh.geometry as BufferGeometry), material))
+            }
+
+            //set position for meseh
+            mesh.updatePosition(obj)
+
+            //add listener to object properties
+            obj.onChange(this) { name, _, _ ->
+                if (name.toString() == "material") {
+                    //updated material
+                    mesh.material = obj.material
+                } else if (
+                    name.startsWith("pos".toName()) ||
+                    name.startsWith("scale".toName()) ||
+                    name.startsWith("rotation".toName()) ||
+                    name.toString() == "visible"
+                ) {
+                    //update position of mesh using this object
+                    mesh.updatePosition(obj)
+                } else {
+                    //full update
+                    mesh.geometry = geometryBuilder(obj)
+                    mesh.material = obj.material
+                }
             }
             return mesh
         }
@@ -78,7 +106,8 @@ operator fun <T : DisplayObject> ThreeFactory<T>.invoke(obj: Any): Object3D {
 /**
  * Basic geometry-based factory
  */
-abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out T>) : ThreeFactory<T> {
+abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out T>) :
+    ThreeFactory<T> {
     /**
      * Build a geometry for an object
      */
@@ -86,36 +115,8 @@ abstract class MeshThreeFactory<T : DisplayObject>(override val type: KClass<out
 
 
     override fun invoke(obj: T): Mesh {
-        val geometry = buildGeometry(obj)
-
-        //JS sometimes tries to pass Geometry as BufferGeometry
-        @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
-
         //create mesh from geometry
-        val mesh = buildMesh(obj, geometry)
-
-        //set position for meseh
-        mesh.updatePosition(obj)
-
-        //add listener to object properties
-        obj.onChange(this) { name, _, _ ->
-            if (name.toString() == "material") {
-                //updated material
-                mesh.material = obj.material
-            } else if (
-                name.startsWith("pos".toName()) ||
-                name.startsWith("scale".toName()) ||
-                name.startsWith("rotation".toName()) ||
-                name.toString() == "visible"
-            ) {
-                //update position of mesh using this object
-                mesh.updatePosition(obj)
-            } else {
-                //full update
-                mesh.geometry = buildGeometry(obj)
-                mesh.material = obj.material
-            }
-        }
+        val mesh = buildMesh(obj, ::buildGeometry)
         return mesh
     }
 }

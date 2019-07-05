@@ -1,4 +1,4 @@
-package hep.dataforge.vis.spatial
+package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.double

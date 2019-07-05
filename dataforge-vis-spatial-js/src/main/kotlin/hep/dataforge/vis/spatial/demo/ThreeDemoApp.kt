@@ -2,6 +2,7 @@ package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.ContextBuilder
 import hep.dataforge.meta.number
+import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.jsroot.JSRootPlugin
 import hep.dataforge.vis.spatial.jsroot.jsRootGeometry
@@ -28,7 +29,7 @@ class ThreeDemoApp : ApplicationBase() {
         }.build()
 
         context.plugins.load(ThreeDemoGrid()).run {
-            demo("group", "Group demo") {
+            demo("dynamic", "Dynamic properties demo") {
                 val group = group {
                     box {
                         z = 110.0
@@ -42,6 +43,7 @@ class ThreeDemoApp : ApplicationBase() {
                         xSize = 100.0
                         ySize = 100.0
                         zSize = 100.0
+                        //override color for this cube
                         color(1530)
 
                         GlobalScope.launch {
@@ -53,13 +55,13 @@ class ThreeDemoApp : ApplicationBase() {
                     }
                 }
 
-                var color by group.properties.number(1530).int
+                var material by group.properties.number(1530).int
 
                 GlobalScope.launch {
                     val random = Random(111)
                     while (isActive) {
                         delay(1000)
-                        color = random.nextInt(0, Int.MAX_VALUE)
+                        material = random.nextInt(0, Int.MAX_VALUE)
                     }
                 }
             }
@@ -68,7 +70,9 @@ class ThreeDemoApp : ApplicationBase() {
                 jsRootGeometry {
                     y = 110.0
                     shape = box(50, 50, 50)
-                    color(12285)
+                    color(Colors.lightcoral)
+                    rotationX = PI / 4
+                    rotationY = PI / 4
                 }
             }
 
@@ -80,6 +84,40 @@ class ThreeDemoApp : ApplicationBase() {
                     for (i in 0..100) {
                         layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
                     }
+                }
+
+                color(Colors.teal)
+            }
+
+            demo("CSG", "CSG operations") {
+                composite(CompositeType.UNION) {
+                    box(100, 100, 100) {
+                        z = 100
+                        rotationX = PI / 4
+                        rotationY = PI / 4
+                    }
+                    box(100, 100, 100)
+                    color(Colors.green)
+                }
+                composite(CompositeType.INTERSECT) {
+                    box(100, 100, 100) {
+                        z = 100
+                        rotationX = PI / 4
+                        rotationY = PI / 4
+                    }
+                    box(100, 100, 100)
+                    y = 300
+                    color(Colors.red)
+                }
+                composite(CompositeType.SUBTRACT) {
+                    box(100, 100, 100) {
+                        z = 100
+                        rotationX = PI / 4
+                        rotationY = PI / 4
+                    }
+                    box(100, 100, 100)
+                    y = -300
+                    color(Colors.blue)
                 }
             }
         }

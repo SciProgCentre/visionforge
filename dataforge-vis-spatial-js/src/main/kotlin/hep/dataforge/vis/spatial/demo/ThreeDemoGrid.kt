@@ -14,8 +14,10 @@ import hep.dataforge.output.Output
 import hep.dataforge.output.OutputManager
 import hep.dataforge.vis.common.DisplayGroup
 import hep.dataforge.vis.common.DisplayObject
-import hep.dataforge.vis.spatial.ThreeOutput
 import hep.dataforge.vis.spatial.render
+import hep.dataforge.vis.spatial.three.ThreeOutput
+import hep.dataforge.vis.spatial.three.ThreePlugin
+import hep.dataforge.vis.spatial.three.output
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.h2
@@ -33,6 +35,8 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     private val gridRoot = document.create.div("row")
     private val outputs: MutableMap<Name, ThreeOutput> = HashMap()
 
+    override fun dependsOn(): List<PluginFactory<*>> = listOf(ThreePlugin)
+
     override fun attach(context: Context) {
         super.attach(context)
         val elementId = meta["elementID"].string ?: "canvas"
@@ -42,9 +46,11 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     }
 
     override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Output<T> {
+        val three = context.plugins.get<ThreePlugin>()!!
+
         return outputs.getOrPut(name) {
             if (type != DisplayObject::class) error("Supports only DisplayObject")
-            val output = ThreeOutput.build(context, meta) {
+            val output = three.output(meta) {
                 "axis" to {
                     "size" to 500
                 }
@@ -52,8 +58,8 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
             //TODO calculate cell width here using jquery
             gridRoot.append {
                 span("border") {
-                    div("col-4") {
-                        output.attach(div { id = "output-$name" }){ 300}
+                    div("col-6") {
+                        output.attach(div { id = "output-$name" }) { 500 }
                         hr()
                         h2 { +(meta["title"].string ?: name.toString()) }
                     }

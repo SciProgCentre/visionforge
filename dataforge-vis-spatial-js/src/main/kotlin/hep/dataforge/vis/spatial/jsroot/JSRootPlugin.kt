@@ -1,32 +1,27 @@
 package hep.dataforge.vis.spatial.jsroot
 
 import hep.dataforge.context.AbstractPlugin
-import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.spatial.ThreePlugin
+import hep.dataforge.vis.spatial.three.ThreeFactory
+import hep.dataforge.vis.spatial.three.ThreePlugin
 
 class JSRootPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = JSRootPlugin.tag
 
     override fun dependsOn() = listOf(ThreePlugin)
 
-    override fun attach(context: Context) {
-        super.attach(context)
-        context.plugins.get<ThreePlugin>()?.factories?.apply {
-            this["jsRoot.geometry".toName()] = ThreeJSRootGeometryFactory
-            this["jsRoot.object".toName()] = ThreeJSRootObjectFactory
+    override fun provideTop(target: String): Map<Name, Any> {
+        return when(target){
+            ThreeFactory.TYPE -> mapOf(
+                "jsRoot.geometry".toName() to ThreeJSRootGeometryFactory,
+                "jsRoot.object".toName() to ThreeJSRootObjectFactory
+            )
+            else -> emptyMap()
         }
-    }
-
-    override fun detach() {
-        context.plugins.get<ThreePlugin>()?.factories?.apply {
-            remove("jsRoot.geometry".toName())
-            remove("jsRoot.object".toName())
-        }
-        super.detach()
     }
 
     companion object: PluginFactory<JSRootPlugin> {

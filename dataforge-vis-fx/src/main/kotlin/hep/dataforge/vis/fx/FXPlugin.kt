@@ -115,5 +115,5 @@ class ApplicationSurrogate : App() {
 }
 
 fun Context.display(width: Double = 800.0, height: Double = 600.0, component: () -> UIComponent) {
-    plugins.getOrLoad<FXPlugin>().display(component(), width, height)
+    plugins.fetch(FXPlugin).display(component(), width, height)
 }

@@ -7,7 +7,7 @@ import hep.dataforge.meta.values
 import hep.dataforge.vis.common.DisplayLeaf
 import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.common.int
-import hep.dataforge.vis.spatial.MeshThreeFactory
+import hep.dataforge.vis.spatial.three.MeshThreeFactory
 import hep.dataforge.vis.spatial.jsroot.createCubeBuffer
 import hep.dataforge.vis.spatial.jsroot.createGeometry
 import hep.dataforge.vis.spatial.jsroot.createTubeBuffer

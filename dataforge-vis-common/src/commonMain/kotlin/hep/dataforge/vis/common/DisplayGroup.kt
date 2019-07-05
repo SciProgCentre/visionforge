@@ -17,19 +17,15 @@ class DisplayGroup(
     private val namedChildren = HashMap<Name, DisplayObject>()
     private val unnamedChildren = ArrayList<DisplayObject>()
 
-    override val defaultTarget: String get() = DisplayObject.TARGET
+    override val defaultTarget: String get() = DisplayObject.TYPE
     override val properties: Styled = Styled(meta)
 
     override fun iterator(): Iterator<DisplayObject> = (namedChildren.values + unnamedChildren).iterator()
 
-    override fun listNames(target: String): Sequence<Name> =
-        namedChildren.keys.asSequence()
-
-    override fun provideTop(target: String, name: Name): Any? {
-        return if (target == defaultTarget) {
-            namedChildren[name]
-        } else {
-            null
+    override fun provideTop(target: String): Map<Name, Any> {
+        return when(target){
+            DisplayObject.TYPE -> namedChildren
+            else -> emptyMap()
         }
     }
 
@@ -55,14 +51,18 @@ class DisplayGroup(
     /**
      *
      */
-    operator fun set(key: String, child: DisplayObject?) {
-        val name = key.toName()
-        if (child == null) {
-            namedChildren.remove(name)
+    operator fun set(key: String?, child: DisplayObject?) {
+        if(key == null){
+
         } else {
-            namedChildren[name] = child
+            val name = key.toName()
+            if (child == null) {
+                namedChildren.remove(name)
+            } else {
+                namedChildren[name] = child
+            }
+            listeners.forEach { it.callback(name, child) }
         }
-        listeners.forEach { it.callback(name, child) }
     }
 
     /**

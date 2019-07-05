@@ -1,5 +1,5 @@
 import * as JSROOT from "JSRootUtils"
-import * as THREE from "three-full"
+import * as THREE from "three"
 import * as ThreeBSP from "ThreeCSG"
 
 // Holder of all TGeo-related functions and classes

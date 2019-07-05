@@ -3,13 +3,16 @@ package hep.dataforge.vis.common
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
+import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.DisplayObject.Companion.META_KEY
 import hep.dataforge.vis.common.DisplayObject.Companion.TAGS_KEY
+import hep.dataforge.vis.common.DisplayObject.Companion.TYPE
 
 /**
  * A root type for display hierarchy
  */
-interface DisplayObject {
+@Type(TYPE)
+interface DisplayObject : MetaRepr {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -18,8 +21,12 @@ interface DisplayObject {
 
     val properties: Styled
 
+    override fun toMeta(): Meta = buildMeta(properties) {
+        "type" to this::class
+    }
+
     companion object {
-        const val TARGET = "display"
+        const val TYPE = "display"
 
         const val DEFAULT_TYPE = ""
         //const val TYPE_KEY = "@type"

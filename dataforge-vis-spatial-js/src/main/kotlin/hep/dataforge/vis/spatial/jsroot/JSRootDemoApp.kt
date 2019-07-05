@@ -2,9 +2,11 @@ package hep.dataforge.vis.spatial.jsroot
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.EmptyMeta
-import hep.dataforge.vis.spatial.ThreeOutput
+import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.demo.ApplicationBase
 import hep.dataforge.vis.spatial.render
+import hep.dataforge.vis.spatial.three.ThreePlugin
+import hep.dataforge.vis.spatial.three.output
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
 import org.w3c.files.FileList
@@ -59,7 +61,7 @@ class JSRootDemoApp : ApplicationBase() {
         FileReader().apply {
             onload = {
                 val string = result as String
-                val renderer = ThreeOutput(Global)
+                val renderer = Global.plugins.fetch(ThreePlugin).output()
                 val canvas = document.getElementById("canvas")!!
                 canvas.clear()
                 renderer.attach(canvas)

@@ -5,7 +5,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.toDynamic
 import hep.dataforge.vis.common.*
-import hep.dataforge.vis.spatial.MeshThreeFactory
+import hep.dataforge.vis.spatial.three.MeshThreeFactory
 import info.laht.threekt.core.BufferGeometry
 
 class JSRootGeometry(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {

@@ -26,12 +26,12 @@ class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape
         val node6 = Point3D(dx, -dy, dz)
         val node7 = Point3D(dx, dy, dz)
         val node8 = Point3D(-dx, dy, dz)
-        geometryBuilder.face4(node1, node4, node3, node2, Point3D(0, 0, -1))
-        geometryBuilder.face4(node1, node2, node6, node5, Point3D(0, -1, 0))
-        geometryBuilder.face4(node2, node3, node7, node6, Point3D(1, 0, 0))
-        geometryBuilder.face4(node4, node8, node7, node3, Point3D(0, 1, 0))
-        geometryBuilder.face4(node1, node5, node8, node4, Point3D(-1, 0, 0))
-        geometryBuilder.face4(node8, node5, node6, node7, Point3D(0, 0, 1))
+        geometryBuilder.face4(node1, node4, node3, node2)
+        geometryBuilder.face4(node1, node2, node6, node5)
+        geometryBuilder.face4(node2, node3, node7, node6)
+        geometryBuilder.face4(node4, node8, node7, node3)
+        geometryBuilder.face4(node1, node5, node8, node4)
+        geometryBuilder.face4(node8, node5, node6, node7)
     }
 
     companion object {
@@ -41,3 +41,10 @@ class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape
 
 fun DisplayGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
     Box(this, meta).apply(action).also { add(it) }
+
+fun DisplayGroup.box(xSize: Number, ySize: Number, zSize: Number, meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
+    Box(this, meta).apply(action).apply{
+        this.xSize = xSize.toDouble()
+        this.ySize = ySize.toDouble()
+        this.zSize = zSize.toDouble()
+    }.also { add(it) }
