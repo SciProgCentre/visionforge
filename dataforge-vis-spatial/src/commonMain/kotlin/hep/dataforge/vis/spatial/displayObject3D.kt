@@ -97,7 +97,7 @@ enum class RotationOrder {
  * Rotation order. Not inherited
  */
 var DisplayObject.rotationOrder: RotationOrder
-    get() = properties["rotation.order"].enum<RotationOrder>() ?: RotationOrder.XYZ
+    get() = getProperty("rotation.order").enum<RotationOrder>() ?: RotationOrder.XYZ
     set(value) {
         properties["rotation.order"] = value
     }
@@ -139,14 +139,26 @@ fun DisplayObject.color(meta: Meta) {
     this.properties["material"] = meta
 }
 
-fun DisplayObject.color(r: Int, g: Int, b: Int) = color(buildMeta {
+fun DisplayObject.color(builder: MetaBuilder.()->Unit) {
+    color(buildMeta(builder))
+}
+
+fun DisplayObject.color(r: Int, g: Int, b: Int) = color{
     "red" to r
     "green" to g
     "blue" to b
-})
-
+}
 
 //TODO add inherited scale
+
+/**
+ * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default
+ */
+var DisplayObject.detail: Int?
+    get() = properties["detail"]?.int
+    set(value) {
+        properties["detail"] = value
+    }
 
 object World {
     const val CAMERA_INITIAL_DISTANCE = -500.0

@@ -13,7 +13,6 @@ import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.buildMesh
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.external.geometries.ConvexBufferGeometry
-import info.laht.threekt.geometries.BoxBufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
@@ -130,11 +129,6 @@ object ThreeShapeFactory : MeshThreeFactory<Shape>(Shape::class) {
             ThreeGeometryBuilder().apply { toGeometry(this) }.build()
         }
     }
-}
-
-object ThreeBoxFactory : MeshThreeFactory<Box>(Box::class) {
-    override fun buildGeometry(obj: Box) =
-        BoxBufferGeometry(obj.xSize, obj.ySize, obj.zSize)
 }
 
 //FIXME not functional yet

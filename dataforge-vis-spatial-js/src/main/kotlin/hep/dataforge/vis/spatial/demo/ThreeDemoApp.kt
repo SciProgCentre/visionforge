@@ -29,7 +29,17 @@ class ThreeDemoApp : ApplicationBase() {
         }.build()
 
         context.plugins.load(ThreeDemoGrid()).run {
-            demo("dynamic", "Dynamic properties demo") {
+            demo("shapes", "Basic shapes"){
+                box(100.0,100.0,100.0) {
+                    z = 110.0
+                }
+                sphere(50.0){
+                    x = 110
+                    detail = 200
+                }
+            }
+
+            demo("dynamic", "Dynamic properties") {
                 val group = group {
                     box {
                         z = 110.0
@@ -97,7 +107,10 @@ class ThreeDemoApp : ApplicationBase() {
                         rotationY = PI / 4
                     }
                     box(100, 100, 100)
-                    color(Colors.green)
+                    color{
+                        "color" to Colors.lightgreen
+                        "opacity" to 0.3
+                    }
                 }
                 composite(CompositeType.INTERSECT) {
                     box(100, 100, 100) {

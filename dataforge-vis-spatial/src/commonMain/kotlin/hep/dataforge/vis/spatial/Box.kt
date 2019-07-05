@@ -8,9 +8,9 @@ import hep.dataforge.vis.common.DisplayObject
 import hep.dataforge.vis.common.double
 
 class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
-    var xSize by double(1.0)
-    var ySize by double(1.0)
-    var zSize by double(1.0)
+    var xSize by double(100.0)
+    var ySize by double(100.0)
+    var zSize by double(100.0)
 
     //TODO add helper for color configuration
 

@@ -1,9 +1,6 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.double
-import hep.dataforge.meta.get
-import hep.dataforge.meta.int
+import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
 import info.laht.threekt.materials.Material
@@ -53,6 +50,7 @@ fun MetaItem<*>?.material(): Material {
         is MetaItem.NodeItem -> MeshPhongMaterial().apply {
             (node["color"] ?: this@material).let { color = it.color() }
             opacity = node["opacity"]?.double ?: 1.0
+            transparent = node["transparent"].boolean ?: (opacity < 1.0)
             node["specularColor"]?.let { specular = it.color() }
         }
     }
