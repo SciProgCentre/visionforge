@@ -3,9 +3,9 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.seal
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 
 enum class CompositeType {
     UNION,
@@ -14,25 +14,25 @@ enum class CompositeType {
 }
 
 class Composite(
-    parent: DisplayObject?,
-    val first: DisplayObject,
-    val second: DisplayObject,
+    parent: VisualObject?,
+    val first: VisualObject,
+    val second: VisualObject,
     val type: CompositeType = CompositeType.UNION,
     meta: Meta = EmptyMeta
 ) : DisplayLeaf(parent, meta)
 
-fun DisplayGroup.composite(type: CompositeType, builder: DisplayGroup.() -> Unit): Composite {
-    val group = DisplayGroup().apply(builder)
+fun VisualGroup.composite(type: CompositeType, builder: VisualGroup.() -> Unit): Composite {
+    val group = VisualGroup().apply(builder)
     val children = group.toList()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(this, children[0], children[1], type, group.properties.seal()).also { add(it) }
 }
 
-fun DisplayGroup.union(builder: DisplayGroup.() -> Unit) =
+fun VisualGroup.union(builder: VisualGroup.() -> Unit) =
     composite(CompositeType.UNION,builder)
 
-fun DisplayGroup.subtract(builder: DisplayGroup.() -> Unit) =
+fun VisualGroup.subtract(builder: VisualGroup.() -> Unit) =
     composite(CompositeType.SUBTRACT,builder)
 
-fun DisplayGroup.intersect(builder: DisplayGroup.() -> Unit) =
+fun VisualGroup.intersect(builder: VisualGroup.() -> Unit) =
     composite(CompositeType.INTERSECT,builder)

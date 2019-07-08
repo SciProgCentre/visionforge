@@ -33,7 +33,9 @@ include(
     ":dataforge-vis-fx",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-fx",
-    ":dataforge-vis-spatial-js"
+    ":dataforge-vis-spatial-js",
+    ":dataforge-vis-jsroot",
+    ":dataforge-vis-spatial-gdml"
 )
 
 //if(file("../dataforge-core").exists()) {

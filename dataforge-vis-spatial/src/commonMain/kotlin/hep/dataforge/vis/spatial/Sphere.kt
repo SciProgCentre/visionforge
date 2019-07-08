@@ -2,13 +2,13 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.double
 import kotlin.math.PI
 
-class Sphere(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
+class Sphere(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta) {
     var radius by double(50.0)
     var phiStart by double(0.0)
     var phi by double(2 * PI)
@@ -16,10 +16,10 @@ class Sphere(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
     var theta by double(PI)
 }
 
-fun DisplayGroup.sphere(meta: Meta = EmptyMeta, action: Sphere.() -> Unit = {}) =
+fun VisualGroup.sphere(meta: Meta = EmptyMeta, action: Sphere.() -> Unit = {}) =
     Sphere(this, meta).apply(action).also { add(it) }
 
-fun DisplayGroup.sphere(
+fun VisualGroup.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,

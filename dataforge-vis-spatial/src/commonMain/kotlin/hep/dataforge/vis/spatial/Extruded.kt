@@ -1,9 +1,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -42,7 +42,7 @@ class Layer(override val config: Config) : Specific {
 
 //class Layer(val z: Number, val x: Number = 0.0, val y: Number = 0.0, val scale: Number = 1.0)
 
-class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
+class Extruded(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
 
     val shape
         get() = properties.getAll("shape.point").map { (_, value) ->
@@ -119,5 +119,5 @@ class Extruded(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), 
     }
 }
 
-fun DisplayGroup.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
+fun VisualGroup.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
     Extruded(this, meta).apply(action).also { add(it) }

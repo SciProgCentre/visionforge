@@ -8,7 +8,7 @@ import hep.dataforge.vis.common.*
 import hep.dataforge.vis.spatial.three.MeshThreeFactory
 import info.laht.threekt.core.BufferGeometry
 
-class JSRootGeometry(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta) {
+class JSRootGeometry(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta) {
 
     var shape by node()
 
@@ -53,7 +53,7 @@ class JSRootGeometry(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, m
     }
 }
 
-fun DisplayGroup.jsRootGeometry(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
+fun VisualGroup.jsRootGeometry(meta: Meta = EmptyMeta, action: JSRootGeometry.() -> Unit = {}) =
     JSRootGeometry(this, meta).apply(action).also { add(it) }
 
 //fun Meta.toDynamic(): dynamic {

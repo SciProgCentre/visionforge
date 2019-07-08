@@ -2,12 +2,12 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.double
 
-class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
+class Box(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
     var xSize by double(100.0)
     var ySize by double(100.0)
     var zSize by double(100.0)
@@ -36,13 +36,14 @@ class Box(parent: DisplayObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape
 
     companion object {
         const val TYPE = "geometry.3d.box"
+
     }
 }
 
-fun DisplayGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
+fun VisualGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
     Box(this, meta).apply(action).also { add(it) }
 
-fun DisplayGroup.box(xSize: Number, ySize: Number, zSize: Number, meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
+fun VisualGroup.box(xSize: Number, ySize: Number, zSize: Number, meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
     Box(this, meta).apply(action).apply{
         this.xSize = xSize.toDouble()
         this.ySize = ySize.toDouble()

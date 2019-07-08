@@ -4,7 +4,7 @@ import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.rotationOrder
 import hep.dataforge.vis.spatial.rotationX
 import hep.dataforge.vis.spatial.rotationY
@@ -25,7 +25,7 @@ fun Group(children: Collection<Object3D>) = info.laht.threekt.objects.Group().ap
     children.forEach { this.add(it) }
 }
 
-val DisplayObject.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
+val VisualObject.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
 
 val MetaItem<*>.vector get() = Vector3(node["x"].float ?: 0f, node["y"].float ?: 0f, node["z"].float ?: 0f)
 

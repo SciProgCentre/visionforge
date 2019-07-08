@@ -4,20 +4,20 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.common.DisplayObject.Companion.META_KEY
-import hep.dataforge.vis.common.DisplayObject.Companion.TAGS_KEY
-import hep.dataforge.vis.common.DisplayObject.Companion.TYPE
+import hep.dataforge.vis.common.VisualObject.Companion.META_KEY
+import hep.dataforge.vis.common.VisualObject.Companion.TAGS_KEY
+import hep.dataforge.vis.common.VisualObject.Companion.TYPE
 
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface DisplayObject : MetaRepr {
+interface VisualObject : MetaRepr {
 
     /**
      * The parent object of this one. If null, this one is a root.
      */
-    val parent: DisplayObject?
+    val parent: VisualObject?
 
     val properties: Styled
 
@@ -26,7 +26,7 @@ interface DisplayObject : MetaRepr {
     }
 
     companion object {
-        const val TYPE = "display"
+        const val TYPE = "visual"
 
         const val DEFAULT_TYPE = ""
         //const val TYPE_KEY = "@type"
@@ -39,14 +39,14 @@ interface DisplayObject : MetaRepr {
 /**
  * Get the property of this display object of parent's if not found
  */
-tailrec fun DisplayObject.getProperty(name: Name): MetaItem<*>? = properties[name] ?: parent?.getProperty(name)
+tailrec fun VisualObject.getProperty(name: Name): MetaItem<*>? = properties[name] ?: parent?.getProperty(name)
 
-fun DisplayObject.getProperty(name: String): MetaItem<*>? = getProperty(name.toName())
+fun VisualObject.getProperty(name: String): MetaItem<*>? = getProperty(name.toName())
 
 /**
- * A change listener for [DisplayObject] configuration.
+ * A change listener for [VisualObject] configuration.
  */
-fun DisplayObject.onChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit) {
+fun VisualObject.onChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit) {
     properties.onChange(owner, action)
     parent?.onChange(owner, action)
 }
@@ -54,7 +54,7 @@ fun DisplayObject.onChange(owner: Any?, action: (Name, before: MetaItem<*>?, aft
 /**
  * Remove all meta listeners with matching owners
  */
-fun DisplayObject.removeChangeListener(owner: Any?) {
+fun VisualObject.removeChangeListener(owner: Any?) {
     properties.removeListener(owner)
     parent?.removeChangeListener(owner)
 }
@@ -63,24 +63,24 @@ fun DisplayObject.removeChangeListener(owner: Any?) {
 /**
  * Additional meta not relevant to display
  */
-val DisplayObject.meta: Meta get() = properties[META_KEY]?.node ?: EmptyMeta
+val VisualObject.meta: Meta get() = properties[META_KEY]?.node ?: EmptyMeta
 
-val DisplayObject.tags: List<String> get() = properties[TAGS_KEY].stringList
+val VisualObject.tags: List<String> get() = properties[TAGS_KEY].stringList
 
 /**
- * Basic [DisplayObject] leaf element
+ * Basic [VisualObject] leaf element
  */
 open class DisplayLeaf(
-    override val parent: DisplayObject?,
+    override val parent: VisualObject?,
     meta: Meta = EmptyMeta
-) : DisplayObject {
+) : VisualObject {
     final override val properties = Styled(meta)
 }
 
 ///**
 // * A group that could contain both named and unnamed children. Unnamed children could be accessed only via
 // */
-//interface DisplayGroup : DisplayObject, Iterable<DisplayObject>, Provider {
+//interface VisualGroup : DisplayObject, Iterable<DisplayObject>, Provider {
 //    override val defaultTarget: String get() = DisplayObject.TARGET
 //
 //    val children

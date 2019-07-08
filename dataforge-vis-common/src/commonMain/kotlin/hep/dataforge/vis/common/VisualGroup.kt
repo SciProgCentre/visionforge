@@ -10,33 +10,33 @@ import hep.dataforge.provider.Provider
 /**
  * A display group which allows both named and unnamed children
  */
-class DisplayGroup(
-    override val parent: DisplayObject? = null, meta: Meta = EmptyMeta
-) : DisplayObject, Iterable<DisplayObject>, Provider {
+class VisualGroup(
+    override val parent: VisualObject? = null, meta: Meta = EmptyMeta
+) : VisualObject, Iterable<VisualObject>, Provider {
 
-    private val namedChildren = HashMap<Name, DisplayObject>()
-    private val unnamedChildren = ArrayList<DisplayObject>()
+    private val namedChildren = HashMap<Name, VisualObject>()
+    private val unnamedChildren = ArrayList<VisualObject>()
 
-    override val defaultTarget: String get() = DisplayObject.TYPE
+    override val defaultTarget: String get() = VisualObject.TYPE
     override val properties: Styled = Styled(meta)
 
-    override fun iterator(): Iterator<DisplayObject> = (namedChildren.values + unnamedChildren).iterator()
+    override fun iterator(): Iterator<VisualObject> = (namedChildren.values + unnamedChildren).iterator()
 
     override fun provideTop(target: String): Map<Name, Any> {
         return when(target){
-            DisplayObject.TYPE -> namedChildren
+            VisualObject.TYPE -> namedChildren
             else -> emptyMap()
         }
     }
 
-    private data class Listener(val owner: Any?, val callback: (Name?, DisplayObject?) -> Unit)
+    private data class Listener(val owner: Any?, val callback: (Name?, VisualObject?) -> Unit)
 
     private val listeners = HashSet<Listener>()
 
     /**
      * Add listener for children change
      */
-    fun onChildrenChange(owner: Any?, action: (Name?, DisplayObject?) -> Unit) {
+    fun onChildrenChange(owner: Any?, action: (Name?, VisualObject?) -> Unit) {
         listeners.add(Listener(owner, action))
     }
 
@@ -51,7 +51,7 @@ class DisplayGroup(
     /**
      *
      */
-    operator fun set(key: String?, child: DisplayObject?) {
+    operator fun set(key: String?, child: VisualObject?) {
         if(key == null){
 
         } else {
@@ -68,7 +68,7 @@ class DisplayGroup(
     /**
      * Append unnamed child
      */
-    fun add(child: DisplayObject) {
+    fun add(child: VisualObject) {
         unnamedChildren.add(child)
         listeners.forEach { it.callback(null, child) }
     }
@@ -76,7 +76,7 @@ class DisplayGroup(
     /**
      * remove unnamed child
      */
-    fun remove(child: DisplayObject) {
+    fun remove(child: VisualObject) {
         unnamedChildren.remove(child)
         listeners.forEach { it.callback(null, null) }
     }

@@ -3,16 +3,16 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.common.onChange
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 
 /**
- * A caching binding collection for [DisplayObject] properties
+ * A caching binding collection for [VisualObject] properties
  */
-class DisplayObjectFXListener(val obj: DisplayObject) {
+class DisplayObjectFXListener(val obj: VisualObject) {
     private val binndings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
 
     init {

@@ -4,8 +4,6 @@ import hep.dataforge.context.ContextBuilder
 import hep.dataforge.meta.number
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.*
-import hep.dataforge.vis.spatial.jsroot.JSRootPlugin
-import hep.dataforge.vis.spatial.jsroot.jsRootGeometry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -21,19 +19,16 @@ class ThreeDemoApp : ApplicationBase() {
     override val stateKeys: List<String> = emptyList()
 
     override fun start(state: Map<String, Any>) {
-        require("JSRootGeoBase.js")
 
         //TODO replace by optimized builder after dataforge 0.1.3-dev-8
-        val context = ContextBuilder("three-demo").apply {
-            plugin(JSRootPlugin())
-        }.build()
+        val context = ContextBuilder("three-demo").build()
 
         context.plugins.load(ThreeDemoGrid()).run {
-            demo("shapes", "Basic shapes"){
-                box(100.0,100.0,100.0) {
+            demo("shapes", "Basic shapes") {
+                box(100.0, 100.0, 100.0) {
                     z = 110.0
                 }
-                sphere(50.0){
+                sphere(50.0) {
                     x = 110
                     detail = 200
                 }
@@ -76,15 +71,15 @@ class ThreeDemoApp : ApplicationBase() {
                 }
             }
 
-            demo("jsroot", "JSROOT cube") {
-                jsRootGeometry {
-                    y = 110.0
-                    shape = box(50, 50, 50)
-                    color(Colors.lightcoral)
-                    rotationX = PI / 4
-                    rotationY = PI / 4
-                }
-            }
+//            demo("jsroot", "JSROOT cube") {
+//                jsRootGeometry {
+//                    y = 110.0
+//                    shape = box(50, 50, 50)
+//                    color(Colors.lightcoral)
+//                    rotationX = PI / 4
+//                    rotationY = PI / 4
+//                }
+//            }
 
             demo("extrude", "extruded shape") {
                 extrude {
@@ -107,7 +102,7 @@ class ThreeDemoApp : ApplicationBase() {
                         rotationY = PI / 4
                     }
                     box(100, 100, 100)
-                    color{
+                    color {
                         "color" to Colors.lightgreen
                         "opacity" to 0.3
                     }

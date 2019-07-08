@@ -3,14 +3,14 @@ package hep.dataforge.vis.spatial.jsroot
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.toDynamic
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.node
 import hep.dataforge.vis.spatial.three.ThreeFactory
 import info.laht.threekt.core.Object3D
 
-class JSRootObject(parent: DisplayObject?, meta: Meta, val data: dynamic) : DisplayLeaf(parent, meta) {
+class JSRootObject(parent: VisualObject?, meta: Meta, val data: dynamic) : DisplayLeaf(parent, meta) {
 
     var options by node()
 
@@ -28,7 +28,7 @@ object ThreeJSRootObjectFactory : ThreeFactory<JSRootObject> {
     }
 }
 
-fun DisplayGroup.jsRootObject(str: String) {
+fun VisualGroup.jsRootObject(str: String) {
     val json = JSON.parse<Any>(str)
     JSRootObject(this, EmptyMeta, json).also { add(it) }
 }

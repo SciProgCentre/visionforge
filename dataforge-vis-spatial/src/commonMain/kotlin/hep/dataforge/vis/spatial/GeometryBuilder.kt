@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualObject
 
 data class Point2D(val x: Number, val y: Number) : MetaRepr {
     override fun toMeta(): Meta = buildMeta {
@@ -60,6 +60,6 @@ fun GeometryBuilder<*>.face4(
     face(vertex1, vertex3, vertex4, normal, meta)
 }
 
-interface Shape : DisplayObject {
+interface Shape : VisualObject {
     fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>)
 }

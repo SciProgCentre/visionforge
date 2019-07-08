@@ -4,14 +4,14 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.getAll
 import hep.dataforge.meta.node
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.DisplayGroup
+import hep.dataforge.vis.common.VisualGroup
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConvexTest {
     @Test
     fun testConvexBuilder() {
-        val group = DisplayGroup().apply {
+        val group = VisualGroup().apply {
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)

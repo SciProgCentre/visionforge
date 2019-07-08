@@ -2,16 +2,16 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.DisplayGroup
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.getProperty
 
-fun DisplayGroup.group(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit = {}): DisplayGroup =
-    DisplayGroup(this, meta).apply(action).also { add(it) }
+fun VisualGroup.group(meta: Meta = EmptyMeta, action: VisualGroup.() -> Unit = {}): VisualGroup =
+    VisualGroup(this, meta).apply(action).also { add(it) }
 
 
-fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.() -> Unit) =
-    render(DisplayGroup(null, EmptyMeta).apply(action), meta)
+fun Output<VisualObject>.render(meta: Meta = EmptyMeta, action: VisualGroup.() -> Unit) =
+    render(VisualGroup(null, EmptyMeta).apply(action), meta)
 
 //TODO replace properties by containers?
 
@@ -20,7 +20,7 @@ fun Output<DisplayObject>.render(meta: Meta = EmptyMeta, action: DisplayGroup.()
 /**
  * Visibility property. Inherited from parent
  */
-var DisplayObject.visible
+var VisualObject.visible
     get() = getProperty("visible").boolean ?: true
     set(value) {
         properties["visible"] = value
@@ -31,7 +31,7 @@ var DisplayObject.visible
 /**
  * x position property relative to parent. Not inherited
  */
-var DisplayObject.x
+var VisualObject.x
     get() = properties["pos.x"].number ?: 0.0
     set(value) {
         properties["pos.x"] = value
@@ -40,7 +40,7 @@ var DisplayObject.x
 /**
  * y position property. Not inherited
  */
-var DisplayObject.y
+var VisualObject.y
     get() = properties["pos.y"].number ?: 0.0
     set(value) {
         properties["pos.y"] = value
@@ -49,7 +49,7 @@ var DisplayObject.y
 /**
  * z position property. Not inherited
  */
-var DisplayObject.z
+var VisualObject.z
     get() = properties["pos.z"].number ?: 0.0
     set(value) {
         properties["pos.z"] = value
@@ -60,7 +60,7 @@ var DisplayObject.z
 /**
  * x rotation relative to parent. Not inherited
  */
-var DisplayObject.rotationX
+var VisualObject.rotationX
     get() = properties["rotation.x"].number ?: 0.0
     set(value) {
         properties["rotation.x"] = value
@@ -69,7 +69,7 @@ var DisplayObject.rotationX
 /**
  * y rotation relative to parent. Not inherited
  */
-var DisplayObject.rotationY
+var VisualObject.rotationY
     get() = properties["rotation.y"].number ?: 0.0
     set(value) {
         properties["rotation.y"] = value
@@ -78,7 +78,7 @@ var DisplayObject.rotationY
 /**
  * z rotation relative to parent. Not inherited
  */
-var DisplayObject.rotationZ
+var VisualObject.rotationZ
     get() = properties["rotation.z"].number ?: 0.0
     set(value) {
         properties["rotation.z"] = value
@@ -96,7 +96,7 @@ enum class RotationOrder {
 /**
  * Rotation order. Not inherited
  */
-var DisplayObject.rotationOrder: RotationOrder
+var VisualObject.rotationOrder: RotationOrder
     get() = getProperty("rotation.order").enum<RotationOrder>() ?: RotationOrder.XYZ
     set(value) {
         properties["rotation.order"] = value
@@ -107,7 +107,7 @@ var DisplayObject.rotationOrder: RotationOrder
 /**
  * X scale. Not inherited
  */
-var DisplayObject.scaleX
+var VisualObject.scaleX
     get() = properties["scale.x"].number ?: 1.0
     set(value) {
         properties["scale.x"] = value
@@ -116,7 +116,7 @@ var DisplayObject.scaleX
 /**
  * Y scale. Not inherited
  */
-var DisplayObject.scaleY
+var VisualObject.scaleY
     get() = properties["scale.y"].number ?: 1.0
     set(value) {
         properties["scale.y"] = value
@@ -125,36 +125,18 @@ var DisplayObject.scaleY
 /**
  * Z scale. Not inherited
  */
-var DisplayObject.scaleZ
+var VisualObject.scaleZ
     get() = properties["scale.z"].number ?: 1.0
     set(value) {
         properties["scale.z"] = value
     }
-
-fun DisplayObject.color(rgb: Int) {
-    this.properties["material"] = rgb
-}
-
-fun DisplayObject.color(meta: Meta) {
-    this.properties["material"] = meta
-}
-
-fun DisplayObject.color(builder: MetaBuilder.()->Unit) {
-    color(buildMeta(builder))
-}
-
-fun DisplayObject.color(r: Int, g: Int, b: Int) = color{
-    "red" to r
-    "green" to g
-    "blue" to b
-}
 
 //TODO add inherited scale
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default
  */
-var DisplayObject.detail: Int?
+var VisualObject.detail: Int?
     get() = properties["detail"]?.int
     set(value) {
         properties["detail"] = value

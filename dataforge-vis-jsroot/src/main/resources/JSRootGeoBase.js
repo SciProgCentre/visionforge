@@ -1,6 +1,6 @@
-import * as JSROOT from "JSRootUtils"
+import * as JSROOT from "src/main/resources/JSRootUtils"
 import * as THREE from "three"
-import * as ThreeBSP from "ThreeCSG"
+import * as ThreeBSP from "src/main/resources/ThreeCSG"
 
 // Holder of all TGeo-related functions and classes
 const GradPerSegm = 6;     // grad per segment in cylinder/spherical symmetry shapes

@@ -5,8 +5,8 @@ import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.context.content
 import hep.dataforge.meta.*
-import hep.dataforge.vis.common.DisplayGroup
-import hep.dataforge.vis.common.DisplayObject
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.cameras.Camera
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    private val objectFactories = HashMap<KClass<out DisplayObject>, ThreeFactory<*>>()
+    private val objectFactories = HashMap<KClass<out VisualObject>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
 
     init {
@@ -30,14 +30,14 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[Sphere::class] = ThreeSphereFactory
     }
 
-    private fun findObjectFactory(type: KClass<out DisplayObject>): ThreeFactory<*>? {
+    private fun findObjectFactory(type: KClass<out VisualObject>): ThreeFactory<*>? {
         return objectFactories[type]
             ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type }
     }
 
-    fun buildObject3D(obj: DisplayObject): Object3D {
+    fun buildObject3D(obj: VisualObject): Object3D {
         return when (obj) {
-            is DisplayGroup -> Group(obj.map { buildObject3D(it) }).apply {
+            is VisualGroup -> Group(obj.map { buildObject3D(it) }).apply {
                 updatePosition(obj)
             }
             is Composite -> compositeFactory(obj)
