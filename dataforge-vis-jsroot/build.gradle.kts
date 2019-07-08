@@ -13,7 +13,6 @@ val kotlinVersion: String by rootProject.extra
 
 dependencies {
     implementation(project(":dataforge-vis-spatial-js"))
-    implementation("info.laht.threekt:threejs-wrapper:0.106-npm-2")
     testCompile(kotlin("test-js"))
 }
 
@@ -22,6 +21,9 @@ configure<KotlinFrontendExtension> {
 
     configure<NpmExtension> {
         dependency("three","0.106.2")
+        dependency("@hi-level/three-csg")
+        dependency("style-loader")
+        dependency("element-resize-event")
         devDependency("karma")
     }
 
