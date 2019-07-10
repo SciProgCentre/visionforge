@@ -7,6 +7,8 @@ import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.color
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 private fun VisualObject.applyPosition(pos: GDMLPosition): VisualObject = apply {
@@ -28,7 +30,14 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
         is GDMLBox -> box(solid.x, solid.y, solid.z)
         is GDMLTube -> TODO()
         is GDMLXtru -> extrude {
-            TODO()
+            shape {
+                solid.vertices.forEach {
+                    point(it.x, it.y)
+                }
+            }
+            solid.sections.sortedBy { it.zOrder }.forEach { section ->
+                layer(section.zPosition ?: 0f, section.xOffset, section.yOffset, section.scalingFactor)
+            }
         }
         is GDMLScaledSolid -> {
             //Add solid with modified scale
@@ -46,7 +55,21 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
             thetaStart = solid.starttheta.toDouble()
         }
         is GDMLOrb -> sphere(solid.r)
-        is GDMLPolyhedra -> TODO()
+        is GDMLPolyhedra -> extrude {
+            //getting the radius of first
+            require(solid.planes.size > 1) { "The polyhedron geometry requires at least two planes" }
+            val baseRadius = solid.planes.first().rmax.toDouble()
+            shape {
+                (0..solid.numsides).forEach {
+                    val phi = solid.deltaphi.toDouble() / solid.numsides * it + solid.startphi.toDouble()
+                    baseRadius * cos(phi) to baseRadius * sin(phi)
+                }
+            }
+            solid.planes.forEach { plane ->
+                //scaling all radii relative to first layer radius
+                layer(plane.z, scale = plane.rmax.toDouble() / baseRadius)
+            }
+        }
         is GDMLBoolSolid -> {
             val first = solid.first.resolve(root) ?: error("")
             val second = solid.second.resolve(root) ?: error("")
@@ -85,8 +108,8 @@ private fun VisualGroup.addVolume(
     }
 
     gdmlVolume.physVolumes.forEach {
-        val volume = it.volumeref.resolve(root)?: error("Volume with ref ${it.volumeref.ref} could not be resolved")
-        addVolume(root,volume,resolveColor).apply {
+        val volume = it.volumeref.resolve(root) ?: error("Volume with ref ${it.volumeref.ref} could not be resolved")
+        addVolume(root, volume, resolveColor).apply {
             it.resolvePosition(root)?.let { pos -> applyPosition(pos) }
             it.resolveRotation(root)?.let { rot -> applyRotation(rot) }
         }
@@ -99,5 +122,5 @@ private fun VisualGroup.addVolume(
 fun GDML.toVisual(): VisualGroup {
     //TODO add materials cache
     fun GDMLMaterialBase.color(): Meta = EmptyMeta
-    return VisualGroup().also { it.addVolume(this, world){color()} }
+    return VisualGroup().also { it.addVolume(this, world) { color() } }
 }

@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
@@ -17,6 +17,8 @@ class Shape2DBuilder {
     fun point(x: Number, y: Number) {
         list.add(Point2D(x, y))
     }
+
+    infix fun Number.to(y:Number) = point(this, y)
 
     fun build(): Shape2D = list
 }
