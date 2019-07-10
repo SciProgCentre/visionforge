@@ -21,8 +21,9 @@ interface VisualObject : MetaRepr {
 
     val properties: Styled
 
-    override fun toMeta(): Meta = buildMeta(properties) {
+    override fun toMeta(): Meta = buildMeta {
         "type" to this::class
+        "properties" to properties
     }
 
     companion object {
