@@ -28,7 +28,10 @@ private fun VisualObject.applyRotation(rotation: GDMLRotation): VisualObject = a
 private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObject.() -> Unit = {}): VisualObject {
     return when (solid) {
         is GDMLBox -> box(solid.x, solid.y, solid.z)
-        is GDMLTube -> TODO()
+        is GDMLTube -> cylinder(solid.rmax, solid.z) {
+            startAngle = solid.startphi
+            angle = solid.deltaphi
+        }
         is GDMLXtru -> extrude {
             shape {
                 solid.vertices.forEach {
@@ -45,9 +48,9 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
                 ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
             addSolid(root, innerSolid) {
                 block()
-                scaleX = scaleX.toDouble() * solid.scale.value.toDouble()
-                scaleY = scaleY.toDouble() * solid.scale.value.toDouble()
-                scaleZ = scaleZ.toDouble() * solid.scale.value.toDouble()
+                scaleX = scaleX.toDouble() * solid.scale.x.toDouble()
+                scaleY = scaleY.toDouble() * solid.scale.y.toDouble()
+                scaleZ = scaleZ.toDouble() * solid.scale.z.toDouble()
             }
         }
         is GDMLSphere -> sphere(solid.rmax, solid.deltaphi, solid.deltatheta) {
@@ -94,7 +97,7 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
 private fun VisualGroup.addVolume(
     root: GDML,
     gdmlVolume: GDMLVolume,
-    resolveColor: GDMLMaterialBase.() -> Meta
+    resolveColor: GDMLMaterial.() -> Meta
 ): VisualGroup {
     val solid =
         gdmlVolume.solidref.resolve(root)
@@ -121,6 +124,6 @@ private fun VisualGroup.addVolume(
 
 fun GDML.toVisual(): VisualGroup {
     //TODO add materials cache
-    fun GDMLMaterialBase.color(): Meta = EmptyMeta
+    fun GDMLMaterial.color(): Meta = EmptyMeta
     return VisualGroup().also { it.addVolume(this, world) { color() } }
 }

@@ -1,7 +1,7 @@
 @file:JsModule("JSRootGeoBase")
 @file:JsNonModule
 
-package hep.dataforge.vis.spatial.jsroot
+package hep.dataforge.vis.jsroot
 
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D

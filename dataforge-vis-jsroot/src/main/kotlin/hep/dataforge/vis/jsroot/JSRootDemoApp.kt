@@ -1,9 +1,7 @@
-package hep.dataforge.vis.spatial.jsroot
+package hep.dataforge.vis.jsroot
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.EmptyMeta
-import hep.dataforge.vis.spatial.three.ThreeOutput
-import hep.dataforge.vis.spatial.demo.ApplicationBase
 import hep.dataforge.vis.spatial.render
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output

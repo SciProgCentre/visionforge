@@ -1,4 +1,4 @@
-package hep.dataforge.vis.spatial.jsroot
+package hep.dataforge.vis.jsroot
 
 import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.PluginFactory
@@ -10,7 +10,7 @@ import hep.dataforge.vis.spatial.three.ThreeFactory
 import hep.dataforge.vis.spatial.three.ThreePlugin
 
 class JSRootPlugin : AbstractPlugin() {
-    override val tag: PluginTag get() = JSRootPlugin.tag
+    override val tag: PluginTag get() = Companion.tag
 
     override fun dependsOn() = listOf(ThreePlugin)
 

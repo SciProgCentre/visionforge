@@ -55,22 +55,22 @@ class DisplayObjectDelegateWrapper<T>(
 }
 
 
-fun VisualObject.value(default: Value? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.value(default: Value? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.value }
 
-fun VisualObject.string(default: String? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.string(default: String? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.string }
 
-fun VisualObject.boolean(default: Boolean? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.boolean(default: Boolean? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.boolean }
 
-fun VisualObject.number(default: Number? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.number(default: Number? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.number }
 
-fun VisualObject.double(default: Double? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.double(default: Double? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.double }
 
-fun VisualObject.int(default: Int? = null, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.int(default: Int? = null, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.int }
 
 
@@ -83,26 +83,26 @@ fun VisualObject.item(key: String? = null, inherited: Boolean = true) =
 //fun <T : Configurable> Configurable.spec(spec: Specification<T>, key: String? = null) = ChildConfigDelegate<T>(key) { spec.wrap(this) }
 
 @JvmName("safeString")
-fun VisualObject.string(default: String, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.string(default: String, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.string }
 
 @JvmName("safeBoolean")
-fun VisualObject.boolean(default: Boolean, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.boolean(default: Boolean, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.boolean }
 
 @JvmName("safeNumber")
-fun VisualObject.number(default: Number, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.number(default: Number, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.number }
 
 @JvmName("safeDouble")
-fun VisualObject.double(default: Double, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.double(default: Double, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.double }
 
 @JvmName("safeInt")
-fun VisualObject.int(default: Int, key: String? = null, inherited: Boolean = true) =
+fun VisualObject.int(default: Int, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { it.int }
 
-inline fun <reified E : Enum<E>> VisualObject.enum(default: E, key: String? = null, inherited: Boolean = true) =
+inline fun <reified E : Enum<E>> VisualObject.enum(default: E, key: String? = null, inherited: Boolean = false) =
     DisplayObjectDelegateWrapper(key?.toName(), default, inherited) { item -> item.string?.let { enumValueOf<E>(it) } }
 
 //merge properties

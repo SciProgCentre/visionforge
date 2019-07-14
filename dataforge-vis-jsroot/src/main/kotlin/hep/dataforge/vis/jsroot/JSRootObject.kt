@@ -1,4 +1,4 @@
-package hep.dataforge.vis.spatial.jsroot
+package hep.dataforge.vis.jsroot
 
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta

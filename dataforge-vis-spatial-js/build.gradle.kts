@@ -9,10 +9,15 @@ plugins {
     id("org.jetbrains.kotlin.frontend")
 }
 
-val kotlinVersion: String by rootProject.extra
+repositories{
+    maven("https://dl.bintray.com/pdvrieze/maven")
+}
+
+//val kotlinVersion: String by rootProject.extra
 
 dependencies {
     api(project(":dataforge-vis-spatial"))
+    api(project(":dataforge-vis-spatial-gdml"))
     api("info.laht.threekt:threejs-wrapper:0.106-npm-2")
     testCompile(kotlin("test-js"))
 }

@@ -1,6 +1,5 @@
-package hep.dataforge.vis.spatial.demo
+package hep.dataforge.vis.jsroot
 
-import hep.dataforge.vis.spatial.jsroot.JSRootDemoApp
 import kotlin.browser.document
 import kotlin.dom.hasClass
 

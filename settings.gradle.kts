@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         jcenter()
         gradlePluginPortal()
         maven("https://dl.bintray.com/kotlin/kotlin-eap")
@@ -34,7 +35,7 @@ include(
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-fx",
     ":dataforge-vis-spatial-js",
-    ":dataforge-vis-jsroot",
+//    ":dataforge-vis-jsroot",
     ":dataforge-vis-spatial-gdml"
 )
 

@@ -5,7 +5,8 @@ plugins{
     id("kotlin2js") version "1.3.40" apply false
     id("kotlin-dce-js") version "1.3.40" apply false
     id("org.jetbrains.kotlin.frontend") version "0.0.45" apply false
-    id("scientifik.mpp") version "0.1.0" apply false
+    id("scientifik.mpp") version "0.1.3" apply false
+    id("scientifik.publish") version "0.1.3" apply false
 }
 
 allprojects {
@@ -18,12 +19,12 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = dataforgeVersion
+    version = "0.1.0"
 }
 
+val githubProject by extra("dataforge-vis")
+val bintrayRepo by extra("dataforge")
+
 subprojects {
-//    apply(plugin = "dokka-publish")
-//    if (name.startsWith("dataforge")) {
-//        apply(plugin = "npm-publish")
-//    }
+    apply(plugin = "scientifik.publish")
 }
