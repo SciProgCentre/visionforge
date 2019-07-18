@@ -1,9 +1,9 @@
 val dataforgeVersion by extra("0.1.3-dev-9")
 
 plugins{
-    kotlin("jvm") version "1.3.40" apply false
-    id("kotlin2js") version "1.3.40" apply false
-    id("kotlin-dce-js") version "1.3.40" apply false
+    kotlin("jvm") version "1.3.41" apply false
+    id("kotlin2js") version "1.3.41" apply false
+    id("kotlin-dce-js") version "1.3.41" apply false
     id("org.jetbrains.kotlin.frontend") version "0.0.45" apply false
     id("scientifik.mpp") version "0.1.3" apply false
     id("scientifik.publish") version "0.1.3" apply false

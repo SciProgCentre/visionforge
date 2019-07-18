@@ -14,6 +14,8 @@ import hep.dataforge.provider.Type
 import hep.dataforge.provider.provideByType
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
+import hep.dataforge.vis.common.widget
+import hep.dataforge.vis.common.widgetType
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.scene.Node
@@ -62,29 +64,33 @@ interface ValueChooser {
     fun setCallback(callback: ValueCallback)
 
     @Type("hep.dataforge.vis.fx.valueChooserFactory")
-    interface Factory: Named {
+    interface Factory : Named {
         operator fun invoke(meta: Meta = EmptyMeta): ValueChooser
     }
 
     companion object {
 
         private fun findWidgetByType(context: Context, type: String): Factory? {
-            return when(type){
+            return when (type) {
                 TextValueChooser.name -> TextValueChooser
                 ColorValueChooser.name -> ColorValueChooser
                 ComboBoxValueChooser.name -> ComboBoxValueChooser
-                else-> context.provideByType(type)//Search for additional factories in the plugin
+                else -> context.provideByType(type)//Search for additional factories in the plugin
             }
         }
 
-        private fun build(descriptor: ValueDescriptor?): ValueChooser {
+        private fun build(context: Context, descriptor: ValueDescriptor?): ValueChooser {
             return if (descriptor == null) {
                 TextValueChooser();
             } else {
-                //val types = descriptor.type
+                val widgetType = descriptor.widgetType
                 val chooser: ValueChooser = when {
+                    widgetType != null -> {
+                        findWidgetByType(context, widgetType)?.invoke(
+                            descriptor.widget
+                        ) ?: TextValueChooser()
+                    }
                     descriptor.allowedValues.isNotEmpty() -> ComboBoxValueChooser()
-                    descriptor.tags.contains("widget:color") -> ColorValueChooser()
                     else -> TextValueChooser()
                 }
                 chooser.descriptor = descriptor
@@ -93,11 +99,12 @@ interface ValueChooser {
         }
 
         fun build(
+            context: Context,
             value: ObservableValue<Value?>,
             descriptor: ValueDescriptor? = null,
             setter: (Value) -> Unit
         ): ValueChooser {
-            val chooser = build(descriptor)
+            val chooser = build(context, descriptor)
             chooser.setDisplayValue(value.value ?: Null)
             value.onChange {
                 chooser.setDisplayValue(it ?: Null)

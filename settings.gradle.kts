@@ -7,7 +7,6 @@ pluginManagement {
         maven("https://dl.bintray.com/mipt-npm/scientifik")
     }
 
-    val kotlinVersion = "1.3.40"
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
