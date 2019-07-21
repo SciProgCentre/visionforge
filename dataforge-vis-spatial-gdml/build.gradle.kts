@@ -2,10 +2,6 @@ plugins {
     id("scientifik.mpp")
 }
 
-repositories{
-    maven("https://dl.bintray.com/pdvrieze/maven")
-}
-
 kotlin {
     sourceSets {
         val commonMain by getting {

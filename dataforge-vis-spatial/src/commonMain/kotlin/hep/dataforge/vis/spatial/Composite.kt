@@ -3,8 +3,8 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.seal
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 
 enum class CompositeType {

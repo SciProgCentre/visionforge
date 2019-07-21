@@ -39,7 +39,7 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
                 }
             }
             solid.sections.sortedBy { it.zOrder }.forEach { section ->
-                layer(section.zPosition ?: 0f, section.xOffset, section.yOffset, section.scalingFactor)
+                layer(section.zPosition, section.xOffset, section.yOffset, section.scalingFactor)
             }
         }
         is GDMLScaledSolid -> {

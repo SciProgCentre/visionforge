@@ -5,6 +5,7 @@
  */
 package hep.dataforge.vis.fx.meta
 
+import hep.dataforge.context.Global
 import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.Config
 import hep.dataforge.names.NameToken
@@ -30,7 +31,7 @@ class ConfigEditor(
 ) : Fragment(title = title, icon = dfIconView) {
 
     constructor(config: Config, descriptor: NodeDescriptor, title: String = "Configuration editor") :
-            this(FXMeta.root(config, descriptor = descriptor),title = title)
+            this(FXMeta.root(config, descriptor = descriptor), title = title)
 
     override val root = borderpane {
         center = treetableview<FXMeta<Config>> {
@@ -124,13 +125,13 @@ class ConfigEditor(
                     when (item) {
                         is FXMetaValue<Config> -> {
                             text = null
-                            val chooser = ValueChooser.build(item.valueProperty, item.descriptor) {
+                            val chooser = ValueChooser.build(Global, item.valueProperty, item.descriptor) {
                                 item.set(it)
                             }
                             graphic = chooser.node
                         }
                         is FXMetaNode<Config> -> {
-                            if(allowNew) {
+                            if (allowNew) {
                                 text = null
                                 graphic = hbox {
                                     button("node", Glyph("FontAwesome", "PLUS_CIRCLE")) {
