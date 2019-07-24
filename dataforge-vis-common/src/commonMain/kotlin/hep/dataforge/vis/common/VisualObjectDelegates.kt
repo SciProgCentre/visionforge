@@ -39,6 +39,9 @@ class DisplayObjectDelegateWrapper<T>(
     val write: Config.(name: Name, value: T) -> Unit = { name, value -> set(name, value) },
     val read: (MetaItem<*>?) -> T?
 ) : ReadWriteProperty<VisualObject, T> {
+
+    //private var cachedName: Name? = null
+
     override fun getValue(thisRef: VisualObject, property: KProperty<*>): T {
         val name = key ?: property.name.toName()
         return if (inherited) {

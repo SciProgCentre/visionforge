@@ -50,7 +50,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
 
         return outputs.getOrPut(name) {
             if (type != VisualObject::class) error("Supports only DisplayObject")
-            val output = three.output(meta) {
+            val output = three.output(meta = meta) {
                 "axis" to {
                     "size" to 500
                 }

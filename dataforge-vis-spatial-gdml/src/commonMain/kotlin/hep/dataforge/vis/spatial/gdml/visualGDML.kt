@@ -86,7 +86,7 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
                     solid.resolveFirstPosition(root)?.let { applyPosition(it) }
                     solid.resolveFirstRotation(root)?.let { applyRotation(it) }
                 }
-                addSolid(root, second) {}
+                addSolid(root, second)
                 solid.resolvePosition(root)?.let { applyPosition(it) }
                 solid.resolveRotation(root)?.let { applyRotation(it) }
             }
@@ -96,22 +96,24 @@ private fun VisualGroup.addSolid(root: GDML, solid: GDMLSolid, block: VisualObje
 
 private fun VisualGroup.addVolume(
     root: GDML,
-    gdmlVolume: GDMLVolume,
+    group: GDMLGroup,
     resolveColor: GDMLMaterial.() -> Meta
 ): VisualGroup {
-    val solid =
-        gdmlVolume.solidref.resolve(root)
-            ?: error("Solid with tag ${gdmlVolume.solidref.ref} for volume ${gdmlVolume.name} not defined")
-    val material =
-        gdmlVolume.materialref.resolve(root)
-            ?: error("Material with tag ${gdmlVolume.materialref.ref} for volume ${gdmlVolume.name} not defined")
+    if (group is GDMLVolume) {
+        val solid = group.solidref.resolve(root)
+            ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
+        val material = group.materialref.resolve(root)
+            ?: error("Material with tag ${group.materialref.ref} for volume ${group.name} not defined")
 
-    addSolid(root, solid) {
-        color(material.resolveColor())
+        addSolid(root, solid) {
+            color(material.resolveColor())
+        }
+        //TODO render placements
     }
 
-    gdmlVolume.physVolumes.forEach {
-        val volume = it.volumeref.resolve(root) ?: error("Volume with ref ${it.volumeref.ref} could not be resolved")
+    group.physVolumes.forEach {
+        val volume: GDMLGroup =
+            it.volumeref.resolve(root) ?: error("Volume with ref ${it.volumeref.ref} could not be resolved")
         addVolume(root, volume, resolveColor).apply {
             it.resolvePosition(root)?.let { pos -> applyPosition(pos) }
             it.resolveRotation(root)?.let { rot -> applyRotation(rot) }

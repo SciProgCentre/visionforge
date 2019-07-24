@@ -16,13 +16,13 @@ class Cylinder(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta) {
     var upperRadius by number(default = radius)
     var height by number()
     var startAngle by number(0.0)
-    var angle by number(2* PI)
+    var angle by number(2 * PI)
 }
 
-fun VisualGroup.cylinder(r: Number, height: Number, meta: Meta = EmptyMeta, block: Cylinder.()->Unit = {}):Cylinder{
-    val cylinder = Cylinder(this,meta)
+fun VisualGroup.cylinder(r: Number, height: Number, meta: Meta = EmptyMeta, block: Cylinder.() -> Unit = {}): Cylinder {
+    val cylinder = Cylinder(this, meta)
     cylinder.radius = r
     cylinder.height = height
     cylinder.apply(block)
-    return cylinder
+    return cylinder.also { add(it) }
 }

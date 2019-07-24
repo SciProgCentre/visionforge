@@ -5,7 +5,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.demo.require
+import hep.dataforge.vis.hmr.require
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.helpers.AxesHelper
 import info.laht.threekt.lights.AmbientLight
@@ -39,7 +39,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
             setSize(width, height)
         }
 
-        three.addControls(camera,renderer.domElement, meta["controls"].node?:EmptyMeta)
+        three.addControls(camera, renderer.domElement, meta["controls"].node ?: EmptyMeta)
 
         fun animate() {
             window.requestAnimationFrame {
@@ -63,5 +63,9 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
     }
 }
 
-fun ThreePlugin.output(meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
-    ThreeOutput(this, buildMeta(meta, override))
+fun ThreePlugin.output(element: Element? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
+    ThreeOutput(this, buildMeta(meta, override)).apply {
+        if(element!=null){
+            attach(element)
+        }
+    }

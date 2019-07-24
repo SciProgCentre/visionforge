@@ -4,6 +4,8 @@ import hep.dataforge.context.ContextBuilder
 import hep.dataforge.meta.number
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.color
+import hep.dataforge.vis.hmr.ApplicationBase
+import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -135,4 +137,8 @@ class ThreeDemoApp : ApplicationBase() {
     }
 
     override fun dispose() = emptyMap<String, Any>()//mapOf("lines" to presenter.dispose())
+}
+
+fun main() {
+    startApplication(::ThreeDemoApp)
 }

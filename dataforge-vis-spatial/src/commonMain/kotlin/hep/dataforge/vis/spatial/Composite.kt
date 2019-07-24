@@ -25,7 +25,9 @@ fun VisualGroup.composite(type: CompositeType, builder: VisualGroup.() -> Unit):
     val group = VisualGroup().apply(builder)
     val children = group.toList()
     if (children.size != 2) error("Composite requires exactly two children")
-    return Composite(this, children[0], children[1], type, group.properties.seal()).also { add(it) }
+    return Composite(this, children[0], children[1], type, group.properties.seal()).also {
+        this.add(it)
+    }
 }
 
 fun VisualGroup.union(builder: VisualGroup.() -> Unit) =

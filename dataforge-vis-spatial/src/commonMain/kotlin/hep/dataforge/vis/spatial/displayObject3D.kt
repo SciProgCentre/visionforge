@@ -1,6 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.toName
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
@@ -28,60 +29,71 @@ var VisualObject.visible
 
 // 3D Object position
 
+private val xPos = "pos.x".toName()
 /**
  * x position property relative to parent. Not inherited
  */
 var VisualObject.x
-    get() = properties["pos.x"].number ?: 0.0
+    get() = properties[xPos].number ?: 0.0
     set(value) {
-        properties["pos.x"] = value
+        properties[xPos] = value
     }
+
+private val yPos = "pos.y".toName()
 
 /**
  * y position property. Not inherited
  */
 var VisualObject.y
-    get() = properties["pos.y"].number ?: 0.0
+    get() = properties[yPos].number ?: 0.0
     set(value) {
-        properties["pos.y"] = value
+        properties[yPos] = value
     }
+
+private val zPos = "pos.z".toName()
 
 /**
  * z position property. Not inherited
  */
 var VisualObject.z
-    get() = properties["pos.z"].number ?: 0.0
+    get() = properties[zPos].number ?: 0.0
     set(value) {
-        properties["pos.z"] = value
+        properties[zPos] = value
     }
 
 // 3D Object rotation
+
+private val xRotation = "rotation.x".toName()
 
 /**
  * x rotation relative to parent. Not inherited
  */
 var VisualObject.rotationX
-    get() = properties["rotation.x"].number ?: 0.0
+    get() = properties[xRotation].number ?: 0.0
     set(value) {
-        properties["rotation.x"] = value
+        properties[xRotation] = value
     }
+
+private val yRotation = "rotation.y".toName()
 
 /**
  * y rotation relative to parent. Not inherited
  */
 var VisualObject.rotationY
-    get() = properties["rotation.y"].number ?: 0.0
+    get() = properties[yRotation].number ?: 0.0
     set(value) {
-        properties["rotation.y"] = value
+        properties[yRotation] = value
     }
+
+private val zRotation = "rotation.z".toName()
 
 /**
  * z rotation relative to parent. Not inherited
  */
 var VisualObject.rotationZ
-    get() = properties["rotation.z"].number ?: 0.0
+    get() = properties[zRotation].number ?: 0.0
     set(value) {
-        properties["rotation.z"] = value
+        properties[zRotation] = value
     }
 
 enum class RotationOrder {
