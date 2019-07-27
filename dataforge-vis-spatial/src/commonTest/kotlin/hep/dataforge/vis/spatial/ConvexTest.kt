@@ -26,7 +26,7 @@ class ConvexTest {
 
         val convex = group.first() as Convex
 
-        val pointsNode = convex.properties["points"].node
+        val pointsNode = convex.config["points"].node
 
         assertEquals(8, pointsNode?.items?.count())
         val points = pointsNode?.getAll("point".toName())

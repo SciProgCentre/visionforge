@@ -17,7 +17,7 @@ import scientifik.gdml.GDML
 import kotlin.browser.document
 import kotlin.dom.clear
 
-class GDMLDemoApp : ApplicationBase() {
+private class GDMLDemoApp : ApplicationBase() {
 
 
     /**
@@ -56,13 +56,13 @@ class GDMLDemoApp : ApplicationBase() {
 
         val context = Global.context("demo") {}
         val three = context.plugins.load(ThreePlugin)
-        val canvas = document.getElementById("canvas") ?: error("Element with id canvas not found on page")
-        canvas.clear()
-        val output = three.output(canvas)
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
+        val canvas = document.getElementById("canvas") ?: error("Element with id canvas not found on page")
 
         val action: suspend (String) -> Unit = {
+            canvas.clear()
+            val output = three.output(canvas)
             val gdml = GDML.format.parse(GDML.serializer(), it)
             val visual = gdml.toVisual()
             output.render(visual)

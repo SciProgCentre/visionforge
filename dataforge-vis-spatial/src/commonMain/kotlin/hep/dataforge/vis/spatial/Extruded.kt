@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.*
-import hep.dataforge.vis.common.DisplayLeaf
+import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
@@ -18,7 +18,7 @@ class Shape2DBuilder {
         list.add(Point2D(x, y))
     }
 
-    infix fun Number.to(y:Number) = point(this, y)
+    infix fun Number.to(y: Number) = point(this, y)
 
     fun build(): Shape2D = list
 }
@@ -31,45 +31,22 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
     }
 }
 
-class Layer(override val config: Config) : Specific {
-    var z by number(0.0)
-    var x by number(0.0)
-    var y by number(0.0)
-    var scale by number(1.0)
+data class Layer(var x: Number, var y: Number, var z: Number, var scale: Number)
 
-    companion object : Specification<Layer> {
-        override fun wrap(config: Config): Layer = Layer(config)
-    }
-}
+class Extruded(parent: VisualObject?, meta: Array<out Meta>) : VisualLeaf(parent, meta), Shape {
 
-//class Layer(val z: Number, val x: Number = 0.0, val y: Number = 0.0, val scale: Number = 1.0)
-
-class Extruded(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
-
-    val shape
-        get() = properties.getAll("shape.point").map { (_, value) ->
-            Point2D.from(value.node ?: error("Point definition is not a node"))
-        }
+    var shape: List<Point2D> = ArrayList()
 
     fun shape(block: Shape2DBuilder.() -> Unit) {
-        val points = Shape2DBuilder().apply(block).build().map { it.toMeta() }
-        properties["shape.point"] = points
+        this.shape = Shape2DBuilder().apply(block).build()
+        //TODO send invalidation signal
     }
 
-    val layers
-        get() = properties.getAll("layer").values.map {
-            Layer.wrap(it.node ?: error("layer item is not a node"))
-        }
+    val layers: MutableList<Layer> = ArrayList()
 
-    fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0): Layer {
-        val layer = Layer.build {
-            this.x = x
-            this.y = y
-            this.z = z
-            this.scale = scale
-        }
-        properties.append("layer", layer)
-        return layer
+    fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
+        layers.add(Layer(x,y,z,scale))
+        //TODO send invalidation signal
     }
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -121,5 +98,5 @@ class Extruded(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), S
     }
 }
 
-fun VisualGroup.extrude(meta: Meta = EmptyMeta, action: Extruded.() -> Unit = {}) =
-    Extruded(this, meta).apply(action).also { add(it) }
+fun VisualGroup.extrude(name: String? = null, vararg meta: Meta, action: Extruded.() -> Unit = {}) =
+    Extruded(this, meta).apply(action).also { set(name, it) }

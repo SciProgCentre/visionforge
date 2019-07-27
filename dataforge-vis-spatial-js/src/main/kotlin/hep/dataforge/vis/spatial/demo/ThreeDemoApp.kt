@@ -17,7 +17,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-class ThreeDemoApp : ApplicationBase() {
+private class ThreeDemoApp : ApplicationBase() {
 
     override val stateKeys: List<String> = emptyList()
 
@@ -39,18 +39,12 @@ class ThreeDemoApp : ApplicationBase() {
 
             demo("dynamic", "Dynamic properties") {
                 val group = group {
-                    box {
+                    box(100, 100, 100) {
                         z = 110.0
-                        xSize = 100.0
-                        ySize = 100.0
-                        zSize = 100.0
                     }
-                    box {
+                    box(100, 100, 100) {
                         visible = false
                         x = 110.0
-                        xSize = 100.0
-                        ySize = 100.0
-                        zSize = 100.0
                         //override color for this cube
                         color(1530)
 
@@ -63,7 +57,7 @@ class ThreeDemoApp : ApplicationBase() {
                     }
                 }
 
-                var material by group.properties.number(1530).int
+                var material by group.config.number(1530).int
 
                 GlobalScope.launch {
                     val random = Random(111)
@@ -100,34 +94,28 @@ class ThreeDemoApp : ApplicationBase() {
             demo("CSG", "CSG operations") {
                 composite(CompositeType.UNION) {
                     box(100, 100, 100) {
-                        z = 100
-                        rotationX = PI / 4
-                        rotationY = PI / 4
+                        z = 50
                     }
-                    box(100, 100, 100)
+                    sphere(50)
                     color {
                         "color" to Colors.lightgreen
                         "opacity" to 0.3
                     }
                 }
                 composite(CompositeType.INTERSECT) {
-                    box(100, 100, 100) {
-                        z = 100
-                        rotationX = PI / 4
-                        rotationY = PI / 4
-                    }
-                    box(100, 100, 100)
                     y = 300
+                    box(100, 100, 100) {
+                        z = 50
+                    }
+                    sphere(50)
                     color(Colors.red)
                 }
                 composite(CompositeType.SUBTRACT) {
-                    box(100, 100, 100) {
-                        z = 100
-                        rotationX = PI / 4
-                        rotationY = PI / 4
-                    }
-                    box(100, 100, 100)
                     y = -300
+                    box(100, 100, 100) {
+                        z = 50
+                    }
+                    sphere(50)
                     color(Colors.blue)
                 }
             }

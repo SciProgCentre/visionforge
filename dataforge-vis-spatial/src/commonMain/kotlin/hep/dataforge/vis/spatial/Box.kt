@@ -1,23 +1,18 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.DisplayLeaf
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.double
 
-class Box(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape {
-    var xSize by double(100.0)
-    var ySize by double(100.0)
-    var zSize by double(100.0)
+class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize: Number, meta: Array<out Meta>) :
+    VisualObject3D(parent, meta), Shape {
 
     //TODO add helper for color configuration
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        val dx = xSize / 2
-        val dy = ySize / 2
-        val dz = zSize / 2
+        val dx = xSize.toDouble() / 2
+        val dy = ySize.toDouble() / 2
+        val dz = zSize.toDouble() / 2
         val node1 = Point3D(-dx, -dy, -dz)
         val node2 = Point3D(dx, -dy, -dz)
         val node3 = Point3D(dx, dy, -dz)
@@ -40,12 +35,15 @@ class Box(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, meta), Shape 
     }
 }
 
-fun VisualGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
-    Box(this, meta).apply(action).also { add(it) }
+//fun VisualGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
+//    Box(this, meta).apply(action).also { add(it) }
 
-fun VisualGroup.box(xSize: Number, ySize: Number, zSize: Number, meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
-    Box(this, meta).apply(action).apply{
-        this.xSize = xSize.toDouble()
-        this.ySize = ySize.toDouble()
-        this.zSize = zSize.toDouble()
-    }.also { add(it) }
+fun VisualGroup.box(
+    xSize: Number,
+    ySize: Number,
+    zSize: Number,
+    name: String? = null,
+    vararg meta: Meta,
+    action: Box.() -> Unit = {}
+) =
+    Box(this, xSize, ySize, zSize, meta).apply(action).also { set(name, it) }

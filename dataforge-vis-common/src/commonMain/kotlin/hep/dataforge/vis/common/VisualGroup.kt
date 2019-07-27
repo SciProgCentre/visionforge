@@ -1,29 +1,41 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.EmptyMeta
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.Styled
 import hep.dataforge.names.Name
-import hep.dataforge.names.toName
 import hep.dataforge.provider.Provider
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.Iterable
+import kotlin.collections.Iterator
+import kotlin.collections.Map
+import kotlin.collections.emptyMap
+import kotlin.collections.forEach
+import kotlin.collections.plus
+import kotlin.collections.removeAll
+import kotlin.collections.set
 
 /**
  * A display group which allows both named and unnamed children
  */
 class VisualGroup(
-    override val parent: VisualObject? = null, meta: Meta = EmptyMeta
+    override val parent: VisualObject? = null, tagRefs: Array<out Meta> = emptyArray()
 ) : VisualObject, Iterable<VisualObject>, Provider {
 
     private val namedChildren = HashMap<Name, VisualObject>()
     private val unnamedChildren = ArrayList<VisualObject>()
 
     override val defaultTarget: String get() = VisualObject.TYPE
-    override val properties: Styled = Styled(meta)
+    override val config = Config()
+
+    override val properties: Laminate by lazy { combineProperties(parent, config, tagRefs) }
 
     override fun iterator(): Iterator<VisualObject> = (namedChildren.values + unnamedChildren).iterator()
 
     override fun provideTop(target: String): Map<Name, Any> {
-        return when(target){
+        return when (target) {
             VisualObject.TYPE -> namedChildren
             else -> emptyMap()
         }
@@ -49,21 +61,25 @@ class VisualGroup(
     }
 
     /**
-     *
+     * Add named or unnamed child to the group. If key is [null] the child is considered unnamed. Both key and value are not
+     * allowed to be null in the same time. If name is present and [child] is null, the appropriate element is removed.
      */
-    operator fun set(key: String?, child: VisualObject?) {
-        if(key == null){
-
-        } else {
-            val name = key.toName()
-            if (child == null) {
-                namedChildren.remove(name)
-            } else {
-                namedChildren[name] = child
+    operator fun set(name: Name?, child: VisualObject?) {
+        when {
+            name != null -> {
+                if (child == null) {
+                    namedChildren.remove(name)
+                } else {
+                    namedChildren[name] = child
+                }
+                listeners.forEach { it.callback(name, child) }
             }
-            listeners.forEach { it.callback(name, child) }
+            child != null -> unnamedChildren.add(child)
+            else -> error("Both key and child element are empty")
         }
     }
+
+    operator fun set(key: String?, child: VisualObject?) = set(key?.asName(), child)
 
     /**
      * Append unnamed child

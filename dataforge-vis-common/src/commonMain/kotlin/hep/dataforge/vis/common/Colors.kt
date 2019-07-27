@@ -4,6 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.set
+import hep.dataforge.names.toName
 
 /**
  * Taken from https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
@@ -181,13 +182,14 @@ object Colors {
     const val yellowgreen = 0x9ACD32
 }
 
+private val material = "material".toName()
 
 fun VisualObject.color(rgb: Int) {
-    this.properties["material"] = rgb
+    this.config[material] = rgb
 }
 
 fun VisualObject.color(meta: Meta) {
-    this.properties["material"] = meta
+    this.config[material] = meta
 }
 
 fun VisualObject.color(builder: MetaBuilder.() -> Unit) {

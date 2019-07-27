@@ -1,11 +1,10 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
+import hep.dataforge.meta.get
 import hep.dataforge.names.startsWith
-import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.common.onChange
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
@@ -19,7 +18,7 @@ import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
 
-internal val VisualObject.material get() = getProperty("material").material()
+internal val VisualObject.material get() = properties["material"].material()
 
 /**
  * Builder and updater for three.js object
@@ -43,14 +42,14 @@ interface ThreeFactory<T : VisualObject> {
             val mesh = Mesh(geometry, obj.material)
 
             //inherited edges definition, enabled by default
-            if (obj.getProperty("edges.enabled").boolean != false) {
-                val material = obj.getProperty("edges.material")?.material() ?: Materials.DEFAULT
+            if (obj.properties["edges.enabled"].boolean != false) {
+                val material = obj.properties["edges.material"]?.material() ?: Materials.DEFAULT
                 mesh.add(LineSegments(EdgesGeometry(mesh.geometry as BufferGeometry), material))
             }
 
             //inherited wireframe definition, disabled by default
-            if (obj.getProperty("wireframe.enabled").boolean == true) {
-                val material = obj.getProperty("edges.material")?.material() ?: Materials.DEFAULT
+            if (obj.properties["wireframe.enabled"].boolean == true) {
+                val material = obj.properties["edges.material"]?.material() ?: Materials.DEFAULT
                 mesh.add(LineSegments(WireframeGeometry(mesh.geometry as BufferGeometry), material))
             }
 
@@ -63,9 +62,9 @@ interface ThreeFactory<T : VisualObject> {
                     //updated material
                     mesh.material = obj.material
                 } else if (
-                    name.startsWith("pos".toName()) ||
-                    name.startsWith("scale".toName()) ||
-                    name.startsWith("rotation".toName()) ||
+                    name.startsWith(PropertyNames3D.position) ||
+                    name.startsWith(PropertyNames3D.rotation) ||
+                    name.startsWith(PropertyNames3D.scale) ||
                     name.toString() == "visible"
                 ) {
                     //update position of mesh using this object

@@ -2,24 +2,34 @@ package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
-import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject.Companion.META_KEY
 import hep.dataforge.vis.common.VisualObject.Companion.TAGS_KEY
 import hep.dataforge.vis.common.VisualObject.Companion.TYPE
 
+private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
+private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
+
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface VisualObject : MetaRepr {
+interface VisualObject : MetaRepr, Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
      */
     val parent: VisualObject?
 
-    val properties: Styled
+    /**
+     * Individual properties configurator
+     */
+    override val config: Config
+
+    /**
+     * All properties including inherited ones
+     */
+    val properties: Laminate
 
     override fun toMeta(): Meta = buildMeta {
         "type" to this::class
@@ -38,17 +48,10 @@ interface VisualObject : MetaRepr {
 }
 
 /**
- * Get the property of this display object of parent's if not found
- */
-tailrec fun VisualObject.getProperty(name: Name): MetaItem<*>? = properties[name] ?: parent?.getProperty(name)
-
-fun VisualObject.getProperty(name: String): MetaItem<*>? = getProperty(name.toName())
-
-/**
  * A change listener for [VisualObject] configuration.
  */
 fun VisualObject.onChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit) {
-    properties.onChange(owner, action)
+    config.onChange(owner, action)
     parent?.onChange(owner, action)
 }
 
@@ -56,7 +59,7 @@ fun VisualObject.onChange(owner: Any?, action: (Name, before: MetaItem<*>?, afte
  * Remove all meta listeners with matching owners
  */
 fun VisualObject.removeChangeListener(owner: Any?) {
-    properties.removeListener(owner)
+    config.removeListener(owner)
     parent?.removeChangeListener(owner)
 }
 
@@ -64,18 +67,28 @@ fun VisualObject.removeChangeListener(owner: Any?) {
 /**
  * Additional meta not relevant to display
  */
-val VisualObject.meta: Meta get() = properties[META_KEY]?.node ?: EmptyMeta
+val VisualObject.meta: Meta get() = config[META_KEY]?.node ?: EmptyMeta
 
-val VisualObject.tags: List<String> get() = properties[TAGS_KEY].stringList
+val VisualObject.tags: List<String> get() = config[TAGS_KEY].stringList
 
 /**
  * Basic [VisualObject] leaf element
  */
-open class DisplayLeaf(
-    override val parent: VisualObject?,
-    meta: Meta = EmptyMeta
+open class VisualLeaf(
+    final override val parent: VisualObject?,
+    tagRefs: Array<out Meta>
 ) : VisualObject {
-    final override val properties = Styled(meta)
+    final override val config = Config()
+
+    override val properties: Laminate by lazy { combineProperties(parent, config, tagRefs) }
+}
+
+internal fun combineProperties(parent: VisualObject?, config: Config, tagRefs: Array<out Meta>): Laminate {
+    val list = ArrayList<Meta>(tagRefs.size + 2)
+    list += config
+    list.addAll(tagRefs)
+    parent?.properties?.let { list.add(it) }
+    return Laminate(list)
 }
 
 ///**

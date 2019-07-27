@@ -27,21 +27,14 @@ class RendererDemoView : View() {
 
         renderer.render {
             group = group {
-                box {
-                    xSize = 100.0
-                    ySize = 100.0
-                    zSize = 100.0
-                }
-                box {
+                box(100,100,100)
+                box(100,100,100) {
                     x = 110.0
-                    xSize = 100.0
-                    ySize = 100.0
-                    zSize = 100.0
                 }
             }
         }
 
-        var color by group.properties.number(1530).int
+        var color by group.config.number(1530).int
 
         GlobalScope.launch {
             val random = Random(111)

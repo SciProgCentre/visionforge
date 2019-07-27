@@ -11,9 +11,9 @@ object ThreeCylinderFactory : MeshThreeFactory<Cylinder>(Cylinder::class) {
         return obj.detail?.let {
             val segments = it.toDouble().pow(0.5).toInt()
             CylinderBufferGeometry(
-                radiusTop = obj.upperRadius!!,
-                radiusBottom = obj.radius!!,
-                height = obj.height!!,
+                radiusTop = obj.upperRadius,
+                radiusBottom = obj.radius,
+                height = obj.height,
                 radialSegments = segments,
                 heightSegments = segments,
                 openEnded = false,
@@ -21,9 +21,9 @@ object ThreeCylinderFactory : MeshThreeFactory<Cylinder>(Cylinder::class) {
                 thetaLength = obj.angle
             )
         } ?: CylinderBufferGeometry(
-            radiusTop = obj.upperRadius!!,
-            radiusBottom = obj.radius!!,
-            height = obj.height!!,
+            radiusTop = obj.upperRadius,
+            radiusBottom = obj.radius,
+            height = obj.height,
             openEnded = false,
             thetaStart = obj.startAngle,
             thetaLength = obj.angle

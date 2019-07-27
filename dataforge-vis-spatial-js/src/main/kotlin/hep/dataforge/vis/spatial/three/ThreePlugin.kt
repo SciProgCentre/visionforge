@@ -38,7 +38,14 @@ class ThreePlugin : AbstractPlugin() {
 
     fun buildObject3D(obj: VisualObject): Object3D {
         return when (obj) {
-            is VisualGroup -> Group(obj.map { buildObject3D(it) }).apply {
+            is VisualGroup -> Group(obj.mapNotNull {
+                try {
+                    buildObject3D(it)
+                } catch (ex: Throwable){
+                    logger.error(ex){"Failed to render $it"}
+                    null
+                }
+             }).apply {
                 updatePosition(obj)
             }
             is Composite -> compositeFactory(obj)

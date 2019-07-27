@@ -13,7 +13,7 @@ class BMNTest {
 
         val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
         val file = File("D:\\Work\\Projects\\gdml.kt\\src\\commonTest\\resources\\gdml\\geofile_full.xml")
-        val stream = if(file.exists()){
+        val stream = if (file.exists()) {
             file.inputStream()
         } else {
             url.openStream()
@@ -21,7 +21,7 @@ class BMNTest {
 
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        repeat(5) {
+        repeat(20) {
             xml.toVisual()
         }
     }
