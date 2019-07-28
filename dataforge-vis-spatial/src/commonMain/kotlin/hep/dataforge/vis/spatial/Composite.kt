@@ -4,6 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.seal
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 
 enum class CompositeType {
@@ -18,7 +19,7 @@ open class Composite(
     val second: VisualObject,
     val type: CompositeType = CompositeType.UNION,
     meta: Array<out Meta>
-) : VisualObject3D(parent, meta)
+) : VisualLeaf(parent, meta)
 
 fun VisualGroup.composite(
     type: CompositeType,

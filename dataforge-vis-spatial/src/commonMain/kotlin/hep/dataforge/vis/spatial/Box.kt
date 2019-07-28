@@ -2,10 +2,11 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 
 class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize: Number, meta: Array<out Meta>) :
-    VisualObject3D(parent, meta), Shape {
+    VisualLeaf(parent, meta), Shape {
 
     //TODO add helper for color configuration
 

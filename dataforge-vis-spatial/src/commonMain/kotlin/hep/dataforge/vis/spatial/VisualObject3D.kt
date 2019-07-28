@@ -4,22 +4,8 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
-
-/**
- * Performance optimized version of visual object
- */
-open class VisualObject3D(parent: VisualObject?, tagRefs: Array<out Meta>) : VisualLeaf(parent, tagRefs) {
-    var x: Number? = null; get() = field ?: (this as VisualLeaf).x
-    var y: Number? = null; get() = field ?: (this as VisualLeaf).y
-    var z: Number? = null; get() = field ?: (this as VisualLeaf).z
-
-    var rotationX: Number? = null; get() = field ?: (this as VisualLeaf).rotationX
-    var rotationY: Number? = null; get() = field ?: (this as VisualLeaf).rotationY
-    var rotationZ: Number? = null; get() = field ?: (this as VisualLeaf).rotationZ
-}
 
 fun VisualGroup.group(key: String? = null, vararg meta: Meta, action: VisualGroup.() -> Unit = {}): VisualGroup =
     VisualGroup(this, meta).apply(action).also { set(key, it) }

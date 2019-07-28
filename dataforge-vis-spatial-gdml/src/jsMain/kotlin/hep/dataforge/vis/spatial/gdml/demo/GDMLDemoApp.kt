@@ -3,9 +3,11 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
+import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.w3c.dom.HTMLDivElement
@@ -32,7 +34,7 @@ private class GDMLDemoApp : ApplicationBase() {
     /**
      * Load data from text file
      */
-    private fun loadData(event: Event, block: suspend (String) -> Unit) {
+    private fun loadData(event: Event, block: suspend CoroutineScope.(String) -> Unit) {
         event.stopPropagation()
         event.preventDefault()
 
@@ -51,6 +53,25 @@ private class GDMLDemoApp : ApplicationBase() {
         }
     }
 
+    private fun spinner(show: Boolean) {
+        val style = if (show) {
+            "display:block;"
+        } else {
+            "display:none;"
+        }
+        document.getElementById("loader")?.setAttribute("style", style)
+    }
+
+    private fun message(message: String?) {
+        val element = document.getElementById("message")
+        if (message == null) {
+            element?.setAttribute("style", "display:none;")
+        } else {
+            element?.textContent = message
+            element?.setAttribute("style", "display:block;")
+        }
+    }
+
 
     override fun start(state: Map<String, Any>) {
 
@@ -59,13 +80,22 @@ private class GDMLDemoApp : ApplicationBase() {
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
         val canvas = document.getElementById("canvas") ?: error("Element with id canvas not found on page")
+        canvas.clear()
 
-        val action: suspend (String) -> Unit = {
+        val action: suspend CoroutineScope.(String) -> Unit = {
             canvas.clear()
-            val output = three.output(canvas)
+            launch { spinner(true) }
+            launch { message("Loading GDML") }
             val gdml = GDML.format.parse(GDML.serializer(), it)
-            val visual = gdml.toVisual()
+            launch { message("Converting GDML into DF-VIS format") }
+            val visual = gdml.toVisual(LUnit.CM)
+            launch { message("Rendering") }
+            val output = three.output(canvas)
             output.render(visual)
+            launch {
+                message(null)
+                spinner(false)
+            }
         }
 
         (document.getElementById("drop_zone") as? HTMLDivElement)?.apply {

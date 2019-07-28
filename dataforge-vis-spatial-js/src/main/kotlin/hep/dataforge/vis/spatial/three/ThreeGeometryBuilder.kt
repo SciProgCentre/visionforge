@@ -4,14 +4,18 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.vis.spatial.GeometryBuilder
+import hep.dataforge.vis.spatial.Point2D
 import hep.dataforge.vis.spatial.Point3D
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Face3
 import info.laht.threekt.core.Geometry
+import info.laht.threekt.math.Vector2
 import info.laht.threekt.math.Vector3
 
 // TODO use unsafe cast instead
 fun Point3D.asVector(): Vector3 = Vector3(this.x, this.y, this.z)
+
+fun Point2D.asVector(): Vector2 = Vector2(this.x, this.y)
 
 class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
 
@@ -37,6 +41,7 @@ class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
         meta["color"]?.color()?.let { face.color = it }
         faces.add(face)
     }
+
 
     override fun build(): BufferGeometry {
         return Geometry().apply {

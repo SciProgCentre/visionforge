@@ -45,8 +45,21 @@ class Extruded(parent: VisualObject?, meta: Array<out Meta>) : VisualLeaf(parent
     val layers: MutableList<Layer> = ArrayList()
 
     fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
-        layers.add(Layer(x,y,z,scale))
+        layers.add(Layer(x, y, z, scale))
         //TODO send invalidation signal
+    }
+
+    private fun <T : Any> GeometryBuilder<T>.cap(shape: List<Point3D>) {
+        //FIXME won't work for non-convex shapes
+        val center = Point3D(
+            shape.map { it.x.toDouble() }.average(),
+            shape.map { it.y.toDouble() }.average(),
+            shape.map { it.z.toDouble() }.average()
+        )
+        for(i in 0 until (shape.size - 1)){
+            face(shape[i], shape[i+1], center, null)
+        }
+        face(shape.last(), shape.first(),center,null)
     }
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -91,6 +104,8 @@ class Extruded(parent: VisualObject?, meta: Array<out Meta>) : VisualLeaf(parent
             )
             lowerLayer = upperLayer
         }
+        geometryBuilder.cap(layers.first().reversed())
+        geometryBuilder.cap(layers.last())
     }
 
     companion object {

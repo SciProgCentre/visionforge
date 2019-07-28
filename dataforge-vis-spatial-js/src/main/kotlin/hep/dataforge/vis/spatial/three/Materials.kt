@@ -4,6 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
 import info.laht.threekt.materials.Material
+import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
 
@@ -39,19 +40,20 @@ fun MetaItem<*>.color(): Color {
 }
 
 /**
- * Infer FX material based on meta item
+ * Infer Three material based on meta item
  */
 fun MetaItem<*>?.material(): Material {
     return when (this) {
         null -> Materials.DEFAULT
-        is MetaItem.ValueItem -> MeshPhongMaterial().apply {
+        is MetaItem.ValueItem -> MeshBasicMaterial().apply {
             color = this@material.color()
         }
-        is MetaItem.NodeItem -> MeshPhongMaterial().apply {
+        is MetaItem.NodeItem -> MeshBasicMaterial().apply {
             (node["color"] ?: this@material).let { color = it.color() }
             opacity = node["opacity"]?.double ?: 1.0
             transparent = node["transparent"].boolean ?: (opacity < 1.0)
-            node["specularColor"]?.let { specular = it.color() }
+            //node["specularColor"]?.let { specular = it.color() }
+            side = 2
         }
     }
 }
