@@ -78,9 +78,11 @@ open class VisualLeaf(
     final override val parent: VisualObject?,
     tagRefs: Array<out Meta>
 ) : VisualObject {
-    final override val config = Config()
+    override val config = Config()
 
-    override val properties: Laminate by lazy { combineProperties(parent, config, tagRefs) }
+    override val properties: Laminate by lazy {
+        combineProperties(parent, config, tagRefs)
+    }
 }
 
 internal fun combineProperties(parent: VisualObject?, config: Config, tagRefs: Array<out Meta>): Laminate {

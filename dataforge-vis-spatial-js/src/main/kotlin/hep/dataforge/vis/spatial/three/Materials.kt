@@ -10,8 +10,9 @@ import info.laht.threekt.math.Color
 
 
 object Materials {
+    val DEFAULT_COLOR = Color(Colors.darkgreen)
     val DEFAULT = MeshPhongMaterial().apply {
-        this.color.set(Colors.darkgreen)
+        this.color.set(DEFAULT_COLOR)
     }
 }
 
@@ -42,19 +43,18 @@ fun MetaItem<*>.color(): Color {
 /**
  * Infer Three material based on meta item
  */
-fun MetaItem<*>?.material(): Material {
-    return when (this) {
-        null -> Materials.DEFAULT
-        is MetaItem.ValueItem -> MeshBasicMaterial().apply {
-            color = this@material.color()
-        }
-        is MetaItem.NodeItem -> MeshBasicMaterial().apply {
-            (node["color"] ?: this@material).let { color = it.color() }
-            opacity = node["opacity"]?.double ?: 1.0
-            transparent = node["transparent"].boolean ?: (opacity < 1.0)
+fun Meta?.jsMaterial(): Material {
+    return if(this == null){
+        Materials.DEFAULT
+    } else
+        //TODO add more oprions for material
+        MeshBasicMaterial().apply {
+            color = get("color")?.color()?: Materials.DEFAULT_COLOR
+            opacity = get("opacity")?.double ?: 1.0
+            transparent = get("transparent").boolean ?: (opacity < 1.0)
             //node["specularColor"]?.let { specular = it.color() }
             side = 2
         }
-    }
+
 }
 

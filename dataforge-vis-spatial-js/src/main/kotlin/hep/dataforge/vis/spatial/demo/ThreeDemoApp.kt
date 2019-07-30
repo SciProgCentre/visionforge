@@ -1,9 +1,7 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.ContextBuilder
-import hep.dataforge.meta.number
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.color
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
@@ -42,6 +40,7 @@ private class ThreeDemoApp : ApplicationBase() {
                     box(100, 100, 100) {
                         z = 110.0
                     }
+
                     box(100, 100, 100) {
                         visible = false
                         x = 110.0
@@ -51,32 +50,32 @@ private class ThreeDemoApp : ApplicationBase() {
                         GlobalScope.launch {
                             while (isActive) {
                                 delay(500)
-                                visible = !visible
+                                visible = !(visible ?: false)
                             }
                         }
                     }
                 }
 
-                var material by group.config.number(1530).int
-
                 GlobalScope.launch {
                     val random = Random(111)
                     while (isActive) {
                         delay(1000)
-                        material = random.nextInt(0, Int.MAX_VALUE)
+                        group.color(random.nextInt(0, Int.MAX_VALUE))
                     }
                 }
             }
 
-//            demo("jsroot", "JSROOT cube") {
-//                jsRootGeometry {
-//                    y = 110.0
-//                    shape = box(50, 50, 50)
-//                    color(Colors.lightcoral)
-//                    rotationX = PI / 4
-//                    rotationY = PI / 4
-//                }
-//            }
+            demo("rotation", "Rotations") {
+                box(100, 100, 100)
+                group {
+                    x = 200
+                    rotationY = PI / 4
+                    box(100, 100, 100) {
+                        rotationZ = PI / 4
+                        color(Colors.red)
+                    }
+                }
+            }
 
             demo("extrude", "extruded shape") {
                 extrude {
@@ -86,9 +85,8 @@ private class ThreeDemoApp : ApplicationBase() {
                     for (i in 0..100) {
                         layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
                     }
+                    color(Colors.teal)
                 }
-
-                color(Colors.teal)
             }
 
             demo("CSG", "CSG operations") {
@@ -97,7 +95,7 @@ private class ThreeDemoApp : ApplicationBase() {
                         z = 50
                     }
                     sphere(50)
-                    color {
+                    material {
                         "color" to Colors.lightgreen
                         "opacity" to 0.3
                     }

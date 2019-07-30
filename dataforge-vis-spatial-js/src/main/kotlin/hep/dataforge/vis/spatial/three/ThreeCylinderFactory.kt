@@ -4,11 +4,12 @@ import hep.dataforge.vis.spatial.Cylinder
 import hep.dataforge.vis.spatial.detail
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.CylinderBufferGeometry
+import kotlin.math.PI
 import kotlin.math.pow
 
 object ThreeCylinderFactory : MeshThreeFactory<Cylinder>(Cylinder::class) {
     override fun buildGeometry(obj: Cylinder): BufferGeometry {
-        return obj.detail?.let {
+        val cylinder =  obj.detail?.let {
             val segments = it.toDouble().pow(0.5).toInt()
             CylinderBufferGeometry(
                 radiusTop = obj.upperRadius,
@@ -28,5 +29,6 @@ object ThreeCylinderFactory : MeshThreeFactory<Cylinder>(Cylinder::class) {
             thetaStart = obj.startAngle,
             thetaLength = obj.angle
         )
+        return cylinder.rotateX(PI/2)
     }
 }

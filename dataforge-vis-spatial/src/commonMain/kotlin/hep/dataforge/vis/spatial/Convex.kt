@@ -2,10 +2,9 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 
-class Convex(parent: VisualObject?, val points: List<Point3D>, meta: Array<out Meta>) : VisualLeaf(parent, meta) {
+class Convex(parent: VisualObject?, val points: List<Point3D>, meta: Array<out Meta>) : VisualLeaf3D(parent, meta) {
 
 
     companion object {

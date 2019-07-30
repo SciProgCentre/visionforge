@@ -5,22 +5,12 @@ import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.provider.Provider
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.collections.Iterable
-import kotlin.collections.Iterator
-import kotlin.collections.Map
-import kotlin.collections.emptyMap
-import kotlin.collections.forEach
-import kotlin.collections.plus
-import kotlin.collections.removeAll
 import kotlin.collections.set
 
 /**
  * A display group which allows both named and unnamed children
  */
-class VisualGroup(
+open class VisualGroup(
     override val parent: VisualObject? = null, tagRefs: Array<out Meta> = emptyArray()
 ) : VisualObject, Iterable<VisualObject>, Provider {
 
@@ -30,7 +20,9 @@ class VisualGroup(
     override val defaultTarget: String get() = VisualObject.TYPE
     override val config = Config()
 
-    override val properties: Laminate by lazy { combineProperties(parent, config, tagRefs) }
+    override val properties: Laminate by lazy {
+        combineProperties(parent, config, tagRefs)
+    }
 
     override fun iterator(): Iterator<VisualObject> = (namedChildren.values + unnamedChildren).iterator()
 

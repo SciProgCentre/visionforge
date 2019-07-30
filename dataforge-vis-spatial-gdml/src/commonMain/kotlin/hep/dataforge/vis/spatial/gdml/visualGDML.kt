@@ -2,9 +2,7 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.color
+import hep.dataforge.meta.builder
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*
 import kotlin.math.cos
@@ -12,41 +10,87 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-private fun VisualObject.withPosition(
+class GDMLTransformer(val root: GDML) {
+    private val cache = HashMap<GDMLMaterial, Meta>()
+    private val random = Random(111)
+
+    var lUnit: LUnit = LUnit.MM
+    var resolveColor: ColorResolver = { material, _ ->
+        val materialColor = cache.getOrPut(material) {
+            buildMeta {
+                "color" to random.nextInt(0, Int.MAX_VALUE)
+            }
+        }
+
+        if (this?.physVolumes?.isEmpty() != false) {
+            materialColor
+        } else {
+            materialColor.builder().apply { "opacity" to 0.5 }
+        }
+    }
+
+    var acceptSolid: (GDMLSolid) -> Boolean = { true }
+    var acceptGroup: (GDMLGroup) -> Boolean = { true }
+
+    fun printStatistics() {
+        println("Solids:")
+        solidCounter.entries.sortedByDescending { it.value }.forEach {
+            println("\t$it")
+        }
+        println(println("Solids total: ${solidCounter.values.sum()}"))
+    }
+
+    private val solidCounter = HashMap<String, Int>()
+
+    internal fun solidAdded(solid: GDMLSolid) {
+        solidCounter[solid.name] = (solidCounter[solid.name] ?: 0) + 1
+    }
+
+    var onFinish: GDMLTransformer.() -> Unit = {}
+
+    internal fun finished(){
+        onFinish(this)
+    }
+
+}
+
+
+private fun VisualObject3D.withPosition(
     lUnit: LUnit,
     pos: GDMLPosition? = null,
     rotation: GDMLRotation? = null,
     scale: GDMLScale? = null
-): VisualObject = apply {
+): VisualObject3D = apply {
     pos?.let {
-        x = pos.x(lUnit)
-        y = pos.y(lUnit)
-        z = pos.z(lUnit)
+        this@withPosition.position.x = pos.x(lUnit)
+        this@withPosition.position.y = pos.y(lUnit)
+        this@withPosition.position.z = pos.z(lUnit)
     }
     rotation?.let {
-        rotationX = rotation.x()
-        rotationY = rotation.y()
-        rotationZ = rotation.z()
+        this@withPosition.rotation.x = rotation.x()
+        this@withPosition.rotation.y = rotation.y()
+        this@withPosition.rotation.z = rotation.z()
     }
     scale?.let {
-        scaleX = scale.x
-        scaleY = scale.y
-        scaleZ = scale.z
+        this@withPosition.scale.x = scale.x.toFloat()
+        this@withPosition.scale.y = scale.y.toFloat()
+        this@withPosition.scale.z = scale.z.toFloat()
     }
     //TODO convert units if needed
 }
 
 private inline operator fun Number.times(d: Double) = toDouble() * d
+private inline operator fun Number.times(f: Float) = toFloat() * f
 
 
-private fun VisualGroup.addSolid(
-    root: GDML,
+private fun VisualGroup3D.addSolid(
+    context: GDMLTransformer,
     solid: GDMLSolid,
-    lUnit: LUnit,
     name: String? = null,
-    block: VisualObject.() -> Unit = {}
-): VisualObject {
-    val lScale = solid.lscale(lUnit)
+    block: VisualObject3D.() -> Unit = {}
+): VisualObject3D {
+    context.solidAdded(solid)
+    val lScale = solid.lscale(context.lUnit)
     val aScale = solid.ascale()
     return when (solid) {
         is GDMLBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
@@ -71,14 +115,14 @@ private fun VisualGroup.addSolid(
         }
         is GDMLScaledSolid -> {
             //Add solid with modified scale
-            val innerSolid = solid.solidref.resolve(root)
+            val innerSolid = solid.solidref.resolve(context.root)
                 ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
 
-            addSolid(root, innerSolid, lUnit) {
+            addSolid(context, innerSolid) {
                 block()
-                scaleX = scaleX.toDouble() * solid.scale.x.toDouble()
-                scaleY = scaleY.toDouble() * solid.scale.y.toDouble()
-                scaleZ = scaleZ.toDouble() * solid.scale.z.toDouble()
+                scale.x *= solid.scale.x.toFloat()
+                scale.y *= solid.scale.y.toFloat()
+                scale.z = solid.scale.z.toFloat()
             }
         }
         is GDMLSphere -> sphere(solid.rmax * lScale, solid.deltaphi * aScale, solid.deltatheta * aScale, name) {
@@ -102,8 +146,8 @@ private fun VisualGroup.addSolid(
             }
         }
         is GDMLBoolSolid -> {
-            val first = solid.first.resolve(root) ?: error("")
-            val second = solid.second.resolve(root) ?: error("")
+            val first = solid.first.resolve(context.root) ?: error("")
+            val second = solid.second.resolve(context.root) ?: error("")
             val type: CompositeType = when (solid) {
                 is GDMLUnion -> CompositeType.UNION
                 is GDMLSubtraction -> CompositeType.SUBTRACT
@@ -111,97 +155,114 @@ private fun VisualGroup.addSolid(
             }
 
             return composite(type, name) {
-                addSolid(root, first, lUnit) {
-                    withPosition(lUnit, solid.resolveFirstPosition(root), solid.resolveFirstRotation(root), null)
+                addSolid(context, first) {
+                    withPosition(
+                        context.lUnit,
+                        solid.resolveFirstPosition(context.root),
+                        solid.resolveFirstRotation(context.root),
+                        null
+                    )
                 }
-                addSolid(root, second, lUnit) {
-                    withPosition(lUnit, solid.resolvePosition(root), solid.resolveRotation(root), null)
+                addSolid(context, second) {
+                    withPosition(
+                        context.lUnit,
+                        solid.resolvePosition(context.root),
+                        solid.resolveRotation(context.root),
+                        null
+                    )
                 }
             }
         }
     }.apply(block)
 }
 
-private fun VisualGroup.addPhysicalVolume(
-    root: GDML,
-    physVolume: GDMLPhysVolume,
-    lUnit: LUnit,
-    resolveColor: GDMLMaterial.() -> Meta
+private fun VisualGroup3D.addPhysicalVolume(
+    context: GDMLTransformer,
+    physVolume: GDMLPhysVolume
 ) {
-    val volume: GDMLGroup = physVolume.volumeref.resolve(root)
+    val volume: GDMLGroup = physVolume.volumeref.resolve(context.root)
         ?: error("Volume with ref ${physVolume.volumeref.ref} could not be resolved")
 
-    addVolume(
-        root,
-        volume,
-        lUnit,
-        physVolume.resolvePosition(root),
-        physVolume.resolveRotation(root),
-        physVolume.resolveScale(root),
-        resolveColor
-    )
+    if (context.acceptGroup(volume)) {
+
+        this[physVolume.name] = volume(
+            context,
+            volume,
+            physVolume.resolvePosition(context.root),
+            physVolume.resolveRotation(context.root),
+            physVolume.resolveScale(context.root)
+        )
+    }
 }
 
-private fun VisualGroup.addDivisionVolume(
-    root: GDML,
-    divisionVolume: GDMLDivisionVolume,
-    lUnit: LUnit,
-    resolveColor: GDMLMaterial.() -> Meta
+private fun VisualGroup3D.addDivisionVolume(
+    context: GDMLTransformer,
+    divisionVolume: GDMLDivisionVolume
 ) {
-    val volume: GDMLGroup = divisionVolume.volumeref.resolve(root)
+    val volume: GDMLGroup = divisionVolume.volumeref.resolve(context.root)
         ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
     //TODO add divisions
-    addVolume(
-        root,
-        volume,
-        lUnit,
-        resolveColor = resolveColor
+    add(
+        volume(
+            context,
+            volume
+        )
     )
 }
 
-private fun VisualGroup.addVolume(
-    root: GDML,
+private fun VisualGroup3D.addVolume(
+    context: GDMLTransformer,
     group: GDMLGroup,
-    lUnit: LUnit,
     position: GDMLPosition? = null,
     rotation: GDMLRotation? = null,
-    scale: GDMLScale? = null,
-    resolveColor: GDMLMaterial.() -> Meta
+    scale: GDMLScale? = null
 ) {
+    this[group.name] = volume(context, group, position, rotation, scale)
+}
 
-    group(group.name) {
-        withPosition(lUnit, position, rotation, scale)
+private fun volume(
+    context: GDMLTransformer,
+    group: GDMLGroup,
+    position: GDMLPosition? = null,
+    rotation: GDMLRotation? = null,
+    scale: GDMLScale? = null
+): VisualGroup3D {
+
+    return VisualGroup3D().apply {
+        withPosition(context.lUnit, position, rotation, scale)
 
         if (group is GDMLVolume) {
-            val solid = group.solidref.resolve(root)
+            val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
-            val material = group.materialref.resolve(root) ?: GDMLElement(group.materialref.ref)
-            //?: error("Material with tag ${group.materialref.ref} for volume ${group.name} not defined")
+            val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
-            addSolid(root, solid, lUnit, solid.name) {
-                color(material.resolveColor())
+            if (context.acceptSolid(solid)) {
+                addSolid(context, solid, solid.name) {
+                    this.material = context.resolveColor(group, material, solid)
+                }
             }
 
             when (val vol = group.placement) {
-                is GDMLPhysVolume -> addPhysicalVolume(root, vol, lUnit, resolveColor)
-                is GDMLDivisionVolume -> addDivisionVolume(root, vol, lUnit, resolveColor)
+                is GDMLPhysVolume -> addPhysicalVolume(context, vol)
+                is GDMLDivisionVolume -> addDivisionVolume(context, vol)
             }
         }
 
         group.physVolumes.forEach { physVolume ->
-            addPhysicalVolume(root, physVolume, lUnit, resolveColor)
+            addPhysicalVolume(context, physVolume)
         }
     }
 }
 
-fun GDML.toVisual(lUnit: LUnit = LUnit.MM): VisualGroup {
-    val cache = HashMap<GDMLMaterial, Meta>()
-    val random = Random(111)
+typealias ColorResolver = GDMLGroup?.(GDMLMaterial, GDMLSolid?) -> Meta
 
-    fun GDMLMaterial.color(): Meta = cache.getOrPut(this) {
-        buildMeta { "color" to random.nextInt(0, Int.MAX_VALUE) }
+
+fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
+
+    val context = GDMLTransformer(this).apply(block)
+
+    return volume(context, world).also{
+        context.finished()
     }
-
-    return VisualGroup().also { it.addVolume(this, world, lUnit) { color() } }
 }

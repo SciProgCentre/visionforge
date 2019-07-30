@@ -4,8 +4,8 @@ import hep.dataforge.context.Context
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.hmr.require
+import hep.dataforge.vis.spatial.VisualObject3D
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.helpers.AxesHelper
 import info.laht.threekt.lights.AmbientLight
@@ -15,7 +15,7 @@ import kotlin.browser.window
 
 private val elementResizeEvent = require("element-resize-event")
 
-class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<VisualObject> {
+class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<VisualObject3D> {
 
     override val context: Context get() = three.context
 
@@ -58,7 +58,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
         animate()
     }
 
-    override fun render(obj: VisualObject, meta: Meta) {
+    override fun render(obj: VisualObject3D, meta: Meta) {
         scene.add(three.buildObject3D(obj))
     }
 }

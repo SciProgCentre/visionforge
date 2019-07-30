@@ -12,8 +12,8 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.output.Output
 import hep.dataforge.output.OutputManager
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.render
 import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
@@ -79,7 +79,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     }
 }
 
-fun ThreeDemoGrid.demo(name: String, title: String = name, block: VisualGroup.() -> Unit) {
+fun ThreeDemoGrid.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
     val meta = buildMeta {
         "title" to title
     }

@@ -1,118 +1,115 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.detailKey
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.materialKey
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.visibleKey
 
-fun VisualGroup.group(key: String? = null, vararg meta: Meta, action: VisualGroup.() -> Unit = {}): VisualGroup =
-    VisualGroup(this, meta).apply(action).also { set(key, it) }
+data class Value3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f)
 
+interface VisualObject3D : VisualObject {
+    var position: Value3
+    var rotation: Value3
+    var scale: Value3
 
-fun Output<VisualObject>.render(meta: Meta = EmptyMeta, action: VisualGroup.() -> Unit) =
-    render(VisualGroup().apply(action), meta)
+    fun setProperty(name: Name, value: Any?)
+    fun getProperty(name: Name, inherit: Boolean = true): MetaItem<*>?
 
-//TODO replace properties by containers?
+    companion object {
+        val materialKey = "material".asName()
+        val visibleKey = "visible".asName()
+        val detailKey = "detail".asName()
 
-object PropertyNames3D {
-    val x = "x".asName()
-    val y = "y".asName()
-    val z = "z".asName()
+        val x = "x".asName()
+        val y = "y".asName()
+        val z = "z".asName()
 
-    val position = "pos".asName()
+        val position = "pos".asName()
 
-    val xPos = position + x
-    val yPos = position + y
-    val zPos = position + z
+        val xPos = position + x
+        val yPos = position + y
+        val zPos = position + z
 
-    val rotation = "rotation".asName()
+        val rotation = "rotation".asName()
 
-    val xRotation = rotation + x
-    val yRotation = rotation + y
-    val zRotation = rotation + z
+        val xRotation = rotation + x
+        val yRotation = rotation + y
+        val zRotation = rotation + z
 
-    val rotationOrder = rotation + "order"
+        val rotationOrder = rotation + "order"
 
-    val scale = "scale".asName()
+        val scale = "scale".asName()
 
-    val xScale = scale + x
-    val yScale = scale + y
-    val zScale = scale + z
+        val xScale = scale + x
+        val yScale = scale + y
+        val zScale = scale + z
+    }
 }
+
+open class VisualLeaf3D(parent: VisualObject?, tagRefs: Array<out Meta>) : VisualLeaf(parent, tagRefs), VisualObject3D {
+    override var position: Value3 = Value3()
+    override var rotation: Value3 = Value3()
+    override var scale: Value3 = Value3(1f, 1f, 1f)
+
+    private var _config: Config? = null
+    override val config: Config get() = _config ?: Config().also { _config = it }
+
+    override fun setProperty(name: Name, value: Any?) {
+        config[name] = value
+    }
+
+    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
+        return if (inherit) {
+            config[name] ?: (parent as? VisualObject3D)?.getProperty(name, inherit) ?: parent?.properties[name]
+        } else {
+            _config?.get(name)
+        }
+    }
+}
+
+class VisualGroup3D(
+    parent: VisualObject? = null,
+    tagRefs: Array<out Meta> = emptyArray()
+) : VisualGroup(parent, tagRefs), VisualObject3D {
+
+    override var position: Value3 = Value3()
+    override var rotation: Value3 = Value3()
+    override var scale: Value3 = Value3(1f, 1f, 1f)
+
+    private var _config: Config? = null
+    override val config: Config get() = _config ?: Config().also { _config = it }
+
+    override fun setProperty(name: Name, value: Any?) {
+        config[name] = value
+    }
+
+    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
+        return if (inherit) {
+            config[name] ?: (parent as? VisualObject3D)?.getProperty(name, inherit) ?: parent?.properties[name]
+        } else {
+            _config?.get(name)
+        }
+    }
+}
+
+
+fun VisualGroup.group(key: String? = null, vararg meta: Meta, action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
+    VisualGroup3D(this, meta).apply(action).also { set(key, it) }
+
+
+fun Output<VisualObject>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
+    render(VisualGroup3D().apply(action), meta)
+
 
 // Common properties
 
-/**
- * Visibility property. Inherited from parent
- */
-var VisualObject.visible
-    get() = properties["visible"].boolean ?: true
-    set(value) {
-        config["visible"] = value
-    }
-
-// 3D Object position
-
-/**
- * x position property relative to parent. Not inherited
- */
-var VisualObject.x
-    get() =  config[PropertyNames3D.xPos].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.xPos] = value
-    }
-
-
-/**
- * y position property. Not inherited
- */
-var VisualObject.y
-    get() = config[PropertyNames3D.yPos].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.yPos] = value
-    }
-
-
-/**
- * z position property. Not inherited
- */
-var VisualObject.z
-    get() = config[PropertyNames3D.zPos].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.zPos] = value
-    }
-
-// 3D Object rotation
-
-
-/**
- * x rotation relative to parent. Not inherited
- */
-var VisualObject.rotationX
-    get() = config[PropertyNames3D.xRotation].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.xRotation] = value
-    }
-
-/**
- * y rotation relative to parent. Not inherited
- */
-var VisualObject.rotationY
-    get() = config[PropertyNames3D.yRotation].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.yRotation] = value
-    }
-
-/**
- * z rotation relative to parent. Not inherited
- */
-var VisualObject.rotationZ
-    get() = config[PropertyNames3D.zRotation].number ?: 0.0
-    set(value) {
-        config[PropertyNames3D.zRotation] = value
-    }
 
 enum class RotationOrder {
     XYZ,
@@ -124,53 +121,41 @@ enum class RotationOrder {
 }
 
 /**
- * Rotation order. Not inherited
+ * Rotation order
  */
-var VisualObject.rotationOrder: RotationOrder
-    get() = config[PropertyNames3D.rotationOrder].enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) {
-        config[PropertyNames3D.rotationOrder] = value
-    }
+var VisualObject3D.rotationOrder: RotationOrder
+    get() = getProperty(VisualObject3D.rotationOrder).enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = setProperty(VisualObject3D.rotationOrder, value)
 
-// 3D object scale
-
-/**
- * X scale. Not inherited
- */
-var VisualObject.scaleX
-    get() = config[PropertyNames3D.xScale].number ?: 1.0
-    set(value) {
-        config[PropertyNames3D.xScale] = value
-    }
-
-/**
- * Y scale. Not inherited
- */
-var VisualObject.scaleY
-    get() = config[PropertyNames3D.yScale].number ?: 1.0
-    set(value) {
-        config[PropertyNames3D.yScale] = value
-    }
-
-/**
- * Z scale. Not inherited
- */
-var VisualObject.scaleZ
-    get() = config[PropertyNames3D.zScale].number ?: 1.0
-    set(value) {
-        config[PropertyNames3D.zScale] = value
-    }
-
-//TODO add inherited scale
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default
  */
-var VisualObject.detail: Int?
-    get() = properties["detail"]?.int
-    set(value) {
-        config["detail"] = value
-    }
+var VisualObject3D.detail: Int?
+    get() = getProperty(detailKey).int
+    set(value) = setProperty(detailKey, value)
+
+var VisualObject3D.material: Meta?
+    get() = getProperty(materialKey).node
+    set(value) = setProperty(materialKey, value)
+
+var VisualObject3D.visible: Boolean?
+    get() = getProperty(visibleKey).boolean
+    set(value) = setProperty(visibleKey, value)
+
+fun VisualObject3D.color(rgb: Int) {
+    material = buildMeta { "color" to rgb }
+}
+
+fun VisualObject3D.material(builder: MetaBuilder.() -> Unit) {
+    material = buildMeta(builder)
+}
+
+fun VisualObject3D.color(r: Int, g: Int, b: Int) = material {
+    "red" to r
+    "green" to g
+    "blue" to b
+}
 
 object World {
     const val CAMERA_INITIAL_DISTANCE = -500.0

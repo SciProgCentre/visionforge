@@ -18,7 +18,7 @@ class GroupTest {
                     rotationY = PI / 4
                 }
                 box(100, 100, 100)
-                color {
+                material {
                     "color" to Colors.lightgreen
                     "opacity" to 0.3
                 }
@@ -31,7 +31,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = 300
-                color(Colors.red)
+                material(Colors.red)
             }
             subtract{
                 box(100, 100, 100) {
@@ -41,7 +41,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = -300
-                color(Colors.blue)
+                material(Colors.blue)
             }
         }
 

@@ -2,14 +2,12 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualLeaf
 import hep.dataforge.vis.common.VisualObject
 
 class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize: Number, meta: Array<out Meta>) :
-    VisualLeaf(parent, meta), Shape {
+    VisualLeaf3D(parent, meta), Shape {
 
     //TODO add helper for color configuration
-
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val dx = xSize.toDouble() / 2
         val dy = ySize.toDouble() / 2
@@ -39,12 +37,11 @@ class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize
 //fun VisualGroup.box(meta: Meta = EmptyMeta, action: Box.() -> Unit = {}) =
 //    Box(this, meta).apply(action).also { add(it) }
 
-fun VisualGroup.box(
+inline fun VisualGroup.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,
     name: String? = null,
     vararg meta: Meta,
     action: Box.() -> Unit = {}
-) =
-    Box(this, xSize, ySize, zSize, meta).apply(action).also { set(name, it) }
+) = Box(this, xSize, ySize, zSize, meta).apply(action).also { set(name, it) }
