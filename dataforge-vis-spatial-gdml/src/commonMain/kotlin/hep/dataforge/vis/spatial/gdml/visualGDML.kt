@@ -1,58 +1,10 @@
 package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.buildMeta
-import hep.dataforge.meta.builder
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
-
-
-class GDMLTransformer(val root: GDML) {
-    private val cache = HashMap<GDMLMaterial, Meta>()
-    private val random = Random(111)
-
-    var lUnit: LUnit = LUnit.MM
-    var resolveColor: ColorResolver = { material, _ ->
-        val materialColor = cache.getOrPut(material) {
-            buildMeta {
-                "color" to random.nextInt(0, Int.MAX_VALUE)
-            }
-        }
-
-        if (this?.physVolumes?.isEmpty() != false) {
-            materialColor
-        } else {
-            materialColor.builder().apply { "opacity" to 0.5 }
-        }
-    }
-
-    var acceptSolid: (GDMLSolid) -> Boolean = { true }
-    var acceptGroup: (GDMLGroup) -> Boolean = { true }
-
-    fun printStatistics() {
-        println("Solids:")
-        solidCounter.entries.sortedByDescending { it.value }.forEach {
-            println("\t$it")
-        }
-        println(println("Solids total: ${solidCounter.values.sum()}"))
-    }
-
-    private val solidCounter = HashMap<String, Int>()
-
-    internal fun solidAdded(solid: GDMLSolid) {
-        solidCounter[solid.name] = (solidCounter[solid.name] ?: 0) + 1
-    }
-
-    var onFinish: GDMLTransformer.() -> Unit = {}
-
-    internal fun finished(){
-        onFinish(this)
-    }
-
-}
 
 
 private fun VisualObject3D.withPosition(
@@ -81,7 +33,6 @@ private fun VisualObject3D.withPosition(
 
 private inline operator fun Number.times(d: Double) = toDouble() * d
 private inline operator fun Number.times(f: Float) = toFloat() * f
-
 
 private fun VisualGroup3D.addSolid(
     context: GDMLTransformer,
@@ -238,9 +189,12 @@ private fun volume(
             val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
             if (context.acceptSolid(solid)) {
-                addSolid(context, solid, solid.name) {
-                    this.material = context.resolveColor(group, material, solid)
-                }
+                val cachedSolid = context.templates[solid.name]
+                    ?: context.templates.addSolid(context, solid, solid.name) {
+                        this.material = context.resolveColor(group, material, solid)
+                    }
+                val wrapper = Proxy3D(this,cachedSolid)
+                add(wrapper)
             }
 
             when (val vol = group.placement) {
@@ -262,7 +216,7 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 
     val context = GDMLTransformer(this).apply(block)
 
-    return volume(context, world).also{
+    return volume(context, world).also {
         context.finished()
     }
 }

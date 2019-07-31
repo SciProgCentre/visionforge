@@ -18,7 +18,7 @@ fun main() {
     val xml = GDML.format.parse(GDML.serializer(), xmlReader)
     xml.toVisual {
         lUnit = LUnit.CM
-        acceptSolid = { solid -> !solid.name.startsWith("ecal") && !solid.name.startsWith("V") }
+        //acceptSolid = { solid -> !solid.name.startsWith("ecal") && !solid.name.startsWith("V") }
         onFinish = { printStatistics() }
     }
     readLine()

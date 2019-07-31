@@ -18,7 +18,7 @@ class ThreeCompositeFactory(val three: ThreePlugin) : MeshThreeFactory<Composite
         second.updateMatrix()
         val firstCSG = CSG.fromMesh(first)
         val secondCSG = CSG.fromMesh(second)
-        val resultCSG = when (obj.type) {
+        val resultCSG = when (obj.compositeType) {
             CompositeType.UNION -> firstCSG.union(secondCSG)
             CompositeType.INTERSECT -> firstCSG.intersect(secondCSG)
             CompositeType.SUBTRACT -> firstCSG.subtract(secondCSG)

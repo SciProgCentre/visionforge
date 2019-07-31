@@ -2,7 +2,6 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.number
-import hep.dataforge.vis.common.VisualGroup
 import javafx.scene.Parent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -21,7 +20,7 @@ class RendererDemoView : View() {
         center = renderer.canvas.root
     }
 
-    lateinit var group: VisualGroup
+    lateinit var group: VisualGroup3D
 
     init {
 

@@ -1,18 +1,16 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
-import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.meta.node
+import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.common.onChange
+import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
-import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.buildMesh
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.external.geometries.ConvexBufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
@@ -31,55 +29,6 @@ interface ThreeFactory<T : VisualObject3D> {
 
     companion object {
         const val TYPE = "threeFactory"
-
-        fun <T : VisualObject3D> buildMesh(obj: T, geometryBuilder: (T) -> BufferGeometry): Mesh {
-            val geometry = geometryBuilder(obj)
-
-            //JS sometimes tries to pass Geometry as BufferGeometry
-            @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
-
-            val mesh = Mesh(geometry, obj.material.jsMaterial())
-
-            //inherited edges definition, enabled by default
-            if (obj.properties["edges.enabled"].boolean != false) {
-                val material = obj.properties["edges.material"].node?.jsMaterial() ?: Materials.DEFAULT
-                mesh.add(LineSegments(EdgesGeometry(mesh.geometry as BufferGeometry), material))
-            }
-
-            //inherited wireframe definition, disabled by default
-            if (obj.properties["wireframe.enabled"].boolean == true) {
-                val material = obj.properties["wireframe.material"].node?.jsMaterial() ?: Materials.DEFAULT
-                mesh.add(LineSegments(WireframeGeometry(mesh.geometry as BufferGeometry), material))
-            }
-
-            //set position for mesh
-            mesh.updatePosition(obj)
-
-            obj.config["layer"].int?.let {
-                mesh.layers.set(it)
-            }
-
-            //add listener to object properties
-            obj.onChange(this) { name, _, _ ->
-                if (name.startsWith(VisualObject3D.materialKey)) {
-                    //updated material
-                    mesh.material = obj.material.jsMaterial()
-                } else if (
-                    name.startsWith(VisualObject3D.position) ||
-                    name.startsWith(VisualObject3D.rotation) ||
-                    name.startsWith(VisualObject3D.scale) ||
-                    name == VisualObject3D.visibleKey
-                ) {
-                    //update position of mesh using this object
-                    mesh.updatePosition(obj)
-                } else {
-                    //full update
-                    mesh.geometry = geometryBuilder(obj)
-                    mesh.material = obj.material.jsMaterial()
-                }
-            }
-            return mesh
-        }
     }
 }
 
@@ -90,7 +39,30 @@ internal fun Object3D.updatePosition(obj: VisualObject3D) {
     position.set(obj.x, obj.y, obj.z)
     setRotationFromEuler(obj.euler)
     scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
-    visible = obj.visible ?: true
+    updateMatrix()
+}
+
+internal fun <T : VisualObject3D> Mesh.updateFrom(obj: T) {
+    matrixAutoUpdate = false
+
+    //inherited edges definition, enabled by default
+    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
+        val material = obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node?.jsMaterial() ?: Materials.DEFAULT
+        add(LineSegments(EdgesGeometry(geometry as BufferGeometry), material))
+    }
+
+    //inherited wireframe definition, disabled by default
+    if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
+        val material = obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node?.jsMaterial() ?: Materials.DEFAULT
+        add(LineSegments(WireframeGeometry(geometry as BufferGeometry), material))
+    }
+
+    //set position for mesh
+    updatePosition(obj)
+
+    obj.getProperty(MeshThreeFactory.LAYER_KEY).int?.let {
+        layers.set(it)
+    }
 }
 
 /**
@@ -118,6 +90,51 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
         //create mesh from geometry
         return buildMesh<T>(obj) { buildGeometry(it) }
     }
+
+    companion object {
+        val EDGES_KEY = "edges".asName()
+        val WIREFRAME_KEY = "wireframe".asName()
+        val ENABLED_KEY = "enabled".asName()
+        val EDGES_ENABLED_KEY = EDGES_KEY + ENABLED_KEY
+        val EDGES_MATERIAL_KEY = EDGES_KEY + VisualObject3D.MATERIAL_KEY
+        val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
+        val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + VisualObject3D.MATERIAL_KEY
+        val LAYER_KEY = "layer".asName()
+
+        fun <T : VisualObject3D> buildMesh(obj: T, geometryBuilder: (T) -> BufferGeometry): Mesh {
+            //TODO add caching for geometries using templates
+            val geometry = geometryBuilder(obj)
+
+            //JS sometimes tries to pass Geometry as BufferGeometry
+            @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
+
+            val mesh = Mesh(geometry, obj.material.jsMaterial())
+
+            mesh.updateFrom(obj)
+
+            //add listener to object properties
+            obj.onPropertyChange(this) { name, _, _ ->
+                if (name.startsWith(VisualObject3D.MATERIAL_KEY)) {
+                    //updated material
+                    mesh.material = obj.material.jsMaterial()
+                } else if (
+                    name.startsWith(VisualObject3D.position) ||
+                    name.startsWith(VisualObject3D.rotation) ||
+                    name.startsWith(VisualObject3D.scale)
+                ) {
+                    //update position of mesh using this object
+                    mesh.updatePosition(obj)
+                } else if (name == VisualObject3D.VISIBLE_KEY) {
+                    obj.visible = obj.visible ?: true
+                } else {
+                    //full update
+                    mesh.geometry = geometryBuilder(obj)
+                    mesh.material = obj.material.jsMaterial()
+                }
+            }
+            return mesh
+        }
+    }
 }
 
 /**
@@ -128,13 +145,5 @@ object ThreeShapeFactory : MeshThreeFactory<Shape>(Shape::class) {
         return obj.run {
             ThreeGeometryBuilder().apply { toGeometry(this) }.build()
         }
-    }
-}
-
-//FIXME not functional yet
-object ThreeConvexFactory : MeshThreeFactory<Convex>(Convex::class) {
-    override fun buildGeometry(obj: Convex): ConvexBufferGeometry {
-        val vectors = obj.points.map { it.asVector() }.toTypedArray()
-        return ConvexBufferGeometry(vectors)
     }
 }

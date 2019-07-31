@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualNode
 import hep.dataforge.vis.common.VisualObject
 import javafx.scene.Group
 import javafx.scene.Node
@@ -27,7 +27,7 @@ class FX3DOutput(override val context: Context) : Output<VisualObject> {
             org.fxyz3d.geometry.Point3D(x.value ?: 0f, y.value ?: 0f, z.value ?: 0f)
         }
         return when (obj) {
-            is VisualGroup -> Group(obj.map { buildNode(it) }).apply {
+            is VisualNode -> Group(obj.map { buildNode(it) }).apply {
                 this.translateXProperty().bind(x)
                 this.translateYProperty().bind(y)
                 this.translateZProperty().bind(z)

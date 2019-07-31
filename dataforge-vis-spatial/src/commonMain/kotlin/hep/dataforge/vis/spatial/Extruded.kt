@@ -1,7 +1,5 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.Meta
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
@@ -32,7 +30,7 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
 
 data class Layer(var x: Number, var y: Number, var z: Number, var scale: Number)
 
-class Extruded(parent: VisualObject?, meta: Array<out Meta>) : VisualLeaf3D(parent, meta), Shape {
+class Extruded(parent: VisualObject?) : VisualLeaf3D(parent), Shape {
 
     var shape: List<Point2D> = ArrayList()
 
@@ -112,5 +110,5 @@ class Extruded(parent: VisualObject?, meta: Array<out Meta>) : VisualLeaf3D(pare
     }
 }
 
-fun VisualGroup.extrude(name: String? = null, vararg meta: Meta, action: Extruded.() -> Unit = {}) =
-    Extruded(this, meta).apply(action).also { set(name, it) }
+fun VisualGroup3D.extrude(name: String? = null, action: Extruded.() -> Unit = {}) =
+    Extruded(this).apply(action).also { set(name, it) }

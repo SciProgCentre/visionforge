@@ -1,9 +1,7 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.isEmpty
 import hep.dataforge.meta.update
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 
 enum class CompositeType {
@@ -16,21 +14,19 @@ open class Composite(
     parent: VisualObject?,
     val first: VisualObject3D,
     val second: VisualObject3D,
-    val type: CompositeType = CompositeType.UNION,
-    meta: Array<out Meta>
-) : VisualLeaf3D(parent, meta)
+    val compositeType: CompositeType = CompositeType.UNION
+) : VisualLeaf3D(parent)
 
-fun VisualGroup.composite(
+fun VisualGroup3D.composite(
     type: CompositeType,
     name: String? = null,
-    vararg meta: Meta,
     builder: VisualGroup3D.() -> Unit
 ): Composite {
     val group = VisualGroup3D().apply(builder)
     val children = group.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
-    return Composite(this, children[0], children[1], type, meta).also {
-        if( !group.config.isEmpty()) {
+    return Composite(this, children[0], children[1], type).also {
+        if (!group.config.isEmpty()) {
             it.config.update(group.config)
         }
         it.position = group.position
@@ -41,11 +37,11 @@ fun VisualGroup.composite(
     }
 }
 
-fun VisualGroup3D.union(name: String? = null, vararg meta: Meta, builder: VisualGroup3D.() -> Unit) =
-    composite(CompositeType.UNION, name, *meta, builder = builder)
+fun VisualGroup3D.union(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+    composite(CompositeType.UNION, name, builder = builder)
 
-fun VisualGroup3D.subtract(name: String? = null, vararg meta: Meta, builder: VisualGroup3D.() -> Unit) =
-    composite(CompositeType.SUBTRACT, name, *meta, builder = builder)
+fun VisualGroup3D.subtract(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+    composite(CompositeType.SUBTRACT, name, builder = builder)
 
-fun VisualGroup3D.intersect(name: String? = null, vararg meta: Meta, builder: VisualGroup3D.() -> Unit) =
-    composite(CompositeType.INTERSECT, name, *meta, builder = builder)
+fun VisualGroup3D.intersect(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+    composite(CompositeType.INTERSECT, name, builder = builder)

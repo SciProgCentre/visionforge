@@ -40,21 +40,24 @@ fun MetaItem<*>.color(): Color {
     }
 }
 
+private val materialCache = HashMap<Meta, Material>()
+
 /**
  * Infer Three material based on meta item
  */
 fun Meta?.jsMaterial(): Material {
-    return if(this == null){
+    return if (this == null) {
         Materials.DEFAULT
     } else
-        //TODO add more oprions for material
-        MeshBasicMaterial().apply {
-            color = get("color")?.color()?: Materials.DEFAULT_COLOR
-            opacity = get("opacity")?.double ?: 1.0
-            transparent = get("transparent").boolean ?: (opacity < 1.0)
-            //node["specularColor"]?.let { specular = it.color() }
-            side = 2
+    //TODO add more options for material
+        return materialCache.getOrPut(this) {
+            MeshBasicMaterial().apply {
+                color = get("color")?.color() ?: Materials.DEFAULT_COLOR
+                opacity = get("opacity")?.double ?: 1.0
+                transparent = get("transparent").boolean ?: (opacity < 1.0)
+                //node["specularColor"]?.let { specular = it.color() }
+                side = 2
+            }
         }
-
 }
 

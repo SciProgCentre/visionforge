@@ -20,6 +20,7 @@ class ThreePlugin : AbstractPlugin() {
 
     private val objectFactories = HashMap<KClass<out VisualObject3D>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
+    private val proxyFactory = ThreeProxyFactory(this)
 
     init {
         //Add specialized factories here
@@ -38,7 +39,6 @@ class ThreePlugin : AbstractPlugin() {
         return when (obj) {
             is VisualGroup3D -> Group(obj.mapNotNull {
                 try {
-                    it as VisualObject3D
                     buildObject3D(it)
                 } catch (ex: Throwable) {
                     console.error(ex)
@@ -49,6 +49,7 @@ class ThreePlugin : AbstractPlugin() {
                 updatePosition(obj)
             }
             is Composite -> compositeFactory(obj)
+            is Proxy3D -> proxyFactory(obj)
             else -> {
                 //find specialized factory for this type if it is present
                 val factory = findObjectFactory(obj::class)
