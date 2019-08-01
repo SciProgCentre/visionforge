@@ -45,10 +45,14 @@ private fun VisualGroup3D.addSolid(
     val aScale = solid.ascale()
     return when (solid) {
         is GDMLBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
-        is GDMLTube -> cylinder(solid.rmax * lScale, solid.z * lScale, name) {
-            startAngle = solid.startphi * aScale
-            angle = solid.deltaphi * aScale
-        }
+        is GDMLTube -> tube(
+            solid.rmax * lScale,
+            solid.z * lScale,
+            solid.rmin * lScale,
+            solid.startphi * aScale,
+            solid.deltaphi * aScale,
+            name
+        )
         is GDMLXtru -> extrude(name) {
             shape {
                 solid.vertices.forEach {
@@ -193,8 +197,7 @@ private fun volume(
                     ?: context.templates.addSolid(context, solid, solid.name) {
                         this.material = context.resolveColor(group, material, solid)
                     }
-                val wrapper = Proxy3D(this,cachedSolid)
-                add(wrapper)
+                proxy(cachedSolid, solid.name)
             }
 
             when (val vol = group.placement) {

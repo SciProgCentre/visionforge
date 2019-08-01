@@ -105,10 +105,10 @@ var VisualObject3D.rotationOrder: RotationOrder
 
 
 /**
- * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default
+ * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
 var VisualObject3D.detail: Int?
-    get() = getProperty(DETAIL_KEY).int
+    get() = getProperty(DETAIL_KEY,false).int
     set(value) = setProperty(DETAIL_KEY, value)
 
 var VisualObject3D.material: Meta?

@@ -33,7 +33,7 @@ class RendererDemoView : View() {
             }
         }
 
-        var color by group.config.number(1530).int
+        var color by group.config.number(1530)
 
         GlobalScope.launch {
             val random = Random(111)

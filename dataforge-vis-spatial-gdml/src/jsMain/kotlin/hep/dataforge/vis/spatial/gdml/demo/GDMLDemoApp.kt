@@ -90,11 +90,11 @@ private class GDMLDemoApp : ApplicationBase() {
             launch { message("Converting GDML into DF-VIS format") }
             val visual = gdml.toVisual {
                 lUnit = LUnit.CM
-//                acceptSolid = { solid ->
-//                    !solid.name.startsWith("ecal")
+                acceptSolid = { solid ->
+                    !solid.name.startsWith("ecal")
 //                            && !solid.name.startsWith("V")
 //                            && !solid.name.startsWith("U")
-//                }
+                }
             }
             launch { message("Rendering") }
             val output = three.output(canvas)

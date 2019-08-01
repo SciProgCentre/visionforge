@@ -81,7 +81,11 @@ abstract class AbstractVisualObject(override val parent: VisualObject?) : Visual
     }
 
     private var _config: Config? = null
-    override val config: Config get() = _config ?: Config().also { _config = it }
+    override val config: Config
+        get() = _config ?: Config().also { config ->
+            _config = config
+            config.onChange(this, ::propertyChanged)
+        }
 
     override fun setProperty(name: Name, value: Any?) {
         config[name] = value
@@ -117,6 +121,13 @@ open class VisualGroup<T : VisualObject>(parent: VisualObject?) : AbstractVisual
         return when (target) {
             TYPE -> namedChildren
             else -> emptyMap()
+        }
+    }
+
+    override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
+        super.propertyChanged(name, before, after)
+        forEach {
+            it.propertyChanged(name, before, after)
         }
     }
 
@@ -164,10 +175,12 @@ open class VisualGroup<T : VisualObject>(parent: VisualObject?) : AbstractVisual
      * Get named child by name
      */
     operator fun get(name: Name): T? = namedChildren[name]
+
     /**
      * Get named child by string
      */
     operator fun get(key: String): T? = namedChildren[key]
+
     /**
      * Get an unnamed child
      */

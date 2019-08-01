@@ -7,9 +7,9 @@ class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        val dx = xSize.toDouble() / 2
-        val dy = ySize.toDouble() / 2
-        val dz = zSize.toDouble() / 2
+        val dx = xSize.toFloat() / 2
+        val dy = ySize.toFloat() / 2
+        val dz = zSize.toFloat() / 2
         val node1 = Point3D(-dx, -dy, -dz)
         val node2 = Point3D(dx, -dy, -dz)
         val node3 = Point3D(dx, dy, -dz)

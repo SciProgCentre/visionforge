@@ -31,7 +31,12 @@ private class ThreeDemoApp : ApplicationBase() {
                 }
                 sphere(50.0) {
                     x = 110
-                    detail = 200
+                    detail = 16
+                }
+                tube(50, height = 10, innerRadius = 25, angle = PI) {
+                    y = 110
+                    detail = 16
+                    rotationX = PI/4
                 }
             }
 

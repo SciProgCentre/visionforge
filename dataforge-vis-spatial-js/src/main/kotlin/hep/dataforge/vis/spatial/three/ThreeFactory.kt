@@ -36,6 +36,7 @@ interface ThreeFactory<T : VisualObject3D> {
  * Update position, rotation and visibility
  */
 internal fun Object3D.updatePosition(obj: VisualObject3D) {
+    visible = obj.visible ?: true
     position.set(obj.x, obj.y, obj.z)
     setRotationFromEuler(obj.euler)
     scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
@@ -125,7 +126,7 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
                     //update position of mesh using this object
                     mesh.updatePosition(obj)
                 } else if (name == VisualObject3D.VISIBLE_KEY) {
-                    obj.visible = obj.visible ?: true
+                    mesh.visible = obj.visible ?: true
                 } else {
                     //full update
                     mesh.geometry = geometryBuilder(obj)

@@ -46,19 +46,6 @@ class Extruded(parent: VisualObject?) : VisualLeaf3D(parent), Shape {
         //TODO send invalidation signal
     }
 
-    private fun <T : Any> GeometryBuilder<T>.cap(shape: List<Point3D>) {
-        //FIXME won't work for non-convex shapes
-        val center = Point3D(
-            shape.map { it.x.toDouble() }.average(),
-            shape.map { it.y.toDouble() }.average(),
-            shape.map { it.z.toDouble() }.average()
-        )
-        for(i in 0 until (shape.size - 1)){
-            face(shape[i], shape[i+1], center, null)
-        }
-        face(shape.last(), shape.first(),center,null)
-    }
-
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
 
