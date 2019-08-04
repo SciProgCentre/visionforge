@@ -1,6 +1,8 @@
 package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.plus
+import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*
 import kotlin.math.cos
@@ -131,6 +133,8 @@ private fun VisualGroup3D.addSolid(
     }.apply(block)
 }
 
+private val volumesName = "volumes".asName()
+
 private fun VisualGroup3D.addPhysicalVolume(
     context: GDMLTransformer,
     physVolume: GDMLPhysVolume
@@ -138,15 +142,35 @@ private fun VisualGroup3D.addPhysicalVolume(
     val volume: GDMLGroup = physVolume.volumeref.resolve(context.root)
         ?: error("Volume with ref ${physVolume.volumeref.ref} could not be resolved")
 
-    if (context.acceptGroup(volume)) {
+    when (context.volumeAction(volume)) {
+        GDMLTransformer.Action.ACCEPT -> {
+            this[physVolume.name] = volume(context, volume).apply {
+                withPosition(
+                    context.lUnit,
+                    physVolume.resolvePosition(context.root),
+                    physVolume.resolveRotation(context.root),
+                    physVolume.resolveScale(context.root)
+                )
+            }
+        }
+        GDMLTransformer.Action.CACHE -> {
+            val name = volumesName + volume.name.asName()
+            if (context.templates[name] == null) {
+                context.templates[name] = volume(context, volume)
+            }
 
-        this[physVolume.name] = volume(
-            context,
-            volume,
-            physVolume.resolvePosition(context.root),
-            physVolume.resolveRotation(context.root),
-            physVolume.resolveScale(context.root)
-        )
+            this[physVolume.name] = Proxy(name).apply {
+                withPosition(
+                    context.lUnit,
+                    physVolume.resolvePosition(context.root),
+                    physVolume.resolveRotation(context.root),
+                    physVolume.resolveScale(context.root)
+                )
+            }
+        }
+        GDMLTransformer.Action.REJECT -> {
+            //ignore
+        }
     }
 }
 
@@ -168,36 +192,38 @@ private fun VisualGroup3D.addDivisionVolume(
 
 private fun VisualGroup3D.addVolume(
     context: GDMLTransformer,
-    group: GDMLGroup,
-    position: GDMLPosition? = null,
-    rotation: GDMLRotation? = null,
-    scale: GDMLScale? = null
+    group: GDMLGroup
 ) {
-    this[group.name] = volume(context, group, position, rotation, scale)
+    this[group.name] = volume(context, group)
 }
 
 private fun volume(
     context: GDMLTransformer,
-    group: GDMLGroup,
-    position: GDMLPosition? = null,
-    rotation: GDMLRotation? = null,
-    scale: GDMLScale? = null
+    group: GDMLGroup
 ): VisualGroup3D {
-
     return VisualGroup3D().apply {
-        withPosition(context.lUnit, position, rotation, scale)
-
         if (group is GDMLVolume) {
             val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
             val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
-            if (context.acceptSolid(solid)) {
-                val cachedSolid = context.templates[solid.name]
-                    ?: context.templates.addSolid(context, solid, solid.name) {
+            when (context.solidAction(solid)) {
+                GDMLTransformer.Action.ACCEPT -> {
+                    addSolid(context, solid, solid.name) {
                         this.material = context.resolveColor(group, material, solid)
                     }
-                proxy(cachedSolid, solid.name)
+                }
+                GDMLTransformer.Action.CACHE -> {
+                    if (context.templates[solid.name] == null) {
+                        context.templates.addSolid(context, solid, solid.name) {
+                            this.material = context.resolveColor(group, material, solid)
+                        }
+                    }
+                    ref(solid.name.asName(), solid.name)
+                }
+                GDMLTransformer.Action.REJECT -> {
+                    //ignore
+                }
             }
 
             when (val vol = group.placement) {
@@ -220,6 +246,6 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
     val context = GDMLTransformer(this).apply(block)
 
     return volume(context, world).also {
-        context.finished()
+        context.finished(it)
     }
 }

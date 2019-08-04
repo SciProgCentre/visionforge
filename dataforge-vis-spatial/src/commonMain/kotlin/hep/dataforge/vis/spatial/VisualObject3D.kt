@@ -1,6 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.AbstractVisualObject
@@ -61,17 +62,28 @@ interface VisualObject3D : VisualObject {
     }
 }
 
-abstract class VisualLeaf3D(parent: VisualObject?) : AbstractVisualObject(parent), VisualObject3D, Configurable {
+abstract class VisualLeaf3D : AbstractVisualObject(), VisualObject3D, Configurable {
     override var position: Value3 = Value3()
     override var rotation: Value3 = Value3()
     override var scale: Value3 = Value3(1f, 1f, 1f)
 }
 
-class VisualGroup3D(parent: VisualObject? = null) : VisualGroup<VisualObject3D>(parent), VisualObject3D, Configurable {
+class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurable {
 
     override var position: Value3 = Value3()
     override var rotation: Value3 = Value3()
     override var scale: Value3 = Value3(1f, 1f, 1f)
+
+    /**
+     * A container for templates visible inside this group
+     */
+    var templates: VisualGroup3D? = null
+        set(value) {
+            value?.parent = this
+            field = value
+        }
+
+    fun getTemplate(name: Name): VisualObject3D? = templates?.get(name) ?: (parent as? VisualGroup3D)?.getTemplate(name)
 
     override fun MetaBuilder.updateMeta() {
         updatePosition()
@@ -80,7 +92,7 @@ class VisualGroup3D(parent: VisualObject? = null) : VisualGroup<VisualObject3D>(
 }
 
 fun VisualGroup3D.group(key: String? = null, action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
-    VisualGroup3D(this).apply(action).also { set(key, it) }
+    VisualGroup3D().apply(action).also { set(key, it) }
 
 fun Output<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)
@@ -108,7 +120,7 @@ var VisualObject3D.rotationOrder: RotationOrder
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
 var VisualObject3D.detail: Int?
-    get() = getProperty(DETAIL_KEY,false).int
+    get() = getProperty(DETAIL_KEY, false).int
     set(value) = setProperty(DETAIL_KEY, value)
 
 var VisualObject3D.material: Meta?

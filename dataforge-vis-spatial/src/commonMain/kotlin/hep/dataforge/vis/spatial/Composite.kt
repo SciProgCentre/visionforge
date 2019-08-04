@@ -2,7 +2,6 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.isEmpty
 import hep.dataforge.meta.update
-import hep.dataforge.vis.common.VisualObject
 
 enum class CompositeType {
     UNION,
@@ -11,13 +10,12 @@ enum class CompositeType {
 }
 
 open class Composite(
-    parent: VisualObject?,
     val first: VisualObject3D,
     val second: VisualObject3D,
     val compositeType: CompositeType = CompositeType.UNION
-) : VisualLeaf3D(parent)
+) : VisualLeaf3D()
 
-fun VisualGroup3D.composite(
+inline fun VisualGroup3D.composite(
     type: CompositeType,
     name: String? = null,
     builder: VisualGroup3D.() -> Unit
@@ -25,7 +23,7 @@ fun VisualGroup3D.composite(
     val group = VisualGroup3D().apply(builder)
     val children = group.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
-    return Composite(this, children[0], children[1], type).also {
+    return Composite(children[0], children[1], type).also {
         if (!group.config.isEmpty()) {
             it.config.update(group.config)
         }

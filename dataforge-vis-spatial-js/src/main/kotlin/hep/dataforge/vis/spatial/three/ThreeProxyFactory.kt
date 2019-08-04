@@ -1,22 +1,22 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.vis.spatial.Proxy3D
+import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.VisualObject3D
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.objects.Mesh
 
-class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy3D> {
-    private val cache = HashMap<VisualObject3D, Mesh>()
+class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
+    private val cache = HashMap<VisualObject3D, Object3D>()
 
-    override val type = Proxy3D::class
+    override val type = Proxy::class
 
-    override fun invoke(obj: Proxy3D): Object3D {
-        val templateMesh = cache.getOrPut(obj.template) {
-            three.buildObject3D(obj.template) as Mesh
+    override fun invoke(obj: Proxy): Object3D {
+        val template = obj.template
+        val cachedObject = cache.getOrPut(template) {
+            three.buildObject3D(template)
         }
 
         //val mesh = Mesh(templateMesh.geometry as BufferGeometry, templateMesh.material)
-        val mesh = templateMesh.clone()
+        val mesh = cachedObject.clone()
 
         mesh.updatePosition(obj)
         return mesh

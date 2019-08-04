@@ -1,7 +1,6 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.color
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -9,7 +8,7 @@ import kotlin.test.assertEquals
 class GroupTest {
     @Test
     fun testGroupWithComposite(){
-        val group = VisualNode().apply{
+        val group = VisualGroup3D().apply{
             union {
                 box(100, 100, 100) {
                     z = 100
@@ -30,7 +29,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = 300
-                material(Colors.red)
+                color(Colors.red)
             }
             subtract{
                 box(100, 100, 100) {
@@ -40,7 +39,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = -300
-                material(Colors.blue)
+                color(Colors.blue)
             }
         }
 

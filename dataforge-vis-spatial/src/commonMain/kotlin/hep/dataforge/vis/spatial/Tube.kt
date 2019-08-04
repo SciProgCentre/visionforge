@@ -1,21 +1,19 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Stright tube segment
+ * Straight tube segment
  */
 class Tube(
-    parent: VisualObject?,
     var radius: Float,
     var height: Float,
     var innerRadius: Float = 0f,
     var startAngle: Float = 0f,
     var angle: Float = PI2
-) : VisualLeaf3D(parent), Shape {
+) : VisualLeaf3D(), Shape {
 
     init {
         require(radius > 0)
@@ -108,7 +106,7 @@ class Tube(
     }
 }
 
-fun VisualGroup3D.tube(
+inline fun VisualGroup3D.tube(
     r: Number,
     height: Number,
     innerRadius: Number = 0f,
@@ -116,16 +114,12 @@ fun VisualGroup3D.tube(
     angle: Number = 2 * PI,
     name: String? = null,
     block: Tube.() -> Unit = {}
-): Tube {
-    val tube = Tube(
-        this,
-        r.toFloat(),
-        height.toFloat(),
-        innerRadius.toFloat(),
-        startAngle.toFloat(),
-        angle.toFloat()
-    ).apply(
-        block
-    )
-    return tube.also { set(name, it) }
-}
+): Tube = Tube(
+    r.toFloat(),
+    height.toFloat(),
+    innerRadius.toFloat(),
+    startAngle.toFloat(),
+    angle.toFloat()
+).apply(
+    block
+).also { set(name, it) }

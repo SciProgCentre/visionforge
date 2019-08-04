@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 class ConvexTest {
     @Test
     fun testConvexBuilder() {
-        val group = VisualNode().apply {
+        val group = VisualGroup3D().apply {
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)
@@ -25,7 +25,7 @@ class ConvexTest {
 
         val convex = group.first() as Convex
 
-        val pointsNode = convex.config["points"].node
+        val pointsNode = convex.toMeta()["points"].node
 
         assertEquals(8, pointsNode?.items?.count())
         val points = pointsNode?.getAll("point".toName())

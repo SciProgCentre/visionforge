@@ -6,10 +6,7 @@ import hep.dataforge.names.Name
 /**
  * Basic [VisualObject] leaf element
  */
-open class VisualLeaf(
-    parent: VisualObject? = null,
-    meta: Meta = EmptyMeta
-) : AbstractVisualObject(parent), Configurable {
+open class VisualLeaf(meta: Meta = EmptyMeta) : AbstractVisualObject(), Configurable {
 
     val properties = Styled(meta)
 

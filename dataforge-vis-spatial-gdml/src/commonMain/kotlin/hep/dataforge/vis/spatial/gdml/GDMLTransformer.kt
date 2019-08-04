@@ -14,6 +14,12 @@ class GDMLTransformer(val root: GDML) {
     private val materialCache = HashMap<GDMLMaterial, Meta>()
     private val random = Random(111)
 
+    enum class Action{
+        ACCEPT,
+        REJECT,
+        CACHE
+    }
+
     /**
      * A special group for local templates
      */
@@ -34,15 +40,15 @@ class GDMLTransformer(val root: GDML) {
         }
     }
 
-    var acceptSolid: (GDMLSolid) -> Boolean = { true }
-    var acceptGroup: (GDMLGroup) -> Boolean = { true }
+    var solidAction: (GDMLSolid) -> Action = { Action.CACHE }
+    var volumeAction: (GDMLGroup) -> Action = { Action.ACCEPT }
 
     fun printStatistics() {
         println("Solids:")
         solidCounter.entries.sortedByDescending { it.value }.forEach {
             println("\t$it")
         }
-        println(println("Solids total: ${solidCounter.values.sum()}"))
+        println("Solids total: ${solidCounter.values.sum()}")
     }
 
     private val solidCounter = HashMap<String, Int>()
@@ -53,8 +59,9 @@ class GDMLTransformer(val root: GDML) {
 
     var onFinish: GDMLTransformer.() -> Unit = {}
 
-    internal fun finished() {
-        onFinish(this)
+    internal fun finished(final: VisualGroup3D) {
+        final.templates = templates
+        onFinish(this@GDMLTransformer)
     }
 
 }

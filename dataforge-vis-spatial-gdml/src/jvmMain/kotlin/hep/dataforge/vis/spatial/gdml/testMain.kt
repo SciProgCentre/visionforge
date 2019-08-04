@@ -1,25 +1,38 @@
 package hep.dataforge.vis.spatial.gdml
 
+import hep.dataforge.names.toName
+import hep.dataforge.vis.spatial.VisualGroup3D
 import nl.adaptivity.xmlutil.StAXReader
 import scientifik.gdml.GDML
 import java.io.File
-import java.net.URL
 
 fun main() {
-    val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
     val file = File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\BM@N.gdml")
-    val stream = if (file.exists()) {
-        file.inputStream()
-    } else {
-        url.openStream()
-    }
+    //val file = File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.gdml")
 
-    val xmlReader = StAXReader(stream, "UTF-8")
+    val xmlReader = StAXReader(file.inputStream(), "UTF-8")
     val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-    xml.toVisual {
+    val visual = xml.toVisual {
         lUnit = LUnit.CM
-        //acceptSolid = { solid -> !solid.name.startsWith("ecal") && !solid.name.startsWith("V") }
+        volumeAction = { volume ->
+            when {
+                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
+                else -> GDMLTransformer.Action.ACCEPT
+            }
+        }
         onFinish = { printStatistics() }
     }
-    readLine()
+
+    val template = visual.getTemplate("volumes.ecal01mod".toName())
+    println(template)
+    visual.flatMap { (it as? VisualGroup3D) ?: listOf(it) }.forEach {
+        if(it.parent==null) error("")
+    }
+    //readLine()
+    //val meta = visual.toMeta()
+//    val tmpFile = File.createTempFile("dataforge-visual", "json")
+    //tmpFile.writeText(meta.toString())
+    //println(tmpFile.absoluteFile)
 }

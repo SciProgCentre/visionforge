@@ -1,17 +1,24 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.meta.MetaBuilder
 
-class Convex(parent: VisualObject?, val points: List<Point3D>) : VisualLeaf3D(parent) {
+class Convex(
+    val points: List<Point3D>
+) : VisualLeaf3D() {
 
+    override fun MetaBuilder.updateMeta() {
+        "points" to {
+            "point" to points.map{it.toMeta()}
+        }
+    }
 
     companion object {
         const val TYPE = "geometry.3d.convex"
     }
 }
 
-fun VisualGroup3D.convex(action: ConvexBuilder.() -> Unit = {}) =
-    ConvexBuilder().apply(action).build(this).also { add(it) }
+inline fun VisualGroup3D.convex(name: String? = null, action: ConvexBuilder.() -> Unit = {}) =
+    ConvexBuilder().apply(action).build().also { set(name, it) }
 
 class ConvexBuilder {
     private val points = ArrayList<Point3D>()
@@ -20,7 +27,7 @@ class ConvexBuilder {
         points.add(Point3D(x, y, z))
     }
 
-    fun build(parent: VisualObject?): Convex {
-        return Convex(parent, points)
+    fun build(): Convex {
+        return Convex(points)
     }
 }

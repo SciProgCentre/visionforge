@@ -7,11 +7,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("scientifik:gdml:0.1.3")
+                api("scientifik:gdml:0.1.4-dev-1")
             }
         }
-        val jsMain by getting{
-            dependencies{
+        val jsMain by getting {
+            dependencies {
                 api(project(":dataforge-vis-spatial-js"))
             }
         }

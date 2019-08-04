@@ -1,6 +1,5 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.vis.common.VisualObject
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -30,7 +29,7 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
 
 data class Layer(var x: Number, var y: Number, var z: Number, var scale: Number)
 
-class Extruded(parent: VisualObject?) : VisualLeaf3D(parent), Shape {
+class Extruded : VisualLeaf3D(), Shape {
 
     var shape: List<Point2D> = ArrayList()
 
@@ -98,4 +97,4 @@ class Extruded(parent: VisualObject?) : VisualLeaf3D(parent), Shape {
 }
 
 fun VisualGroup3D.extrude(name: String? = null, action: Extruded.() -> Unit = {}) =
-    Extruded(this).apply(action).also { set(name, it) }
+    Extruded().apply(action).also { set(name, it) }

@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
+import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
@@ -82,7 +83,7 @@ private class GDMLDemoApp : ApplicationBase() {
         val canvas = document.getElementById("canvas") ?: error("Element with id canvas not found on page")
         canvas.clear()
 
-        val action: suspend CoroutineScope.(String) -> Unit = {
+        val action: suspend CoroutineScope.(String) -> Unit = { it ->
             canvas.clear()
             launch { spinner(true) }
             launch { message("Loading GDML") }
@@ -90,11 +91,15 @@ private class GDMLDemoApp : ApplicationBase() {
             launch { message("Converting GDML into DF-VIS format") }
             val visual = gdml.toVisual {
                 lUnit = LUnit.CM
-                acceptSolid = { solid ->
-                    !solid.name.startsWith("ecal")
-//                            && !solid.name.startsWith("V")
-//                            && !solid.name.startsWith("U")
+                volumeAction = { volume ->
+                    when {
+                        volume.name.startsWith("ecal") -> GDMLTransformer.Action.REJECT
+                        volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                        volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
+                        else -> GDMLTransformer.Action.ACCEPT
+                    }
                 }
+
             }
             launch { message("Rendering") }
             val output = three.output(canvas)

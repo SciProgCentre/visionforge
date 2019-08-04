@@ -49,7 +49,7 @@ class ThreePlugin : AbstractPlugin() {
                 updatePosition(obj)
             }
             is Composite -> compositeFactory(obj)
-            is Proxy3D -> proxyFactory(obj)
+            is Proxy -> proxyFactory(obj)
             else -> {
                 //find specialized factory for this type if it is present
                 val factory = findObjectFactory(obj::class)
@@ -84,7 +84,7 @@ class ThreePlugin : AbstractPlugin() {
     }
 
     companion object : PluginFactory<ThreePlugin> {
-        override val tag = PluginTag("vis.three", "hep.dataforge")
+        override val tag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
         override val type = ThreePlugin::class
         override fun invoke(meta: Meta) = ThreePlugin()
     }

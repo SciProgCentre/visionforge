@@ -1,9 +1,19 @@
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.context.Context
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.float
+import hep.dataforge.meta.get
+import hep.dataforge.vis.common.VisualFactory
 import hep.dataforge.vis.common.VisualObject
+import kotlin.reflect.KClass
 
-class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize: Number) :
-    VisualLeaf3D(parent), Shape {
+data class Box(
+    val xSize: Float,
+    val ySize: Float,
+    val zSize: Float
+) : VisualLeaf3D(), Shape {
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -26,9 +36,24 @@ class Box(parent: VisualObject?, val xSize: Number, val ySize: Number, val zSize
         geometryBuilder.face4(node8, node5, node6, node7)
     }
 
-    companion object {
+    override fun MetaBuilder.updateMeta() {
+        "xSize" to xSize
+        "ySize" to ySize
+        "zSize" to ySize
+    }
+
+    companion object : VisualFactory<Box> {
         const val TYPE = "geometry.3d.box"
 
+        override val type: KClass<Box> get() = Box::class
+
+        override fun invoke(context: Context, parent: VisualObject?, meta: Meta): Box = Box(
+            meta["xSize"].float!!,
+            meta["ySize"].float!!,
+            meta["zSize"].float!!
+        ).apply {
+            update(meta)
+        }
     }
 }
 
@@ -38,4 +63,4 @@ inline fun VisualGroup3D.box(
     zSize: Number,
     name: String? = null,
     action: Box.() -> Unit = {}
-) = Box(this, xSize, ySize, zSize).apply(action).also { set(name, it) }
+) = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }

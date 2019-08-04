@@ -96,14 +96,14 @@ class FXMetaNode<M : MetaNode<M>>(
                 if (name.length == 1) invalidate()
             }
 
-            (node as? MutableMeta<*>)?.onChange(this, listener)
+            (node as? Config)?.onChange(this, listener)
 
             nodeProperty.addListener { _, oldValue, newValue ->
                 if (newValue == null) {
-                    (oldValue as? MutableMeta<*>)?.removeListener(this)
+                    (oldValue as? Config)?.removeListener(this)
                 }
 
-                if (newValue is MutableMeta<*>) {
+                if (newValue is Config) {
                     newValue.onChange(this, listener)
                 }
             }
