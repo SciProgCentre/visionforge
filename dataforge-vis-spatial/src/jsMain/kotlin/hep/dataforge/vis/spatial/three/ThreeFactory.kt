@@ -71,6 +71,7 @@ internal fun <T : VisualObject3D> Mesh.updateFrom(obj: T) {
  */
 operator fun <T : VisualObject3D> ThreeFactory<T>.invoke(obj: Any): Object3D {
     if (type.isInstance(obj)) {
+        @Suppress("UNCHECKED_CAST")
         return invoke(obj as T)
     } else {
         error("The object of type ${obj::class} could not be rendered by this factory")

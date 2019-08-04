@@ -27,7 +27,7 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
     }
 }
 
-data class Layer(var x: Number, var y: Number, var z: Number, var scale: Number)
+data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
 class Extruded : VisualLeaf3D(), Shape {
 
@@ -41,7 +41,7 @@ class Extruded : VisualLeaf3D(), Shape {
     val layers: MutableList<Layer> = ArrayList()
 
     fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
-        layers.add(Layer(x, y, z, scale))
+        layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
         //TODO send invalidation signal
     }
 
@@ -55,8 +55,8 @@ class Extruded : VisualLeaf3D(), Shape {
          */
         val layers: List<List<Point3D>> = layers.map { layer ->
             shape.map { (x, y) ->
-                val newX = layer.x.toDouble() + x.toDouble() * layer.scale.toDouble()
-                val newY = layer.y.toDouble() + y.toDouble() * layer.scale.toDouble()
+                val newX = layer.x + x * layer.scale
+                val newY = layer.y + y * layer.scale
                 Point3D(newX, newY, layer.z)
             }
         }

@@ -9,20 +9,17 @@ import hep.dataforge.vis.common.AbstractVisualObject
  * A proxy [VisualObject3D] to reuse a template object
  */
 class Proxy(val templateName: Name) : AbstractVisualObject(), VisualObject3D {
-    override var position: Value3 = Value3()
-    override var rotation: Value3 = Value3()
-    override var scale: Value3 = Value3(1f, 1f, 1f)
-
-    val template by lazy { getTemplate() }
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
 
     /**
      * Recursively search for defined template in the parent
      */
-    private fun getTemplate(): VisualObject3D {
-        return (parent as? VisualGroup3D)?.getTemplate(templateName)
+    val template by lazy {
+        (parent as? VisualGroup3D)?.getTemplate(templateName)
             ?: error("Template with name $templateName not found in $parent")
     }
-
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

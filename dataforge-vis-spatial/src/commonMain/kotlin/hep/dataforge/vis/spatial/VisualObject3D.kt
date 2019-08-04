@@ -12,23 +12,21 @@ import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 
-data class Value3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f)
-
 interface VisualObject3D : VisualObject {
-    var position: Value3
-    var rotation: Value3
-    var scale: Value3
+    var position: Point3D?
+    var rotation: Point3D?
+    var scale: Point3D?
 
     fun MetaBuilder.updatePosition() {
-        xPos to position.x
-        yPos to position.y
-        zPos to position.z
-        xRotation to rotation.x
-        yRotation to rotation.y
-        zRotation to rotation.z
-        xScale to scale.x
-        yScale to scale.y
-        zScale to scale.z
+        xPos to position?.x
+        yPos to position?.y
+        zPos to position?.z
+        xRotation to rotation?.x
+        yRotation to rotation?.y
+        zRotation to rotation?.z
+        xScale to scale?.x
+        yScale to scale?.y
+        zScale to scale?.z
     }
 
     companion object {
@@ -63,16 +61,16 @@ interface VisualObject3D : VisualObject {
 }
 
 abstract class VisualLeaf3D : AbstractVisualObject(), VisualObject3D, Configurable {
-    override var position: Value3 = Value3()
-    override var rotation: Value3 = Value3()
-    override var scale: Value3 = Value3(1f, 1f, 1f)
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
 }
 
 class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurable {
 
-    override var position: Value3 = Value3()
-    override var rotation: Value3 = Value3()
-    override var scale: Value3 = Value3(1f, 1f, 1f)
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
 
     /**
      * A container for templates visible inside this group
@@ -145,66 +143,75 @@ fun VisualObject3D.color(r: Int, g: Int, b: Int) = material {
     "blue" to b
 }
 
+private fun VisualObject3D.position(): Point3D =
+    position ?: Point3D(0.0, 0.0, 0.0).also { position = it }
+
 var VisualObject3D.x: Number
-    get() = position.x
+    get() = position?.x ?: 0f
     set(value) {
-        position.x = value.toFloat()
+        position().x = value.toDouble()
         propertyChanged(VisualObject3D.xPos)
     }
 
 var VisualObject3D.y: Number
-    get() = position.y
+    get() = position?.y ?: 0f
     set(value) {
-        position.y = value.toFloat()
+        position().y = value.toDouble()
         propertyChanged(VisualObject3D.yPos)
     }
 
 var VisualObject3D.z: Number
-    get() = position.z
+    get() = position?.z ?: 0f
     set(value) {
-        position.z = value.toFloat()
+        position().z = value.toDouble()
         propertyChanged(VisualObject3D.zPos)
     }
 
+private fun VisualObject3D.rotation(): Point3D =
+    rotation ?: Point3D(0.0, 0.0, 0.0).also { rotation = it }
+
 var VisualObject3D.rotationX: Number
-    get() = rotation.x
+    get() = rotation?.x ?: 0f
     set(value) {
-        rotation.x = value.toFloat()
+        rotation().x = value.toDouble()
         propertyChanged(VisualObject3D.xRotation)
     }
 
 var VisualObject3D.rotationY: Number
-    get() = rotation.y
+    get() = rotation?.y ?: 0f
     set(value) {
-        rotation.y = value.toFloat()
+        rotation().y = value.toDouble()
         propertyChanged(VisualObject3D.xRotation)
     }
 
 var VisualObject3D.rotationZ: Number
-    get() = rotation.z
+    get() = rotation?.z ?: 0f
     set(value) {
-        rotation.z = value.toFloat()
+        rotation().z = value.toDouble()
         propertyChanged(VisualObject3D.zRotation)
     }
 
+private fun VisualObject3D.scale(): Point3D =
+    scale ?: Point3D(1.0, 1.0, 1.0).also { scale = it }
+
 var VisualObject3D.scaleX: Number
-    get() = scale.x
+    get() = scale?.x ?: 1f
     set(value) {
-        scale.x = value.toFloat()
+        scale().x = value.toDouble()
         propertyChanged(VisualObject3D.xScale)
     }
 
 var VisualObject3D.scaleY: Number
-    get() = scale.y
+    get() = scale?.y ?: 1f
     set(value) {
-        scale.y = value.toFloat()
+        scale().y = value.toDouble()
         propertyChanged(VisualObject3D.yScale)
     }
 
 var VisualObject3D.scaleZ: Number
-    get() = scale.z
+    get() = scale?.z ?: 1f
     set(value) {
-        scale.z = value.toFloat()
+        scale().z = value.toDouble()
         propertyChanged(VisualObject3D.zScale)
     }
 

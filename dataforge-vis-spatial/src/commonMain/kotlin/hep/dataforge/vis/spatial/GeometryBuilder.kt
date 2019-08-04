@@ -1,35 +1,7 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.*
-
-data class Point2D(val x: Number, val y: Number) : MetaRepr {
-    override fun toMeta(): Meta = buildMeta {
-        "x" to x
-        "y" to y
-    }
-
-    companion object {
-        fun from(meta: Meta): Point2D {
-            return Point2D(meta["x"].number ?: 0, meta["y"].number ?: 0)
-        }
-    }
-}
-
-data class Point3D(val x: Number, val y: Number, val z: Number) : MetaRepr {
-    override fun toMeta(): Meta = buildMeta {
-        "x" to x
-        "y" to y
-        "z" to z
-    }
-
-    companion object {
-        fun from(meta: Meta): Point3D {
-            return Point3D(meta["x"].number ?: 0, meta["y"].number ?: 0, meta["y"].number ?: 0)
-        }
-
-        val zero = Point3D(0, 0, 0)
-    }
-}
+import hep.dataforge.meta.EmptyMeta
+import hep.dataforge.meta.Meta
 
 /**
  * @param T the type of resulting geometry
@@ -66,9 +38,9 @@ interface Shape : VisualObject3D {
 fun <T : Any> GeometryBuilder<T>.cap(shape: List<Point3D>, normal: Point3D? = null) {
     //FIXME won't work for non-convex shapes
     val center = Point3D(
-        shape.map { it.x.toDouble() }.average(),
-        shape.map { it.y.toDouble() }.average(),
-        shape.map { it.z.toDouble() }.average()
+        shape.map { it.x }.average(),
+        shape.map { it.y }.average(),
+        shape.map { it.z }.average()
     )
     for (i in 0 until (shape.size - 1)) {
         face(shape[i], shape[i + 1], center, normal)

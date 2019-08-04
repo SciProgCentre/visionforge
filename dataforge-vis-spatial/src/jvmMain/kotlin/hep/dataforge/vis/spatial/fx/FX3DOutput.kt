@@ -3,9 +3,9 @@ package hep.dataforge.vis.spatial.fx
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.VisualNode
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Box
+import hep.dataforge.vis.spatial.VisualGroup3D
 import javafx.scene.Group
 import javafx.scene.Node
 import org.fxyz3d.shapes.primitives.CuboidMesh
@@ -28,12 +28,12 @@ class FX3DOutput(override val context: Context) : Output<VisualObject> {
             org.fxyz3d.geometry.Point3D(x.value ?: 0f, y.value ?: 0f, z.value ?: 0f)
         }
         return when (obj) {
-            is VisualNode -> Group(obj.map { buildNode(it) }).apply {
+            is VisualGroup3D -> Group(obj.map { buildNode(it) }).apply {
                 this.translateXProperty().bind(x)
                 this.translateYProperty().bind(y)
                 this.translateZProperty().bind(z)
             }
-            is Box -> CuboidMesh(obj.xSize, obj.ySize, obj.zSize).apply {
+            is Box -> CuboidMesh(obj.xSize.toDouble(), obj.ySize.toDouble(), obj.zSize.toDouble()).apply {
                 this.centerProperty().bind(center)
                 this.materialProperty().bind(listener["color"].transform { it.material() })
             }

@@ -1,6 +1,5 @@
 package hep.dataforge.vis.spatial.fx
 
-import com.sun.tools.javac.util.JCDiagnostic
 import hep.dataforge.vis.spatial.World.CAMERA_FAR_CLIP
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_DISTANCE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_X_ANGLE

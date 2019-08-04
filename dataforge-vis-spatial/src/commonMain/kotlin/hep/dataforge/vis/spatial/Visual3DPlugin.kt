@@ -27,7 +27,7 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
 }
 
 internal fun VisualObject3D.update(meta: Meta) {
-    fun Meta.toVector(default: Float = 0f) = Value3(
+    fun Meta.toVector(default: Float = 0f) = Point3D(
         this[VisualObject3D.x].float ?: default,
         this[VisualObject3D.y].float ?: default,
         this[VisualObject3D.z].float ?: default

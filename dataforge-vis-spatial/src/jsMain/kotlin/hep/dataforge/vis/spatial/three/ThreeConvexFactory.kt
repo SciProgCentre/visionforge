@@ -2,10 +2,11 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.vis.spatial.Convex
 import info.laht.threekt.external.geometries.ConvexBufferGeometry
+import info.laht.threekt.math.Vector3
 
 object ThreeConvexFactory : MeshThreeFactory<Convex>(Convex::class) {
     override fun buildGeometry(obj: Convex): ConvexBufferGeometry {
-        val vectors = obj.points.map { it.asVector() }.toTypedArray()
+        @Suppress("USELESS_CAST") val vectors = obj.points.toTypedArray() as Array<Vector3>
         return ConvexBufferGeometry(vectors)
     }
 }

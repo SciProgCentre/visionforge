@@ -16,24 +16,26 @@ private fun VisualObject3D.withPosition(
     scale: GDMLScale? = null
 ): VisualObject3D = apply {
     pos?.let {
-        this@withPosition.position.x = pos.x(lUnit)
-        this@withPosition.position.y = pos.y(lUnit)
-        this@withPosition.position.z = pos.z(lUnit)
+        this@withPosition.x = pos.x(lUnit)
+        this@withPosition.y = pos.y(lUnit)
+        this@withPosition.z = pos.z(lUnit)
     }
     rotation?.let {
-        this@withPosition.rotation.x = rotation.x()
-        this@withPosition.rotation.y = rotation.y()
-        this@withPosition.rotation.z = rotation.z()
+        this@withPosition.rotationX = rotation.x()
+        this@withPosition.rotationY = rotation.y()
+        this@withPosition.rotationZ = rotation.z()
     }
     scale?.let {
-        this@withPosition.scale.x = scale.x.toFloat()
-        this@withPosition.scale.y = scale.y.toFloat()
-        this@withPosition.scale.z = scale.z.toFloat()
+        this@withPosition.scaleX = scale.x.toFloat()
+        this@withPosition.scaleY = scale.y.toFloat()
+        this@withPosition.scaleZ = scale.z.toFloat()
     }
     //TODO convert units if needed
 }
 
+@Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(d: Double) = toDouble() * d
+@Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
 private fun VisualGroup3D.addSolid(
@@ -77,9 +79,9 @@ private fun VisualGroup3D.addSolid(
 
             addSolid(context, innerSolid) {
                 block()
-                scale.x *= solid.scale.x.toFloat()
-                scale.y *= solid.scale.y.toFloat()
-                scale.z = solid.scale.z.toFloat()
+                scaleX *= solid.scale.x.toFloat()
+                scaleY *= solid.scale.y.toFloat()
+                scaleZ = solid.scale.z.toFloat()
             }
         }
         is GDMLSphere -> sphere(solid.rmax * lScale, solid.deltaphi * aScale, solid.deltatheta * aScale, name) {

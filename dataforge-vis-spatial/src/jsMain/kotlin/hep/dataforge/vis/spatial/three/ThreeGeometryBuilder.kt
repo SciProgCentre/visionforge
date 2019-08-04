@@ -4,18 +4,11 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.vis.spatial.GeometryBuilder
-import hep.dataforge.vis.spatial.Point2D
 import hep.dataforge.vis.spatial.Point3D
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Face3
 import info.laht.threekt.core.Geometry
-import info.laht.threekt.math.Vector2
 import info.laht.threekt.math.Vector3
-
-// TODO use unsafe cast instead
-fun Point3D.asVector(): Vector3 = Vector3(this.x, this.y, this.z)
-
-fun Point2D.asVector(): Vector2 = Vector2(this.x, this.y)
 
 class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
 
@@ -36,7 +29,7 @@ class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
     }
 
     override fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D?, meta: Meta) {
-        val face = Face3(append(vertex1), append(vertex2), append(vertex3), normal?.asVector() ?: Vector3(0, 0, 0))
+        val face = Face3(append(vertex1), append(vertex2), append(vertex3), normal ?: Vector3(0, 0, 0))
         meta["materialIndex"].int?.let { face.materialIndex = it }
         meta["color"]?.color()?.let { face.color = it }
         faces.add(face)
@@ -45,7 +38,7 @@ class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
 
     override fun build(): BufferGeometry {
         return Geometry().apply {
-            vertices = this@ThreeGeometryBuilder.vertices.map { it.asVector() }.toTypedArray()
+            vertices = this@ThreeGeometryBuilder.vertices.toTypedArray()
             faces = this@ThreeGeometryBuilder.faces.toTypedArray()
             computeBoundingSphere()
             computeFaceNormals()
