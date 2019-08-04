@@ -1,5 +1,6 @@
-package hep.dataforge.vis.spatial
+package hep.dataforge.vis.spatial.fx
 
+import com.sun.tools.javac.util.JCDiagnostic
 import hep.dataforge.vis.spatial.World.CAMERA_FAR_CLIP
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_DISTANCE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_X_ANGLE
@@ -54,7 +55,7 @@ class Canvas3D : Fragment() {
     var angleZ by rotationZProperty
 
 
-    override val root =borderpane {
+    override val root = borderpane {
         center = SubScene(
             Group(world, cameraRotation).apply { DepthTest.ENABLE },
             1024.0,

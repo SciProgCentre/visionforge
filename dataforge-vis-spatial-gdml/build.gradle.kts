@@ -12,7 +12,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                api(project(":dataforge-vis-spatial-js"))
+                api(project(":dataforge-vis-spatial"))
             }
         }
     }

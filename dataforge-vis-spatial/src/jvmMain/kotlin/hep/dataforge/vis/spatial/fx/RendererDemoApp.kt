@@ -1,7 +1,8 @@
-package hep.dataforge.vis.spatial
+package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.number
+import hep.dataforge.vis.spatial.*
 import javafx.scene.Parent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

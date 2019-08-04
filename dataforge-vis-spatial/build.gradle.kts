@@ -1,5 +1,8 @@
+import org.openjfx.gradle.JavaFXOptions
+
 plugins {
     id("scientifik.mpp")
+    id("org.openjfx.javafxplugin")
 }
 
 scientifik{
@@ -18,7 +21,8 @@ kotlin {
         }
         jvmMain{
             dependencies {
-
+                implementation(project(":dataforge-vis-fx"))
+                implementation("org.fxyz3d:fxyz3d:0.4.0")
             }
         }
         jsMain{
@@ -31,5 +35,9 @@ kotlin {
             }
         }
     }
+}
+
+configure<JavaFXOptions> {
+    modules("javafx.controls")
 }
 

@@ -1,10 +1,11 @@
-package hep.dataforge.vis.spatial
+package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualNode
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.spatial.Box
 import javafx.scene.Group
 import javafx.scene.Node
 import org.fxyz3d.shapes.primitives.CuboidMesh

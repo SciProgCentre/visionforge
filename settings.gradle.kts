@@ -34,9 +34,6 @@ include(
     ":dataforge-vis-common",
     ":dataforge-vis-fx",
     ":dataforge-vis-spatial",
-    ":dataforge-vis-spatial-fx",
-    ":dataforge-vis-spatial-js",
-//    ":dataforge-vis-jsroot",
     ":dataforge-vis-spatial-gdml",
     ":spatial-js-demo"
 )

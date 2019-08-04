@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":dataforge-vis-spatial-js"))
+    api(project(":dataforge-vis-spatial"))
     api("info.laht.threekt:threejs-wrapper:0.106-npm-3")
     testCompile(kotlin("test-js"))
 }

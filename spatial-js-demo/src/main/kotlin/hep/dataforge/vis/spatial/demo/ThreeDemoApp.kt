@@ -9,9 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 import kotlin.random.Random
 
 
@@ -36,7 +34,7 @@ private class ThreeDemoApp : ApplicationBase() {
                 tube(50, height = 10, innerRadius = 25, angle = PI) {
                     y = 110
                     detail = 16
-                    rotationX = PI/4
+                    rotationX = PI / 4
                 }
             }
 
@@ -94,7 +92,7 @@ private class ThreeDemoApp : ApplicationBase() {
                 }
             }
 
-            demo("CSG", "CSG operations") {
+            demo("CSG.simple", "CSG operations") {
                 composite(CompositeType.UNION) {
                     box(100, 100, 100) {
                         z = 50
@@ -120,6 +118,12 @@ private class ThreeDemoApp : ApplicationBase() {
                     }
                     sphere(50)
                     color(Colors.blue)
+                }
+            }
+            demo("CSG.custom","CSG with manually created object"){
+                intersect {
+                    box(100,100,100)
+                    tube(60,10)
                 }
             }
         }
