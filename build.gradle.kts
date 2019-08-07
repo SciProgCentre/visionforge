@@ -7,10 +7,10 @@ plugins{
     id("kotlin2js") version kotlinVersion apply false
     id("kotlin-dce-js") version kotlinVersion apply false
     id("org.jetbrains.kotlin.frontend") version "0.0.45" apply false
-    id("scientifik.mpp") version "0.1.4-dev" apply false
-    id("scientifik.jvm") version "0.1.4-dev" apply false
-    id("scientifik.js") version "0.1.4-dev" apply false
-    id("scientifik.publish") version "0.1.4-dev" apply false
+    id("scientifik.mpp") version "0.1.4" apply false
+    id("scientifik.jvm") version "0.1.4" apply false
+    id("scientifik.js") version "0.1.4" apply false
+    id("scientifik.publish") version "0.1.4" apply false
     id("org.openjfx.javafxplugin") version "0.0.7" apply false
 }
 
