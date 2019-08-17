@@ -102,7 +102,11 @@ private class GDMLDemoApp : ApplicationBase() {
 
             }
             launch { message("Rendering") }
-            val output = three.output(canvas)
+            val output = three.output(canvas){
+                "axis" to {
+                    "size" to 100
+                }
+            }
             output.render(visual)
             launch {
                 message(null)

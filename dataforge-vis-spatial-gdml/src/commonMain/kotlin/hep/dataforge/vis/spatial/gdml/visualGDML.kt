@@ -24,6 +24,7 @@ private fun VisualObject3D.withPosition(
         this@withPosition.rotationX = rotation.x()
         this@withPosition.rotationY = rotation.y()
         this@withPosition.rotationZ = rotation.z()
+        this@withPosition.rotationOrder=RotationOrder.ZXY
     }
     scale?.let {
         this@withPosition.scaleX = scale.x.toFloat()

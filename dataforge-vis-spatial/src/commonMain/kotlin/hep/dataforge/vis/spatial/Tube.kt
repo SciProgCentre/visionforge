@@ -33,7 +33,7 @@ class Tube(
         require(radius > 0)
         require(height > 0)
         require(innerRadius >= 0)
-        require(startAngle >= 0)
+        //require(startAngle >= 0)
         require(angle in (0f..(PI2)))
     }
 

@@ -21,8 +21,8 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
     val scene: Scene = Scene().apply {
         add(AmbientLight())
-        if (meta["axis"] != null) {
-            val axesHelper = AxesHelper(meta["axis.size"].int ?: 1)
+        meta["axis"]?.let {
+            val axesHelper = AxesHelper(it.node["size"].int ?: 1)
             add(axesHelper)
         }
     }

@@ -9,7 +9,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 
@@ -120,10 +122,12 @@ private class ThreeDemoApp : ApplicationBase() {
                     color(Colors.blue)
                 }
             }
-            demo("CSG.custom","CSG with manually created object"){
+            demo("CSG.custom", "CSG with manually created object") {
                 intersect {
-                    box(100,100,100)
-                    tube(60,10)
+                    box(100, 100, 100)
+                    tube(60, 10) {
+                        detail = 180
+                    }
                 }
             }
         }

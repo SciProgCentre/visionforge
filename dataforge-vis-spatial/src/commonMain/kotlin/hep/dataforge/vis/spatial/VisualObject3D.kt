@@ -121,7 +121,7 @@ enum class RotationOrder {
  */
 var VisualObject3D.rotationOrder: RotationOrder
     get() = getProperty(VisualObject3D.rotationOrder).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(VisualObject3D.rotationOrder, value)
+    set(value) = setProperty(VisualObject3D.rotationOrder, value.name)
 
 
 /**
@@ -191,7 +191,7 @@ var VisualObject3D.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyChanged(VisualObject3D.xRotation)
+        propertyChanged(VisualObject3D.yRotation)
     }
 
 var VisualObject3D.rotationZ: Number
