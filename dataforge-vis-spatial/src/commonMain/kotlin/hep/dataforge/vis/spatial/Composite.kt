@@ -1,7 +1,13 @@
+@file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.isEmpty
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.update
+import hep.dataforge.vis.common.AbstractVisualObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 enum class CompositeType {
     UNION,
@@ -9,11 +15,27 @@ enum class CompositeType {
     SUBTRACT
 }
 
-open class Composite(
+@Serializable
+class Composite(
+    val compositeType: CompositeType,
     val first: VisualObject3D,
-    val second: VisualObject3D,
-    val compositeType: CompositeType = CompositeType.UNION
-) : VisualLeaf3D()
+    val second: VisualObject3D
+) : AbstractVisualObject(), VisualObject3D {
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
+
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
+
+    override fun MetaBuilder.updateMeta() {
+        "compositeType" to compositeType
+        "first" to first.toMeta()
+        "second" to second.toMeta()
+        updatePosition()
+    }
+}
 
 inline fun VisualGroup3D.composite(
     type: CompositeType,
@@ -23,14 +45,14 @@ inline fun VisualGroup3D.composite(
     val group = VisualGroup3D().apply(builder)
     val children = group.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
-    return Composite(children[0], children[1], type).also {
-        if (!group.config.isEmpty()) {
+    return Composite(type, children[0], children[1]).also {
+        if (group.properties != null) {
             it.config.update(group.config)
+            it.material = group.material
         }
         it.position = group.position
         it.rotation = group.rotation
         it.scale = group.scale
-        it.material = group.material
         set(name, it)
     }
 }

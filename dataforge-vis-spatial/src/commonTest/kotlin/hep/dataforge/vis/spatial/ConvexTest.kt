@@ -25,6 +25,8 @@ class ConvexTest {
 
         val convex = group.first() as Convex
 
+        val meta = convex.toMeta()
+
         val pointsNode = convex.toMeta()["points"].node
 
         assertEquals(8, pointsNode?.items?.count())

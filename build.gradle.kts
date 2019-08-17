@@ -1,4 +1,4 @@
-val dataforgeVersion by extra("0.1.3-dev-10")
+val dataforgeVersion by extra("0.1.3")
 
 plugins{
     val kotlinVersion = "1.3.50-eap-5"

@@ -1,5 +1,11 @@
+@file:UseSerializers(Point2DSerializer::class, Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.meta.Config
+import hep.dataforge.vis.common.AbstractVisualObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -7,16 +13,16 @@ import kotlin.math.sin
 
 typealias Shape2D = List<Point2D>
 
-class Shape2DBuilder {
-    private val list = ArrayList<Point2D>()
+@Serializable
+class Shape2DBuilder(private val points: MutableList<Point2D> = ArrayList()) {
 
     fun point(x: Number, y: Number) {
-        list.add(Point2D(x, y))
+        points.add(Point2D(x, y))
     }
 
     infix fun Number.to(y: Number) = point(this, y)
 
-    fun build(): Shape2D = list
+    fun build(): Shape2D = points
 }
 
 fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
@@ -27,18 +33,26 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
     }
 }
 
+@Serializable
 data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
-class Extruded : VisualLeaf3D(), Shape {
+@Serializable
+class Extruded(
+    var shape: List<Point2D> = ArrayList(),
+    var layers: MutableList<Layer> = ArrayList()
+) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    var shape: List<Point2D> = ArrayList()
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
 
     fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()
         //TODO send invalidation signal
     }
-
-    val layers: MutableList<Layer> = ArrayList()
 
     fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
         layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))

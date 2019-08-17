@@ -1,17 +1,20 @@
 package hep.dataforge.vis.common
 
+import hep.dataforge.meta.Config
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
-import hep.dataforge.names.get
+import hep.dataforge.names.toName
 import hep.dataforge.provider.Provider
 import kotlinx.serialization.Transient
 import kotlin.collections.set
 
 open class VisualGroup<T : VisualObject> : AbstractVisualObject(), Iterable<T>, Provider {
 
-    protected val namedChildren = HashMap<Name, T>()
-    protected val unnamedChildren = ArrayList<T>()
+    protected open val namedChildren: MutableMap<Name, T> = HashMap()
+    protected open val unnamedChildren: MutableList<T> = ArrayList()
+
+    override var properties: Config? = null
 
     override val defaultTarget: String get() = VisualObject.TYPE
 
@@ -51,27 +54,25 @@ open class VisualGroup<T : VisualObject> : AbstractVisualObject(), Iterable<T>, 
         listeners.removeAll { it.owner === owner }
     }
 
-    operator fun set(name: Name, child: T?) {
-        if (child == null) {
-            namedChildren.remove(name)
-        } else {
-            if (child.parent == null) {
-                child.parent = this
-            } else {
-                error("Can't reassign existing parent for $child")
-            }
-            namedChildren[name] = child
-        }
-        listeners.forEach { it.callback(name, child) }
-    }
-
     /**
      * Add named or unnamed child to the group. If key is [null] the child is considered unnamed. Both key and value are not
      * allowed to be null in the same time. If name is present and [child] is null, the appropriate element is removed.
      */
     operator fun set(name: Name?, child: T?) {
         when {
-            name != null -> set(name, child)
+            name != null -> {
+                if (child == null) {
+                    namedChildren.remove(name)
+                } else {
+                    if (child.parent == null) {
+                        child.parent = this
+                    } else {
+                        error("Can't reassign existing parent for $child")
+                    }
+                    namedChildren[name] = child
+                }
+                listeners.forEach { it.callback(name, child) }
+            }
             child != null -> add(child)
             else -> error("Both key and child element are empty")
         }
@@ -87,7 +88,7 @@ open class VisualGroup<T : VisualObject> : AbstractVisualObject(), Iterable<T>, 
     /**
      * Get named child by string
      */
-    operator fun get(key: String): T? = namedChildren.get(key)
+    operator fun get(key: String): T? = namedChildren[key.toName()]
 
     /**
      * Get an unnamed child

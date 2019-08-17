@@ -3,7 +3,6 @@ package hep.dataforge.vis.spatial.three
 import hep.dataforge.vis.spatial.Composite
 import hep.dataforge.vis.spatial.CompositeType
 import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Geometry
 import info.laht.threekt.objects.Mesh
 
 /**
@@ -23,9 +22,7 @@ class ThreeCompositeFactory(val three: ThreePlugin) : MeshThreeFactory<Composite
             CompositeType.INTERSECT -> firstCSG.intersect(secondCSG)
             CompositeType.SUBTRACT -> firstCSG.subtract(secondCSG)
         }
-
-        val mesh = CSG.toMesh(resultCSG, second.matrix)
-        return (mesh.geometry as Geometry).toBufferGeometry()
+        return resultCSG.toGeometry().toBufferGeometry()
     }
 
 }

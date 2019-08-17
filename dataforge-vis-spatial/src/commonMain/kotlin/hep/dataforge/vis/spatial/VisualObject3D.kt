@@ -1,16 +1,21 @@
+@file:UseSerializers(Point3DSerializer::class, NameSerializer::class)
+
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 interface VisualObject3D : VisualObject {
     var position: Point3D?
@@ -60,18 +65,8 @@ interface VisualObject3D : VisualObject {
     }
 }
 
-abstract class VisualLeaf3D : AbstractVisualObject(), VisualObject3D, Configurable {
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-}
-
+@Serializable
 class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurable {
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
     /**
      * A container for templates visible inside this group
      */
@@ -81,11 +76,26 @@ class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurabl
             field = value
         }
 
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
+
+    override val namedChildren: MutableMap<Name, VisualObject3D> = HashMap()
+    override val unnamedChildren: MutableList<VisualObject3D> = ArrayList()
+
     fun getTemplate(name: Name): VisualObject3D? = templates?.get(name) ?: (parent as? VisualGroup3D)?.getTemplate(name)
 
     override fun MetaBuilder.updateMeta() {
+        set(TEMPLATES_KEY, templates?.toMeta())
         updatePosition()
         updateChildren()
+    }
+
+    companion object {
+        const val TEMPLATES_KEY = "templates"
     }
 }
 
@@ -214,4 +224,3 @@ var VisualObject3D.scaleZ: Number
         scale().z = value.toDouble()
         propertyChanged(VisualObject3D.zScale)
     }
-

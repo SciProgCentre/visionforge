@@ -13,10 +13,11 @@ package hep.dataforge.vis.spatial.three
 
 
 import info.laht.threekt.math.Matrix4
+import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 
 open external class CSG {
-    open var polygons: Any
+    open var polygons: Array<Polygon>
     open fun clone(): CSG
     open fun toPolygons(): Array<Polygon>
     open fun union(csg: CSG): CSG
@@ -40,8 +41,7 @@ open external class CSG {
     }
 }
 
-open external class Vector(x: Number, y: Number, z: Number) {
-    open fun clone(): Any
+open external class Vector(x: Number, y: Number, z: Number): Vector3 {
     open fun negated(): Vector
     open fun plus(a: Vector): Vector
     open fun minus(a: Vector): Vector

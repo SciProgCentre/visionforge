@@ -1,5 +1,11 @@
+@file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.meta.Config
+import hep.dataforge.vis.common.AbstractVisualObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -7,13 +13,21 @@ import kotlin.math.sin
 /**
  * Straight tube segment
  */
+@Serializable
 class Tube(
     var radius: Float,
     var height: Float,
     var innerRadius: Float = 0f,
     var startAngle: Float = 0f,
     var angle: Float = PI2
-) : VisualLeaf3D(), Shape {
+) : AbstractVisualObject(), VisualObject3D, Shape {
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
+
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
 
     init {
         require(radius > 0)
@@ -37,8 +51,8 @@ class Tube(
         geometryBuilder.apply {
 
             //creating shape in x-y plane with z = 0
-            val bottomOuterPoints = shape(radius, 0f)
-            val upperOuterPoints = shape(radius, height)
+            val bottomOuterPoints = shape(radius, -height/2)
+            val upperOuterPoints = shape(radius, height/2)
             //outer face
             (1 until segments).forEach {
                 face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], upperOuterPoints[it], upperOuterPoints[it - 1])
@@ -62,8 +76,8 @@ class Tube(
                     face4(zeroTop, zeroBottom, bottomOuterPoints.last(), upperOuterPoints.last())
                 }
             } else {
-                val bottomInnerPoints = shape(innerRadius, 0f)
-                val upperInnerPoints = shape(innerRadius, height)
+                val bottomInnerPoints = shape(innerRadius, -height/2)
+                val upperInnerPoints = shape(innerRadius, height/2)
                 //outer face
                 (1 until segments).forEach {
                     // inner surface
@@ -97,9 +111,14 @@ class Tube(
                         bottomOuterPoints.last()
                     )
                     face4(upperInnerPoints[0], upperInnerPoints.last(), upperOuterPoints.last(), upperOuterPoints[0])
-                } else{
-                    face4(bottomInnerPoints[0],bottomOuterPoints[0],upperOuterPoints[0],upperInnerPoints[0])
-                    face4(bottomOuterPoints.last(),bottomInnerPoints.last(),upperInnerPoints.last(),upperOuterPoints.last())
+                } else {
+                    face4(bottomInnerPoints[0], bottomOuterPoints[0], upperOuterPoints[0], upperInnerPoints[0])
+                    face4(
+                        bottomOuterPoints.last(),
+                        bottomInnerPoints.last(),
+                        upperInnerPoints.last(),
+                        upperOuterPoints.last()
+                    )
                 }
             }
         }

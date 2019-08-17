@@ -1,13 +1,15 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Global
+import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SerializationTest {
+    @ImplicitReflectionSerializer
     @Test
     fun testCubeSerialization(){
-        val cube = Box(null,100f,100f,100f).apply{
+        val cube = Box(100f,100f,100f).apply{
             color(222)
         }
         val meta = cube.toMeta()

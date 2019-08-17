@@ -1,12 +1,9 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject.Companion.TYPE
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
@@ -17,8 +14,6 @@ private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
  */
 @Type(TYPE)
 interface VisualObject : MetaRepr, Configurable {
-
-    val type: String get() = this::class.simpleName ?: TYPE
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -64,7 +59,9 @@ internal data class MetaListener(
     val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
 )
 
-abstract class AbstractVisualObject : VisualObject {
+abstract class AbstractVisualObject: VisualObject {
+
+    @Transient
     override var parent: VisualObject? = null
 
     @Transient
@@ -84,12 +81,10 @@ abstract class AbstractVisualObject : VisualObject {
         listeners.removeAll { it.owner == owner }
     }
 
-    @Serializable(ConfigSerializer::class)
-    @SerialName("properties")
-    private var _config: Config? = null
+    abstract var properties: Config?
     override val config: Config
-        get() = _config ?: Config().also { config ->
-            _config = config
+        get() = properties ?: Config().also { config ->
+            properties = config
             config.onChange(this, ::propertyChanged)
         }
 
@@ -99,19 +94,17 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            _config?.get(name) ?: parent?.getProperty(name, inherit)
+            properties?.get(name) ?: parent?.getProperty(name, inherit)
         } else {
-            _config?.get(name)
+            properties?.get(name)
         }
     }
 
     protected open fun MetaBuilder.updateMeta() {}
 
     override fun toMeta(): Meta = buildMeta {
-        "type" to type
-        "properties" to config
+        "type" to this::class.simpleName
+        "properties" to properties
         updateMeta()
     }
 }
-
-

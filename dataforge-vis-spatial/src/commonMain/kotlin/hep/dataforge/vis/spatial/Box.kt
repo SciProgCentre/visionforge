@@ -1,19 +1,29 @@
+@file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.float
-import hep.dataforge.meta.get
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.meta.*
+import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualFactory
 import hep.dataforge.vis.common.VisualObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KClass
 
+@Serializable
 data class Box(
     val xSize: Float,
     val ySize: Float,
     val zSize: Float
-) : VisualLeaf3D(), Shape {
+) : AbstractVisualObject(), VisualObject3D, Shape {
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
+
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -40,7 +50,12 @@ data class Box(
         "xSize" to xSize
         "ySize" to ySize
         "zSize" to ySize
+        updatePosition()
     }
+
+//    override fun toMeta(): Meta {
+//        return (Visual3DPlugin.json.toJson(Box.serializer(), this) as JsonObject).toMeta()
+//    }
 
     companion object : VisualFactory<Box> {
         const val TYPE = "geometry.3d.box"

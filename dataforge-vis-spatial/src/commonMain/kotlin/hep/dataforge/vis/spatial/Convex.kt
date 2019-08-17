@@ -1,15 +1,29 @@
+@file:UseSerializers(Point3DSerializer::class)
+
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.meta.Config
 import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.vis.common.AbstractVisualObject
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
-class Convex(
-    val points: List<Point3D>
-) : VisualLeaf3D() {
+@Serializable
+class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
+
+    @Serializable(ConfigSerializer::class)
+    override var properties: Config? = null
+
+    override var position: Point3D? = null
+    override var rotation: Point3D? = null
+    override var scale: Point3D? = null
 
     override fun MetaBuilder.updateMeta() {
         "points" to {
-            "point" to points.map{it.toMeta()}
+            "point" to points.map { it.toMeta() }
         }
+        updatePosition()
     }
 
     companion object {

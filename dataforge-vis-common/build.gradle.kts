@@ -18,6 +18,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
+                api(npm("text-encoding"))
             }
         }
     }

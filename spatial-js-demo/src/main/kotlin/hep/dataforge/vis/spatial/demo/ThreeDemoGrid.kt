@@ -45,6 +45,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
         element.append(gridRoot)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Output<T> {
         val three = context.plugins.get<ThreePlugin>()!!
 
