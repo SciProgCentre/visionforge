@@ -38,11 +38,6 @@ interface ThreeFactory<T : VisualObject3D> {
 internal fun Object3D.updatePosition(obj: VisualObject3D) {
     visible = obj.visible ?: true
     position.set(obj.x, obj.y, obj.z)
-//    obj.rotation?.let{
-//        rotateZ(it.z)
-//        rotateX(it.x)
-//        rotateY(it.y)
-//    }
     setRotationFromEuler(obj.euler)
     scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
     updateMatrix()

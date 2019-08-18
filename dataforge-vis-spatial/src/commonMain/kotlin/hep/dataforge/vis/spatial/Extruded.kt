@@ -110,5 +110,5 @@ class Extruded(
     }
 }
 
-fun VisualGroup3D.extrude(name: String? = null, action: Extruded.() -> Unit = {}) =
+fun VisualGroup3D.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
     Extruded().apply(action).also { set(name, it) }

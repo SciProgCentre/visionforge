@@ -30,7 +30,7 @@ inline fun VisualGroup3D.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,
-    name: String? = null,
+    name: String = "",
     action: Sphere.() -> Unit = {}
 ) = Sphere(
     radius.toFloat(),

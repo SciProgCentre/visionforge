@@ -31,7 +31,7 @@ class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D
     }
 }
 
-inline fun VisualGroup3D.convex(name: String? = null, action: ConvexBuilder.() -> Unit = {}) =
+inline fun VisualGroup3D.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}) =
     ConvexBuilder().apply(action).build().also { set(name, it) }
 
 class ConvexBuilder {

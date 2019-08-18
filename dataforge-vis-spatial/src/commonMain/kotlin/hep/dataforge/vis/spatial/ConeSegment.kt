@@ -31,7 +31,7 @@ class ConeSegment(
 inline fun VisualGroup3D.cylinder(
     r: Number,
     height: Number,
-    name: String? = null,
+    name: String = "",
     block: ConeSegment.() -> Unit = {}
 ): ConeSegment = ConeSegment(
     r.toFloat(),

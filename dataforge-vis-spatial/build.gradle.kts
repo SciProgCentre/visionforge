@@ -27,7 +27,6 @@ kotlin {
         }
         jsMain{
             dependencies {
-                api("info.laht.threekt:threejs-wrapper:0.106-npm-3")
                 implementation(npm("three", "0.106.2"))
                 implementation(npm("@hi-level/three-csg", "1.0.6"))
                 implementation(npm("style-loader"))

@@ -1,6 +1,7 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.EmptyName
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
@@ -10,7 +11,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun String.asName() = NameToken(this).asName()
+fun String.asName() = if (isBlank()) EmptyName else NameToken(this).asName()
 
 /**
  * A delegate for display object properties
@@ -110,7 +111,11 @@ fun VisualObject.int(default: Int, key: String? = null, inherited: Boolean = fal
 
 
 inline fun <reified E : Enum<E>> VisualObject.enum(default: E, key: String? = null, inherited: Boolean = false) =
-    DisplayObjectDelegateWrapper(key?.let{ NameToken(it).asName()}, default, inherited) { item -> item.string?.let { enumValueOf<E>(it) } }
+    DisplayObjectDelegateWrapper(
+        key?.let { NameToken(it).asName() },
+        default,
+        inherited
+    ) { item -> item.string?.let { enumValueOf<E>(it) } }
 
 //merge properties
 

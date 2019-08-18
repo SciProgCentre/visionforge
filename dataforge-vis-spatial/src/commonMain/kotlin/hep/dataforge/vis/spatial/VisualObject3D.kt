@@ -1,14 +1,13 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class)
+@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, NameTokenSerializer::class)
 
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
-import hep.dataforge.names.Name
-import hep.dataforge.names.plus
+import hep.dataforge.names.*
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
@@ -66,7 +65,7 @@ interface VisualObject3D : VisualObject {
 }
 
 @Serializable
-class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurable {
+class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, Configurable {
     /**
      * A container for templates visible inside this group
      */
@@ -83,10 +82,38 @@ class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurabl
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override val namedChildren: MutableMap<Name, VisualObject3D> = HashMap()
-    override val unnamedChildren: MutableList<VisualObject3D> = ArrayList()
+    private val _children = HashMap<NameToken, VisualObject>()
+    override val children: Map<NameToken, VisualObject> get() = _children
 
-    fun getTemplate(name: Name): VisualObject3D? = templates?.get(name) ?: (parent as? VisualGroup3D)?.getTemplate(name)
+    override fun removeChild(token: NameToken) {
+        _children.remove(token)
+    }
+
+    override fun setChild(token: NameToken, child: VisualObject?) {
+        if (child == null) {
+            _children.remove(token)
+        } else {
+            _children[token] = child
+        }
+    }
+
+    override fun createGroup(name: Name): VisualGroup3D {
+        return when{
+            name.isEmpty() -> error("Should be unreachable")
+            name.length == 1 -> {
+                val token = name.first()!!
+                when (val current = children[token]) {
+                    null -> VisualGroup3D().also { setChild(token, it) }
+                    is VisualGroup3D -> current
+                    else -> error("Can't create group with name $name because it exists and not a group")
+                }
+            }
+            else -> createGroup(name.first()!!.asName()).createGroup(name.cutFirst())
+        }
+    }
+
+    fun getTemplate(name: Name): VisualObject3D? =
+        templates?.get(name) as? VisualGroup3D ?: (parent as? VisualGroup3D)?.getTemplate(name)
 
     override fun MetaBuilder.updateMeta() {
         set(TEMPLATES_KEY, templates?.toMeta())
@@ -99,7 +126,7 @@ class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurabl
     }
 }
 
-fun VisualGroup3D.group(key: String? = null, action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
+fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also { set(key, it) }
 
 fun Output<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =

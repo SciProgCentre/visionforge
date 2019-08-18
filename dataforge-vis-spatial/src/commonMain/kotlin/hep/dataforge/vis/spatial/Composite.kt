@@ -39,7 +39,7 @@ class Composite(
 
 inline fun VisualGroup3D.composite(
     type: CompositeType,
-    name: String? = null,
+    name: String = "",
     builder: VisualGroup3D.() -> Unit
 ): Composite {
     val group = VisualGroup3D().apply(builder)
@@ -57,11 +57,11 @@ inline fun VisualGroup3D.composite(
     }
 }
 
-fun VisualGroup3D.union(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+fun VisualGroup3D.union(name: String = "", builder: VisualGroup3D.() -> Unit) =
     composite(CompositeType.UNION, name, builder = builder)
 
-fun VisualGroup3D.subtract(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+fun VisualGroup3D.subtract(name: String = "", builder: VisualGroup3D.() -> Unit) =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
-fun VisualGroup3D.intersect(name: String? = null, builder: VisualGroup3D.() -> Unit) =
+fun VisualGroup3D.intersect(name: String = "", builder: VisualGroup3D.() -> Unit) =
     composite(CompositeType.INTERSECT, name, builder = builder)

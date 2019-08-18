@@ -76,6 +76,6 @@ inline fun VisualGroup3D.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,
-    name: String? = null,
+    name: String = "",
     action: Box.() -> Unit = {}
 ) = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }

@@ -131,7 +131,7 @@ inline fun VisualGroup3D.tube(
     innerRadius: Number = 0f,
     startAngle: Number = 0f,
     angle: Number = 2 * PI,
-    name: String? = null,
+    name: String = "",
     block: Tube.() -> Unit = {}
 ): Tube = Tube(
     r.toFloat(),

@@ -58,6 +58,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualObject3D {
 
 inline fun VisualGroup3D.ref(
     templateName: Name,
-    name: String? = null,
+    name: String = "",
     action: Proxy.() -> Unit = {}
 ) = Proxy(templateName).apply(action).also { set(name, it) }
