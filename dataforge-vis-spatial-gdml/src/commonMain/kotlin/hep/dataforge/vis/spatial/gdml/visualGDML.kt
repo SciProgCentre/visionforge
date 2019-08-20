@@ -1,6 +1,5 @@
 package hep.dataforge.vis.spatial.gdml
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.names.EmptyName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.asName
@@ -26,7 +25,7 @@ private fun VisualObject3D.withPosition(
         this@withPosition.rotationX = rotation.x()
         this@withPosition.rotationY = rotation.y()
         this@withPosition.rotationZ = rotation.z()
-        this@withPosition.rotationOrder=RotationOrder.ZXY
+        this@withPosition.rotationOrder = RotationOrder.ZXY
     }
     scale?.let {
         this@withPosition.scaleX = scale.x.toFloat()
@@ -38,6 +37,7 @@ private fun VisualObject3D.withPosition(
 
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(d: Double) = toDouble() * d
+
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
@@ -211,18 +211,18 @@ private fun volume(
         if (group is GDMLVolume) {
             val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
-            val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
+            //val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
             when (context.solidAction(solid)) {
                 GDMLTransformer.Action.ACCEPT -> {
                     addSolid(context, solid, solid.name) {
-                        this.material = context.resolveColor(group, material, solid)
+                        context.configureSolid(this, group, solid)
                     }
                 }
                 GDMLTransformer.Action.CACHE -> {
-                    if (context.templates.get(solid.name) == null) {
+                    if (context.templates[solid.name] == null) {
                         context.templates.addSolid(context, solid, solid.name) {
-                            this.material = context.resolveColor(group, material, solid)
+                            context.configureSolid(this, group, solid)
                         }
                     }
                     ref(solid.name.asName(), solid.name)
@@ -243,9 +243,6 @@ private fun volume(
         }
     }
 }
-
-typealias ColorResolver = GDMLGroup?.(GDMLMaterial, GDMLSolid?) -> Meta
-
 
 fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 

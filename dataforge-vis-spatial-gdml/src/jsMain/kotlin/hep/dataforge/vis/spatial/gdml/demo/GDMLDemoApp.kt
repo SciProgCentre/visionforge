@@ -100,9 +100,11 @@ private class GDMLDemoApp : ApplicationBase() {
                     }
                 }
 
+                transparent = { !physVolumes.isEmpty() || (it?.name?.startsWith("Coil") ?: false) }
+
             }
             launch { message("Rendering") }
-            val output = three.output(canvas){
+            val output = three.output(canvas) {
                 "axis" to {
                     "size" to 100
                 }
