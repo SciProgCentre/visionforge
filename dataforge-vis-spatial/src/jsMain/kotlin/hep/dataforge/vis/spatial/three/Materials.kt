@@ -56,7 +56,7 @@ fun Meta?.jsMaterial(): Material {
                 opacity = get("opacity")?.double ?: 1.0
                 transparent = get("transparent").boolean ?: (opacity < 1.0)
                 //node["specularColor"]?.let { specular = it.color() }
-                side = 2
+                //side = 2
             }
         }
 }

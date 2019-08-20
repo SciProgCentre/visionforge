@@ -1,8 +1,10 @@
 package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.EmptyName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.asName
+import hep.dataforge.vis.common.get
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*
 import kotlin.math.cos
@@ -42,7 +44,7 @@ private inline operator fun Number.times(f: Float) = toFloat() * f
 private fun VisualGroup3D.addSolid(
     context: GDMLTransformer,
     solid: GDMLSolid,
-    name: String? = null,
+    name: String = "",
     block: VisualObject3D.() -> Unit = {}
 ): VisualObject3D {
     context.solidAdded(solid)
@@ -185,7 +187,8 @@ private fun VisualGroup3D.addDivisionVolume(
         ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
     //TODO add divisions
-    add(
+    set(
+        EmptyName,
         volume(
             context,
             volume
@@ -217,7 +220,7 @@ private fun volume(
                     }
                 }
                 GDMLTransformer.Action.CACHE -> {
-                    if (context.templates[solid.name] == null) {
+                    if (context.templates.get(solid.name) == null) {
                         context.templates.addSolid(context, solid, solid.name) {
                             this.material = context.resolveColor(group, material, solid)
                         }

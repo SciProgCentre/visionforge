@@ -34,8 +34,7 @@ abstract class AbstractVisualObject : VisualObject {
     abstract var properties: Config?
     override val config: Config
         get() = properties ?: Config().also { config ->
-            properties = config
-            config.onChange(this, ::propertyChanged)
+            properties = config.apply { onChange(this, ::propertyChanged) }
         }
 
     override fun setProperty(name: Name, value: Any?) {

@@ -90,7 +90,7 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
 
     override fun invoke(obj: T): Mesh {
         //create mesh from geometry
-        return buildMesh<T>(obj) { buildGeometry(it) }
+        return buildMesh(obj) { buildGeometry(it) }
     }
 
     companion object {

@@ -5,6 +5,9 @@ import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.context.content
 import hep.dataforge.meta.*
+import hep.dataforge.names.Name
+import hep.dataforge.names.asName
+import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.cameras.Camera
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -46,7 +49,7 @@ class ThreePlugin : AbstractPlugin() {
                             object3D.name = name.toString()
                             group.add(object3D)
                         } catch (ex: Throwable) {
-                            console.error(ex)
+//                            console.error(ex)
                             logger.error(ex) { "Failed to render $name" }
                         }
                     }
@@ -96,5 +99,13 @@ class ThreePlugin : AbstractPlugin() {
         override val tag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
         override val type = ThreePlugin::class
         override fun invoke(meta: Meta) = ThreePlugin()
+    }
+}
+
+fun Object3D.findChild(name: Name): Object3D? {
+    return when {
+        name.isEmpty() -> this
+        name.length == 1 -> this.children.find { it.name == name.first()!!.toString() }
+        else -> findChild(name.first()!!.asName())?.findChild(name.cutFirst())
     }
 }

@@ -12,7 +12,7 @@ import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KClass
 
 @Serializable
-data class Box(
+class Box(
     val xSize: Float,
     val ySize: Float,
     val zSize: Float

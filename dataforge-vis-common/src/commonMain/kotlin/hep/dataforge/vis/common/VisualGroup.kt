@@ -50,4 +50,4 @@ interface VisualGroup : VisualObject, Provider, Iterable<VisualObject> {
     operator fun set(name: Name, child: VisualObject?)
 }
 
-operator fun VisualGroup.get(str: String) = get(str.toName())
+operator fun VisualGroup.get(str: String?) = get(str?.toName() ?: EmptyName)

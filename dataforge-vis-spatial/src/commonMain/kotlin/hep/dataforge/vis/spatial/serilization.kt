@@ -1,7 +1,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.names.NameToken
+import hep.dataforge.names.toName
 import kotlinx.serialization.*
+import kotlinx.serialization.internal.StringDescriptor
 
 @Serializable
 private data class Point2DSerial(val x: Double, val y: Double)
@@ -10,7 +12,7 @@ private data class Point2DSerial(val x: Double, val y: Double)
 private data class Point3DSerial(val x: Double, val y: Double, val z: Double)
 
 @Serializer(Point3D::class)
-object Point3DSerializer : KSerializer<Point3D>{
+object Point3DSerializer : KSerializer<Point3D> {
     private val serializer = Point3DSerial.serializer()
     override val descriptor: SerialDescriptor get() = serializer.descriptor
 
@@ -26,7 +28,7 @@ object Point3DSerializer : KSerializer<Point3D>{
 }
 
 @Serializer(Point2D::class)
-object Point2DSerializer : KSerializer<Point2D>{
+object Point2DSerializer : KSerializer<Point2D> {
     private val serializer = Point2DSerial.serializer()
     override val descriptor: SerialDescriptor get() = serializer.descriptor
 
@@ -42,4 +44,14 @@ object Point2DSerializer : KSerializer<Point2D>{
 }
 
 @Serializer(NameToken::class)
-object NameTokenSerializer : KSerializer<NameToken>
+object NameTokenSerializer : KSerializer<NameToken> {
+    override val descriptor: SerialDescriptor = StringDescriptor.withName("NameToken")
+
+    override fun deserialize(decoder: Decoder): NameToken {
+        return decoder.decodeString().toName().first()!!
+    }
+
+    override fun serialize(encoder: Encoder, obj: NameToken) {
+        encoder.encodeString(obj.toString())
+    }
+}

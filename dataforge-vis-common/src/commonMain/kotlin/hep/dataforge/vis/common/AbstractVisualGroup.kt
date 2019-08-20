@@ -54,10 +54,24 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
 //
 //    }
 
+    /**
+     * Remove a child with given name token
+     */
     protected abstract fun removeChild(token: NameToken)
 
+    /**
+     * Add, remove or replace child with given name
+     */
     protected abstract fun setChild(token: NameToken, child: VisualObject?)
 
+    /**
+     * Add a static child. Statics could not be found by name, removed or replaced
+     */
+    protected abstract fun addStatic(child: VisualObject)
+
+    /**
+     * Recursively create a child group
+     */
     protected abstract fun createGroup(name: Name): VisualGroup
 
     /**
@@ -66,17 +80,16 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
      */
     override fun set(name: Name, child: VisualObject?) {
         when {
-            name.isEmpty() -> error("")
+            name.isEmpty() -> {
+                if (child != null) {
+                    addStatic(child)
+                }
+            }
             name.length == 1 -> {
                 val token = name.first()!!
                 if (child == null) {
                     removeChild(token)
                 } else {
-                    if (child.parent == null) {
-                        child.parent = this
-                    } else {
-                        error("Can't reassign existing parent for $child")
-                    }
                     setChild(token, child)
                 }
             }
@@ -89,7 +102,13 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
         listeners.forEach { it.callback(name, child) }
     }
 
-    operator fun set(key: String, child: VisualObject?) = set(key.asName(), child)
+    operator fun set(key: String, child: VisualObject?) = if (key.isBlank()) {
+        child?.let { addStatic(child) }
+    } else {
+        set(key.asName(), child)
+    }
+
+    operator fun set(key: String?, child: VisualObject?) = set(key ?: "", child)
 
     protected fun MetaBuilder.updateChildren() {
         //adding named children
