@@ -28,31 +28,31 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
         }
     }
 
-    private data class Listener(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
+    private data class StructureChangeListeners(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
 
     @Transient
-    private val listeners = HashSet<Listener>()
+    private val structureChangeListeners = HashSet<StructureChangeListeners>()
 
     /**
      * Add listener for children change
      */
     override fun onChildrenChange(owner: Any?, action: (Name, VisualObject?) -> Unit) {
-        listeners.add(Listener(owner, action))
+        structureChangeListeners.add(StructureChangeListeners(owner, action))
     }
 
     /**
      * Remove children change listener
      */
     override fun removeChildrenChangeListener(owner: Any?) {
-        listeners.removeAll { it.owner === owner }
+        structureChangeListeners.removeAll { it.owner === owner }
     }
 
-//    /**
-//     * Propagate children change event upwards
-//     */
-//    protected fun childrenChanged(name: Name, child: VisualObject?) {
-//
-//    }
+    /**
+     * Propagate children change event upwards
+     */
+    protected fun childrenChanged(name: Name, child: VisualObject?) {
+        structureChangeListeners.forEach { it.callback(name, child) }
+    }
 
     /**
      * Remove a child with given name token
@@ -62,7 +62,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
     /**
      * Add, remove or replace child with given name
      */
-    protected abstract fun setChild(token: NameToken, child: VisualObject?)
+    protected abstract fun setChild(token: NameToken, child: VisualObject)
 
     /**
      * Add a static child. Statics could not be found by name, removed or replaced
@@ -99,7 +99,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
                 parent[name.last()!!.asName()] = child
             }
         }
-        listeners.forEach { it.callback(name, child) }
+        structureChangeListeners.forEach { it.callback(name, child) }
     }
 
     operator fun set(key: String, child: VisualObject?) = if (key.isBlank()) {

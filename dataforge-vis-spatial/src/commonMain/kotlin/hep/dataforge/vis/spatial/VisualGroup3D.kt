@@ -1,9 +1,9 @@
 @file:UseSerializers(Point3DSerializer::class, ConfigSerializer::class, NameTokenSerializer::class)
+
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.Configurable
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.set
 import hep.dataforge.names.Name
@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, Configurable {
+class VisualGroup3D() : AbstractVisualGroup(), VisualObject3D {
     /**
      * A container for templates visible inside this group
      */
@@ -36,21 +36,26 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, Configurable {
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
 
-    override fun removeChild(token: NameToken) {
-        _children.remove(token)
+    init {
+        //Do after deserialization
+        _children.values.forEach {
+            it.parent = this
+        }
     }
 
-    override fun setChild(token: NameToken, child: VisualObject?) {
-        if (child == null) {
-            _children.remove(token)
+    override fun removeChild(token: NameToken) {
+        _children.remove(token)
+        childrenChanged(token.asName(), null)
+    }
+
+    override fun setChild(token: NameToken, child: VisualObject) {
+        if (child.parent == null) {
+            child.parent = this
         } else {
-            if (child.parent == null) {
-                child.parent = this
-            } else {
-                error("Can't reassign existing parent for $child")
-            }
-            _children[token] = child
+            error("Can't reassign existing parent for $child")
         }
+        _children[token] = child
+        childrenChanged(token.asName(), child)
     }
 
     /**

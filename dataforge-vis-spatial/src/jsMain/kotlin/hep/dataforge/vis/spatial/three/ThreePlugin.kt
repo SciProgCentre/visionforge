@@ -40,6 +40,7 @@ class ThreePlugin : AbstractPlugin() {
 
     fun buildObject3D(obj: VisualObject3D): Object3D {
         return when (obj) {
+            is Proxy -> proxyFactory(obj)
             is VisualGroup3D -> {
                 val group = info.laht.threekt.objects.Group()
                 obj.children.forEach { (name, child) ->
@@ -49,7 +50,6 @@ class ThreePlugin : AbstractPlugin() {
                             object3D.name = name.toString()
                             group.add(object3D)
                         } catch (ex: Throwable) {
-//                            console.error(ex)
                             logger.error(ex) { "Failed to render $name" }
                         }
                     }
@@ -61,7 +61,6 @@ class ThreePlugin : AbstractPlugin() {
                 }
             }
             is Composite -> compositeFactory(obj)
-            is Proxy -> proxyFactory(obj)
             else -> {
                 //find specialized factory for this type if it is present
                 val factory = findObjectFactory(obj::class)

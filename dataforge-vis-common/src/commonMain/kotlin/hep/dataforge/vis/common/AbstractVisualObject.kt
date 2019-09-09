@@ -2,6 +2,7 @@ package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
@@ -13,6 +14,19 @@ abstract class AbstractVisualObject : VisualObject {
 
     @Transient
     override var parent: VisualObject? = null
+
+    override var style: Meta? = null
+        set(value) {
+            //notify about style removed
+            style?.items?.forEach {(name, value) ->
+                propertyChanged(name.asName(), value, null)
+            }
+            field = value
+            //notify about style adition
+            value?.items?.forEach { (name, value) ->
+                propertyChanged(name.asName(), null, value)
+            }
+        }
 
     @Transient
     private val listeners = HashSet<PropertyListener>()
@@ -31,7 +45,8 @@ abstract class AbstractVisualObject : VisualObject {
         listeners.removeAll { it.owner == owner }
     }
 
-    abstract var properties: Config?
+    protected abstract var properties: Config?
+
     override val config: Config
         get() = properties ?: Config().also { config ->
             properties = config.apply { onChange(this, ::propertyChanged) }
@@ -43,9 +58,9 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: parent?.getProperty(name, inherit)
+            style?.get(name) ?: properties?.get(name) ?: parent?.getProperty(name, inherit)
         } else {
-            properties?.get(name)
+            style?.get(name) ?: properties?.get(name)
         }
     }
 

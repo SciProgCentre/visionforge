@@ -90,15 +90,15 @@ var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
     set(value) = setProperty(DETAIL_KEY, value)
 
-var VisualObject3D.material: Meta?
+var VisualObject.material: Meta?
     get() = getProperty(MATERIAL_KEY).node
     set(value) = setProperty(MATERIAL_KEY, value)
 
-var VisualObject3D.visible: Boolean?
+var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
 
-fun VisualObject3D.color(rgb: Int) {
+fun VisualObject.color(rgb: Int) {
     material = buildMeta { "color" to rgb }
 }
 

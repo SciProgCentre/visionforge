@@ -22,6 +22,11 @@ interface VisualObject : MetaRepr, Configurable {
     var parent: VisualObject?
 
     /**
+     * A style which is set externally and could not be modified from inside
+     */
+    var style: Meta?
+
+    /**
      * Set property for this object
      */
     fun setProperty(name: Name, value: Any?)

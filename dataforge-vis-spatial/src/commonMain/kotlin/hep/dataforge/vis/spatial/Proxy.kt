@@ -1,4 +1,4 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class)
+@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, ConfigSerializer::class)
 
 package hep.dataforge.vis.spatial
 
@@ -8,15 +8,20 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
+import hep.dataforge.names.NameToken
+import hep.dataforge.names.asName
 import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 
 /**
  * A proxy [VisualObject3D] to reuse a template object
  */
 @Serializable
-class Proxy(val templateName: Name) : AbstractVisualObject(), VisualObject3D {
+class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -28,10 +33,10 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualObject3D {
     /**
      * Recursively search for defined template in the parent
      */
-    val template: VisualObject3D
-        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
+    val template: VisualObject3D by lazy {
+        (parent as? VisualGroup3D)?.getTemplate(templateName)
             ?: error("Template with name $templateName not found in $parent")
-
+    }
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -45,16 +50,58 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualObject3D {
         //TODO add reference to child
         updatePosition()
     }
-}
 
-//fun VisualGroup3D.proxy(
-//    templateName: Name,
-//    //name: String? = null,
-//    builder: VisualGroup3D.() -> Unit
-//): Proxy {
-//    val template = getTemplate(templateName) ?: templates.builder()
-//    return Proxy(this, templateName).also { set(name, it) }
-//}
+    override val children: Map<NameToken, ProxyChild>
+        get() = (template as? VisualGroup)?.children?.mapValues {
+            ProxyChild(it.key.asName())
+        } ?: emptyMap()
+
+    private data class ProxyChangeListeners(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
+
+    @Transient
+    private val listeners = HashSet<ProxyChangeListeners>()
+
+    override fun onChildrenChange(owner: Any?, action: (Name, VisualObject?) -> Unit) {
+        listeners.add(ProxyChangeListeners(owner, action))
+    }
+
+    override fun removeChildrenChangeListener(owner: Any?) {
+        listeners.removeAll { it.owner == owner }
+    }
+
+    override fun set(name: Name, child: VisualObject?) {
+        error("Content change not supported for proxy")
+    }
+
+    private val propertyCache: HashMap<Name, Config> = HashMap()
+
+    private fun Config.attachListener(obj: VisualObject) {
+        onChange(this@Proxy) { name, before, after ->
+            listeners.forEach { listener ->
+                listener.callback(name, obj)
+            }
+        }
+    }
+
+    inner class ProxyChild(val name: Name) : AbstractVisualObject() {
+        override var properties: Config?
+            get() = propertyCache.getOrPut(name) {
+                Config().apply {
+                    attachListener(this@ProxyChild)
+                }
+            }
+            set(value) {
+                if (value == null) {
+                    propertyCache.remove(name)?.removeListener(this@Proxy)
+                } else {
+                    propertyCache[name] = value.apply {
+                        attachListener(this@ProxyChild)
+                    }
+                }
+            }
+
+    }
+}
 
 inline fun VisualGroup3D.ref(
     templateName: Name,
