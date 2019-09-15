@@ -15,6 +15,6 @@ class SerializationTest {
         val meta = cube.toMeta()
         println(meta)
         val newCube = Box(Global,null, meta)
-        assertEquals(cube,newCube)
+        assertEquals(cube.toMeta(),newCube.toMeta())
     }
 }

@@ -12,6 +12,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.VisualObject
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
@@ -26,13 +27,13 @@ class VisualGroup3D() : AbstractVisualGroup(), VisualObject3D {
             field = value
         }
 
-    @Serializable(ConfigSerializer::class)
-    override var properties: Config? = null
+    public override var properties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
+    @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
 

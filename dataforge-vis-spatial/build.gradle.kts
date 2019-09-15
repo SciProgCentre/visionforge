@@ -6,7 +6,7 @@ plugins {
 }
 
 scientifik{
-    serialization = true
+    withSerialization()
 }
 
 kotlin {

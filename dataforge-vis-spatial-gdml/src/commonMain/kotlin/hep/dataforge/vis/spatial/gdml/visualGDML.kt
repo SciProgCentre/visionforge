@@ -149,13 +149,32 @@ private fun VisualGroup3D.addPhysicalVolume(
 
     when (context.volumeAction(volume)) {
         GDMLTransformer.Action.ACCEPT -> {
-            this[physVolume.name] = volume(context, volume).apply {
-                withPosition(
-                    context.lUnit,
-                    physVolume.resolvePosition(context.root),
-                    physVolume.resolveRotation(context.root),
-                    physVolume.resolveScale(context.root)
-                )
+            val group = volume(context, volume)
+            //optimizing single child case
+            if (context.optimizeSingleChild && group.children.size == 1) {
+                this[physVolume.name ?: "@unnamed"] = group.children.values.first().apply {
+                    //Must ser this to avoid parent reset error
+                    parent = null
+                    //setting offset from physical volume
+                    withPosition(
+                        context.lUnit,
+                        physVolume.resolvePosition(context.root),
+                        physVolume.resolveRotation(context.root),
+                        physVolume.resolveScale(context.root)
+                    )
+                    // in case when both phys volume and underlying volume have offset
+                    position += group.position
+                    rotation += group.rotation
+                }
+            } else {
+                this[physVolume.name ?: "@unnamed"] = group.apply {
+                    withPosition(
+                        context.lUnit,
+                        physVolume.resolvePosition(context.root),
+                        physVolume.resolveRotation(context.root),
+                        physVolume.resolveScale(context.root)
+                    )
+                }
             }
         }
         GDMLTransformer.Action.CACHE -> {
@@ -164,7 +183,7 @@ private fun VisualGroup3D.addPhysicalVolume(
                 context.templates[name] = volume(context, volume)
             }
 
-            this[physVolume.name] = Proxy(name).apply {
+            this[physVolume.name ?: ""] = Proxy(name).apply {
                 withPosition(
                     context.lUnit,
                     physVolume.resolvePosition(context.root),
@@ -196,12 +215,12 @@ private fun VisualGroup3D.addDivisionVolume(
     )
 }
 
-private fun VisualGroup3D.addVolume(
-    context: GDMLTransformer,
-    group: GDMLGroup
-) {
-    this[group.name] = volume(context, group)
-}
+//private fun VisualGroup3D.addVolume(
+//    context: GDMLTransformer,
+//    group: GDMLGroup
+//) {
+//    this[group.name] = volume(context, group)
+//}
 
 private fun volume(
     context: GDMLTransformer,
@@ -211,7 +230,6 @@ private fun volume(
         if (group is GDMLVolume) {
             val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
-            //val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
             when (context.solidAction(solid)) {
                 GDMLTransformer.Action.ACCEPT -> {
@@ -248,7 +266,5 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 
     val context = GDMLTransformer(this).apply(block)
 
-    return volume(context, world).also {
-        context.finished(it)
-    }
+    return context.finalize(volume(context, world))
 }

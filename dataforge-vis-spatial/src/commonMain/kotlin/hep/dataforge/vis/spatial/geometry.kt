@@ -26,6 +26,24 @@ expect class Point3D(x: Number, y: Number, z: Number) {
     var z: Double
 }
 
+operator fun Point3D?.plus(other: Point3D?): Point3D? {
+    return when {
+        this == null && other == null -> null
+        this == null -> other
+        other == null -> this
+        else -> Point3D(x + other.x, y + other.y, z + other.z)
+    }
+}
+
+operator fun Point3D?.minus(other: Point3D?): Point3D? {
+    return when {
+        this == null && other == null -> null
+        this == null -> Point3D(-other!!.x, -other.y, -other.z)
+        other == null -> this
+        else -> Point3D(x - other.x, y - other.y, z - other.z)
+    }
+}
+
 operator fun Point3D.component1() = x
 operator fun Point3D.component2() = y
 operator fun Point3D.component3() = z

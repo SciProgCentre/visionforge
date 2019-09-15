@@ -8,6 +8,7 @@ import hep.dataforge.io.MetaSerializer
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.VisualPlugin
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -38,13 +39,15 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
             contextual(NameTokenSerializer)
             contextual(MetaSerializer)
             contextual(ConfigSerializer)
-            polymorphic(VisualObject3D::class) {
+
+            polymorphic(VisualObject::class,VisualObject3D::class) {
                 VisualGroup3D::class with VisualGroup3D.serializer()
                 Proxy::class with Proxy.serializer()
                 Composite::class with Composite.serializer()
                 Tube::class with Tube.serializer()
                 Box::class with Box.serializer()
                 Convex::class with Convex.serializer()
+                addSubclass(Extruded.serializer())
             }
         }
 

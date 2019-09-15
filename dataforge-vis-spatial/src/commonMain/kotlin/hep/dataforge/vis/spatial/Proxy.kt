@@ -33,10 +33,10 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val template: VisualObject3D by lazy {
-        (parent as? VisualGroup3D)?.getTemplate(templateName)
+    val template: VisualObject3D
+        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
             ?: error("Template with name $templateName not found in $parent")
-    }
+
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

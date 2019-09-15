@@ -64,9 +64,18 @@ class GDMLTransformer(val root: GDML) {
 
     var onFinish: GDMLTransformer.() -> Unit = {}
 
-    internal fun finished(final: VisualGroup3D) {
+    var optimizeSingleChild = false
+
+    //var optimizations: List<GDMLOptimization> = emptyList()
+
+    internal fun finalize(final: VisualGroup3D): VisualGroup3D {
+//        var res = final
+//        optimizations.forEach {
+//            res = it(res)
+//        }
         final.templates = templates
         onFinish(this@GDMLTransformer)
+        return final
     }
 
 }

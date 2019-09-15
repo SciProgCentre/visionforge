@@ -3,7 +3,7 @@ plugins {
 }
 
 scientifik{
-    serialization = true
+    withSerialization()
 }
 
 val dataforgeVersion: String by rootProject.extra

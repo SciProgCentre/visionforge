@@ -108,7 +108,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
         set(key.asName(), child)
     }
 
-    operator fun set(key: String?, child: VisualObject?) = set(key ?: "", child)
+//    operator fun set(key: String?, child: VisualObject?) = set(key ?: "", child)
 
     protected fun MetaBuilder.updateChildren() {
         //adding named children

@@ -1,15 +1,16 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.common.get
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GroupTest {
     @Test
-    fun testGroupWithComposite(){
-        val group = VisualGroup3D().apply{
-            union {
+    fun testGroupWithComposite() {
+        val group = VisualGroup3D().apply {
+            union("union") {
                 box(100, 100, 100) {
                     z = 100
                     rotationX = PI / 4
@@ -21,7 +22,7 @@ class GroupTest {
                     "opacity" to 0.3
                 }
             }
-            intersect{
+            intersect("intersect") {
                 box(100, 100, 100) {
                     z = 100
                     rotationX = PI / 4
@@ -31,7 +32,7 @@ class GroupTest {
                 y = 300
                 color(Colors.red)
             }
-            subtract{
+            subtract("subtract") {
                 box(100, 100, 100) {
                     z = 100
                     rotationX = PI / 4
@@ -44,7 +45,7 @@ class GroupTest {
         }
 
         assertEquals(3, group.count())
-        assertEquals(300.0,group.toList()[1].y.toDouble())
-        assertEquals(-300.0,group.toList()[2].y.toDouble())
+        assertEquals(300.0, (group["intersect"] as VisualObject3D).y.toDouble())
+        assertEquals(-300.0, (group["subtract"]  as VisualObject3D).y.toDouble())
     }
 }
