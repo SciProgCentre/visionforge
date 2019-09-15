@@ -7,11 +7,17 @@ import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.opacity
+import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.html.InputType
+import kotlinx.html.dom.append
+import kotlinx.html.js.div
+import kotlinx.html.js.input
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
 import org.w3c.files.FileList
@@ -74,6 +80,29 @@ private class GDMLDemoApp : ApplicationBase() {
         }
     }
 
+    fun setupSidebar(element: Element, output: ThreeOutput) {
+        element.clear()
+        (0..9).forEach{layer->
+            element.append {
+                div("row") {
+                    +"layer $layer"
+                    input(type = InputType.checkBox).apply {
+                        if (layer == 0 || layer == 1) {
+                            checked = true
+                        }
+                        onchange = {
+                            if (checked) {
+                                output.camera.layers.enable(layer)
+                            } else {
+                                output.camera.layers.disable(layer)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun start(state: Map<String, Any>) {
 
@@ -81,7 +110,8 @@ private class GDMLDemoApp : ApplicationBase() {
         val three = context.plugins.load(ThreePlugin)
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
-        val canvas = document.getElementById("canvas") ?: error("Element with id canvas not found on page")
+        val canvas = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
+        val sidebar = document.getElementById("sidebar") ?: error("Element with id 'sidebar' not found on page")
         canvas.clear()
 
         val action: suspend CoroutineScope.(String) -> Unit = { it ->
@@ -121,13 +151,15 @@ private class GDMLDemoApp : ApplicationBase() {
             }
             launch { message("Rendering") }
             val output = three.output(canvas) {
-//                "axis" to {
+                //                "axis" to {
 //                    "size" to 100
 //                }
             }
             //make top layer visible
             //output.camera.layers.disable(0)
             output.camera.layers.enable(1)
+
+            setupSidebar(sidebar, output)
 
             output.render(visual)
             launch {
