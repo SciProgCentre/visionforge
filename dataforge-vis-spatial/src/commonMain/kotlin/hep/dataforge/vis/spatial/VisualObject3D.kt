@@ -94,12 +94,20 @@ var VisualObject.material: Meta?
     get() = getProperty(MATERIAL_KEY).node
     set(value) = setProperty(MATERIAL_KEY, value)
 
+var VisualObject.opacity: Double
+    get() = material?.get("opacity").double ?: 1.0
+    set(value) {
+        material = (material?.builder() ?: MetaBuilder()).apply {
+            "opacity" to value
+        }
+    }
+
 var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
 
 fun VisualObject.color(rgb: Int) {
-    material = buildMeta { "color" to rgb }
+    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
 }
 
 fun VisualObject3D.material(builder: MetaBuilder.() -> Unit) {

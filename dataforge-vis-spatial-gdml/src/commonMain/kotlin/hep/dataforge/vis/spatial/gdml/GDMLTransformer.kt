@@ -2,7 +2,6 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
-import hep.dataforge.meta.builder
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.material
@@ -30,9 +29,9 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.ACCEPT }
 
 
-    var transparent: GDMLVolume.(GDMLSolid?) -> Boolean = { !physVolumes.isEmpty() }
+    var configure: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
 
-    internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid?) {
+    internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid) {
         val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
 
         val materialColor = materialCache.getOrPut(material) {
@@ -41,11 +40,8 @@ class GDMLTransformer(val root: GDML) {
             }
         }
 
-        obj.material = if (parent.transparent(solid)) {
-            materialColor.builder().apply { "opacity" to 0.5 }
-        } else {
-            materialColor
-        }
+        obj.material = materialColor
+        obj.configure(parent, solid)
     }
 
     fun printStatistics() {

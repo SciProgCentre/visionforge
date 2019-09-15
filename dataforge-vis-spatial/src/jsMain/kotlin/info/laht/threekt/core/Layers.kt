@@ -71,5 +71,5 @@ external class Layers {
      * Returns true if this and the passed layers object are members of the same set of layers.
      * @param layers a Layers object
      */
-    fun test(layers: Int)
+    fun test(layers: Layers): Boolean
 }

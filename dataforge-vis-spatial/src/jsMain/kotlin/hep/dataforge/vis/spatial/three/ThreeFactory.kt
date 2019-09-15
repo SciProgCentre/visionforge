@@ -43,6 +43,13 @@ internal fun Object3D.updatePosition(obj: VisualObject3D) {
     updateMatrix()
 }
 
+/**
+ * Count number of layers to the top object. Return 1 if this is top layer
+ */
+val VisualObject3D.layer: Int
+    get() = getProperty(MeshThreeFactory.LAYER_KEY).int ?: ((parent as? VisualObject3D)?.layer ?: 0 + 1)
+
+
 internal fun <T : VisualObject3D> Mesh.updateFrom(obj: T) {
     matrixAutoUpdate = false
 
@@ -61,8 +68,9 @@ internal fun <T : VisualObject3D> Mesh.updateFrom(obj: T) {
     //set position for mesh
     updatePosition(obj)
 
-    obj.getProperty(MeshThreeFactory.LAYER_KEY).int?.let {
-        layers.set(it)
+    layers.enable(obj.layer)
+    children.forEach {
+        it.layers.enable(obj.layer)
     }
 }
 

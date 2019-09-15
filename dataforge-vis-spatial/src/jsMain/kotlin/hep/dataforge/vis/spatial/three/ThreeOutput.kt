@@ -27,7 +27,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
         }
     }
 
-    private val camera = three.buildCamera(meta["camera"].node ?: EmptyMeta)
+    val camera = three.buildCamera(meta["camera"].node ?: EmptyMeta)
 
     fun attach(element: Element, computeWidth: Element.() -> Int = { element.clientWidth }) {
         val width by meta.number(computeWidth(element)).int

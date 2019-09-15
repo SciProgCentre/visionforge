@@ -6,6 +6,7 @@ import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
+import hep.dataforge.vis.spatial.opacity
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
 import kotlinx.coroutines.CoroutineScope
@@ -93,22 +94,41 @@ private class GDMLDemoApp : ApplicationBase() {
                 lUnit = LUnit.CM
                 volumeAction = { volume ->
                     when {
-                        volume.name.startsWith("ecal") -> GDMLTransformer.Action.REJECT
+                        volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
+                        volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
+                        volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
+                        volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
                         volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                        volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
+                        volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
                         volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
                         else -> GDMLTransformer.Action.ACCEPT
                     }
                 }
 
-                transparent = { !physVolumes.isEmpty() || (it?.name?.startsWith("Coil") ?: false) }
-
+                configure = { parent, solid ->
+                    if (!parent.physVolumes.isEmpty()) {
+                        opacity = 0.3
+                    }
+                    if (solid.name.startsWith("Coil")
+                        || solid.name.startsWith("Yoke")
+                        || solid.name.startsWith("Magnet")
+                        || solid.name.startsWith("Pole")
+                    ) {
+                        opacity = 0.3
+                    }
+                }
             }
             launch { message("Rendering") }
             val output = three.output(canvas) {
-                "axis" to {
-                    "size" to 100
-                }
+//                "axis" to {
+//                    "size" to 100
+//                }
             }
+            //make top layer visible
+            //output.camera.layers.disable(0)
+            output.camera.layers.enable(1)
+
             output.render(visual)
             launch {
                 message(null)
