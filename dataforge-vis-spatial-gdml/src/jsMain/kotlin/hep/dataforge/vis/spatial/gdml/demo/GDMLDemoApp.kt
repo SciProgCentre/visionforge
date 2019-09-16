@@ -3,10 +3,10 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
+import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
-import hep.dataforge.vis.spatial.opacity
 import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
@@ -25,11 +25,10 @@ import org.w3c.files.FileReader
 import org.w3c.files.get
 import scientifik.gdml.GDML
 import kotlin.browser.document
+import kotlin.browser.window
 import kotlin.dom.clear
 
 private class GDMLDemoApp : ApplicationBase() {
-
-
     /**
      * Handle mouse drag according to https://www.html5rocks.com/en/tutorials/file/dndfiles/
      */
@@ -42,7 +41,7 @@ private class GDMLDemoApp : ApplicationBase() {
     /**
      * Load data from text file
      */
-    private fun loadData(event: Event, block: suspend CoroutineScope.(String) -> Unit) {
+    private fun loadData(event: Event, block: suspend CoroutineScope.(name: String, data: String) -> Unit) {
         event.stopPropagation()
         event.preventDefault()
 
@@ -54,7 +53,7 @@ private class GDMLDemoApp : ApplicationBase() {
             onload = {
                 val string = result as String
                 GlobalScope.launch {
-                    block(string)
+                    block(file.name, string)
                 }
             }
             readAsText(file)
@@ -82,12 +81,12 @@ private class GDMLDemoApp : ApplicationBase() {
 
     fun setupSidebar(element: Element, output: ThreeOutput) {
         element.clear()
-        (0..9).forEach{layer->
+        (0..9).forEach { layer ->
             element.append {
                 div("row") {
                     +"layer $layer"
                     input(type = InputType.checkBox).apply {
-                        if (layer == 0 || layer == 1) {
+                        if (layer == 0) {
                             checked = true
                         }
                         onchange = {
@@ -103,6 +102,38 @@ private class GDMLDemoApp : ApplicationBase() {
         }
     }
 
+    private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
+        lUnit = LUnit.CM
+        volumeAction = { volume ->
+            when {
+                volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
+                else -> GDMLTransformer.Action.ACCEPT
+            }
+        }
+
+//        optimizeSingleChild = true
+
+        solidConfiguration = { parent, solid ->
+            if (!parent.physVolumes.isEmpty()) {
+                opacity = 0.3
+            }
+            if (solid.name.startsWith("Coil")
+                || solid.name.startsWith("Yoke")
+                || solid.name.startsWith("Magnet")
+                || solid.name.startsWith("Pole")
+            ) {
+                opacity = 0.3
+            }
+        }
+    }
+
 
     override fun start(state: Map<String, Any>) {
 
@@ -114,51 +145,30 @@ private class GDMLDemoApp : ApplicationBase() {
         val sidebar = document.getElementById("sidebar") ?: error("Element with id 'sidebar' not found on page")
         canvas.clear()
 
-        val action: suspend CoroutineScope.(String) -> Unit = { it ->
+        val action: suspend CoroutineScope.(name: String, data: String) -> Unit = { name, data ->
             canvas.clear()
             launch { spinner(true) }
             launch { message("Loading GDML") }
-            val gdml = GDML.format.parse(GDML.serializer(), it)
+            val gdml = GDML.format.parse(GDML.serializer(), data)
             launch { message("Converting GDML into DF-VIS format") }
-            val visual = gdml.toVisual {
-                lUnit = LUnit.CM
-                volumeAction = { volume ->
-                    when {
-                        volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
-                        volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
-                        volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
-                        volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
-                        volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
-                        volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
-                        volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
-                        volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
-                        else -> GDMLTransformer.Action.ACCEPT
-                    }
-                }
 
-                configure = { parent, solid ->
-                    if (!parent.physVolumes.isEmpty()) {
-                        opacity = 0.3
-                    }
-                    if (solid.name.startsWith("Coil")
-                        || solid.name.startsWith("Yoke")
-                        || solid.name.startsWith("Magnet")
-                        || solid.name.startsWith("Pole")
-                    ) {
-                        opacity = 0.3
-                    }
+            val visual: VisualObject3D = when {
+                name.endsWith(".gdml") || name.endsWith(".xml") -> gdml.toVisual(gdmlConfiguration)
+                name.endsWith(".json") -> {
+                    Visual3DPlugin.json.parse(VisualGroup3D.serializer(), data).apply { attachChildren() }
+                }
+                else -> {
+                    window.alert("File extension is not recognized: $name")
+                    error("File extension is not recognized: $name")
                 }
             }
+
             launch { message("Rendering") }
-            val output = three.output(canvas) {
-                //                "axis" to {
-//                    "size" to 100
-//                }
-            }
-            //make top layer visible
-            //output.camera.layers.disable(0)
-            output.camera.layers.enable(1)
+            val output = three.output(canvas)
 
+
+            //output.camera.layers.enable(1)
+            output.camera.layers.set(0)
             setupSidebar(sidebar, output)
 
             output.render(visual)

@@ -29,7 +29,7 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.ACCEPT }
 
 
-    var configure: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
+    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
 
     internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid) {
         val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
@@ -41,7 +41,7 @@ class GDMLTransformer(val root: GDML) {
         }
 
         obj.material = materialColor
-        obj.configure(parent, solid)
+        obj.solidConfiguration(parent, solid)
     }
 
     fun printStatistics() {

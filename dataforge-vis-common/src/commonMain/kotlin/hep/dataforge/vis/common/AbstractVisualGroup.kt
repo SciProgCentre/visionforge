@@ -21,6 +21,13 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
      */
     abstract override val children: Map<NameToken, VisualObject> //get() = _children
 
+//    init {
+//        //Do after deserialization
+//        children.values.forEach {
+//            it.parent = this
+//        }
+//    }
+
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
         super.propertyChanged(name, before, after)
         forEach {

@@ -31,6 +31,8 @@ kotlin {
                 implementation(npm("@hi-level/three-csg", "1.0.6"))
                 implementation(npm("style-loader"))
                 implementation(npm("element-resize-event"))
+                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
+                implementation(npm("jquery.fancytree","2.32.0"))
             }
         }
     }

@@ -1,7 +1,6 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
-import hep.dataforge.meta.int
 import hep.dataforge.meta.node
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
@@ -42,13 +41,6 @@ internal fun Object3D.updatePosition(obj: VisualObject3D) {
     scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
     updateMatrix()
 }
-
-/**
- * Count number of layers to the top object. Return 1 if this is top layer
- */
-val VisualObject3D.layer: Int
-    get() = getProperty(MeshThreeFactory.LAYER_KEY).int ?: ((parent as? VisualObject3D)?.layer ?: 0 + 1)
-
 
 internal fun <T : VisualObject3D> Mesh.updateFrom(obj: T) {
     matrixAutoUpdate = false
@@ -109,7 +101,6 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
         val EDGES_MATERIAL_KEY = EDGES_KEY + VisualObject3D.MATERIAL_KEY
         val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
         val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + VisualObject3D.MATERIAL_KEY
-        val LAYER_KEY = "layer".asName()
 
         fun <T : VisualObject3D> buildMesh(obj: T, geometryBuilder: (T) -> BufferGeometry): Mesh {
             //TODO add caching for geometries using templates

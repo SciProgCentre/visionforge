@@ -2,6 +2,7 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
+import hep.dataforge.vis.spatial.opacity
 import nl.adaptivity.xmlutil.StAXReader
 import scientifik.gdml.GDML
 import java.io.File
@@ -16,14 +17,32 @@ fun main() {
         lUnit = LUnit.CM
         volumeAction = { volume ->
             when {
+                volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
+                volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
-                volume.name.startsWith("tof") -> GDMLTransformer.Action.CACHE
                 else -> GDMLTransformer.Action.ACCEPT
             }
         }
-        optimizeSingleChild = true
+
+        solidConfiguration = { parent, solid ->
+            if (parent.physVolumes.isNotEmpty()) {
+                opacity = 0.3
+            }
+            if (solid.name.startsWith("Coil")
+                || solid.name.startsWith("Yoke")
+                || solid.name.startsWith("Magnet")
+                || solid.name.startsWith("Pole")
+            ) {
+                opacity = 0.3
+            }
+        }
+
+//        optimizeSingleChild = true
         //optimizations = listOf(optimizeSingleChild)
         onFinish = { printStatistics() }
     }
@@ -35,7 +54,6 @@ fun main() {
     tmpFile.writeText(string)
 
     println(tmpFile.canonicalPath)
-
 
 //    val template = visual.getTemplate("volumes.ecal01mod".toName())
 //    println(template)

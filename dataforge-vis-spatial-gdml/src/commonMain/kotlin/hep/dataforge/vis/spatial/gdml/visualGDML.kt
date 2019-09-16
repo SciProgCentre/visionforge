@@ -178,12 +178,12 @@ private fun VisualGroup3D.addPhysicalVolume(
             }
         }
         GDMLTransformer.Action.CACHE -> {
-            val name = volumesName + volume.name.asName()
-            if (context.templates[name] == null) {
-                context.templates[name] = volume(context, volume)
+            val fullName = volumesName + volume.name.asName()
+            if (context.templates[fullName] == null) {
+                context.templates[fullName] = volume(context, volume)
             }
 
-            this[physVolume.name ?: ""] = Proxy(name).apply {
+            this[physVolume.name ?: ""] = Proxy(fullName).apply {
                 withPosition(
                     context.lUnit,
                     physVolume.resolvePosition(context.root),
@@ -215,12 +215,7 @@ private fun VisualGroup3D.addDivisionVolume(
     )
 }
 
-//private fun VisualGroup3D.addVolume(
-//    context: GDMLTransformer,
-//    group: GDMLGroup
-//) {
-//    this[group.name] = volume(context, group)
-//}
+private val solidsName = "solids".asName()
 
 private fun volume(
     context: GDMLTransformer,

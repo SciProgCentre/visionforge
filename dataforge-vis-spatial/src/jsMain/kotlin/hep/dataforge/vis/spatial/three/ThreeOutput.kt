@@ -19,12 +19,14 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
     override val context: Context get() = three.context
 
+    val axes = AxesHelper(meta["axes.size"].int ?: 50).apply { visible = false }
+
     val scene: Scene = Scene().apply {
         add(AmbientLight())
-        meta["axis"]?.let {
-            val axesHelper = AxesHelper(it.node["size"].int ?: 1)
-            add(axesHelper)
+        if(meta["axes.visible"].boolean == true){
+            axes.visible = true
         }
+        add(axes)
     }
 
     val camera = three.buildCamera(meta["camera"].node ?: EmptyMeta)
@@ -65,7 +67,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
 fun ThreePlugin.output(element: Element? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
     ThreeOutput(this, buildMeta(meta, override)).apply {
-        if(element!=null){
+        if (element != null) {
             attach(element)
         }
     }

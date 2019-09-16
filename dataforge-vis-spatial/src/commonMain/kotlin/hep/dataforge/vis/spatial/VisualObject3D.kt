@@ -9,6 +9,7 @@ import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
@@ -34,6 +35,7 @@ interface VisualObject3D : VisualObject {
         val MATERIAL_KEY = "material".asName()
         val VISIBLE_KEY = "visible".asName()
         val DETAIL_KEY = "detail".asName()
+        val LAYER_KEY = "layer".asName()
 
         val x = "x".asName()
         val y = "y".asName()
@@ -60,6 +62,15 @@ interface VisualObject3D : VisualObject {
         val zScale = scale + z
     }
 }
+
+/**
+ * Count number of layers to the top object. Return 1 if this is top layer
+ */
+var VisualObject3D.layer: Int
+    get() = getProperty(LAYER_KEY).int ?: 0
+    set(value) {
+        setProperty(LAYER_KEY, value)
+    }
 
 fun Output<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)

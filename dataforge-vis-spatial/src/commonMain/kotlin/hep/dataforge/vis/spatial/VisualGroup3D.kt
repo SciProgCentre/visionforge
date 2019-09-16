@@ -11,6 +11,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -36,13 +37,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
-
-    init {
-        //Do after deserialization
-        _children.values.forEach {
-            it.parent = this
-        }
-    }
 
     override fun removeChild(token: NameToken) {
         _children.remove(token)
@@ -91,6 +85,22 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 
     companion object {
         const val TEMPLATES_KEY = "templates"
+    }
+}
+
+/**
+ * A fix for serialization bug that writes all proper parents inside the tree after deserialization
+ */
+fun VisualGroup.attachChildren() {
+    this.children.values.forEach {
+        it.parent = this
+        (it as? VisualGroup)?.attachChildren()
+    }
+    if(this is VisualGroup3D){
+        templates?.apply {
+            parent = this@attachChildren
+            attachChildren()
+        }
     }
 }
 
