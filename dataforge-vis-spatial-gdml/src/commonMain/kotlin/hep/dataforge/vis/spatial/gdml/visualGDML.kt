@@ -80,7 +80,7 @@ private fun VisualGroup3D.addSolid(
             val innerSolid = solid.solidref.resolve(context.root)
                 ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
 
-            addSolid(context, innerSolid) {
+            addSolid(context, innerSolid, name) {
                 block()
                 scaleX *= solid.scale.x.toFloat()
                 scaleY *= solid.scale.y.toFloat()
@@ -152,7 +152,7 @@ private fun VisualGroup3D.addPhysicalVolume(
             val group = volume(context, volume)
             //optimizing single child case
             if (context.optimizeSingleChild && group.children.size == 1) {
-                this[physVolume.name ?: "@unnamed"] = group.children.values.first().apply {
+                this[physVolume.name ?: ""] = group.children.values.first().apply {
                     //Must ser this to avoid parent reset error
                     parent = null
                     //setting offset from physical volume
@@ -167,7 +167,7 @@ private fun VisualGroup3D.addPhysicalVolume(
                     rotation += group.rotation
                 }
             } else {
-                this[physVolume.name ?: "@unnamed"] = group.apply {
+                this[physVolume.name ?: ""] = group.apply {
                     withPosition(
                         context.lUnit,
                         physVolume.resolvePosition(context.root),

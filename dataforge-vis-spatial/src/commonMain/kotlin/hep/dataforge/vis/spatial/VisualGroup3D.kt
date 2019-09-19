@@ -56,7 +56,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     /**
      * TODO add special static group to hold statics without propagation
      */
-    override fun addStatic(child: VisualObject) = setChild(NameToken(child.hashCode().toString()), child)
+    override fun addStatic(child: VisualObject) = setChild(NameToken("@static(${child.hashCode()})"), child)
 
     override fun createGroup(name: Name): VisualGroup3D {
         return when {

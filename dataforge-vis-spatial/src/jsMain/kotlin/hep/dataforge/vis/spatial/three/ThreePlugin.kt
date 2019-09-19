@@ -8,6 +8,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
+import hep.dataforge.names.startsWith
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.cameras.Camera
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -17,6 +18,7 @@ import info.laht.threekt.external.controls.TrackballControls
 import org.w3c.dom.Node
 import kotlin.collections.set
 import kotlin.reflect.KClass
+import info.laht.threekt.objects.Group as ThreeGroup
 
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
@@ -42,7 +44,7 @@ class ThreePlugin : AbstractPlugin() {
         return when (obj) {
             is Proxy -> proxyFactory(obj)
             is VisualGroup3D -> {
-                val group = info.laht.threekt.objects.Group()
+                val group = ThreeGroup()
                 obj.children.forEach { (name, child) ->
                     if (child is VisualObject3D) {
                         try {
@@ -58,6 +60,19 @@ class ThreePlugin : AbstractPlugin() {
                 group.apply {
                     updatePosition(obj)
                     //obj.onChildrenChange()
+
+                    obj.onPropertyChange(this) { name, _, _ ->
+                        if (
+                            name.startsWith(VisualObject3D.position) ||
+                            name.startsWith(VisualObject3D.rotation) ||
+                            name.startsWith(VisualObject3D.scale)
+                        ) {
+                            //update position of mesh using this object
+                            updatePosition(obj)
+                        } else if (name == VisualObject3D.VISIBLE_KEY) {
+                            visible = obj.visible ?: true
+                        }
+                    }
                 }
             }
             is Composite -> compositeFactory(obj)

@@ -15,8 +15,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
 import kotlinx.html.dom.append
-import kotlinx.html.js.div
 import kotlinx.html.js.input
+import kotlinx.html.js.li
+import kotlinx.html.js.ul
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.Event
@@ -79,27 +80,30 @@ private class GDMLDemoApp : ApplicationBase() {
         }
     }
 
-    fun setupSidebar(element: Element, output: ThreeOutput) {
+    fun setupSidebar(element: Element, output: ThreeOutput, root: VisualObject3D) {
         element.clear()
-        (0..9).forEach { layer ->
-            element.append {
-                div("row") {
-                    +"layer $layer"
-                    input(type = InputType.checkBox).apply {
-                        if (layer == 0) {
-                            checked = true
-                        }
-                        onchange = {
-                            if (checked) {
-                                output.camera.layers.enable(layer)
-                            } else {
-                                output.camera.layers.disable(layer)
+        element.append {
+            ul("list-group") {
+                (0..9).forEach { layer ->
+                    li("list-group-item") {
+                        +"layer $layer"
+                        input(type = InputType.checkBox).apply {
+                            if (layer == 0) {
+                                checked = true
+                            }
+                            onchange = {
+                                if (checked) {
+                                    output.camera.layers.enable(layer)
+                                } else {
+                                    output.camera.layers.disable(layer)
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        element.appendFancyTree(root)
     }
 
     private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
@@ -117,8 +121,6 @@ private class GDMLDemoApp : ApplicationBase() {
                 else -> GDMLTransformer.Action.ACCEPT
             }
         }
-
-//        optimizeSingleChild = true
 
         solidConfiguration = { parent, solid ->
             if (!parent.physVolumes.isEmpty()) {
@@ -169,7 +171,7 @@ private class GDMLDemoApp : ApplicationBase() {
 
             //output.camera.layers.enable(1)
             output.camera.layers.set(0)
-            setupSidebar(sidebar, output)
+            setupSidebar(sidebar, output, visual)
 
             output.render(visual)
             launch {
