@@ -10,8 +10,9 @@ import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.helpers.AxesHelper
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.scenes.Scene
-import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
 import kotlin.browser.window
+import kotlin.dom.clear
 
 private val elementResizeEvent = require("element-resize-event")
 
@@ -23,7 +24,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
     val scene: Scene = Scene().apply {
         add(AmbientLight())
-        if(meta["axes.visible"].boolean == true){
+        if (meta["axes.visible"].boolean == true) {
             axes.visible = true
         }
         add(axes)
@@ -31,7 +32,8 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
     val camera = three.buildCamera(meta["camera"].node ?: EmptyMeta)
 
-    fun attach(element: Element, computeWidth: Element.() -> Int = { element.clientWidth }) {
+    fun attach(element: HTMLElement, computeWidth: HTMLElement.() -> Int = { this.offsetWidth }) {
+        element.clear()
         val width by meta.number(computeWidth(element)).int
 
         val height: Int = (width / camera.aspect).toInt()
@@ -56,7 +58,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
             renderer.setSize(newWidth, (newWidth / camera.aspect).toInt())
         }
 
-        element.replaceWith(renderer.domElement)
+        element.appendChild(renderer.domElement)
         animate()
     }
 
@@ -65,7 +67,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
     }
 }
 
-fun ThreePlugin.output(element: Element? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
+fun ThreePlugin.output(element: HTMLElement? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
     ThreeOutput(this, buildMeta(meta, override)).apply {
         if (element != null) {
             attach(element)

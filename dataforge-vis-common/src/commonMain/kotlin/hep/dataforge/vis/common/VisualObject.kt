@@ -2,6 +2,7 @@ package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
+import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject.Companion.TYPE
 import kotlinx.serialization.Transient
@@ -58,4 +59,7 @@ interface VisualObject : MetaRepr, Configurable {
         //const val TAGS_KEY = "@tags"
     }
 }
+
+fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
+fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 

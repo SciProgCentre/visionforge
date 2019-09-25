@@ -5,12 +5,12 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-scientifik{
+scientifik {
     withSerialization()
 }
 
 kotlin {
-    jvm{
+    jvm {
         withJava()
     }
     sourceSets {
@@ -19,20 +19,20 @@ kotlin {
                 api(project(":dataforge-vis-common"))
             }
         }
-        jvmMain{
+        jvmMain {
             dependencies {
                 implementation(project(":dataforge-vis-fx"))
                 implementation("org.fxyz3d:fxyz3d:0.4.0")
             }
         }
-        jsMain{
+        jsMain {
             dependencies {
                 implementation(npm("three", "0.106.2"))
                 implementation(npm("@hi-level/three-csg", "1.0.6"))
                 implementation(npm("style-loader"))
                 implementation(npm("element-resize-event"))
-//                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
-//                implementation(npm("jquery.fancytree","2.32.0"))
+                implementation(npm("inspire-tree","6.0.1"))
+                implementation(npm("inspire-tree-dom","4.0.6"))
             }
         }
     }

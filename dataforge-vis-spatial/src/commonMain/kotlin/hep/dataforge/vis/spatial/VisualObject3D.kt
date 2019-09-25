@@ -11,6 +11,7 @@ import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
 
@@ -34,6 +35,7 @@ interface VisualObject3D : VisualObject {
     companion object {
         val MATERIAL_KEY = "material".asName()
         val VISIBLE_KEY = "visible".asName()
+        val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
 
@@ -117,7 +119,15 @@ var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
 
+var VisualObject.selected: Boolean?
+    get() = getProperty(SELECTED_KEY).boolean
+    set(value) = setProperty(SELECTED_KEY, value)
+
 fun VisualObject.color(rgb: Int) {
+    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
+}
+
+fun VisualObject.color(rgb: String) {
     material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
 }
 

@@ -1,6 +1,10 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
+import hep.dataforge.meta.get
+import hep.dataforge.meta.string
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
@@ -10,16 +14,14 @@ import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import hep.dataforge.vis.spatial.tree.render
+import hep.dataforge.vis.spatial.tree.toTree
 import kotlinx.html.InputType
 import kotlinx.html.dom.append
-import kotlinx.html.js.input
-import kotlinx.html.js.li
-import kotlinx.html.js.ul
+import kotlinx.html.js.*
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
@@ -42,7 +44,7 @@ private class GDMLDemoApp : ApplicationBase() {
     /**
      * Load data from text file
      */
-    private fun loadData(event: Event, block: suspend CoroutineScope.(name: String, data: String) -> Unit) {
+    private fun loadData(event: Event, block: (name: String, data: String) -> Unit) {
         event.stopPropagation()
         event.preventDefault()
 
@@ -53,34 +55,46 @@ private class GDMLDemoApp : ApplicationBase() {
         FileReader().apply {
             onload = {
                 val string = result as String
-                GlobalScope.launch {
+
+                try {
                     block(file.name, string)
+                } catch (ex: Exception) {
+                    console.error(ex)
                 }
+
             }
             readAsText(file)
         }
     }
 
     private fun spinner(show: Boolean) {
-        val style = if (show) {
-            "display:block;"
-        } else {
-            "display:none;"
-        }
-        document.getElementById("loader")?.setAttribute("style", style)
+//        if( show){
+//
+//        val style = if (show) {
+//            "display:block;"
+//        } else {
+//            "display:none;"
+//        }
+//        document.getElementById("canvas")?.append {
+//
+//        }
     }
 
     private fun message(message: String?) {
-        val element = document.getElementById("message")
-        if (message == null) {
-            element?.setAttribute("style", "display:none;")
-        } else {
-            element?.textContent = message
-            element?.setAttribute("style", "display:block;")
+        document.getElementById("messages")?.let { element ->
+            if (message == null) {
+                element.clear()
+            } else {
+                element.append {
+                    p {
+                        +message
+                    }
+                }
+            }
         }
     }
 
-    fun setupSidebar(element: Element, output: ThreeOutput, root: VisualObject3D) {
+    fun setupLayers(element: Element, output: ThreeOutput) {
         element.clear()
         element.append {
             ul("list-group") {
@@ -103,7 +117,6 @@ private class GDMLDemoApp : ApplicationBase() {
                 }
             }
         }
-        element.appendFancyTree(root)
     }
 
     private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
@@ -137,6 +150,43 @@ private class GDMLDemoApp : ApplicationBase() {
     }
 
 
+    fun showEditor(item: VisualObject?, name: String?) {
+        val element = document.getElementById("editor") ?: error("Element with id 'canvas' not found on page")
+        element.clear()
+        if (item != null) {
+            element.append {
+                div("card") {
+                    div("card-body") {
+                        h3(classes = "card-title") { +(name ?: "") }
+                        form {
+                            div("form-group") {
+                                label {
+                                    +"Color: "
+                                }
+                                input(InputType.color, classes = "form-control").apply {
+                                    onchange = { event ->
+                                        item.color(value)
+                                    }
+                                }
+                            }
+                            div("form-group form-check") {
+                                input(InputType.checkBox, classes = "form-check-input").apply {
+                                    this.value = item.material?.get("color").string ?: ""
+                                    onchange = { event ->
+                                        item.visible = checked
+                                        Unit
+                                    }
+                                }
+                                label("form-check-label") { +"Visible" }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     override fun start(state: Map<String, Any>) {
 
         val context = Global.context("demo") {}
@@ -144,15 +194,16 @@ private class GDMLDemoApp : ApplicationBase() {
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
         val canvas = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
-        val sidebar = document.getElementById("sidebar") ?: error("Element with id 'sidebar' not found on page")
+        val layers = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
+        val tree = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
         canvas.clear()
 
-        val action: suspend CoroutineScope.(name: String, data: String) -> Unit = { name, data ->
+        val action: (name: String, data: String) -> Unit = { name, data ->
             canvas.clear()
-            launch { spinner(true) }
-            launch { message("Loading GDML") }
+            spinner(true)
+            message("Loading GDML")
             val gdml = GDML.format.parse(GDML.serializer(), data)
-            launch { message("Converting GDML into DF-VIS format") }
+            message("Converting GDML into DF-VIS format")
 
             val visual: VisualObject3D = when {
                 name.endsWith(".gdml") || name.endsWith(".xml") -> gdml.toVisual(gdmlConfiguration)
@@ -165,19 +216,22 @@ private class GDMLDemoApp : ApplicationBase() {
                 }
             }
 
-            launch { message("Rendering") }
-            val output = three.output(canvas)
-
+            message("Rendering")
+            val output = three.output(canvas as HTMLElement)
 
             //output.camera.layers.enable(1)
             output.camera.layers.set(0)
-            setupSidebar(sidebar, output, visual)
+            setupLayers(layers, output)
+
+            if (visual is VisualGroup) {
+                visual.toTree(::showEditor).render(tree as HTMLElement) {
+                    showCheckboxes = true
+                }
+            }
 
             output.render(visual)
-            launch {
-                message(null)
-                spinner(false)
-            }
+            message(null)
+            spinner(false)
         }
 
         (document.getElementById("drop_zone") as? HTMLDivElement)?.apply {
@@ -187,6 +241,9 @@ private class GDMLDemoApp : ApplicationBase() {
 
     }
 
+    override fun dispose(): Map<String, Any> {
+        return super.dispose()
+    }
 }
 
 fun main() {

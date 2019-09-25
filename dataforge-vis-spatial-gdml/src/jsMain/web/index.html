@@ -4,11 +4,13 @@
     <meta charset="utf-8">
     <!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
     <title>Three js demo for particle physics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.32.0/dist/modules/jquery.fancytree.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.fancytree@2.32.0/dist/skin-bootstrap/ui.fancytree.min.css">
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/inspire-tree-light.min.css">
     <script type="text/javascript" src="main.bundle.js"></script>
 </head>
 <body class="testApp">
@@ -21,18 +23,53 @@
 <div class="container">
     <h1>GDML demo</h1>
 </div>
-<div class="container loader" id="loader" style="display:none;"></div>
-<div class="container animate-bottom" id="message" style="display:none;"></div>
+<!--<div class="container loader" id="loader" style="display:none;"></div>-->
+<div class="container animate-bottom" id="messages"></div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-9" id="canvas"></div>
-        <div class="col-3" id="sidebar"></div>
+        <div class="col-3">
+
+            <div id="editor"></div>
+            <div class="accordion" id="accordion">
+                <div class="card">
+                    <div class="card-header" id="layers-header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#layers-body"
+                                    aria-expanded="true" aria-controls="layers-body">
+                                Layers
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="layers-body" class="collapse show" aria-labelledby="layers-header"
+                         data-parent="#accordion">
+                        <div class="card-body">
+                            <div id="layers"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tree-header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#tree-body" aria-expanded="false" aria-controls="tree-body">
+                                Object tree
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="tree-body" class="collapse" aria-labelledby="tree-header" data-parent="#accordion">
+                        <div class="card-body">
+                            <div id="tree"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
         crossorigin="anonymous"></script>

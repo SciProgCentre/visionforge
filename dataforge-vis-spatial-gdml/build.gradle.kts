@@ -17,6 +17,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
+                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
             }
         }
     }
