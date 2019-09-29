@@ -9,6 +9,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.getProperty
+import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.selected
 import hep.dataforge.vis.spatial.visible
 import org.w3c.dom.HTMLElement
@@ -32,13 +33,24 @@ internal fun createInspireTree(block: Config.() -> Unit = {}): InspireTree {
     return InspireTree(config)
 }
 
-fun VisualGroup.toTree(onFocus: (VisualObject?, String?)->Unit = {obj,name->}): InspireTree {
+fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { obj, name -> }): InspireTree {
 
     val map = HashMap<String, VisualObject>()
 
     fun generateNodeConfig(item: VisualObject, fullName: Name): NodeConfig {
         val title = item.getProperty("title").string ?: fullName.last()?.toString() ?: "root"
-        val text = "$title[${item::class.toString().replace("class ","")}]"
+        val className = if (item is Proxy) {
+            item.template::class.toString()
+        } else {
+            item::class.toString()
+        }.replace("class ", "")
+
+        val text: String = if (title.startsWith("@")) {
+            "[$className}]"
+        } else {
+            "$title[$className}]"
+        }
+
         return json(
             "children" to if ((item as? VisualGroup)?.children?.isEmpty() != false) {
                 emptyArray<NodeConfig>()
@@ -68,7 +80,7 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?)->Unit = {obj,name->}): 
         }
     }
 
-    val inspireTree = createInspireTree{
+    val inspireTree = createInspireTree {
 
     }
     val nodeConfig = generateNodeConfig(this, EmptyName)
@@ -93,14 +105,14 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?)->Unit = {obj,name->}): 
     }
 
     inspireTree.on("node.unchecked") { node: TreeNode ->
-        if(!node.indeterminate()){
+        if (!node.indeterminate()) {
             map[node.id]?.visible = node.checked()
         }
     }
 
     inspireTree.on("node.focused") { node: TreeNode, isLoadEvent: Boolean ->
         if (!isLoadEvent) {
-            onFocus(map[node.id],node.id)
+            onFocus(map[node.id], node.id)
         }
     }
 

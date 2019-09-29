@@ -32,15 +32,14 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
     val camera = three.buildCamera(meta["camera"].node ?: EmptyMeta)
 
-    fun attach(element: HTMLElement, computeWidth: HTMLElement.() -> Int = { this.offsetWidth }) {
+    fun attach(element: HTMLElement) {
         element.clear()
-        val width by meta.number(computeWidth(element)).int
 
-        val height: Int = (width / camera.aspect).toInt()
+        camera.aspect = 1.0
 
         val renderer = WebGLRenderer { antialias = true }.apply {
             setClearColor(Colors.skyblue, 1)
-            setSize(width, height)
+
         }
 
         three.addControls(camera, renderer.domElement, meta["controls"].node ?: EmptyMeta)
@@ -52,13 +51,19 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
             renderer.render(scene, camera)
         }
 
+        element.appendChild(renderer.domElement)
+
         elementResizeEvent(element) {
+            renderer.setSize(element.offsetWidth, element.offsetWidth)
             camera.updateProjectionMatrix()
-            val newWidth = computeWidth(element)
-            renderer.setSize(newWidth, (newWidth / camera.aspect).toInt())
         }
 
-        element.appendChild(renderer.domElement)
+//        val width by meta.number(element.offsetWidth).int
+//        val height by meta.number(element.offsetHeight).int
+//        val size = min(width, height)
+//        renderer.setSize(size, size)
+        renderer.setSize(element.offsetWidth, element.offsetWidth)
+
         animate()
     }
 

@@ -6,6 +6,7 @@ import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
+import hep.dataforge.vis.common.Colors.rgbToString
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
@@ -124,12 +125,20 @@ var VisualObject.selected: Boolean?
     set(value) = setProperty(SELECTED_KEY, value)
 
 fun VisualObject.color(rgb: Int) {
-    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
+    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgbToString(rgb) }
 }
 
 fun VisualObject.color(rgb: String) {
     material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
 }
+
+var VisualObject.color: String?
+    get() = material["color"].string
+    set(value) {
+        if (value != null) {
+            color(value)
+        }
+    }
 
 fun VisualObject3D.material(builder: MetaBuilder.() -> Unit) {
     material = buildMeta(builder)

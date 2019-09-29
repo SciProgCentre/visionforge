@@ -2,6 +2,8 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.buildMeta
+import hep.dataforge.names.toName
+import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.material
@@ -36,10 +38,10 @@ class GDMLTransformer(val root: GDML) {
 
         val materialColor = materialCache.getOrPut(material) {
             buildMeta {
-                "color" to random.nextInt(0, Int.MAX_VALUE)
+                "color" to Colors.rgbToString(random.nextInt(0, Int.MAX_VALUE))
             }
         }
-
+        obj.setProperty("gdml.material".toName(), material.name)
         obj.material = materialColor
         obj.solidConfiguration(parent, solid)
     }

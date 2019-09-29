@@ -1,10 +1,7 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
-import hep.dataforge.meta.get
-import hep.dataforge.meta.string
 import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
@@ -14,11 +11,15 @@ import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
+import hep.dataforge.vis.spatial.tree.propertyEditor
 import hep.dataforge.vis.spatial.tree.render
 import hep.dataforge.vis.spatial.tree.toTree
 import kotlinx.html.InputType
 import kotlinx.html.dom.append
-import kotlinx.html.js.*
+import kotlinx.html.js.input
+import kotlinx.html.js.li
+import kotlinx.html.js.p
+import kotlinx.html.js.ul
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
@@ -150,43 +151,6 @@ private class GDMLDemoApp : ApplicationBase() {
     }
 
 
-    fun showEditor(item: VisualObject?, name: String?) {
-        val element = document.getElementById("editor") ?: error("Element with id 'canvas' not found on page")
-        element.clear()
-        if (item != null) {
-            element.append {
-                div("card") {
-                    div("card-body") {
-                        h3(classes = "card-title") { +(name ?: "") }
-                        form {
-                            div("form-group") {
-                                label {
-                                    +"Color: "
-                                }
-                                input(InputType.color, classes = "form-control").apply {
-                                    onchange = { event ->
-                                        item.color(value)
-                                    }
-                                }
-                            }
-                            div("form-group form-check") {
-                                input(InputType.checkBox, classes = "form-check-input").apply {
-                                    this.value = item.material?.get("color").string ?: ""
-                                    onchange = { event ->
-                                        item.visible = checked
-                                        Unit
-                                    }
-                                }
-                                label("form-check-label") { +"Visible" }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     override fun start(state: Map<String, Any>) {
 
         val context = Global.context("demo") {}
@@ -196,6 +160,7 @@ private class GDMLDemoApp : ApplicationBase() {
         val canvas = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
         val layers = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
         val tree = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
+        val editor = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
         canvas.clear()
 
         val action: (name: String, data: String) -> Unit = { name, data ->
@@ -224,7 +189,7 @@ private class GDMLDemoApp : ApplicationBase() {
             setupLayers(layers, output)
 
             if (visual is VisualGroup) {
-                visual.toTree(::showEditor).render(tree as HTMLElement) {
+                visual.toTree(editor::propertyEditor).render(tree as HTMLElement) {
                     showCheckboxes = true
                 }
             }

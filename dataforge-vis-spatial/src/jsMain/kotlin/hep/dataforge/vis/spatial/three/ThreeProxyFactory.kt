@@ -45,8 +45,9 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
             }
         }
 
-        obj.onChildrenChange(object3D) { name, propertyHolder ->
-            (object3D.findChild(name) as? Mesh)?.updateProperties(propertyHolder)
+        obj.onChildrenChange(this) { name, propertyHolder ->
+            val child = object3D.findChild(name)
+            (child as? Mesh)?.updateProperties(propertyHolder)
         }
 
         return object3D

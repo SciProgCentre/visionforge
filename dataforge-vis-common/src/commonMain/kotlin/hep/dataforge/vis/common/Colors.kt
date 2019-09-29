@@ -174,4 +174,9 @@ object Colors {
     const val whitesmoke = 0xF5F5F5
     const val yellow = 0xFFFF00
     const val yellowgreen = 0x9ACD32
+
+    fun rgbToString(rgb: Int): String {
+        val string = rgb.toString(16)
+        return "#" + string.substring(string.length - 6)
+    }
 }

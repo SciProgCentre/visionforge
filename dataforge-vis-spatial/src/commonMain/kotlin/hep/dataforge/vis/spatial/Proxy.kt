@@ -85,11 +85,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     inner class ProxyChild(val name: Name) : AbstractVisualObject() {
         override var properties: Config?
-            get() = propertyCache.getOrPut(name) {
-                Config().apply {
-                    attachListener(this@ProxyChild)
-                }
-            }
+            get() = propertyCache[name]
             set(value) {
                 if (value == null) {
                     propertyCache.remove(name)?.removeListener(this@Proxy)
@@ -99,7 +95,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                     }
                 }
             }
-
     }
 }
 
