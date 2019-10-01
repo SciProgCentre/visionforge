@@ -4,7 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
 
-interface VisualGroup : VisualObject, Provider, Iterable<VisualObject> {
+interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     /**
      * A map of top level named children
      */
@@ -26,6 +26,7 @@ interface VisualGroup : VisualObject, Provider, Iterable<VisualObject> {
             else -> emptyMap()
         }
 
+
     /**
      * Iterate over children of this group
      */
@@ -42,6 +43,17 @@ interface VisualGroup : VisualObject, Provider, Iterable<VisualObject> {
      */
     fun setStyle(name: Name, meta: Meta)
 
+    operator fun get(name: Name): VisualObject? {
+        return when {
+            name.isEmpty() -> this
+            name.length == 1 -> children[name.first()!!]
+            else -> (children[name.first()!!] as? VisualGroup)?.get(name.cutFirst())
+        }
+    }
+}
+
+interface MutableVisualGroup : VisualGroup {
+
     /**
      * Add listener for children structure change.
      * @param owner the handler to properly remove listeners
@@ -53,14 +65,6 @@ interface VisualGroup : VisualObject, Provider, Iterable<VisualObject> {
      * Remove children change listener
      */
     fun removeChildrenChangeListener(owner: Any?)
-
-    operator fun get(name: Name): VisualObject? {
-        return when {
-            name.isEmpty() -> this
-            name.length == 1 -> children[name.first()!!]
-            else -> (children[name.first()!!] as? VisualGroup)?.get(name.cutFirst())
-        }
-    }
 
     operator fun set(name: Name, child: VisualObject?)
 }

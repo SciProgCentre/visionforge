@@ -4,18 +4,16 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.NameSerializer
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
+import hep.dataforge.names.plus
 import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.MutableVisualGroup
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 
 /**
@@ -34,21 +32,22 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val template: VisualObject3D
+    val prototype: VisualObject3D
         get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
             ?: error("Template with name $templateName not found in $parent")
 
-    override fun getStyle(name: Name): Meta?  = null
+    override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
 
     override fun setStyle(name: Name, meta: Meta) {
+        (parent as VisualGroup?)?.setStyle(name, meta)
         //do nothing
     }
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            super.getProperty(name, false) ?: template.getProperty(name, false) ?: parent?.getProperty(name, inherit)
+            super.getProperty(name, false) ?: prototype.getProperty(name, false) ?: parent?.getProperty(name, inherit)
         } else {
-            super.getProperty(name, false) ?: template.getProperty(name, false)
+            super.getProperty(name, false) ?: prototype.getProperty(name, false)
         }
     }
 
@@ -58,49 +57,56 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 
     override val children: Map<NameToken, ProxyChild>
-        get() = (template as? VisualGroup)?.children?.mapValues {
+        get() = (prototype as? MutableVisualGroup)?.children?.mapValues {
             ProxyChild(it.key.asName())
         } ?: emptyMap()
 
-    private data class ProxyChangeListeners(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
-
-    @Transient
-    private val listeners = HashSet<ProxyChangeListeners>()
-
-    override fun onChildrenChange(owner: Any?, action: (Name, VisualObject?) -> Unit) {
-        listeners.add(ProxyChangeListeners(owner, action))
-    }
-
-    override fun removeChildrenChangeListener(owner: Any?) {
-        listeners.removeAll { it.owner == owner }
-    }
-
-    override fun set(name: Name, child: VisualObject?) {
-        error("Content change not supported for proxy")
-    }
-
     private val propertyCache: HashMap<Name, Config> = HashMap()
 
-    private fun Config.attachListener(obj: VisualObject) {
-        onChange(this@Proxy) { name, before, after ->
-            listeners.forEach { listener ->
-                listener.callback(name, obj)
-            }
-        }
-    }
+    inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
-    inner class ProxyChild(val name: Name) : AbstractVisualObject() {
+        override val children: Map<NameToken, VisualObject>
+            get() = ((prototype as? MutableVisualGroup)?.get(name) as? MutableVisualGroup)
+                ?.children
+                ?.mapValues { (key, _) ->
+                    ProxyChild(
+                        name + key.asName()
+                    )
+                }
+                ?: emptyMap()
+
+        override fun getStyle(name: Name): Meta? = this@Proxy.getStyle(name)
+
+        override fun setStyle(name: Name, meta: Meta) {
+            this@Proxy.setStyle(name, meta)
+        }
+
+        val prototype: VisualObject
+            get() = (this@Proxy.prototype as? VisualGroup)?.get(name)
+                ?: error("Prototype with name $name not found in ${this@Proxy}")
+
         override var properties: Config?
             get() = propertyCache[name]
             set(value) {
                 if (value == null) {
-                    propertyCache.remove(name)?.removeListener(this@Proxy)
+                    propertyCache.remove(name)
                 } else {
-                    propertyCache[name] = value.apply {
-                        attachListener(this@ProxyChild)
-                    }
+                    propertyCache[name] = value
                 }
             }
+
+        override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
+            return if (inherit) {
+                properties?.get(name)
+                    ?: parent?.getProperty(name, inherit)
+                    ?: actualStyles[name]
+                    ?: prototype.getProperty(name, inherit)
+            } else {
+                properties?.get(name)
+                    ?: actualStyles[name]
+                    ?: prototype.getProperty(name, inherit)
+            }
+        }
     }
 }
 

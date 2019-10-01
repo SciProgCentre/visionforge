@@ -20,7 +20,7 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
     }
 
     override fun invoke(obj: Proxy): Object3D {
-        val template = obj.template
+        val template = obj.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)
         }
@@ -43,11 +43,6 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
             } else if (name == VisualObject3D.VISIBLE_KEY) {
                 object3D.visible = obj.visible ?: true
             }
-        }
-
-        obj.onChildrenChange(this) { name, propertyHolder ->
-            val child = object3D.findChild(name)
-            (child as? Mesh)?.updateProperties(propertyHolder)
         }
 
         return object3D

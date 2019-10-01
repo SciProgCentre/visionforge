@@ -37,10 +37,10 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
             contextual(Point2DSerializer)
             contextual(NameSerializer)
             contextual(NameTokenSerializer)
-            contextual(MetaSerializer)
+            contextual(Meta::class, MetaSerializer)
             contextual(ConfigSerializer)
 
-            polymorphic(VisualObject::class,VisualObject3D::class) {
+            polymorphic(VisualObject::class, VisualObject3D::class) {
                 VisualGroup3D::class with VisualGroup3D.serializer()
                 Proxy::class with Proxy.serializer()
                 Composite::class with Composite.serializer()

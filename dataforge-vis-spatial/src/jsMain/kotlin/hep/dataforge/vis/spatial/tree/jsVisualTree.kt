@@ -10,7 +10,6 @@ import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.spatial.Proxy
-import hep.dataforge.vis.spatial.selected
 import hep.dataforge.vis.spatial.visible
 import org.w3c.dom.HTMLElement
 import kotlin.js.json
@@ -40,7 +39,7 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { obj, name -
     fun generateNodeConfig(item: VisualObject, fullName: Name): NodeConfig {
         val title = item.getProperty("title").string ?: fullName.last()?.toString() ?: "root"
         val className = if (item is Proxy) {
-            item.template::class.toString()
+            item.prototype::class.toString()
         } else {
             item::class.toString()
         }.replace("class ", "")
@@ -88,15 +87,15 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { obj, name -
     map[rootNode.id] = this
     rootNode.fillChildren(this, EmptyName)
 
-    inspireTree.on("node.selected") { node: TreeNode, isLoadEvent: Boolean ->
-        if (!isLoadEvent) {
-            map[node.id]?.selected = node.selected()
-        }
-    }
-
-    inspireTree.on("node.deselect") { node: TreeNode ->
-        map[node.id]?.selected = node.selected()
-    }
+//    inspireTree.on("node.selected") { node: TreeNode, isLoadEvent: Boolean ->
+//        if (!isLoadEvent) {
+//            map[node.id]?.selected = node.selected()
+//        }
+//    }
+//
+//    inspireTree.on("node.deselect") { node: TreeNode ->
+//        map[node.id]?.selected = node.selected()
+//    }
 
     inspireTree.on("node.checked") { node: TreeNode, isLoadEvent: Boolean ->
         if (!isLoadEvent) {

@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.update
 import hep.dataforge.names.asName
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.MutableVisualGroup
 import hep.dataforge.vis.spatial.Point3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
@@ -16,7 +16,7 @@ typealias GDMLOptimization = GDMLTransformer.(VisualGroup3D) -> VisualGroup3D
  * Collapse nodes with single child
  */
 val optimizeSingleChild: GDMLOptimization = { tree ->
-    fun VisualGroup.replaceChildren() {
+    fun MutableVisualGroup.replaceChildren() {
         children.forEach { (key, child) ->
             if (child is VisualGroup3D && child.children.size == 1) {
                 val newChild = child.children.values.first().apply {
@@ -40,13 +40,13 @@ val optimizeSingleChild: GDMLOptimization = { tree ->
                     }
                 }
 
-                if (newChild is VisualGroup) {
+                if (newChild is MutableVisualGroup) {
                     newChild.replaceChildren()
                 }
 
                 //actual replacement
                 set(key.asName(), newChild)
-            } else if (child is VisualGroup) {
+            } else if (child is MutableVisualGroup) {
                 child.replaceChildren()
             }
         }

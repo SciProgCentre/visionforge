@@ -15,30 +15,17 @@ fun main() {
     val xml = GDML.format.parse(GDML.serializer(), xmlReader)
     val visual = xml.toVisual {
         lUnit = LUnit.CM
-        volumeAction = { volume ->
-            when {
-                volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
-                volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
-                volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
-                else -> GDMLTransformer.Action.ACCEPT
-            }
-        }
 
         solidConfiguration = { parent, solid ->
-            if (parent.physVolumes.isNotEmpty()) {
-                opacity = 0.3
-            }
-            if (solid.name.startsWith("Coil")
+            if (parent.physVolumes.isNotEmpty()
+                || solid.name.startsWith("Coil")
                 || solid.name.startsWith("Yoke")
                 || solid.name.startsWith("Magnet")
                 || solid.name.startsWith("Pole")
             ) {
-                opacity = 0.3
+                useStyle("opaque") {
+                    opacity = 0.3
+                }
             }
         }
 

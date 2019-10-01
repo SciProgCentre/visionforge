@@ -1,18 +1,16 @@
 package hep.dataforge.vis.common
 
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.MetaItem
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.isEmpty
+import hep.dataforge.names.*
 import kotlinx.serialization.Transient
 
 
 /**
  * Abstract implementation of group of [VisualObject]
  */
-abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
+abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -20,6 +18,32 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
      * A map of top level named children
      */
     abstract override val children: Map<NameToken, VisualObject> //get() = _children
+
+    //TODO replace by custom object with get/set functionality
+    protected abstract val styles: MutableMap<Name, Meta>
+
+    override fun getStyle(name: Name): Meta? = styles[name]
+
+    override fun setStyle(name: Name, meta: Meta) {
+        fun VisualObject.applyStyle(name: Name, meta: Meta) {
+            if (style.contains(name.toString())) {
+                //full update
+                //TODO do a fine grained update
+                if (this is AbstractVisualObject) {
+                    styleChanged()
+                } else {
+                    propertyChanged(EmptyName)
+                }
+            }
+            if (this is VisualGroup) {
+                this.children.forEach { (_, child) ->
+                    child.applyStyle(name, meta)
+                }
+            }
+        }
+        styles[name] = meta
+        applyStyle(name, meta)
+    }
 
 
 //    init {
@@ -75,12 +99,13 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
     /**
      * Add a static child. Statics could not be found by name, removed or replaced
      */
-    protected abstract fun addStatic(child: VisualObject)
+    protected open fun addStatic(child: VisualObject) =
+        setChild(NameToken("@static(${child.hashCode()})"), child)
 
     /**
      * Recursively create a child group
      */
-    protected abstract fun createGroup(name: Name): VisualGroup
+    protected abstract fun createGroup(name: Name): MutableVisualGroup
 
     /**
      * Add named or unnamed child to the group. If key is [null] the child is considered unnamed. Both key and value are not
@@ -103,7 +128,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
             }
             else -> {
                 //TODO add safety check
-                val parent = (get(name.cutLast()) as? VisualGroup) ?: createGroup(name.cutLast())
+                val parent = (get(name.cutLast()) as? MutableVisualGroup) ?: createGroup(name.cutLast())
                 parent[name.last()!!.asName()] = child
             }
         }

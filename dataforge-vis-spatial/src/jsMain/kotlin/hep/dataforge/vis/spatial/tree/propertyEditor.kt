@@ -1,6 +1,8 @@
 package hep.dataforge.vis.spatial.tree
 
+import hep.dataforge.io.toJson
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.color
 import hep.dataforge.vis.spatial.opacity
 import hep.dataforge.vis.spatial.visible
@@ -62,6 +64,21 @@ fun Element.propertyEditor(item: VisualObject?, name: String?) {
                     }
                 }
             }
+            (item.properties ?: (item as? Proxy)?.prototype?.properties
+            ?: (item as? Proxy.ProxyChild)?.prototype?.properties)
+                ?.let { config ->
+
+                    div("card") {
+                        div("card-body") {
+                            h3(classes = "card-title") { +"Properties" }
+                        }.apply {
+                            val options = (js("{}") as JSONEditorOptions).apply {
+                                mode = "view"
+                            }
+                            JSONEditor(this, options, JSON.parse(config.toJson().toString()))
+                        }
+                    }
+                }
         }
     }
 }

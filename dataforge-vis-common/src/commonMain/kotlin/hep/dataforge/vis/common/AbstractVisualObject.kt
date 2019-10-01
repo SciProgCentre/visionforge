@@ -17,12 +17,13 @@ abstract class AbstractVisualObject : VisualObject {
     @Transient
     override var parent: VisualObject? = null
 
-    protected abstract var properties: Config?
+    abstract override var properties: Config?
 
     override var style: List<String>
         get() = properties?.let { it[STYLE_KEY].stringList } ?: emptyList()
         set(value) {
-            setProperty(VisualObject.STYLE_KEY, value)
+            setProperty(STYLE_KEY, value)
+            styleChanged()
         }
 
     /**
@@ -57,12 +58,11 @@ abstract class AbstractVisualObject : VisualObject {
 
     private var styleCache: Laminate? = null
 
-    private fun styles(): Laminate {
-        return styleCache ?: kotlin.run {
+    protected val actualStyles: Laminate
+        get() = styleCache ?: run {
             Laminate(style.map { it.toName() }.mapNotNull(::findStyle))
                 .also { styleCache = it }
         }
-    }
 
     /**
      * Helper to reset style cache
@@ -74,9 +74,9 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: parent?.getProperty(name, inherit) ?: styles()[name]
+            properties?.get(name) ?: parent?.getProperty(name, inherit) ?: actualStyles[name]
         } else {
-            properties?.get(name) ?: styles()[name]
+            properties?.get(name) ?: actualStyles[name]
         }
     }
 

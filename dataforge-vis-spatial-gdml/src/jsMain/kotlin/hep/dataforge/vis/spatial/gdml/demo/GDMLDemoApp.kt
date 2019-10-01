@@ -57,11 +57,11 @@ private class GDMLDemoApp : ApplicationBase() {
             onload = {
                 val string = result as String
 
-                try {
+//                try {
                     block(file.name, string)
-                } catch (ex: Exception) {
-                    console.error(ex)
-                }
+//                } catch (ex: Exception) {
+//                    console.error(ex)
+//                }
 
             }
             readAsText(file)
@@ -190,7 +190,7 @@ private class GDMLDemoApp : ApplicationBase() {
 
             if (visual is VisualGroup) {
                 visual.toTree(editor::propertyEditor).render(tree as HTMLElement) {
-                    showCheckboxes = true
+                    showCheckboxes = false
                 }
             }
 

@@ -33,6 +33,7 @@ kotlin {
                 implementation(npm("element-resize-event"))
                 implementation(npm("inspire-tree","6.0.1"))
                 implementation(npm("inspire-tree-dom","4.0.6"))
+                implementation(npm("jsoneditor"))
             }
         }
     }

@@ -1,5 +1,6 @@
 package hep.dataforge.vis.common
 
+import hep.dataforge.meta.Config
 import hep.dataforge.meta.Configurable
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MetaRepr
@@ -24,6 +25,11 @@ interface VisualObject : MetaRepr, Configurable {
      */
     @Transient
     var parent: VisualObject?
+
+    /**
+     * Direct properties access
+     */
+    val properties: Config?
 
     /**
      * Set property for this object
@@ -63,3 +69,7 @@ interface VisualObject : MetaRepr, Configurable {
 
 fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
+
+fun VisualObject.applyStyle(name: String) {
+    style = style + name
+}

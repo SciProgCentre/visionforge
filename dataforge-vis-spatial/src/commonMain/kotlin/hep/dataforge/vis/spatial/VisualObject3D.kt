@@ -9,9 +9,11 @@ import hep.dataforge.names.plus
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.Colors.rgbToString
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
@@ -39,6 +41,9 @@ interface VisualObject3D : VisualObject {
         val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
+
+        val COLOR_KEY = MATERIAL_KEY + "color"
+        val OPACITY_KEY = MATERIAL_KEY + "opacity"
 
         val x = "x".asName()
         val y = "y".asName()
@@ -109,11 +114,9 @@ var VisualObject.material: Meta?
     set(value) = setProperty(MATERIAL_KEY, value)
 
 var VisualObject.opacity: Double
-    get() = material?.get("opacity").double ?: 1.0
+    get() = getProperty(OPACITY_KEY).double ?: 1.0
     set(value) {
-        material = (material?.builder() ?: MetaBuilder()).apply {
-            "opacity" to value
-        }
+        setProperty(OPACITY_KEY, value)
     }
 
 var VisualObject.visible: Boolean?
@@ -125,15 +128,15 @@ var VisualObject.selected: Boolean?
     set(value) = setProperty(SELECTED_KEY, value)
 
 fun VisualObject.color(rgb: Int) {
-    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgbToString(rgb) }
+    setProperty(COLOR_KEY, rgbToString(rgb))
 }
 
 fun VisualObject.color(rgb: String) {
-    material = (material?.builder() ?: MetaBuilder()).apply { "color" to rgb }
+    setProperty(COLOR_KEY, rgb)
 }
 
 var VisualObject.color: String?
-    get() = material["color"].string
+    get() = getProperty(COLOR_KEY).string
     set(value) {
         if (value != null) {
             color(value)
