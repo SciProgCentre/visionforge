@@ -5,6 +5,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
@@ -37,6 +38,11 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
             ?: error("Template with name $templateName not found in $parent")
 
+    override fun getStyle(name: Name): Meta?  = null
+
+    override fun setStyle(name: Name, meta: Meta) {
+        //do nothing
+    }
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

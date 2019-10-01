@@ -4,11 +4,11 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.Colors.rgbToString
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY

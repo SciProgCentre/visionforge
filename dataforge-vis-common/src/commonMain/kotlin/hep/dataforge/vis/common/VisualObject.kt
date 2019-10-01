@@ -1,14 +1,17 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Configurable
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.MetaRepr
 import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject.Companion.TYPE
 import kotlinx.serialization.Transient
 
-private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
-private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
+//private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
+//private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
 
 /**
  * A root type for display hierarchy
@@ -21,11 +24,6 @@ interface VisualObject : MetaRepr, Configurable {
      */
     @Transient
     var parent: VisualObject?
-
-    /**
-     * A style which is set externally and could not be modified from inside
-     */
-    var style: Meta?
 
     /**
      * Set property for this object
@@ -52,8 +50,11 @@ interface VisualObject : MetaRepr, Configurable {
      */
     fun removeChangeListener(owner: Any?)
 
+    var style: List<String>
+
     companion object {
         const val TYPE = "visual"
+        val STYLE_KEY = "style".asName()
 
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
@@ -62,4 +63,3 @@ interface VisualObject : MetaRepr, Configurable {
 
 fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
-

@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.names.EmptyName
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.common.get
 import hep.dataforge.vis.spatial.*
 import scientifik.gdml.*

@@ -21,6 +21,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), VisualGroup {
      */
     abstract override val children: Map<NameToken, VisualObject> //get() = _children
 
+
 //    init {
 //        //Do after deserialization
 //        children.values.forEach {

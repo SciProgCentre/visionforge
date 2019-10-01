@@ -2,10 +2,10 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
 import hep.dataforge.meta.node
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
 import info.laht.threekt.core.BufferGeometry

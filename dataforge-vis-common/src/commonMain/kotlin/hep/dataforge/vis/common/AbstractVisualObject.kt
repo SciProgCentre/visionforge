@@ -1,8 +1,10 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.EmptyName
 import hep.dataforge.names.Name
-import hep.dataforge.names.asName
+import hep.dataforge.names.toName
+import hep.dataforge.vis.common.VisualObject.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
@@ -15,17 +17,21 @@ abstract class AbstractVisualObject : VisualObject {
     @Transient
     override var parent: VisualObject? = null
 
-    override var style: Meta? = null
+    protected abstract var properties: Config?
+
+    override var style: List<String>
+        get() = properties?.let { it[STYLE_KEY].stringList } ?: emptyList()
         set(value) {
-            //notify about style removed
-            style?.items?.forEach {(name, value) ->
-                propertyChanged(name.asName(), value, null)
-            }
-            field = value
-            //notify about style adition
-            value?.items?.forEach { (name, value) ->
-                propertyChanged(name.asName(), null, value)
-            }
+            setProperty(VisualObject.STYLE_KEY, value)
+        }
+
+    /**
+     * The config is initialized and assigned on-demand.
+     * To avoid unnecessary allocations, one should access [properties] via [getProperty] instead.
+     */
+    override val config: Config
+        get() = properties ?: Config().also { config ->
+            properties = config.apply { onChange(this, ::propertyChanged) }
         }
 
     @Transient
@@ -45,22 +51,32 @@ abstract class AbstractVisualObject : VisualObject {
         listeners.removeAll { it.owner == owner }
     }
 
-    protected abstract var properties: Config?
-
-    override val config: Config
-        get() = properties ?: Config().also { config ->
-            properties = config.apply { onChange(this, ::propertyChanged) }
-        }
-
     override fun setProperty(name: Name, value: Any?) {
         config[name] = value
     }
 
+    private var styleCache: Laminate? = null
+
+    private fun styles(): Laminate {
+        return styleCache ?: kotlin.run {
+            Laminate(style.map { it.toName() }.mapNotNull(::findStyle))
+                .also { styleCache = it }
+        }
+    }
+
+    /**
+     * Helper to reset style cache
+     */
+    protected fun styleChanged() {
+        styleCache = null
+        propertyChanged(EmptyName)
+    }
+
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            style?.get(name) ?: properties?.get(name) ?: parent?.getProperty(name, inherit)
+            properties?.get(name) ?: parent?.getProperty(name, inherit) ?: styles()[name]
         } else {
-            style?.get(name) ?: properties?.get(name)
+            properties?.get(name) ?: styles()[name]
         }
     }
 
@@ -71,4 +87,12 @@ abstract class AbstractVisualObject : VisualObject {
         "properties" to properties
         updateMeta()
     }
+}
+
+internal fun VisualObject.findStyle(styleName: Name): Meta? {
+    if (this is VisualGroup) {
+        val style = getStyle(styleName)
+        if (style != null) return style
+    }
+    return parent?.findStyle(styleName)
 }
