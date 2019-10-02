@@ -8,9 +8,11 @@ import hep.dataforge.names.toName
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.applyStyle
+import hep.dataforge.vis.spatial.RotationOrder
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
+import hep.dataforge.vis.spatial.rotationOrder
 import scientifik.gdml.*
 import kotlin.collections.set
 import kotlin.random.Random
@@ -88,6 +90,7 @@ class GDMLTransformer(val root: GDML) {
         styles.forEach {
             final.setStyle(it.key, it.value)
         }
+        final.rotationOrder = RotationOrder.ZXY
         onFinish(this@GDMLTransformer)
         return final
     }

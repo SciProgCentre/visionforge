@@ -11,9 +11,9 @@ import info.laht.threekt.objects.Mesh
 class ThreeCompositeFactory(val three: ThreePlugin) : MeshThreeFactory<Composite>(Composite::class) {
 
     override fun buildGeometry(obj: Composite): BufferGeometry {
-        val first = three.buildObject3D(obj.first) as? Mesh ?: error("First part of composite is not a mesh")
+        val first = three.buildObject3D(obj.first.apply { parent = obj.parent }) as? Mesh ?: error("First part of composite is not a mesh")
         first.updateMatrix()
-        val second = three.buildObject3D(obj.second) as? Mesh ?: error("Second part of composite is not a mesh")
+        val second = three.buildObject3D(obj.second.apply { parent = obj.parent }) as? Mesh ?: error("Second part of composite is not a mesh")
         second.updateMatrix()
         val firstCSG = CSG.fromMesh(first)
         val secondCSG = CSG.fromMesh(second)
