@@ -110,6 +110,12 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 }
 
+val VisualObject.prototype: VisualObject? get() = when(this){
+    is Proxy -> prototype
+    is Proxy.ProxyChild -> prototype
+    else -> null
+}
+
 inline fun VisualGroup3D.ref(
     templateName: Name,
     name: String = "",

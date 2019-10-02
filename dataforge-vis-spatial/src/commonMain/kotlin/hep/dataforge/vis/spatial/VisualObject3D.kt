@@ -113,8 +113,8 @@ var VisualObject.material: Meta?
     get() = getProperty(MATERIAL_KEY).node
     set(value) = setProperty(MATERIAL_KEY, value)
 
-var VisualObject.opacity: Double
-    get() = getProperty(OPACITY_KEY).double ?: 1.0
+var VisualObject.opacity: Double?
+    get() = getProperty(OPACITY_KEY).double
     set(value) {
         setProperty(OPACITY_KEY, value)
     }

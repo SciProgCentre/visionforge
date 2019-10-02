@@ -1,10 +1,16 @@
 package hep.dataforge.vis.spatial.tree
 
 import hep.dataforge.io.toJson
+import hep.dataforge.meta.DynamicMeta
+import hep.dataforge.meta.builder
+import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.Proxy
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.OPACITY_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.color
 import hep.dataforge.vis.spatial.opacity
+import hep.dataforge.vis.spatial.prototype
 import hep.dataforge.vis.spatial.visible
 import kotlinx.html.InputType
 import kotlinx.html.dom.append
@@ -18,7 +24,9 @@ fun Element.propertyEditor(item: VisualObject?, name: String?) {
         append {
             div("card") {
                 div("card-body") {
-                    h3(classes = "card-title") { +(name ?: "") }
+                    h3(classes = "card-title") {
+                        +(name ?: "")
+                    }
                     form {
                         div("form-group row") {
                             label("col-form-label col-4") {
@@ -64,21 +72,27 @@ fun Element.propertyEditor(item: VisualObject?, name: String?) {
                     }
                 }
             }
-            (item.properties ?: (item as? Proxy)?.prototype?.properties
-            ?: (item as? Proxy.ProxyChild)?.prototype?.properties)
-                ?.let { config ->
-
-                    div("card") {
-                        div("card-body") {
-                            h3(classes = "card-title") { +"Properties" }
-                        }.apply {
-                            val options = (js("{}") as JSONEditorOptions).apply {
-                                mode = "view"
-                            }
-                            JSONEditor(this, options, JSON.parse(config.toJson().toString()))
+            (item.properties ?: item.prototype?.properties)?.let { config ->
+                div("card") {
+                    div("card-body") {
+                        h3(classes = "card-title") { +"Properties" }
+                    }.apply {
+                        val metaToEdit = config.builder().apply {
+                            VISIBLE_KEY to (item.visible ?: true)
+                            COLOR_KEY to (item.color ?: "#ffffff")
+                            OPACITY_KEY to (item.opacity ?: 1.0)
                         }
+                        //FIXME something rotten in JS-Meta converter
+                        val jsObject: dynamic = JSON.parse(metaToEdit.toJson().toString())
+                        //jsObject.material.color != null
+                        val options = (js("{}") as JSONEditorOptions).apply {
+                            mode = "form"
+                            onChangeJSON = { item.config.update(DynamicMeta(it.asDynamic())) }
+                        }
+                        JSONEditor(this, options, jsObject)
                     }
                 }
+            }
         }
     }
 }
