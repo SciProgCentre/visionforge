@@ -42,6 +42,8 @@ interface VisualObject3D : VisualObject {
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
 
+        val GEOMETRY_KEY = "geometey".asName()
+
         val COLOR_KEY = MATERIAL_KEY + "color"
         val OPACITY_KEY = MATERIAL_KEY + "opacity"
 

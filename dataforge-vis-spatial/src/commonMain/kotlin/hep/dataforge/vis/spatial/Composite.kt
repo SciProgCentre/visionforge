@@ -22,6 +22,11 @@ class Composite(
     val second: VisualObject3D
 ) : AbstractVisualObject(), VisualObject3D {
 
+    init {
+        first.parent = this
+        second.parent = this
+    }
+
     override var position: Point3D? = null
     override var rotation: Point3D? = null
     override var scale: Point3D? = null

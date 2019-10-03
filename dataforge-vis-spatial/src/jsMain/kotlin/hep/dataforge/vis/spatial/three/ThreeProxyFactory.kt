@@ -1,8 +1,9 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.names.startsWith
+import hep.dataforge.names.toName
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Proxy
+import hep.dataforge.vis.spatial.Proxy.Companion.PROXY_CHILD_PROPERTY_PREFIX
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.material
 import hep.dataforge.vis.spatial.visible
@@ -30,18 +31,14 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
         object3D.updatePosition(obj)
 
         obj.onPropertyChange(this) { name, _, _ ->
-            if (object3D is Mesh && name.startsWith(VisualObject3D.MATERIAL_KEY)) {
-                //updated material
-                object3D.material = obj.material.jsMaterial()
-            } else if (
-                name.startsWith(VisualObject3D.position) ||
-                name.startsWith(VisualObject3D.rotation) ||
-                name.startsWith(VisualObject3D.scale)
-            ) {
-                //update position of mesh using this object
-                object3D.updatePosition(obj)
-            } else if (name == VisualObject3D.VISIBLE_KEY) {
-                object3D.visible = obj.visible ?: true
+            if (name.first()?.body == PROXY_CHILD_PROPERTY_PREFIX) {
+                val childName = name.first()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
+                val propertyName = name.cutFirst()
+                val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
+                val child = object3D.findChild(childName)?: error("Object child with name '$childName' not found")
+                child.updateProperty(proxyChild, propertyName)
+            } else {
+                object3D.updateProperty(obj, name)
             }
         }
 

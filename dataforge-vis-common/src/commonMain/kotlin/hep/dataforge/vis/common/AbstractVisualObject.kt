@@ -74,7 +74,7 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: parent?.getProperty(name, inherit) ?: actualStyles[name]
+            properties?.get(name) ?: actualStyles[name] ?: parent?.getProperty(name, inherit)
         } else {
             properties?.get(name) ?: actualStyles[name]
         }

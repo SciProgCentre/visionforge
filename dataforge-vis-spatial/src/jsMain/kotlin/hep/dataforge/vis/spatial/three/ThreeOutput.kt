@@ -58,10 +58,6 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
             camera.updateProjectionMatrix()
         }
 
-//        val width by meta.number(element.offsetWidth).int
-//        val height by meta.number(element.offsetHeight).int
-//        val size = min(width, height)
-//        renderer.setSize(size, size)
         renderer.setSize(element.offsetWidth, element.offsetWidth)
 
         animate()

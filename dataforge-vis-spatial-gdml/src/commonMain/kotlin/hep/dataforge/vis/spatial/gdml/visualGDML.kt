@@ -153,7 +153,7 @@ private fun VisualGroup3D.addPhysicalVolume(
             //optimizing single child case
             if (context.optimizeSingleChild && group.children.size == 1) {
                 this[physVolume.name ?: ""] = group.children.values.first().apply {
-                    //Must ser this to avoid parent reset error
+                    //Must set this to avoid parent reset error
                     parent = null
                     //setting offset from physical volume
                     withPosition(

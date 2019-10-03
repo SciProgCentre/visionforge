@@ -2,11 +2,14 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.boolean
 import hep.dataforge.meta.node
+import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
@@ -115,26 +118,30 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
 
             //add listener to object properties
             obj.onPropertyChange(this) { name, _, _ ->
-                if (name.startsWith(VisualObject3D.MATERIAL_KEY)) {
-                    //updated material
-                    mesh.material = obj.material.jsMaterial()
-                } else if (
-                    name.startsWith(VisualObject3D.position) ||
-                    name.startsWith(VisualObject3D.rotation) ||
-                    name.startsWith(VisualObject3D.scale)
-                ) {
-                    //update position of mesh using this object
-                    mesh.updatePosition(obj)
-                } else if (name == VisualObject3D.VISIBLE_KEY) {
-                    mesh.visible = obj.visible ?: true
-                } else {
-                    //full update
+                mesh.updateProperty(obj, name)
+                if (name.startsWith(GEOMETRY_KEY)) {
                     mesh.geometry = geometryBuilder(obj)
-                    mesh.material = obj.material.jsMaterial()
                 }
             }
             return mesh
         }
+    }
+}
+
+fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
+    if (this is Mesh && propertyName.startsWith(VisualObject3D.MATERIAL_KEY)) {
+        //updated material
+        material = source.material.jsMaterial()
+    } else if (
+        source is VisualObject3D &&
+        (propertyName.startsWith(VisualObject3D.position)
+                || propertyName.startsWith(VisualObject3D.rotation)
+                || propertyName.startsWith(VisualObject3D.scale))
+    ) {
+        //update position of mesh using this object
+        updatePosition(source)
+    } else if (propertyName == VisualObject3D.VISIBLE_KEY) {
+        visible = source.visible ?: true
     }
 }
 

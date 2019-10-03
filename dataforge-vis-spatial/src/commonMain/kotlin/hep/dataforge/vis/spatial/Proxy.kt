@@ -15,6 +15,9 @@ import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 /**
  * A proxy [VisualObject3D] to reuse a template object
@@ -63,6 +66,10 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     private val propertyCache: HashMap<Name, Config> = HashMap()
 
+    fun childPropertyName(childName: Name, propertyName: Name): Name {
+        return NameToken(PROXY_CHILD_PROPERTY_PREFIX, childName.toString()) + propertyName
+    }
+
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         override val children: Map<NameToken, VisualObject>
@@ -89,9 +96,16 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             get() = propertyCache[name]
             set(value) {
                 if (value == null) {
-                    propertyCache.remove(name)
+                    propertyCache.remove(name)?.also {
+                        //Removing listener if it is present
+                        removeChangeListener(this@Proxy)
+                    }
                 } else {
-                    propertyCache[name] = value
+                    propertyCache[name] = value.also {
+                        onPropertyChange(this@Proxy) { propertyName, before, after ->
+                            this@Proxy.propertyChanged(childPropertyName(name, propertyName), before, after)
+                        }
+                    }
                 }
             }
 
@@ -108,13 +122,18 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             }
         }
     }
+
+    companion object {
+        const val PROXY_CHILD_PROPERTY_PREFIX = "@child"
+    }
 }
 
-val VisualObject.prototype: VisualObject? get() = when(this){
-    is Proxy -> prototype
-    is Proxy.ProxyChild -> prototype
-    else -> null
-}
+val VisualObject.prototype: VisualObject?
+    get() = when (this) {
+        is Proxy -> prototype
+        is Proxy.ProxyChild -> prototype
+        else -> null
+    }
 
 inline fun VisualGroup3D.ref(
     templateName: Name,
