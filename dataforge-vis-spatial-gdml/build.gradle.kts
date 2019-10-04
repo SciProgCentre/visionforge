@@ -11,13 +11,13 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("scientifik:gdml:0.1.4-dev-3")
+                api("scientifik:gdml:0.1.4")
             }
         }
         val jsMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
+                //api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
             }
         }
     }

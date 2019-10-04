@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openjfx.gradle.JavaFXOptions
 
 plugins {
-    kotlin("jvm") 
+    id("scientifik.jvm")
     id("org.openjfx.javafxplugin")
 }
 

@@ -112,8 +112,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
                 properties?.get(name)
-                    ?: parent?.getProperty(name, inherit)
                     ?: actualStyles[name]
+                    ?: parent?.getProperty(name, inherit)
                     ?: prototype.getProperty(name, inherit)
             } else {
                 properties?.get(name)
