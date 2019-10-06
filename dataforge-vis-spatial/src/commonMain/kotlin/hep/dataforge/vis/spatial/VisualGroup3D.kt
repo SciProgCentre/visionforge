@@ -20,7 +20,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
-import hep.dataforge.vis.common.MutableVisualGroup
+import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -103,15 +103,15 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 /**
  * A fix for serialization bug that writes all proper parents inside the tree after deserialization
  */
-fun MutableVisualGroup.attachChildren() {
+fun VisualGroup.attachChildren() {
     this.children.values.forEach {
         it.parent = this
-        (it as? MutableVisualGroup)?.attachChildren()
+        (it as? VisualGroup)?.attachChildren()
     }
     if (this is VisualGroup3D) {
-        templates?.apply {
-            parent = this@attachChildren
-            attachChildren()
+        templates?.also {
+            it.parent = this
+            it.attachChildren()
         }
     }
 }

@@ -58,11 +58,12 @@ abstract class AbstractVisualObject : VisualObject {
 
     private var styleCache: Laminate? = null
 
-    protected val actualStyles: Laminate
-        get() = styleCache ?: run {
-            Laminate(style.map { it.toName() }.mapNotNull(::findStyle))
-                .also { styleCache = it }
-        }
+    /**
+     * Collect all styles for this object in a laminate
+     */
+    val appliedStyles: Laminate
+        get() = styleCache ?: Laminate(style.map { it.toName() }.mapNotNull(::findStyle)).also { styleCache = it }
+
 
     /**
      * Helper to reset style cache
@@ -74,9 +75,9 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: actualStyles[name] ?: parent?.getProperty(name, inherit)
+            properties?.get(name) ?: appliedStyles[name] ?: parent?.getProperty(name, inherit)
         } else {
-            properties?.get(name) ?: actualStyles[name]
+            properties?.get(name) ?: appliedStyles[name]
         }
     }
 
