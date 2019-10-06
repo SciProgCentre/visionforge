@@ -56,13 +56,13 @@ abstract class AbstractVisualObject : VisualObject {
         config[name] = value
     }
 
-    private var styleCache: Laminate? = null
+    private var styleCache: Meta? = null
 
     /**
      * Collect all styles for this object in a laminate
      */
-    val appliedStyles: Laminate
-        get() = styleCache ?: Laminate(style.map { it.toName() }.mapNotNull(::findStyle)).also { styleCache = it }
+    protected val appliedStyles: Meta
+        get() = styleCache ?: Laminate(style.map { it.toName() }.mapNotNull(::findStyle)).merge().also { styleCache = it }
 
 
     /**

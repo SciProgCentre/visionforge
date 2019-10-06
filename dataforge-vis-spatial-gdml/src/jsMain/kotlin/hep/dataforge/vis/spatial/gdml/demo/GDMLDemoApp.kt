@@ -4,7 +4,10 @@ import hep.dataforge.context.Global
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
-import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.VisualGroup3D
+import hep.dataforge.vis.spatial.VisualObject3D
+import hep.dataforge.vis.spatial.attachChildren
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
@@ -137,15 +140,15 @@ private class GDMLDemoApp : ApplicationBase() {
         }
 
         solidConfiguration = { parent, solid ->
-            if (!parent.physVolumes.isEmpty()) {
-                opacity = 0.3
-            }
-            if (solid.name.startsWith("Coil")
+            if (parent.physVolumes.isNotEmpty()
+                || solid.name.startsWith("Coil")
                 || solid.name.startsWith("Yoke")
                 || solid.name.startsWith("Magnet")
                 || solid.name.startsWith("Pole")
             ) {
-                opacity = 0.3
+                useStyle("opaque") {
+                    VisualObject3D.OPACITY_KEY to 0.3
+                }
             }
         }
     }
