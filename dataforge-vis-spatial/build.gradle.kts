@@ -22,7 +22,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(project(":dataforge-vis-fx"))
-                implementation("org.fxyz3d:fxyz3d:0.4.0")
+                implementation("org.fxyz3d:fxyz3d:0.5.2")
             }
         }
         jsMain {
@@ -30,7 +30,6 @@ kotlin {
                 implementation(npm("three", "0.106.2"))
                 implementation(npm("@hi-level/three-csg", "1.0.6"))
                 implementation(npm("style-loader"))
-                implementation(npm("element-resize-event"))
                 implementation(npm("inspire-tree","6.0.1"))
                 implementation(npm("inspire-tree-dom","4.0.6"))
                 implementation(npm("jsoneditor"))

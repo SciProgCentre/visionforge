@@ -35,9 +35,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val prototype: VisualObject3D
-        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
-            ?: error("Template with name $templateName not found in $parent")
+    val prototype: VisualObject3D get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
+        ?: error("Template with name $templateName not found in $parent")
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
 
@@ -70,27 +69,29 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         return NameToken(PROXY_CHILD_PROPERTY_PREFIX, childName.toString()) + propertyName
     }
 
+    private fun prototypeFor(name: Name): VisualObject =
+        (prototype as? VisualGroup)?.get(name)
+            ?: error("Prototype with name $name not found in ${this@Proxy}")
+
+
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
+        val prototype: VisualObject by lazy {
+            prototypeFor(name)
+        }
+
         override val children: Map<NameToken, VisualObject>
-            get() = ((prototype as? MutableVisualGroup)?.get(name) as? MutableVisualGroup)
-                ?.children
-                ?.mapValues { (key, _) ->
-                    ProxyChild(
-                        name + key.asName()
-                    )
-                }
-                ?: emptyMap()
+            get() = (prototype as? VisualGroup)?.children?.mapValues { (key, _) ->
+                ProxyChild(
+                    name + key.asName()
+                )
+            } ?: emptyMap()
 
         override fun getStyle(name: Name): Meta? = this@Proxy.getStyle(name)
 
         override fun setStyle(name: Name, meta: Meta) {
             this@Proxy.setStyle(name, meta)
         }
-
-        val prototype: VisualObject
-            get() = (this@Proxy.prototype as? VisualGroup)?.get(name)
-                ?: error("Prototype with name $name not found in ${this@Proxy}")
 
         override var properties: Config?
             get() = propertyCache[name]
@@ -112,15 +113,16 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
                 properties?.get(name)
-                    ?: actualStyles[name]
+                    ?: appliedStyles[name]
                     ?: parent?.getProperty(name, inherit)
                     ?: prototype.getProperty(name, inherit)
             } else {
                 properties?.get(name)
-                    ?: actualStyles[name]
+                    ?: appliedStyles[name]
                     ?: prototype.getProperty(name, inherit)
             }
         }
+
     }
 
     companion object {

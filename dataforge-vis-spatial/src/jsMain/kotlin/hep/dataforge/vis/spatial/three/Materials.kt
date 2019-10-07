@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial.three
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.spatial.Material3D
 import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
@@ -60,4 +61,6 @@ fun Meta?.jsMaterial(): Material {
             }
         }
 }
+
+fun Material3D?.jsMaterial(): Material = this?.config.jsMaterial()
 

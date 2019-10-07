@@ -7,13 +7,9 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Output
-import hep.dataforge.vis.common.Colors.rgbToString
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
@@ -36,16 +32,13 @@ interface VisualObject3D : VisualObject {
     }
 
     companion object {
-        val MATERIAL_KEY = "material".asName()
+
         val VISIBLE_KEY = "visible".asName()
         val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
 
         val GEOMETRY_KEY = "geometey".asName()
-
-        val COLOR_KEY = MATERIAL_KEY + "color"
-        val OPACITY_KEY = MATERIAL_KEY + "opacity"
 
         val x = "x".asName()
         val y = "y".asName()
@@ -111,16 +104,6 @@ var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
     set(value) = setProperty(DETAIL_KEY, value)
 
-var VisualObject.material: Meta?
-    get() = getProperty(MATERIAL_KEY).node
-    set(value) = setProperty(MATERIAL_KEY, value)
-
-var VisualObject.opacity: Double?
-    get() = getProperty(OPACITY_KEY).double
-    set(value) {
-        setProperty(OPACITY_KEY, value)
-    }
-
 var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
@@ -128,32 +111,6 @@ var VisualObject.visible: Boolean?
 var VisualObject.selected: Boolean?
     get() = getProperty(SELECTED_KEY).boolean
     set(value) = setProperty(SELECTED_KEY, value)
-
-fun VisualObject.color(rgb: Int) {
-    setProperty(COLOR_KEY, rgbToString(rgb))
-}
-
-fun VisualObject.color(rgb: String) {
-    setProperty(COLOR_KEY, rgb)
-}
-
-var VisualObject.color: String?
-    get() = getProperty(COLOR_KEY).string
-    set(value) {
-        if (value != null) {
-            color(value)
-        }
-    }
-
-fun VisualObject3D.material(builder: MetaBuilder.() -> Unit) {
-    material = buildMeta(builder)
-}
-
-fun VisualObject3D.color(r: Int, g: Int, b: Int) = material {
-    "red" to r
-    "green" to g
-    "blue" to b
-}
 
 private fun VisualObject3D.position(): Point3D =
     position ?: Point3D(0.0, 0.0, 0.0).also { position = it }

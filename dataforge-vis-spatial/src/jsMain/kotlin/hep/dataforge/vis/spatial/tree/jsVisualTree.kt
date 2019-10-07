@@ -32,7 +32,7 @@ internal fun createInspireTree(block: Config.() -> Unit = {}): InspireTree {
     return InspireTree(config)
 }
 
-fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { obj, name -> }): InspireTree {
+fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }): InspireTree {
 
     val map = HashMap<String, VisualObject>()
 

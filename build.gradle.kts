@@ -1,6 +1,6 @@
 val dataforgeVersion by extra("0.1.3")
 
-plugins{
+plugins {
     val kotlinVersion = "1.3.50"
     val toolsVersion = "0.2.0"
 
@@ -16,6 +16,7 @@ plugins{
 allprojects {
     repositories {
         maven("https://dl.bintray.com/pdvrieze/maven")
+        maven("http://maven.jzy3d.org/releases")
     }
 
     group = "hep.dataforge"

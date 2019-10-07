@@ -5,8 +5,8 @@ import hep.dataforge.meta.DynamicMeta
 import hep.dataforge.meta.builder
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.OPACITY_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.color
 import hep.dataforge.vis.spatial.opacity
