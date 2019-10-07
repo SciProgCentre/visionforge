@@ -9,6 +9,7 @@ import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
 import info.laht.threekt.core.BufferGeometry
@@ -101,9 +102,9 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
         val WIREFRAME_KEY = "wireframe".asName()
         val ENABLED_KEY = "enabled".asName()
         val EDGES_ENABLED_KEY = EDGES_KEY + ENABLED_KEY
-        val EDGES_MATERIAL_KEY = EDGES_KEY + VisualObject3D.MATERIAL_KEY
+        val EDGES_MATERIAL_KEY = EDGES_KEY + MATERIAL_KEY
         val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
-        val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + VisualObject3D.MATERIAL_KEY
+        val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + MATERIAL_KEY
 
         fun <T : VisualObject3D> buildMesh(obj: T, geometryBuilder: (T) -> BufferGeometry): Mesh {
             //TODO add caching for geometries using templates
@@ -129,7 +130,7 @@ abstract class MeshThreeFactory<T : VisualObject3D>(override val type: KClass<ou
 }
 
 fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
-    if (this is Mesh && propertyName.startsWith(VisualObject3D.MATERIAL_KEY)) {
+    if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         //updated material
         material = source.material.jsMaterial()
     } else if (

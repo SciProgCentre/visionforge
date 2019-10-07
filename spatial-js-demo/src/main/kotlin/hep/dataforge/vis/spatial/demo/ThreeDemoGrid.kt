@@ -52,6 +52,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
         return outputs.getOrPut(name) {
             if (type != VisualObject::class) error("Supports only DisplayObject")
             val output = three.output(meta = meta) {
+                "minSize" to 500
                 "axis" to {
                     "size" to 500
                 }
@@ -86,6 +87,6 @@ fun ThreeDemoGrid.demo(name: String, title: String = name, block: VisualGroup3D.
     val meta = buildMeta {
         "title" to title
     }
-    val output = get<VisualObject>(VisualObject::class, name.toName(), meta = meta)
+    val output = get(VisualObject::class, name.toName(), meta = meta)
     output.render(action = block)
 }

@@ -35,9 +35,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val prototype: VisualObject3D get() = getPrototype()
-
-    private fun getPrototype(): VisualObject3D = (parent as? VisualGroup3D)?.getTemplate(templateName)
+    val prototype: VisualObject3D get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
         ?: error("Template with name $templateName not found in $parent")
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)

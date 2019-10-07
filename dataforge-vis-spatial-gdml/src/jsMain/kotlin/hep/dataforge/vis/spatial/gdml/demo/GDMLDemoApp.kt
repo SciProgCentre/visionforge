@@ -4,6 +4,7 @@ import hep.dataforge.context.Global
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.hmr.ApplicationBase
 import hep.dataforge.vis.hmr.startApplication
+import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
@@ -147,7 +148,7 @@ private class GDMLDemoApp : ApplicationBase() {
                 || solid.name.startsWith("Pole")
             ) {
                 useStyle("opaque") {
-                    VisualObject3D.OPACITY_KEY to 0.3
+                    OPACITY_KEY to 0.3
                 }
             }
         }

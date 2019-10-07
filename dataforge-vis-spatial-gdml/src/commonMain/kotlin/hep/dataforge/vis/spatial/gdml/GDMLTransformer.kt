@@ -8,10 +8,10 @@ import hep.dataforge.names.toName
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.applyStyle
+import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.RotationOrder
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.rotationOrder
 import scientifik.gdml.*
 import kotlin.collections.set

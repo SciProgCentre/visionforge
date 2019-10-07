@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConvexTest {
+    @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {
         val group = VisualGroup3D().apply {

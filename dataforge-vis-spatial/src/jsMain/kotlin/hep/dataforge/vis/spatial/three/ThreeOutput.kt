@@ -4,7 +4,6 @@ import hep.dataforge.context.Context
 import hep.dataforge.meta.*
 import hep.dataforge.output.Output
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.hmr.require
 import hep.dataforge.vis.spatial.VisualObject3D
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.helpers.AxesHelper
@@ -13,8 +12,7 @@ import info.laht.threekt.scenes.Scene
 import org.w3c.dom.HTMLElement
 import kotlin.browser.window
 import kotlin.dom.clear
-
-private val elementResizeEvent = require("element-resize-event")
+import kotlin.math.max
 
 class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<VisualObject3D> {
 
@@ -53,12 +51,14 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<V
 
         element.appendChild(renderer.domElement)
 
-        elementResizeEvent(element) {
+        val minSize by meta.number(0).int
+
+        renderer.setSize(max(minSize, element.offsetWidth), max(minSize, element.offsetWidth))
+
+        element.onresize = {
             renderer.setSize(element.offsetWidth, element.offsetWidth)
             camera.updateProjectionMatrix()
         }
-
-        renderer.setSize(element.offsetWidth, element.offsetWidth)
 
         animate()
     }
