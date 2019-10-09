@@ -69,7 +69,7 @@ class GDMLTransformer(val root: GDML) {
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
         final.templates = templates
         styleCache.forEach {
-            final.addStyle(it.key, it.value)
+            final.addStyle(it.key, it.value, false)
         }
         final.rotationOrder = RotationOrder.ZXY
         onFinish(this@GDMLTransformer)

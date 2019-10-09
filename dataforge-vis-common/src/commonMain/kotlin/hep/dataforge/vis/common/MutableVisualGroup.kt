@@ -41,7 +41,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     /**
      * Add or replace style with given name
      */
-    fun addStyle(name: Name, meta: Meta)
+    fun addStyle(name: Name, meta: Meta, apply: Boolean = true)
 
     operator fun get(name: Name): VisualObject? {
         return when {

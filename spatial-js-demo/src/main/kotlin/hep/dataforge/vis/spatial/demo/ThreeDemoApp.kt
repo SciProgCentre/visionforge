@@ -1,10 +1,10 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.ContextBuilder
+import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.hmr.ApplicationBase
-import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.startApplication
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

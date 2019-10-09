@@ -5,8 +5,14 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
-import hep.dataforge.names.*
-import hep.dataforge.vis.common.*
+import hep.dataforge.names.Name
+import hep.dataforge.names.NameToken
+import hep.dataforge.names.asName
+import hep.dataforge.names.plus
+import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.MutableVisualGroup
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.component1
@@ -35,16 +41,21 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
 
-    override fun addStyle(name: Name, meta: Meta) {
-        (parent as VisualGroup?)?.addStyle(name, meta)
+    override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
+        (parent as VisualGroup?)?.addStyle(name, meta, apply)
         //do nothing
     }
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            super.getProperty(name, false) ?: prototype.getProperty(name, false) ?: parent?.getProperty(name, inherit)
+            properties?.get(name)
+                ?: mergedStyles[name]
+                ?: prototype.getProperty(name, false)
+                ?: parent?.getProperty(name, inherit)
         } else {
-            super.getProperty(name, false) ?: prototype.getProperty(name, false)
+            properties?.get(name)
+                ?: mergedStyles[name]
+                ?: prototype.getProperty(name, false)
         }
     }
 
@@ -93,8 +104,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
         override fun getStyle(name: Name): Meta? = this@Proxy.getStyle(name)
 
-        override fun addStyle(name: Name, meta: Meta) {
-            this@Proxy.addStyle(name, meta)
+        override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
+            this@Proxy.addStyle(name, meta, apply)
         }
 
         override var properties: Config?
@@ -118,8 +129,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             return if (inherit) {
                 properties?.get(name)
                     ?: mergedStyles[name]
-                    ?: parent?.getProperty(name, inherit)
                     ?: prototype.getProperty(name, inherit)
+                    ?: parent?.getProperty(name, inherit)
             } else {
                 properties?.get(name)
                     ?: mergedStyles[name]

@@ -1,6 +1,4 @@
-package hep.dataforge.vis.hmr
-
-import kotlinext.js.objectAssign
+package hep.dataforge.vis
 
 inline fun <T : Any> jsObject(builder: T.() -> Unit): T {
     val obj: T = js("({})") as T

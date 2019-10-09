@@ -27,7 +27,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
 
     override fun getStyle(name: Name): Meta? = styleSheet[name]
 
-    override fun addStyle(name: Name, meta: Meta) {
+    override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
         fun VisualObject.applyStyle(name: Name, meta: Meta) {
             if (styles.contains(name)) {
                 //full update
@@ -45,7 +45,9 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
             }
         }
         styleSheet[name] = meta
-        applyStyle(name, meta)
+        if (apply) {
+            applyStyle(name, meta)
+        }
     }
 
 
