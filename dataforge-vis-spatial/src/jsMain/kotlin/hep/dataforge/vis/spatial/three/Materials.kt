@@ -4,6 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.Material3D
+import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
@@ -13,8 +14,37 @@ import info.laht.threekt.math.Color
 object Materials {
     val DEFAULT_COLOR = Color(Colors.darkgreen)
     val DEFAULT = MeshPhongMaterial().apply {
-        this.color.set(DEFAULT_COLOR)
+        color.set(DEFAULT_COLOR)
     }
+    val DEFAULT_LINE_COLOR = Color(Colors.black)
+    val DEFAULT_LINE = LineBasicMaterial().apply {
+        color.set(DEFAULT_LINE_COLOR)
+    }
+
+
+    private val materialCache = HashMap<Meta, Material>()
+    private val lineMaterialCache = HashMap<Meta, Material>()
+
+    fun getMaterial(meta: Meta): Material = materialCache.getOrPut(meta) {
+        MeshBasicMaterial().apply {
+            color = meta["color"]?.color() ?: DEFAULT_COLOR
+            opacity = meta["opacity"]?.double ?: 1.0
+            transparent = meta["transparent"].boolean ?: (opacity < 1.0)
+            //node["specularColor"]?.let { specular = it.color() }
+            //side = 2
+        }
+    }
+
+    fun getLineMaterial(meta: Meta): Material = lineMaterialCache.getOrPut(meta) {
+        LineBasicMaterial().apply {
+            color = meta["color"]?.color() ?: DEFAULT_LINE_COLOR
+            opacity = meta["opacity"].double ?: 1.0
+            transparent = meta["transparent"].boolean ?: (opacity < 1.0)
+            linewidth = meta["thickness"].double ?: 1.0
+        }
+    }
+
+
 }
 
 /**
@@ -41,26 +71,26 @@ fun MetaItem<*>.color(): Color {
     }
 }
 
-private val materialCache = HashMap<Meta, Material>()
-
 /**
  * Infer Three material based on meta item
  */
 fun Meta?.jsMaterial(): Material {
     return if (this == null) {
         Materials.DEFAULT
-    } else
-    //TODO add more options for material
-        return materialCache.getOrPut(this) {
-            MeshBasicMaterial().apply {
-                color = get("color")?.color() ?: Materials.DEFAULT_COLOR
-                opacity = get("opacity")?.double ?: 1.0
-                transparent = get("transparent").boolean ?: (opacity < 1.0)
-                //node["specularColor"]?.let { specular = it.color() }
-                //side = 2
-            }
-        }
+    } else {
+        Materials.getMaterial(this)
+    }
 }
 
+fun Meta?.jsLineMaterial(): Material {
+    return if (this == null) {
+        Materials.DEFAULT_LINE
+    } else{
+        Materials.getLineMaterial(this)
+    }
+}
+
+
 fun Material3D?.jsMaterial(): Material = this?.config.jsMaterial()
+fun Material3D?.jsLineMaterial(): Material = this?.config.jsLineMaterial()
 

@@ -130,6 +130,21 @@ private class ThreeDemoApp : ApplicationBase() {
                     }
                 }
             }
+            demo("lines", "Track / line segments") {
+                sphere(100) {
+                    color(Colors.blue)
+                    detail = 50
+                    opacity = 0.4
+                }
+                repeat(20) {
+                    polyline(Point3D(100, 100, 100), Point3D(-100, -100, -100)) {
+                        thickness = 208.0
+                        rotationX = it * PI2 / 20
+                        color(Colors.green)
+                             //rotationY = it * PI2 / 20
+                    }
+                }
+            }
         }
 
 

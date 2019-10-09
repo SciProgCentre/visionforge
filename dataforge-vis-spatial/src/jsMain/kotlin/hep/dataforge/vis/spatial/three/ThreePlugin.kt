@@ -33,6 +33,7 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[Convex::class] = ThreeConvexFactory
         objectFactories[Sphere::class] = ThreeSphereFactory
         objectFactories[ConeSegment::class] = ThreeCylinderFactory
+        objectFactories[PolyLine::class] = ThreeLineFactory
     }
 
     private fun findObjectFactory(type: KClass<out VisualObject3D>): ThreeFactory<*>? {
