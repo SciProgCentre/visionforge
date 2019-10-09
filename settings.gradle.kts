@@ -5,6 +5,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://kotlin.bintray.com/kotlinx")
         maven("https://dl.bintray.com/kotlin/kotlin-eap")
+        maven("https://dl.bintray.com/mipt-npm/dataforge")
         maven("https://dl.bintray.com/mipt-npm/scientifik")
         maven("https://dl.bintray.com/mipt-npm/dev")
     }
@@ -17,7 +18,6 @@ pluginManagement {
                 "org.jetbrains.kotlin.jvm" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
                 "org.jetbrains.kotlin.js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
                 "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-                "kotlin2js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
                 "org.jetbrains.kotlin.frontend" -> useModule("org.jetbrains.kotlin:kotlin-frontend-plugin:${requested.version}")
                 "scientifik.mpp", "scientifik.publish", "scientifik.jvm", "scientifik.js" -> useModule("scientifik:gradle-tools:${requested.version}")
                 "org.openjfx.javafxplugin" -> useModule("org.openjfx:javafx-plugin:${requested.version}")
