@@ -1,9 +1,6 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.Configurable
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.MetaRepr
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -56,11 +53,16 @@ interface VisualObject : MetaRepr, Configurable {
      */
     fun removeChangeListener(owner: Any?)
 
-    var style: List<String>
+    /**
+     * List of names of styles applied to this object
+     */
+    var styles: List<Name>
+
+    fun findAllStyles(): Laminate = Laminate(styles.distinct().mapNotNull(::findStyle))
 
     companion object {
         const val TYPE = "visual"
-        val STYLE_KEY = "style".asName()
+        val STYLE_KEY = "@style".asName()
 
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
@@ -71,5 +73,5 @@ fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>?
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
 fun VisualObject.applyStyle(name: String) {
-    style = style + name
+    styles = styles + name.toName()
 }

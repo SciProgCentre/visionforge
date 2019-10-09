@@ -8,7 +8,7 @@
 @file:JsModule("eventemitter2")
 @file: JsNonModule
 
-package hep.dataforge.vis.spatial.tree
+package hep.dataforge.vis.spatial.editor
 
 import kotlin.js.Promise
 

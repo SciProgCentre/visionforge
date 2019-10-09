@@ -5,14 +5,8 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.NameSerializer
 import hep.dataforge.meta.*
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.plus
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.MutableVisualGroup
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.names.*
+import hep.dataforge.vis.common.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.component1
@@ -35,13 +29,14 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val prototype: VisualObject3D get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
-        ?: error("Template with name $templateName not found in $parent")
+    val prototype: VisualObject3D
+        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
+            ?: error("Template with name $templateName not found in $parent")
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
 
-    override fun setStyle(name: Name, meta: Meta) {
-        (parent as VisualGroup?)?.setStyle(name, meta)
+    override fun addStyle(name: Name, meta: Meta) {
+        (parent as VisualGroup?)?.addStyle(name, meta)
         //do nothing
     }
 
@@ -74,6 +69,15 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             ?: error("Prototype with name $name not found in ${this@Proxy}")
 
 
+    override var styles: List<Name>
+        get() = super.styles + prototype.styles
+        set(value) {
+            setProperty(VisualObject.STYLE_KEY, value.map { it.toString() })
+            styleChanged()
+        }
+
+    //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
+
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         val prototype: VisualObject by lazy {
@@ -89,8 +93,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
         override fun getStyle(name: Name): Meta? = this@Proxy.getStyle(name)
 
-        override fun setStyle(name: Name, meta: Meta) {
-            this@Proxy.setStyle(name, meta)
+        override fun addStyle(name: Name, meta: Meta) {
+            this@Proxy.addStyle(name, meta)
         }
 
         override var properties: Config?
@@ -113,12 +117,12 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
                 properties?.get(name)
-                    ?: appliedStyles[name]
+                    ?: mergedStyles[name]
                     ?: parent?.getProperty(name, inherit)
                     ?: prototype.getProperty(name, inherit)
             } else {
                 properties?.get(name)
-                    ?: appliedStyles[name]
+                    ?: mergedStyles[name]
                     ?: prototype.getProperty(name, inherit)
             }
         }

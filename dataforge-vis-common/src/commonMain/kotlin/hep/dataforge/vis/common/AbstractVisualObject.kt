@@ -19,10 +19,10 @@ abstract class AbstractVisualObject : VisualObject {
 
     abstract override var properties: Config?
 
-    override var style: List<String>
-        get() = properties?.let { it[STYLE_KEY].stringList } ?: emptyList()
+    override var styles: List<Name>
+        get() = properties?.get(STYLE_KEY).stringList.map(String::toName)
         set(value) {
-            setProperty(STYLE_KEY, value)
+            setProperty(STYLE_KEY, value.map { it.toString() })
             styleChanged()
         }
 
@@ -61,8 +61,10 @@ abstract class AbstractVisualObject : VisualObject {
     /**
      * Collect all styles for this object in a laminate
      */
-    protected val appliedStyles: Meta
-        get() = styleCache ?: Laminate(style.map { it.toName() }.mapNotNull(::findStyle)).merge().also { styleCache = it }
+    protected val mergedStyles: Meta
+        get() = styleCache ?: findAllStyles().merge().also {
+            styleCache = it
+        }
 
 
     /**
@@ -75,9 +77,9 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: appliedStyles[name] ?: parent?.getProperty(name, inherit)
+            properties?.get(name) ?: mergedStyles[name] ?: parent?.getProperty(name, inherit)
         } else {
-            properties?.get(name) ?: appliedStyles[name]
+            properties?.get(name) ?: mergedStyles[name]
         }
     }
 
@@ -90,7 +92,7 @@ abstract class AbstractVisualObject : VisualObject {
     }
 }
 
-internal fun VisualObject.findStyle(styleName: Name): Meta? {
+fun VisualObject.findStyle(styleName: Name): Meta? {
     if (this is VisualGroup) {
         val style = getStyle(styleName)
         if (style != null) return style

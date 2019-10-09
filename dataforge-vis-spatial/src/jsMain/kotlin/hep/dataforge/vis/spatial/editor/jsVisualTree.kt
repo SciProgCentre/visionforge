@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 
-package hep.dataforge.vis.spatial.tree
+package hep.dataforge.vis.spatial.editor
 
 import hep.dataforge.meta.string
 import hep.dataforge.names.EmptyName
@@ -69,12 +69,14 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }):
 
     fun TreeNode.fillChildren(group: VisualGroup, groupName: Name) {
         group.children.forEach { (token, obj) ->
-            val name = groupName + token
-            val nodeConfig = generateNodeConfig(obj, name)
-            val childNode = addChild(nodeConfig)
-            map[childNode.id] = obj
-            if (obj is VisualGroup) {
-                childNode.fillChildren(obj, name)
+            if(! token.body.startsWith("@")) {
+                val name = groupName + token
+                val nodeConfig = generateNodeConfig(obj, name)
+                val childNode = addChild(nodeConfig)
+                map[childNode.id] = obj
+                if (obj is VisualGroup) {
+                    childNode.fillChildren(obj, name)
+                }
             }
         }
     }

@@ -19,14 +19,17 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
      */
     abstract override val children: Map<NameToken, VisualObject> //get() = _children
 
-    //TODO replace by custom object with get/set functionality
-    protected abstract val styles: MutableMap<Name, Meta>
+    /**
+     * Styles, defined in this group. A style could be defined but not applied
+     * TODO replace by custom object with get/set functionality
+     */
+    protected abstract val styleSheet: MutableMap<Name, Meta>
 
-    override fun getStyle(name: Name): Meta? = styles[name]
+    override fun getStyle(name: Name): Meta? = styleSheet[name]
 
-    override fun setStyle(name: Name, meta: Meta) {
+    override fun addStyle(name: Name, meta: Meta) {
         fun VisualObject.applyStyle(name: Name, meta: Meta) {
-            if (style.contains(name.toString())) {
+            if (styles.contains(name)) {
                 //full update
                 //TODO do a fine grained update
                 if (this is AbstractVisualObject) {
@@ -41,7 +44,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
                 }
             }
         }
-        styles[name] = meta
+        styleSheet[name] = meta
         applyStyle(name, meta)
     }
 

@@ -6,7 +6,7 @@
     "EXTERNAL_DELEGATION"
 )
 
-package hep.dataforge.vis.spatial.tree
+package hep.dataforge.vis.spatial.editor
 
 import org.w3c.dom.HTMLElement
 

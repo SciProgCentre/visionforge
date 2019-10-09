@@ -40,7 +40,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
-    override val styles = HashMap<Name, Meta>()
+    override val styleSheet = HashMap<Name, Meta>()
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

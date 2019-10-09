@@ -15,9 +15,12 @@ import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.tree.propertyEditor
-import hep.dataforge.vis.spatial.tree.render
-import hep.dataforge.vis.spatial.tree.toTree
+import hep.dataforge.vis.spatial.transform.RemoveSingleChild
+import hep.dataforge.vis.spatial.transform.UnRef
+import hep.dataforge.vis.spatial.transform.transformInPlace
+import hep.dataforge.vis.spatial.editor.propertyEditor
+import hep.dataforge.vis.spatial.editor.render
+import hep.dataforge.vis.spatial.editor.toTree
 import kotlinx.html.InputType
 import kotlinx.html.dom.append
 import kotlinx.html.js.input
@@ -62,7 +65,7 @@ private class GDMLDemoApp : ApplicationBase() {
                 val string = result as String
 
 //                try {
-                    block(file.name, string)
+                block(file.name, string)
 //                } catch (ex: Exception) {
 //                    console.error(ex)
 //                }
@@ -129,23 +132,24 @@ private class GDMLDemoApp : ApplicationBase() {
         volumeAction = { volume ->
             when {
                 volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
+//                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
                 volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
+                //              volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
                 volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
-                else -> GDMLTransformer.Action.ACCEPT
+//                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
+                else -> GDMLTransformer.Action.CACHE
             }
         }
 
         solidConfiguration = { parent, solid ->
-            if (parent.physVolumes.isNotEmpty()
-                || solid.name.startsWith("Coil")
+            if (
+                solid.name.startsWith("Coil")
                 || solid.name.startsWith("Yoke")
                 || solid.name.startsWith("Magnet")
                 || solid.name.startsWith("Pole")
+                || parent.physVolumes.isNotEmpty()
             ) {
                 useStyle("opaque") {
                     OPACITY_KEY to 0.3
@@ -184,6 +188,9 @@ private class GDMLDemoApp : ApplicationBase() {
                     error("File extension is not recognized: $name")
                 }
             }
+
+            //Optimize tree
+            //(visual as? VisualGroup3D)?.transformInPlace(UnRef, RemoveSingleChild)
 
             message("Rendering")
             val output = three.output(canvas as HTMLElement)

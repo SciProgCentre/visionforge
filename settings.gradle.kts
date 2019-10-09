@@ -32,6 +32,7 @@ rootProject.name = "dataforge-vis"
 
 include(
     ":dataforge-vis-common",
+    ":wrappers",
     ":dataforge-vis-fx",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-gdml",
