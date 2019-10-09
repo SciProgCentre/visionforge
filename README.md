@@ -1,6 +1,6 @@
 # DataForge Plugins for Visualisation
 
-This repository contains [DataForge](http://www.inr.ru/~nozik/dataforge/) 
+This repository contains [DataForge](http://npm.mipt.ru/dataforge/) 
 (also [here](https://github.com/mipt-npm/dataforge-core)) components useful for visualization in
 various scientific applications. Currently, the main application is 3D visualization for accelerator 
 experiments.

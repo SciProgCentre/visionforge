@@ -12,6 +12,9 @@ internal data class PropertyListener(
     val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
 )
 
+/**
+ * Abstract implementation of [VisualObject]
+ */
 abstract class AbstractVisualObject : VisualObject {
 
     @Transient
@@ -19,6 +22,9 @@ abstract class AbstractVisualObject : VisualObject {
 
     abstract override var properties: Config?
 
+    /**
+     * Style(s) of the object
+     */
     override var style: List<String>
         get() = properties?.let { it[STYLE_KEY].stringList } ?: emptyList()
         set(value) {

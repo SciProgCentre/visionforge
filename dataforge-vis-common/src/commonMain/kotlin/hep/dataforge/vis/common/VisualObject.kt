@@ -67,9 +67,19 @@ interface VisualObject : MetaRepr, Configurable {
     }
 }
 
+/**
+ * Get [VisualObject] property using key as a String
+ */
 fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
+
+/**
+ * Set [VisualObject] property using key as a String
+ */
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
+/**
+ *  Apply style to [VisualObject] by adding it to the [style] list
+ */
 fun VisualObject.applyStyle(name: String) {
     style = style + name
 }

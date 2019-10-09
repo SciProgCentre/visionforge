@@ -4,6 +4,9 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
 
+/**
+ * Represents a group of [VisualObject] instances
+ */
 interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     /**
      * A map of top level named children
@@ -52,6 +55,9 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     }
 }
 
+/**
+ * Mutable version of [VisualGroup]
+ */
 interface MutableVisualGroup : VisualGroup {
 
     /**

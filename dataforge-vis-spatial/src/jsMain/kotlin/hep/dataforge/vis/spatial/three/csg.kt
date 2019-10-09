@@ -16,6 +16,9 @@ import info.laht.threekt.math.Matrix4
 import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 
+/**
+ * Constructive Solid Geometry
+ */
 open external class CSG {
     open var polygons: Array<Polygon>
     open fun clone(): CSG

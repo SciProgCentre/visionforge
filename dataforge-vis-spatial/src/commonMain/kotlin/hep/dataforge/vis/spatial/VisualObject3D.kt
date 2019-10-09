@@ -14,6 +14,9 @@ import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
 
+/**
+ * Interface for 3-dimensional [VisualObject]
+ */
 interface VisualObject3D : VisualObject {
     var position: Point3D?
     var rotation: Point3D?
