@@ -7,7 +7,7 @@
     "unused"
 )
 
-package hep.dataforge.vis.spatial.tree
+package hep.dataforge.vis.spatial.editor
 
 import kotlin.js.Promise
 import kotlin.js.RegExp

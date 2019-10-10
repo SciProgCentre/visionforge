@@ -10,6 +10,7 @@ import hep.dataforge.output.Output
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
@@ -40,6 +41,7 @@ interface VisualObject3D : VisualObject {
         val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
+        val IGNORE_KEY = "ignore".asName()
 
         val GEOMETRY_KEY = "geometey".asName()
 
@@ -110,6 +112,14 @@ var VisualObject3D.detail: Int?
 var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
+
+/**
+ * If this property is true, the object will be ignored on render.
+ * Property is not inherited.
+ */
+var VisualObject.ignore: Boolean?
+    get() = getProperty(IGNORE_KEY,false).boolean
+    set(value) = setProperty(IGNORE_KEY, value)
 
 var VisualObject.selected: Boolean?
     get() = getProperty(SELECTED_KEY).boolean

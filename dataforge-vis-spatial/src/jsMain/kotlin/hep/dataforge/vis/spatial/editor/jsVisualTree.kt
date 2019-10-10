@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 
-package hep.dataforge.vis.spatial.tree
+package hep.dataforge.vis.spatial.editor
 
 import hep.dataforge.meta.string
 import hep.dataforge.names.EmptyName
@@ -9,21 +9,19 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.getProperty
+import hep.dataforge.vis.jsObject
 import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.visible
-import org.w3c.dom.HTMLElement
+import info.laht.threekt.loaders.Cache.clear
+import kotlinx.html.div
+import kotlinx.html.dom.append
+import org.w3c.dom.Element
 import kotlin.js.json
 
 operator fun Name.plus(other: NameToken): Name = Name(tokens + other)
 
-fun InspireTree.render(element: HTMLElement, block: DomConfig.() -> Unit = {}) {
-    val config = (json(
-        "target" to element
-    ) as DomConfig).apply(block)
-    InspireTreeDOM(this, config)
-}
 
-internal fun createInspireTree(block: Config.() -> Unit = {}): InspireTree {
+private fun createInspireTree(block: Config.() -> Unit = {}): InspireTree {
     val config = (json(
         "checkbox" to json(
             "autoCheckChildren" to false
@@ -32,7 +30,7 @@ internal fun createInspireTree(block: Config.() -> Unit = {}): InspireTree {
     return InspireTree(config)
 }
 
-fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }): InspireTree {
+private fun VisualObject.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }): InspireTree {
 
     val map = HashMap<String, VisualObject>()
 
@@ -67,14 +65,18 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }):
 
     }
 
-    fun TreeNode.fillChildren(group: VisualGroup, groupName: Name) {
-        group.children.forEach { (token, obj) ->
-            val name = groupName + token
-            val nodeConfig = generateNodeConfig(obj, name)
-            val childNode = addChild(nodeConfig)
-            map[childNode.id] = obj
-            if (obj is VisualGroup) {
-                childNode.fillChildren(obj, name)
+    fun TreeNode.fillChildren(group: VisualObject, groupName: Name) {
+        if(group is VisualGroup) {
+            group.children.forEach { (token, obj) ->
+                if (!token.body.startsWith("@")) {
+                    val name = groupName + token
+                    val nodeConfig = generateNodeConfig(obj, name)
+                    val childNode = addChild(nodeConfig)
+                    map[childNode.id] = obj
+                    if (obj is VisualGroup) {
+                        childNode.fillChildren(obj, name)
+                    }
+                }
             }
         }
     }
@@ -118,4 +120,17 @@ fun VisualGroup.toTree(onFocus: (VisualObject?, String?) -> Unit = { _, _ -> }):
     inspireTree.collapseDeep()
 
     return inspireTree
+}
+
+fun Element.visualObjectTree(group: VisualObject, onFocus: (VisualObject?, String?) -> Unit) {
+    clear()
+    append {
+        card("Visual object tree") {
+            val domConfig = jsObject<DomConfig> {
+                target = div()
+                showCheckboxes = false
+            }
+            InspireTreeDOM(group.toTree(onFocus), domConfig)
+        }
+    }
 }

@@ -33,6 +33,7 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[Convex::class] = ThreeConvexFactory
         objectFactories[Sphere::class] = ThreeSphereFactory
         objectFactories[ConeSegment::class] = ThreeCylinderFactory
+        objectFactories[PolyLine::class] = ThreeLineFactory
     }
 
     private fun findObjectFactory(type: KClass<out VisualObject3D>): ThreeFactory<*>? {
@@ -46,7 +47,7 @@ class ThreePlugin : AbstractPlugin() {
             is VisualGroup3D -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (name, child) ->
-                    if (child is VisualObject3D) {
+                    if (child is VisualObject3D && child.ignore != true) {
                         try {
                             val object3D = buildObject3D(child)
                             object3D.name = name.toString()

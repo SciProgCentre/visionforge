@@ -47,7 +47,7 @@ private fun VisualGroup3D.addSolid(
     name: String = "",
     block: VisualObject3D.() -> Unit = {}
 ): VisualObject3D {
-    context.solidAdded(solid)
+    //context.solidAdded(solid)
     val lScale = solid.lscale(context.lUnit)
     val aScale = solid.ascale()
     return when (solid) {
@@ -150,31 +150,13 @@ private fun VisualGroup3D.addPhysicalVolume(
     when (context.volumeAction(volume)) {
         GDMLTransformer.Action.ACCEPT -> {
             val group = volume(context, volume)
-            //optimizing single child case
-            if (context.optimizeSingleChild && group.children.size == 1) {
-                this[physVolume.name ?: ""] = group.children.values.first().apply {
-                    //Must set this to avoid parent reset error
-                    parent = null
-                    //setting offset from physical volume
-                    withPosition(
-                        context.lUnit,
-                        physVolume.resolvePosition(context.root),
-                        physVolume.resolveRotation(context.root),
-                        physVolume.resolveScale(context.root)
-                    )
-                    // in case when both phys volume and underlying volume have offset
-                    position += group.position
-                    rotation += group.rotation
-                }
-            } else {
-                this[physVolume.name ?: ""] = group.apply {
-                    withPosition(
-                        context.lUnit,
-                        physVolume.resolvePosition(context.root),
-                        physVolume.resolveRotation(context.root),
-                        physVolume.resolveScale(context.root)
-                    )
-                }
+            this[physVolume.name ?: ""] = group.apply {
+                withPosition(
+                    context.lUnit,
+                    physVolume.resolvePosition(context.root),
+                    physVolume.resolveRotation(context.root),
+                    physVolume.resolveScale(context.root)
+                )
             }
         }
         GDMLTransformer.Action.CACHE -> {

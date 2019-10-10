@@ -1,4 +1,4 @@
-package hep.dataforge.vis.hmr
+package hep.dataforge.vis
 
 import kotlin.browser.document
 import kotlin.dom.hasClass

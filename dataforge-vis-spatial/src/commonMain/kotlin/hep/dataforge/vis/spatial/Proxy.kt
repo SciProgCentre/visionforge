@@ -35,21 +35,27 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     /**
      * Recursively search for defined template in the parent
      */
-    val prototype: VisualObject3D get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
-        ?: error("Template with name $templateName not found in $parent")
+    val prototype: VisualObject3D
+        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
+            ?: error("Template with name $templateName not found in $parent")
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
 
-    override fun setStyle(name: Name, meta: Meta) {
-        (parent as VisualGroup?)?.setStyle(name, meta)
+    override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
+        (parent as VisualGroup?)?.addStyle(name, meta, apply)
         //do nothing
     }
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            super.getProperty(name, false) ?: prototype.getProperty(name, false) ?: parent?.getProperty(name, inherit)
+            properties?.get(name)
+                ?: mergedStyles[name]
+                ?: prototype.getProperty(name, false)
+                ?: parent?.getProperty(name, inherit)
         } else {
-            super.getProperty(name, false) ?: prototype.getProperty(name, false)
+            properties?.get(name)
+                ?: mergedStyles[name]
+                ?: prototype.getProperty(name, false)
         }
     }
 
@@ -74,6 +80,15 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             ?: error("Prototype with name $name not found in ${this@Proxy}")
 
 
+    override var styles: List<Name>
+        get() = super.styles + prototype.styles
+        set(value) {
+            setProperty(VisualObject.STYLE_KEY, value.map { it.toString() })
+            styleChanged()
+        }
+
+    //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
+
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         val prototype: VisualObject by lazy {
@@ -89,8 +104,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
         override fun getStyle(name: Name): Meta? = this@Proxy.getStyle(name)
 
-        override fun setStyle(name: Name, meta: Meta) {
-            this@Proxy.setStyle(name, meta)
+        override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
+            this@Proxy.addStyle(name, meta, apply)
         }
 
         override var properties: Config?
@@ -113,12 +128,12 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
                 properties?.get(name)
-                    ?: appliedStyles[name]
-                    ?: parent?.getProperty(name, inherit)
+                    ?: mergedStyles[name]
                     ?: prototype.getProperty(name, inherit)
+                    ?: parent?.getProperty(name, inherit)
             } else {
                 properties?.get(name)
-                    ?: appliedStyles[name]
+                    ?: mergedStyles[name]
                     ?: prototype.getProperty(name, inherit)
             }
         }

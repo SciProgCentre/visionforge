@@ -1,33 +1,26 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.hmr.ApplicationBase
-import hep.dataforge.vis.hmr.startApplication
+import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.attachChildren
+import hep.dataforge.vis.spatial.editor.propertyEditor
+import hep.dataforge.vis.spatial.editor.threeOutputConfig
+import hep.dataforge.vis.spatial.editor.visualObjectTree
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
-import hep.dataforge.vis.spatial.three.ThreeOutput
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.tree.propertyEditor
-import hep.dataforge.vis.spatial.tree.render
-import hep.dataforge.vis.spatial.tree.toTree
-import kotlinx.html.InputType
+import hep.dataforge.vis.startApplication
 import kotlinx.html.dom.append
-import kotlinx.html.js.input
-import kotlinx.html.js.li
 import kotlinx.html.js.p
-import kotlinx.html.js.ul
-import org.w3c.dom.Element
+import org.w3c.dom.DragEvent
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.events.Event
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -40,33 +33,27 @@ private class GDMLDemoApp : ApplicationBase() {
     /**
      * Handle mouse drag according to https://www.html5rocks.com/en/tutorials/file/dndfiles/
      */
-    private fun handleDragOver(event: Event) {
+    private fun handleDragOver(event: DragEvent) {
         event.stopPropagation()
         event.preventDefault()
-        event.asDynamic().dataTransfer.dropEffect = "copy"
+        event.dataTransfer?.dropEffect = "copy"
     }
 
     /**
      * Load data from text file
      */
-    private fun loadData(event: Event, block: (name: String, data: String) -> Unit) {
+    private fun loadData(event: DragEvent, block: (name: String, data: String) -> Unit) {
         event.stopPropagation()
         event.preventDefault()
 
 
-        val file = (event.asDynamic().dataTransfer.files as FileList)[0]
+        val file = (event.dataTransfer?.files as FileList)[0]
             ?: throw RuntimeException("Failed to load file")
 
         FileReader().apply {
             onload = {
                 val string = result as String
-
-//                try {
-                    block(file.name, string)
-//                } catch (ex: Exception) {
-//                    console.error(ex)
-//                }
-
+                block(file.name, string)
             }
             readAsText(file)
         }
@@ -99,53 +86,24 @@ private class GDMLDemoApp : ApplicationBase() {
         }
     }
 
-    fun setupLayers(element: Element, output: ThreeOutput) {
-        element.clear()
-        element.append {
-            ul("list-group") {
-                (0..9).forEach { layer ->
-                    li("list-group-item") {
-                        +"layer $layer"
-                        input(type = InputType.checkBox).apply {
-                            if (layer == 0) {
-                                checked = true
-                            }
-                            onchange = {
-                                if (checked) {
-                                    output.camera.layers.enable(layer)
-                                } else {
-                                    output.camera.layers.disable(layer)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
         lUnit = LUnit.CM
         volumeAction = { volume ->
             when {
                 volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("ecal") -> GDMLTransformer.Action.CACHE
                 volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("U") -> GDMLTransformer.Action.CACHE
                 volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
                 volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
-                volume.name.startsWith("V") -> GDMLTransformer.Action.CACHE
-                else -> GDMLTransformer.Action.ACCEPT
+                else -> GDMLTransformer.Action.CACHE
             }
         }
 
         solidConfiguration = { parent, solid ->
-            if (parent.physVolumes.isNotEmpty()
-                || solid.name.startsWith("Coil")
-                || solid.name.startsWith("Yoke")
-                || solid.name.startsWith("Magnet")
+            if (
+                solid.name.startsWith("Yoke")
                 || solid.name.startsWith("Pole")
+                || parent.physVolumes.isNotEmpty()
             ) {
                 useStyle("opaque") {
                     OPACITY_KEY to 0.3
@@ -185,18 +143,17 @@ private class GDMLDemoApp : ApplicationBase() {
                 }
             }
 
+            //Optimize tree
+            //(visual as? VisualGroup3D)?.transformInPlace(UnRef, RemoveSingleChild)
+
             message("Rendering")
-            val output = three.output(canvas as HTMLElement)
 
             //output.camera.layers.enable(1)
-            output.camera.layers.set(0)
-            setupLayers(layers, output)
+            val output = three.output(canvas as HTMLElement)
 
-            if (visual is VisualGroup) {
-                visual.toTree(editor::propertyEditor).render(tree as HTMLElement) {
-                    showCheckboxes = false
-                }
-            }
+            output.camera.layers.set(0)
+            layers.threeOutputConfig(output)
+            tree.visualObjectTree(visual, editor::propertyEditor)
 
             output.render(visual)
             message(null)
@@ -204,8 +161,8 @@ private class GDMLDemoApp : ApplicationBase() {
         }
 
         (document.getElementById("drop_zone") as? HTMLDivElement)?.apply {
-            addEventListener("dragover", { handleDragOver(it) }, false)
-            addEventListener("drop", { loadData(it, action) }, false)
+            addEventListener("dragover", { handleDragOver(it as DragEvent) }, false)
+            addEventListener("drop", { loadData(it as DragEvent, action) }, false)
         }
 
     }

@@ -29,45 +29,12 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-9" id="canvas"></div>
-        <div class="col-3">
-
-            <div id="editor"></div>
-            <div class="accordion" id="accordion">
-                <div class="card">
-                    <div class="card-header" id="layers-header">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#layers-body"
-                                    aria-expanded="true" aria-controls="layers-body">
-                                Layers
-                            </button>
-                        </h2>
-                    </div>
-
-                    <div id="layers-body" class="collapse show" aria-labelledby="layers-header"
-                         data-parent="#accordion">
-                        <div class="card-body">
-                            <div id="layers"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="tree-header">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                    data-target="#tree-body" aria-expanded="false" aria-controls="tree-body">
-                                Object tree
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="tree-body" class="collapse" aria-labelledby="tree-header" data-parent="#accordion">
-                        <div class="card-body">
-                            <div id="tree"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-lg-3" id="tree"></div>
+        <div class="col-lg-6">
+            <div class="row" id="layers"></div>
+            <div class="row container" id="canvas"></div>
         </div>
+        <div class="col-lg-3" id="editor"></div>
     </div>
 </div>
 

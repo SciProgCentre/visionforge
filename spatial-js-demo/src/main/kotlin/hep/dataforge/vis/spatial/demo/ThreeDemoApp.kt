@@ -1,10 +1,10 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.ContextBuilder
+import hep.dataforge.vis.ApplicationBase
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.hmr.ApplicationBase
-import hep.dataforge.vis.hmr.startApplication
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.startApplication
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -127,6 +127,21 @@ private class ThreeDemoApp : ApplicationBase() {
                     box(100, 100, 100)
                     tube(60, 10) {
                         detail = 180
+                    }
+                }
+            }
+            demo("lines", "Track / line segments") {
+                sphere(100) {
+                    color(Colors.blue)
+                    detail = 50
+                    opacity = 0.4
+                }
+                repeat(20) {
+                    polyline(Point3D(100, 100, 100), Point3D(-100, -100, -100)) {
+                        thickness = 208.0
+                        rotationX = it * PI2 / 20
+                        color(Colors.green)
+                             //rotationY = it * PI2 / 20
                     }
                 }
             }
