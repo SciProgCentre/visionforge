@@ -4,18 +4,14 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.context.content
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.names.startsWith
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
-import info.laht.threekt.cameras.Camera
-import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.external.controls.OrbitControls
-import info.laht.threekt.external.controls.TrackballControls
-import org.w3c.dom.Node
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
@@ -23,7 +19,7 @@ import info.laht.threekt.objects.Group as ThreeGroup
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    private val objectFactories = HashMap<KClass<out VisualObject3D>, ThreeFactory<*>>()
+    private val objectFactories = HashMap<KClass<out VisualObject>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
     private val proxyFactory = ThreeProxyFactory(this)
 
@@ -36,7 +32,7 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[PolyLine::class] = ThreeLineFactory
     }
 
-    private fun findObjectFactory(type: KClass<out VisualObject3D>): ThreeFactory<*>? {
+    private fun findObjectFactory(type: KClass<out VisualObject>): ThreeFactory<*>? {
         return objectFactories[type]
             ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type }
     }
@@ -86,27 +82,6 @@ class ThreePlugin : AbstractPlugin() {
                     else -> error("Renderer for ${obj::class} not found")
                 }
             }
-        }
-    }
-
-    fun buildCamera(meta: Meta) = PerspectiveCamera(
-        meta["fov"].int ?: 75,
-        meta["aspect"].double ?: 1.0,
-        meta["nearClip"].double ?: World.CAMERA_NEAR_CLIP,
-        meta["farClip"].double ?: World.CAMERA_FAR_CLIP
-    ).apply {
-        position.setZ(World.CAMERA_INITIAL_DISTANCE)
-        rotation.set(
-            World.CAMERA_INITIAL_X_ANGLE,
-            World.CAMERA_INITIAL_Y_ANGLE,
-            World.CAMERA_INITIAL_Z_ANGLE
-        )
-    }
-
-    fun addControls(camera: Camera, element: Node, meta: Meta) {
-        when (meta["type"].string) {
-            "trackball" -> TrackballControls(camera, element)
-            else -> OrbitControls(camera, element)
         }
     }
 

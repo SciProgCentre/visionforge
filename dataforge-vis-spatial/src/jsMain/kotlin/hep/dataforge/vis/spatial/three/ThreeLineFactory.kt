@@ -9,7 +9,7 @@ import info.laht.threekt.objects.LineSegments
 import kotlin.reflect.KClass
 
 object ThreeLineFactory : ThreeFactory<PolyLine> {
-    override val type: KClass<out PolyLine> get() = PolyLine::class
+    override val type: KClass<PolyLine> get() = PolyLine::class
 
     override fun invoke(obj: PolyLine): Object3D {
         val geometry = Geometry().apply {

@@ -1,5 +1,8 @@
+import org.openjfx.gradle.JavaFXOptions
+
 plugins {
     id("scientifik.mpp")
+    id("org.openjfx.javafxplugin")
 }
 
 scientifik{
@@ -9,13 +12,23 @@ scientifik{
 val dataforgeVersion: String by rootProject.extra
 
 kotlin {
+    jvm{
+        withJava()
+    }
+
     sourceSets {
-        val commonMain by getting {
+        commonMain{
             dependencies {
                 api("hep.dataforge:dataforge-output:$dataforgeVersion")
             }
         }
-        val jsMain by getting {
+        jvmMain{
+            dependencies {
+                api("no.tornado:tornadofx:1.7.19")
+                api("no.tornado:tornadofx-controlsfx:0.1")
+            }
+        }
+        jsMain{
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
                 api(npm("text-encoding"))
@@ -24,4 +37,8 @@ kotlin {
             }
         }
     }
+}
+
+configure<JavaFXOptions> {
+    modules("javafx.controls")
 }

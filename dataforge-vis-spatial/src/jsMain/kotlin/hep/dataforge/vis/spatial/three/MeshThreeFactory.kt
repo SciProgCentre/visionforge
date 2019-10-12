@@ -19,8 +19,8 @@ import kotlin.reflect.KClass
 /**
  * Basic geometry-based factory
  */
-abstract class MeshThreeFactory<T : VisualObject3D>(
-    override val type: KClass<out T>
+abstract class MeshThreeFactory<in T : VisualObject3D>(
+    override val type: KClass<in T>
 ) : ThreeFactory<T> {
     /**
      * Build a geometry for an object

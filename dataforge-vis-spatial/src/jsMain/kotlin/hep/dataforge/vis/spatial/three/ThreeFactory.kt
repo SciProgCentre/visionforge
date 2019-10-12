@@ -16,9 +16,9 @@ import kotlin.reflect.KClass
  * Builder and updater for three.js object
  */
 @Type(TYPE)
-interface ThreeFactory<T : VisualObject3D> {
+interface ThreeFactory<in T : VisualObject> {
 
-    val type: KClass<out T>
+    val type: KClass<in T>
 
     operator fun invoke(obj: T): Object3D
 
@@ -30,7 +30,7 @@ interface ThreeFactory<T : VisualObject3D> {
 /**
  * Update position, rotation and visibility
  */
-internal fun Object3D.updatePosition(obj: VisualObject3D) {
+fun Object3D.updatePosition(obj: VisualObject3D) {
     visible = obj.visible ?: true
     position.set(obj.x, obj.y, obj.z)
     setRotationFromEuler(obj.euler)
@@ -50,6 +50,9 @@ operator fun <T : VisualObject3D> ThreeFactory<T>.invoke(obj: Any): Object3D {
     }
 }
 
+/**
+ * Update non-position non-geometry property
+ */
 fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         //updated material

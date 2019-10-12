@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 plugins {
     id("scientifik.mpp")
 }
@@ -20,5 +22,11 @@ kotlin {
                 //api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
             }
         }
+    }
+}
+
+tasks{
+    val jsBrowserWebpack by getting(KotlinWebpack::class) {
+        sourceMaps = false
     }
 }

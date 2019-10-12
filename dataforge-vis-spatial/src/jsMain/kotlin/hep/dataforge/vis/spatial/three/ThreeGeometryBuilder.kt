@@ -10,6 +10,9 @@ import info.laht.threekt.core.Face3
 import info.laht.threekt.core.Geometry
 import info.laht.threekt.math.Vector3
 
+/**
+ * An implementation of geometry builder for Three.js [BufferGeometry]
+ */
 class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
 
     private val vertices = ArrayList<Point3D>()
