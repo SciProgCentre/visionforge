@@ -16,6 +16,7 @@ import info.laht.threekt.loaders.Cache.clear
 import kotlinx.html.div
 import kotlinx.html.dom.append
 import org.w3c.dom.Element
+import kotlin.dom.clear
 import kotlin.js.json
 
 operator fun Name.plus(other: NameToken): Name = Name(tokens + other)
@@ -123,7 +124,7 @@ private fun VisualObject.toTree(onFocus: (VisualObject?, String?) -> Unit = { _,
 }
 
 fun Element.visualObjectTree(group: VisualObject, onFocus: (VisualObject?, String?) -> Unit) {
-    clear()
+    this.clear()
     append {
         card("Visual object tree") {
             val domConfig = jsObject<DomConfig> {
