@@ -1,13 +1,9 @@
-package hep.dataforge.vis
+package hep.dataforge.js
 
 import kotlin.browser.document
 import kotlin.dom.hasClass
 
 external val module: Module
-
-external interface Module {
-    val hot: Hot?
-}
 
 external interface Hot {
     val data: dynamic
@@ -19,17 +15,31 @@ external interface Hot {
     fun dispose(callback: (data: dynamic) -> Unit)
 }
 
-external fun require(name: String): dynamic
-
-abstract class ApplicationBase {
-    open val stateKeys: List<String> get() = emptyList()
-
-    abstract fun start(state: Map<String, Any>)
-    open fun dispose(): Map<String, Any> = emptyMap()
+external interface Module {
+    val hot: Hot?
 }
 
-fun startApplication(builder: () -> ApplicationBase) {
-    fun start(state: dynamic): ApplicationBase? {
+/**
+ * Base interface for applications.
+ *
+ * Base interface for applications supporting Hot Module Replacement (HMR).
+ */
+interface Application {
+    /**
+     * Starting point for an application.
+     * @param state Initial state between Hot Module Replacement (HMR).
+     */
+    fun start(state: Map<String, Any>)
+
+    /**
+     * Ending point for an application.
+     * @return final state for Hot Module Replacement (HMR).
+     */
+    fun dispose(): Map<String, Any> = emptyMap()
+}
+
+fun startApplication(builder: () -> Application) {
+    fun start(state: dynamic): Application? {
         return if (document.body?.hasClass("testApp") == true) {
             val application = builder()
 
@@ -42,7 +52,7 @@ fun startApplication(builder: () -> ApplicationBase) {
         }
     }
 
-    var application: ApplicationBase? = null
+    var application: Application? = null
 
     val state: dynamic = module.hot?.let { hot ->
         hot.accept()

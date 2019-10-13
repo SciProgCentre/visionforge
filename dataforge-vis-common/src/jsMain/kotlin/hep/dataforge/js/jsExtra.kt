@@ -1,4 +1,6 @@
-package hep.dataforge.vis
+package hep.dataforge.js
+
+external fun require(name: String): dynamic
 
 inline fun <T : Any> jsObject(builder: T.() -> Unit): T {
     val obj: T = js("({})") as T

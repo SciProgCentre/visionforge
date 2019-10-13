@@ -1,10 +1,10 @@
 package hep.dataforge.vis.spatial.editor
 
 import hep.dataforge.io.toJson
+import hep.dataforge.js.jsObject
 import hep.dataforge.meta.*
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.findStyle
-import hep.dataforge.vis.jsObject
 import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
@@ -22,7 +22,7 @@ import kotlin.dom.clear
 fun Meta.toDynamic() = JSON.parse<dynamic>(toJson().toString())
 
 
-fun Element.propertyEditor(item: VisualObject?, name: String?) {
+fun Element.propertyEditor(item: VisualObject?) {
     clear()
     if (item != null) {
         append {

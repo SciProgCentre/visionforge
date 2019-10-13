@@ -10,6 +10,7 @@ scientifik{
 }
 
 val dataforgeVersion: String by rootProject.extra
+//val kvisionVersion: String by rootProject.extra("2.0.0-M1")
 
 kotlin {
     jvm{
@@ -31,9 +32,9 @@ kotlin {
         jsMain{
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
+                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
                 api(npm("text-encoding"))
-                api("org.jetbrains:kotlin-extensions:1.0.1-pre.83-kotlin-1.3.50")
-                api(npm("core-js"))
+                api(npm("bootstrap","4.3.1"))
             }
         }
     }

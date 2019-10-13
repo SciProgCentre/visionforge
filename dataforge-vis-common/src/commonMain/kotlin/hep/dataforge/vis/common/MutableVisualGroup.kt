@@ -52,6 +52,8 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     }
 }
 
+val VisualGroup.isEmpty: Boolean get() = this.children.isEmpty()
+
 interface MutableVisualGroup : VisualGroup {
 
     /**

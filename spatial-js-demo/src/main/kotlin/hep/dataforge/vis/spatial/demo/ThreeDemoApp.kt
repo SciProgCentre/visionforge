@@ -1,10 +1,10 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.ContextBuilder
-import hep.dataforge.vis.ApplicationBase
+import hep.dataforge.js.Application
+import hep.dataforge.js.startApplication
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.*
-import hep.dataforge.vis.startApplication
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -15,9 +15,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-private class ThreeDemoApp : ApplicationBase() {
-
-    override val stateKeys: List<String> = emptyList()
+private class ThreeDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
 
@@ -141,7 +139,7 @@ private class ThreeDemoApp : ApplicationBase() {
                         thickness = 208.0
                         rotationX = it * PI2 / 20
                         color(Colors.green)
-                             //rotationY = it * PI2 / 20
+                        //rotationY = it * PI2 / 20
                     }
                 }
             }

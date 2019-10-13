@@ -1,7 +1,10 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
-import hep.dataforge.vis.ApplicationBase
+import hep.dataforge.js.Application
+import hep.dataforge.js.objectTree
+import hep.dataforge.js.startApplication
+import hep.dataforge.names.NameToken
 import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
@@ -9,13 +12,11 @@ import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.attachChildren
 import hep.dataforge.vis.spatial.editor.propertyEditor
 import hep.dataforge.vis.spatial.editor.threeOutputConfig
-import hep.dataforge.vis.spatial.editor.visualObjectTree
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.startApplication
 import kotlinx.html.dom.append
 import kotlinx.html.js.p
 import org.w3c.dom.DragEvent
@@ -29,7 +30,7 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.dom.clear
 
-private class GDMLDemoApp : ApplicationBase() {
+private class GDMLDemoApp : Application {
     /**
      * Handle mouse drag according to https://www.html5rocks.com/en/tutorials/file/dndfiles/
      */
@@ -45,7 +46,6 @@ private class GDMLDemoApp : ApplicationBase() {
     private fun loadData(event: DragEvent, block: (name: String, data: String) -> Unit) {
         event.stopPropagation()
         event.preventDefault()
-
 
         val file = (event.dataTransfer?.files as FileList)[0]
             ?: throw RuntimeException("Failed to load file")
@@ -153,7 +153,9 @@ private class GDMLDemoApp : ApplicationBase() {
 
             output.camera.layers.set(0)
             layers.threeOutputConfig(output)
-            tree.visualObjectTree(visual, editor::propertyEditor)
+            //tree.visualObjectTree(visual, editor::propertyEditor)
+            tree.objectTree(NameToken("World"),visual, editor::propertyEditor)
+
 
             output.render(visual)
             message(null)
@@ -165,10 +167,6 @@ private class GDMLDemoApp : ApplicationBase() {
             addEventListener("drop", { loadData(it as DragEvent, action) }, false)
         }
 
-    }
-
-    override fun dispose(): Map<String, Any> {
-        return super.dispose()
     }
 }
 
