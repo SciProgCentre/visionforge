@@ -18,8 +18,8 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 material {
-                    "color" to Colors.lightgreen
-                    "opacity" to 0.3
+                    color(Colors.lightgreen)
+                    opacity = 0.3f
                 }
             }
             intersect("intersect") {
@@ -46,6 +46,6 @@ class GroupTest {
 
         assertEquals(3, group.count())
         assertEquals(300.0, (group["intersect"] as VisualObject3D).y.toDouble())
-        assertEquals(-300.0, (group["subtract"]  as VisualObject3D).y.toDouble())
+        assertEquals(-300.0, (group["subtract"] as VisualObject3D).y.toDouble())
     }
 }

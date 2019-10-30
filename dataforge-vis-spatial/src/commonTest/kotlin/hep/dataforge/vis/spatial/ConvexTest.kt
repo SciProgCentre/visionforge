@@ -1,9 +1,8 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.get
-import hep.dataforge.meta.getAll
+import hep.dataforge.meta.getIndexed
 import hep.dataforge.meta.node
-import hep.dataforge.names.toName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,7 +30,7 @@ class ConvexTest {
         val pointsNode = convex.toMeta()["points"].node
 
         assertEquals(8, pointsNode?.items?.count())
-        val points = pointsNode?.getAll("point".toName())
+        val points = pointsNode?.getIndexed("points")
 
         assertEquals(8, convex.points.size)
     }

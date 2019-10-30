@@ -11,9 +11,9 @@ import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
 
 class Material3D(override val config: Config) : Specific {
 
-    val color by string()
+    var color by string()
 
-    val opacity by float(1f)
+    var opacity by float(1f)
 
     companion object : Specification<Material3D> {
         override fun wrap(config: Config): Material3D = Material3D(config)

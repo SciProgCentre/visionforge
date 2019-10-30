@@ -99,8 +99,8 @@ private class ThreeDemoApp : Application {
                     }
                     sphere(50)
                     material {
-                        "color" to Colors.lightgreen
-                        "opacity" to 0.3
+                        color(Colors.lightgreen)
+                        opacity = 0.3f
                     }
                 }
                 composite(CompositeType.INTERSECT) {
@@ -148,7 +148,7 @@ private class ThreeDemoApp : Application {
 
     }
 
-    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" to presenter.dispose())
+    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" put presenter.dispose())
 }
 
 fun main() {

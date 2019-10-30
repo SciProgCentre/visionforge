@@ -74,5 +74,5 @@ class JSRootDemoApp : ApplicationBase() {
         }
     }
 
-    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" to presenter.dispose())
+    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" put presenter.dispose())
 }

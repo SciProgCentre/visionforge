@@ -151,7 +151,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     protected fun MetaBuilder.updateChildren() {
         //adding named children
         children.forEach {
-            "children[${it.key}]" to it.value.toMeta()
+            "children[${it.key}]" put it.value.toMeta()
         }
     }
 

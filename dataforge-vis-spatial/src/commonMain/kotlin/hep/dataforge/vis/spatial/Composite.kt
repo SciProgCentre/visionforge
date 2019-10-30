@@ -35,9 +35,9 @@ class Composite(
     override var properties: Config? = null
 
     override fun MetaBuilder.updateMeta() {
-        "compositeType" to compositeType
-        "first" to first.toMeta()
-        "second" to second.toMeta()
+        "compositeType" put compositeType
+        "first" put first.toMeta()
+        "second" put second.toMeta()
         updatePosition()
     }
 }

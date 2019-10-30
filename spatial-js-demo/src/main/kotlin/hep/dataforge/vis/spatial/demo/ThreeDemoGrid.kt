@@ -35,7 +35,9 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     private val gridRoot = document.create.div("row")
     private val outputs: MutableMap<Name, ThreeOutput> = HashMap()
 
-    override fun dependsOn(): List<PluginFactory<*>> = listOf(ThreePlugin)
+    init {
+        require(ThreePlugin)
+    }
 
     override fun attach(context: Context) {
         super.attach(context)
@@ -52,9 +54,9 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
         return outputs.getOrPut(name) {
             if (type != VisualObject::class) error("Supports only DisplayObject")
             val output = three.output(meta = meta) {
-                "minSize" to 500
-                "axis" to {
-                    "size" to 500
+                "minSize" put 500
+                "axis" put {
+                    "size" put 500
                 }
             }
             //TODO calculate cell width here using jquery
@@ -85,7 +87,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
 
 fun ThreeDemoGrid.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
     val meta = buildMeta {
-        "title" to title
+        "title" put title
     }
     val output = get(VisualObject::class, name.toName(), meta = meta)
     output.render(action = block)

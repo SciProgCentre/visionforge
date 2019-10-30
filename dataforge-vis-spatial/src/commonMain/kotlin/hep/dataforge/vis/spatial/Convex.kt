@@ -20,8 +20,8 @@ class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D
     override var scale: Point3D? = null
 
     override fun MetaBuilder.updateMeta() {
-        "points" to {
-            "point" to points.map { it.toMeta() }
+        "points" put {
+            "point" put points.map { it.toMeta() }
         }
         updatePosition()
     }

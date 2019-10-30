@@ -15,37 +15,37 @@ class JSRootGeometry(parent: VisualObject?, meta: Meta) : DisplayLeaf(parent, me
     var facesLimit by int(0)
 
     fun box(xSize: Number, ySize: Number, zSize: Number) = buildMeta {
-        "_typename" to "TGeoBBox"
-        "fDX" to xSize
-        "fDY" to ySize
-        "fDZ" to zSize
+        "_typename" put "TGeoBBox"
+        "fDX" put xSize
+        "fDY" put ySize
+        "fDZ" put zSize
     }
 
     /**
      * Create a GDML union
      */
     operator fun Meta.plus(other: Meta) = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoUnion"
+        "fNode.fLeft" put this
+        "fNode.fRight" put other
+        "fNode._typename" put "TGeoUnion"
     }
 
     /**
      * Create a GDML subtraction
      */
     operator fun Meta.minus(other: Meta)  = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoSubtraction"
+        "fNode.fLeft" put this
+        "fNode.fRight" put other
+        "fNode._typename" put "TGeoSubtraction"
     }
 
     /**
      * Intersect two GDML geometries
      */
     infix fun Meta.intersect(other: Meta) = buildMeta {
-        "fNode.fLeft" to this
-        "fNode.fRight" to other
-        "fNode._typename" to "TGeoIntersection"
+        "fNode.fLeft" put this
+        "fNode.fRight" put other
+        "fNode._typename" put "TGeoIntersection"
     }
 
     companion object {

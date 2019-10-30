@@ -47,9 +47,9 @@ class Box(
     }
 
     override fun MetaBuilder.updateMeta() {
-        "xSize" to xSize
-        "ySize" to ySize
-        "zSize" to ySize
+        "xSize" put xSize
+        "ySize" put ySize
+        "zSize" put ySize
         updatePosition()
     }
 

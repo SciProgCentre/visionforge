@@ -16,12 +16,12 @@ class MetaEditorDemoApp : App(MetaEditorDemo::class)
 class MetaEditorDemo : View("Meta editor demo") {
 
     val meta = buildMeta {
-        "aNode" to {
-            "innerNode" to {
-                "innerValue" to true
+        "aNode" put {
+            "innerNode" put {
+                "innerValue" put true
             }
-            "b" to 223
-            "c" to "StringValue"
+            "b" put 223
+            "c" put "StringValue"
         }
     }.toConfig()
 

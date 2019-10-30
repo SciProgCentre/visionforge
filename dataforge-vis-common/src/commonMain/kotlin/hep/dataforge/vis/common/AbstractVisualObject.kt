@@ -86,8 +86,8 @@ abstract class AbstractVisualObject : VisualObject {
     protected open fun MetaBuilder.updateMeta() {}
 
     override fun toMeta(): Meta = buildMeta {
-        "type" to this::class.simpleName
-        "properties" to properties
+        "type" putValue  this::class.simpleName
+        "properties" put properties
         updateMeta()
     }
 }

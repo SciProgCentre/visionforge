@@ -54,7 +54,7 @@ class GDMLTransformer(val root: GDML) {
 
         obj.useStyle(styleName){
             COLOR_KEY to Colors.rgbToString(random.nextInt(0, Int.MAX_VALUE))
-            "gdml.material" to material.name
+            "gdml.material" put material.name
         }
 
         obj.solidConfiguration(parent, solid)
