@@ -29,7 +29,7 @@ class GDMLTransformer(val root: GDML) {
     /**
      * A special group for local templates
      */
-    val templates by lazy { VisualGroup3D() }
+    val proto by lazy { VisualGroup3D() }
     private val styleCache = HashMap<Name, Meta>()
 
     var lUnit: LUnit = LUnit.MM
@@ -67,7 +67,7 @@ class GDMLTransformer(val root: GDML) {
     var onFinish: GDMLTransformer.() -> Unit = {}
 
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
-        final.templates = templates
+        final.prototypes = proto
         styleCache.forEach {
             final.addStyle(it.key, it.value, false)
         }

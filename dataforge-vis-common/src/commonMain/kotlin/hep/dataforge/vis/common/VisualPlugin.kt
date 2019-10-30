@@ -30,7 +30,8 @@ class VisualPlugin(meta: Meta) : AbstractPlugin(meta) {
     companion object : PluginFactory<VisualPlugin> {
         override val tag: PluginTag = PluginTag(name = "visual", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out VisualPlugin> = VisualPlugin::class
-        override fun invoke(meta: Meta): VisualPlugin = VisualPlugin(meta)
+
+        override fun invoke(meta: Meta, context: Context): VisualPlugin = VisualPlugin(meta)
 
         const val VISUAL_FACTORY_TYPE = "visual.factory"
     }

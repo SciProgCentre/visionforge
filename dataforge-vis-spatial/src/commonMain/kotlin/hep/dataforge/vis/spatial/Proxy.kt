@@ -3,7 +3,8 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.ConfigSerializer
-import hep.dataforge.io.NameSerializer
+
+import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
@@ -36,7 +37,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
      * Recursively search for defined template in the parent
      */
     val prototype: VisualObject3D
-        get() = (parent as? VisualGroup3D)?.getTemplate(templateName)
+        get() = (parent as? VisualGroup3D)?.getPrototype(templateName)
             ?: error("Template with name $templateName not found in $parent")
 
     override fun getStyle(name: Name): Meta? = (parent as VisualGroup?)?.getStyle(name)
@@ -65,9 +66,11 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 
     override val children: Map<NameToken, ProxyChild>
-        get() = (prototype as? MutableVisualGroup)?.children?.mapValues {
-            ProxyChild(it.key.asName())
-        } ?: emptyMap()
+        get() = (prototype as? MutableVisualGroup)?.children
+            ?.filter { !it.key.toString().startsWith("@") }
+            ?.mapValues {
+                ProxyChild(it.key.asName())
+            } ?: emptyMap()
 
     private val propertyCache: HashMap<Name, Config> = HashMap()
 
@@ -152,8 +155,30 @@ val VisualObject.prototype: VisualObject?
         else -> null
     }
 
+/**
+ * Create ref for existing prototype
+ */
 inline fun VisualGroup3D.ref(
     templateName: Name,
     name: String = "",
-    action: Proxy.() -> Unit = {}
-) = Proxy(templateName).apply(action).also { set(name, it) }
+    block: Proxy.() -> Unit = {}
+) = Proxy(templateName).apply(block).also { set(name, it) }
+
+/**
+ * Add new proxy wrapping given object and automatically adding it to the prototypes
+ */
+fun VisualGroup3D.proxy(
+    templateName: Name,
+    obj: VisualObject3D,
+    name: String = "",
+    attachToParent: Boolean = false,
+    block: Proxy.() -> Unit = {}
+): Proxy {
+    val existing = getPrototype(templateName)
+    if (existing == null) {
+        setPrototype(templateName,obj, attachToParent)
+    } else if(existing != obj) {
+        error("Can't add different prototype on top of existing one")
+    }
+    return ref(templateName, name, block)
+}

@@ -6,6 +6,8 @@
 package hep.dataforge.vis.fx.values
 
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.values.*
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.TextField
@@ -100,7 +102,7 @@ class TextValueChooser : ValueChooserBase<TextField>() {
     }
 
     companion object : ValueChooser.Factory {
-        override val name: String = "text"
+        override val name: Name = "text".asName()
         override fun invoke(meta: Meta): ValueChooser = TextValueChooser()
     }
 }

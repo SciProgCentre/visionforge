@@ -8,6 +8,8 @@ package hep.dataforge.vis.fx.values
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.value
+import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.values.Value
 import hep.dataforge.values.parseValue
 import javafx.collections.FXCollections
@@ -50,7 +52,7 @@ class ComboBoxValueChooser(val values: Collection<Value>? = null) : ValueChooser
     }
 
     companion object : ValueChooser.Factory {
-        override val name: String = "combo"
+        override val name: Name = "combo".asName()
 
         override fun invoke(meta: Meta): ValueChooser = ComboBoxValueChooser(meta["values"].value?.list)
     }

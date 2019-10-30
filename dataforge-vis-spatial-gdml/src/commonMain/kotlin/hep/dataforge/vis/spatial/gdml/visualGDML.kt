@@ -161,8 +161,8 @@ private fun VisualGroup3D.addPhysicalVolume(
         }
         GDMLTransformer.Action.CACHE -> {
             val fullName = volumesName + volume.name.asName()
-            if (context.templates[fullName] == null) {
-                context.templates[fullName] = volume(context, volume)
+            if (context.proto[fullName] == null) {
+                context.proto[fullName] = volume(context, volume)
             }
 
             this[physVolume.name ?: ""] = Proxy(fullName).apply {
@@ -215,8 +215,8 @@ private fun volume(
                     }
                 }
                 GDMLTransformer.Action.CACHE -> {
-                    if (context.templates[solid.name] == null) {
-                        context.templates.addSolid(context, solid, solid.name) {
+                    if (context.proto[solid.name] == null) {
+                        context.proto.addSolid(context, solid, solid.name) {
                             context.configureSolid(this, group, solid)
                         }
                     }

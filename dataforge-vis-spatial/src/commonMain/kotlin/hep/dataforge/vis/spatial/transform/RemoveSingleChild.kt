@@ -49,7 +49,7 @@ object RemoveSingleChild : VisualTreeTransform<VisualGroup3D>() {
         }
 
         replaceChildren()
-        templates?.replaceChildren()
+        prototypes?.replaceChildren()
     }
 
     override fun VisualGroup3D.clone(): VisualGroup3D {

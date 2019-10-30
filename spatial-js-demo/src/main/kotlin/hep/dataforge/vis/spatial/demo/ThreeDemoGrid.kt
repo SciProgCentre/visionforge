@@ -79,7 +79,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
 
         override val type: KClass<out ThreeDemoGrid> = ThreeDemoGrid::class
 
-        override fun invoke(meta: Meta): ThreeDemoGrid = ThreeDemoGrid(meta)
+        override fun invoke(meta: Meta,context: Context): ThreeDemoGrid = ThreeDemoGrid(meta)
     }
 }
 

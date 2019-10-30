@@ -10,7 +10,7 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.ConfigSerializer
 import hep.dataforge.io.MetaSerializer
-import hep.dataforge.io.NameSerializer
+import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
@@ -32,7 +32,8 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     /**
      * A container for templates visible inside this group
      */
-    var templates: VisualGroup3D? = null
+    @SerialName(PROTOTYPES_KEY)
+    var prototypes: VisualGroup3D? = null
         set(value) {
             value?.parent = this
             field = value
@@ -85,18 +86,26 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
-    fun getTemplate(name: Name): VisualObject3D? =
-        templates?.get(name) as? VisualObject3D
-            ?: (parent as? VisualGroup3D)?.getTemplate(name)
+    fun getPrototype(name: Name): VisualObject3D? =
+        prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
+
+    fun setPrototype(name: Name, obj: VisualObject3D, attachToParent: Boolean = false) {
+        val parent = this.parent
+        if (attachToParent && parent is VisualGroup3D) {
+            parent.setPrototype(name, obj, attachToParent)
+        } else {
+            (prototypes ?: VisualGroup3D().also { this.prototypes = it }).set(name, obj)
+        }
+    }
 
     override fun MetaBuilder.updateMeta() {
-        set(TEMPLATES_KEY, templates?.toMeta())
+        set(PROTOTYPES_KEY, prototypes?.toMeta())
         updatePosition()
         updateChildren()
     }
 
     companion object {
-        const val TEMPLATES_KEY = "templates"
+        const val PROTOTYPES_KEY = "templates"
     }
 }
 
@@ -109,7 +118,7 @@ fun VisualGroup.attachChildren() {
         (it as? VisualGroup)?.attachChildren()
     }
     if (this is VisualGroup3D) {
-        templates?.also {
+        prototypes?.also {
             it.parent = this
             it.attachChildren()
         }

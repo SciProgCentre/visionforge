@@ -84,7 +84,7 @@ class FXMetaNode<M : MetaNode<M>>(
     override val hasValue: ObservableBooleanValue = nodeProperty.booleanBinding { it != null }
 
     private val filter: (FXMeta<M>) -> Boolean = { cfg ->
-        !(cfg.descriptor?.tags?.contains(ConfigEditor.NO_CONFIGURATOR_TAG) ?: false)
+        !(cfg.descriptor?.attributes?.get(ConfigEditor.NO_CONFIGURATOR_TAG)?.boolean ?: false)
     }
 
     val children = object : ListBinding<FXMeta<M>>() {
@@ -172,7 +172,7 @@ fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
 private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boolean): M {
     return if (append && token.index.isNotEmpty()) {
         val name = token.asName()
-        val index = (getAll(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
+        val index = (getIndexed(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
         val newName = name.withIndex(index.toString())
         set(newName, EmptyMeta)
         get(newName).node!!

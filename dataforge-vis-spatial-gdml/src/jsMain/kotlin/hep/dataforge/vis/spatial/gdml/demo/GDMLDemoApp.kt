@@ -119,14 +119,14 @@ private class GDMLDemoApp : Application {
         val three = context.plugins.load(ThreePlugin)
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
-        val canvas = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
-        val layers = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
-        val tree = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
-        val editor = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
-        canvas.clear()
+        val canvasElement = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
+        val configElement = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
+        val treeElement = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
+        val editorElement = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
+        canvasElement.clear()
 
         val action: (name: String, data: String) -> Unit = { name, data ->
-            canvas.clear()
+            canvasElement.clear()
             spinner(true)
             message("Loading GDML")
             val gdml = GDML.format.parse(GDML.serializer(), data)
@@ -149,12 +149,12 @@ private class GDMLDemoApp : Application {
             message("Rendering")
 
             //output.camera.layers.enable(1)
-            val output = three.output(canvas as HTMLElement)
+            val output = three.output(canvasElement as HTMLElement)
 
             output.camera.layers.set(0)
-            layers.threeOutputConfig(output)
+            configElement.threeOutputConfig(output)
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            tree.objectTree(NameToken("World"),visual, editor::propertyEditor)
+            treeElement.objectTree(NameToken("World"),visual, editorElement::propertyEditor)
 
 
             output.render(visual)

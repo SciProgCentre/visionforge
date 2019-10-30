@@ -10,6 +10,7 @@ import hep.dataforge.context.Named
 import hep.dataforge.descriptors.ValueDescriptor
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.provider.provideByType
 import hep.dataforge.values.Null
@@ -71,7 +72,7 @@ interface ValueChooser {
     companion object {
 
         private fun findWidgetByType(context: Context, type: String): Factory? {
-            return when (type) {
+            return when (type.toName()) {
                 TextValueChooser.name -> TextValueChooser
                 ColorValueChooser.name -> ColorValueChooser
                 ComboBoxValueChooser.name -> ComboBoxValueChooser

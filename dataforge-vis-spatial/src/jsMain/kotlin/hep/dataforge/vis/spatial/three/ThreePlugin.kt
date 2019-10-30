@@ -1,9 +1,6 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.context.AbstractPlugin
-import hep.dataforge.context.PluginFactory
-import hep.dataforge.context.PluginTag
-import hep.dataforge.context.content
+import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
@@ -88,7 +85,7 @@ class ThreePlugin : AbstractPlugin() {
     companion object : PluginFactory<ThreePlugin> {
         override val tag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
         override val type = ThreePlugin::class
-        override fun invoke(meta: Meta) = ThreePlugin()
+        override fun invoke(meta: Meta,context: Context) = ThreePlugin()
     }
 }
 

@@ -24,7 +24,7 @@ object UnRef : VisualTreeTransform<VisualGroup3D>() {
     }
 
     private fun MutableVisualGroup.unref(name: Name) {
-        (this as? VisualGroup3D)?.templates?.set(name, null)
+        (this as? VisualGroup3D)?.prototypes?.set(name, null)
         children.filter { (it.value as? Proxy)?.templateName == name }.forEach { (key, value) ->
             val proxy = value as Proxy
             val newChild = mergeChild(proxy, proxy.prototype)

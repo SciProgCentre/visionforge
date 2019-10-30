@@ -21,7 +21,6 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation(project(":dataforge-vis-fx"))
                 implementation("org.fxyz3d:fxyz3d:0.5.2")
             }
         }

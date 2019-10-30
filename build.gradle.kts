@@ -1,4 +1,4 @@
-val dataforgeVersion by extra("0.1.3")
+val dataforgeVersion by extra("0.1.4")
 
 plugins {
     val kotlinVersion = "1.3.50"
@@ -15,6 +15,7 @@ plugins {
 
 allprojects {
     repositories {
+        mavenLocal()
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")
         maven("https://kotlin.bintray.com/js-externals")
