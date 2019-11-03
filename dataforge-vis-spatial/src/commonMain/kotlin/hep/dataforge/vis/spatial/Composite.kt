@@ -1,7 +1,7 @@
 @file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.update

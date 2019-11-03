@@ -8,8 +8,8 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
-import hep.dataforge.io.MetaSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta

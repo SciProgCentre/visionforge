@@ -2,7 +2,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualFactory

@@ -11,6 +11,8 @@ class SerializationTest {
     fun testCubeSerialization(){
         val cube = Box(100f,100f,100f).apply{
             color(222)
+            x = 100
+            z = -100
         }
         val string  = json.stringify(Box.serializer(),cube)
         println(string)

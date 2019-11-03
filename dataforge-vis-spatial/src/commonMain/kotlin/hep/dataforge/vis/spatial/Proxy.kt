@@ -2,7 +2,7 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 
 import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
@@ -15,6 +15,7 @@ import hep.dataforge.vis.common.MutableVisualGroup
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -72,6 +73,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                 ProxyChild(it.key.asName())
             } ?: emptyMap()
 
+    @Transient
     private val propertyCache: HashMap<Name, Config> = HashMap()
 
     fun childPropertyName(childName: Name, propertyName: Name): Name {
