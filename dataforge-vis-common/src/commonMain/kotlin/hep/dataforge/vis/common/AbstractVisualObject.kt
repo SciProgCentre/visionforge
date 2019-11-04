@@ -82,14 +82,6 @@ abstract class AbstractVisualObject : VisualObject {
             properties?.get(name) ?: mergedStyles[name]
         }
     }
-
-    protected open fun MetaBuilder.updateMeta() {}
-
-    override fun toMeta(): Meta = buildMeta {
-        "type" putValue  this::class.simpleName
-        "properties" put properties
-        updateMeta()
-    }
 }
 
 fun VisualObject.findStyle(styleName: Name): Meta? {

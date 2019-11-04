@@ -36,6 +36,7 @@ class ThreePlugin : AbstractPlugin() {
 
     fun buildObject3D(obj: VisualObject3D): Object3D {
         return when (obj) {
+            is ThreeVisualObject -> obj.toObject3D()
             is Proxy -> proxyFactory(obj)
             is VisualGroup3D -> {
                 val group = ThreeGroup()
@@ -85,7 +86,7 @@ class ThreePlugin : AbstractPlugin() {
     companion object : PluginFactory<ThreePlugin> {
         override val tag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
         override val type = ThreePlugin::class
-        override fun invoke(meta: Meta,context: Context) = ThreePlugin()
+        override fun invoke(meta: Meta, context: Context) = ThreePlugin()
     }
 }
 

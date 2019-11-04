@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial.three
 
+import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.PolyLine
 import hep.dataforge.vis.spatial.layer
-import hep.dataforge.vis.spatial.material
 import info.laht.threekt.core.Geometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.LineSegments
@@ -16,7 +16,8 @@ object ThreeLineFactory : ThreeFactory<PolyLine> {
             vertices = obj.points.toTypedArray()
         }
 
-        val material = obj.material.jsLineMaterial()
+        val material =
+            ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node)
         return LineSegments(geometry, material).apply {
 
             updatePosition(obj)

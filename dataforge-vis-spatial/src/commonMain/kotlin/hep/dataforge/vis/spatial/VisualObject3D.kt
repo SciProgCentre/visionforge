@@ -40,7 +40,7 @@ interface VisualObject3D : VisualObject {
         val LAYER_KEY = "layer".asName()
         val IGNORE_KEY = "ignore".asName()
 
-        val GEOMETRY_KEY = "geometey".asName()
+        val GEOMETRY_KEY = "geometry".asName()
 
         val x = "x".asName()
         val y = "y".asName()

@@ -1,7 +1,6 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.*
 import kotlinx.serialization.Transient
@@ -144,18 +143,5 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
         child?.let { addStatic(child) }
     } else {
         set(key.asName(), child)
-    }
-
-//    operator fun set(key: String?, child: VisualObject?) = set(key ?: "", child)
-
-    protected fun MetaBuilder.updateChildren() {
-        //adding named children
-        children.forEach {
-            "children[${it.key}]" put it.value.toMeta()
-        }
-    }
-
-    override fun MetaBuilder.updateMeta() {
-        updateChildren()
     }
 }

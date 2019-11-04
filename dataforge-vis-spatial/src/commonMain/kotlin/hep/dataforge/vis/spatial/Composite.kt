@@ -2,8 +2,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
@@ -34,12 +35,7 @@ class Composite(
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
-    override fun MetaBuilder.updateMeta() {
-        "compositeType" put compositeType
-        "first" put first.toMeta()
-        "second" put second.toMeta()
-        updatePosition()
-    }
+    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 }
 
 inline fun VisualGroup3D.composite(

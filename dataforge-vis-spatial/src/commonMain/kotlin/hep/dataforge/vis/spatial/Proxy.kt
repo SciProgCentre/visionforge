@@ -3,9 +3,12 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
-
 import hep.dataforge.io.serialization.NameSerializer
-import hep.dataforge.meta.*
+import hep.dataforge.io.toMeta
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
@@ -61,10 +64,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         }
     }
 
-    override fun MetaBuilder.updateMeta() {
-        //TODO add reference to child
-        updatePosition()
-    }
+    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     override val children: Map<NameToken, ProxyChild>
         get() = (prototype as? MutableVisualGroup)?.children
@@ -94,6 +94,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
+    @Serializable
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         val prototype: VisualObject by lazy {
@@ -142,6 +143,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                     ?: prototype.getProperty(name, inherit)
             }
         }
+
+        override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     }
 

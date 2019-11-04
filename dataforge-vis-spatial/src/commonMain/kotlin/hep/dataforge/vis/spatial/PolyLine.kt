@@ -3,7 +3,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.number
 import kotlinx.serialization.Serializable
@@ -20,6 +22,8 @@ class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject
 
     //var lineType by string()
     var thickness by number(1.0, key = "material.thickness")
+
+    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 }
 
 fun VisualGroup3D.polyline(vararg points: Point3D, name: String = "", action: PolyLine.() -> Unit = {}) =

@@ -55,8 +55,7 @@ operator fun <T : VisualObject3D> ThreeFactory<T>.invoke(obj: Any): Object3D {
  */
 fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
-        //updated material
-        material = source.material.jsMaterial()
+        updateMaterial(source)
     } else if (
         source is VisualObject3D &&
         (propertyName.startsWith(VisualObject3D.position)

@@ -5,12 +5,13 @@ import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.*
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Face3
-import info.laht.threekt.core.Geometry
-import info.laht.threekt.core.Object3D
+import info.laht.threekt.core.*
+import info.laht.threekt.external.controls.OrbitControls
+import info.laht.threekt.materials.Material
 import info.laht.threekt.math.Euler
 import info.laht.threekt.math.Vector3
+import info.laht.threekt.objects.Mesh
+import info.laht.threekt.textures.Texture
 
 /**
  * Utility methods for three.kt.
@@ -64,4 +65,19 @@ fun CSG.toGeometry(): Geometry {
     geom.computeBoundingSphere()
     geom.computeBoundingBox()
     return geom
+}
+
+internal fun Any.dispose() {
+    when (this) {
+        is Geometry -> dispose()
+        is BufferGeometry -> dispose()
+        is DirectGeometry -> dispose()
+        is Material -> dispose()
+        is Mesh -> {
+            geometry.dispose()
+            material.dispose()
+        }
+        is OrbitControls -> dispose()
+        is Texture -> dispose()
+    }
 }

@@ -31,7 +31,7 @@ fun VisualObject.color(rgb: String) {
 
 fun VisualObject.color(rgb: Int) = color(Colors.rgbToString(rgb))
 
-fun VisualObject.color(r: UByte, g: UByte, b: UByte) = color( Colors.rgbToString(r,g,b))
+fun VisualObject.color(r: UByte, g: UByte, b: UByte) = color(Colors.rgbToString(r, g, b))
 
 var VisualObject.color: String?
     get() = getProperty(COLOR_KEY).string

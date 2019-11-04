@@ -2,7 +2,9 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -123,6 +125,8 @@ class Tube(
             }
         }
     }
+
+    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 }
 
 inline fun VisualGroup3D.tube(
