@@ -8,12 +8,12 @@ dependencies {
     testCompile(kotlin("test-js"))
 }
 
-kotlin{
-    target {
-        browser{
-            webpackTask {
-                sourceMaps = false
-            }
-        }
-    }
-}
+//kotlin{
+//    target {
+//        browser{
+//            webpackTask {
+//                sourceMaps = false
+//            }
+//        }
+//    }
+//}

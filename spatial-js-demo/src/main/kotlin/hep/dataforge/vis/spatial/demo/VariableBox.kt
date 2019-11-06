@@ -5,26 +5,26 @@ package hep.dataforge.vis.spatial.demo
 import hep.dataforge.meta.int
 import hep.dataforge.meta.number
 import hep.dataforge.names.plus
+import hep.dataforge.names.startsWith
 import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.common.setProperty
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
-import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.X_SIZE_KEY
-import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.Y_SIZE_KEY
 import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.Z_SIZE_KEY
-import hep.dataforge.vis.spatial.three.CustomThreeVisualObject
-import hep.dataforge.vis.spatial.three.MeshThreeFactory
+import hep.dataforge.vis.spatial.three.*
 import info.laht.threekt.core.BufferGeometry
+import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
+import info.laht.threekt.materials.MeshBasicMaterial
+import info.laht.threekt.objects.Mesh
 import kotlinx.serialization.UseSerializers
 import kotlin.math.max
-
-private val BOX_Z_SIZE_KEY = GEOMETRY_KEY + "zSize"
+import kotlin.reflect.KClass
 
 internal var VisualObject3D.variableZSize: Number
-    get() = getProperty(BOX_Z_SIZE_KEY, false).number ?: 0f
+    get() = getProperty(Z_SIZE_KEY, false).number ?: 0f
     set(value) {
-        setProperty(BOX_Z_SIZE_KEY, value)
+        setProperty(Z_SIZE_KEY, value)
     }
 
 internal var VisualObject3D.value: Int
@@ -32,7 +32,7 @@ internal var VisualObject3D.value: Int
     set(value) {
         setProperty("value", value)
         val size = value.toFloat() / 255f * 20f
-        variableZSize = size
+        scaleZ = size
         z = -size / 2
 
         val b = max(0, 255 - value)
@@ -48,22 +48,60 @@ fun VisualGroup3D.varBox(
     name: String = "",
     action: VisualObject3D.() -> Unit = {}
 ) = CustomThreeVisualObject(VariableBoxThreeFactory).apply {
-    setProperty(X_SIZE_KEY, xSize)
-    setProperty(Y_SIZE_KEY, ySize)
-    setProperty(Z_SIZE_KEY, zSize)
+    scaleX = xSize
+    scaleY = ySize
+    scaleZ = zSize
 }.apply(action).also { set(name, it) }
 
-private object VariableBoxThreeFactory : MeshThreeFactory<VisualObject3D>(VisualObject3D::class) {
+private object VariableBoxThreeFactory : ThreeFactory<VisualObject3D> {
     val X_SIZE_KEY = GEOMETRY_KEY + "xSize"
     val Y_SIZE_KEY = GEOMETRY_KEY + "ySize"
     val Z_SIZE_KEY = GEOMETRY_KEY + "zSize"
 
-    override fun buildGeometry(obj: VisualObject3D): BufferGeometry {
-        val xSize = obj.getProperty(X_SIZE_KEY, false).number ?: 0f
-        val ySize = obj.getProperty(Y_SIZE_KEY, false).number ?: 0f
-        val zSize = obj.getProperty(Z_SIZE_KEY, false).number ?: 0f
-        return obj.detail?.let { detail ->
-            BoxBufferGeometry(xSize, ySize, zSize, detail, detail, detail)
-        } ?: BoxBufferGeometry(xSize, ySize, zSize)
+    override val type: KClass<in VisualObject3D> get() = VisualObject3D::class
+
+    override fun invoke(obj: VisualObject3D): Object3D {
+        val xSize = obj.getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
+        val ySize = obj.getProperty(Y_SIZE_KEY, false).number?.toDouble() ?: 1.0
+        val zSize = obj.getProperty(Z_SIZE_KEY, false).number?.toDouble() ?: 1.0
+        val geometry = BoxBufferGeometry(1, 1, 1)
+
+        //JS sometimes tries to pass Geometry as BufferGeometry
+        @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
+
+        val mesh = Mesh(geometry, MeshBasicMaterial()).apply {
+            applyEdges(obj)
+            applyWireFrame(obj)
+
+            //set position for mesh
+            updatePosition(obj)
+
+            //set color for mesh
+            updateMaterial(obj)
+
+            layers.enable(obj.layer)
+            children.forEach {
+                it.layers.enable(obj.layer)
+            }
+        }
+
+        mesh.scale.set(xSize, ySize, zSize)
+
+        //add listener to object properties
+        obj.onPropertyChange(this) { name, _, _ ->
+            when {
+//                name.startsWith(GEOMETRY_KEY) -> {
+//                    val newXSize = obj.getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
+//                    val newYSize = obj.getProperty(Y_SIZE_KEY, false).number?.toDouble() ?: 1.0
+//                    val newZSize = obj.getProperty(Z_SIZE_KEY, false).number?.toDouble() ?: 1.0
+//                    mesh.scale.set(newXSize, newYSize, newZSize)
+//                    mesh.updateMatrix()
+//                }
+                name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
+                name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(obj)
+                else -> mesh.updateProperty(obj, name)
+            }
+        }
+        return mesh
     }
 }

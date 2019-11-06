@@ -29,45 +29,6 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
      */
     abstract fun buildGeometry(obj: T): BufferGeometry
 
-    private fun Mesh.applyEdges(obj: T) {
-        children.find { it.name == "edges" }?.let {
-            remove(it)
-            (it as LineSegments).dispose()
-        }
-        //inherited edges definition, enabled by default
-        if (obj.getProperty(EDGES_ENABLED_KEY).boolean != false) {
-
-            val material = ThreeMaterials.getLineMaterial(obj.getProperty(EDGES_MATERIAL_KEY).node)
-            add(
-                LineSegments(
-                    EdgesGeometry(geometry as BufferGeometry),
-                    material
-                ).apply {
-                    name = "edges"
-                }
-            )
-        }
-    }
-
-    private fun Mesh.applyWireFrame(obj: T) {
-        children.find { it.name == "wireframe" }?.let {
-            remove(it)
-            (it as LineSegments).dispose()
-        }
-        //inherited wireframe definition, disabled by default
-        if (obj.getProperty(WIREFRAME_ENABLED_KEY).boolean == true) {
-            val material = ThreeMaterials.getLineMaterial(obj.getProperty(WIREFRAME_MATERIAL_KEY).node)
-            add(
-                LineSegments(
-                    WireframeGeometry(geometry as BufferGeometry),
-                    material
-                ).apply {
-                    name = "wireframe"
-                }
-            )
-        }
-    }
-
     override fun invoke(obj: T): Mesh {
         val geometry = buildGeometry(obj)
 
@@ -120,5 +81,44 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
         val EDGES_MATERIAL_KEY = EDGES_KEY + Material3D.MATERIAL_KEY
         val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
         val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + Material3D.MATERIAL_KEY
+    }
+}
+
+fun Mesh.applyEdges(obj: VisualObject3D) {
+    children.find { it.name == "edges" }?.let {
+        remove(it)
+        (it as LineSegments).dispose()
+    }
+    //inherited edges definition, enabled by default
+    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
+
+        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node)
+        add(
+            LineSegments(
+                EdgesGeometry(geometry as BufferGeometry),
+                material
+            ).apply {
+                name = "edges"
+            }
+        )
+    }
+}
+
+fun Mesh.applyWireFrame(obj: VisualObject3D) {
+    children.find { it.name == "wireframe" }?.let {
+        remove(it)
+        (it as LineSegments).dispose()
+    }
+    //inherited wireframe definition, disabled by default
+    if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
+        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node)
+        add(
+            LineSegments(
+                WireframeGeometry(geometry as BufferGeometry),
+                material
+            ).apply {
+                name = "wireframe"
+            }
+        )
     }
 }
