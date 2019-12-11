@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
-import hep.dataforge.output.Output
+import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Box
 import hep.dataforge.vis.spatial.VisualGroup3D
@@ -15,7 +15,7 @@ import tornadofx.*
  * https://github.com/miho/JCSG for operations
  *
  */
-class FX3DOutput(override val context: Context) : Output<VisualObject> {
+class FX3DOutput(override val context: Context) : Renderer<VisualObject> {
     val canvas by lazy { Canvas3D() }
 
 

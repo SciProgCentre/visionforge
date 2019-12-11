@@ -73,7 +73,7 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
     val properties: MutableMap<String, JsonObject> = mutableMapOf()
     val requiredProperties: MutableSet<String> = mutableSetOf()
     val isEnum = descriptor.kind == UnionKind.ENUM_KIND
-    val isPolymorphic = descriptor.kind == UnionKind.POLYMORPHIC
+    val isPolymorphic = descriptor.kind is PolymorphicKind
 
 
     if (!isEnum && !isPolymorphic) descriptor.elementDescriptors().forEachIndexed { index, child ->

@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":dataforge-vis-spatial"))
-    testCompile(kotlin("test-js"))
+    testImplementation(kotlin("test-js"))
 }
 
 //kotlin{

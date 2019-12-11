@@ -6,7 +6,7 @@ import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.output.Output
+import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
@@ -77,7 +77,7 @@ var VisualObject3D.layer: Int
         setProperty(LAYER_KEY, value)
     }
 
-fun Output<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
+fun Renderer<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)
 
 // Common properties

@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.*
-import hep.dataforge.output.Output
+import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.World
@@ -19,7 +19,7 @@ import kotlin.browser.window
 import kotlin.dom.clear
 import kotlin.math.max
 
-class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Output<VisualObject3D> {
+class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer<VisualObject3D> {
 
     override val context: Context get() = three.context
 
