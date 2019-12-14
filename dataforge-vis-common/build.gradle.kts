@@ -32,8 +32,7 @@ kotlin {
         jsMain{
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
-                api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
-                api(npm("bootstrap","4.3.1"))
+                api(npm("bootstrap","4.4.1"))
             }
         }
     }

@@ -19,7 +19,7 @@ import kotlin.browser.window
 import kotlin.dom.clear
 import kotlin.math.max
 
-class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer<VisualObject3D> {
+class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer<VisualObject3D> {
 
     override val context: Context get() = three.context
 
@@ -95,7 +95,7 @@ class ThreeOutput(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
 }
 
 fun ThreePlugin.output(element: HTMLElement? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
-    ThreeOutput(this, buildMeta(meta, override)).apply {
+    ThreeCanvas(this, buildMeta(meta, override)).apply {
         if (element != null) {
             attach(element)
         }

@@ -21,7 +21,8 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation("org.fxyz3d:fxyz3d:0.5.2")
+                api("org.fxyz3d:fxyz3d:0.5.2")
+                implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7")
             }
         }
         jsMain {

@@ -10,12 +10,12 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.output.Output
 import hep.dataforge.output.OutputManager
+import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.render
-import hep.dataforge.vis.spatial.three.ThreeOutput
+import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
 import kotlinx.html.dom.append
@@ -33,7 +33,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     override val tag: PluginTag get() = Companion.tag
 
     private val gridRoot = document.create.div("row")
-    private val outputs: MutableMap<Name, ThreeOutput> = HashMap()
+    private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 
     init {
         require(ThreePlugin)
@@ -48,7 +48,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Output<T> {
+    override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Renderer<T> {
         val three = context.plugins.get<ThreePlugin>()!!
 
         return outputs.getOrPut(name) {
@@ -73,7 +73,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
             }
 
             output
-        } as Output<T>
+        } as Renderer<T>
     }
 
     companion object : PluginFactory<ThreeDemoGrid> {

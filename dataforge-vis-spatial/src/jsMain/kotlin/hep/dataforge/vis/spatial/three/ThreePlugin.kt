@@ -16,7 +16,7 @@ import info.laht.threekt.objects.Group as ThreeGroup
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    private val objectFactories = HashMap<KClass<out VisualObject>, ThreeFactory<*>>()
+    private val objectFactories = HashMap<KClass<out VisualObject3D>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
     private val proxyFactory = ThreeProxyFactory(this)
 
@@ -29,9 +29,11 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[PolyLine::class] = ThreeLineFactory
     }
 
-    private fun findObjectFactory(type: KClass<out VisualObject>): ThreeFactory<*>? {
-        return objectFactories[type]
-            ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type }
+    @Suppress("UNCHECKED_CAST")
+    private fun findObjectFactory(type: KClass<out VisualObject>): ThreeFactory<VisualObject3D>? {
+        return (objectFactories[type]
+            ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
+                as ThreeFactory<VisualObject3D>?
     }
 
     fun buildObject3D(obj: VisualObject3D): Object3D {
@@ -73,7 +75,7 @@ class ThreePlugin : AbstractPlugin() {
             is Composite -> compositeFactory(obj)
             else -> {
                 //find specialized factory for this type if it is present
-                val factory = findObjectFactory(obj::class)
+                val factory: ThreeFactory<VisualObject3D>? = findObjectFactory(obj::class)
                 when {
                     factory != null -> factory(obj)
                     obj is Shape -> ThreeShapeFactory(obj)

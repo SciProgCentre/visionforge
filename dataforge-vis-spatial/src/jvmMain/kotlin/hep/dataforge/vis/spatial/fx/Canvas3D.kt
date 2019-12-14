@@ -1,5 +1,11 @@
 package hep.dataforge.vis.spatial.fx
 
+import hep.dataforge.context.Context
+import hep.dataforge.context.ContextAware
+import hep.dataforge.meta.EmptyMeta
+import hep.dataforge.meta.Meta
+import hep.dataforge.output.Renderer
+import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.World.CAMERA_FAR_CLIP
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_DISTANCE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_X_ANGLE
@@ -16,7 +22,9 @@ import javafx.scene.paint.Color
 import org.fxyz3d.utils.CameraTransformer
 import tornadofx.*
 
-class Canvas3D : Fragment() {
+class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(), Renderer<VisualObject3D>, ContextAware {
+
+    override val context: Context get() = plugin.context
     val world: Group = Group()
 
     private val camera = PerspectiveCamera().apply {
@@ -151,6 +159,10 @@ class Canvas3D : Fragment() {
             val newZ = z + MOUSE_SPEED * event.deltaY * RESIZE_SPEED
             camera.translateZ = newZ
         }
+    }
+
+    override fun render(obj: VisualObject3D, meta: Meta) {
+        plugin.buildNode(obj)?.let { world.children.add(it) }
     }
 
     companion object {

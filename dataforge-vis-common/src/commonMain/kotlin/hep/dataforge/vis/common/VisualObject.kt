@@ -1,6 +1,9 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.Configurable
+import hep.dataforge.meta.Laminate
+import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -15,7 +18,7 @@ import kotlinx.serialization.Transient
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface VisualObject : MetaRepr, Configurable {
+interface VisualObject : Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -54,7 +57,7 @@ interface VisualObject : MetaRepr, Configurable {
     fun removeChangeListener(owner: Any?)
 
     /**
-     * List of names of styles applied to this object
+     * List of names of styles applied to this object. Order matters.
      */
     var styles: List<Name>
 

@@ -10,7 +10,7 @@ import tornadofx.*
 /**
  * A caching binding collection for [VisualObject] properties
  */
-class DisplayObjectFXListener(val obj: VisualObject) {
+class DisplayObjectFXBinding(val obj: VisualObject) {
     private val binndings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
 
     init {

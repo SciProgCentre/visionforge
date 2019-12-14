@@ -4,7 +4,6 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.io.serialization.NameSerializer
-import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
@@ -63,8 +62,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                 ?: prototype.getProperty(name, false)
         }
     }
-
-    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     override val children: Map<NameToken, ProxyChild>
         get() = (prototype as? MutableVisualGroup)?.children
@@ -143,8 +140,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                     ?: prototype.getProperty(name, inherit)
             }
         }
-
-        override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     }
 

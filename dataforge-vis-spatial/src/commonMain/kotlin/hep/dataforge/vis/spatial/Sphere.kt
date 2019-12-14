@@ -3,9 +3,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.io.serialization.ConfigSerializer
-import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.Meta
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -18,7 +16,7 @@ class Sphere(
     var phi: Float = PI2,
     var thetaStart: Float = 0f,
     var theta: Float = PI.toFloat()
-) : AbstractVisualObject(), VisualObject3D {
+) : AbstractVisualObject(), VisualObject3D, Shape {
 
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
@@ -27,7 +25,9 @@ class Sphere(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
+    override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 inline fun VisualGroup3D.sphere(

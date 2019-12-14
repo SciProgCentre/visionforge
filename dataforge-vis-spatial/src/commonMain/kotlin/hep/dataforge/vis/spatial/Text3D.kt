@@ -9,8 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
-
+class Text3D(var text: String, var fontSize: Int) : AbstractVisualObject(), VisualObject3D {
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
@@ -18,22 +17,7 @@ class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    companion object {
-        const val TYPE = "geometry.3d.convex"
-    }
 }
 
-inline fun VisualGroup3D.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}) =
-    ConvexBuilder().apply(action).build().also { set(name, it) }
-
-class ConvexBuilder {
-    private val points = ArrayList<Point3D>()
-
-    fun point(x: Number, y: Number, z: Number) {
-        points.add(Point3D(x, y, z))
-    }
-
-    fun build(): Convex {
-        return Convex(points)
-    }
-}
+fun VisualGroup3D.text(text: String, fontSize: Int, name: String = "", action: Text3D.() -> Unit = {}) =
+    Text3D(text, fontSize).apply(action).also { set(name, it) }

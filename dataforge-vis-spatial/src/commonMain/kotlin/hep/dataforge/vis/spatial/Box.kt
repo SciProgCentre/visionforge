@@ -3,7 +3,6 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
 import hep.dataforge.io.serialization.ConfigSerializer
-import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.float
@@ -49,8 +48,6 @@ class Box(
         geometryBuilder.face4(node1, node5, node8, node4)
         geometryBuilder.face4(node8, node5, node6, node7)
     }
-
-    override fun toMeta(): Meta  = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     companion object : VisualFactory<Box> {
         const val TYPE = "geometry.3d.box"

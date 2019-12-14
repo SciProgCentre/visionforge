@@ -11,7 +11,6 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.io.serialization.NameSerializer
-import hep.dataforge.io.toMeta
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
@@ -96,8 +95,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
             (prototypes ?: VisualGroup3D().also { this.prototypes = it }).set(name, obj)
         }
     }
-
-    override fun toMeta(): Meta = Visual3DPlugin.json.toJson(serializer(), this).toMeta()
 
     companion object {
         const val PROTOTYPES_KEY = "templates"

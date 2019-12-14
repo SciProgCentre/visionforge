@@ -16,9 +16,10 @@ class RendererDemoApp : App(RendererDemoView::class)
 
 
 class RendererDemoView : View() {
-    val renderer = FX3DOutput(Global)
+    val plugin = Global.plugins.fetch(FX3DPlugin)
+    val renderer = Canvas3D(plugin)
     override val root: Parent = borderpane {
-        center = renderer.canvas.root
+        center = renderer.root
     }
 
     lateinit var group: VisualGroup3D
@@ -44,7 +45,7 @@ class RendererDemoView : View() {
             }
         }
 
-        renderer.canvas.apply {
+        renderer.apply {
             angleY = -30.0
             angleX = -15.0
         }
