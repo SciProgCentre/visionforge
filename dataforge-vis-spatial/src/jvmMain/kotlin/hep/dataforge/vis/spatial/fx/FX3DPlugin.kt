@@ -84,7 +84,7 @@ class FX3DPlugin : AbstractPlugin() {
             }
 
             if (this is Shape3D) {
-                materialProperty().bind(binding["color"].transform { it.material() })
+                materialProperty().bind(binding[Material3D.MATERIAL_KEY].transform { it.material() })
             }
         }
     }

@@ -7,6 +7,7 @@ import hep.dataforge.vis.spatial.Shape
 import javafx.scene.shape.Mesh
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
+import org.fxyz3d.geometry.Face3
 import kotlin.reflect.KClass
 
 object FXShapeFactory : FX3DFactory<Shape> {
@@ -18,11 +19,9 @@ object FXShapeFactory : FX3DFactory<Shape> {
     }
 }
 
-private typealias Face = IntArray
-
 private class FXGeometryBuilder : GeometryBuilder<Mesh> {
     val vertices = ArrayList<Point3D>()
-    val faces = ArrayList<Face>()
+    val faces = ArrayList<Face3>()
     private val vertexCache = HashMap<Point3D, Int>()
 
     private fun append(vertex: Point3D): Int {
@@ -38,7 +37,7 @@ private class FXGeometryBuilder : GeometryBuilder<Mesh> {
 
     override fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D?, meta: Meta) {
         //adding vertices
-        val face: Face = intArrayOf(append(vertex1), append(vertex2), append(vertex3))
+        val face = Face3(append(vertex1), append(vertex2), append(vertex3))
         faces.add(face)
     }
 
@@ -49,7 +48,7 @@ private class FXGeometryBuilder : GeometryBuilder<Mesh> {
             mesh.points.addAll(it.x.toFloat(), it.y.toFloat(), it.z.toFloat())
         }
         faces.forEach {
-            mesh.faces.addAll(it[0], it[1], it[2])
+            mesh.faces.addAll(it.p0, it.p1, it.p2)
         }
         return mesh
     }

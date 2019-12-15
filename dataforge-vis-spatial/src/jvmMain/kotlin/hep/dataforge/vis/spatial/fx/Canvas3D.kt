@@ -19,13 +19,21 @@ import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.paint.Color
+import org.fxyz3d.scene.Axes
+import org.fxyz3d.scene.CubeWorld
 import org.fxyz3d.utils.CameraTransformer
 import tornadofx.*
 
-class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(), Renderer<VisualObject3D>, ContextAware {
+class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
+    Fragment(), Renderer<VisualObject3D>, ContextAware {
 
     override val context: Context get() = plugin.context
-    val world: Group = Group()
+    val world = CubeWorld(true)
+    val axes = Axes().also {
+        it.setHeight(AXIS_LENGTH)
+        it.setRadius(LINE_WIDTH)
+        world.add(it)
+    }
 
     private val camera = PerspectiveCamera().apply {
         nearClip = CAMERA_NEAR_CLIP
@@ -69,12 +77,12 @@ class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(),
             768.0,
             true,
             SceneAntialiasing.BALANCED
-        ).apply {
-            fill = Color.GREY
-            this.camera = this@Canvas3D.camera
+        ).also {scene->
+            scene.fill = Color.GREY
+            scene.camera = camera
             id = "canvas"
-            handleKeyboard(this)
-            handleMouse(this)
+            handleKeyboard(scene)
+            handleMouse(scene)
         }
     }
 
@@ -90,7 +98,7 @@ class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(),
                         cameraRotation.ry.angle = CAMERA_INITIAL_Y_ANGLE
                         cameraRotation.rx.angle = CAMERA_INITIAL_X_ANGLE
                     }
-//                    KeyCode.X -> axisGroup.isVisible = !axisGroup.isVisible
+                    KeyCode.X -> axes.isVisible = !axes.isVisible
 //                    KeyCode.S -> snapshot()
 //                    KeyCode.DIGIT1 -> pixelMap.filterKeys { it.getLayerNumber() == 1 }.values.forEach {
 //                        toggleTransparency(
@@ -145,8 +153,8 @@ class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(),
             }
 
             if (me.isPrimaryButtonDown) {
-                cameraRotation.rz.angle =
-                    cameraRotation.rz.angle + mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
+                cameraRotation.ry.angle =
+                    cameraRotation.ry.angle + mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
                 cameraRotation.rx.angle =
                     cameraRotation.rx.angle + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED
             } else if (me.isSecondaryButtonDown) {
@@ -162,7 +170,8 @@ class Canvas3D(val plugin: FX3DPlugin, val meta: Meta = EmptyMeta) : Fragment(),
     }
 
     override fun render(obj: VisualObject3D, meta: Meta) {
-        plugin.buildNode(obj)?.let { world.children.add(it) }
+        val node = plugin.buildNode(obj) ?: kotlin.error("Can't render FX node for object $obj")
+        world.add(node)
     }
 
     companion object {

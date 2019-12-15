@@ -1,8 +1,10 @@
-package hep.dataforge.vis.spatial.fx
+package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.meta.number
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.fx.Canvas3D
+import hep.dataforge.vis.spatial.fx.FX3DPlugin
 import javafx.scene.Parent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -11,22 +13,21 @@ import kotlinx.coroutines.launch
 import tornadofx.*
 import kotlin.random.Random
 
+class SpatialDemoApp: App(SpatialDemoView::class)
 
-class RendererDemoApp : App(RendererDemoView::class)
+class SpatialDemoView: View(){
+    private val plugin = Global.plugins.fetch(FX3DPlugin)
+    private val canvas = Canvas3D(plugin)
 
-
-class RendererDemoView : View() {
-    val plugin = Global.plugins.fetch(FX3DPlugin)
-    val renderer = Canvas3D(plugin)
     override val root: Parent = borderpane {
-        center = renderer.root
+        center = canvas.root
     }
 
     lateinit var group: VisualGroup3D
 
     init {
-
-        renderer.render {
+        canvas.render {
+            box(100,100,100)
             group = group {
                 box(100,100,100)
                 box(100,100,100) {
@@ -45,7 +46,7 @@ class RendererDemoView : View() {
             }
         }
 
-        renderer.apply {
+        canvas.apply {
             angleY = -30.0
             angleX = -15.0
         }
@@ -54,5 +55,5 @@ class RendererDemoView : View() {
 
 
 fun main() {
-    launch<RendererDemoApp>()
+    launch<SpatialDemoApp>()
 }
