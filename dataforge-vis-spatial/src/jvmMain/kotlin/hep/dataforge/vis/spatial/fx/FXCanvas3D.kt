@@ -2,15 +2,13 @@ package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
-import hep.dataforge.meta.EmptyMeta
-import hep.dataforge.meta.Meta
+import hep.dataforge.meta.*
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.World.CAMERA_FAR_CLIP
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_DISTANCE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_X_ANGLE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_Y_ANGLE
-import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_Z_ANGLE
 import hep.dataforge.vis.spatial.World.CAMERA_NEAR_CLIP
 import javafx.event.EventHandler
 import javafx.scene.*
@@ -20,19 +18,22 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
-import org.fxyz3d.scene.CubeWorld
 import org.fxyz3d.utils.CameraTransformer
 import tornadofx.*
 
-class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
+class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
     Fragment(), Renderer<VisualObject3D>, ContextAware {
 
     override val context: Context get() = plugin.context
-    val world = CubeWorld(true)
+
+    val world = Group()
+
     val axes = Axes().also {
-        it.setHeight(AXIS_LENGTH)
-        it.setRadius(LINE_WIDTH)
+        it.setHeight(meta["axis.size"].double ?: AXIS_LENGTH)
+        it.setRadius(meta["axis.width"].double ?: LINE_WIDTH)
+        it.isVisible = meta["axis.visible"].boolean ?: (meta["axis"] != null)
         world.add(it)
+
     }
 
     private val camera = PerspectiveCamera().apply {
@@ -41,43 +42,32 @@ class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
         translateZ = CAMERA_INITIAL_DISTANCE
     }
 
-    private val cameraShift = CameraTransformer().apply {
-        val cameraFlip = CameraTransformer()
-        cameraFlip.children.add(camera)
-        cameraFlip.setRotateZ(180.0)
-        children.add(cameraFlip)
+    val cameraTransform = CameraTransformer().also {
+        it.add(camera)
     }
 
-    val translationXProperty get() = cameraShift.t.xProperty()
+    val translationXProperty get() = cameraTransform.t.xProperty()
     var translateX by translationXProperty
-    val translationYProperty get() = cameraShift.t.yProperty()
+    val translationYProperty get() = cameraTransform.t.yProperty()
     var translateY by translationYProperty
-    val translationZProperty get() = cameraShift.t.zProperty()
+    val translationZProperty get() = cameraTransform.t.zProperty()
     var translateZ by translationZProperty
 
-    private val cameraRotation = CameraTransformer().apply {
-        children.add(cameraShift)
-        ry.angle = CAMERA_INITIAL_Y_ANGLE
-        rx.angle = CAMERA_INITIAL_X_ANGLE
-        rz.angle = CAMERA_INITIAL_Z_ANGLE
-    }
-
-    val rotationXProperty get() = cameraRotation.rx.angleProperty()
+    val rotationXProperty get() = cameraTransform.rx.angleProperty()
     var angleX by rotationXProperty
-    val rotationYProperty get() = cameraRotation.ry.angleProperty()
+    val rotationYProperty get() = cameraTransform.ry.angleProperty()
     var angleY by rotationYProperty
-    val rotationZProperty get() = cameraRotation.rz.angleProperty()
+    val rotationZProperty get() = cameraTransform.rz.angleProperty()
     var angleZ by rotationZProperty
-
 
     override val root = borderpane {
         center = SubScene(
-            Group(world, cameraRotation).apply { DepthTest.ENABLE },
+            Group(world, cameraTransform).apply { DepthTest.ENABLE },
             1024.0,
             768.0,
             true,
             SceneAntialiasing.BALANCED
-        ).also {scene->
+        ).also { scene ->
             scene.fill = Color.GREY
             scene.camera = camera
             id = "canvas"
@@ -92,11 +82,11 @@ class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
             if (event.isControlDown) {
                 when (event.code) {
                     KeyCode.Z -> {
-                        cameraShift.t.x = 0.0
-                        cameraShift.t.y = 0.0
+                        translateX = 0.0
+                        translateY = 0.0
                         camera.translateZ = CAMERA_INITIAL_DISTANCE
-                        cameraRotation.ry.angle = CAMERA_INITIAL_Y_ANGLE
-                        cameraRotation.rx.angle = CAMERA_INITIAL_X_ANGLE
+                        angleY = CAMERA_INITIAL_Y_ANGLE
+                        angleX = CAMERA_INITIAL_X_ANGLE
                     }
                     KeyCode.X -> axes.isVisible = !axes.isVisible
 //                    KeyCode.S -> snapshot()
@@ -153,13 +143,11 @@ class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
             }
 
             if (me.isPrimaryButtonDown) {
-                cameraRotation.ry.angle =
-                    cameraRotation.ry.angle + mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
-                cameraRotation.rx.angle =
-                    cameraRotation.rx.angle + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED
+                angleY += mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
+                angleX += mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED
             } else if (me.isSecondaryButtonDown) {
-                cameraShift.t.x = cameraShift.t.x + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED
-                cameraShift.t.y = cameraShift.t.y + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED
+                translateX -= mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED
+                translateY -= mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED
             }
         }
         scene.onScroll = EventHandler<ScrollEvent> { event ->
@@ -171,11 +159,11 @@ class Canvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
 
     override fun render(obj: VisualObject3D, meta: Meta) {
         val node = plugin.buildNode(obj) ?: kotlin.error("Can't render FX node for object $obj")
-        world.add(node)
+        world.children.add(node)
     }
 
     companion object {
-        private const val AXIS_LENGTH = 2000.0
+        private const val AXIS_LENGTH = 400.0
         private const val CONTROL_MULTIPLIER = 0.1
         private const val SHIFT_MULTIPLIER = 10.0
         private const val MOUSE_SPEED = 0.1

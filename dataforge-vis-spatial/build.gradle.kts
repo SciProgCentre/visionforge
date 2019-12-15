@@ -22,6 +22,7 @@ kotlin {
         jvmMain {
             dependencies {
                 api("org.fxyz3d:fxyz3d:0.5.2")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${Scientifik.coroutinesVersion}")
                 implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7")
             }
         }

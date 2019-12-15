@@ -5,7 +5,6 @@ import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.applyStyle
 import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
@@ -53,7 +52,7 @@ class GDMLTransformer(val root: GDML) {
         val styleName = "material[${material.name}]"
 
         obj.useStyle(styleName){
-            COLOR_KEY to Colors.rgbToString(random.nextInt(0, Int.MAX_VALUE))
+            COLOR_KEY to random.nextInt(0, Int.MAX_VALUE)
             "gdml.material" put material.name
         }
 

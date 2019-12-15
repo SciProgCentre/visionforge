@@ -12,7 +12,7 @@ import javafx.scene.paint.PhongMaterial
 object FXMaterials {
     val RED = PhongMaterial().apply {
         diffuseColor = Color.DARKRED
-        specularColor = Color.RED
+        specularColor = Color.WHITE
     }
 
     val WHITE = PhongMaterial().apply {
@@ -22,7 +22,7 @@ object FXMaterials {
 
     val GREY = PhongMaterial().apply {
         diffuseColor = Color.DARKGREY
-        specularColor = Color.GREY
+        specularColor = Color.WHITE
     }
 
     val BLUE = PhongMaterial(Color.BLUE)
@@ -34,14 +34,14 @@ object FXMaterials {
  */
 fun MetaItem<*>.color(opacity: Double = 1.0): Color {
     return when (this) {
-        is MetaItem.ValueItem -> if (this.value.type == ValueType.STRING) {
-            Color.web(this.value.string)
-        } else {
+        is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
             val int = value.number.toInt()
             val red = int and 0x00ff0000 shr 16
             val green = int and 0x0000ff00 shr 8
             val blue = int and 0x000000ff
             Color.rgb(red, green, blue)
+        } else {
+            Color.web(this.value.string)
         }
         is MetaItem.NodeItem -> {
             Color.rgb(
@@ -63,9 +63,8 @@ fun MetaItem<*>?.material(): Material {
         is MetaItem.ValueItem -> PhongMaterial(color())
         is MetaItem.NodeItem -> PhongMaterial().apply {
             val opacity = node["opacity"].double ?: 1.0
-            (node["color"] ?: this@material).let { diffuseColor = it.color(opacity) }
-            node["specularColor"]?.let { specularColor = it.color(opacity) }
-
+            diffuseColor = node["color"]?.color(opacity) ?: Color.DARKGREY
+            specularColor = node["specularColor"]?.color(opacity) ?: Color.WHITE
         }
     }
 }

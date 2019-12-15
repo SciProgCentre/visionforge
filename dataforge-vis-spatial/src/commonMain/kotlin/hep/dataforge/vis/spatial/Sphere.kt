@@ -26,7 +26,16 @@ class Sphere(
     override var scale: Point3D? = null
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
+//        val segments = this.detail ?: 8
+//        require(segments >= 4) { "The detail for sphere must be >= 4" }
+//        val phiStep = phi / segments
+//        val thetaStep = theta / segments
+//        for (i in 1 until segments - 1) {
+//            for (j in 0 until segments - 1) {
+//                val point1 = Point3D()
+//            }
+//        }
     }
 }
 

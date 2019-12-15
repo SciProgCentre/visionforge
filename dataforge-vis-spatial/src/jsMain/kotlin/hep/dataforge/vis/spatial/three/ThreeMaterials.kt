@@ -11,6 +11,7 @@ import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.Mesh
+import kotlin.math.max
 
 
 object ThreeMaterials {
@@ -46,6 +47,11 @@ object ThreeMaterials {
         }
     }
 
+    fun rgbToString(rgb: Int): String {
+        val string = rgb.toString(16).padStart(6, '0')
+        return "#" + string.substring(max(0, string.length - 6))
+    }
+
 }
 
 /**
@@ -53,11 +59,11 @@ object ThreeMaterials {
  */
 fun MetaItem<*>.color(): Color {
     return when (this) {
-        is MetaItem.ValueItem -> if (this.value.type == ValueType.STRING) {
-            Color(this.value.string)
-        } else {
+        is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
             val int = value.number.toInt()
             Color(int)
+        } else {
+            Color(this.value.string)
         }
         is MetaItem.NodeItem -> {
             Color(

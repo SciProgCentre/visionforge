@@ -12,6 +12,8 @@ import javafx.scene.shape.Shape3D
 import javafx.scene.transform.Rotate
 import org.fxyz3d.shapes.composites.PolyLine3D
 import org.fxyz3d.shapes.primitives.CuboidMesh
+import org.fxyz3d.shapes.primitives.SpheroidMesh
+import kotlin.math.PI
 import kotlin.reflect.KClass
 
 class FX3DPlugin : AbstractPlugin() {
@@ -33,13 +35,27 @@ class FX3DPlugin : AbstractPlugin() {
                 as FX3DFactory<VisualObject3D>?
     }
 
-    fun buildNode(obj: VisualObject3D): Node? {
-        val binding = DisplayObjectFXBinding(obj)
+    fun buildNode(obj: VisualObject3D): Node {
+        val binding = VisualObjectFXBinding(obj)
         return when (obj) {
             is Proxy -> proxyFactory(obj, binding)
-            is VisualGroup3D -> Group(obj.filterIsInstance<VisualObject3D>().map { buildNode(it) })
+            is VisualGroup3D -> {
+                Group(obj.children.mapNotNull { (token, obj) ->
+                    (obj as? VisualObject3D)?.let {
+                        buildNode(it).apply {
+                            properties["name"] = token.toString()
+                        }
+                    }
+                })
+            }
             is Composite -> compositeFactory(obj, binding)
             is Box -> CuboidMesh(obj.xSize.toDouble(), obj.ySize.toDouble(), obj.zSize.toDouble())
+            is Sphere -> if (obj.phi == PI2 && obj.theta == PI.toFloat()) {
+                //use sphere for orb
+                SpheroidMesh(obj.detail ?: 16, obj.radius.toDouble(), obj.radius.toDouble())
+            } else {
+                FXShapeFactory(obj, binding)
+            }
             is PolyLine -> PolyLine3D(
                 obj.points.map { it.point },
                 obj.thickness.toFloat(),
@@ -55,23 +71,23 @@ class FX3DPlugin : AbstractPlugin() {
                 }
             }
         }.apply {
-            translateXProperty().bind(binding[VisualObject3D.xPos].float())
-            translateYProperty().bind(binding[VisualObject3D.yPos].float())
-            translateZProperty().bind(binding[VisualObject3D.zPos].float())
-            scaleXProperty().bind(binding[VisualObject3D.xScale].float())
-            scaleYProperty().bind(binding[VisualObject3D.yScale].float())
-            scaleZProperty().bind(binding[VisualObject3D.zScale].float())
+            translateXProperty().bind(binding[VisualObject3D.xPos].float(obj.x.toFloat()))
+            translateYProperty().bind(binding[VisualObject3D.yPos].float(obj.y.toFloat()))
+            translateZProperty().bind(binding[VisualObject3D.zPos].float(obj.z.toFloat()))
+            scaleXProperty().bind(binding[VisualObject3D.xScale].float(obj.scaleX.toFloat()))
+            scaleYProperty().bind(binding[VisualObject3D.yScale].float(obj.scaleY.toFloat()))
+            scaleZProperty().bind(binding[VisualObject3D.zScale].float(obj.scaleZ.toFloat()))
 
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.xRotation].float())
+                angleProperty().bind(binding[VisualObject3D.xRotation].float(obj.rotationX.toFloat()))
             }
 
             val rotateY = Rotate(0.0, Rotate.Y_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.yRotation].float())
+                angleProperty().bind(binding[VisualObject3D.yRotation].float(obj.rotationY.toFloat()))
             }
 
             val rotateZ = Rotate(0.0, Rotate.Z_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.zRotation].float())
+                angleProperty().bind(binding[VisualObject3D.zRotation].float(obj.rotationZ.toFloat()))
             }
 
             when (obj.rotationOrder) {
@@ -84,7 +100,9 @@ class FX3DPlugin : AbstractPlugin() {
             }
 
             if (this is Shape3D) {
-                materialProperty().bind(binding[Material3D.MATERIAL_KEY].transform { it.material() })
+                materialProperty().bind(binding[Material3D.MATERIAL_KEY].transform {
+                    it.material()
+                })
             }
         }
     }
@@ -104,7 +122,7 @@ interface FX3DFactory<in T : VisualObject3D> {
 
     val type: KClass<in T>
 
-    operator fun invoke(obj: T, binding: DisplayObjectFXBinding): Node
+    operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
 
     companion object {
         const val TYPE = "fx3DFactory"

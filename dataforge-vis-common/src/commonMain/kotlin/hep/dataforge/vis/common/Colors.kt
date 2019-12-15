@@ -1,7 +1,5 @@
 package hep.dataforge.vis.common
 
-import kotlin.math.max
-
 /**
  * Taken from https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
  */
@@ -176,11 +174,6 @@ object Colors {
     const val whitesmoke = 0xF5F5F5
     const val yellow = 0xFFFF00
     const val yellowgreen = 0x9ACD32
-
-    fun rgbToString(rgb: Int): String {
-        val string = rgb.toString(16).padStart(6, '0')
-        return "#" + string.substring(max(0, string.length - 6))
-    }
 
     fun rgbToString(red: UByte, green: UByte, blue: UByte): String {
         fun colorToString(color: UByte): String{

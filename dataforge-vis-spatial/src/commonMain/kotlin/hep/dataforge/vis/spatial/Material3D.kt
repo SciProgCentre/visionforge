@@ -3,7 +3,6 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.*
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
@@ -20,6 +19,7 @@ class Material3D(override val config: Config) : Specific {
 
         val MATERIAL_KEY = "material".asName()
         val COLOR_KEY = MATERIAL_KEY + "color"
+        val SPECULAR_COLOR = MATERIAL_KEY + "specularColor"
         val OPACITY_KEY = MATERIAL_KEY + "opacity"
 
     }
@@ -29,9 +29,18 @@ fun VisualObject.color(rgb: String) {
     setProperty(COLOR_KEY, rgb)
 }
 
-fun VisualObject.color(rgb: Int) = color(Colors.rgbToString(rgb))
+fun VisualObject.color(rgb: Int) {
+    setProperty(COLOR_KEY, rgb)
+}
 
-fun VisualObject.color(r: UByte, g: UByte, b: UByte) = color(Colors.rgbToString(r, g, b))
+fun VisualObject.color(r: UByte, g: UByte, b: UByte) = setProperty(
+    COLOR_KEY,
+    buildMeta {
+        "red" put r.toInt()
+        "green" put g.toInt()
+        "blue" put b.toInt()
+    }
+)
 
 var VisualObject.color: String?
     get() = getProperty(COLOR_KEY).string

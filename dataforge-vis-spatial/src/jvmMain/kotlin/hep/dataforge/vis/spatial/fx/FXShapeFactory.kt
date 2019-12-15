@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 object FXShapeFactory : FX3DFactory<Shape> {
     override val type: KClass<in Shape> get() = Shape::class
 
-    override fun invoke(obj: Shape, binding: DisplayObjectFXBinding): MeshView {
+    override fun invoke(obj: Shape, binding: VisualObjectFXBinding): MeshView {
         val mesh = FXGeometryBuilder().apply { obj.toGeometry(this) }.build()
         return MeshView(mesh)
     }

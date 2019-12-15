@@ -14,7 +14,7 @@ class FXCompositeFactory(val plugin: FX3DPlugin) :
     override val type: KClass<in Composite>
         get() = Composite::class
 
-    override fun invoke(obj: Composite, binding: DisplayObjectFXBinding): Node {
+    override fun invoke(obj: Composite, binding: VisualObjectFXBinding): Node {
         val first = plugin.buildNode(obj.first) as? MeshView ?: error("Can't build node")
         val second = plugin.buildNode(obj.second) as? MeshView ?: error("Can't build node")
         val firstCSG = MeshUtils.mesh2CSG(first)
