@@ -6,8 +6,8 @@ import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.applyStyle
-import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
+import hep.dataforge.vis.common.useStyle
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.RotationOrder
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
@@ -43,7 +43,7 @@ class GDMLTransformer(val root: GDML) {
         styleCache.getOrPut(name.toName()){
             buildMeta(builder)
         }
-        applyStyle(name)
+        useStyle(name)
     }
 
     internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid) {
@@ -52,7 +52,7 @@ class GDMLTransformer(val root: GDML) {
         val styleName = "material[${material.name}]"
 
         obj.useStyle(styleName){
-            COLOR_KEY to random.nextInt(0, Int.MAX_VALUE)
+            MATERIAL_COLOR_KEY put random.nextInt(16777216)
             "gdml.material" put material.name
         }
 
@@ -68,7 +68,7 @@ class GDMLTransformer(val root: GDML) {
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
         final.prototypes = proto
         styleCache.forEach {
-            final.addStyle(it.key, it.value, false)
+            final.styleSheet[it.key.toString()] = it.value
         }
         final.rotationOrder = RotationOrder.ZXY
         onFinish(this@GDMLTransformer)

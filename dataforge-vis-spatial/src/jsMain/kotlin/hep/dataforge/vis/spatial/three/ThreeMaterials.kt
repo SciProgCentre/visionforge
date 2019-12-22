@@ -11,7 +11,6 @@ import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.Mesh
-import kotlin.math.max
 
 
 object ThreeMaterials {
@@ -46,12 +45,6 @@ object ThreeMaterials {
             linewidth = meta["thickness"].double ?: 1.0
         }
     }
-
-    fun rgbToString(rgb: Int): String {
-        val string = rgb.toString(16).padStart(6, '0')
-        return "#" + string.substring(max(0, string.length - 6))
-    }
-
 }
 
 /**
@@ -67,9 +60,9 @@ fun MetaItem<*>.color(): Color {
         }
         is MetaItem.NodeItem -> {
             Color(
-                node["red"]?.int ?: 0,
-                node["green"]?.int ?: 0,
-                node["blue"]?.int ?: 0
+                node[Colors.RED_KEY]?.int ?: 0,
+                node[Colors.GREEN_KEY]?.int ?: 0,
+                node[Colors.BLUE_KEY]?.int ?: 0
             )
         }
     }
@@ -99,11 +92,12 @@ fun MetaItem<*>.color(): Color {
 //fun Material3D?.jsLineMaterial(): Material = this?.config.jsLineMaterial()
 
 fun Mesh.updateMaterial(obj: VisualObject) {
-    val meta = obj.properties[Material3D.MATERIAL_KEY].node?:EmptyMeta
+    val meta = obj.getProperty(Material3D.MATERIAL_KEY).node?:EmptyMeta
     material = (material as? MeshBasicMaterial ?: MeshBasicMaterial()).apply {
-        color = meta["color"]?.color() ?: ThreeMaterials.DEFAULT_COLOR
-        opacity = meta["opacity"]?.double ?: 1.0
-        transparent = meta["transparent"].boolean ?: (opacity < 1.0)
+        color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
+        opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
+        transparent = opacity < 1.0
+        wireframe = meta[Material3D.WIREFRAME_KEY].boolean?:false
         needsUpdate = true
     }
 }

@@ -5,6 +5,8 @@ import hep.dataforge.meta.double
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
+import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.spatial.Material3D
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
 import javafx.scene.paint.PhongMaterial
@@ -39,16 +41,16 @@ fun MetaItem<*>.color(opacity: Double = 1.0): Color {
             val red = int and 0x00ff0000 shr 16
             val green = int and 0x0000ff00 shr 8
             val blue = int and 0x000000ff
-            Color.rgb(red, green, blue)
+            Color.rgb(red, green, blue, opacity)
         } else {
             Color.web(this.value.string)
         }
         is MetaItem.NodeItem -> {
             Color.rgb(
-                node["red"]?.int ?: 0,
-                node["green"]?.int ?: 0,
-                node["blue"]?.int ?: 0,
-                node["opacity"]?.double ?: opacity
+                node[Colors.RED_KEY]?.int ?: 0,
+                node[Colors.GREEN_KEY]?.int ?: 0,
+                node[Colors.BLUE_KEY]?.int ?: 0,
+                node[Material3D.OPACITY_KEY]?.double ?: opacity
             )
         }
     }
@@ -62,9 +64,9 @@ fun MetaItem<*>?.material(): Material {
         null -> FXMaterials.GREY
         is MetaItem.ValueItem -> PhongMaterial(color())
         is MetaItem.NodeItem -> PhongMaterial().apply {
-            val opacity = node["opacity"].double ?: 1.0
-            diffuseColor = node["color"]?.color(opacity) ?: Color.DARKGREY
-            specularColor = node["specularColor"]?.color(opacity) ?: Color.WHITE
+            val opacity = node[Material3D.OPACITY_KEY].double ?: 1.0
+            diffuseColor = node[Material3D.COLOR_KEY]?.color(opacity) ?: Color.DARKGREY
+            specularColor = node[Material3D.SPECULAR_COLOR]?.color(opacity) ?: Color.WHITE
         }
     }
 }

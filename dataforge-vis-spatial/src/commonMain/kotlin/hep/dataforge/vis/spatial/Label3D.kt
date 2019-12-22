@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-class Text3D(var text: String, var fontSize: Int) : AbstractVisualObject(), VisualObject3D {
+class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVisualObject(),
+    VisualObject3D {
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
@@ -19,5 +20,11 @@ class Text3D(var text: String, var fontSize: Int) : AbstractVisualObject(), Visu
 
 }
 
-fun VisualGroup3D.text(text: String, fontSize: Int, name: String = "", action: Text3D.() -> Unit = {}) =
-    Text3D(text, fontSize).apply(action).also { set(name, it) }
+fun VisualGroup3D.label(
+    text: String,
+    fontSize: Number = 20,
+    fontFamily: String = "Arial",
+    name: String = "",
+    action: Label3D.() -> Unit = {}
+) =
+    Label3D(text, fontSize.toDouble(), fontFamily).apply(action).also { set(name, it) }

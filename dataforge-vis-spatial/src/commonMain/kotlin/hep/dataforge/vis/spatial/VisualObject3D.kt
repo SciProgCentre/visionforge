@@ -129,21 +129,21 @@ var VisualObject3D.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyChanged(VisualObject3D.xPos)
+        propertyInvalidated(VisualObject3D.xPos)
     }
 
 var VisualObject3D.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyChanged(VisualObject3D.yPos)
+        propertyInvalidated(VisualObject3D.yPos)
     }
 
 var VisualObject3D.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyChanged(VisualObject3D.zPos)
+        propertyInvalidated(VisualObject3D.zPos)
     }
 
 private fun VisualObject3D.rotation(): Point3D =
@@ -153,21 +153,21 @@ var VisualObject3D.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyChanged(VisualObject3D.xRotation)
+        propertyInvalidated(VisualObject3D.xRotation)
     }
 
 var VisualObject3D.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyChanged(VisualObject3D.yRotation)
+        propertyInvalidated(VisualObject3D.yRotation)
     }
 
 var VisualObject3D.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyChanged(VisualObject3D.zRotation)
+        propertyInvalidated(VisualObject3D.zRotation)
     }
 
 private fun VisualObject3D.scale(): Point3D =
@@ -177,19 +177,19 @@ var VisualObject3D.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyChanged(VisualObject3D.xScale)
+        propertyInvalidated(VisualObject3D.xScale)
     }
 
 var VisualObject3D.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyChanged(VisualObject3D.yScale)
+        propertyInvalidated(VisualObject3D.yScale)
     }
 
 var VisualObject3D.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyChanged(VisualObject3D.zScale)
+        propertyInvalidated(VisualObject3D.zScale)
     }

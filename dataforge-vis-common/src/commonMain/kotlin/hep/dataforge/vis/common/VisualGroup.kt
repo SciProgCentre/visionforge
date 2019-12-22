@@ -1,6 +1,8 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.seal
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
 
@@ -12,6 +14,8 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
 
     override val defaultTarget: String get() = VisualObject.TYPE
 
+    val styleSheet: StyleSheet
+
     override fun provideTop(target: String): Map<Name, Any> =
         when (target) {
             VisualObject.TYPE -> children.flatMap { (key, value) ->
@@ -22,7 +26,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
                 }
                 res.entries
             }.associate { it.toPair() }
-            //TODO add styles
+            STYLE_TARGET -> styleSheet.items.mapKeys { it.key.toName() }
             else -> emptyMap()
         }
 
@@ -32,17 +36,6 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
      */
     override fun iterator(): Iterator<VisualObject> = children.values.iterator()
 
-    /**
-     * Resolve style by its name
-     * TODO change to Config?
-     */
-    fun getStyle(name: Name): Meta?
-
-    /**
-     * Add or replace style with given name
-     */
-    fun addStyle(name: Name, meta: Meta, apply: Boolean = true)
-
     operator fun get(name: Name): VisualObject? {
         return when {
             name.isEmpty() -> this
@@ -50,7 +43,29 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
             else -> (children[name.first()!!] as? VisualGroup)?.get(name.cutFirst())
         }
     }
+
+    /**
+     * A fix for serialization bug that writes all proper parents inside the tree after deserialization
+     */
+    fun attachChildren(){
+        styleSheet.owner = this
+        this.children.values.forEach {
+            it.parent = this
+            (it as? VisualGroup)?.attachChildren()
+        }
+    }
+
+    companion object {
+        const val STYLE_TARGET = "style"
+    }
 }
+
+fun VisualGroup.updateStyle(key: String, builder: MetaBuilder.() -> Unit) {
+    val newStyle = styleSheet[key]?.let { buildMeta(it, builder) } ?: buildMeta(builder)
+    styleSheet[key] = newStyle.seal()
+}
+
+data class StyleRef(val group: VisualGroup, val styleName: Name)
 
 val VisualGroup.isEmpty: Boolean get() = this.children.isEmpty()
 

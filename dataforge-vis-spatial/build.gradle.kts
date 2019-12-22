@@ -5,10 +5,6 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-scientifik {
-    withSerialization()
-}
-
 kotlin {
     jvm {
         withJava()
@@ -21,9 +17,13 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                api("org.fxyz3d:fxyz3d:0.5.2")
+                implementation("org.fxyz3d:fxyz3d:0.5.2") {
+                    exclude(module = "slf4j-simple")
+                }
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${Scientifik.coroutinesVersion}")
-                implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7")
+                implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7") {
+                    exclude(module = "slf4j-simple")
+                }
             }
         }
         jsMain {

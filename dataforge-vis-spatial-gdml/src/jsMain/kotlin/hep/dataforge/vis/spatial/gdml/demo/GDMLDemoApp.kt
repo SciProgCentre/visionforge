@@ -5,11 +5,10 @@ import hep.dataforge.js.Application
 import hep.dataforge.js.objectTree
 import hep.dataforge.js.startApplication
 import hep.dataforge.names.NameToken
-import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.attachChildren
 import hep.dataforge.vis.spatial.editor.propertyEditor
 import hep.dataforge.vis.spatial.editor.threeOutputConfig
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
@@ -106,7 +105,7 @@ private class GDMLDemoApp : Application {
                 || parent.physVolumes.isNotEmpty()
             ) {
                 useStyle("opaque") {
-                    OPACITY_KEY to 0.3
+                    MATERIAL_OPACITY_KEY put 0.3
                 }
             }
         }
@@ -154,7 +153,7 @@ private class GDMLDemoApp : Application {
             output.camera.layers.set(0)
             configElement.threeOutputConfig(output)
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.objectTree(NameToken("World"),visual, editorElement::propertyEditor)
+            treeElement.objectTree(NameToken("World"), visual, editorElement::propertyEditor)
 
 
             output.render(visual)

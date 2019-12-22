@@ -1,8 +1,10 @@
+import scientifik.useSerialization
+
 val dataforgeVersion by extra("0.1.5-dev-4")
 
 plugins {
     val kotlinVersion = "1.3.61"
-    val toolsVersion = "0.2.7"
+    val toolsVersion = "0.3.1"
 
     kotlin("jvm") version kotlinVersion apply false
     id("kotlin-dce-js") version kotlinVersion apply false
@@ -25,6 +27,10 @@ allprojects {
 
     group = "hep.dataforge"
     version = "0.1.0-dev"
+}
+
+subprojects{
+    useSerialization("0.13.0")
 }
 
 val githubProject by extra("dataforge-vis")

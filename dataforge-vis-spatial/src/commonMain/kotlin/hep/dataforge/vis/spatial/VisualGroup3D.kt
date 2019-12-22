@@ -12,12 +12,12 @@ import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
+import hep.dataforge.vis.common.StyleSheet
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.SerialName
@@ -37,9 +37,10 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
             field = value
         }
 
+    override val styleSheet: StyleSheet = StyleSheet(this)
+
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
-    override val styleSheet = HashMap<Name, Meta>()
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -48,6 +49,11 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
+
+    init {
+        //Do after deserialization
+        attachChildren()
+    }
 
     override fun removeChild(token: NameToken) {
         _children.remove(token)
@@ -96,24 +102,16 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
+    override fun attachChildren() {
+        super.attachChildren()
+        prototypes?.run {
+            parent = this
+            attachChildren()
+        }
+    }
+
     companion object {
         const val PROTOTYPES_KEY = "templates"
-    }
-}
-
-/**
- * A fix for serialization bug that writes all proper parents inside the tree after deserialization
- */
-fun VisualGroup.attachChildren() {
-    this.children.values.forEach {
-        it.parent = this
-        (it as? VisualGroup)?.attachChildren()
-    }
-    if (this is VisualGroup3D) {
-        prototypes?.also {
-            it.parent = this
-            it.attachChildren()
-        }
     }
 }
 

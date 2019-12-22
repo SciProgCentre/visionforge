@@ -1,11 +1,5 @@
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-
 plugins {
     id("scientifik.mpp")
-}
-
-scientifik{
-    withSerialization()
 }
 
 kotlin {
@@ -13,20 +7,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("scientifik:gdml:0.1.3")
-            }
-        }
-        val jsMain by getting {
-            dependencies {
-                api(project(":dataforge-vis-spatial"))
-                //api("kotlin.js.externals:kotlin-js-jquery:3.2.0-0")
+                api("scientifik:gdml:0.1.4")
             }
         }
     }
 }
 
-tasks{
-    val jsBrowserWebpack by getting(KotlinWebpack::class) {
-        sourceMaps = false
-    }
-}
+//tasks{
+//    val jsBrowserWebpack by getting(KotlinWebpack::class) {
+//        sourceMaps = false
+//    }
+//}

@@ -245,3 +245,10 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 
     return context.finalize(volume(context, world))
 }
+
+/**
+ * Append gdml node to the group
+ */
+fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+    set(key, gdml.toVisual(transformer))
+}

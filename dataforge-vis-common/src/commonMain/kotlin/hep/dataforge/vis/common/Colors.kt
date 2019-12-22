@@ -1,5 +1,10 @@
 package hep.dataforge.vis.common
 
+import hep.dataforge.meta.*
+import hep.dataforge.values.ValueType
+import hep.dataforge.values.int
+import kotlin.math.max
+
 /**
  * Taken from https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
  */
@@ -175,9 +180,38 @@ object Colors {
     const val yellow = 0xFFFF00
     const val yellowgreen = 0x9ACD32
 
+    const val RED_KEY = "red"
+    const val GREEN_KEY = "green"
+    const val BLUE_KEY = "blue"
+
+    fun fromMeta(item: MetaItem<*>): String {
+        return when (item) {
+            is MetaItem.NodeItem<*> -> {
+                val node = item.node
+                rgbToString(
+                    node[RED_KEY].number?.toByte()?.toUByte() ?: 0u,
+                    node[GREEN_KEY].number?.toByte()?.toUByte() ?: 0u,
+                    node[BLUE_KEY].number?.toByte()?.toUByte() ?: 0u
+                )
+            }
+            is MetaItem.ValueItem -> {
+                if (item.value.type == ValueType.NUMBER) {
+                    rgbToString(item.value.int)
+                } else {
+                    item.value.string
+                }
+            }
+        }
+    }
+
+    fun rgbToString(rgb: Int): String {
+        val string = rgb.toString(16).padStart(6, '0')
+        return "#" + string.substring(max(0, string.length - 6))
+    }
+
     fun rgbToString(red: UByte, green: UByte, blue: UByte): String {
-        fun colorToString(color: UByte): String{
-            return color.toString(16).padStart(2,'0')
+        fun colorToString(color: UByte): String {
+            return color.toString(16).padStart(2, '0')
         }
         return buildString {
             append("#")
@@ -185,5 +219,11 @@ object Colors {
             append(colorToString(green))
             append(colorToString(blue))
         }
+    }
+
+    fun rgbToMeta(r: UByte, g: UByte, b: UByte): Meta = buildMeta {
+        RED_KEY put r.toInt()
+        GREEN_KEY put g.toInt()
+        BLUE_KEY put b.toInt()
     }
 }

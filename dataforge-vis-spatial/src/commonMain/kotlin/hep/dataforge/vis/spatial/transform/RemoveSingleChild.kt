@@ -10,7 +10,9 @@ import hep.dataforge.vis.spatial.*
 internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject {
     return child.apply {
 
-        parent.properties?.let { config.update(it) }
+        config.update(parent.config)
+
+        //parent.properties?.let { config.update(it) }
 
         if (this is VisualObject3D && parent is VisualObject3D) {
             position += parent.position

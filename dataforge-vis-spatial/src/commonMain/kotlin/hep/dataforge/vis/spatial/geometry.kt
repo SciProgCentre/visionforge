@@ -14,8 +14,8 @@ operator fun Point2D.component1() = x
 operator fun Point2D.component2() = y
 
 fun Point2D.toMeta() = buildMeta {
-    VisualObject3D.x to x
-    VisualObject3D.y to y
+    VisualObject3D.x put  x
+    VisualObject3D.y put y
 }
 
 fun Meta.point2D() = Point2D(this["x"].number ?: 0, this["y"].number ?: 0)
@@ -53,7 +53,7 @@ fun Meta.point3D() = Point3D(this["x"].number ?: 0, this["y"].number ?: 0, this[
 val zero = Point3D(0, 0, 0)
 
 fun Point3D.toMeta() = buildMeta {
-    VisualObject3D.x to x
-    VisualObject3D.y to y
-    VisualObject3D.z to z
+    VisualObject3D.x put x
+    VisualObject3D.y put y
+    VisualObject3D.z put z
 }

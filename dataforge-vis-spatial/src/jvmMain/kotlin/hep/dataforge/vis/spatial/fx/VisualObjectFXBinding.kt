@@ -2,9 +2,10 @@ package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
-import hep.dataforge.names.isEmpty
+import hep.dataforge.names.startsWith
 import hep.dataforge.names.toName
 import hep.dataforge.vis.common.VisualObject
+import javafx.application.Platform
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 
@@ -16,12 +17,17 @@ class VisualObjectFXBinding(val obj: VisualObject) {
 
     init {
         obj.onPropertyChange(this) { name, _, _ ->
-            var currentName = name
-            while(!currentName.isEmpty()) {
-                //recursively update all upper level bindings
-                bindings[currentName]?.invalidate()
-                currentName = currentName.cutLast()
+            bindings.filter { it.key.startsWith(name) }.forEach { entry ->
+                Platform.runLater {
+                    entry.value.invalidate()
+                }
             }
+//            var currentName = name
+//            while (!currentName.isEmpty()) {
+//                //recursively update all upper level bindings
+//                bindings[currentName]?.invalidate()
+//                currentName = currentName.cutLast()
+//            }
         }
     }
 
@@ -46,9 +52,9 @@ fun ObjectBinding<MetaItem<*>?>.long() = objectBinding { it.long }
 fun ObjectBinding<MetaItem<*>?>.node() = objectBinding { it.node }
 
 fun ObjectBinding<MetaItem<*>?>.string(default: String) = stringBinding { it.string ?: default }
-fun ObjectBinding<MetaItem<*>?>.double(default: Double) = objectBinding { it.double ?: default }
-fun ObjectBinding<MetaItem<*>?>.float(default: Float) = objectBinding { it.float ?: default }
-fun ObjectBinding<MetaItem<*>?>.int(default: Int) = objectBinding { it.int ?: default }
-fun ObjectBinding<MetaItem<*>?>.long(default: Long) = objectBinding { it.long ?:default }
+fun ObjectBinding<MetaItem<*>?>.double(default: Double) = doubleBinding { it.double ?: default }
+fun ObjectBinding<MetaItem<*>?>.float(default: Float) = floatBinding { it.float ?: default }
+fun ObjectBinding<MetaItem<*>?>.int(default: Int) = integerBinding { it.int ?: default }
+fun ObjectBinding<MetaItem<*>?>.long(default: Long) = longBinding { it.long ?: default }
 
 fun <T> ObjectBinding<MetaItem<*>?>.transform(transform: (MetaItem<*>) -> T) = objectBinding { it?.let(transform) }

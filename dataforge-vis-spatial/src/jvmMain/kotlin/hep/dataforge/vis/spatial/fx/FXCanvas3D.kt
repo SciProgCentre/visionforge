@@ -33,13 +33,15 @@ class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
         it.setRadius(meta["axis.width"].double ?: LINE_WIDTH)
         it.isVisible = meta["axis.visible"].boolean ?: (meta["axis"] != null)
         world.add(it)
-
     }
+
+    val light = AmbientLight()
 
     private val camera = PerspectiveCamera().apply {
         nearClip = CAMERA_NEAR_CLIP
         farClip = CAMERA_FAR_CLIP
         translateZ = CAMERA_INITIAL_DISTANCE
+        this.add(light)
     }
 
     val cameraTransform = CameraTransformer().also {
@@ -60,20 +62,27 @@ class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
     val rotationZProperty get() = cameraTransform.rz.angleProperty()
     var angleZ by rotationZProperty
 
+    private val canvas = SubScene(
+        Group(world, cameraTransform).apply { DepthTest.ENABLE },
+        400.0,
+        400.0,
+        true,
+        SceneAntialiasing.BALANCED
+    ).also { scene ->
+        scene.fill = Color.GREY
+        scene.camera = camera
+        //id = "canvas"
+        handleKeyboard(scene)
+        handleMouse(scene)
+    }
+
     override val root = borderpane {
-        center = SubScene(
-            Group(world, cameraTransform).apply { DepthTest.ENABLE },
-            1024.0,
-            768.0,
-            true,
-            SceneAntialiasing.BALANCED
-        ).also { scene ->
-            scene.fill = Color.GREY
-            scene.camera = camera
-            id = "canvas"
-            handleKeyboard(scene)
-            handleMouse(scene)
-        }
+        center = canvas
+    }
+
+    init {
+        canvas.widthProperty().bind(root.widthProperty())
+        canvas.heightProperty().bind(root.heightProperty())
     }
 
 
@@ -170,6 +179,6 @@ class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
         private const val ROTATION_SPEED = 2.0
         private const val TRACK_SPEED = 6.0
         private const val RESIZE_SPEED = 50.0
-        private const val LINE_WIDTH = 3.0
+        private const val LINE_WIDTH = 1.0
     }
 }

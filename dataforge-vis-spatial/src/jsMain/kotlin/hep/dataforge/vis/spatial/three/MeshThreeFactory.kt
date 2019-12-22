@@ -35,7 +35,7 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
         //JS sometimes tries to pass Geometry as BufferGeometry
         @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
 
-        val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
+        //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
         val mesh = Mesh(geometry, MeshBasicMaterial()).apply {
             matrixAutoUpdate = false

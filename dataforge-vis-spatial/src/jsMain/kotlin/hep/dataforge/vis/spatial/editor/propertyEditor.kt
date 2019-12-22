@@ -5,13 +5,10 @@ import hep.dataforge.js.jsObject
 import hep.dataforge.meta.*
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.findStyle
-import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
-import hep.dataforge.vis.spatial.Material3D.Companion.OPACITY_KEY
+import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
-import hep.dataforge.vis.spatial.color
-import hep.dataforge.vis.spatial.opacity
-import hep.dataforge.vis.spatial.prototype
-import hep.dataforge.vis.spatial.visible
 import kotlinx.html.dom.append
 import kotlinx.html.js.div
 import kotlinx.html.js.h4
@@ -27,11 +24,17 @@ fun Element.propertyEditor(item: VisualObject?) {
     if (item != null) {
         append {
             card("Properties") {
-                val config = (item.properties ?: item.prototype?.properties) ?: EmptyMeta
+                val config: Meta = if (item is Proxy || item is Proxy.ProxyChild) {
+                    item.prototype?.config ?: EmptyMeta
+                } else {
+                    item.config
+                }
                 val metaToEdit = config.builder().apply {
                     VISIBLE_KEY to (item.visible ?: true)
-                    COLOR_KEY to (item.color ?: "#ffffff")
-                    OPACITY_KEY to (item.opacity ?: 1.0)
+                    if (item is VisualObject3D) {
+                        MATERIAL_COLOR_KEY to (item.color ?: "#ffffff")
+                        MATERIAL_OPACITY_KEY to (item.opacity ?: 1.0)
+                    }
                 }
                 val dMeta: dynamic = metaToEdit.toDynamic()
                 val options: JSONEditorOptions = jsObject {

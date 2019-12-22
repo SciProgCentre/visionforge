@@ -48,11 +48,3 @@ class FXDemoGrid : View(), OutputManager {
     }
 
 }
-
-fun FXDemoGrid.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
-    val meta = buildMeta {
-        "title" put title
-    }
-    val output = get(VisualObject::class, name.toName(), meta = meta)
-    output.render(action = block)
-}

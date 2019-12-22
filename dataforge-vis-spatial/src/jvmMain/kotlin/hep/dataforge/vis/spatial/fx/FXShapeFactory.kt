@@ -7,6 +7,7 @@ import hep.dataforge.vis.spatial.Shape
 import javafx.scene.shape.Mesh
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh
+import javafx.scene.shape.VertexFormat
 import org.fxyz3d.geometry.Face3
 import kotlin.reflect.KClass
 
@@ -42,13 +43,16 @@ private class FXGeometryBuilder : GeometryBuilder<Mesh> {
     }
 
     override fun build(): Mesh {
-        val mesh = TriangleMesh()
+        val mesh = TriangleMesh(VertexFormat.POINT_TEXCOORD)
         vertices.forEach {
             //TODO optimize copy
             mesh.points.addAll(it.x.toFloat(), it.y.toFloat(), it.z.toFloat())
         }
+
+        mesh.texCoords.addAll(0f, 0f)
+
         faces.forEach {
-            mesh.faces.addAll(it.p0, it.p1, it.p2)
+            mesh.faces.addAll(it.p0, 0, it.p1, 0, it.p2, 0)
         }
         return mesh
     }

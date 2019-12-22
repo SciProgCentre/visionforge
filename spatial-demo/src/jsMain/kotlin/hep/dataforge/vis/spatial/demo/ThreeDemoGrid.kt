@@ -1,20 +1,13 @@
 package hep.dataforge.vis.spatial.demo
 
-import hep.dataforge.context.AbstractPlugin
-import hep.dataforge.context.Context
-import hep.dataforge.context.PluginFactory
-import hep.dataforge.context.PluginTag
+import hep.dataforge.context.Global
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
-import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.VisualGroup3D
-import hep.dataforge.vis.spatial.render
 import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
@@ -25,31 +18,25 @@ import kotlinx.html.hr
 import kotlinx.html.id
 import kotlinx.html.js.div
 import kotlinx.html.span
+import org.w3c.dom.Element
 import kotlin.browser.document
 import kotlin.dom.clear
 import kotlin.reflect.KClass
 
-class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
-    override val tag: PluginTag get() = Companion.tag
+class ThreeDemoGrid(element: Element, meta: Meta = Meta.empty) : OutputManager {
 
     private val gridRoot = document.create.div("row")
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 
-    init {
-        require(ThreePlugin)
-    }
+    private val three = Global.plugins.fetch(ThreePlugin)
 
-    override fun attach(context: Context) {
-        super.attach(context)
-        val elementId = meta["elementID"].string ?: "canvas"
-        val element = document.getElementById(elementId) ?: error("Element with id $elementId not found on page")
+    init {
         element.clear()
         element.append(gridRoot)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Renderer<T> {
-        val three = context.plugins.get<ThreePlugin>()!!
 
         return outputs.getOrPut(name) {
             if (type != VisualObject::class) error("Supports only DisplayObject")
@@ -63,7 +50,7 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
             gridRoot.append {
                 span("border") {
                     div("col-6") {
-                        div { id = "output-$name" }.also{
+                        div { id = "output-$name" }.also {
                             output.attach(it)
                         }
                         hr()
@@ -75,20 +62,5 @@ class ThreeDemoGrid(meta: Meta) : AbstractPlugin(meta), OutputManager {
             output
         } as Renderer<T>
     }
-
-    companion object : PluginFactory<ThreeDemoGrid> {
-        override val tag: PluginTag = PluginTag(group = "hep.dataforge", name = "vis.js.spatial.demo")
-
-        override val type: KClass<out ThreeDemoGrid> = ThreeDemoGrid::class
-
-        override fun invoke(meta: Meta,context: Context): ThreeDemoGrid = ThreeDemoGrid(meta)
-    }
 }
 
-fun ThreeDemoGrid.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
-    val meta = buildMeta {
-        "title" put title
-    }
-    val output = get(VisualObject::class, name.toName(), meta = meta)
-    output.render(action = block)
-}

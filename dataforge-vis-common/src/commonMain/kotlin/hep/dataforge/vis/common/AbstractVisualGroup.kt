@@ -1,8 +1,10 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
-import hep.dataforge.names.*
+import hep.dataforge.names.Name
+import hep.dataforge.names.NameToken
+import hep.dataforge.names.asName
+import hep.dataforge.names.isEmpty
 import kotlinx.serialization.Transient
 
 
@@ -16,46 +18,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     /**
      * A map of top level named children
      */
-    abstract override val children: Map<NameToken, VisualObject> //get() = _children
-
-    /**
-     * Styles, defined in this group. A style could be defined but not applied
-     * TODO replace by custom object with get/set functionality
-     */
-    protected abstract val styleSheet: MutableMap<Name, Meta>
-
-    override fun getStyle(name: Name): Meta? = styleSheet[name]
-
-    override fun addStyle(name: Name, meta: Meta, apply: Boolean) {
-        fun VisualObject.applyStyle(name: Name, meta: Meta) {
-            if (styles.contains(name)) {
-                //full update
-                //TODO do a fine grained update
-                if (this is AbstractVisualObject) {
-                    styleChanged()
-                } else {
-                    propertyChanged(EmptyName)
-                }
-            }
-            if (this is VisualGroup) {
-                this.children.forEach { (_, child) ->
-                    child.applyStyle(name, meta)
-                }
-            }
-        }
-        styleSheet[name] = meta
-        if (apply) {
-            applyStyle(name, meta)
-        }
-    }
-
-
-//    init {
-//        //Do after deserialization
-//        children.values.forEach {
-//            it.parent = this
-//        }
-//    }
+    abstract override val children: Map<NameToken, VisualObject>
 
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
         super.propertyChanged(name, before, after)

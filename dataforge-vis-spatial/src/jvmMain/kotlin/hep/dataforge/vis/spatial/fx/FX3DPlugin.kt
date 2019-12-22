@@ -2,13 +2,20 @@ package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.boolean
 import hep.dataforge.meta.get
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
 import hep.dataforge.vis.spatial.fx.FX3DFactory.Companion.TYPE
 import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.shape.CullFace
+import javafx.scene.shape.DrawMode
 import javafx.scene.shape.Shape3D
+import javafx.scene.text.Font
+import javafx.scene.text.Text
 import javafx.scene.transform.Rotate
 import org.fxyz3d.shapes.composites.PolyLine3D
 import org.fxyz3d.shapes.primitives.CuboidMesh
@@ -56,11 +63,18 @@ class FX3DPlugin : AbstractPlugin() {
             } else {
                 FXShapeFactory(obj, binding)
             }
+            is Label3D -> Text(obj.text).apply {
+                font = Font.font(obj.fontFamily, obj.fontSize)
+                x = -layoutBounds.width / 2
+                y = layoutBounds.height / 2
+            }
             is PolyLine -> PolyLine3D(
                 obj.points.map { it.point },
                 obj.thickness.toFloat(),
-                obj.material?.get("color")?.color()
-            )
+                obj.getProperty(Material3D.MATERIAL_COLOR_KEY)?.color()
+            ).apply {
+                this.meshView.cullFace = CullFace.FRONT
+            }
             else -> {
                 //find specialized factory for this type if it is present
                 val factory: FX3DFactory<VisualObject3D>? = findObjectFactory(obj::class)
@@ -79,15 +93,15 @@ class FX3DPlugin : AbstractPlugin() {
             scaleZProperty().bind(binding[VisualObject3D.zScale].float(obj.scaleZ.toFloat()))
 
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.xRotation].float(obj.rotationX.toFloat()))
+                angleProperty().bind(binding[VisualObject3D.xRotation].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateY = Rotate(0.0, Rotate.Y_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.yRotation].float(obj.rotationY.toFloat()))
+                angleProperty().bind(binding[VisualObject3D.yRotation].float(obj.rotationY.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateZ = Rotate(0.0, Rotate.Z_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.zRotation].float(obj.rotationZ.toFloat()))
+                angleProperty().bind(binding[VisualObject3D.zRotation].float(obj.rotationZ.toFloat()).multiply(180.0 / PI))
             }
 
             when (obj.rotationOrder) {
@@ -100,8 +114,16 @@ class FX3DPlugin : AbstractPlugin() {
             }
 
             if (this is Shape3D) {
-                materialProperty().bind(binding[Material3D.MATERIAL_KEY].transform {
+                materialProperty().bind(binding[MATERIAL_KEY].transform {
                     it.material()
+                })
+
+                drawModeProperty().bind(binding[MATERIAL_WIREFRAME_KEY].transform {
+                    if (it.boolean == true) {
+                        DrawMode.LINE
+                    } else {
+                        DrawMode.FILL
+                    }
                 })
             }
         }

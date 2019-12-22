@@ -5,10 +5,6 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-scientifik{
-    withSerialization()
-}
-
 val dataforgeVersion: String by rootProject.extra
 //val kvisionVersion: String by rootProject.extra("2.0.0-M1")
 
