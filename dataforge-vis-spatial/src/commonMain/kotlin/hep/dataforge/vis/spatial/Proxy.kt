@@ -46,8 +46,8 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         return if (inherit) {
             properties?.get(name)
                 ?: mergedStyles[name]
-                ?: prototype.getProperty(name, false)
-                ?: parent?.getProperty(name, inherit)
+                ?: prototype.getProperty(name)
+                ?: parent?.getProperty(name)
         } else {
             properties?.get(name)
                 ?: mergedStyles[name]
@@ -73,7 +73,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         return (prototype as? VisualGroup)?.get(name)
             ?: error("Prototype with name $name not found in $this")
     }
-
 
     override var styles: List<String>
         get() = super.styles + prototype.styles
@@ -119,12 +118,12 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             return if (inherit) {
                 properties?.get(name)
                     ?: mergedStyles[name]
-                    ?: prototype.getProperty(name, inherit)
-                    ?: parent?.getProperty(name, inherit)
+                    ?: prototype.getProperty(name)
+                    ?: parent?.getProperty(name)
             } else {
                 properties?.get(name)
                     ?: mergedStyles[name]
-                    ?: prototype.getProperty(name, inherit)
+                    ?: prototype.getProperty(name, false)
             }
         }
 
@@ -135,11 +134,11 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 }
 
-val VisualObject.prototype: VisualObject?
+val VisualObject.prototype: VisualObject
     get() = when (this) {
         is Proxy -> prototype
         is Proxy.ProxyChild -> prototype
-        else -> null
+        else -> this
     }
 
 /**
@@ -158,12 +157,11 @@ fun VisualGroup3D.proxy(
     templateName: Name,
     obj: VisualObject3D,
     name: String = "",
-    attachToParent: Boolean = false,
     block: Proxy.() -> Unit = {}
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
-        setPrototype(templateName, obj, attachToParent)
+        setPrototype(templateName, obj)
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }

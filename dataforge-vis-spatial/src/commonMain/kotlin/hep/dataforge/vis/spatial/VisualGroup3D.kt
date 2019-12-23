@@ -18,7 +18,6 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.StyleSheet
-import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -37,7 +36,8 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
             field = value
         }
 
-    override val styleSheet: StyleSheet = StyleSheet(this)
+    override var styleSheet: StyleSheet? = null
+        private set
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
@@ -53,6 +53,14 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     init {
         //Do after deserialization
         attachChildren()
+    }
+
+    /**
+     * Update or create stylesheet
+     */
+    fun styleSheet(block: StyleSheet.() -> Unit) {
+        val res = this.styleSheet ?: StyleSheet(this).also { this.styleSheet = it }
+        res.block()
     }
 
     override fun removeChild(token: NameToken) {
@@ -90,18 +98,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
-    fun getPrototype(name: Name): VisualObject3D? =
-        prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
-
-    fun setPrototype(name: Name, obj: VisualObject3D, attachToParent: Boolean = false) {
-        val parent = this.parent
-        if (attachToParent && parent is VisualGroup3D) {
-            parent.setPrototype(name, obj, attachToParent)
-        } else {
-            (prototypes ?: VisualGroup3D().also { this.prototypes = it }).set(name, obj)
-        }
-    }
-
     override fun attachChildren() {
         super.attachChildren()
         prototypes?.run {
@@ -115,5 +111,28 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     }
 }
 
+/**
+ * Ger a prototype redirecting the request to the parent if prototype is not found
+ */
+fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
+    prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
+
+/**
+ * Defined a prototype inside current group
+ */
+fun VisualGroup3D.setPrototype(name: Name, obj: VisualObject3D) {
+    (prototypes ?: VisualGroup3D().also { this.prototypes = it })[name] = obj
+}
+
+/**
+ * Define a group with given [key], attach it to this parent and return it.
+ */
 fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also { set(key, it) }
+
+/**
+ * Create or edit prototype node as a group
+ */
+inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
+    (prototypes ?: VisualGroup3D().also { this.prototypes = it }).run(builder)
+}

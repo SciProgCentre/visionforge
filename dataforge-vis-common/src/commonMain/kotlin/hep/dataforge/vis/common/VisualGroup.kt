@@ -1,8 +1,5 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.buildMeta
-import hep.dataforge.meta.seal
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
 
@@ -14,7 +11,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
 
     override val defaultTarget: String get() = VisualObject.TYPE
 
-    val styleSheet: StyleSheet
+    val styleSheet: StyleSheet?
 
     override fun provideTop(target: String): Map<Name, Any> =
         when (target) {
@@ -26,7 +23,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
                 }
                 res.entries
             }.associate { it.toPair() }
-            STYLE_TARGET -> styleSheet.items.mapKeys { it.key.toName() }
+            STYLE_TARGET -> styleSheet?.items?.mapKeys { it.key.toName() } ?: emptyMap()
             else -> emptyMap()
         }
 
@@ -47,8 +44,8 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     /**
      * A fix for serialization bug that writes all proper parents inside the tree after deserialization
      */
-    fun attachChildren(){
-        styleSheet.owner = this
+    fun attachChildren() {
+        styleSheet?.owner = this
         this.children.values.forEach {
             it.parent = this
             (it as? VisualGroup)?.attachChildren()
@@ -58,11 +55,6 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     companion object {
         const val STYLE_TARGET = "style"
     }
-}
-
-fun VisualGroup.updateStyle(key: String, builder: MetaBuilder.() -> Unit) {
-    val newStyle = styleSheet[key]?.let { buildMeta(it, builder) } ?: buildMeta(builder)
-    styleSheet[key] = newStyle.seal()
 }
 
 data class StyleRef(val group: VisualGroup, val styleName: Name)

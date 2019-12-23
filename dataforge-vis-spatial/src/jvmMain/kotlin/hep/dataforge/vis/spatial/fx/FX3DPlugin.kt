@@ -3,7 +3,6 @@ package hep.dataforge.vis.spatial.fx
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.boolean
-import hep.dataforge.meta.get
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
@@ -20,6 +19,13 @@ import javafx.scene.transform.Rotate
 import org.fxyz3d.shapes.composites.PolyLine3D
 import org.fxyz3d.shapes.primitives.CuboidMesh
 import org.fxyz3d.shapes.primitives.SpheroidMesh
+import kotlin.collections.HashMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.find
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.reflect.KClass
 
@@ -106,11 +112,11 @@ class FX3DPlugin : AbstractPlugin() {
 
             when (obj.rotationOrder) {
                 RotationOrder.ZYX -> transforms.addAll(rotateZ, rotateY, rotateX)
-                RotationOrder.XZY -> transforms.addAll(rotateY, rotateZ, rotateX)
-                RotationOrder.YXZ -> transforms.addAll(rotateZ, rotateX, rotateY)
-                RotationOrder.YZX -> transforms.addAll(rotateX, rotateZ, rotateY)
-                RotationOrder.ZXY -> transforms.addAll(rotateY, rotateX, rotateZ)
-                RotationOrder.XYZ -> transforms.addAll(rotateZ, rotateY, rotateX)
+                RotationOrder.XZY -> transforms.addAll(rotateX, rotateZ, rotateY)
+                RotationOrder.YXZ -> transforms.addAll(rotateY, rotateX, rotateZ)
+                RotationOrder.YZX -> transforms.addAll(rotateY, rotateZ, rotateX)
+                RotationOrder.ZXY -> transforms.addAll(rotateZ, rotateX, rotateY)
+                RotationOrder.XYZ -> transforms.addAll(rotateX, rotateY, rotateZ)
             }
 
             if (this is Shape3D) {

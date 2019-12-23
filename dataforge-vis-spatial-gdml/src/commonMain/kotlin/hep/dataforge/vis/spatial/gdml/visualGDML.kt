@@ -250,5 +250,7 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
  * Append gdml node to the group
  */
 fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
-    set(key, gdml.toVisual(transformer))
+    val visual = gdml.toVisual(transformer)
+    println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(),visual))
+    set(key, visual)
 }

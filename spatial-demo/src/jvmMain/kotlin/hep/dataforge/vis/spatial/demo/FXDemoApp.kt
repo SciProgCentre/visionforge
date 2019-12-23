@@ -17,7 +17,7 @@ class FXDemoApp : App(FXDemoGrid::class) {
         stage.width = 400.0
         stage.height = 400.0
 
-        //view.showcase()
+        view.showcase()
         view.demo("gdml", "gdml") {
             gdml(Paths.get("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.gdml")) {
                 lUnit = LUnit.CM

@@ -40,7 +40,7 @@ class GDMLTransformer(val root: GDML) {
     var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
 
     fun VisualObject.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
-        styleCache.getOrPut(name.toName()){
+        styleCache.getOrPut(name.toName()) {
             buildMeta(builder)
         }
         useStyle(name)
@@ -51,7 +51,7 @@ class GDMLTransformer(val root: GDML) {
 
         val styleName = "material[${material.name}]"
 
-        obj.useStyle(styleName){
+        obj.useStyle(styleName) {
             MATERIAL_COLOR_KEY put random.nextInt(16777216)
             "gdml.material" put material.name
         }
@@ -68,7 +68,9 @@ class GDMLTransformer(val root: GDML) {
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
         final.prototypes = proto
         styleCache.forEach {
-            final.styleSheet[it.key.toString()] = it.value
+            final.styleSheet {
+                this[it.key.toString()] = it.value
+            }
         }
         final.rotationOrder = RotationOrder.ZXY
         onFinish(this@GDMLTransformer)

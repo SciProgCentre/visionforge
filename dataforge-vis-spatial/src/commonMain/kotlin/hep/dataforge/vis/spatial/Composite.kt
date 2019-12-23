@@ -47,9 +47,15 @@ inline fun VisualGroup3D.composite(
         it.config.update(group.config)
         //it.material = group.material
 
-        it.position = group.position
-        it.rotation = group.rotation
-        it.scale = group.scale
+        if(group.position!=null) {
+            it.position = group.position
+        }
+        if(group.rotation!=null) {
+            it.rotation = group.rotation
+        }
+        if(group.scale!=null) {
+            it.scale = group.scale
+        }
         set(name, it)
     }
 }

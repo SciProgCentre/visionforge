@@ -3,8 +3,7 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.io.serialization.MetaSerializer
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.get
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import kotlinx.serialization.Serializable
@@ -36,6 +35,15 @@ class StyleSheet() {
             styleMap[key] = style
         }
         owner?.styleChanged(key, oldStyle, style)
+    }
+
+    infix fun String.put(style: Meta?) {
+        set(this, style)
+    }
+
+    operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
+        val newStyle = get(key)?.let { buildMeta(it, builder) } ?: buildMeta(builder)
+        set(key, newStyle.seal())
     }
 }
 

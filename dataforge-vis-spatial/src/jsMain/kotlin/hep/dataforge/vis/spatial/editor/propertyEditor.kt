@@ -2,7 +2,10 @@ package hep.dataforge.vis.spatial.editor
 
 import hep.dataforge.io.toJson
 import hep.dataforge.js.jsObject
-import hep.dataforge.meta.*
+import hep.dataforge.meta.DynamicMeta
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.builder
+import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.findStyle
 import hep.dataforge.vis.spatial.*
@@ -24,11 +27,7 @@ fun Element.propertyEditor(item: VisualObject?) {
     if (item != null) {
         append {
             card("Properties") {
-                val config: Meta = if (item is Proxy || item is Proxy.ProxyChild) {
-                    item.prototype?.config ?: EmptyMeta
-                } else {
-                    item.config
-                }
+                val config: Meta = item.prototype.config
                 val metaToEdit = config.builder().apply {
                     VISIBLE_KEY to (item.visible ?: true)
                     if (item is VisualObject3D) {
