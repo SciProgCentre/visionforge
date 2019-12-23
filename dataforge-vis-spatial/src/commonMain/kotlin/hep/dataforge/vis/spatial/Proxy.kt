@@ -12,6 +12,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.*
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
@@ -23,6 +24,7 @@ import kotlin.collections.set
  * A proxy [VisualObject3D] to reuse a template object
  */
 @Serializable
+@SerialName("3d.proxy")
 class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
 
     override var position: Point3D? = null
@@ -89,6 +91,13 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         val prototype: VisualObject get() = prototypeFor(name)
 
         override val styleSheet: StyleSheet get() = this@Proxy.styleSheet
+
+        override var styles: List<String>
+            get() = super.styles + prototype.styles
+            set(value) {
+                setProperty(VisualObject.STYLE_KEY, value)
+                updateStyles(value)
+            }
 
         override val children: Map<NameToken, VisualObject>
             get() = (prototype as? VisualGroup)?.children?.mapValues { (key, _) ->

@@ -17,7 +17,7 @@ import kotlin.random.Random
 
 class GDMLTransformer(val root: GDML) {
     private val materialCache = HashMap<GDMLMaterial, Meta>()
-    private val random = Random(111)
+    private val random = Random(222)
 
     enum class Action {
         ACCEPT,

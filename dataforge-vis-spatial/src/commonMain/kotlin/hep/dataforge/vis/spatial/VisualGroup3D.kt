@@ -25,6 +25,7 @@ import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
 @Serializable
+@SerialName("group.3d")
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     /**
      * A container for templates visible inside this group

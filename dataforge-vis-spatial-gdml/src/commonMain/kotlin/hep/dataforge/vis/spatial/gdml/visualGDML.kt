@@ -5,6 +5,8 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.get
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.GeometryConstants.one
+import hep.dataforge.vis.spatial.GeometryConstants.zero
 import scientifik.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -12,25 +14,28 @@ import kotlin.math.sin
 
 private fun VisualObject3D.withPosition(
     lUnit: LUnit,
-    pos: GDMLPosition? = null,
-    rotation: GDMLRotation? = null,
-    scale: GDMLScale? = null
+    newPos: GDMLPosition? = null,
+    newRotation: GDMLRotation? = null,
+    newScale: GDMLScale? = null
 ): VisualObject3D = apply {
-    pos?.let {
-        this@withPosition.x = pos.x(lUnit)
-        this@withPosition.y = pos.y(lUnit)
-        this@withPosition.z = pos.z(lUnit)
+    newPos?.let {
+        val point = Point3D(it.x(lUnit), it.y(lUnit), it.z(lUnit))
+        if (position != null || point != zero) {
+            position = point
+        }
     }
-    rotation?.let {
-        this@withPosition.rotationX = rotation.x()
-        this@withPosition.rotationY = rotation.y()
-        this@withPosition.rotationZ = rotation.z()
+    newRotation?.let {
+        val point = Point3D(it.x(), it.y(), it.z())
+        if (rotation != null || point != zero) {
+            rotation = point
+        }
         //this@withPosition.rotationOrder = RotationOrder.ZXY
     }
-    scale?.let {
-        this@withPosition.scaleX = scale.x.toFloat()
-        this@withPosition.scaleY = scale.y.toFloat()
-        this@withPosition.scaleZ = scale.z.toFloat()
+    newScale?.let {
+        val point = Point3D(it.x, it.y, it.z)
+        if (scale != null || point != one) {
+            scale = point
+        }
     }
     //TODO convert units if needed
 }
@@ -251,6 +256,6 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
  */
 fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
     val visual = gdml.toVisual(transformer)
-    println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(),visual))
+    println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)
 }

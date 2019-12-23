@@ -10,11 +10,13 @@ import hep.dataforge.meta.get
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualFactory
 import hep.dataforge.vis.common.VisualObject
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KClass
 
 @Serializable
+@SerialName("3d.box")
 class Box(
     val xSize: Float,
     val ySize: Float,

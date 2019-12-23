@@ -5,6 +5,7 @@ import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.GeometryConstants.zero
 import info.laht.threekt.core.*
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.materials.Material

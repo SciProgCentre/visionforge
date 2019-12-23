@@ -50,10 +50,13 @@ operator fun Point3D.component3() = z
 
 fun Meta.point3D() = Point3D(this["x"].number ?: 0, this["y"].number ?: 0, this["y"].number ?: 0)
 
-val zero = Point3D(0, 0, 0)
-
 fun Point3D.toMeta() = buildMeta {
     VisualObject3D.x put x
     VisualObject3D.y put y
     VisualObject3D.z put z
+}
+
+object GeometryConstants{
+    val zero = Point3D(0.0, 0.0, 0.0)
+    val one = Point3D(1.0, 1.0, 1.0)
 }
