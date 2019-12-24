@@ -27,18 +27,21 @@ class StyleSheet() {
         return styleMap[key] ?: (owner?.parent as? VisualGroup)?.styleSheet?.get(key)
     }
 
-    operator fun set(key: String, style: Meta?) {
-        val oldStyle = styleMap[key]
+    /**
+     * Define a style without notifying
+     */
+    fun define(key: String, style: Meta?) {
         if (style == null) {
             styleMap.remove(key)
         } else {
             styleMap[key] = style
         }
-        owner?.styleChanged(key, oldStyle, style)
     }
 
-    infix fun String.put(style: Meta?) {
-        set(this, style)
+    operator fun set(key: String, style: Meta?) {
+        val oldStyle = styleMap[key]
+        define(key, style)
+        owner?.styleChanged(key, oldStyle, style)
     }
 
     operator fun set(key: String, builder: MetaBuilder.() -> Unit) {

@@ -256,6 +256,6 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
  */
 fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
     val visual = gdml.toVisual(transformer)
-    println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
+    //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)
 }

@@ -28,7 +28,7 @@ kotlin {
         }
         jsMain {
             dependencies {
-                api(project(":wrappers"))
+//                api(project(":wrappers"))
                 implementation(npm("three", "0.106.2"))
                 implementation(npm("@hi-level/three-csg", "1.0.6"))
             }

@@ -10,6 +10,9 @@ import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_DISTANCE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_X_ANGLE
 import hep.dataforge.vis.spatial.World.CAMERA_INITIAL_Y_ANGLE
 import hep.dataforge.vis.spatial.World.CAMERA_NEAR_CLIP
+import javafx.application.Platform
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.*
 import javafx.scene.input.KeyCode
@@ -80,9 +83,26 @@ class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
         center = canvas
     }
 
+    val rootObjectProperty: ObjectProperty<VisualObject3D> = SimpleObjectProperty()
+    var rootObject: VisualObject3D? by rootObjectProperty
+
+    private val rootNodeProperty = rootObjectProperty.objectBinding {
+        it?.let { plugin.buildNode(it) }
+    }
+
     init {
         canvas.widthProperty().bind(root.widthProperty())
         canvas.heightProperty().bind(root.heightProperty())
+        rootNodeProperty.addListener { _, oldValue: Node?, newValue: Node? ->
+            Platform.runLater {
+                if (oldValue != null) {
+                    world.children.remove(oldValue)
+                }
+                if (newValue != null) {
+                    world.children.add(newValue)
+                }
+            }
+        }
     }
 
 
@@ -167,8 +187,7 @@ class FXCanvas3D(val plugin: FX3DPlugin, meta: Meta = EmptyMeta) :
     }
 
     override fun render(obj: VisualObject3D, meta: Meta) {
-        val node = plugin.buildNode(obj) ?: kotlin.error("Can't render FX node for object $obj")
-        world.children.add(node)
+        rootObject = obj
     }
 
     companion object {

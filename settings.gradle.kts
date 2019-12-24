@@ -27,10 +27,11 @@ rootProject.name = "dataforge-vis"
 
 include(
     ":dataforge-vis-common",
-    ":wrappers",
+//    ":wrappers",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-gdml",
-    ":spatial-demo"
+    ":demo:spatial-showcase",
+    ":demo:gdml"
 )
 
 //if(file("../dataforge-core").exists()) {

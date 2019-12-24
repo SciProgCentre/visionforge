@@ -16,7 +16,7 @@ import scientifik.gdml.*
 import kotlin.random.Random
 
 class GDMLTransformer(val root: GDML) {
-    private val materialCache = HashMap<GDMLMaterial, Meta>()
+    //private val materialCache = HashMap<GDMLMaterial, Meta>()
     private val random = Random(222)
 
     enum class Action {
@@ -39,7 +39,7 @@ class GDMLTransformer(val root: GDML) {
 
     var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
 
-    fun VisualObject.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+    fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
             buildMeta(builder)
         }
@@ -69,7 +69,7 @@ class GDMLTransformer(val root: GDML) {
         final.prototypes = proto
         styleCache.forEach {
             final.styleSheet {
-                this[it.key.toString()] = it.value
+                define(it.key.toString(), it.value)
             }
         }
         final.rotationOrder = RotationOrder.ZXY
