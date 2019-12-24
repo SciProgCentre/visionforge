@@ -9,7 +9,6 @@ import hep.dataforge.vis.spatial.fx.FXCanvas3D
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.readFile
 import hep.dataforge.vis.spatial.gdml.toVisual
-import hep.dataforge.vis.spatial.prototype
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser
@@ -26,8 +25,10 @@ class GDMLView : View() {
         this.itemProperty.bind(canvas.rootObjectProperty)
     }
 
-    private val propertyEditor = VisualObjectEditorFragment { it.prototype.config }.apply {
-        //TODO add descriptor here
+    private val propertyEditor = VisualObjectEditorFragment {
+        it.allProperties()
+    }.apply {
+        descriptorProperty.set(Material3D.descriptor)
         itemProperty.bind(treeFragment.selectedProperty)
     }
 
@@ -43,7 +44,7 @@ class GDMLView : View() {
                                 lUnit = LUnit.CM
 
                                 solidConfiguration = { parent, solid ->
-                                    if(solid.name == "cave"){
+                                    if (solid.name == "cave") {
                                         setProperty(Material3D.MATERIAL_WIREFRAME_KEY, true)
                                     }
                                     if (parent.physVolumes.isNotEmpty()) {

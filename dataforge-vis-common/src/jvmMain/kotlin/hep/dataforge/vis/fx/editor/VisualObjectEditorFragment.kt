@@ -2,6 +2,8 @@ package hep.dataforge.vis.fx.editor
 
 import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.findStyle
 import javafx.beans.binding.Binding
@@ -11,7 +13,7 @@ import javafx.scene.Parent
 import javafx.scene.layout.VBox
 import tornadofx.*
 
-class VisualObjectEditorFragment(val selector: (VisualObject) -> Config) : Fragment() {
+class VisualObjectEditorFragment(val selector: (VisualObject) -> Meta) : Fragment() {
 
     val itemProperty = SimpleObjectProperty<VisualObject>()
     var item: VisualObject? by itemProperty
@@ -26,8 +28,21 @@ class VisualObjectEditorFragment(val selector: (VisualObject) -> Config) : Fragm
         this.descriptorProperty.set(descriptor)
     }
 
-    private val configProperty: Binding<Config?> = itemProperty.objectBinding {
-        it?.let { selector(it) }
+    private var currentConfig: Config? = null
+
+    private val configProperty: Binding<Config?> = itemProperty.objectBinding { visualObject ->
+        if (visualObject == null) return@objectBinding null
+        val meta = selector(visualObject)
+        val config = Config().apply {
+            update(meta)
+            onChange(this@VisualObjectEditorFragment) { key, _, after ->
+                visualObject.setProperty(key, after)
+            }
+        }
+        //remember old config reference to cleanup listeners
+        currentConfig?.removeListener(this)
+        currentConfig = config
+        config
     }
 
     private val configEditorProperty: Binding<Node?> = configProperty.objectBinding(descriptorProperty) {

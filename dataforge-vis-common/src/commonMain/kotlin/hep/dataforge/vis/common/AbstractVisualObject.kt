@@ -61,10 +61,6 @@ abstract class AbstractVisualObject : VisualObject {
         listeners.removeAll { it.owner == owner }
     }
 
-    override fun setProperty(name: Name, value: Any?) {
-        config[name] = value
-    }
-
     private var styleCache: Meta? = null
 
     /**
@@ -75,6 +71,7 @@ abstract class AbstractVisualObject : VisualObject {
             styleCache = it
         }
 
+    override fun allProperties(): Laminate = Laminate(properties, mergedStyles)
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

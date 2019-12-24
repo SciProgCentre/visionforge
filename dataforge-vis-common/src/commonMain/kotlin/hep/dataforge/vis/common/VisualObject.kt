@@ -24,9 +24,16 @@ interface VisualObject : Configurable {
     var parent: VisualObject?
 
     /**
+     * All properties including styles and prototypes if present, but without inheritance
+     */
+    fun allProperties(): Meta
+
+    /**
      * Set property for this object
      */
-    fun setProperty(name: Name, value: Any?)
+    fun setProperty(name: Name, value: Any?) {
+        config[name] = value
+    }
 
     /**
      * Get property including or excluding parent properties

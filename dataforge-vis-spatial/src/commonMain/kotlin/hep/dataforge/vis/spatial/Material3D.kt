@@ -1,8 +1,10 @@
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.*
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
@@ -23,12 +25,28 @@ class Material3D(override val config: Config) : Specific {
         val MATERIAL_KEY = "material".asName()
         internal val COLOR_KEY = "color".asName()
         val MATERIAL_COLOR_KEY = MATERIAL_KEY + COLOR_KEY
-        val SPECULAR_COLOR ="specularColor".asName()
+        val SPECULAR_COLOR = "specularColor".asName()
         internal val OPACITY_KEY = "opacity".asName()
         val MATERIAL_OPACITY_KEY = MATERIAL_KEY + OPACITY_KEY
         internal val WIREFRAME_KEY = "wireframe".asName()
         val MATERIAL_WIREFRAME_KEY = MATERIAL_KEY + WIREFRAME_KEY
 
+        val descriptor = NodeDescriptor {
+            node(MATERIAL_KEY) {
+                value(COLOR_KEY) {
+                    type(ValueType.STRING, ValueType.NUMBER)
+                    default("#ffffff")
+                }
+                value(OPACITY_KEY){
+                    type(ValueType.NUMBER)
+                    default(1.0)
+                }
+                value(WIREFRAME_KEY){
+                    type(ValueType.BOOLEAN)
+                    default(false)
+                }
+            }
+        }
     }
 }
 
@@ -63,7 +81,7 @@ fun VisualObject3D.material(builder: Material3D.() -> Unit) {
     if (node != null) {
         Material3D.update(node, builder)
     } else {
-        config[Material3D.MATERIAL_KEY] = Material3D.build(builder)
+        config[Material3D.MATERIAL_KEY] = Material3D(builder)
     }
 }
 

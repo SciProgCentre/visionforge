@@ -1,6 +1,7 @@
 package hep.dataforge.vis.spatial.gdml
 
-import hep.dataforge.names.EmptyName
+
+import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.get
@@ -194,7 +195,7 @@ private fun VisualGroup3D.addDivisionVolume(
 
     //TODO add divisions
     set(
-        EmptyName,
+        Name.EMPTY,
         volume(
             context,
             volume

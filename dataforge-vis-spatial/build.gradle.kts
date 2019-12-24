@@ -1,9 +1,12 @@
 import org.openjfx.gradle.JavaFXOptions
+import scientifik.useSerialization
 
 plugins {
     id("scientifik.mpp")
     id("org.openjfx.javafxplugin")
 }
+
+useSerialization()
 
 kotlin {
     jvm {

@@ -2,14 +2,11 @@ package hep.dataforge.vis.spatial.fx
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.names.startsWith
 import hep.dataforge.names.toName
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Proxy
 import javafx.scene.Group
 import javafx.scene.Node
-import javafx.scene.shape.Shape3D
 import kotlin.reflect.KClass
 
 class FXProxyFactory(val plugin: FX3DPlugin) : FX3DFactory<Proxy> {
@@ -44,7 +41,7 @@ private fun Node.findChild(name: Name): Node? {
 }
 
 private fun Node.updateProperty(obj: VisualObject, propertyName: Name) {
-    if (propertyName.startsWith(Material3D.MATERIAL_KEY)) {
-        (this as? Shape3D)?.let { it.material = obj.getProperty(Material3D.MATERIAL_KEY).material() }
-    }
+//    if (propertyName.startsWith(Material3D.MATERIAL_KEY)) {
+//        (this as? Shape3D)?.let { it.material = obj.getProperty(Material3D.MATERIAL_KEY).material() }
+//    }
 }

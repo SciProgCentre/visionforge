@@ -5,6 +5,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.get
 import hep.dataforge.names.Name
@@ -76,12 +77,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             ?: error("Prototype with name $name not found in $this")
     }
 
-    override var styles: List<String>
-        get() = super.styles + prototype.styles
-        set(value) {
-            setProperty(VisualObject.STYLE_KEY, value)
-            updateStyles(value)
-        }
+    override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
@@ -91,13 +87,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
         val prototype: VisualObject get() = prototypeFor(name)
 
         override val styleSheet: StyleSheet get() = this@Proxy.styleSheet
-
-        override var styles: List<String>
-            get() = super.styles + prototype.styles
-            set(value) {
-                setProperty(VisualObject.STYLE_KEY, value)
-                updateStyles(value)
-            }
 
         override val children: Map<NameToken, VisualObject>
             get() = (prototype as? VisualGroup)?.children?.mapValues { (key, _) ->
@@ -135,6 +124,9 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
                     ?: prototype.getProperty(name, false)
             }
         }
+
+
+        override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 
     }
 

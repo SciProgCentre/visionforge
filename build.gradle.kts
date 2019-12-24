@@ -1,6 +1,6 @@
 import scientifik.useSerialization
 
-val dataforgeVersion by extra("0.1.5-dev-4")
+val dataforgeVersion by extra("0.1.5-dev-5")
 
 plugins {
     val kotlinVersion = "1.3.61"
@@ -30,7 +30,7 @@ allprojects {
 }
 
 subprojects{
-    useSerialization("0.13.0")
+    this.useSerialization()
 }
 
 val githubProject by extra("dataforge-vis")

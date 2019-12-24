@@ -1,4 +1,5 @@
 import org.openjfx.gradle.JavaFXOptions
+import scientifik.useSerialization
 
 plugins {
     id("scientifik.mpp")
@@ -7,6 +8,8 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 //val kvisionVersion: String by rootProject.extra("2.0.0-M1")
+
+useSerialization()
 
 kotlin {
     jvm{
@@ -22,7 +25,9 @@ kotlin {
         jvmMain{
             dependencies {
                 api("no.tornado:tornadofx:1.7.19")
-                api("no.tornado:tornadofx-controlsfx:0.1")
+                //api("no.tornado:tornadofx-controlsfx:0.1.1")
+                api("de.jensd:fontawesomefx-fontawesome:4.7.0-11")
+                api("de.jensd:fontawesomefx-commons:11.0")
             }
         }
         jsMain{

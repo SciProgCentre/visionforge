@@ -5,17 +5,20 @@
  */
 package hep.dataforge.vis.fx.editor
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import hep.dataforge.context.Global
 import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.Config
 import hep.dataforge.names.NameToken
 import hep.dataforge.vis.fx.dfIconView
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTreeTableCell
+import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
-import org.controlsfx.glyphfont.Glyph
 import tornadofx.*
 
 /**
@@ -133,8 +136,9 @@ class ConfigEditor(
                         is FXMetaNode<Config> -> {
                             if (allowNew) {
                                 text = null
-                                graphic = hbox {
-                                    button("node", Glyph("FontAwesome", "PLUS_CIRCLE")) {
+                                graphic = HBox().apply {
+                                    val glyph: Node = FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE)
+                                    button("node", graphic = glyph) {
                                         hgrow = Priority.ALWAYS
                                         maxWidth = Double.POSITIVE_INFINITY
                                         action {
@@ -143,7 +147,7 @@ class ConfigEditor(
                                             }
                                         }
                                     }
-                                    button("value", Glyph("FontAwesome", "PLUS_SQUARE")) {
+                                    button("value", graphic = FontAwesomeIconView(FontAwesomeIcon.PLUS_SQUARE)) {
                                         hgrow = Priority.ALWAYS
                                         maxWidth = Double.POSITIVE_INFINITY
                                         action {
