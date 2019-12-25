@@ -32,16 +32,20 @@ class Material3D(override val config: Config) : Specific {
         val MATERIAL_WIREFRAME_KEY = MATERIAL_KEY + WIREFRAME_KEY
 
         val descriptor = NodeDescriptor {
+            value(VisualObject3D.VISIBLE_KEY) {
+                type(ValueType.BOOLEAN)
+                default(true)
+            }
             node(MATERIAL_KEY) {
                 value(COLOR_KEY) {
                     type(ValueType.STRING, ValueType.NUMBER)
                     default("#ffffff")
                 }
-                value(OPACITY_KEY){
+                value(OPACITY_KEY) {
                     type(ValueType.NUMBER)
                     default(1.0)
                 }
-                value(WIREFRAME_KEY){
+                value(WIREFRAME_KEY) {
                     type(ValueType.BOOLEAN)
                     default(false)
                 }

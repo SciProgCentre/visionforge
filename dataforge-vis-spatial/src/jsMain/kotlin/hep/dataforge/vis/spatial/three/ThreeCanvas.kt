@@ -23,6 +23,9 @@ class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
 
     override val context: Context get() = three.context
 
+    var data: VisualObject3D? = null
+        private set
+
     val axes = AxesHelper(meta["axes.size"].int ?: 50).apply { visible = false }
 
     val scene: Scene = Scene().apply {
@@ -90,6 +93,7 @@ class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
     }
 
     override fun render(obj: VisualObject3D, meta: Meta) {
+        data = obj
         scene.add(three.buildObject3D(obj))
     }
 }

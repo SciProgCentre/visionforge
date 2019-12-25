@@ -4,20 +4,24 @@ import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.objectTree
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.builder
+import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.withBottom
 import hep.dataforge.names.NameToken
-import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.js.editor.propertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
+import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.VisualGroup3D
+import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
-import hep.dataforge.vis.js.editor.propertyEditor
-import hep.dataforge.vis.spatial.three.threeOutputConfig
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
+import hep.dataforge.vis.spatial.three.threeOutputConfig
+import hep.dataforge.vis.spatial.visible
 import kotlinx.html.dom.append
 import kotlinx.html.js.p
 import org.w3c.dom.DragEvent
@@ -156,15 +160,19 @@ private class GDMLDemoApp : Application {
             configElement.threeOutputConfig(output)
             //tree.visualObjectTree(visual, editor::propertyEditor)
             treeElement.objectTree(NameToken("World"), visual) {
-                editorElement.propertyEditor(it) {item->
-                    val config: Meta = item.prototype.config
-                    config.builder().apply {
-                        VISIBLE_KEY to (item.visible ?: true)
+                editorElement.propertyEditor(it) { item ->
+                    //val descriptorMeta = Material3D.descriptor
+
+                    val properties = item.allProperties()
+                    val bottom = buildMeta {
+                        VISIBLE_KEY put (item.visible ?: true)
                         if (item is VisualObject3D) {
-                            MATERIAL_COLOR_KEY to (item.color ?: "#ffffff")
-                            MATERIAL_OPACITY_KEY to (item.opacity ?: 1.0)
+                            MATERIAL_COLOR_KEY put "#ffffff"
+                            MATERIAL_OPACITY_KEY put 1.0
+                            MATERIAL_WIREFRAME_KEY put false
                         }
                     }
+                    properties.withBottom(bottom)
                 }
             }
 

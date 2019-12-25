@@ -26,7 +26,7 @@ interface VisualObject : Configurable {
     /**
      * All properties including styles and prototypes if present, but without inheritance
      */
-    fun allProperties(): Meta
+    fun allProperties(): Laminate
 
     /**
      * Set property for this object
