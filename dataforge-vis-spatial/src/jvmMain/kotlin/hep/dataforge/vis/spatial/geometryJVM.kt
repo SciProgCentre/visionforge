@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
-actual data class Point2D(actual var x: Double, actual var y: Double){
-    actual constructor(x: Number, y: Number): this(x.toDouble(),y.toDouble())
+actual data class Point2D(actual var x: Double, actual var y: Double) {
+    actual constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 }
 
 actual class Point3D(val point: org.fxyz3d.geometry.Point3D) {
@@ -18,11 +18,13 @@ actual class Point3D(val point: org.fxyz3d.geometry.Point3D) {
         inline set(value) {
             point.x = value.toFloat()
         }
+
     actual var y: Double
         inline get() = point.y.toDouble()
         inline set(value) {
             point.y = value.toFloat()
         }
+
     actual var z: Double
         inline get() = point.z.toDouble()
         inline set(value) {
@@ -40,4 +42,8 @@ actual class Point3D(val point: org.fxyz3d.geometry.Point3D) {
     override fun toString(): String {
         return point.toString()
     }
+}
+
+actual operator fun Point3D.plus(other: Point3D): Point3D {
+    return Point3D(point.add(other.point))
 }

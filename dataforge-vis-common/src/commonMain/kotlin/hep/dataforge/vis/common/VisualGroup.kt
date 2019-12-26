@@ -79,3 +79,5 @@ interface MutableVisualGroup : VisualGroup {
 }
 
 operator fun VisualGroup.get(str: String?) = get(str?.toName() ?: Name.EMPTY)
+
+fun MutableVisualGroup.removeAll() = children.keys.map { it.asName() }.forEach { this[it] = null }

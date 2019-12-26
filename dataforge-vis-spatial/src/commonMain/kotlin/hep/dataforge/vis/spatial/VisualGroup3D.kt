@@ -137,3 +137,4 @@ fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {})
 inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
     (prototypes ?: VisualGroup3D().also { this.prototypes = it }).run(builder)
 }
+

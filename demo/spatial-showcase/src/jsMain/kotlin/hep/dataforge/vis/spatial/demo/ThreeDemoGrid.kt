@@ -23,7 +23,7 @@ import kotlin.browser.document
 import kotlin.dom.clear
 import kotlin.reflect.KClass
 
-class ThreeDemoGrid(element: Element, meta: Meta = Meta.empty) : OutputManager {
+class ThreeDemoGrid(element: Element, meta: Meta = Meta.EMPTY) : OutputManager {
 
     private val gridRoot = document.create.div("row")
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()

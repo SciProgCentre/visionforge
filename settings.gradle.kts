@@ -31,7 +31,8 @@ include(
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-gdml",
     ":demo:spatial-showcase",
-    ":demo:gdml"
+    ":demo:gdml",
+    ":demo:muon-monitor"
 )
 
 //if(file("../dataforge-core").exists()) {
