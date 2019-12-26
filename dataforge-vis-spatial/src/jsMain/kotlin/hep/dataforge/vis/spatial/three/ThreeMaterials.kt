@@ -93,7 +93,7 @@ fun MetaItem<*>.color(): Color {
 
 fun Mesh.updateMaterial(obj: VisualObject) {
     val meta = obj.getProperty(Material3D.MATERIAL_KEY).node?:EmptyMeta
-    material = (material as? MeshBasicMaterial ?: MeshBasicMaterial()).apply {
+    material = MeshBasicMaterial().apply {
         color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
         opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
         transparent = opacity < 1.0

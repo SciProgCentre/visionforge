@@ -48,8 +48,10 @@ abstract class AbstractVisualObject : VisualObject {
     private val listeners = HashSet<PropertyListener>()
 
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
-        for (l in listeners) {
-            l.action(name, before, after)
+        if (before != after) {
+            for (l in listeners) {
+                l.action(name, before, after)
+            }
         }
     }
 
