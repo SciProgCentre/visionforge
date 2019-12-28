@@ -1,6 +1,6 @@
 import scientifik.useSerialization
 
-val dataforgeVersion by extra("0.1.5-dev-5")
+val dataforgeVersion by extra("0.1.5-dev-6")
 
 plugins {
     val kotlinVersion = "1.3.61"

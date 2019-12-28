@@ -5,7 +5,6 @@ import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.*
-import hep.dataforge.vis.spatial.GeometryConstants.zero
 import info.laht.threekt.core.*
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.materials.Material
@@ -13,6 +12,7 @@ import info.laht.threekt.math.Euler
 import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
+import kotlin.math.PI
 
 /**
  * Utility methods for three.kt.
@@ -30,6 +30,8 @@ val MetaItem<*>.vector get() = Vector3(node["x"].float ?: 0f, node["y"].float ?:
 
 fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply { fromGeometry(this@toBufferGeometry) }
 
+internal fun Double.toRadians() = this * PI / 180
+
 fun CSG.toGeometry(): Geometry {
     val geom = Geometry()
 
@@ -45,7 +47,7 @@ fun CSG.toGeometry(): Geometry {
         }
 
         for (j in 3..polygon.vertices.size) {
-            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, zero)
+            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, World.ZERO)
             fc.vertexNormals = arrayOf(
                 Vector3().copy(pvs[0].normal),
                 Vector3().copy(pvs[j - 2].normal),

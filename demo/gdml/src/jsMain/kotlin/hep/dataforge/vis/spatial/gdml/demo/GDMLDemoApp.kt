@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
-import hep.dataforge.js.objectTree
+import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.js.startApplication
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.withBottom
@@ -20,7 +20,7 @@ import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.three.threeOutputConfig
+import hep.dataforge.vis.spatial.three.threeSettings
 import hep.dataforge.vis.spatial.visible
 import kotlinx.html.dom.append
 import kotlinx.html.js.p
@@ -157,7 +157,7 @@ private class GDMLDemoApp : Application {
             val output = three.output(canvasElement as HTMLElement)
 
             output.camera.layers.set(0)
-            configElement.threeOutputConfig(output)
+            configElement.threeSettings(output)
             //tree.visualObjectTree(visual, editor::propertyEditor)
             treeElement.objectTree(NameToken("World"), visual) {
                 editorElement.propertyEditor(it) { item ->

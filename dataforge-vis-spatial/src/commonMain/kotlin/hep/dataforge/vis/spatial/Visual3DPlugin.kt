@@ -38,7 +38,7 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
             contextual(Point2DSerializer)
             contextual(NameSerializer)
             contextual(NameTokenSerializer)
-            contextual(Meta::class, MetaSerializer)
+            contextual(MetaSerializer)
             contextual(ConfigSerializer)
 
             polymorphic(VisualObject::class, VisualObject3D::class) {
@@ -48,7 +48,8 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
                 Tube::class with Tube.serializer()
                 Box::class with Box.serializer()
                 Convex::class with Convex.serializer()
-                addSubclass(Extruded.serializer())
+                Extruded::class with Extruded.serializer()
+                addSubclass(Label3D.serializer())
             }
         }
 

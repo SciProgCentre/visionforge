@@ -20,7 +20,7 @@ kotlin {
     js {
         browser {
             webpackTask {
-                sourceMaps = false
+                sourceMaps = true
             }
         }
     }

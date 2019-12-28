@@ -1,59 +1,61 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.get
+import hep.dataforge.meta.string
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.spatial.Point3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.World
+import hep.dataforge.vis.spatial.specifications.AxesSpec
+import hep.dataforge.vis.spatial.specifications.CameraSpec
+import hep.dataforge.vis.spatial.specifications.CanvasSpec
+import hep.dataforge.vis.spatial.specifications.ControlsSpec
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.external.controls.TrackballControls
 import info.laht.threekt.helpers.AxesHelper
-import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import kotlin.browser.window
 import kotlin.dom.clear
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
 
-class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer<VisualObject3D> {
+class ThreeCanvas(val three: ThreePlugin, val spec: CanvasSpec) : Renderer<VisualObject3D> {
 
     override val context: Context get() = three.context
 
-    var data: VisualObject3D? = null
+    var content: VisualObject3D? = null
         private set
 
-    val axes = AxesHelper(meta["axes.size"].int ?: 50).apply { visible = false }
+    val axes = AxesHelper(spec.axes.size.toInt()).apply {
+        visible = spec.axes.visible
+    }
 
     val scene: Scene = Scene().apply {
-        add(AmbientLight())
-        if (meta["axes.visible"].boolean == true) {
-            axes.visible = true
-        }
         add(axes)
     }
 
-    private fun buildCamera(meta: Meta) = PerspectiveCamera(
-        meta["fov"].int ?: 75,
-        meta["aspect"].double ?: 1.0,
-        meta["nearClip"].double ?: World.CAMERA_NEAR_CLIP,
-        meta["farClip"].double ?: World.CAMERA_FAR_CLIP
+    val camera = buildCamera(spec.camera)
+
+    private fun buildCamera(spec: CameraSpec) = PerspectiveCamera(
+        spec.fov,
+        1.0,
+        spec.nearClip,
+        spec.farClip
     ).apply {
-        position.setZ(World.CAMERA_INITIAL_DISTANCE)
-        rotation.set(
-            World.CAMERA_INITIAL_X_ANGLE,
-            World.CAMERA_INITIAL_Y_ANGLE,
-            World.CAMERA_INITIAL_Z_ANGLE
-        )
+        translateX(spec.distance* sin(spec.zenith) * sin(spec.azimuth))
+        translateY(spec.distance* cos(spec.zenith))
+        translateZ(spec.distance * sin(spec.zenith) * cos(spec.azimuth))
     }
 
-    val camera = buildCamera(meta["camera"].node ?: EmptyMeta)
-
-    private fun addControls(element: Node, meta: Meta) {
-        when (meta["type"].string) {
+    private fun addControls(element: Node, controlsSpec: ControlsSpec) {
+        when (controlsSpec["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }
@@ -69,7 +71,7 @@ class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
 
         }
 
-        addControls(renderer.domElement, meta["controls"].node ?: EmptyMeta)
+        addControls(renderer.domElement, spec.controls ?: ControlsSpec.empty())
 
         fun animate() {
             window.requestAnimationFrame {
@@ -80,9 +82,7 @@ class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
 
         element.appendChild(renderer.domElement)
 
-        val minSize by meta.number(0).int
-
-        renderer.setSize(max(minSize, element.offsetWidth), max(minSize, element.offsetWidth))
+        renderer.setSize(max(spec.minSize, element.offsetWidth), max(spec.minSize, element.offsetWidth))
 
         element.onresize = {
             renderer.setSize(element.offsetWidth, element.offsetWidth)
@@ -93,13 +93,13 @@ class ThreeCanvas(val three: ThreePlugin, val meta: Meta = EmptyMeta) : Renderer
     }
 
     override fun render(obj: VisualObject3D, meta: Meta) {
-        data = obj
+        content = obj
         scene.add(three.buildObject3D(obj))
     }
 }
 
-fun ThreePlugin.output(element: HTMLElement? = null, meta: Meta = EmptyMeta, override: MetaBuilder.() -> Unit = {}) =
-    ThreeCanvas(this, buildMeta(meta, override)).apply {
+fun ThreePlugin.output(element: HTMLElement? = null, spec: CanvasSpec = CanvasSpec.empty()): ThreeCanvas =
+    ThreeCanvas(this, spec).apply {
         if (element != null) {
             attach(element)
         }

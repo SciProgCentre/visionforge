@@ -2,11 +2,11 @@ package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
-import hep.dataforge.js.objectTree
 import hep.dataforge.js.startApplication
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.NameToken
+import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.vis.js.editor.propertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
@@ -15,11 +15,12 @@ import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.three.threeOutputConfig
+import hep.dataforge.vis.spatial.three.threeSettings
 import hep.dataforge.vis.spatial.visible
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.clear
+import kotlin.math.PI
 
 private class GDMLDemoApp : Application {
 //    /**
@@ -59,7 +60,8 @@ private class GDMLDemoApp : Application {
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
         val canvasElement = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
-        val configElement = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
+        val settingsElement =
+            document.getElementById("settings") ?: error("Element with id 'settings' not found on page")
         val treeElement = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
         val editorElement = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
         canvasElement.clear()
@@ -71,7 +73,9 @@ private class GDMLDemoApp : Application {
         val output = three.output(canvasElement as HTMLElement)
 
         output.camera.layers.set(0)
-        configElement.threeOutputConfig(output)
+        output.camera.position.z = -2000.0
+        output.camera.position.y = 500.0
+        settingsElement.threeSettings(output)
         //tree.visualObjectTree(visual, editor::propertyEditor)
         treeElement.objectTree(NameToken("World"), visual) {
             editorElement.propertyEditor(it) { item ->

@@ -1,11 +1,13 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.specifications.CanvasSpec
 import kotlinx.coroutines.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -21,10 +23,22 @@ fun OutputManager.demo(name: String, title: String = name, block: VisualGroup3D.
     output.render(action = block)
 }
 
+val canvasOptions = CanvasSpec {
+    minSize = 500
+    axes {
+        size = 500.0
+        visible = true
+    }
+    camera {
+        distance = 600.0
+        latitude = PI/6
+    }
+}
+
 fun OutputManager.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {
-            z = 110.0
+            z = -110.0
         }
         sphere(50.0) {
             x = 110
@@ -88,6 +102,7 @@ fun OutputManager.showcase() {
                 layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
             }
             color(Colors.teal)
+            rotationX = -PI / 2
         }
     }
 
@@ -111,13 +126,13 @@ fun OutputManager.showcase() {
         box(100, 100, 50) {
             opacity = 0.3
         }
-        label("Hello, world!",fontSize = 15) {
-            z = -26
+        label("Hello, world!", fontSize = 12) {
+            z = 26
         }
     }
 }
 
-fun OutputManager.showcaseCSG(){
+fun OutputManager.showcaseCSG() {
     demo("CSG.simple", "CSG operations") {
         composite(CompositeType.UNION) {
             box(100, 100, 100) {

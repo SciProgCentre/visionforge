@@ -39,8 +39,3 @@ fun Point3D.toMeta() = buildMeta {
     VisualObject3D.y put y
     VisualObject3D.z put z
 }
-
-object GeometryConstants {
-    val zero = Point3D(0.0, 0.0, 0.0)
-    val one = Point3D(1.0, 1.0, 1.0)
-}

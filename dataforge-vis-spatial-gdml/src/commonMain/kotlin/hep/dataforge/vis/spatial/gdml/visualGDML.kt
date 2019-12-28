@@ -6,8 +6,8 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.get
 import hep.dataforge.vis.spatial.*
-import hep.dataforge.vis.spatial.GeometryConstants.one
-import hep.dataforge.vis.spatial.GeometryConstants.zero
+import hep.dataforge.vis.spatial.World.ONE
+import hep.dataforge.vis.spatial.World.ZERO
 import scientifik.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -21,20 +21,20 @@ private fun VisualObject3D.withPosition(
 ): VisualObject3D = apply {
     newPos?.let {
         val point = Point3D(it.x(lUnit), it.y(lUnit), it.z(lUnit))
-        if (position != null || point != zero) {
+        if (position != null || point != ZERO) {
             position = point
         }
     }
     newRotation?.let {
         val point = Point3D(it.x(), it.y(), it.z())
-        if (rotation != null || point != zero) {
+        if (rotation != null || point != ZERO) {
             rotation = point
         }
         //this@withPosition.rotationOrder = RotationOrder.ZXY
     }
     newScale?.let {
         val point = Point3D(it.x, it.y, it.z)
-        if (scale != null || point != one) {
+        if (scale != null || point != ONE) {
             scale = point
         }
     }

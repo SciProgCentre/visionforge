@@ -15,8 +15,8 @@ internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject 
         //parent.properties?.let { config.update(it) }
 
         if (this is VisualObject3D && parent is VisualObject3D) {
-            position = (position ?: GeometryConstants.zero) + (parent.position ?: GeometryConstants.zero)
-            rotation = (parent.rotation ?: GeometryConstants.zero) + (parent.rotation ?: GeometryConstants.zero)
+            position = (position ?: World.ZERO) + (parent.position ?: World.ZERO)
+            rotation = (parent.rotation ?: World.ZERO) + (parent.rotation ?: World.ZERO)
             scale = when {
                 scale == null && parent.scale == null -> null
                 scale == null -> parent.scale

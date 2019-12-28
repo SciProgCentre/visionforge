@@ -5,13 +5,9 @@ import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.useStyle
+import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
-import hep.dataforge.vis.spatial.RotationOrder
-import hep.dataforge.vis.spatial.VisualGroup3D
-import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.rotationOrder
 import scientifik.gdml.*
 import kotlin.random.Random
 
@@ -37,7 +33,14 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.CACHE }
 
 
-    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
+    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, solid ->
+        lUnit = LUnit.CM
+        if (parent.physVolumes.isNotEmpty()) {
+            useStyle("opaque") {
+                Material3D.MATERIAL_OPACITY_KEY put 0.3
+            }
+        }
+    }
 
     fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {

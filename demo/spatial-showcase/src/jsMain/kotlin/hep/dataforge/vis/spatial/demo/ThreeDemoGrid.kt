@@ -3,11 +3,15 @@ package hep.dataforge.vis.spatial.demo
 import hep.dataforge.context.Global
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
+import hep.dataforge.meta.invoke
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.spatial.specifications.AxesSpec
+import hep.dataforge.vis.spatial.specifications.CameraSpec
+import hep.dataforge.vis.spatial.specifications.CanvasSpec
 import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
@@ -40,18 +44,14 @@ class ThreeDemoGrid(element: Element, meta: Meta = Meta.EMPTY) : OutputManager {
 
         return outputs.getOrPut(name) {
             if (type != VisualObject::class) error("Supports only DisplayObject")
-            val output = three.output(meta = meta) {
-                "minSize" put 500
-                "axis" put {
-                    "size" put 500
-                }
-            }
+            lateinit var output: ThreeCanvas
             //TODO calculate cell width here using jquery
             gridRoot.append {
                 span("border") {
                     div("col-6") {
                         div { id = "output-$name" }.also {
-                            output.attach(it)
+                            output = three.output(it, canvasOptions)
+                            //output.attach(it)
                         }
                         hr()
                         h2 { +(meta["title"].string ?: name.toString()) }

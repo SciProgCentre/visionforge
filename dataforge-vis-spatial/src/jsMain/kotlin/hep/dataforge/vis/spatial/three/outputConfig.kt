@@ -1,51 +1,67 @@
 package hep.dataforge.vis.spatial.three
 
+import hep.dataforge.js.requireJS
 import hep.dataforge.vis.js.editor.card
+import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.VisualGroup3D
 import kotlinx.html.InputType
+import kotlinx.html.TagConsumer
 import kotlinx.html.button
 import kotlinx.html.dom.append
 import kotlinx.html.js.*
 import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.Event
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 import kotlin.dom.clear
 
-//private fun download(filename: String, text: String) {
-//    var element = document.createElement("a");
-//    element.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(text));
-//    element.setAttribute("download", filename);
-//
-//    element.style.display = 'none';
-//    document.body.appendChild(element);
-//
-//    element.click();
-//
-//    document.body.removeChild(element);
-//}
+private fun saveData(event: Event, fileName: String, mimeType: String = "text/plain", dataBuilder: () -> String) {
+    event.stopPropagation();
+    event.preventDefault();
 
-fun Element.threeOutputConfig(canvas: ThreeCanvas) {
+    val fileSaver = requireJS("file-saver")
+    val blob = Blob(arrayOf(dataBuilder()), BlobPropertyBag("$mimeType;charset=utf-8"))
+    fileSaver.saveAs(blob, fileName)
+}
+
+fun Element.threeSettings(canvas: ThreeCanvas, block: TagConsumer<HTMLElement>.() -> Unit = {}) {
     clear()
     append {
-        card("Settings"){
-            div("row"){
-                div("col-1") {
-                    label { +"Axes" }
-                    input(type = InputType.checkBox).apply {
-                        checked = canvas.axes.visible
-                        onChangeFunction = {
-                            canvas.axes.visible = checked
+        card("Settings") {
+            div("row") {
+                div("col-2") {
+                    label("checkbox-inline") {
+                        input(type = InputType.checkBox).apply {
+                            checked = canvas.axes.visible
+                            onChangeFunction = {
+                                canvas.axes.visible = checked
+                            }
                         }
+                        +"Axes"
                     }
                 }
                 div("col-1") {
                     button {
                         +"Export"
                         onClickFunction = {
-
+                            val json = (canvas.content as? VisualGroup3D)?.let { group ->
+                                Visual3DPlugin.json.stringify(
+                                    VisualGroup3D.serializer(),
+                                    group
+                                )
+                            }
+                            if (json != null) {
+                                saveData(it, "object.json", "text/json"){
+                                    json
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        card("Layers"){
+        card("Layers") {
             div("row") {
                 (0..11).forEach { layer ->
                     div("col-1") {
@@ -66,5 +82,6 @@ fun Element.threeOutputConfig(canvas: ThreeCanvas) {
                 }
             }
         }
+        block()
     }
 }

@@ -1,10 +1,9 @@
-package hep.dataforge.js
+package hep.dataforge.vis.js.editor
 
 import hep.dataforge.names.NameToken
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.isEmpty
-import hep.dataforge.vis.js.editor.card
 import kotlinx.html.TagConsumer
 import kotlinx.html.dom.append
 import kotlinx.html.js.*
