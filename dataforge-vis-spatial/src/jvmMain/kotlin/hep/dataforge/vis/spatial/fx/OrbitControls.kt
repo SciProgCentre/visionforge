@@ -49,11 +49,11 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     val centerMarker by lazy {
         Sphere(10.0).also {
-            it.transforms.setAll(center, baseTranslate)
+            it.transforms.setAll(baseTranslate)
         }
     }
 
-    private val center = Translate()
+    //private val center = Translate()
 
     private val rx = Rotate(0.0, Rotate.X_AXIS)
 
@@ -61,11 +61,11 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     private val translate = Translate()
 
-    private val rz = Rotate(180.0, Rotate.Z_AXIS)
+    //private val rz = Rotate(180.0, Rotate.Z_AXIS)
 
 
     init {
-        camera.transforms.setAll(center, ry, rx, translate, rz)
+        camera.transforms.setAll(ry, rx, translate)
         update()
         val listener = InvalidationListener {
             update()
@@ -153,8 +153,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
             }
 
             if (me.isPrimaryButtonDown) {
-                azimuth -= mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
-                zenith -= mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED
+                azimuth = (azimuth - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0, 2 * PI)
+                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0,PI)
             } else if (me.isSecondaryButtonDown) {
                 x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) + mouseDeltaY * sin(azimuth))
                 z += MOUSE_SPEED * modifier * TRACK_SPEED * (-mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))

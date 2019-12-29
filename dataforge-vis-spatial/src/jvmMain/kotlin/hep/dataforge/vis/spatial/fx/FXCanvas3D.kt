@@ -10,7 +10,6 @@ import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.*
-import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
 import tornadofx.*
@@ -20,7 +19,9 @@ class FXCanvas3D(val plugin: FX3DPlugin, val spec: CanvasSpec) :
 
     override val context: Context get() = plugin.context
 
-    val world = Group()
+    val world = Group().apply {
+        //transforms.add(Rotate(180.0, Rotate.Z_AXIS))
+    }
 
     val axes = Axes().also {
         it.setHeight(spec.axes.size)
