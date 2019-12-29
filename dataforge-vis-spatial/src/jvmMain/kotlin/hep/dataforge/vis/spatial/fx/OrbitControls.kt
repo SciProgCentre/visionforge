@@ -25,10 +25,10 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
     val azimuthProperty = SimpleDoubleProperty(spec.azimuth)
     var azimuth by azimuthProperty
 
-    val zenithProperty = SimpleDoubleProperty(PI/2 - spec.latitude)
+    val zenithProperty = SimpleDoubleProperty(PI / 2 - spec.latitude)
     var zenith by zenithProperty
 
-    val latitudeProperty = zenithProperty.unaryMinus().plus(PI/2)
+    val latitudeProperty = zenithProperty.unaryMinus().plus(PI / 2)
     val latitude by latitudeProperty
 
     val baseXProperty = SimpleDoubleProperty(0.0)
@@ -37,6 +37,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
     var y by baseYProperty
     val baseZProperty = SimpleDoubleProperty(0.0)
     var z by baseZProperty
+
+    private val baseTranslate = Translate()
 
 //    val basePositionProperty: ObjectBinding<Point3D> =
 //        nonNullObjectBinding(baseXProperty, baseYProperty, baseZProperty) {
@@ -47,11 +49,11 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     val centerMarker by lazy {
         Sphere(10.0).also {
-            it.translateXProperty().bind(baseXProperty)
-            it.translateYProperty().bind(baseYProperty)
-            it.translateZProperty().bind(baseZProperty)
+            it.transforms.setAll(center, baseTranslate)
         }
     }
+
+    private val center = Translate()
 
     private val rx = Rotate(0.0, Rotate.X_AXIS)
 
@@ -63,7 +65,7 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
 
     init {
-        camera.transforms.setAll(ry, rx, translate,rz)
+        camera.transforms.setAll(center, ry, rx, translate, rz)
         update()
         val listener = InvalidationListener {
             update()
@@ -76,8 +78,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
         baseZProperty.addListener(listener)
 
         canvas.apply {
-            camera.translateXProperty().bind(widthProperty().divide(2))
-            camera.translateZProperty().bind(heightProperty().divide(2))
+//            center.xProperty().bind(widthProperty().divide(2))
+//            center.zProperty().bind(heightProperty().divide(2))
             handleMouse()
         }
 //        coordinateContainer?.vbox {
@@ -94,6 +96,9 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
             sin(zenith) * cos(azimuth)
         ).times(distance)
         val basePosition = Point3D(x, y, z)
+        baseTranslate.x = x
+        baseTranslate.y = y
+        baseTranslate.z = z
         //Create direction vector
         val cameraPosition = basePosition + spherePosition
         val camDirection: Point3D = (-spherePosition).normalize()
@@ -151,8 +156,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
                 azimuth -= mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED
                 zenith -= mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED
             } else if (me.isSecondaryButtonDown) {
-                x += mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED
-                z -= mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED
+                x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) + mouseDeltaY * sin(azimuth))
+                z += MOUSE_SPEED * modifier * TRACK_SPEED * (-mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))
             }
         }
         onScroll = EventHandler<ScrollEvent> { event ->
@@ -165,7 +170,7 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
         private const val SHIFT_MULTIPLIER = 10.0
         private const val MOUSE_SPEED = 0.1
         private const val ROTATION_SPEED = 0.02
-        private const val TRACK_SPEED = 6.0
+        private const val TRACK_SPEED = 20.0
         private const val RESIZE_SPEED = 10.0
     }
 }
