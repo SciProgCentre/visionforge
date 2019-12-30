@@ -67,7 +67,7 @@ class Model {
         tracks.removeAll()
     }
 
-    fun showEvent(event: Event) {
+    fun displayEvent(event: Event) {
         events.add(event)
         event.hits.forEach {
             highlight(it)
@@ -75,5 +75,9 @@ class Model {
         event.track?.let {
             tracks.polyline(*it.toTypedArray())
         }
+    }
+
+    companion object {
+        fun buildGeometry() = Model().root
     }
 }

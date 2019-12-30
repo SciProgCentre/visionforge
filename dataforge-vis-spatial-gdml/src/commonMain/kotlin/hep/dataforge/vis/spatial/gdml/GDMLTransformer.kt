@@ -33,7 +33,7 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.CACHE }
 
 
-    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, solid ->
+    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
         lUnit = LUnit.CM
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {

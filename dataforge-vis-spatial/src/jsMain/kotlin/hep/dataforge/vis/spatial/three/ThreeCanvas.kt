@@ -6,9 +6,7 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.spatial.Point3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.specifications.AxesSpec
 import hep.dataforge.vis.spatial.specifications.CameraSpec
 import hep.dataforge.vis.spatial.specifications.CanvasSpec
 import hep.dataforge.vis.spatial.specifications.ControlsSpec
@@ -71,7 +69,7 @@ class ThreeCanvas(val three: ThreePlugin, val spec: CanvasSpec) : Renderer<Visua
 
         }
 
-        addControls(renderer.domElement, spec.controls ?: ControlsSpec.empty())
+        addControls(renderer.domElement, spec.controls)
 
         fun animate() {
             window.requestAnimationFrame {

@@ -132,18 +132,20 @@ object Monitor {
      * Build map for the whole monitor
      */
     val detectors: Collection<SC16> by lazy {
-        readMonitorConfig().lineSequence().mapNotNull { line ->
-            if (line.startsWith(" ")) {
-                val split = line.trim().split("\\s+".toRegex());
-                val detectorName = split[1];
-                val x = split[4].toDouble() - 500;
-                val y = split[5].toDouble() - 500;
-                val z = split[6].toDouble() - 180;
-                SC16(detectorName, Point3D(x, y, z))
-            } else {
-                null
-            }
-        }.toList()
+        readMonitorConfig()
+            .lineSequence()
+            .mapNotNull { line ->
+                if (line.startsWith(" ")) {
+                    val split = line.trim().split("\\s+".toRegex());
+                    val detectorName = split[1];
+                    val x = split[4].toDouble() - 500;
+                    val y = split[5].toDouble() - 500;
+                    val z = split[6].toDouble() - 180;
+                    SC16(detectorName, Point3D(x, y, z))
+                } else {
+                    null
+                }
+            }.toList()
     }
 
     val pixels: Collection<SC1> get() = detectors.flatMap { it.pixels }

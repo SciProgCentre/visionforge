@@ -1,6 +1,7 @@
 package ru.mipt.npm.muon.monitor.sim
 
 import org.apache.commons.math3.geometry.euclidean.threed.Line
+import org.apache.commons.math3.random.RandomGenerator
 import ru.mipt.npm.muon.monitor.Event
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 
@@ -8,19 +9,20 @@ import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 /**
  * Simulate single track and returns corresponding event
  */
-fun simulateOne(trackGenerator: TrackGenerator = UniformTrackGenerator()): Event {
-    val track = trackGenerator.generate()
+fun TrackGenerator.simulateOne(): Event {
+    val track = generate()
     return buildEventByTrack(track)
 }
 
 interface TrackGenerator {
+    val rnd: RandomGenerator
     fun generate(): Line
 }
 
 /**
  * A uniform generator with track bases distributed in square in central plane, uniform phi and cos theta
  */
-class UniformTrackGenerator(val maxX: Double = 4 * PIXEL_XY_SIZE, val maxY: Double = 4 * PIXEL_XY_SIZE) :
+class UniformTrackGenerator(override val rnd: RandomGenerator, val maxX: Double = 4 * PIXEL_XY_SIZE, val maxY: Double = 4 * PIXEL_XY_SIZE) :
     TrackGenerator {
     override fun generate(): Line {
         val x = (1 - rnd.nextDouble() * 2.0) * maxX
@@ -32,6 +34,7 @@ class UniformTrackGenerator(val maxX: Double = 4 * PIXEL_XY_SIZE, val maxY: Doub
 }
 
 class FixedAngleGenerator(
+    override val rnd: RandomGenerator,
     val phi: Double, val theta: Double,
     val maxX: Double = 4 * PIXEL_XY_SIZE,
     val maxY: Double = 4 * PIXEL_XY_SIZE
@@ -47,6 +50,7 @@ class FixedAngleGenerator(
  * Generating surface distribution using accept-reject method
  */
 class Cos2TrackGenerator(
+    override val rnd: RandomGenerator,
     val power: Double = 2.0,
     val maxX: Double = 4 * PIXEL_XY_SIZE,
     val maxY: Double = 4 * PIXEL_XY_SIZE

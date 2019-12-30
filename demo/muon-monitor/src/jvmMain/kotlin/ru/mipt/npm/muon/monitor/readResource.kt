@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
 actual fun readResource(path: String): String {
-    return ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.readAllBytes()?.contentToString()
+    return ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.readAllBytes()?.decodeToString()
         ?: error("Resource '$path' not found")
 }
 

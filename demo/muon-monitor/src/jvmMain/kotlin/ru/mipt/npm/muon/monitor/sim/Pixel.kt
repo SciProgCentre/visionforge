@@ -9,6 +9,7 @@ import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import ru.mipt.npm.muon.monitor.SC1
+import kotlin.random.Random
 
 /**
  * Auxiliary cache for [SC1] planes
@@ -108,7 +109,7 @@ internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
     }
 
     private fun eff(): Boolean {
-        return efficiency == 1.0 || rnd.nextDouble() < efficiency;
+        return efficiency == 1.0 || Random.nextDouble() < efficiency;
     }
 }
 

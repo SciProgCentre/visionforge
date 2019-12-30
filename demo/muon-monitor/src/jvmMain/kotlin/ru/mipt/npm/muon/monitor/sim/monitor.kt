@@ -3,8 +3,6 @@ package ru.mipt.npm.muon.monitor.sim
 import org.apache.commons.math3.geometry.euclidean.threed.Line
 import org.apache.commons.math3.geometry.euclidean.threed.Plane
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import org.apache.commons.math3.random.JDKRandomGenerator
-import org.apache.commons.math3.random.RandomGenerator
 import ru.mipt.npm.muon.monitor.Event
 import ru.mipt.npm.muon.monitor.Monitor
 import ru.mipt.npm.muon.monitor.SC1
@@ -14,8 +12,6 @@ import java.util.*
 
 // minimal track length in detector
 val MINIMAL_TRACK_LENGTH = 10.0
-
-var rnd: RandomGenerator = JDKRandomGenerator(223)
 
 
 private val layerCache = HashMap<Double, Plane>()
@@ -36,7 +32,7 @@ fun readEffs(): Map<String, Double> {
             detectorName = trimmed.split(Regex("\\s+"))[2]
         } else if (trimmed.startsWith("pixel")) {
             index = 0
-        } else if (!trimmed.isEmpty()) {
+        } else if (trimmed.isNotEmpty()) {
             val eff = trimmed.split(Regex("\\s+"))[1].toDouble()
             effMap.put("SC${detectorName}_${index}", eff)
             index++

@@ -4,7 +4,7 @@ val dataforgeVersion by extra("0.1.5-dev-6")
 
 plugins {
     val kotlinVersion = "1.3.61"
-    val toolsVersion = "0.3.1"
+    val toolsVersion = "0.3.2"
 
     kotlin("jvm") version kotlinVersion apply false
     id("kotlin-dce-js") version kotlinVersion apply false
