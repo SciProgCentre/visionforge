@@ -14,7 +14,7 @@ import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
 import tornadofx.*
 
-class FXCanvas3D(val plugin: FX3DPlugin, val spec: CanvasSpec) :
+class FXCanvas3D(val plugin: FX3DPlugin, val spec: CanvasSpec = CanvasSpec.empty()) :
     Fragment(), Renderer<VisualObject3D>, ContextAware {
 
     override val context: Context get() = plugin.context

@@ -25,7 +25,7 @@ class MetaEditorDemo : View("Meta editor demo") {
         }
     }.toConfig()
 
-    val descriptor = NodeDescriptor.build {
+    val descriptor = NodeDescriptor {
         node("aNode") {
             info = "A root demo node"
             value("b") {

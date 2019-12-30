@@ -92,12 +92,23 @@ fun MetaItem<*>.color(): Color {
 //fun Material3D?.jsLineMaterial(): Material = this?.config.jsLineMaterial()
 
 fun Mesh.updateMaterial(obj: VisualObject) {
-    val meta = obj.getProperty(Material3D.MATERIAL_KEY).node?:EmptyMeta
-    material = MeshBasicMaterial().apply {
-        color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
-        opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
-        transparent = opacity < 1.0
-        wireframe = meta[Material3D.WIREFRAME_KEY].boolean?:false
-        needsUpdate = true
+    val meta = obj.getProperty(Material3D.MATERIAL_KEY).node ?: EmptyMeta
+    material = if(meta[Material3D.SPECULAR_COLOR]!= null){
+        MeshPhongMaterial().apply {
+            color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
+            specular = meta[Material3D.SPECULAR_COLOR]!!.color()
+            opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
+            transparent = opacity <= 0.0
+            wireframe = meta[Material3D.WIREFRAME_KEY].boolean ?: false
+            needsUpdate = true
+        }
+    }else {
+        MeshBasicMaterial().apply {
+            color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
+            opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
+            transparent = opacity <= 0.0
+            wireframe = meta[Material3D.WIREFRAME_KEY].boolean ?: false
+            needsUpdate = true
+        }
     }
 }

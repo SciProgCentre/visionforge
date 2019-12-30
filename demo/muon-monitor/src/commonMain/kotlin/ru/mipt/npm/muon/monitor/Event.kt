@@ -1,14 +1,18 @@
-package ru.mipt.npm.muon.sim
+@file:UseSerializers(Point3DSerializer::class)
+package ru.mipt.npm.muon.monitor
 
+import hep.dataforge.vis.spatial.Point3D
+import hep.dataforge.vis.spatial.Point3DSerializer
 import kotlinx.serialization.Serializable
-import ru.mipt.npm.muon.monitor.Line
+import kotlinx.serialization.UseSerializers
 
+typealias Track = List<Point3D>
 
 /**
- * Created by darksnake on 11-May-16.
+ *
  */
 @Serializable
-data class Event(val track: Line, val hits: Set<String>) {
+data class Event(val track: Track?, val hits: Collection<String>) {
     /**
      * The unique identity for given set of hits. One identity could correspond to different tracks
      */

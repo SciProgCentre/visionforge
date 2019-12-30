@@ -11,6 +11,8 @@ group = "ru.mipt.npm"
 
 useSerialization()
 
+val ktor_version = "1.3.0-rc"
+
 kotlin {
 
     jvm {
@@ -28,15 +30,20 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                implementation(project(":dataforge-vis-spatial"))
+            }
+        }
+        jvmMain{
+            dependencies {
+                implementation("org.apache.commons:commons-math3:3.6.1")
+                implementation("io.ktor:ktor-server-cio:$ktor_version")
             }
         }
     }
 }
 
 application {
-    mainClassName = "hep.dataforge.vis.spatial.demo.FXDemoAppKt"
+    mainClassName = "ru.mipt.npm.muon.monitor.MMDemoAppKt"
 }
 
 configure<JavaFXOptions> {

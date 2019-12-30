@@ -8,9 +8,11 @@ import info.laht.threekt.geometries.PlaneBufferGeometry
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
-import org.w3c.dom.*
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextBaseline
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.MIDDLE
 import kotlin.browser.document
-import kotlin.math.PI
 import kotlin.reflect.KClass
 
 /**
@@ -24,11 +26,13 @@ object ThreeLabelFactory : ThreeFactory<Label3D> {
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
         context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"
         context.fillStyle = obj.color ?: "black"
-        context.textAlign = CanvasTextAlign.CENTER
-        //context.textBaseline = CanvasTextBaseline.MIDDLE
+        //context.textAlign = CanvasTextAlign.CENTER
+        context.textBaseline = CanvasTextBaseline.MIDDLE
         val metrics = context.measureText(obj.text)
+        //canvas.width = metrics.width.toInt()
 
-        context.fillText(obj.text, 0.5*metrics.width, 0.5*metrics.width)
+
+        context.fillText(obj.text, (canvas.width - metrics.width)/2, 0.5*canvas.height)
 
 
         // canvas contents will be used for a texture
@@ -45,8 +49,6 @@ object ThreeLabelFactory : ThreeFactory<Label3D> {
             PlaneBufferGeometry(canvas.width, canvas.height),
             material
         )
-
-        //mesh.rotateX(PI)
 
         mesh.updatePosition(obj)
 
