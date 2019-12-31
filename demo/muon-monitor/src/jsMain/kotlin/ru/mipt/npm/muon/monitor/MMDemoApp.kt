@@ -6,52 +6,40 @@ import hep.dataforge.js.startApplication
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.NameToken
+import hep.dataforge.vis.js.editor.card
 import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.vis.js.editor.propertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
+import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output
 import hep.dataforge.vis.spatial.three.threeSettings
 import hep.dataforge.vis.spatial.visible
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.get
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.html.js.button
+import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.clear
-import kotlin.math.PI
 
 private class GDMLDemoApp : Application {
-//    /**
-//     * Handle mouse drag according to https://www.html5rocks.com/en/tutorials/file/dndfiles/
-//     */
-//    private fun handleDragOver(event: DragEvent) {
-//        event.stopPropagation()
-//        event.preventDefault()
-//        event.dataTransfer?.dropEffect = "copy"
-//    }
-//
-//    /**
-//     * Load data from text file
-//     */
-//    private fun loadData(event: DragEvent, block: (name: String, data: String) -> Unit) {
-//        event.stopPropagation()
-//        event.preventDefault()
-//
-//        val file = (event.dataTransfer?.files as FileList)[0]
-//            ?: throw RuntimeException("Failed to load file")
-//
-//        FileReader().apply {
-//            onload = {
-//                val string = result as String
-//                block(file.name, string)
-//            }
-//            readAsText(file)
-//        }
-//    }
 
     private val model = Model()
+
+    private val connection = HttpClient{
+        install(JsonFeature) {
+            serializer = KotlinxSerializer(Visual3DPlugin.json)
+        }
+    }
 
     override fun start(state: Map<String, Any>) {
 
@@ -75,7 +63,25 @@ private class GDMLDemoApp : Application {
         output.camera.layers.set(0)
         output.camera.position.z = -2000.0
         output.camera.position.y = 500.0
-        settingsElement.threeSettings(output)
+        settingsElement.threeSettings(output){
+            card("Events") {
+                button {
+                    +"Next"
+                    onClickFunction = {
+                        GlobalScope.launch {
+                            val event = connection.get<Event>("http://localhost:8080/event")
+                            model.displayEvent(event)
+                        }
+                    }
+                }
+                button {
+                    +"Clear"
+                    onClickFunction = {
+                        model.reset()
+                    }
+                }
+            }
+        }
         //tree.visualObjectTree(visual, editor::propertyEditor)
         treeElement.objectTree(NameToken("World"), visual) {
             editorElement.propertyEditor(it) { item ->

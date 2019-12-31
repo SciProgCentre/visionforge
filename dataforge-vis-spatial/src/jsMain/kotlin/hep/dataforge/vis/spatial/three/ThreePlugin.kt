@@ -2,10 +2,7 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
-import hep.dataforge.names.Name
-import hep.dataforge.names.asName
-import hep.dataforge.names.isEmpty
-import hep.dataforge.names.startsWith
+import hep.dataforge.names.*
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.core.Object3D
@@ -43,14 +40,13 @@ class ThreePlugin : AbstractPlugin() {
             is Proxy -> proxyFactory(obj)
             is VisualGroup3D -> {
                 val group = ThreeGroup()
-                obj.children.forEach { (name, child) ->
+                obj.children.forEach { (token, child) ->
                     if (child is VisualObject3D && child.ignore != true) {
                         try {
                             val object3D = buildObject3D(child)
-                            object3D.name = name.toString()
-                            group.add(object3D)
+                            group[token] = object3D
                         } catch (ex: Throwable) {
-                            logger.error(ex) { "Failed to render $name" }
+                            logger.error(ex) { "Failed to render $child" }
                         }
                     }
                 }
@@ -69,6 +65,31 @@ class ThreePlugin : AbstractPlugin() {
                             updatePosition(obj)
                         } else if (name == VisualObject3D.VISIBLE_KEY) {
                             visible = obj.visible ?: true
+                        }
+                    }
+
+                    obj.onChildrenChange(this) { name, child ->
+                        if (name.isEmpty()) {
+                            logger.error { "Children change with empty namr on $group" }
+                            return@onChildrenChange
+                        }
+
+                        val parentName = name.cutLast()
+                        val childName = name.last()!!
+
+                        //removing old object
+                        findChild(name)?.let { oldChild ->
+                            oldChild.parent?.remove(oldChild)
+                        }
+
+                        //adding new object
+                        if (child != null && child is VisualObject3D) {
+                            try {
+                                val object3D = buildObject3D(child)
+                                set(name, object3D)
+                            } catch (ex: Throwable) {
+                                logger.error(ex) { "Failed to render $child" }
+                            }
                         }
                     }
                 }
@@ -93,7 +114,34 @@ class ThreePlugin : AbstractPlugin() {
     }
 }
 
-fun Object3D.findChild(name: Name): Object3D? {
+internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
+    object3D.name = token.toString()
+    add(object3D)
+}
+
+internal fun Object3D.getOrCreateGroup(name: Name): Object3D {
+    return when {
+        name.isEmpty() -> this
+        name.length == 1 -> {
+            val token = name.first()!!
+            children.find { it.name == token.toString() } ?: info.laht.threekt.objects.Group().also { group ->
+                group.name = token.toString()
+                this.add(group)
+            }
+        }
+        else -> getOrCreateGroup(name.first()!!.asName()).getOrCreateGroup(name.cutFirst())
+    }
+}
+
+internal operator fun Object3D.set(name: Name, obj: Object3D) {
+    when (name.length) {
+        0 -> error("Can't set object with an empty name")
+        1 -> set(name.first()!!, obj)
+        else -> getOrCreateGroup(name.cutLast())[name.last()!!] = obj
+    }
+}
+
+internal fun Object3D.findChild(name: Name): Object3D? {
     return when {
         name.isEmpty() -> this
         name.length == 1 -> this.children.find { it.name == name.first()!!.toString() }

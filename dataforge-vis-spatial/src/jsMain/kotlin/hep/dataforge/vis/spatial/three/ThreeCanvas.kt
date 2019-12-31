@@ -92,7 +92,8 @@ class ThreeCanvas(val three: ThreePlugin, val spec: CanvasSpec) : Renderer<Visua
 
     override fun render(obj: VisualObject3D, meta: Meta) {
         content = obj
-        scene.add(three.buildObject3D(obj))
+        val object3D = three.buildObject3D(obj)
+        scene.add(object3D)
     }
 }
 

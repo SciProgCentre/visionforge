@@ -54,8 +54,8 @@ fun Vector3D.toPoint() = Point3D(x, y, z)
 
 fun Line.toPoints(): List<Point3D> {
     val basePoint = basePlane.intersection(this)
-    val bottom = basePoint.subtract(300.0, direction)
-    val top = basePoint.add(300.0, direction)
+    val bottom = basePoint.subtract(2000.0, direction)
+    val top = basePoint.add(2000.0, direction)
     return listOf(bottom.toPoint(), top.toPoint())
 }
 

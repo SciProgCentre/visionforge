@@ -11,13 +11,14 @@ import java.util.*
 
 
 // minimal track length in detector
-val MINIMAL_TRACK_LENGTH = 10.0
+internal const val MINIMAL_TRACK_LENGTH = 10.0
 
 
 private val layerCache = HashMap<Double, Plane>()
 
-fun findLayer(z: Double): Plane = layerCache.getOrPut(z){
-    Plane(Vector3D(0.0, 0.0, z), Vector3D(0.0, 0.0, 1.0),
+fun findLayer(z: Double): Plane = layerCache.getOrPut(z) {
+    Plane(
+        Vector3D(0.0, 0.0, z), Vector3D(0.0, 0.0, 1.0),
         Monitor.GEOMETRY_TOLERANCE
     )
 }
@@ -34,7 +35,7 @@ fun readEffs(): Map<String, Double> {
             index = 0
         } else if (trimmed.isNotEmpty()) {
             val eff = trimmed.split(Regex("\\s+"))[1].toDouble()
-            effMap.put("SC${detectorName}_${index}", eff)
+            effMap["SC${detectorName}_${index}"] = eff
             index++
         }
     }
@@ -42,8 +43,8 @@ fun readEffs(): Map<String, Double> {
 }
 
 
-fun buildEventByTrack(track: Line, hitResolver: (Line) -> Collection<SC1> = defaultHitResolver): Event {
-    return Event(track.toPoints(), hitResolver(track).map { it.name })
+fun buildEventByTrack(index: Int, track: Line, hitResolver: (Line) -> Collection<SC1> = defaultHitResolver): Event {
+    return Event(index, track.toPoints(), hitResolver(track).map { it.name })
 }
 
 val defaultHitResolver: (Line) -> Collection<SC1> = { track: Line ->

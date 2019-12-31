@@ -5,7 +5,10 @@ import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.*
-import info.laht.threekt.core.*
+import info.laht.threekt.core.BufferGeometry
+import info.laht.threekt.core.DirectGeometry
+import info.laht.threekt.core.Face3
+import info.laht.threekt.core.Geometry
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.materials.Material
 import info.laht.threekt.math.Euler
@@ -13,16 +16,6 @@ import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
 import kotlin.math.PI
-
-/**
- * Utility methods for three.kt.
- * TODO move to three project
- */
-
-@Suppress("FunctionName")
-fun Group(children: Collection<Object3D>) = info.laht.threekt.objects.Group().apply {
-    children.forEach { this.add(it) }
-}
 
 val VisualObject3D.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
 

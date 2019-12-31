@@ -26,7 +26,6 @@ object ThreeLabelFactory : ThreeFactory<Label3D> {
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
         context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"
         context.fillStyle = obj.color ?: "black"
-        //context.textAlign = CanvasTextAlign.CENTER
         context.textBaseline = CanvasTextBaseline.MIDDLE
         val metrics = context.measureText(obj.text)
         //canvas.width = metrics.width.toInt()

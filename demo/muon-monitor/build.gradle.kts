@@ -1,9 +1,8 @@
-import org.openjfx.gradle.JavaFXOptions
 import scientifik.useSerialization
 
 plugins {
     id("scientifik.mpp")
-    id("org.openjfx.javafxplugin")
+    //id("org.openjfx.javafxplugin")
     id("application")
 }
 
@@ -50,6 +49,14 @@ kotlin {
                 implementation("io.ktor:ktor-serialization:$ktor_version")
             }
         }
+        jsMain{
+            dependencies{
+                implementation("io.ktor:ktor-client-js:$ktor_version")
+                implementation("io.ktor:ktor-client-serialization-js:$ktor_version")
+                implementation(npm("text-encoding"))
+                implementation(npm("abort-controller"))
+            }
+        }
     }
 }
 
@@ -57,6 +64,6 @@ application {
     mainClassName = "ru.mipt.npm.muon.monitor.server/MMServerKt"
 }
 
-configure<JavaFXOptions> {
-    modules("javafx.controls")
-}
+//configure<JavaFXOptions> {
+//    modules("javafx.controls")
+//}

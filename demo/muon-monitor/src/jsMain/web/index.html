@@ -11,24 +11,19 @@
     <script type="text/javascript" src="main.bundle.js"></script>
 </head>
 <body class="testApp">
-<!--
-<div class="container" id="drop_zone" data-toggle="tooltip" data-placement="right"
-     title="Для загрузки данных в текстовом формате, надо перетащить файл сюда">
-    Загрузить данные
-    <br/>
-    (перетащить файл сюда)
-</div>
--->
+
 <div class="container">
     <h1>Muon monitor demo</h1>
 </div>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-3" id="tree"></div>
+        <div class="col-lg-3">
+            <div class="row" id ="settings"></div>
+            <div class="row" id ="tree"></div>
+        </div>
         <div class="col-lg-6">
-            <div class="row" id="settings"></div>
-            <div class="row" id="canvas"></div>
+            <div class="container" id = "canvas"></div>
         </div>
         <div class="col-lg-3" id="editor"></div>
     </div>

@@ -1,10 +1,7 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.MetaItem
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.isEmpty
+import hep.dataforge.names.*
 import kotlinx.serialization.Transient
 
 
@@ -75,7 +72,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     protected abstract fun createGroup(name: Name): MutableVisualGroup
 
     /**
-     * Add named or unnamed child to the group. If key is [null] the child is considered unnamed. Both key and value are not
+     * Add named or unnamed child to the group. If key is null the child is considered unnamed. Both key and value are not
      * allowed to be null in the same time. If name is present and [child] is null, the appropriate element is removed.
      */
     override fun set(name: Name, child: VisualObject?) {
@@ -102,9 +99,13 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
         structureChangeListeners.forEach { it.callback(name, child) }
     }
 
-    operator fun set(key: String, child: VisualObject?) = if (key.isBlank()) {
-        child?.let { addStatic(child) }
-    } else {
-        set(key.asName(), child)
+    operator fun set(key: String, child: VisualObject?): Unit {
+        if (key.isBlank()) {
+            if(child!= null) {
+                addStatic(child)
+            }
+        } else {
+            set(key.toName(), child)
+        }
     }
 }

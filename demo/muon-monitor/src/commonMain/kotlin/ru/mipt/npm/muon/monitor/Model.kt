@@ -60,7 +60,7 @@ class Model {
         map[pixel]?.color("blue")
     }
 
-    private fun reset() {
+    fun reset() {
         map.values.forEach {
             it.setProperty(Material3D.MATERIAL_COLOR_KEY, null)
         }
@@ -73,7 +73,9 @@ class Model {
             highlight(it)
         }
         event.track?.let {
-            tracks.polyline(*it.toTypedArray())
+            tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]"){
+                thickness = 4
+            }
         }
     }
 

@@ -6,7 +6,6 @@ import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Material3D
 import info.laht.threekt.materials.LineBasicMaterial
-import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
@@ -25,7 +24,7 @@ object ThreeMaterials {
 
 
     //    private val materialCache = HashMap<Meta, Material>()
-    private val lineMaterialCache = HashMap<Meta?, Material>()
+    private val lineMaterialCache = HashMap<Meta?, LineBasicMaterial>()
 
 
 //    fun buildMaterial(meta: Meta): Material =
@@ -37,11 +36,11 @@ object ThreeMaterials {
 //            //side = 2
 //        }
 
-    fun getLineMaterial(meta: Meta?): Material = lineMaterialCache.getOrPut(meta) {
+    fun getLineMaterial(meta: Meta?): LineBasicMaterial = lineMaterialCache.getOrPut(meta) {
         LineBasicMaterial().apply {
-            color = meta["color"]?.color() ?: DEFAULT_LINE_COLOR
-            opacity = meta["opacity"].double ?: 1.0
-            transparent = meta["transparent"].boolean ?: (opacity < 1.0)
+            color = meta[Material3D.COLOR_KEY]?.color() ?: DEFAULT_LINE_COLOR
+            opacity = meta[Material3D.OPACITY_KEY].double ?: 1.0
+            transparent = opacity < 1.0
             linewidth = meta["thickness"].double ?: 1.0
         }
     }
@@ -98,7 +97,7 @@ fun Mesh.updateMaterial(obj: VisualObject) {
             color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
             specular = meta[Material3D.SPECULAR_COLOR]!!.color()
             opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
-            transparent = opacity <= 0.0
+            transparent = opacity < 1.0
             wireframe = meta[Material3D.WIREFRAME_KEY].boolean ?: false
             needsUpdate = true
         }
@@ -106,7 +105,7 @@ fun Mesh.updateMaterial(obj: VisualObject) {
         MeshBasicMaterial().apply {
             color = meta[Material3D.COLOR_KEY]?.color() ?: ThreeMaterials.DEFAULT_COLOR
             opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
-            transparent = opacity <= 0.0
+            transparent = opacity < 1.0
             wireframe = meta[Material3D.WIREFRAME_KEY].boolean ?: false
             needsUpdate = true
         }

@@ -125,8 +125,8 @@ object Monitor {
     const val PIXEL_XY_SPACING = 123.2
     const val PIXEL_Z_SIZE = 30.0
     const val CENTRAL_LAYER_Z = 0.0
-    const val UPPER_LAYER_Z = 166.0
-    const val LOWER_LAYER_Z = -180.0
+    const val UPPER_LAYER_Z = -166.0
+    const val LOWER_LAYER_Z = 180.0
 
     /**
      * Build map for the whole monitor
@@ -136,11 +136,11 @@ object Monitor {
             .lineSequence()
             .mapNotNull { line ->
                 if (line.startsWith(" ")) {
-                    val split = line.trim().split("\\s+".toRegex());
+                    val split = line.trim().split("\\s+".toRegex())
                     val detectorName = split[1];
-                    val x = split[4].toDouble() - 500;
-                    val y = split[5].toDouble() - 500;
-                    val z = split[6].toDouble() - 180;
+                    val x = split[4].toDouble() - 500
+                    val y = split[5].toDouble() - 500
+                    val z = 180 - split[6].toDouble()
                     SC16(detectorName, Point3D(x, y, z))
                 } else {
                     null
