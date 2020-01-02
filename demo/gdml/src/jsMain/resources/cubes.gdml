@@ -1,0 +1,254 @@
+<gdml>
+    <define>
+        <position name="center" x="0.0" y="0.0" z="0.0" unit="cm"></position>
+        <position name="box_position" x="25.0" y="50.0" z="75.0" unit="cm"></position>
+        <rotation name="Rot0" x="0.0" y="0.0" z="0.0" unit="deg"></rotation>
+        <rotation name="Rot1" x="0.0" y="0.0" z="60.0" unit="deg"></rotation>
+        <rotation name="Rot2" x="0.0" y="0.0" z="120.0" unit="deg"></rotation>
+        <rotation name="Rot3" x="0.0" y="0.0" z="180.0" unit="deg"></rotation>
+        <rotation name="Rot4" x="0.0" y="0.0" z="240.0" unit="deg"></rotation>
+        <rotation name="Rot5" x="0.0" y="0.0" z="300.0" unit="deg"></rotation>
+        <rotation name="Rot000" x="0.0" y="0.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos000" x="-50.0" y="-50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot001" x="0.0" y="0.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos001" x="-50.0" y="-50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot002" x="0.0" y="0.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos002" x="-50.0" y="-50.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot010" x="0.0" y="120.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos010" x="-50.0" y="0.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot011" x="0.0" y="120.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos011" x="-50.0" y="0.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot012" x="0.0" y="120.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos012" x="-50.0" y="0.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot020" x="0.0" y="240.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos020" x="-50.0" y="50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot021" x="0.0" y="240.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos021" x="-50.0" y="50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot022" x="0.0" y="240.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos022" x="-50.0" y="50.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot100" x="120.0" y="0.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos100" x="0.0" y="-50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot101" x="120.0" y="0.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos101" x="0.0" y="-50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot102" x="120.0" y="0.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos102" x="0.0" y="-50.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot110" x="120.0" y="120.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos110" x="0.0" y="0.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot111" x="120.0" y="120.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos111" x="0.0" y="0.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot112" x="120.0" y="120.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos112" x="0.0" y="0.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot120" x="120.0" y="240.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos120" x="0.0" y="50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot121" x="120.0" y="240.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos121" x="0.0" y="50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot122" x="120.0" y="240.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos122" x="0.0" y="50.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot200" x="240.0" y="0.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos200" x="50.0" y="-50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot201" x="240.0" y="0.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos201" x="50.0" y="-50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot202" x="240.0" y="0.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos202" x="50.0" y="-50.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot210" x="240.0" y="120.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos210" x="50.0" y="0.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot211" x="240.0" y="120.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos211" x="50.0" y="0.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot212" x="240.0" y="120.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos212" x="50.0" y="0.0" z="50.0" unit="cm"></position>
+        <rotation name="Rot220" x="240.0" y="240.0" z="0.0" unit="deg"></rotation>
+        <position name="Pos220" x="50.0" y="50.0" z="-50.0" unit="cm"></position>
+        <rotation name="Rot221" x="240.0" y="240.0" z="120.0" unit="deg"></rotation>
+        <position name="Pos221" x="50.0" y="50.0" z="0.0" unit="cm"></position>
+        <rotation name="Rot222" x="240.0" y="240.0" z="240.0" unit="deg"></rotation>
+        <position name="Pos222" x="50.0" y="50.0" z="50.0" unit="cm"></position>
+    </define>
+    <materials></materials>
+    <solids>
+        <tube aunit="degree" name="InnerTube" rmax="20.0" z="5.0" rmin="17.0" startphi="0.0" deltaphi="60.0"></tube>
+        <box name="largeBox" x="200.0" y="200.0" z="200.0"></box>
+        <box name="box" x="30.0" y="30.0" z="30.0"></box>
+    </solids>
+    <structure>
+        <volume name="vol1">
+            <materialref ref="G4_WATER"></materialref>
+            <solidref ref="InnerTube"></solidref>
+        </volume>
+        <volume name="Circle">
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot0"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot1"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot2"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot3"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot4"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="vol1"></volumeref>
+                <positionref ref="center"></positionref>
+                <rotationref ref="Rot5"></rotationref>
+            </physvol>
+            <materialref ref="G4_AIR"></materialref>
+            <solidref ref="box"></solidref>
+        </volume>
+        <volume name="world">
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos000"></positionref>
+                <rotationref ref="Rot000"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos001"></positionref>
+                <rotationref ref="Rot001"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos002"></positionref>
+                <rotationref ref="Rot002"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos010"></positionref>
+                <rotationref ref="Rot010"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos011"></positionref>
+                <rotationref ref="Rot011"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos012"></positionref>
+                <rotationref ref="Rot012"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos020"></positionref>
+                <rotationref ref="Rot020"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos021"></positionref>
+                <rotationref ref="Rot021"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos022"></positionref>
+                <rotationref ref="Rot022"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos100"></positionref>
+                <rotationref ref="Rot100"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos101"></positionref>
+                <rotationref ref="Rot101"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos102"></positionref>
+                <rotationref ref="Rot102"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos110"></positionref>
+                <rotationref ref="Rot110"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos111"></positionref>
+                <rotationref ref="Rot111"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos112"></positionref>
+                <rotationref ref="Rot112"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos120"></positionref>
+                <rotationref ref="Rot120"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos121"></positionref>
+                <rotationref ref="Rot121"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos122"></positionref>
+                <rotationref ref="Rot122"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos200"></positionref>
+                <rotationref ref="Rot200"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos201"></positionref>
+                <rotationref ref="Rot201"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos202"></positionref>
+                <rotationref ref="Rot202"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos210"></positionref>
+                <rotationref ref="Rot210"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos211"></positionref>
+                <rotationref ref="Rot211"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos212"></positionref>
+                <rotationref ref="Rot212"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos220"></positionref>
+                <rotationref ref="Rot220"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos221"></positionref>
+                <rotationref ref="Rot221"></rotationref>
+            </physvol>
+            <physvol>
+                <volumeref ref="Circle"></volumeref>
+                <positionref ref="Pos222"></positionref>
+                <rotationref ref="Rot222"></rotationref>
+            </physvol>
+            <materialref ref="G4_AIR"></materialref>
+            <solidref ref="box"></solidref>
+        </volume>
+    </structure>
+    <setup name="Default" version="1.0">
+        <world ref="world"></world>
+    </setup>
+</gdml>

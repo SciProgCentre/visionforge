@@ -70,4 +70,6 @@ To run full-stack app (both server and browser front-end), run
 
 ##### gdml
 
-Visualization example for geometry defined as GDML file.
+Visualization example for geometry defined as GDML file. Once you open Web application,
+drag-and-drop GDML file to the window to see visualization. For example file, use 
+`demo\gdml\src\jsMain\resources\cubes.gdml`.
