@@ -1,4 +1,6 @@
-# DataForge Plugins for Visualisation
+[![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+
+# DataForge plugins for visualisation
 
 This repository contains [DataForge](http://npm.mipt.ru/dataforge/) 
 (also [here](https://github.com/mipt-npm/dataforge-core)) components useful for visualization in

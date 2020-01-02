@@ -5,20 +5,15 @@ import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.applyStyle
-import hep.dataforge.vis.spatial.Material3D.Companion.COLOR_KEY
-import hep.dataforge.vis.spatial.RotationOrder
-import hep.dataforge.vis.spatial.VisualGroup3D
-import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.rotationOrder
+import hep.dataforge.vis.common.useStyle
+import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import scientifik.gdml.*
 import kotlin.random.Random
 
 class GDMLTransformer(val root: GDML) {
-    private val materialCache = HashMap<GDMLMaterial, Meta>()
-    private val random = Random(111)
+    //private val materialCache = HashMap<GDMLMaterial, Meta>()
+    private val random = Random(222)
 
     enum class Action {
         ACCEPT,
@@ -29,7 +24,7 @@ class GDMLTransformer(val root: GDML) {
     /**
      * A special group for local templates
      */
-    val templates by lazy { VisualGroup3D() }
+    val proto by lazy { VisualGroup3D() }
     private val styleCache = HashMap<Name, Meta>()
 
     var lUnit: LUnit = LUnit.MM
@@ -38,13 +33,20 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.CACHE }
 
 
-    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { _, _ -> }
+    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
+        lUnit = LUnit.CM
+        if (parent.physVolumes.isNotEmpty()) {
+            useStyle("opaque") {
+                Material3D.MATERIAL_OPACITY_KEY put 0.3
+            }
+        }
+    }
 
-    fun VisualObject.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
-        styleCache.getOrPut(name.toName()){
+    fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+        styleCache.getOrPut(name.toName()) {
             buildMeta(builder)
         }
-        applyStyle(name)
+        useStyle(name)
     }
 
     internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid) {
@@ -52,9 +54,9 @@ class GDMLTransformer(val root: GDML) {
 
         val styleName = "material[${material.name}]"
 
-        obj.useStyle(styleName){
-            COLOR_KEY to Colors.rgbToString(random.nextInt(0, Int.MAX_VALUE))
-            "gdml.material" to material.name
+        obj.useStyle(styleName) {
+            MATERIAL_COLOR_KEY put random.nextInt(16777216)
+            "gdml.material" put material.name
         }
 
         obj.solidConfiguration(parent, solid)
@@ -67,9 +69,11 @@ class GDMLTransformer(val root: GDML) {
     var onFinish: GDMLTransformer.() -> Unit = {}
 
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
-        final.templates = templates
+        final.prototypes = proto
         styleCache.forEach {
-            final.addStyle(it.key, it.value, false)
+            final.styleSheet {
+                define(it.key.toString(), it.value)
+            }
         }
         final.rotationOrder = RotationOrder.ZXY
         onFinish(this@GDMLTransformer)

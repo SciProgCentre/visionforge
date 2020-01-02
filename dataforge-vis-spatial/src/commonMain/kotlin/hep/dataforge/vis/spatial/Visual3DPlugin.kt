@@ -1,11 +1,12 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.AbstractPlugin
+import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
-import hep.dataforge.io.ConfigSerializer
-import hep.dataforge.io.MetaSerializer
-import hep.dataforge.io.NameSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.serialization.MetaSerializer
+import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.vis.common.VisualObject
@@ -30,14 +31,14 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
     companion object : PluginFactory<Visual3DPlugin> {
         override val tag: PluginTag = PluginTag(name = "visual.spatial", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out Visual3DPlugin> = Visual3DPlugin::class
-        override fun invoke(meta: Meta): Visual3DPlugin = Visual3DPlugin(meta)
+        override fun invoke(meta: Meta, context: Context): Visual3DPlugin = Visual3DPlugin(meta)
 
         val serialModule = SerializersModule {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
             contextual(NameSerializer)
             contextual(NameTokenSerializer)
-            contextual(Meta::class, MetaSerializer)
+            contextual(MetaSerializer)
             contextual(ConfigSerializer)
 
             polymorphic(VisualObject::class, VisualObject3D::class) {
@@ -47,7 +48,8 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
                 Tube::class with Tube.serializer()
                 Box::class with Box.serializer()
                 Convex::class with Convex.serializer()
-                addSubclass(Extruded.serializer())
+                Extruded::class with Extruded.serializer()
+                addSubclass(Label3D.serializer())
             }
         }
 

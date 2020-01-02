@@ -1,9 +1,9 @@
 @file:UseSerializers(Point3DSerializer::class)
+
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
@@ -33,13 +33,6 @@ class Composite(
 
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
-
-    override fun MetaBuilder.updateMeta() {
-        "compositeType" to compositeType
-        "first" to first.toMeta()
-        "second" to second.toMeta()
-        updatePosition()
-    }
 }
 
 inline fun VisualGroup3D.composite(
@@ -51,13 +44,18 @@ inline fun VisualGroup3D.composite(
     val children = group.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also {
-        if (group.properties != null) {
-            it.config.update(group.config)
-            it.material = group.material
+        it.config.update(group.config)
+        //it.material = group.material
+
+        if(group.position!=null) {
+            it.position = group.position
         }
-        it.position = group.position
-        it.rotation = group.rotation
-        it.scale = group.scale
+        if(group.rotation!=null) {
+            it.rotation = group.rotation
+        }
+        if(group.scale!=null) {
+            it.scale = group.scale
+        }
         set(name, it)
     }
 }

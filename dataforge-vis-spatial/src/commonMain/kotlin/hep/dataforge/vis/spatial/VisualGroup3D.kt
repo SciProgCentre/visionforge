@@ -8,19 +8,16 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
-import hep.dataforge.io.MetaSerializer
-import hep.dataforge.io.NameSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
+import hep.dataforge.io.serialization.MetaSerializer
+import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.set
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.StyleSheet
 import hep.dataforge.vis.common.VisualObject
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,19 +28,23 @@ import kotlin.collections.set
  * Represents 3-dimensional Visual Group
  */
 @Serializable
+@SerialName("group.3d")
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     /**
      * A container for templates visible inside this group
      */
-    var templates: VisualGroup3D? = null
+    @SerialName(PROTOTYPES_KEY)
+    var prototypes: VisualGroup3D? = null
         set(value) {
             value?.parent = this
             field = value
         }
 
+    override var styleSheet: StyleSheet? = null
+        private set
+
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
-    override val styleSheet = HashMap<Name, Meta>()
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -52,6 +53,19 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
+
+    init {
+        //Do after deserialization
+        attachChildren()
+    }
+
+    /**
+     * Update or create stylesheet
+     */
+    fun styleSheet(block: StyleSheet.() -> Unit) {
+        val res = this.styleSheet ?: StyleSheet(this).also { this.styleSheet = it }
+        res.block()
+    }
 
     override fun removeChild(token: NameToken) {
         _children.remove(token)
@@ -88,36 +102,42 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
-    fun getTemplate(name: Name): VisualObject3D? =
-        templates?.get(name) as? VisualObject3D
-            ?: (parent as? VisualGroup3D)?.getTemplate(name)
-
-    override fun MetaBuilder.updateMeta() {
-        set(TEMPLATES_KEY, templates?.toMeta())
-        updatePosition()
-        updateChildren()
+    override fun attachChildren() {
+        super.attachChildren()
+        prototypes?.run {
+            parent = this
+            attachChildren()
+        }
     }
 
     companion object {
-        const val TEMPLATES_KEY = "templates"
+        const val PROTOTYPES_KEY = "templates"
     }
 }
 
 /**
- * A fix for serialization bug that writes all proper parents inside the tree after deserialization
+ * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-fun VisualGroup.attachChildren() {
-    this.children.values.forEach {
-        it.parent = this
-        (it as? VisualGroup)?.attachChildren()
-    }
-    if (this is VisualGroup3D) {
-        templates?.also {
-            it.parent = this
-            it.attachChildren()
-        }
-    }
+fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
+    prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
+
+/**
+ * Defined a prototype inside current group
+ */
+fun VisualGroup3D.setPrototype(name: Name, obj: VisualObject3D) {
+    (prototypes ?: VisualGroup3D().also { this.prototypes = it })[name] = obj
 }
 
+/**
+ * Define a group with given [key], attach it to this parent and return it.
+ */
 fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also { set(key, it) }
+
+/**
+ * Create or edit prototype node as a group
+ */
+inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
+    (prototypes ?: VisualGroup3D().also { this.prototypes = it }).run(builder)
+}
+

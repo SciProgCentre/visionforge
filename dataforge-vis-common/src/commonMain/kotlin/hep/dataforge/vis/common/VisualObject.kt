@@ -15,7 +15,7 @@ import kotlinx.serialization.Transient
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface VisualObject : MetaRepr, Configurable {
+interface VisualObject : Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -24,14 +24,16 @@ interface VisualObject : MetaRepr, Configurable {
     var parent: VisualObject?
 
     /**
-     * Direct properties access
+     * All properties including styles and prototypes if present, but without inheritance
      */
-    val properties: Config?
+    fun allProperties(): Laminate
 
     /**
      * Set property for this object
      */
-    fun setProperty(name: Name, value: Any?)
+    fun setProperty(name: Name, value: Any?) {
+        config[name] = value
+    }
 
     /**
      * Get property including or excluding parent properties
@@ -39,9 +41,11 @@ interface VisualObject : MetaRepr, Configurable {
     fun getProperty(name: Name, inherit: Boolean = true): MetaItem<*>?
 
     /**
-     * Manually trigger property changed event. If [name] is empty, notify that the whole object is changed
+     * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
      */
-    fun propertyChanged(name: Name, before: MetaItem<*>? = null, after: MetaItem<*>? = null): Unit
+    fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?): Unit
+
+    fun propertyInvalidated(name: Name) = propertyChanged(name, null, null)
 
     /**
      * Add listener triggering on property change
@@ -54,11 +58,9 @@ interface VisualObject : MetaRepr, Configurable {
     fun removeChangeListener(owner: Any?)
 
     /**
-     * List of names of styles applied to this object
+     * List of names of styles applied to this object. Order matters. Not inherited
      */
-    var styles: List<Name>
-
-    fun findAllStyles(): Laminate = Laminate(styles.distinct().mapNotNull(::findStyle))
+    var styles: List<String>
 
     companion object {
         const val TYPE = "visual"
@@ -66,6 +68,7 @@ interface VisualObject : MetaRepr, Configurable {
 
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
+
     }
 }
 
@@ -80,8 +83,33 @@ fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>?
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
 /**
- *  Apply style to [VisualObject] by adding it to the [style] list
+ * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
-fun VisualObject.applyStyle(name: String) {
-    styles = styles + name.toName()
+fun VisualObject.useStyle(name: String) {
+    styles = styles + name
 }
+
+//private tailrec fun VisualObject.topGroup(): VisualGroup? {
+//    val parent = this.parent
+//    return if (parent == null) {
+//        this as? VisualGroup
+//    }
+//    else {
+//        parent.topGroup()
+//    }
+//}
+//
+///**
+// * Add or update given style on a top-most reachable parent group and apply it to this object
+// */
+//fun VisualObject.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+//    val styleName = name.toName()
+//    topGroup()?.updateStyle(styleName, builder) ?: error("Can't find parent group for $this")
+//    useStyle(styleName)
+//}
+
+tailrec fun VisualObject.findStyle(name: String): Meta? =
+    (this as? VisualGroup)?.styleSheet?.get(name) ?: parent?.findStyle(name)
+
+fun VisualObject.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))
+

@@ -1,9 +1,8 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
-import hep.dataforge.names.EmptyName
 import hep.dataforge.names.Name
-import hep.dataforge.names.toName
+import hep.dataforge.names.asName
 import hep.dataforge.vis.common.VisualObject.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
@@ -17,14 +16,24 @@ abstract class AbstractVisualObject : VisualObject {
     @Transient
     override var parent: VisualObject? = null
 
-    abstract override var properties: Config?
+    protected abstract var properties: Config?
 
-    override var styles: List<Name>
-        get() = properties?.get(STYLE_KEY).stringList.map(String::toName)
+    override var styles: List<String>
+        get() = properties?.get(STYLE_KEY).stringList
         set(value) {
-            setProperty(STYLE_KEY, value.map { it.toString() })
-            styleChanged()
+            //val allStyles = (field + value).distinct()
+            setProperty(STYLE_KEY, value)
+            updateStyles(value)
         }
+
+    protected fun updateStyles(names: List<String>) {
+        names.mapNotNull { findStyle(it) }.asSequence()
+            .flatMap { it.items.asSequence() }
+            .distinctBy { it.key }
+            .forEach {
+                propertyChanged(it.key.asName(), null, it.value)
+            }
+    }
 
     /**
      * The config is initialized and assigned on-demand.
@@ -39,8 +48,10 @@ abstract class AbstractVisualObject : VisualObject {
     private val listeners = HashSet<PropertyListener>()
 
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
-        for (l in listeners) {
-            l.action(name, before, after)
+        if (before != after) {
+            for (l in listeners) {
+                l.action(name, before, after)
+            }
         }
     }
 
@@ -50,10 +61,6 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun removeChangeListener(owner: Any?) {
         listeners.removeAll { it.owner == owner }
-    }
-
-    override fun setProperty(name: Name, value: Any?) {
-        config[name] = value
     }
 
     private var styleCache: Meta? = null
@@ -66,14 +73,7 @@ abstract class AbstractVisualObject : VisualObject {
             styleCache = it
         }
 
-
-    /**
-     * Helper to reset style cache
-     */
-    protected fun styleChanged() {
-        styleCache = null
-        propertyChanged(EmptyName)
-    }
+    override fun allProperties(): Laminate = Laminate(properties, mergedStyles)
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -82,20 +82,12 @@ abstract class AbstractVisualObject : VisualObject {
             properties?.get(name) ?: mergedStyles[name]
         }
     }
-
-    protected open fun MetaBuilder.updateMeta() {}
-
-    override fun toMeta(): Meta = buildMeta {
-        "type" to this::class.simpleName
-        "properties" to properties
-        updateMeta()
-    }
 }
 
-fun VisualObject.findStyle(styleName: Name): Meta? {
-    if (this is VisualGroup) {
-        val style = getStyle(styleName)
-        if (style != null) return style
-    }
-    return parent?.findStyle(styleName)
-}
+//fun VisualObject.findStyle(styleName: Name): Meta? {
+//    if (this is VisualGroup) {
+//        val style = resolveStyle(styleName)
+//        if (style != null) return style
+//    }
+//    return parent?.findStyle(styleName)
+//}

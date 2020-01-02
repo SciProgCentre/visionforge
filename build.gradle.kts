@@ -1,8 +1,10 @@
-val dataforgeVersion by extra("0.1.3")
+import scientifik.useSerialization
+
+val dataforgeVersion by extra("0.1.5-dev-6")
 
 plugins {
-    val kotlinVersion = "1.3.50"
-    val toolsVersion = "0.2.0"
+    val kotlinVersion = "1.3.61"
+    val toolsVersion = "0.3.2"
 
     kotlin("jvm") version kotlinVersion apply false
     id("kotlin-dce-js") version kotlinVersion apply false
@@ -15,12 +17,20 @@ plugins {
 
 allprojects {
     repositories {
+        mavenLocal()
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")
+        maven("https://kotlin.bintray.com/js-externals")
+//        maven("https://dl.bintray.com/gbaldeck/kotlin")
+//        maven("https://dl.bintray.com/rjaros/kotlin")
     }
 
     group = "hep.dataforge"
     version = "0.1.0-dev"
+}
+
+subprojects{
+    this.useSerialization()
 }
 
 val githubProject by extra("dataforge-vis")

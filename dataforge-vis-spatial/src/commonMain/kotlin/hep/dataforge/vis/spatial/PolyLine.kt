@@ -2,7 +2,7 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.number
@@ -20,6 +20,7 @@ class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject
 
     //var lineType by string()
     var thickness by number(1.0, key = "material.thickness")
+
 }
 
 fun VisualGroup3D.polyline(vararg points: Point3D, name: String = "", action: PolyLine.() -> Unit = {}) =

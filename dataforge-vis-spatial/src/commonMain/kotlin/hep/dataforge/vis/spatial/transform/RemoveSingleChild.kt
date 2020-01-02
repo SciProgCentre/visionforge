@@ -10,11 +10,13 @@ import hep.dataforge.vis.spatial.*
 internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject {
     return child.apply {
 
-        parent.properties?.let { config.update(it) }
+        config.update(parent.config)
+
+        //parent.properties?.let { config.update(it) }
 
         if (this is VisualObject3D && parent is VisualObject3D) {
-            position += parent.position
-            rotation += parent.rotation
+            position = (position ?: World.ZERO) + (parent.position ?: World.ZERO)
+            rotation = (parent.rotation ?: World.ZERO) + (parent.rotation ?: World.ZERO)
             scale = when {
                 scale == null && parent.scale == null -> null
                 scale == null -> parent.scale
@@ -49,7 +51,7 @@ object RemoveSingleChild : VisualTreeTransform<VisualGroup3D>() {
         }
 
         replaceChildren()
-        templates?.replaceChildren()
+        prototypes?.replaceChildren()
     }
 
     override fun VisualGroup3D.clone(): VisualGroup3D {
