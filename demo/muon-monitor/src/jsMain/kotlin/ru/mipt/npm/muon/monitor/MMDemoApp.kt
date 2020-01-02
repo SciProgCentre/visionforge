@@ -35,7 +35,7 @@ private class GDMLDemoApp : Application {
 
     private val model = Model()
 
-    private val connection = HttpClient{
+    private val connection = HttpClient {
         install(JsonFeature) {
             serializer = KotlinxSerializer(Visual3DPlugin.json)
         }
@@ -52,7 +52,6 @@ private class GDMLDemoApp : Application {
             document.getElementById("settings") ?: error("Element with id 'settings' not found on page")
         val treeElement = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
         val editorElement = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
-        canvasElement.clear()
 
         canvasElement.clear()
         val visual: VisualObject3D = model.root
@@ -63,7 +62,7 @@ private class GDMLDemoApp : Application {
         output.camera.layers.set(0)
         output.camera.position.z = -2000.0
         output.camera.position.y = 500.0
-        settingsElement.threeSettings(output){
+        settingsElement.threeSettings(output) {
             card("Events") {
                 button {
                     +"Next"
@@ -83,8 +82,8 @@ private class GDMLDemoApp : Application {
             }
         }
         //tree.visualObjectTree(visual, editor::propertyEditor)
-        treeElement.objectTree(NameToken("World"), visual) {
-            editorElement.propertyEditor(it) { item ->
+        treeElement.objectTree(NameToken("World"), visual) { name, obj ->
+            editorElement.propertyEditor(name, obj) { item ->
                 //val descriptorMeta = Material3D.descriptor
 
                 val properties = item.allProperties()
@@ -99,10 +98,7 @@ private class GDMLDemoApp : Application {
                 properties.withBottom(bottom)
             }
         }
-
-
         output.render(visual)
-
     }
 }
 

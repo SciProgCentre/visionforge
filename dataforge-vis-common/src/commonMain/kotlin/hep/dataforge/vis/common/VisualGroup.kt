@@ -61,6 +61,7 @@ data class StyleRef(val group: VisualGroup, val styleName: Name)
 
 val VisualGroup.isEmpty: Boolean get() = this.children.isEmpty()
 
+
 interface MutableVisualGroup : VisualGroup {
 
     /**

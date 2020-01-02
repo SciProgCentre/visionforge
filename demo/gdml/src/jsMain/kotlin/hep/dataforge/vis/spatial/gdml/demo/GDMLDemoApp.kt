@@ -2,11 +2,11 @@ package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
-import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.js.startApplication
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.NameToken
+import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.vis.js.editor.propertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
@@ -159,8 +159,8 @@ private class GDMLDemoApp : Application {
             output.camera.layers.set(0)
             configElement.threeSettings(output)
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.objectTree(NameToken("World"), visual) {
-                editorElement.propertyEditor(it) { item ->
+            treeElement.objectTree(NameToken("World"), visual) { objName, obj ->
+                editorElement.propertyEditor(objName, obj) { item ->
                     //val descriptorMeta = Material3D.descriptor
 
                     val properties = item.allProperties()
