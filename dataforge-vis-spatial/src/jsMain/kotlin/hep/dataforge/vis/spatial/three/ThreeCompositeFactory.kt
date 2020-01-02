@@ -6,7 +6,7 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.objects.Mesh
 
 /**
- * This should be inner, becaulse it uses object builder
+ * This should be inner, because it uses object builder
  */
 class ThreeCompositeFactory(val three: ThreePlugin) : MeshThreeFactory<Composite>(Composite::class) {
 

@@ -6,7 +6,8 @@ import hep.dataforge.values.int
 import kotlin.math.max
 
 /**
- * Taken from https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
+ * Definitions of common colors. Taken from
+ * https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
  */
 object Colors {
     const val aliceblue = 0xF0F8FF
@@ -184,6 +185,9 @@ object Colors {
     const val GREEN_KEY = "green"
     const val BLUE_KEY = "blue"
 
+    /**
+     * Convert color represented as Meta to string of format #rrggbb
+     */
     fun fromMeta(item: MetaItem<*>): String {
         return when (item) {
             is MetaItem.NodeItem<*> -> {
@@ -204,11 +208,17 @@ object Colors {
         }
     }
 
+    /**
+     * Convert Int color to string of format #rrggbb
+     */
     fun rgbToString(rgb: Int): String {
         val string = rgb.toString(16).padStart(6, '0')
         return "#" + string.substring(max(0, string.length - 6))
     }
 
+    /**
+     * Convert three bytes representing color to string of format #rrggbb
+     */
     fun rgbToString(red: UByte, green: UByte, blue: UByte): String {
         fun colorToString(color: UByte): String {
             return color.toString(16).padStart(2, '0')
@@ -221,6 +231,9 @@ object Colors {
         }
     }
 
+    /**
+     * Convert three bytes representing color to Meta
+     */
     fun rgbToMeta(r: UByte, g: UByte, b: UByte): Meta = buildMeta {
         RED_KEY put r.toInt()
         GREEN_KEY put g.toInt()
