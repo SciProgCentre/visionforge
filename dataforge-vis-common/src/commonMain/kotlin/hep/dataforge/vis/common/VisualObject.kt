@@ -69,11 +69,17 @@ interface VisualObject : Configurable {
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
 
-
     }
 }
 
+/**
+ * Get [VisualObject] property using key as a String
+ */
 fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
+
+/**
+ * Set [VisualObject] property using key as a String
+ */
 fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
 /**

@@ -3,6 +3,9 @@ package hep.dataforge.vis.common
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
 
+/**
+ * Represents a group of [VisualObject] instances
+ */
 interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
     /**
      * A map of top level named children
@@ -61,7 +64,9 @@ data class StyleRef(val group: VisualGroup, val styleName: Name)
 
 val VisualGroup.isEmpty: Boolean get() = this.children.isEmpty()
 
-
+/**
+ * Mutable version of [VisualGroup]
+ */
 interface MutableVisualGroup : VisualGroup {
 
     /**

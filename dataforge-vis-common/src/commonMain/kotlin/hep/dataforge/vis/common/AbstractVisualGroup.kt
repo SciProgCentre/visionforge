@@ -6,7 +6,7 @@ import kotlinx.serialization.Transient
 
 
 /**
- * Abstract implementation of group of [VisualObject]
+ * Abstract implementation of mutable group of [VisualObject]
  */
 abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup {
 
@@ -24,6 +24,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
         }
     }
 
+    // TODO Consider renaming to `StructureChangeListener` (singular)
     private data class StructureChangeListeners(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
 
     @Transient

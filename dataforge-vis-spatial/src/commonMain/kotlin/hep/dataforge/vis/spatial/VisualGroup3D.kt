@@ -24,6 +24,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
+/**
+ * Represents 3-dimensional Visual Group
+ */
 @Serializable
 @SerialName("group.3d")
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {

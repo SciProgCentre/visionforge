@@ -62,7 +62,7 @@ class Extruded(
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
 
-        if (shape.size < 3) error("Extruded shape requires more than points per layer")
+        if (shape.size < 3) error("Extruded shape requires more than 2 points per layer")
 
         /**
          * Expand the shape for specific layers
