@@ -25,7 +25,7 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
     fileSaver.saveAs(blob, fileName)
 }
 
-fun Element.threeSettings(canvas: ThreeCanvas, block: TagConsumer<HTMLElement>.() -> Unit = {}) {
+fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLElement>.() -> Unit = {}) {
     clear()
     append {
         card("Settings") {

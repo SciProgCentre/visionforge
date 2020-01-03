@@ -11,7 +11,6 @@ import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.SELECTED_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
 
@@ -118,9 +117,9 @@ var VisualObject.ignore: Boolean?
     get() = getProperty(IGNORE_KEY,false).boolean
     set(value) = setProperty(IGNORE_KEY, value)
 
-var VisualObject.selected: Boolean?
-    get() = getProperty(SELECTED_KEY).boolean
-    set(value) = setProperty(SELECTED_KEY, value)
+//var VisualObject.selected: Boolean?
+//    get() = getProperty(SELECTED_KEY).boolean
+//    set(value) = setProperty(SELECTED_KEY, value)
 
 private fun VisualObject3D.position(): Point3D =
     position ?: Point3D(0.0, 0.0, 0.0).also { position = it }

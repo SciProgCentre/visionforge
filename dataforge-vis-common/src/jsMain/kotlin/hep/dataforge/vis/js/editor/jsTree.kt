@@ -1,7 +1,6 @@
 package hep.dataforge.vis.js.editor
 
 import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.VisualGroup
 import hep.dataforge.vis.common.VisualObject
@@ -14,26 +13,25 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSpanElement
 import kotlin.dom.clear
 
-fun Element.objectTree(
-    token: NameToken,
+fun Element.displayObjectTree(
     obj: VisualObject,
-    clickCallback: (Name, VisualObject) -> Unit = {_,_->}
+    clickCallback: (Name) -> Unit = {}
 ) {
     clear()
     append {
         card("Object tree") {
-            subTree(Name.EMPTY, token, obj, clickCallback)
+            subTree(Name.EMPTY, obj, clickCallback)
         }
     }
 }
 
 private fun TagConsumer<HTMLElement>.subTree(
-    parentName: Name,
-    token: NameToken,
+    fullName: Name,
     obj: VisualObject,
-    clickCallback: (Name, VisualObject) -> Unit
+    clickCallback: (Name) -> Unit
 ) {
-    val fullName = parentName + token
+//    val fullName = parentName + token
+    val token = fullName.last()?.toString()?:"World"
 
     //display as node if any child is visible
     if (obj is VisualGroup && obj.children.keys.any { !it.body.startsWith("@") }) {
@@ -41,8 +39,8 @@ private fun TagConsumer<HTMLElement>.subTree(
         div("d-inline-block text-truncate") {
             toggle = span("objTree-caret")
             label("objTree-label") {
-                +token.toString()
-                onClickFunction = { clickCallback(fullName, obj) }
+                +token
+                onClickFunction = { clickCallback(fullName) }
             }
         }
         val subtree = ul("objTree-subtree")
@@ -57,7 +55,7 @@ private fun TagConsumer<HTMLElement>.subTree(
                         .forEach { (childToken, child) ->
                             append {
                                 li().apply {
-                                    subTree(fullName, childToken, child, clickCallback)
+                                    subTree(fullName + childToken, child, clickCallback)
                                 }
                             }
                         }
@@ -68,11 +66,11 @@ private fun TagConsumer<HTMLElement>.subTree(
             }
         }
     } else {
-        val div = div("d-inline-block text-truncate") {
+        div("d-inline-block text-truncate") {
             span("objTree-leaf")
             label("objTree-label") {
-                +token.toString()
-                onClickFunction = { clickCallback(fullName, obj) }
+                +token
+                onClickFunction = { clickCallback(fullName) }
             }
         }
     }

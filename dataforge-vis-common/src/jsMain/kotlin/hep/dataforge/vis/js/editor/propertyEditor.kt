@@ -12,22 +12,29 @@ import hep.dataforge.vis.common.findStyle
 import kotlinx.html.dom.append
 import kotlinx.html.js.*
 import org.w3c.dom.Element
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.set
 import kotlin.dom.clear
 
 //FIXME something rotten in JS-Meta converter
 fun Meta.toDynamic() = JSON.parse<dynamic>(toJson().toString())
 
 //TODO add node descriptor instead of configuring property selector
-fun Element.propertyEditor(name: Name, item: VisualObject, propertySelector: (VisualObject) -> Meta = { it.config }) {
+fun Element.displayPropertyEditor(
+    name: Name,
+    item: VisualObject,
+    propertySelector: (VisualObject) -> Meta = { it.config }
+) {
     clear()
 
     append {
         card("Properties") {
-            if(!name.isEmpty()) {
+            if (!name.isEmpty()) {
                 nav {
                     attributes["aria-label"] = "breadcrumb"
                     ol("breadcrumb") {
-                        name.tokens.forEach {token->
+                        name.tokens.forEach { token ->
                             li("breadcrumb-item") {
                                 +token.toString()
                             }
