@@ -1,7 +1,7 @@
 @file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
@@ -123,6 +123,7 @@ class Tube(
             }
         }
     }
+
 }
 
 inline fun VisualGroup3D.tube(
@@ -131,7 +132,7 @@ inline fun VisualGroup3D.tube(
     innerRadius: Number = 0f,
     startAngle: Number = 0f,
     angle: Number = 2 * PI,
-    name: String? = null,
+    name: String = "",
     block: Tube.() -> Unit = {}
 ): Tube = Tube(
     r.toFloat(),

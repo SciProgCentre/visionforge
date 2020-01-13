@@ -2,18 +2,20 @@ package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
+import hep.dataforge.names.asName
+import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.common.VisualObject.Companion.TYPE
 import kotlinx.serialization.Transient
 
-private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
-private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
+//private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
+//private fun Laminate.withBottom(meta: Meta): Laminate = Laminate(layers + meta)
 
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface VisualObject : MetaRepr, Configurable {
+interface VisualObject : Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -22,9 +24,16 @@ interface VisualObject : MetaRepr, Configurable {
     var parent: VisualObject?
 
     /**
+     * All properties including styles and prototypes if present, but without inheritance
+     */
+    fun allProperties(): Laminate
+
+    /**
      * Set property for this object
      */
-    fun setProperty(name: Name, value: Any?)
+    fun setProperty(name: Name, value: Any?) {
+        config[name] = value
+    }
 
     /**
      * Get property including or excluding parent properties
@@ -32,9 +41,11 @@ interface VisualObject : MetaRepr, Configurable {
     fun getProperty(name: Name, inherit: Boolean = true): MetaItem<*>?
 
     /**
-     * Manually trigger property changed event. If [name] is empty, notify that the whole object is changed
+     * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
      */
-    fun propertyChanged(name: Name, before: MetaItem<*>? = null, after: MetaItem<*>? = null): Unit
+    fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?): Unit
+
+    fun propertyInvalidated(name: Name) = propertyChanged(name, null, null)
 
     /**
      * Add listener triggering on property change
@@ -46,65 +57,67 @@ interface VisualObject : MetaRepr, Configurable {
      */
     fun removeChangeListener(owner: Any?)
 
+    /**
+     * List of names of styles applied to this object. Order matters. Not inherited
+     */
+    var styles: List<String>
+
     companion object {
         const val TYPE = "visual"
+        val STYLE_KEY = "@style".asName()
 
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
+
     }
 }
 
-internal data class MetaListener(
-    val owner: Any? = null,
-    val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
-)
+/**
+ * Get [VisualObject] property using key as a String
+ */
+fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
 
-abstract class AbstractVisualObject: VisualObject {
+/**
+ * Set [VisualObject] property using key as a String
+ */
+fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
-    @Transient
-    override var parent: VisualObject? = null
-
-    @Transient
-    private val listeners = HashSet<MetaListener>()
-
-    override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
-        for (l in listeners) {
-            l.action(name, before, after)
-        }
-    }
-
-    override fun onPropertyChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit) {
-        listeners.add(MetaListener(owner, action))
-    }
-
-    override fun removeChangeListener(owner: Any?) {
-        listeners.removeAll { it.owner == owner }
-    }
-
-    abstract var properties: Config?
-    override val config: Config
-        get() = properties ?: Config().also { config ->
-            properties = config
-            config.onChange(this, ::propertyChanged)
-        }
-
-    override fun setProperty(name: Name, value: Any?) {
-        config[name] = value
-    }
-
-    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
-        return if (inherit) {
-            properties?.get(name) ?: parent?.getProperty(name, inherit)
-        } else {
-            properties?.get(name)
-        }
-    }
-
-    protected open fun MetaBuilder.updateMeta() {}
-
-    override fun toMeta(): Meta = buildMeta {
-        "type" to this::class.simpleName
-        "properties" to properties
-        updateMeta()
-    }
+/**
+ * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
+ */
+fun VisualObject.useStyle(name: String) {
+    styles = styles + name
 }
+
+//private tailrec fun VisualObject.topGroup(): VisualGroup? {
+//    val parent = this.parent
+//    return if (parent == null) {
+//        this as? VisualGroup
+//    }
+//    else {
+//        parent.topGroup()
+//    }
+//}
+//
+///**
+// * Add or update given style on a top-most reachable parent group and apply it to this object
+// */
+//fun VisualObject.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+//    val styleName = name.toName()
+//    topGroup()?.updateStyle(styleName, builder) ?: error("Can't find parent group for $this")
+//    useStyle(styleName)
+//}
+
+tailrec fun VisualObject.findStyle(name: String): Meta? =
+    (this as? VisualGroup)?.styleSheet?.get(name) ?: parent?.findStyle(name)
+
+fun VisualObject.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))
+
+//operator fun VisualObject.get(name: Name): VisualObject?{
+//    return when {
+//        name.isEmpty() -> this
+//        this is VisualGroup -> this[name]
+//        else -> null
+//    }
+//}
+

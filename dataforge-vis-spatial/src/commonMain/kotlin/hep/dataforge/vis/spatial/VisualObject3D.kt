@@ -1,22 +1,22 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class)
+@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, NameTokenSerializer::class)
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
-import hep.dataforge.io.NameSerializer
+import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
-import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.output.Output
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.output.Renderer
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.asName
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.MATERIAL_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
+import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
+/**
+ * Interface for 3-dimensional [VisualObject]
+ */
 interface VisualObject3D : VisualObject {
     var position: Point3D?
     var rotation: Point3D?
@@ -35,9 +35,14 @@ interface VisualObject3D : VisualObject {
     }
 
     companion object {
-        val MATERIAL_KEY = "material".asName()
+
         val VISIBLE_KEY = "visible".asName()
+        val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
+        val LAYER_KEY = "layer".asName()
+        val IGNORE_KEY = "ignore".asName()
+
+        val GEOMETRY_KEY = "geometry".asName()
 
         val x = "x".asName()
         val y = "y".asName()
@@ -65,44 +70,16 @@ interface VisualObject3D : VisualObject {
     }
 }
 
-@Serializable
-class VisualGroup3D : VisualGroup<VisualObject3D>(), VisualObject3D, Configurable {
-    /**
-     * A container for templates visible inside this group
-     */
-    var templates: VisualGroup3D? = null
-        set(value) {
-            value?.parent = this
-            field = value
-        }
-
-    @Serializable(ConfigSerializer::class)
-    override var properties: Config? = null
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-    override val namedChildren: MutableMap<Name, VisualObject3D> = HashMap()
-    override val unnamedChildren: MutableList<VisualObject3D> = ArrayList()
-
-    fun getTemplate(name: Name): VisualObject3D? = templates?.get(name) ?: (parent as? VisualGroup3D)?.getTemplate(name)
-
-    override fun MetaBuilder.updateMeta() {
-        set(TEMPLATES_KEY, templates?.toMeta())
-        updatePosition()
-        updateChildren()
+/**
+ * Count number of layers to the top object. Return 1 if this is top layer
+ */
+var VisualObject3D.layer: Int
+    get() = getProperty(LAYER_KEY).int ?: 0
+    set(value) {
+        setProperty(LAYER_KEY, value)
     }
 
-    companion object {
-        const val TEMPLATES_KEY = "templates"
-    }
-}
-
-fun VisualGroup3D.group(key: String? = null, action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
-    VisualGroup3D().apply(action).also { set(key, it) }
-
-fun Output<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
+fun Renderer<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)
 
 // Common properties
@@ -131,27 +108,21 @@ var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
     set(value) = setProperty(DETAIL_KEY, value)
 
-var VisualObject3D.material: Meta?
-    get() = getProperty(MATERIAL_KEY).node
-    set(value) = setProperty(MATERIAL_KEY, value)
-
-var VisualObject3D.visible: Boolean?
+var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = setProperty(VISIBLE_KEY, value)
 
-fun VisualObject3D.color(rgb: Int) {
-    material = buildMeta { "color" to rgb }
-}
+/**
+ * If this property is true, the object will be ignored on render.
+ * Property is not inherited.
+ */
+var VisualObject.ignore: Boolean?
+    get() = getProperty(IGNORE_KEY,false).boolean
+    set(value) = setProperty(IGNORE_KEY, value)
 
-fun VisualObject3D.material(builder: MetaBuilder.() -> Unit) {
-    material = buildMeta(builder)
-}
-
-fun VisualObject3D.color(r: Int, g: Int, b: Int) = material {
-    "red" to r
-    "green" to g
-    "blue" to b
-}
+//var VisualObject.selected: Boolean?
+//    get() = getProperty(SELECTED_KEY).boolean
+//    set(value) = setProperty(SELECTED_KEY, value)
 
 private fun VisualObject3D.position(): Point3D =
     position ?: Point3D(0.0, 0.0, 0.0).also { position = it }
@@ -160,21 +131,21 @@ var VisualObject3D.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyChanged(VisualObject3D.xPos)
+        propertyInvalidated(VisualObject3D.xPos)
     }
 
 var VisualObject3D.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyChanged(VisualObject3D.yPos)
+        propertyInvalidated(VisualObject3D.yPos)
     }
 
 var VisualObject3D.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyChanged(VisualObject3D.zPos)
+        propertyInvalidated(VisualObject3D.zPos)
     }
 
 private fun VisualObject3D.rotation(): Point3D =
@@ -184,21 +155,21 @@ var VisualObject3D.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyChanged(VisualObject3D.xRotation)
+        propertyInvalidated(VisualObject3D.xRotation)
     }
 
 var VisualObject3D.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyChanged(VisualObject3D.yRotation)
+        propertyInvalidated(VisualObject3D.yRotation)
     }
 
 var VisualObject3D.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyChanged(VisualObject3D.zRotation)
+        propertyInvalidated(VisualObject3D.zRotation)
     }
 
 private fun VisualObject3D.scale(): Point3D =
@@ -208,19 +179,19 @@ var VisualObject3D.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyChanged(VisualObject3D.xScale)
+        propertyInvalidated(VisualObject3D.xScale)
     }
 
 var VisualObject3D.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyChanged(VisualObject3D.yScale)
+        propertyInvalidated(VisualObject3D.yScale)
     }
 
 var VisualObject3D.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyChanged(VisualObject3D.zScale)
+        propertyInvalidated(VisualObject3D.zScale)
     }

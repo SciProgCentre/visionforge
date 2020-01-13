@@ -3,12 +3,8 @@ package hep.dataforge.vis.spatial
 import kotlin.math.PI
 
 object World {
-    const val CAMERA_INITIAL_DISTANCE = -500.0
-    const val CAMERA_INITIAL_X_ANGLE = -50.0
-    const val CAMERA_INITIAL_Y_ANGLE = 0.0
-    const val CAMERA_INITIAL_Z_ANGLE = -210.0
-    const val CAMERA_NEAR_CLIP = 0.1
-    const val CAMERA_FAR_CLIP = 10000.0
+    val ZERO = Point3D(0.0, 0.0, 0.0)
+    val ONE = Point3D(1.0, 1.0, 1.0)
 }
 
 const val PI2: Float = 2 * PI.toFloat()

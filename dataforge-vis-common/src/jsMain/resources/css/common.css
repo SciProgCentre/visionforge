@@ -1,0 +1,23 @@
+/* Remove default bullets */
+ul, .objTree-subtree {
+    list-style-type: none;
+}
+
+/* Style the caret/arrow */
+.objTree-caret {
+    cursor: pointer;
+    user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+.objTree-caret::before {
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+.objTree-caret-down::before {
+    transform: rotate(90deg);
+}

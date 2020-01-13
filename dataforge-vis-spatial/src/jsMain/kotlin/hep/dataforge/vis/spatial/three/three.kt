@@ -6,27 +6,24 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.core.BufferGeometry
+import info.laht.threekt.core.DirectGeometry
 import info.laht.threekt.core.Face3
 import info.laht.threekt.core.Geometry
-import info.laht.threekt.core.Object3D
+import info.laht.threekt.external.controls.OrbitControls
+import info.laht.threekt.materials.Material
 import info.laht.threekt.math.Euler
 import info.laht.threekt.math.Vector3
-
-/**
- * Utility methods for three.kt.
- * TODO move to three project
- */
-
-@Suppress("FunctionName")
-fun Group(children: Collection<Object3D>) = info.laht.threekt.objects.Group().apply {
-    children.forEach { this.add(it) }
-}
+import info.laht.threekt.objects.Mesh
+import info.laht.threekt.textures.Texture
+import kotlin.math.PI
 
 val VisualObject3D.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
 
 val MetaItem<*>.vector get() = Vector3(node["x"].float ?: 0f, node["y"].float ?: 0f, node["z"].float ?: 0f)
 
 fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply { fromGeometry(this@toBufferGeometry) }
+
+internal fun Double.toRadians() = this * PI / 180
 
 fun CSG.toGeometry(): Geometry {
     val geom = Geometry()
@@ -43,7 +40,7 @@ fun CSG.toGeometry(): Geometry {
         }
 
         for (j in 3..polygon.vertices.size) {
-            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, zero)
+            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, World.ZERO)
             fc.vertexNormals = arrayOf(
                 Vector3().copy(pvs[0].normal),
                 Vector3().copy(pvs[j - 2].normal),
@@ -64,4 +61,19 @@ fun CSG.toGeometry(): Geometry {
     geom.computeBoundingSphere()
     geom.computeBoundingBox()
     return geom
+}
+
+internal fun Any.dispose() {
+    when (this) {
+        is Geometry -> dispose()
+        is BufferGeometry -> dispose()
+        is DirectGeometry -> dispose()
+        is Material -> dispose()
+        is Mesh -> {
+            geometry.dispose()
+            material.dispose()
+        }
+        is OrbitControls -> dispose()
+        is Texture -> dispose()
+    }
 }

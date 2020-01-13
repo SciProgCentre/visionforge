@@ -7,13 +7,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("scientifik:gdml:0.1.4-dev-1")
-            }
-        }
-        val jsMain by getting {
-            dependencies {
-                api(project(":dataforge-vis-spatial"))
+                api("scientifik:gdml:0.1.4")
             }
         }
     }
 }
+
+//tasks{
+//    val jsBrowserWebpack by getting(KotlinWebpack::class) {
+//        sourceMaps = false
+//    }
+//}

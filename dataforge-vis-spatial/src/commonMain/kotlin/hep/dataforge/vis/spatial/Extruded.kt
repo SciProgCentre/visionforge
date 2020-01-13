@@ -1,7 +1,7 @@
 @file:UseSerializers(Point2DSerializer::class, Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
@@ -62,7 +62,7 @@ class Extruded(
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
 
-        if (shape.size < 3) error("Extruded shape requires more than points per layer")
+        if (shape.size < 3) error("Extruded shape requires more than 2 points per layer")
 
         /**
          * Expand the shape for specific layers
@@ -110,5 +110,5 @@ class Extruded(
     }
 }
 
-fun VisualGroup3D.extrude(name: String? = null, action: Extruded.() -> Unit = {}) =
+fun VisualGroup3D.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
     Extruded().apply(action).also { set(name, it) }

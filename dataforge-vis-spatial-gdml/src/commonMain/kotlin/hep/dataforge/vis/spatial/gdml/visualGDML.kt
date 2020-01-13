@@ -1,9 +1,13 @@
 package hep.dataforge.vis.spatial.gdml
 
-import hep.dataforge.meta.Meta
+
+import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.vis.common.asName
+import hep.dataforge.vis.common.get
 import hep.dataforge.vis.spatial.*
+import hep.dataforge.vis.spatial.World.ONE
+import hep.dataforge.vis.spatial.World.ZERO
 import scientifik.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -11,41 +15,45 @@ import kotlin.math.sin
 
 private fun VisualObject3D.withPosition(
     lUnit: LUnit,
-    pos: GDMLPosition? = null,
-    rotation: GDMLRotation? = null,
-    scale: GDMLScale? = null
+    newPos: GDMLPosition? = null,
+    newRotation: GDMLRotation? = null,
+    newScale: GDMLScale? = null
 ): VisualObject3D = apply {
-    pos?.let {
-        this@withPosition.x = pos.x(lUnit)
-        this@withPosition.y = pos.y(lUnit)
-        this@withPosition.z = pos.z(lUnit)
+    newPos?.let {
+        val point = Point3D(it.x(lUnit), it.y(lUnit), it.z(lUnit))
+        if (position != null || point != ZERO) {
+            position = point
+        }
     }
-    rotation?.let {
-        this@withPosition.rotationX = rotation.x()
-        this@withPosition.rotationY = rotation.y()
-        this@withPosition.rotationZ = rotation.z()
-        this@withPosition.rotationOrder=RotationOrder.ZXY
+    newRotation?.let {
+        val point = Point3D(it.x(), it.y(), it.z())
+        if (rotation != null || point != ZERO) {
+            rotation = point
+        }
+        //this@withPosition.rotationOrder = RotationOrder.ZXY
     }
-    scale?.let {
-        this@withPosition.scaleX = scale.x.toFloat()
-        this@withPosition.scaleY = scale.y.toFloat()
-        this@withPosition.scaleZ = scale.z.toFloat()
+    newScale?.let {
+        val point = Point3D(it.x, it.y, it.z)
+        if (scale != null || point != ONE) {
+            scale = point
+        }
     }
     //TODO convert units if needed
 }
 
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(d: Double) = toDouble() * d
+
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
 private fun VisualGroup3D.addSolid(
     context: GDMLTransformer,
     solid: GDMLSolid,
-    name: String? = null,
+    name: String = "",
     block: VisualObject3D.() -> Unit = {}
 ): VisualObject3D {
-    context.solidAdded(solid)
+    //context.solidAdded(solid)
     val lScale = solid.lscale(context.lUnit)
     val aScale = solid.ascale()
     return when (solid) {
@@ -78,7 +86,7 @@ private fun VisualGroup3D.addSolid(
             val innerSolid = solid.solidref.resolve(context.root)
                 ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
 
-            addSolid(context, innerSolid) {
+            addSolid(context, innerSolid, name) {
                 block()
                 scaleX *= solid.scale.x.toFloat()
                 scaleY *= solid.scale.y.toFloat()
@@ -147,7 +155,8 @@ private fun VisualGroup3D.addPhysicalVolume(
 
     when (context.volumeAction(volume)) {
         GDMLTransformer.Action.ACCEPT -> {
-            this[physVolume.name] = volume(context, volume).apply {
+            val group = volume(context, volume)
+            this[physVolume.name ?: ""] = group.apply {
                 withPosition(
                     context.lUnit,
                     physVolume.resolvePosition(context.root),
@@ -157,12 +166,12 @@ private fun VisualGroup3D.addPhysicalVolume(
             }
         }
         GDMLTransformer.Action.CACHE -> {
-            val name = volumesName + volume.name.asName()
-            if (context.templates[name] == null) {
-                context.templates[name] = volume(context, volume)
+            val fullName = volumesName + volume.name.asName()
+            if (context.proto[fullName] == null) {
+                context.proto[fullName] = volume(context, volume)
             }
 
-            this[physVolume.name] = Proxy(name).apply {
+            this[physVolume.name ?: ""] = Proxy(fullName).apply {
                 withPosition(
                     context.lUnit,
                     physVolume.resolvePosition(context.root),
@@ -185,7 +194,8 @@ private fun VisualGroup3D.addDivisionVolume(
         ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
     //TODO add divisions
-    add(
+    set(
+        Name.EMPTY,
         volume(
             context,
             volume
@@ -193,12 +203,7 @@ private fun VisualGroup3D.addDivisionVolume(
     )
 }
 
-private fun VisualGroup3D.addVolume(
-    context: GDMLTransformer,
-    group: GDMLGroup
-) {
-    this[group.name] = volume(context, group)
-}
+private val solidsName = "solids".asName()
 
 private fun volume(
     context: GDMLTransformer,
@@ -208,18 +213,17 @@ private fun volume(
         if (group is GDMLVolume) {
             val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
-            val material = group.materialref.resolve(context.root) ?: GDMLElement(group.materialref.ref)
 
             when (context.solidAction(solid)) {
                 GDMLTransformer.Action.ACCEPT -> {
                     addSolid(context, solid, solid.name) {
-                        this.material = context.resolveColor(group, material, solid)
+                        context.configureSolid(this, group, solid)
                     }
                 }
                 GDMLTransformer.Action.CACHE -> {
-                    if (context.templates[solid.name] == null) {
-                        context.templates.addSolid(context, solid, solid.name) {
-                            this.material = context.resolveColor(group, material, solid)
+                    if (context.proto[solid.name] == null) {
+                        context.proto.addSolid(context, solid, solid.name) {
+                            context.configureSolid(this, group, solid)
                         }
                     }
                     ref(solid.name.asName(), solid.name)
@@ -241,14 +245,18 @@ private fun volume(
     }
 }
 
-typealias ColorResolver = GDMLGroup?.(GDMLMaterial, GDMLSolid?) -> Meta
-
-
 fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 
     val context = GDMLTransformer(this).apply(block)
 
-    return volume(context, world).also {
-        context.finished(it)
-    }
+    return context.finalize(volume(context, world))
+}
+
+/**
+ * Append gdml node to the group
+ */
+fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+    val visual = gdml.toVisual(transformer)
+    //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
+    set(key, visual)
 }

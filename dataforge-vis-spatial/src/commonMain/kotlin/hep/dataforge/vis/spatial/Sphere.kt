@@ -2,7 +2,7 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.ConfigSerializer
+import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ class Sphere(
     var phi: Float = PI2,
     var thetaStart: Float = 0f,
     var theta: Float = PI.toFloat()
-) : AbstractVisualObject(), VisualObject3D {
+) : AbstractVisualObject(), VisualObject3D, Shape {
 
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
@@ -24,13 +24,26 @@ class Sphere(
     override var position: Point3D? = null
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
+
+    override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
+        TODO("not implemented")
+//        val segments = this.detail ?: 8
+//        require(segments >= 4) { "The detail for sphere must be >= 4" }
+//        val phiStep = phi / segments
+//        val thetaStep = theta / segments
+//        for (i in 1 until segments - 1) {
+//            for (j in 0 until segments - 1) {
+//                val point1 = Point3D()
+//            }
+//        }
+    }
 }
 
 inline fun VisualGroup3D.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,
-    name: String? = null,
+    name: String = "",
     action: Sphere.() -> Unit = {}
 ) = Sphere(
     radius.toFloat(),
