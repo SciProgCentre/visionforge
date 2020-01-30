@@ -12,10 +12,10 @@ import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.Z_SIZE_KEY
 import hep.dataforge.vis.spatial.three.*
+import hep.dataforge.vis.spatial.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
-import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.objects.Mesh
 import kotlinx.serialization.UseSerializers
 import kotlin.math.max
@@ -69,15 +69,12 @@ private object VariableBoxThreeFactory : ThreeFactory<VisualObject3D> {
         //JS sometimes tries to pass Geometry as BufferGeometry
         @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
 
-        val mesh = Mesh(geometry, MeshBasicMaterial()).apply {
+        val mesh = Mesh(geometry, getMaterial(obj)).apply {
             applyEdges(obj)
             applyWireFrame(obj)
 
             //set position for mesh
             updatePosition(obj)
-
-            //set color for mesh
-            updateMaterial(obj)
 
             layers.enable(obj.layer)
             children.forEach {

@@ -1,8 +1,6 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.boolean
-import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
@@ -10,10 +8,10 @@ import hep.dataforge.names.startsWith
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.layer
+import hep.dataforge.vis.spatial.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
-import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
@@ -37,16 +35,13 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
 
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
-        val mesh = Mesh(geometry, MeshBasicMaterial()).apply {
+        val mesh = Mesh(geometry, getMaterial(obj)).apply {
             matrixAutoUpdate = false
             applyEdges(obj)
             applyWireFrame(obj)
 
             //set position for mesh
             updatePosition(obj)
-
-            //set color for mesh
-            updateMaterial(obj)
 
             layers.enable(obj.layer)
             children.forEach {

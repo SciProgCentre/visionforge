@@ -34,7 +34,7 @@ class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
     override fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D?, meta: Meta) {
         val face = Face3(append(vertex1), append(vertex2), append(vertex3), normal ?: Vector3(0, 0, 0))
         meta["materialIndex"].int?.let { face.materialIndex = it }
-        meta["color"]?.color()?.let { face.color = it }
+        meta["color"]?.getColor()?.let { face.color = it }
         faces.add(face)
     }
 

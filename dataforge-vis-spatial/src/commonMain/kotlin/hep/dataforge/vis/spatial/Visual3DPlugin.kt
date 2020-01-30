@@ -49,6 +49,7 @@ class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
                 Box::class with Box.serializer()
                 Convex::class with Convex.serializer()
                 Extruded::class with Extruded.serializer()
+                addSubclass(PolyLine.serializer())
                 addSubclass(Label3D.serializer())
             }
         }

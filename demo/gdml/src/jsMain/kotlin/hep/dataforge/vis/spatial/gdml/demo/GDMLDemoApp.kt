@@ -2,12 +2,15 @@ package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
-import hep.dataforge.vis.js.editor.objectTree
 import hep.dataforge.js.startApplication
 import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.withBottom
-import hep.dataforge.names.NameToken
-import hep.dataforge.vis.js.editor.propertyEditor
+import hep.dataforge.names.Name
+import hep.dataforge.names.isEmpty
+import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.js.editor.displayObjectTree
+import hep.dataforge.vis.js.editor.displayPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
@@ -19,8 +22,8 @@ import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
+import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.three.threeSettings
 import hep.dataforge.vis.spatial.visible
 import kotlinx.html.dom.append
 import kotlinx.html.js.p
@@ -154,13 +157,18 @@ private class GDMLDemoApp : Application {
             message("Rendering")
 
             //output.camera.layers.enable(1)
-            val output = three.output(canvasElement as HTMLElement)
+            val canvas = three.output(canvasElement as HTMLElement)
 
-            output.camera.layers.set(0)
-            configElement.threeSettings(output)
+            canvas.camera.layers.set(0)
+            configElement.displayCanvasControls(canvas)
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.objectTree(NameToken("World"), visual) {
-                editorElement.propertyEditor(it) { item ->
+            fun selectElement(name: Name) {
+                val child: VisualObject = when {
+                    name.isEmpty() -> visual
+                    visual is VisualGroup -> visual[name] ?: return
+                    else -> return
+                }
+                editorElement.displayPropertyEditor(name, child) { item ->
                     //val descriptorMeta = Material3D.descriptor
 
                     val properties = item.allProperties()
@@ -176,8 +184,18 @@ private class GDMLDemoApp : Application {
                 }
             }
 
+//        canvas.clickListener = ::selectElement
 
-            output.render(visual)
+            //tree.visualObjectTree(visual, editor::propertyEditor)
+            treeElement.displayObjectTree(visual) { name ->
+                selectElement(name)
+                canvas.highlight(name)
+            }
+            canvas.render(visual)
+
+
+
+            canvas.render(visual)
             message(null)
             spinner(false)
         }

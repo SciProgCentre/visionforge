@@ -24,7 +24,7 @@ class ThreePlugin : AbstractPlugin() {
         objectFactories[Sphere::class] = ThreeSphereFactory
         objectFactories[ConeSegment::class] = ThreeCylinderFactory
         objectFactories[PolyLine::class] = ThreeLineFactory
-        objectFactories[Label3D::class] = ThreeLabelFactory
+        objectFactories[Label3D::class] = ThreeCanvasLabelFactory
     }
 
     @Suppress("UNCHECKED_CAST")

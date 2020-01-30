@@ -7,6 +7,7 @@ import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE
+import hep.dataforge.vis.spatial.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
@@ -53,14 +54,13 @@ fun Object3D.updatePosition(obj: VisualObject3D) {
 /**
  * Update non-position non-geometry property
  */
-fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
+fun Object3D.updateProperty(source: VisualObject3D, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
-        updateMaterial(source)
+        this.material = getMaterial(source)
     } else if (
-        source is VisualObject3D &&
-        (propertyName.startsWith(VisualObject3D.position)
-                || propertyName.startsWith(VisualObject3D.rotation)
-                || propertyName.startsWith(VisualObject3D.scale))
+        propertyName.startsWith(VisualObject3D.position)
+        || propertyName.startsWith(VisualObject3D.rotation)
+        || propertyName.startsWith(VisualObject3D.scale)
     ) {
         //update position of mesh using this object
         updatePosition(source)

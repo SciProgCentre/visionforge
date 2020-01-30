@@ -113,3 +113,11 @@ tailrec fun VisualObject.findStyle(name: String): Meta? =
 
 fun VisualObject.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))
 
+//operator fun VisualObject.get(name: Name): VisualObject?{
+//    return when {
+//        name.isEmpty() -> this
+//        this is VisualGroup -> this[name]
+//        else -> null
+//    }
+//}
+
