@@ -4,8 +4,8 @@
 
 This repository contains [DataForge](http://npm.mipt.ru/dataforge/) 
 (also [here](https://github.com/mipt-npm/dataforge-core)) components useful for visualization in
-various scientific applications. Currently, the main application is 3D visualization for particle
-physics experiments.
+various scientific applications. The main application for now is 3D visualization for particle
+physics experiments. Other applications including 2D plots are planned for future.
 
 The project is developed as a Kotlin multiplatform application, currently 
 targeting browser JavaScript and JVM.

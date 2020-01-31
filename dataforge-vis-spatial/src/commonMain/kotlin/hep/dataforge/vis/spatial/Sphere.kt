@@ -8,6 +8,8 @@ import hep.dataforge.vis.common.AbstractVisualObject
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Serializable
 class Sphere(
@@ -26,16 +28,31 @@ class Sphere(
     override var scale: Point3D? = null
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        TODO("not implemented")
-//        val segments = this.detail ?: 8
-//        require(segments >= 4) { "The detail for sphere must be >= 4" }
-//        val phiStep = phi / segments
-//        val thetaStep = theta / segments
-//        for (i in 1 until segments - 1) {
-//            for (j in 0 until segments - 1) {
-//                val point1 = Point3D()
-//            }
-//        }
+        fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
+            val z = r * cos(theta)
+            val x = r * sin(theta) * cos(phi)
+            val y = r * sin(theta) * sin(phi)
+            return Point3D(x, y, z)
+        }
+        val segments = this.detail ?: 8
+        require(segments >= 4) { "The detail for sphere must be >= 4" }
+        val phiStep = phi / segments
+        val thetaStep = theta / segments
+        for (i in 0 until segments) {  // theta iteration
+            val theta1 = thetaStart + i * thetaStep
+            val theta2 = theta1 + thetaStep
+            for (j in 0 until segments) {   // phi iteration
+                val phi1 = phiStart + j * phiStep
+                val phi2 = phi1 + phiStep
+                val point1 = point3DfromSphCoord(radius, theta1, phi1)
+                val point2 = point3DfromSphCoord(radius, theta1, phi2)
+                val point3 = point3DfromSphCoord(radius, theta2, phi2)
+                val point4 = point3DfromSphCoord(radius, theta2, phi1)
+                geometryBuilder.apply {
+                    face4(point1, point2, point3, point4)
+                }
+            }
+        }
     }
 }
 
