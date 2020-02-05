@@ -29,9 +29,10 @@ class Sphere(
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
-            val z = r * cos(theta)
-            val x = r * sin(theta) * cos(phi)
-            val y = r * sin(theta) * sin(phi)
+            // This transformation matches three.js sphere implementation
+            val y = r * cos(theta)
+            val z = r * sin(theta) * sin(phi)
+            val x = - r * sin(theta) * cos(phi)
             return Point3D(x, y, z)
         }
         val segments = this.detail ?: 8
@@ -49,7 +50,8 @@ class Sphere(
                 val point3 = point3DfromSphCoord(radius, theta2, phi2)
                 val point4 = point3DfromSphCoord(radius, theta2, phi1)
                 geometryBuilder.apply {
-                    face4(point1, point2, point3, point4)
+                    // 1-2-3-4 gives the same face but with opposite orientation
+                    face4(point1, point4, point3, point2)
                 }
             }
         }
