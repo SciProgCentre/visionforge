@@ -4,8 +4,8 @@
 
 This repository contains [DataForge](http://npm.mipt.ru/dataforge/) 
 (also [here](https://github.com/mipt-npm/dataforge-core)) components useful for visualization in
-various scientific applications. Currently, the main application is 3D visualization for particle
-physics experiments.
+various scientific applications. The main application for now is 3D visualization for particle
+physics experiments. Other applications including 2D plots are planned for future.
 
 The project is developed as a Kotlin multiplatform application, currently 
 targeting browser JavaScript and JVM.
@@ -70,4 +70,6 @@ To run full-stack app (both server and browser front-end), run
 
 ##### gdml
 
-Visualization example for geometry defined as GDML file.
+Visualization example for geometry defined as GDML file. Once you open Web application,
+drag-and-drop GDML file to the window to see visualization. For example file, use 
+`demo\gdml\src\jsMain\resources\cubes.gdml`.
