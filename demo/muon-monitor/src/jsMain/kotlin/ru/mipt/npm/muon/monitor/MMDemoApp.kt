@@ -22,6 +22,7 @@ import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
 import hep.dataforge.vis.spatial.visible
+import info.laht.threekt.math.Vector3
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
@@ -65,6 +66,7 @@ private class GDMLDemoApp : Application {
         canvas.camera.layers.set(0)
         canvas.camera.position.z = -2000.0
         canvas.camera.position.y = 500.0
+        canvas.camera.lookAt(Vector3(0,0,0))
         settingsElement.displayCanvasControls(canvas) {
             card("Events") {
                 button {
