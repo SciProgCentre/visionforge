@@ -6,15 +6,16 @@
 
 * [Introduction](#introduction)
 * [Features](#features)
+* [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
   * [dataforge-vis-common](#dataforge-vis-common)
   * [dataforge-vis-spatial](#dataforge-vis-spatial)
   * [dataforge-vis-spatial-gdml](#dataforge-vis-spatial-gdml)
   * [dataforge-vis-jsroot](#dataforge-vis-jsroot)
-* [Demonstrations](#demo)
+* [Demonstrations](#demonstrations)
   * [Spatial Showcase](#spatial-showcase)
-  * [Muon Monitor](#muon-monitor)
-  * [GDML](#gdml)
+  * [Muon Monitor](#muon-monitor-visualization)
+  * [GDML Example](#gdml-example)
 
 ## Introduction
 
@@ -54,20 +55,31 @@ To learn more about DataForge, please consult the following URLs:
 ### dataforge-vis-common 
 
 Contains a general hierarchy of classes and interfaces useful for visualization. 
-This module is not 3D-specific.
+This module is not specific to 3D-visualization.
 
-Class diagram: 
+The `dataforge-vis-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
+
+##### Class diagram: 
 
 ![](doc/resources/class-diag-common.png)
 
-This module also includes configuration editors for JS (in jsMain) and JVM (in jvmMain).
+
 
 
 ### dataforge-vis-spatial
 
 Includes common classes and serializers for 3D visualisation, Three.js and JavaFX implementations.
 
-Class diagram:
+##### Prototypes
+
+One of the important features of the framework is support for 3D object prototypes (sometimes
+also referred to as templates). The idea is that prototype geometry can be rendered once and reused 
+for multiple objects. This helps to significantly decrease memory usage.
+
+The `prototypes` property tree is defined in `VisualGroup3D` class, and `Proxy` class helps to reuse a template object. 
+
+##### Class diagram:
+
 ![](doc/resources/class-diag-3d.png)
 
 
@@ -87,7 +99,7 @@ Note: Currently, this part is experimental and put here for completeness. This m
 
 The `demo` module contains several demonstrations of using the `dataforge-vis` framework:
 
-### spatial-showcase
+### Spatial Showcase
 
 Contains a simple demonstration with a grid including a few shapes that you can rotate, move camera, and so on.
 Some shapes will also periodically change their color and visibility. 
@@ -95,11 +107,11 @@ Some shapes will also periodically change their color and visibility.
 To see the demo: run `demo/spatial-showcase/Tasks/distribution/installJsDist` Gradle task, then open
 `build/distribuions/spatial-showcase-js-0.1.0-dev/index.html` file in your browser.
 
-Example view:
+##### Example view:
 
 ![](doc/resources/spatial-showcase.png)
 
-### muon-monitor
+### Muon Monitor Visualization
 
 A full-stack application example, showing the 
 [Muon Monitor](http://npm.mipt.ru/projects/physics.html#mounMonitor) experiment set-up.
@@ -109,11 +121,11 @@ Includes server back-end generating events, as well as visualization front-end.
 To run full-stack app (both server and browser front-end), run 
 `demo/muon-monitor/application/run` task.
 
-Example view:
+##### Example view:
 
 ![](doc/resources/muon-monitor.png)
 
-### gdml
+### GDML Example
 
 Visualization example for geometry defined as GDML file. 
 
@@ -122,6 +134,6 @@ To build the app, run `demo/gdml/Tasks/distribution/installJsDist` task, then op
 drag-and-drop GDML file to the window to see visualization. For an example file, use 
 `demo/gdml/src/jsMain/resources/cubes.gdml`.
 
-Example view:
+##### Example view:
 
 ![](doc/resources/gdml-demo.png)
