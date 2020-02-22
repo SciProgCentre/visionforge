@@ -16,6 +16,10 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
 
     val styleSheet: StyleSheet?
 
+    /**
+     * A map of direct children for specific target
+     * (currently "visual" or "style")
+     */
     override fun provideTop(target: String): Map<Name, Any> =
         when (target) {
             VisualObject.TYPE -> children.flatMap { (key, value) ->
