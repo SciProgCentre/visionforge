@@ -1,6 +1,6 @@
 [![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 
-# DataForge Visualisation Platform
+# DataForge Visualization Platform
 
 ## Table of contents
 
@@ -17,6 +17,7 @@
   * [Muon Monitor](#muon-monitor-visualization)
   * [GDML Example](#gdml-example)
 
+
 ## Introduction
 
 This repository contains a [DataForge](#about-dataforge)\-based framework 
@@ -28,6 +29,7 @@ Other applications including 2D plots are planned for the future.
 The project is being developed as a Kotlin multiplatform application, currently targeting browser 
 JavaScript and JVM.
 
+
 ## Features
 
 The main framework's features for now include:
@@ -35,9 +37,10 @@ The main framework's features for now include:
 - Event display such as particle tracks, etc.
 - Scales up to few hundred thousands of elements
 - Camera move, rotate, zoom-in and zoom-out
-- Object tree with property editor
+- Scene graph as an object tree with property editor
 - Settings export and import
 - Multiple platform support
+
 
 ## About DataForge
 
@@ -49,6 +52,7 @@ To learn more about DataForge, please consult the following URLs:
  * [Kotlin multiplatform implementation of DataForge](https://github.com/mipt-npm/dataforge-core)  
  * [DataForge documentation](http://npm.mipt.ru/dataforge/) 
  * [Original implementation of DataForge](https://bitbucket.org/Altavir/dataforge/src/default/)
+
 
 ## Modules contained in this repository
 
@@ -64,11 +68,13 @@ The `dataforge-vis-common` module also includes configuration editors for JS (in
 ![](doc/resources/class-diag-common.png)
 
 
-
-
 ### dataforge-vis-spatial
 
-Includes common classes and serializers for 3D visualisation, Three.js and JavaFX implementations.
+Includes common classes and serializers for 3D visualization, Three.js and JavaFX implementations.
+
+##### Class diagram:
+
+![](doc/resources/class-diag-3d.png)
 
 ##### Prototypes
 
@@ -78,14 +84,16 @@ for multiple objects. This helps to significantly decrease memory usage.
 
 The `prototypes` property tree is defined in `VisualGroup3D` class, and `Proxy` class helps to reuse a template object. 
 
-##### Class diagram:
+##### Styles
 
-![](doc/resources/class-diag-3d.png)
+`VisualGroup3D` has a `styleSheet` property that can optionally define styles at the Group's 
+level. Styles are applied to child (descendant) objects using `styles: List<String>` property defined 
+in `VisualObject`. 
 
 
 ### dataforge-vis-spatial-gdml
 
-GDML bindings for 3D visualisation (to be moved to gdml project).
+GDML bindings for 3D visualization (to be moved to gdml project).
 
 
 ### dataforge-vis-jsroot

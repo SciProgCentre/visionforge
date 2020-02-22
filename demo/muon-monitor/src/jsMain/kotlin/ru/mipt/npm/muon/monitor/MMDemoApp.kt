@@ -35,7 +35,7 @@ import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.clear
 
-private class GDMLDemoApp : Application {
+private class MMDemoApp : Application {
 
     private val model = Model()
 
@@ -122,5 +122,5 @@ private class GDMLDemoApp : Application {
 }
 
 fun main() {
-    startApplication(::GDMLDemoApp)
+    startApplication(::MMDemoApp)
 }
