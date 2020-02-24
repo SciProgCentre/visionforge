@@ -8,7 +8,7 @@ import java.nio.file.Path
 
 fun GDML.Companion.readFile(file: Path): GDML {
     val xmlReader = StAXReader(Files.newInputStream(file), "UTF-8")
-    return GDML.format.parse(GDML.serializer(), xmlReader)
+    return format.parse(GDML.serializer(), xmlReader)
 }
 
 fun VisualGroup3D.gdml(file: Path, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {

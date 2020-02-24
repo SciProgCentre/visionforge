@@ -66,7 +66,7 @@ fun MetaItem<*>?.material(): Material {
         is MetaItem.NodeItem -> PhongMaterial().apply {
             val opacity = node[Material3D.OPACITY_KEY].double ?: 1.0
             diffuseColor = node[Material3D.COLOR_KEY]?.color(opacity) ?: Color.DARKGREY
-            specularColor = node[Material3D.SPECULAR_COLOR]?.color(opacity) ?: Color.WHITE
+            specularColor = node[Material3D.SPECULAR_COLOR_KEY]?.color(opacity) ?: Color.WHITE
         }
     }
 }

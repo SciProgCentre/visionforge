@@ -26,12 +26,11 @@ fun Element.displayObjectTree(
 }
 
 private fun TagConsumer<HTMLElement>.subTree(
-    fullName: Name,
+    name: Name,
     obj: VisualObject,
     clickCallback: (Name) -> Unit
 ) {
-//    val fullName = parentName + token
-    val token = fullName.last()?.toString()?:"World"
+    val token = name.last()?.toString()?:"World"
 
     //display as node if any child is visible
     if (obj is VisualGroup && obj.children.keys.any { !it.body.startsWith("@") }) {
@@ -40,7 +39,7 @@ private fun TagConsumer<HTMLElement>.subTree(
             toggle = span("objTree-caret")
             label("objTree-label") {
                 +token
-                onClickFunction = { clickCallback(fullName) }
+                onClickFunction = { clickCallback(name) }
             }
         }
         val subtree = ul("objTree-subtree")
@@ -55,7 +54,7 @@ private fun TagConsumer<HTMLElement>.subTree(
                         .forEach { (childToken, child) ->
                             append {
                                 li().apply {
-                                    subTree(fullName + childToken, child, clickCallback)
+                                    subTree(name + childToken, child, clickCallback)
                                 }
                             }
                         }
@@ -70,7 +69,7 @@ private fun TagConsumer<HTMLElement>.subTree(
             span("objTree-leaf")
             label("objTree-label") {
                 +token
-                onClickFunction = { clickCallback(fullName) }
+                onClickFunction = { clickCallback(name) }
             }
         }
     }

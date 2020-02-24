@@ -10,6 +10,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 
+/**
+ * A container for styles
+ */
 @Serializable
 class StyleSheet() {
     @Transient
@@ -28,7 +31,7 @@ class StyleSheet() {
     }
 
     /**
-     * Define a style without notifying
+     * Define a style without notifying owner
      */
     fun define(key: String, style: Meta?) {
         if (style == null) {
