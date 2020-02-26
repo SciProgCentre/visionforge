@@ -66,6 +66,12 @@ private fun VisualGroup3D.addSolid(
             solid.deltaphi * aScale,
             name
         )
+        is GDMLCone -> cone(solid.rmax1, solid.z, solid.rmax2, name = name) {
+            require(solid.rmin1 == 0.0){"Empty cones are not supported"}
+            require(solid.rmin2 == 0.0){"Empty cones are not supported"}
+            startAngle = solid.startphi.toFloat()
+            angle = solid.deltaphi.toFloat()
+        }
         is GDMLXtru -> extrude(name) {
             shape {
                 solid.vertices.forEach {

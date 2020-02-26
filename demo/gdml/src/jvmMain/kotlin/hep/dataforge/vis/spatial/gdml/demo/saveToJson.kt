@@ -10,10 +10,10 @@ import java.io.File
 import java.nio.file.Paths
 
 fun main() {
-    val gdml = GDML.readFile(Paths.get("D:\\Work\\Projects\\gdml.kt\\gdml-source\\BM@N.gdml"))
+    val gdml = GDML.readFile(Paths.get("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.gdml"))
     val visual = gdml.toVisual {
         lUnit = LUnit.CM
     }
     val json = Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual)
-    File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\BM@N.json").writeText(json)
+    File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.json").writeText(json)
 }

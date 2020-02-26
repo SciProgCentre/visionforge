@@ -54,10 +54,10 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
 
-    init {
-        //Do after deserialization
-        attachChildren()
-    }
+//    init {
+//        //Do after deserialization
+//        attachChildren()
+//    }
 
     /**
      * Update or create stylesheet
@@ -103,15 +103,18 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     }
 
     override fun attachChildren() {
-        super.attachChildren()
-        prototypes?.run {
-            parent = this
-            attachChildren()
+        prototypes?.let {
+            it.parent = this
+            it.attachChildren()
         }
+        super.attachChildren()
     }
 
     companion object {
         const val PROTOTYPES_KEY = "templates"
+
+        fun fromJson(json: String): VisualGroup3D =
+            Visual3DPlugin.json.parse(serializer(),json).also { it.attachChildren() }
     }
 }
 

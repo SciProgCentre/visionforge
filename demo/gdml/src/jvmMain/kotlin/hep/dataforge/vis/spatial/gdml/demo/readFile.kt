@@ -28,20 +28,19 @@ fun Visual3DPlugin.Companion.readFile(file: File): VisualGroup3D = when {
             }
         }
     }
-    file.extension == "json" -> Visual3DPlugin.json
-        .parse(VisualGroup3D.serializer(), file.readText())
+    file.extension == "json" -> VisualGroup3D.fromJson(file.readText())
     file.name.endsWith("json.zip") -> {
         file.inputStream().use {
             val unzip = ZipInputStream(it, Charsets.UTF_8)
             val text = unzip.readAllBytes().decodeToString()
-            json.parse(VisualGroup3D.serializer(), text)
+            VisualGroup3D.fromJson(text)
         }
     }
     file.name.endsWith("json.gz") -> {
         file.inputStream().use {
             val unzip = GZIPInputStream(it)
             val text = unzip.readAllBytes().decodeToString()
-            json.parse(VisualGroup3D.serializer(), text)
+            VisualGroup3D.fromJson(text)
         }
     }
     else -> error("Unknown extension ${file.extension}")

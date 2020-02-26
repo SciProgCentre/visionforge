@@ -14,7 +14,6 @@ import hep.dataforge.vis.js.editor.displayPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
-import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
@@ -142,9 +141,7 @@ private class GDMLDemoApp : Application {
 
             val visual: VisualObject3D = when {
                 name.endsWith(".gdml") || name.endsWith(".xml") -> gdml.toVisual(gdmlConfiguration)
-                name.endsWith(".json") -> {
-                    Visual3DPlugin.json.parse(VisualGroup3D.serializer(), data).apply { attachChildren() }
-                }
+                name.endsWith(".json") -> VisualGroup3D.fromJson(data)
                 else -> {
                     window.alert("File extension is not recognized: $name")
                     error("File extension is not recognized: $name")

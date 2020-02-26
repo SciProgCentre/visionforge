@@ -83,3 +83,16 @@ inline fun VisualGroup3D.cylinder(
     height.toFloat(),
     r.toFloat()
 ).apply(block).also { set(name, it) }
+
+
+inline fun VisualGroup3D.cone(
+    bottomRadius: Number,
+    height: Number,
+    upperRadius: Number = 0.0,
+    name: String = "",
+    block: ConeSegment.() -> Unit = {}
+): ConeSegment = ConeSegment(
+    bottomRadius.toFloat(),
+    height.toFloat(),
+    upperRadius = upperRadius.toFloat()
+).apply(block).also { set(name, it) }
