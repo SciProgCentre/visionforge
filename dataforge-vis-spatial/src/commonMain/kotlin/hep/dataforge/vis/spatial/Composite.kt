@@ -6,6 +6,7 @@ import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.set
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 

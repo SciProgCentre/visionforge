@@ -79,6 +79,10 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 
+    override fun attachChildren() {
+        //do nothing
+    }
+
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
     @Serializable
@@ -125,6 +129,9 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             }
         }
 
+        override fun attachChildren() {
+            //do nothing
+        }
 
         override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 

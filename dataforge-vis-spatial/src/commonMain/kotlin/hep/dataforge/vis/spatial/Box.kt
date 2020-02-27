@@ -10,6 +10,7 @@ import hep.dataforge.meta.get
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualFactory
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.common.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

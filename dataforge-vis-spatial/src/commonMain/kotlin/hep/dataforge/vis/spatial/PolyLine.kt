@@ -8,6 +8,7 @@ import hep.dataforge.meta.number
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.set
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 

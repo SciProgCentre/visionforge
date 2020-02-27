@@ -19,6 +19,8 @@ import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.StyleSheet
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.common.set
+import hep.dataforge.vis.spatial.VisualGroup3D.Companion.PROTOTYPES_KEY
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -30,15 +32,6 @@ import kotlin.collections.set
 @Serializable
 @SerialName("group.3d")
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
-    /**
-     * A container for templates visible inside this group
-     */
-    @SerialName(PROTOTYPES_KEY)
-    var prototypes: VisualGroup3D? = null
-        set(value) {
-            value?.parent = this
-            field = value
-        }
 
     override var styleSheet: StyleSheet? = null
         private set
@@ -52,7 +45,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
-    override val children: Map<NameToken, VisualObject> get() = _children
+    override val children: Map<NameToken, VisualObject> get() = _children.filterKeys { it != PROTOTYPES_KEY }
 
 //    init {
 //        //Do after deserialization
@@ -111,12 +104,21 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     }
 
     companion object {
-        const val PROTOTYPES_KEY = "templates"
+        val PROTOTYPES_KEY = NameToken("@prototypes")
 
         fun fromJson(json: String): VisualGroup3D =
-            Visual3DPlugin.json.parse(serializer(),json).also { it.attachChildren() }
+            Visual3DPlugin.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
+
+/**
+ * A container for templates visible inside this group
+ */
+var VisualGroup3D.prototypes: VisualGroup3D?
+    get() = children[PROTOTYPES_KEY] as? VisualGroup3D
+    set(value) {
+        this[PROTOTYPES_KEY.asName()] = value
+    }
 
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found

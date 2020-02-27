@@ -7,6 +7,7 @@ import hep.dataforge.meta.number
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.vis.common.getProperty
+import hep.dataforge.vis.common.set
 import hep.dataforge.vis.common.setProperty
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY

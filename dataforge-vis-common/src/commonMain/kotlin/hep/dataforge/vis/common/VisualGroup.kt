@@ -53,7 +53,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
      */
     fun attachChildren() {
         styleSheet?.owner = this
-        this.children.values.forEach {
+        children.values.forEach {
             it.parent = this
             (it as? VisualGroup)?.attachChildren()
         }
@@ -89,5 +89,9 @@ interface MutableVisualGroup : VisualGroup {
 }
 
 operator fun VisualGroup.get(str: String?) = get(str?.toName() ?: Name.EMPTY)
+
+operator fun MutableVisualGroup.set(key: String, child: VisualObject?) {
+    set(key.toName(), child)
+}
 
 fun MutableVisualGroup.removeAll() = children.keys.map { it.asName() }.forEach { this[it] = null }
