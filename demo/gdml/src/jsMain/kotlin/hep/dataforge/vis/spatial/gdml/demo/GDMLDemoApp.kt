@@ -24,11 +24,7 @@ import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
 import hep.dataforge.vis.spatial.visible
-import kotlinx.html.dom.append
-import kotlinx.html.js.p
-import org.w3c.dom.DragEvent
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLElement
+import org.w3c.dom.*
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -80,17 +76,18 @@ private class GDMLDemoApp : Application {
     }
 
     private fun message(message: String?) {
-        document.getElementById("messages")?.let { element ->
-            if (message == null) {
-                element.clear()
-            } else {
-                element.append {
-                    p {
-                        +message
-                    }
-                }
-            }
-        }
+        console.log(message)
+//        document.getElementById("messages")?.let { element ->
+//            if (message == null) {
+//                element.clear()
+//            } else {
+//                element.append {
+//                    p {
+//                        +message
+//                    }
+//                }
+//            }
+//        }
     }
 
     private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
@@ -201,6 +198,19 @@ private class GDMLDemoApp : Application {
         (document.getElementById("drop_zone") as? HTMLDivElement)?.apply {
             addEventListener("dragover", { handleDragOver(it as DragEvent) }, false)
             addEventListener("drop", { loadData(it as DragEvent, action) }, false)
+        }
+        (document.getElementById("file_load_button") as? HTMLInputElement)?.apply {
+            addEventListener("change", {
+                (it.target as HTMLInputElement).files?.asList()?.first()?.let { file ->
+                    FileReader().apply {
+                        onload = {
+                            val string = result as String
+                            action(file.name, string)
+                        }
+                        readAsText(file)
+                    }
+                }
+            }, false)
         }
 
     }

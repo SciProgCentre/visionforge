@@ -20,7 +20,6 @@ import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.StyleSheet
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.set
-import hep.dataforge.vis.spatial.VisualGroup3D.Companion.PROTOTYPES_KEY
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -36,6 +35,15 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     override var styleSheet: StyleSheet? = null
         private set
 
+    /**
+     * A container for templates visible inside this group
+     */
+    var prototypes: VisualGroup3D? = null
+        set(value) {
+            value?.parent = this
+            field = value
+        }
+
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
 
@@ -45,18 +53,23 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
-    override val children: Map<NameToken, VisualObject> get() = _children.filterKeys { it != PROTOTYPES_KEY }
+    override val children: Map<NameToken, VisualObject> get() = _children
 
 //    init {
 //        //Do after deserialization
 //        attachChildren()
 //    }
 
+    override fun attachChildren() {
+        prototypes?.parent = this
+        super.attachChildren()
+    }
+
     /**
      * Update or create stylesheet
      */
     fun styleSheet(block: StyleSheet.() -> Unit) {
-        val res = this.styleSheet ?: StyleSheet(this).also { this.styleSheet = it }
+        val res = styleSheet ?: StyleSheet(this).also { styleSheet = it }
         res.block()
     }
 
@@ -95,16 +108,8 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
-    override fun attachChildren() {
-        prototypes?.let {
-            it.parent = this
-            it.attachChildren()
-        }
-        super.attachChildren()
-    }
-
     companion object {
-        val PROTOTYPES_KEY = NameToken("@prototypes")
+//        val PROTOTYPES_KEY = NameToken("@prototypes")
 
         fun fromJson(json: String): VisualGroup3D =
             Visual3DPlugin.json.parse(serializer(), json).also { it.attachChildren() }
@@ -112,25 +117,16 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 }
 
 /**
- * A container for templates visible inside this group
- */
-var VisualGroup3D.prototypes: VisualGroup3D?
-    get() = children[PROTOTYPES_KEY] as? VisualGroup3D
-    set(value) {
-        this[PROTOTYPES_KEY.asName()] = value
-    }
-
-/**
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
+tailrec fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
     prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
 
 /**
- * Defined a prototype inside current group
+ * Create or edit prototype node as a group
  */
-fun VisualGroup3D.setPrototype(name: Name, obj: VisualObject3D) {
-    (prototypes ?: VisualGroup3D().also { this.prototypes = it })[name] = obj
+inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
+    (prototypes ?: VisualGroup3D().also { prototypes = it }).run(builder)
 }
 
 /**
@@ -138,11 +134,4 @@ fun VisualGroup3D.setPrototype(name: Name, obj: VisualObject3D) {
  */
 fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also { set(key, it) }
-
-/**
- * Create or edit prototype node as a group
- */
-inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
-    (prototypes ?: VisualGroup3D().also { this.prototypes = it }).run(builder)
-}
 

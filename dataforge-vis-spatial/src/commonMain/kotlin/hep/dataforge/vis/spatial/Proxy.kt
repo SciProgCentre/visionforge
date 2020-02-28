@@ -169,7 +169,9 @@ fun VisualGroup3D.proxy(
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
-        setPrototype(templateName, obj)
+        prototypes{
+            this[templateName] = obj
+        }
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }

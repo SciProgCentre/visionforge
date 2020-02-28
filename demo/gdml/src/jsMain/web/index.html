@@ -11,17 +11,30 @@
     <script type="text/javascript" src="main.bundle.js"></script>
 </head>
 <body class="testApp">
-<div class="container" id="drop_zone" data-toggle="tooltip" data-placement="right"
-     title="To load data in text format, drag-and-drop file here">
-    Load data
-    <br/>
-    (drag file here)
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <a>Load file:</a>
+                    <input type="file" id="file_load_button" accept=".gdml, application/xml, application/json"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body" id="drop_zone">
+                    Load data
+                    <br/>
+                    (drag file here)
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="container">
     <h1>GDML demo</h1>
 </div>
-<!--<div class="container loader" id="loader" style="display:none;"></div>-->
-<div class="container animate-bottom" id="messages"></div>
 
 <div class="container-fluid">
     <div class="row">
@@ -33,5 +46,6 @@
         <div class="col-lg-3" id="editor"></div>
     </div>
 </div>
+
 </body>
 </html>

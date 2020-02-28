@@ -51,7 +51,9 @@ object RemoveSingleChild : VisualTreeTransform<VisualGroup3D>() {
         }
 
         replaceChildren()
-        prototypes?.replaceChildren()
+        prototypes {
+            replaceChildren()
+        }
     }
 
     override fun VisualGroup3D.clone(): VisualGroup3D {
