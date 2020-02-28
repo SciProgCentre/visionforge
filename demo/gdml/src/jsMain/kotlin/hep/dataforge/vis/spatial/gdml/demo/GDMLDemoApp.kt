@@ -135,12 +135,13 @@ private class GDMLDemoApp : Application {
         val action: (name: String, data: String) -> Unit = { name, data ->
             canvasElement.clear()
             spinner(true)
-            message("Loading GDML")
-            val gdml = GDML.format.parse(GDML.serializer(), data)
-            message("Converting GDML into DF-VIS format")
-
             val visual: VisualObject3D = when {
-                name.endsWith(".gdml") || name.endsWith(".xml") -> gdml.toVisual(gdmlConfiguration)
+                name.endsWith(".gdml") || name.endsWith(".xml") -> {
+                    message("Loading GDML")
+                    val gdml = GDML.format.parse(GDML.serializer(), data)
+                    message("Converting GDML into DF-VIS format")
+                    gdml.toVisual(gdmlConfiguration)
+                }
                 name.endsWith(".json") -> VisualGroup3D.fromJson(data)
                 else -> {
                     window.alert("File extension is not recognized: $name")
