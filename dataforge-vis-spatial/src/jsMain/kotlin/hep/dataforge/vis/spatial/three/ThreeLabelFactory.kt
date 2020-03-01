@@ -25,7 +25,7 @@ object ThreeLabelFactory : ThreeFactory<Label3D> {
         } )
         return Mesh(textGeo, getMaterial(obj)).apply {
             updatePosition(obj)
-            obj.onPropertyChange(this@ThreeLabelFactory){name: Name, before: MetaItem<*>?, after: MetaItem<*>? ->
+            obj.onPropertyChange(this@ThreeLabelFactory){ _: Name, _: MetaItem<*>?, _: MetaItem<*>? ->
                 //TODO
             }
         }
