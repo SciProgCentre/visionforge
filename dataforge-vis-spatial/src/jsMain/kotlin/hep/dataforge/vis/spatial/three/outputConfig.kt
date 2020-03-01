@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.js.requireJS
 import hep.dataforge.vis.js.editor.card
-import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import kotlinx.html.InputType
 import kotlinx.html.TagConsumer
@@ -46,7 +46,7 @@ fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLEl
                         +"Export"
                         onClickFunction = {
                             val json = (canvas.content as? VisualGroup3D)?.let { group ->
-                                Visual3DPlugin.json.stringify(
+                                Visual3D.json.stringify(
                                     VisualGroup3D.serializer(),
                                     group
                                 )

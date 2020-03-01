@@ -59,7 +59,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 
     override val children: Map<NameToken, ProxyChild>
-        get() = (prototype as? MutableVisualGroup)?.children
+        get() = (prototype as? VisualGroup)?.children
             ?.filter { !it.key.toString().startsWith("@") }
             ?.mapValues {
                 ProxyChild(it.key.asName())
@@ -85,7 +85,6 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
-    @Serializable
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         val prototype: VisualObject get() = prototypeFor(name)

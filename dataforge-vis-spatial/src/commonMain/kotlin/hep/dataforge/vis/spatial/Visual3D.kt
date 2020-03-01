@@ -9,29 +9,32 @@ import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
+import hep.dataforge.names.toName
+import hep.dataforge.vis.common.Visual
 import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.VisualPlugin
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlin.reflect.KClass
 
-class Visual3DPlugin(meta: Meta) : AbstractPlugin(meta) {
+class Visual3D(meta: Meta) : AbstractPlugin(meta) {
+
+    val visual by require(Visual)
+
     override val tag: PluginTag get() = Companion.tag
 
-    override fun provideTop(target: String): Map<Name, Any> {
-        return if (target == VisualPlugin.VISUAL_FACTORY_TYPE) {
-            mapOf()
-        } else {
-            emptyMap()
-        }
+    override fun provideTop(target: String): Map<Name, Any> = if (target == Visual.VISUAL_FACTORY_TYPE) {
+        mapOf(Box.TYPE_NAME.toName() to Box)
+    } else {
+        super.provideTop(target)
     }
 
-    companion object : PluginFactory<Visual3DPlugin> {
+
+    companion object : PluginFactory<Visual3D> {
         override val tag: PluginTag = PluginTag(name = "visual.spatial", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out Visual3DPlugin> = Visual3DPlugin::class
-        override fun invoke(meta: Meta, context: Context): Visual3DPlugin = Visual3DPlugin(meta)
+        override val type: KClass<out Visual3D> = Visual3D::class
+        override fun invoke(meta: Meta, context: Context): Visual3D = Visual3D(meta)
 
         val serialModule = SerializersModule {
             contextual(Point3DSerializer)

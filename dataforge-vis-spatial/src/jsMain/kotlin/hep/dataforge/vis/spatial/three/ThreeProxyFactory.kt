@@ -25,7 +25,7 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
             if (name.first()?.body == PROXY_CHILD_PROPERTY_PREFIX) {
                 val childName = name.first()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
                 val propertyName = name.cutFirst()
-                val proxyChild = obj[childName] as? VisualObject3D ?: error("Proxy child with name '$childName' not found or not a 3D object")
+                val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
                 val child = object3D.findChild(childName)?: error("Object child with name '$childName' not found")
                 child.updateProperty(proxyChild, propertyName)
             } else {

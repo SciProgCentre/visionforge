@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.vis.spatial.Material3D
-import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.readFile
@@ -11,7 +11,7 @@ import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
 
-fun Visual3DPlugin.Companion.readFile(file: File): VisualGroup3D = when {
+fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
     file.extension == "gdml" || file.extension == "xml" -> {
         GDML.readFile(file.toPath()).toVisual {
             lUnit = LUnit.CM
@@ -46,4 +46,4 @@ fun Visual3DPlugin.Companion.readFile(file: File): VisualGroup3D = when {
     else -> error("Unknown extension ${file.extension}")
 }
 
-fun Visual3DPlugin.Companion.readFile(fileName: String): VisualGroup3D = readFile(File(fileName))
+fun Visual3D.Companion.readFile(fileName: String): VisualGroup3D = readFile(File(fileName))

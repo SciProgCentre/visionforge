@@ -11,13 +11,14 @@ import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.VisualFactory
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.set
+import hep.dataforge.vis.spatial.Box.Companion.TYPE_NAME
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.reflect.KClass
 
 @Serializable
-@SerialName("3d.box")
+@SerialName(TYPE_NAME)
 class Box(
     val xSize: Float,
     val ySize: Float,
@@ -53,7 +54,8 @@ class Box(
     }
 
     companion object : VisualFactory<Box> {
-        const val TYPE = "geometry.3d.box"
+
+        const val TYPE_NAME = "3d.box"
 
         override val type: KClass<Box> get() = Box::class
 

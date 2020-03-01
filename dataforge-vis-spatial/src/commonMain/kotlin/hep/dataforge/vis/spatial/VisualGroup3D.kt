@@ -112,7 +112,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
         fun fromJson(json: String): VisualGroup3D =
-            Visual3DPlugin.json.parse(serializer(), json).also { it.attachChildren() }
+            Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
 

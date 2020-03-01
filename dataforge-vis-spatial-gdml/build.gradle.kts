@@ -7,7 +7,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
-                api("scientifik:gdml:0.1.5")
+                api("scientifik:gdml:0.1.6")
             }
         }
     }

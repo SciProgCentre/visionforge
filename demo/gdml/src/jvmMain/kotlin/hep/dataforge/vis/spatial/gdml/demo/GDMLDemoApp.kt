@@ -4,7 +4,7 @@ import hep.dataforge.context.Global
 import hep.dataforge.vis.fx.editor.VisualObjectEditorFragment
 import hep.dataforge.vis.fx.editor.VisualObjectTreeFragment
 import hep.dataforge.vis.spatial.Material3D
-import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.fx.FX3DPlugin
 import hep.dataforge.vis.spatial.fx.FXCanvas3D
@@ -34,11 +34,11 @@ class GDMLView : View() {
     override val root: Parent = borderpane {
         top {
             buttonbar {
-                button("Load GDML") {
+                button("Load GDML/json") {
                     action {
                         val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
                             ?: return@action
-                        val visual: VisualGroup3D = Visual3DPlugin.readFile(file)
+                        val visual: VisualGroup3D = Visual3D.readFile(file)
                         canvas.render(visual)
                     }
                 }

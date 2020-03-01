@@ -15,7 +15,7 @@ import hep.dataforge.vis.js.editor.displayPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
-import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.three.ThreePlugin
@@ -41,7 +41,7 @@ private class MMDemoApp : Application {
 
     private val connection = HttpClient {
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Visual3DPlugin.json)
+            serializer = KotlinxSerializer(Visual3D.json)
         }
     }
 

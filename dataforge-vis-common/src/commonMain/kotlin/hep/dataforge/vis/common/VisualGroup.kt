@@ -88,7 +88,7 @@ interface MutableVisualGroup : VisualGroup {
     operator fun set(name: Name, child: VisualObject?)
 }
 
-operator fun VisualGroup.get(str: String?) = get(str?.toName() ?: Name.EMPTY)
+operator fun VisualGroup.get(str: String?): VisualObject? = get(str?.toName() ?: Name.EMPTY)
 
 operator fun MutableVisualGroup.set(key: String, child: VisualObject?) {
     set(key.toName(), child)

@@ -1,6 +1,6 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.vis.spatial.Visual3DPlugin.Companion.json
+import hep.dataforge.vis.spatial.Visual3D.Companion.json
 import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
