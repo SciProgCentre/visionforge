@@ -6,6 +6,7 @@ import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.set
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.math.cos
@@ -15,6 +16,7 @@ import kotlin.math.sin
  * A cylinder or cut cone segment
  */
 @Serializable
+@SerialName("3d.cone")
 class ConeSegment(
     var radius: Float,
     var height: Float,

@@ -5,6 +5,7 @@ import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.set
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
@@ -15,6 +16,7 @@ import kotlin.math.sin
  * Straight tube segment
  */
 @Serializable
+@SerialName("3d.tube")
 class Tube(
     var radius: Float,
     var height: Float,

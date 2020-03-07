@@ -5,6 +5,7 @@ import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.set
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
@@ -38,6 +39,7 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
 data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
 @Serializable
+@SerialName("3d.extrude")
 class Extruded(
     var shape: List<Point2D> = ArrayList(),
     var layers: MutableList<Layer> = ArrayList()

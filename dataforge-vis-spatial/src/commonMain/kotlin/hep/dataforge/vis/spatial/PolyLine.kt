@@ -9,10 +9,12 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.set
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
+@SerialName("3d.line")
 class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
     @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
