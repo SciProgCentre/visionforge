@@ -82,7 +82,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     override fun setChild(token: NameToken, child: VisualObject) {
         if (child.parent == null) {
             child.parent = this
-        } else {
+        } else if (child.parent !== this) {
             error("Can't reassign existing parent for $child")
         }
         _children[token] = child
@@ -134,5 +134,7 @@ inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
  * Define a group with given [key], attach it to this parent and return it.
  */
 fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
-    VisualGroup3D().apply(action).also { set(key, it) }
+    VisualGroup3D().apply(action).also {
+        set(key, it)
+    }
 
