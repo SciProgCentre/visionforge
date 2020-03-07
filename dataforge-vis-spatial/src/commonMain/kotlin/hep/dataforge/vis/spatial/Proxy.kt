@@ -26,7 +26,11 @@ import kotlin.collections.set
  */
 @Serializable
 @SerialName("3d.proxy")
-class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+class Proxy private constructor(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+
+    constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
+        this.parent = parent
+    }
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -155,7 +159,7 @@ inline fun VisualGroup3D.ref(
     templateName: Name,
     name: String = "",
     block: Proxy.() -> Unit = {}
-) = Proxy(templateName).apply(block).also { set(name, it) }
+) = Proxy(this, templateName).apply(block).also { set(name, it) }
 
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
@@ -168,7 +172,7 @@ fun VisualGroup3D.proxy(
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
-        prototypes{
+        prototypes {
             this[templateName] = obj
         }
     } else if (existing != obj) {

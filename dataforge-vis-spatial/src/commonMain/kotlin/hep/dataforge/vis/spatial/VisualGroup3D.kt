@@ -62,6 +62,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 
     override fun attachChildren() {
         prototypes?.parent = this
+        prototypes?.attachChildren()
         super.attachChildren()
     }
 
@@ -74,7 +75,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     }
 
     override fun removeChild(token: NameToken) {
-        _children.remove(token)
+        _children.remove(token)?.run { parent = null }
         childrenChanged(token.asName(), null)
     }
 

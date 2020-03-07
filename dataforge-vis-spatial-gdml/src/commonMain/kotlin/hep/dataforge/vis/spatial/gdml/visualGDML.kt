@@ -68,8 +68,8 @@ private fun VisualGroup3D.addSolid(
             name
         )
         is GDMLCone -> cone(solid.rmax1, solid.z, solid.rmax2, name = name) {
-            require(solid.rmin1 == 0.0){"Empty cones are not supported"}
-            require(solid.rmin2 == 0.0){"Empty cones are not supported"}
+            require(solid.rmin1 == 0.0) { "Empty cones are not supported" }
+            require(solid.rmin2 == 0.0) { "Empty cones are not supported" }
             startAngle = solid.startphi.toFloat()
             angle = solid.deltaphi.toFloat()
         }
@@ -178,7 +178,7 @@ private fun VisualGroup3D.addPhysicalVolume(
                 context.proto[fullName] = volume(context, volume)
             }
 
-            this[physVolume.name ?: ""] = Proxy(fullName).apply {
+            this[physVolume.name ?: ""] = Proxy(this, fullName).apply {
                 withPosition(
                     context.lUnit,
                     physVolume.resolvePosition(context.root),
