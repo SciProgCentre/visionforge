@@ -27,6 +27,11 @@ kotlin {
                 api(project(":dataforge-vis-spatial-gdml"))
             }
         }
+        jvmMain{
+            dependencies {
+                api("org.fxyz3d:fxyz3d:0.5.2")
+            }
+        }
     }
 }
 

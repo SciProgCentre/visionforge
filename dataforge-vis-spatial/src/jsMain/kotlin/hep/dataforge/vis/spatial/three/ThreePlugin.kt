@@ -74,8 +74,8 @@ class ThreePlugin : AbstractPlugin() {
                             return@onChildrenChange
                         }
 
-                        val parentName = name.cutLast()
-                        val childName = name.last()!!
+//                        val parentName = name.cutLast()
+//                        val childName = name.last()!!
 
                         //removing old object
                         findChild(name)?.let { oldChild ->

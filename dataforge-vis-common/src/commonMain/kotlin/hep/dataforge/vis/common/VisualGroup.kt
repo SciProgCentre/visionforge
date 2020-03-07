@@ -16,6 +16,10 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
 
     val styleSheet: StyleSheet?
 
+    /**
+     * A map of direct children for specific target
+     * (currently "visual" or "style")
+     */
     override fun provideTop(target: String): Map<Name, Any> =
         when (target) {
             VisualObject.TYPE -> children.flatMap { (key, value) ->
@@ -49,7 +53,7 @@ interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
      */
     fun attachChildren() {
         styleSheet?.owner = this
-        this.children.values.forEach {
+        children.values.forEach {
             it.parent = this
             (it as? VisualGroup)?.attachChildren()
         }
@@ -84,6 +88,10 @@ interface MutableVisualGroup : VisualGroup {
     operator fun set(name: Name, child: VisualObject?)
 }
 
-operator fun VisualGroup.get(str: String?) = get(str?.toName() ?: Name.EMPTY)
+operator fun VisualGroup.get(str: String?): VisualObject? = get(str?.toName() ?: Name.EMPTY)
+
+operator fun MutableVisualGroup.set(key: String, child: VisualObject?) {
+    set(key.toName(), child)
+}
 
 fun MutableVisualGroup.removeAll() = children.keys.map { it.asName() }.forEach { this[it] = null }

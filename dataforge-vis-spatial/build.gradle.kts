@@ -20,7 +20,7 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation("org.fxyz3d:fxyz3d:0.5.2") {
+                api("org.fxyz3d:fxyz3d:0.5.2") {
                     exclude(module = "slf4j-simple")
                 }
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${Scientifik.coroutinesVersion}")

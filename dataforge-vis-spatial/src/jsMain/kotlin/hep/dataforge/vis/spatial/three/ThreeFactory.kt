@@ -31,12 +31,14 @@ interface ThreeFactory<in T : VisualObject> {
 /**
  * Update position, rotation and visibility
  */
-fun Object3D.updatePosition(obj: VisualObject3D) {
+fun Object3D.updatePosition(obj: VisualObject) {
     visible = obj.visible ?: true
-    position.set(obj.x, obj.y, obj.z)
-    setRotationFromEuler(obj.euler)
-    scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
-    updateMatrix()
+    if(obj is VisualObject3D) {
+        position.set(obj.x, obj.y, obj.z)
+        setRotationFromEuler(obj.euler)
+        scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
+        updateMatrix()
+    }
 }
 
 ///**
@@ -54,7 +56,7 @@ fun Object3D.updatePosition(obj: VisualObject3D) {
 /**
  * Update non-position non-geometry property
  */
-fun Object3D.updateProperty(source: VisualObject3D, propertyName: Name) {
+fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         this.material = getMaterial(source)
     } else if (

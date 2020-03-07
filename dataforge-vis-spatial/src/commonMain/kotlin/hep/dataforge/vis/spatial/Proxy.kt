@@ -26,7 +26,11 @@ import kotlin.collections.set
  */
 @Serializable
 @SerialName("3d.proxy")
-class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+class Proxy private constructor(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+
+    constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
+        this.parent = parent
+    }
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -59,7 +63,7 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
     }
 
     override val children: Map<NameToken, ProxyChild>
-        get() = (prototype as? MutableVisualGroup)?.children
+        get() = (prototype as? VisualGroup)?.children
             ?.filter { !it.key.toString().startsWith("@") }
             ?.mapValues {
                 ProxyChild(it.key.asName())
@@ -79,9 +83,12 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
 
     override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 
+    override fun attachChildren() {
+        //do nothing
+    }
+
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
-    @Serializable
     inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
 
         val prototype: VisualObject get() = prototypeFor(name)
@@ -125,6 +132,9 @@ class Proxy(val templateName: Name) : AbstractVisualObject(), VisualGroup, Visua
             }
         }
 
+        override fun attachChildren() {
+            //do nothing
+        }
 
         override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
 
@@ -149,7 +159,7 @@ inline fun VisualGroup3D.ref(
     templateName: Name,
     name: String = "",
     block: Proxy.() -> Unit = {}
-) = Proxy(templateName).apply(block).also { set(name, it) }
+) = Proxy(this, templateName).apply(block).also { set(name, it) }
 
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
@@ -162,7 +172,9 @@ fun VisualGroup3D.proxy(
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
-        setPrototype(templateName, obj)
+        prototypes {
+            this[templateName] = obj
+        }
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }

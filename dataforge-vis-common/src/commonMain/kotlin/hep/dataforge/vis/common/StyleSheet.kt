@@ -6,10 +6,11 @@ import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.*
 
+/**
+ * A container for styles
+ */
 @Serializable
 class StyleSheet() {
     @Transient
@@ -28,7 +29,7 @@ class StyleSheet() {
     }
 
     /**
-     * Define a style without notifying
+     * Define a style without notifying owner
      */
     fun define(key: String, style: Meta?) {
         if (style == null) {
@@ -47,6 +48,20 @@ class StyleSheet() {
     operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
         val newStyle = get(key)?.let { buildMeta(it, builder) } ?: buildMeta(builder)
         set(key, newStyle.seal())
+    }
+
+    companion object: KSerializer<StyleSheet>{
+        override val descriptor: SerialDescriptor
+            get() = TODO("Not yet implemented")
+
+        override fun deserialize(decoder: Decoder): StyleSheet {
+            TODO("Not yet implemented")
+        }
+
+        override fun serialize(encoder: Encoder, obj: StyleSheet) {
+            TODO("Not yet implemented")
+        }
+
     }
 }
 

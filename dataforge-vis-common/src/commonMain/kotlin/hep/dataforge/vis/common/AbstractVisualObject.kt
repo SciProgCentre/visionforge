@@ -73,6 +73,9 @@ abstract class AbstractVisualObject : VisualObject {
             styleCache = it
         }
 
+    /**
+     * All available properties in a layered form
+     */
     override fun allProperties(): Laminate = Laminate(properties, mergedStyles)
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {

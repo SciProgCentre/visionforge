@@ -4,34 +4,45 @@
     <meta charset="utf-8">
     <!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
     <title>Three js demo for particle physics</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/jsoneditor.min.css">
     <script type="text/javascript" src="main.bundle.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/jsoneditor.min.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body class="testApp">
-<div class="container" id="drop_zone" data-toggle="tooltip" data-placement="right"
-     title="To load data in text format, drag-and-drop file here">
-    Load data
-    <br/>
-    (drag file here)
-</div>
+
 <div class="container">
     <h1>GDML demo</h1>
 </div>
-<!--<div class="container loader" id="loader" style="display:none;"></div>-->
-<div class="container animate-bottom" id="messages"></div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-3" id="tree"></div>
-        <div class="col-lg-6">
-            <div class="row" id="layers"></div>
-            <div class="row container" id="canvas"></div>
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <a>Load file:</a>
+                    <input type="file" id="file_load_button" accept=".gdml, application/xml, application/json"/>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body" id="drop_zone">
+                    Load data
+                    <br/>
+                    (drag file here)
+                </div>
+            </div>
+            <div class="overflow-auto" id="tree"></div>
         </div>
-        <div class="col-lg-3" id="editor"></div>
+        <div class="col-lg-6">
+            <div id="canvas"></div>
+        </div>
+        <div class="col-lg-3">
+            <div class="row" id="config"></div>
+            <div class="row" id="editor"></div>
+        </div>
     </div>
 </div>
-</body>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script></body>
 </html>

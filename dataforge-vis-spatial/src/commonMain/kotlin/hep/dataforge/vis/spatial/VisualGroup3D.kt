@@ -19,6 +19,7 @@ import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.common.AbstractVisualGroup
 import hep.dataforge.vis.common.StyleSheet
 import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.common.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -30,18 +31,18 @@ import kotlin.collections.set
 @Serializable
 @SerialName("group.3d")
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
+
+    override var styleSheet: StyleSheet? = null
+        private set
+
     /**
      * A container for templates visible inside this group
      */
-    @SerialName(PROTOTYPES_KEY)
     var prototypes: VisualGroup3D? = null
         set(value) {
             value?.parent = this
             field = value
         }
-
-    override var styleSheet: StyleSheet? = null
-        private set
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
@@ -54,28 +55,34 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
 
-    init {
-        //Do after deserialization
-        attachChildren()
+//    init {
+//        //Do after deserialization
+//        attachChildren()
+//    }
+
+    override fun attachChildren() {
+        prototypes?.parent = this
+        prototypes?.attachChildren()
+        super.attachChildren()
     }
 
     /**
      * Update or create stylesheet
      */
     fun styleSheet(block: StyleSheet.() -> Unit) {
-        val res = this.styleSheet ?: StyleSheet(this).also { this.styleSheet = it }
+        val res = styleSheet ?: StyleSheet(this).also { styleSheet = it }
         res.block()
     }
 
     override fun removeChild(token: NameToken) {
-        _children.remove(token)
+        _children.remove(token)?.run { parent = null }
         childrenChanged(token.asName(), null)
     }
 
     override fun setChild(token: NameToken, child: VisualObject) {
         if (child.parent == null) {
             child.parent = this
-        } else {
+        } else if (child.parent !== this) {
             error("Can't reassign existing parent for $child")
         }
         _children[token] = child
@@ -102,42 +109,32 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
         }
     }
 
-    override fun attachChildren() {
-        super.attachChildren()
-        prototypes?.run {
-            parent = this
-            attachChildren()
-        }
-    }
-
     companion object {
-        const val PROTOTYPES_KEY = "templates"
+//        val PROTOTYPES_KEY = NameToken("@prototypes")
+
+        fun fromJson(json: String): VisualGroup3D =
+            Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
 
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
+tailrec fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
     prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
 
 /**
- * Defined a prototype inside current group
+ * Create or edit prototype node as a group
  */
-fun VisualGroup3D.setPrototype(name: Name, obj: VisualObject3D) {
-    (prototypes ?: VisualGroup3D().also { this.prototypes = it })[name] = obj
+inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
+    (prototypes ?: VisualGroup3D().also { prototypes = it }).run(builder)
 }
 
 /**
  * Define a group with given [key], attach it to this parent and return it.
  */
 fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
-    VisualGroup3D().apply(action).also { set(key, it) }
-
-/**
- * Create or edit prototype node as a group
- */
-inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
-    (prototypes ?: VisualGroup3D().also { this.prototypes = it }).run(builder)
-}
+    VisualGroup3D().apply(action).also {
+        set(key, it)
+    }
 

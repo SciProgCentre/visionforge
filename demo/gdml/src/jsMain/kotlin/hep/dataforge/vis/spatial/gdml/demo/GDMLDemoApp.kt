@@ -14,7 +14,6 @@ import hep.dataforge.vis.js.editor.displayPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
-import hep.dataforge.vis.spatial.Visual3DPlugin
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
@@ -25,11 +24,7 @@ import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
 import hep.dataforge.vis.spatial.visible
-import kotlinx.html.dom.append
-import kotlinx.html.js.p
-import org.w3c.dom.DragEvent
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLElement
+import org.w3c.dom.*
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -81,17 +76,18 @@ private class GDMLDemoApp : Application {
     }
 
     private fun message(message: String?) {
-        document.getElementById("messages")?.let { element ->
-            if (message == null) {
-                element.clear()
-            } else {
-                element.append {
-                    p {
-                        +message
-                    }
-                }
-            }
-        }
+        console.log(message)
+//        document.getElementById("messages")?.let { element ->
+//            if (message == null) {
+//                element.clear()
+//            } else {
+//                element.append {
+//                    p {
+//                        +message
+//                    }
+//                }
+//            }
+//        }
     }
 
     private val gdmlConfiguration: GDMLTransformer.() -> Unit = {
@@ -128,7 +124,7 @@ private class GDMLDemoApp : Application {
         //val url = URL("https://drive.google.com/open?id=1w5e7fILMN83JGgB8WANJUYm8OW2s0WVO")
 
         val canvasElement = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
-        val configElement = document.getElementById("layers") ?: error("Element with id 'layers' not found on page")
+        val configElement = document.getElementById("config") ?: error("Element with id 'layers' not found on page")
         val treeElement = document.getElementById("tree") ?: error("Element with id 'tree' not found on page")
         val editorElement = document.getElementById("editor") ?: error("Element with id 'editor' not found on page")
         canvasElement.clear()
@@ -136,15 +132,14 @@ private class GDMLDemoApp : Application {
         val action: (name: String, data: String) -> Unit = { name, data ->
             canvasElement.clear()
             spinner(true)
-            message("Loading GDML")
-            val gdml = GDML.format.parse(GDML.serializer(), data)
-            message("Converting GDML into DF-VIS format")
-
             val visual: VisualObject3D = when {
-                name.endsWith(".gdml") || name.endsWith(".xml") -> gdml.toVisual(gdmlConfiguration)
-                name.endsWith(".json") -> {
-                    Visual3DPlugin.json.parse(VisualGroup3D.serializer(), data).apply { attachChildren() }
+                name.endsWith(".gdml") || name.endsWith(".xml") -> {
+                    message("Loading GDML")
+                    val gdml = GDML.format.parse(GDML.serializer(), data)
+                    message("Converting GDML into DF-VIS format")
+                    gdml.toVisual(gdmlConfiguration)
                 }
+                name.endsWith(".json") -> VisualGroup3D.fromJson(data)
                 else -> {
                     window.alert("File extension is not recognized: $name")
                     error("File extension is not recognized: $name")
@@ -187,9 +182,9 @@ private class GDMLDemoApp : Application {
 //        canvas.clickListener = ::selectElement
 
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.displayObjectTree(visual) { name ->
-                selectElement(name)
-                canvas.highlight(name)
+            treeElement.displayObjectTree(visual) { treeName ->
+                selectElement(treeName)
+                canvas.highlight(treeName)
             }
             canvas.render(visual)
 
@@ -203,6 +198,19 @@ private class GDMLDemoApp : Application {
         (document.getElementById("drop_zone") as? HTMLDivElement)?.apply {
             addEventListener("dragover", { handleDragOver(it as DragEvent) }, false)
             addEventListener("drop", { loadData(it as DragEvent, action) }, false)
+        }
+        (document.getElementById("file_load_button") as? HTMLInputElement)?.apply {
+            addEventListener("change", {
+                (it.target as HTMLInputElement).files?.asList()?.first()?.let { file ->
+                    FileReader().apply {
+                        onload = {
+                            val string = result as String
+                            action(file.name, string)
+                        }
+                        readAsText(file)
+                    }
+                }
+            }, false)
         }
 
     }

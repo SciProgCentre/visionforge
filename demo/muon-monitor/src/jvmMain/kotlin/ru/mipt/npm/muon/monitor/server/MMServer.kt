@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor.server
 
 
-import hep.dataforge.vis.spatial.Visual3DPlugin
+import hep.dataforge.vis.spatial.Visual3D
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -35,7 +35,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        serialization(json = Visual3DPlugin.json)
+        serialization(json = Visual3D.json)
     }
     install(Routing) {
         get("/event") {

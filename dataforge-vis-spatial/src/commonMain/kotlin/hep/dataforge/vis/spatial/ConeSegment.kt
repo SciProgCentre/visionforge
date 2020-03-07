@@ -5,6 +5,8 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.common.set
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.math.cos
@@ -14,6 +16,7 @@ import kotlin.math.sin
  * A cylinder or cut cone segment
  */
 @Serializable
+@SerialName("3d.cone")
 class ConeSegment(
     var radius: Float,
     var height: Float,
@@ -82,4 +85,17 @@ inline fun VisualGroup3D.cylinder(
     r.toFloat(),
     height.toFloat(),
     r.toFloat()
+).apply(block).also { set(name, it) }
+
+
+inline fun VisualGroup3D.cone(
+    bottomRadius: Number,
+    height: Number,
+    upperRadius: Number = 0.0,
+    name: String = "",
+    block: ConeSegment.() -> Unit = {}
+): ConeSegment = ConeSegment(
+    bottomRadius.toFloat(),
+    height.toFloat(),
+    upperRadius = upperRadius.toFloat()
 ).apply(block).also { set(name, it) }

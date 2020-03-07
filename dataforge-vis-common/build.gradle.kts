@@ -37,7 +37,7 @@ kotlin {
         jsMain{
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
-                api(npm("bootstrap","4.4.1"))
+                //api(npm("bootstrap","4.4.1"))
                 implementation(npm("jsoneditor"))
                 implementation(npm("file-saver"))
             }

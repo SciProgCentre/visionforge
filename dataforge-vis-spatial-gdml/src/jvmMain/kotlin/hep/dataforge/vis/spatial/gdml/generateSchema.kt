@@ -135,7 +135,7 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
 }
 
 fun main() {
-    val context = Visual3DPlugin.serialModule
+    val context = Visual3D.serialModule
     val definitions = json {
         "children" to json {
             "anyOf" to jsonArray {

@@ -22,22 +22,10 @@ interface VisualObject3D : VisualObject {
     var rotation: Point3D?
     var scale: Point3D?
 
-    fun MetaBuilder.updatePosition() {
-        xPos to position?.x
-        yPos to position?.y
-        zPos to position?.z
-        xRotation to rotation?.x
-        yRotation to rotation?.y
-        zRotation to rotation?.z
-        xScale to scale?.x
-        yScale to scale?.y
-        zScale to scale?.z
-    }
-
     companion object {
 
         val VISIBLE_KEY = "visible".asName()
-        val SELECTED_KEY = "selected".asName()
+//        val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
         val IGNORE_KEY = "ignore".asName()

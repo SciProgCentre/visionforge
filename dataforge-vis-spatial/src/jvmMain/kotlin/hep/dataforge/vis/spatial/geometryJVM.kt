@@ -1,12 +1,13 @@
 package hep.dataforge.vis.spatial
+import org.fxyz3d.geometry.Point3D as FXPoint3D
 
 actual data class Point2D(actual var x: Double, actual var y: Double) {
     actual constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 }
 
-actual class Point3D(val point: org.fxyz3d.geometry.Point3D) {
+actual class Point3D(val point: FXPoint3D) {
     actual constructor(x: Number, y: Number, z: Number) : this(
-        org.fxyz3d.geometry.Point3D(
+        FXPoint3D(
             x.toFloat(),
             y.toFloat(),
             z.toFloat()
@@ -32,7 +33,7 @@ actual class Point3D(val point: org.fxyz3d.geometry.Point3D) {
         }
 
     override fun equals(other: Any?): Boolean {
-        return this.point == (other as? hep.dataforge.vis.spatial.Point3D)?.point
+        return this.point == (other as? Point3D)?.point
     }
 
     override fun hashCode(): Int {

@@ -3,8 +3,8 @@ package hep.dataforge.vis.spatial.three
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.Material3D
-import hep.dataforge.vis.spatial.VisualObject3D
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial
@@ -37,12 +37,12 @@ object ThreeMaterials {
         }
     }
 
-    fun getMaterial(visualObject3D: VisualObject3D): Material {
+    fun getMaterial(visualObject3D: VisualObject): Material {
         val meta = visualObject3D.getProperty(Material3D.MATERIAL_KEY).node ?: return ThreeMaterials.DEFAULT
-        return if (meta[Material3D.SPECULAR_COLOR] != null) {
+        return if (meta[Material3D.SPECULAR_COLOR_KEY] != null) {
             MeshPhongMaterial().apply {
                 color = meta[Material3D.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
-                specular = meta[Material3D.SPECULAR_COLOR]!!.getColor()
+                specular = meta[Material3D.SPECULAR_COLOR_KEY]!!.getColor()
                 opacity = meta[Material3D.OPACITY_KEY]?.double ?: 1.0
                 transparent = opacity < 1.0
                 wireframe = meta[Material3D.WIREFRAME_KEY].boolean ?: false

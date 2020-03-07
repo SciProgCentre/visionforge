@@ -13,8 +13,8 @@ class FXProxyFactory(val plugin: FX3DPlugin) : FX3DFactory<Proxy> {
     override val type: KClass<in Proxy> get() = Proxy::class
 
     override fun invoke(obj: Proxy, binding: VisualObjectFXBinding): Node {
-        val template = obj.prototype
-        val node = plugin.buildNode(template)
+        val prototype = obj.prototype
+        val node = plugin.buildNode(prototype)
 
         obj.onPropertyChange(this) { name, _, _ ->
             if (name.first()?.body == Proxy.PROXY_CHILD_PROPERTY_PREFIX) {

@@ -46,8 +46,8 @@ object Point3DSerializer : KSerializer<Point3D> {
                 when (val i = decodeElementIndex(descriptor)) {
                     CompositeDecoder.READ_DONE -> break@loop
                     0 -> x = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
-                    1 -> y = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
-                    2 -> z = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
+                    1 -> y = decodeNullableSerializableElement(descriptor, 1, DoubleSerializer.nullable) ?: 0.0
+                    2 -> z = decodeNullableSerializableElement(descriptor, 2, DoubleSerializer.nullable) ?: 0.0
                     else -> throw SerializationException("Unknown index $i")
                 }
             }
@@ -79,7 +79,7 @@ object Point2DSerializer : KSerializer<Point2D> {
                 when (val i = decodeElementIndex(descriptor)) {
                     CompositeDecoder.READ_DONE -> break@loop
                     0 -> x = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
-                    1 -> y = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
+                    1 -> y = decodeNullableSerializableElement(descriptor, 1, DoubleSerializer.nullable) ?: 0.0
                     else -> throw SerializationException("Unknown index $i")
                 }
             }

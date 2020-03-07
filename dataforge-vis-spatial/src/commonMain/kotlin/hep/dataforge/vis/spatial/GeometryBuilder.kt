@@ -31,6 +31,9 @@ fun GeometryBuilder<*>.face4(
     face(vertex1, vertex3, vertex4, normal, meta)
 }
 
+/**
+ * [Shape] is a [VisualObject3D] that can represent its own geometry as a set of polygons.
+ */
 interface Shape : VisualObject3D {
     fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>)
 }

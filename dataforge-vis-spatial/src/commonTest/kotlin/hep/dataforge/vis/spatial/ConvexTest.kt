@@ -25,7 +25,7 @@ class ConvexTest {
 
         val convex = group.first() as Convex
 
-        val json = Visual3DPlugin.json.toJson(Convex.serializer(), convex)
+        val json = Visual3D.json.toJson(Convex.serializer(), convex)
         val meta = json.toMeta()
 
         val points = meta.getIndexed("points").values.map { (it as MetaItem.NodeItem<*>).node.point3D()}
