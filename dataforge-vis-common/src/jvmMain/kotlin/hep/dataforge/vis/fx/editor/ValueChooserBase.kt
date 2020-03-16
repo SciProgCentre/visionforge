@@ -5,7 +5,7 @@
  */
 package hep.dataforge.vis.fx.editor
 
-import hep.dataforge.descriptors.ValueDescriptor
+import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
 import javafx.beans.property.SimpleObjectProperty

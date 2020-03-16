@@ -2,7 +2,6 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.AbstractVisualObject
@@ -34,7 +33,6 @@ class Composite(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 }
 

@@ -2,7 +2,6 @@
 
 package hep.dataforge.vis.common
 
-import hep.dataforge.io.serialization.MetaSerializer
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
@@ -46,7 +45,7 @@ class StyleSheet() {
     }
 
     operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
-        val newStyle = get(key)?.let { buildMeta(it, builder) } ?: buildMeta(builder)
+        val newStyle = get(key)?.edit(builder) ?: Meta(builder)
         set(key, newStyle.seal())
     }
 
@@ -58,7 +57,7 @@ class StyleSheet() {
             TODO("Not yet implemented")
         }
 
-        override fun serialize(encoder: Encoder, obj: StyleSheet) {
+        override fun serialize(encoder: Encoder, value: StyleSheet) {
             TODO("Not yet implemented")
         }
 

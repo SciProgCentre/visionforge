@@ -7,9 +7,9 @@ package hep.dataforge.vis.fx.editor
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.Named
-import hep.dataforge.descriptors.ValueDescriptor
 import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.provider.provideByType

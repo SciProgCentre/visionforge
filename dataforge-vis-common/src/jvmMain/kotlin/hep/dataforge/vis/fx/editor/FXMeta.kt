@@ -1,9 +1,9 @@
 package hep.dataforge.vis.fx.editor
 
-import hep.dataforge.descriptors.ItemDescriptor
-import hep.dataforge.descriptors.NodeDescriptor
-import hep.dataforge.descriptors.ValueDescriptor
 import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.ItemDescriptor
+import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName

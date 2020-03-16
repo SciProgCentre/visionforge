@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
@@ -167,7 +167,7 @@ private class GDMLDemoApp : Application {
                     //val descriptorMeta = Material3D.descriptor
 
                     val properties = item.allProperties()
-                    val bottom = buildMeta {
+                    val bottom = Meta {
                         VISIBLE_KEY put (item.visible ?: true)
                         if (item is VisualObject3D) {
                             MATERIAL_COLOR_KEY put "#ffffff"
@@ -186,10 +186,6 @@ private class GDMLDemoApp : Application {
                 selectElement(treeName)
                 canvas.highlight(treeName)
             }
-            canvas.render(visual)
-
-
-
             canvas.render(visual)
             message(null)
             spinner(false)

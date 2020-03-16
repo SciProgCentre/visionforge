@@ -1,12 +1,13 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, NameTokenSerializer::class)
+@file:UseSerializers(Point3DSerializer::class)
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
+import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
+import hep.dataforge.values.asValue
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
@@ -64,7 +65,7 @@ interface VisualObject3D : VisualObject {
 var VisualObject3D.layer: Int
     get() = getProperty(LAYER_KEY).int ?: 0
     set(value) {
-        setProperty(LAYER_KEY, value)
+        setProperty(LAYER_KEY, value.asValue())
     }
 
 fun Renderer<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
@@ -86,7 +87,7 @@ enum class RotationOrder {
  */
 var VisualObject3D.rotationOrder: RotationOrder
     get() = getProperty(VisualObject3D.rotationOrder).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(VisualObject3D.rotationOrder, value.name)
+    set(value) = setProperty(VisualObject3D.rotationOrder, value.name.asValue())
 
 
 /**
@@ -94,11 +95,11 @@ var VisualObject3D.rotationOrder: RotationOrder
  */
 var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setProperty(DETAIL_KEY, value)
+    set(value) = setProperty(DETAIL_KEY, value?.asValue())
 
 var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
-    set(value) = setProperty(VISIBLE_KEY, value)
+    set(value) = setProperty(VISIBLE_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
@@ -106,7 +107,7 @@ var VisualObject.visible: Boolean?
  */
 var VisualObject.ignore: Boolean?
     get() = getProperty(IGNORE_KEY,false).boolean
-    set(value) = setProperty(IGNORE_KEY, value)
+    set(value) = setProperty(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean

@@ -1,13 +1,13 @@
 package hep.dataforge.vis.spatial.demo
 
-import hep.dataforge.meta.buildMeta
-import hep.dataforge.meta.invoke
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.scheme.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.spatial.*
-import hep.dataforge.vis.spatial.specifications.CanvasSpec
+import hep.dataforge.vis.spatial.specifications.Canvas
 import kotlinx.coroutines.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -16,14 +16,14 @@ import kotlin.random.Random
 
 
 fun OutputManager.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
-    val meta = buildMeta {
+    val meta = Meta {
         "title" put title
     }
     val output = get(VisualObject::class, name.toName(), meta = meta)
     output.render(action = block)
 }
 
-val canvasOptions = CanvasSpec {
+val canvasOptions = Canvas {
     minSize = 500
     axes {
         size = 500.0
@@ -31,7 +31,7 @@ val canvasOptions = CanvasSpec {
     }
     camera {
         distance = 600.0
-        latitude = PI/6
+        latitude = PI / 6
     }
 }
 

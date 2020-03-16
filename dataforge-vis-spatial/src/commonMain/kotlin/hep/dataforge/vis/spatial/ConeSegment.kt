@@ -2,7 +2,6 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.common.set
@@ -25,7 +24,6 @@ class ConeSegment(
     var angle: Float = PI2
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override var position: Point3D? = null

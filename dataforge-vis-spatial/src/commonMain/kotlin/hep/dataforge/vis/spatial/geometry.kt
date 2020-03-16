@@ -1,7 +1,6 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.buildMeta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.number
 
@@ -13,7 +12,7 @@ expect class Point2D(x: Number, y: Number) {
 operator fun Point2D.component1() = x
 operator fun Point2D.component2() = y
 
-fun Point2D.toMeta() = buildMeta {
+fun Point2D.toMeta() = Meta {
     VisualObject3D.x put x
     VisualObject3D.y put y
 }
@@ -34,7 +33,7 @@ operator fun Point3D.component3() = z
 
 fun Meta.point3D() = Point3D(this["x"].number ?: 0, this["y"].number ?: 0, this["y"].number ?: 0)
 
-fun Point3D.toMeta() = buildMeta {
+fun Point3D.toMeta() = Meta {
     VisualObject3D.x put x
     VisualObject3D.y put y
     VisualObject3D.z put z

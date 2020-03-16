@@ -2,7 +2,6 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vis.common.useStyle
@@ -44,7 +43,7 @@ class GDMLTransformer(val root: GDML) {
 
     fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
-            buildMeta(builder)
+            Meta(builder)
         }
         useStyle(name)
     }

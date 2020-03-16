@@ -1,16 +1,21 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.descriptors.NodeDescriptor
-import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.double
+import hep.dataforge.meta.get
+import hep.dataforge.meta.node
+import hep.dataforge.meta.scheme.*
+import hep.dataforge.meta.set
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
+import hep.dataforge.values.asValue
 import hep.dataforge.vis.common.Colors
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 
-class Material3D(override val config: Config) : Specific {
+class Material3D : Scheme() {
 
     /**
      * Primary web-color for the material
@@ -32,8 +37,7 @@ class Material3D(override val config: Config) : Specific {
      */
     var wireframe by boolean(false, WIREFRAME_KEY)
 
-    companion object : Specification<Material3D> {
-        override fun wrap(config: Config): Material3D = Material3D(config)
+    companion object : SchemeSpec<Material3D>(::Material3D) {
 
         val MATERIAL_KEY = "material".asName()
         internal val COLOR_KEY = "color".asName()
@@ -45,20 +49,20 @@ class Material3D(override val config: Config) : Specific {
         val MATERIAL_WIREFRAME_KEY = MATERIAL_KEY + WIREFRAME_KEY
 
         val descriptor = NodeDescriptor {
-            value(VisualObject3D.VISIBLE_KEY) {
+            defineValue(VisualObject3D.VISIBLE_KEY) {
                 type(ValueType.BOOLEAN)
                 default(true)
             }
-            node(MATERIAL_KEY) {
-                value(COLOR_KEY) {
+            defineNode(MATERIAL_KEY) {
+                defineValue(COLOR_KEY) {
                     type(ValueType.STRING, ValueType.NUMBER)
                     default("#ffffff")
                 }
-                value(OPACITY_KEY) {
+                defineValue(OPACITY_KEY) {
                     type(ValueType.NUMBER)
                     default(1.0)
                 }
-                value(WIREFRAME_KEY) {
+                defineValue(WIREFRAME_KEY) {
                     type(ValueType.BOOLEAN)
                     default(false)
                 }
@@ -71,14 +75,14 @@ class Material3D(override val config: Config) : Specific {
  * Set color as web-color
  */
 fun VisualObject3D.color(webColor: String) {
-    setProperty(MATERIAL_COLOR_KEY, webColor)
+    setProperty(MATERIAL_COLOR_KEY, webColor.asValue())
 }
 
 /**
  * Set color as integer
  */
 fun VisualObject3D.color(rgb: Int) {
-    setProperty(MATERIAL_COLOR_KEY, rgb)
+    setProperty(MATERIAL_COLOR_KEY, rgb.asValue())
 }
 
 fun VisualObject3D.color(r: UByte, g: UByte, b: UByte) = setProperty(
@@ -92,7 +96,7 @@ fun VisualObject3D.color(r: UByte, g: UByte, b: UByte) = setProperty(
 var VisualObject3D.color: String?
     get() = getProperty(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
     set(value) {
-        setProperty(MATERIAL_COLOR_KEY, value)
+        setProperty(MATERIAL_COLOR_KEY, value?.asValue())
     }
 
 val VisualObject3D.material: Material3D?
@@ -110,5 +114,5 @@ fun VisualObject3D.material(builder: Material3D.() -> Unit) {
 var VisualObject3D.opacity: Double?
     get() = getProperty(MATERIAL_OPACITY_KEY).double
     set(value) {
-        setProperty(MATERIAL_OPACITY_KEY, value)
+        setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
     }

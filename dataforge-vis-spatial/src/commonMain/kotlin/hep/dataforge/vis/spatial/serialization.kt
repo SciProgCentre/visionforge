@@ -1,17 +1,14 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.descriptor
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.toName
+import hep.dataforge.meta.double
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.DoubleSerializer
-import kotlinx.serialization.internal.StringDescriptor
-import kotlinx.serialization.internal.nullable
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.builtins.serializer
 
 inline fun <R> Decoder.decodeStructure(
     desc: SerialDescriptor,
     vararg typeParams: KSerializer<*> = emptyArray(),
-    crossinline block:  CompositeDecoder.() -> R
+    crossinline block: CompositeDecoder.() -> R
 ): R {
     val decoder = beginStructure(desc, *typeParams)
     val res = decoder.block()
@@ -31,7 +28,7 @@ inline fun Encoder.encodeStructure(
 
 @Serializer(Point3D::class)
 object Point3DSerializer : KSerializer<Point3D> {
-    override val descriptor: SerialDescriptor = descriptor("hep.dataforge.vis.spatial.Point3D") {
+    override val descriptor: SerialDescriptor = SerialDescriptor("hep.dataforge.vis.spatial.Point3D") {
         double("x", true)
         double("y", true)
         double("z", true)
@@ -45,28 +42,28 @@ object Point3DSerializer : KSerializer<Point3D> {
             loop@ while (true) {
                 when (val i = decodeElementIndex(descriptor)) {
                     CompositeDecoder.READ_DONE -> break@loop
-                    0 -> x = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
-                    1 -> y = decodeNullableSerializableElement(descriptor, 1, DoubleSerializer.nullable) ?: 0.0
-                    2 -> z = decodeNullableSerializableElement(descriptor, 2, DoubleSerializer.nullable) ?: 0.0
+                    0 -> x = decodeNullableSerializableElement(descriptor, 0, Double.serializer().nullable) ?: 0.0
+                    1 -> y = decodeNullableSerializableElement(descriptor, 1, Double.serializer().nullable) ?: 0.0
+                    2 -> z = decodeNullableSerializableElement(descriptor, 2, Double.serializer().nullable) ?: 0.0
                     else -> throw SerializationException("Unknown index $i")
                 }
             }
         }
-        return Point3D(x?:0.0, y?:0.0, z?:0.0)
+        return Point3D(x ?: 0.0, y ?: 0.0, z ?: 0.0)
     }
 
-    override fun serialize(encoder: Encoder, obj: Point3D) {
+    override fun serialize(encoder: Encoder, value: Point3D) {
         encoder.encodeStructure(descriptor) {
-            if (obj.x != 0.0) encodeDoubleElement(descriptor, 0, obj.x)
-            if (obj.y != 0.0) encodeDoubleElement(descriptor, 1, obj.y)
-            if (obj.z != 0.0) encodeDoubleElement(descriptor, 2, obj.z)
+            if (value.x != 0.0) encodeDoubleElement(descriptor, 0, value.x)
+            if (value.y != 0.0) encodeDoubleElement(descriptor, 1, value.y)
+            if (value.z != 0.0) encodeDoubleElement(descriptor, 2, value.z)
         }
     }
 }
 
 @Serializer(Point2D::class)
 object Point2DSerializer : KSerializer<Point2D> {
-    override val descriptor: SerialDescriptor = descriptor("hep.dataforge.vis.spatial.Point2D") {
+    override val descriptor: SerialDescriptor = SerialDescriptor("hep.dataforge.vis.spatial.Point2D") {
         double("x", true)
         double("y", true)
     }
@@ -78,32 +75,19 @@ object Point2DSerializer : KSerializer<Point2D> {
             loop@ while (true) {
                 when (val i = decodeElementIndex(descriptor)) {
                     CompositeDecoder.READ_DONE -> break@loop
-                    0 -> x = decodeNullableSerializableElement(descriptor, 0, DoubleSerializer.nullable) ?: 0.0
-                    1 -> y = decodeNullableSerializableElement(descriptor, 1, DoubleSerializer.nullable) ?: 0.0
+                    0 -> x = decodeNullableSerializableElement(descriptor, 0, Double.serializer().nullable) ?: 0.0
+                    1 -> y = decodeNullableSerializableElement(descriptor, 1, Double.serializer().nullable) ?: 0.0
                     else -> throw SerializationException("Unknown index $i")
                 }
             }
         }
-        return Point2D(x?:0.0, y?:0.0)
+        return Point2D(x ?: 0.0, y ?: 0.0)
     }
 
-    override fun serialize(encoder: Encoder, obj: Point2D) {
+    override fun serialize(encoder: Encoder, value: Point2D) {
         encoder.encodeStructure(descriptor) {
-            if (obj.x != 0.0) encodeDoubleElement(descriptor, 0, obj.x)
-            if (obj.y != 0.0) encodeDoubleElement(descriptor, 1, obj.y)
+            if (value.x != 0.0) encodeDoubleElement(descriptor, 0, value.x)
+            if (value.y != 0.0) encodeDoubleElement(descriptor, 1, value.y)
         }
-    }
-}
-
-@Serializer(NameToken::class)
-object NameTokenSerializer : KSerializer<NameToken> {
-    override val descriptor: SerialDescriptor = StringDescriptor.withName("NameToken")
-
-    override fun deserialize(decoder: Decoder): NameToken {
-        return decoder.decodeString().toName().first()!!
-    }
-
-    override fun serialize(encoder: Encoder, obj: NameToken) {
-        encoder.encodeString(obj.toString())
     }
 }

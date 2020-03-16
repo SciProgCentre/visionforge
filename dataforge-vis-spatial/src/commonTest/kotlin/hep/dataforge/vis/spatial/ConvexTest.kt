@@ -1,8 +1,9 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.toMeta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.getIndexed
+import hep.dataforge.meta.node
+import hep.dataforge.meta.toMetaItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,9 +27,9 @@ class ConvexTest {
         val convex = group.first() as Convex
 
         val json = Visual3D.json.toJson(Convex.serializer(), convex)
-        val meta = json.toMeta()
+        val meta = json.toMetaItem().node!!
 
-        val points = meta.getIndexed("points").values.map { (it as MetaItem.NodeItem<*>).node.point3D()}
+        val points = meta.getIndexed("points").values.map { (it as MetaItem.NodeItem<*>).node.point3D() }
         assertEquals(8, points.count())
 
         assertEquals(8, convex.points.size)

@@ -60,13 +60,13 @@ private fun SerialModule.enumerate(type: KClass<*>): Sequence<SerialDescriptor> 
  */
 private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): JsonObject {
 
-    if (descriptor.name in arrayOf(
+    if (descriptor.serialName in arrayOf(
             "hep.dataforge.vis.spatial.Point3D",
             "hep.dataforge.vis.spatial.Point2D",
             Meta::class.qualifiedName
         )
     ) return json {
-        "\$ref" to "#/definitions/${descriptor.name}"
+        "\$ref" to "#/definitions/${descriptor.serialName}"
     }
 
 
@@ -109,7 +109,7 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
 
     val jsonType = descriptor.jsonType
     val objectData: MutableMap<String, JsonElement> = mutableMapOf(
-        "description" to JsonLiteral(descriptor.name),
+        "description" to JsonLiteral(descriptor.serialName),
         "type" to JsonLiteral(jsonType)
     )
     if (isEnum) {
@@ -140,9 +140,9 @@ fun main() {
         "children" to json {
             "anyOf" to jsonArray {
                 context.enumerate(VisualObject3D::class).forEach {
-                    if (it.name == "hep.dataforge.vis.spatial.VisualGroup3D") {
+                    if (it.serialName == "hep.dataforge.vis.spatial.VisualGroup3D") {
                         +json {
-                            "\$ref" to "#/definitions/${it.name}"
+                            "\$ref" to "#/definitions/${it.serialName}"
                         }
                     } else {
                         +jsonSchema(it, context)

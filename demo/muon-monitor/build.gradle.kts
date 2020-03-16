@@ -1,14 +1,11 @@
-import scientifik.useSerialization
+import scientifik.jsDistDirectory
 
 plugins {
     id("scientifik.mpp")
-    //id("org.openjfx.javafxplugin")
     id("application")
 }
 
 group = "ru.mipt.npm"
-
-useSerialization()
 
 val ktor_version = "1.3.0-rc"
 
@@ -22,7 +19,7 @@ kotlin {
         }
     }
 
-    val installJS = tasks.getByName<Copy>("installJsDist")
+    val installJS = tasks.getByName("jsBrowserWebpack")
 
     jvm {
         withJava()
@@ -30,7 +27,7 @@ kotlin {
             tasks.getByName<ProcessResources>("jvmProcessResources") {
                 dependsOn(installJS)
                 afterEvaluate {
-                    from(installJS.destinationDir)
+                    from(project.jsDistDirectory)
                 }
             }
         }
@@ -49,8 +46,8 @@ kotlin {
                 implementation("io.ktor:ktor-serialization:$ktor_version")
             }
         }
-        jsMain{
-            dependencies{
+        jsMain {
+            dependencies {
                 implementation("io.ktor:ktor-client-js:$ktor_version")
                 implementation("io.ktor:ktor-client-serialization-js:$ktor_version")
                 implementation(npm("text-encoding"))

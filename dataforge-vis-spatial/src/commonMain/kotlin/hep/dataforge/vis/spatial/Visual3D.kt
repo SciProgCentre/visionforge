@@ -4,10 +4,11 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
-import hep.dataforge.io.serialization.ConfigSerializer
-import hep.dataforge.io.serialization.MetaSerializer
-import hep.dataforge.io.serialization.NameSerializer
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.float
+import hep.dataforge.meta.get
+import hep.dataforge.meta.node
+import hep.dataforge.meta.scheme.configure
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vis.common.Visual
@@ -39,10 +40,6 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
         val serialModule = SerializersModule {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
-            contextual(NameSerializer)
-            contextual(NameTokenSerializer)
-            contextual(MetaSerializer)
-            contextual(ConfigSerializer)
 
             polymorphic(VisualObject::class, VisualObject3D::class) {
                 VisualGroup3D::class with VisualGroup3D.serializer()
@@ -52,8 +49,8 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
                 Box::class with Box.serializer()
                 Convex::class with Convex.serializer()
                 Extruded::class with Extruded.serializer()
-                addSubclass(PolyLine.serializer())
-                addSubclass(Label3D.serializer())
+                subclass(PolyLine.serializer())
+                subclass(Label3D.serializer())
             }
         }
 

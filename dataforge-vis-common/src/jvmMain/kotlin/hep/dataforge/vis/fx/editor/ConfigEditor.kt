@@ -8,8 +8,8 @@ package hep.dataforge.vis.fx.editor
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import hep.dataforge.context.Global
-import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.NameToken
 import hep.dataforge.vis.fx.dfIconView
 import javafx.scene.Node

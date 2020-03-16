@@ -1,9 +1,7 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, ConfigSerializer::class)
+@file:UseSerializers(Point3DSerializer::class)
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
-import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
@@ -36,7 +34,6 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     /**

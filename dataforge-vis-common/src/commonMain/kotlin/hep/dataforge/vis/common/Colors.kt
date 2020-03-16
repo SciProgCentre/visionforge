@@ -1,6 +1,9 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.get
+import hep.dataforge.meta.number
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
 import kotlin.math.max
@@ -234,7 +237,7 @@ object Colors {
     /**
      * Convert three bytes representing color to Meta
      */
-    fun rgbToMeta(r: UByte, g: UByte, b: UByte): Meta = buildMeta {
+    fun rgbToMeta(r: UByte, g: UByte, b: UByte): Meta = Meta {
         RED_KEY put r.toInt()
         GREEN_KEY put g.toInt()
         BLUE_KEY put b.toInt()

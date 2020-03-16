@@ -1,6 +1,9 @@
 package hep.dataforge.vis.common
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Laminate
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.scheme.Configurable
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -29,16 +32,11 @@ interface VisualObject : Configurable {
     fun allProperties(): Laminate
 
     /**
-     * Set property for this object
-     */
-    fun setProperty(name: Name, value: Any?) {
-        config[name] = value
-    }
-
-    /**
      * Get property including or excluding parent properties
      */
-    fun getProperty(name: Name, inherit: Boolean = true): MetaItem<*>?
+    fun getProperty(name: Name, inherit: Boolean): MetaItem<*>?
+
+    override fun getProperty(name: Name): MetaItem<*>? = getProperty(name, true)
 
     /**
      * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
@@ -76,11 +74,6 @@ interface VisualObject : Configurable {
  * Get [VisualObject] property using key as a String
  */
 fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? = getProperty(key.toName(), inherit)
-
-/**
- * Set [VisualObject] property using key as a String
- */
-fun VisualObject.setProperty(key: String, value: Any?) = setProperty(key.toName(), value)
 
 /**
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.

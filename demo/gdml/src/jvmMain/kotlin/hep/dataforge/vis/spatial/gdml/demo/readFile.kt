@@ -10,6 +10,8 @@ import scientifik.gdml.GDML
 import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
+import hep.dataforge.meta.*
+import hep.dataforge.values.*
 
 fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
     file.extension == "gdml" || file.extension == "xml" -> {
@@ -18,7 +20,7 @@ fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
 
             solidConfiguration = { parent, solid ->
                 if (solid.name == "cave") {
-                    setProperty(Material3D.MATERIAL_WIREFRAME_KEY, true)
+                    setProperty(Material3D.MATERIAL_WIREFRAME_KEY, true.asValue())
                 }
                 if (parent.physVolumes.isNotEmpty()) {
                     useStyle("opaque") {

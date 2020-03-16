@@ -2,9 +2,8 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.number
+import hep.dataforge.meta.scheme.number
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.common.AbstractVisualObject
@@ -16,7 +15,6 @@ import kotlinx.serialization.UseSerializers
 @Serializable
 @SerialName("3d.line")
 class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override var position: Point3D? = null

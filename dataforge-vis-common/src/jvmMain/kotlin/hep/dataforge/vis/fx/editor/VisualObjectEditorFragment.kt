@@ -1,8 +1,8 @@
 package hep.dataforge.vis.fx.editor
 
-import hep.dataforge.descriptors.NodeDescriptor
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.update
 import hep.dataforge.vis.common.VisualObject
 import hep.dataforge.vis.common.findStyle

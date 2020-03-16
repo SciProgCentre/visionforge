@@ -2,7 +2,6 @@
 
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.common.AbstractVisualObject
 import hep.dataforge.vis.spatial.Point3D
@@ -26,7 +25,6 @@ class CustomThreeVisualObject(val threeFactory: ThreeFactory<VisualObject3D>) : 
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override fun toObject3D(): Object3D = threeFactory(this)

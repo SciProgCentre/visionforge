@@ -1,9 +1,9 @@
 package hep.dataforge.vis.js.editor
 
-import hep.dataforge.io.toJson
 import hep.dataforge.js.jsObject
 import hep.dataforge.meta.DynamicMeta
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.toJson
 import hep.dataforge.meta.update
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
@@ -12,8 +12,6 @@ import hep.dataforge.vis.common.findStyle
 import kotlinx.html.dom.append
 import kotlinx.html.js.*
 import org.w3c.dom.Element
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
 import kotlin.collections.set
 import kotlin.dom.clear
 

@@ -3,7 +3,7 @@ package ru.mipt.npm.muon.monitor
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.buildMeta
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
@@ -98,7 +98,7 @@ private class MMDemoApp : Application {
                 //val descriptorMeta = Material3D.descriptor
 
                 val properties = item.allProperties()
-                val bottom = buildMeta {
+                val bottom = Meta {
                     VISIBLE_KEY put (item.visible ?: true)
                     if (item is VisualObject3D) {
                         MATERIAL_COLOR_KEY put "#ffffff"

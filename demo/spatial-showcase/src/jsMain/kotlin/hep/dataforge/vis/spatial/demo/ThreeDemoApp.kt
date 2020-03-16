@@ -2,16 +2,7 @@ package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.vis.spatial.three.MeshThreeFactory.Companion.EDGES_ENABLED_KEY
-import hep.dataforge.vis.spatial.three.MeshThreeFactory.Companion.WIREFRAME_ENABLED_KEY
-import hep.dataforge.vis.spatial.x
-import hep.dataforge.vis.spatial.y
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlin.browser.document
-import kotlin.random.Random
 
 private class ThreeDemoApp : Application {
 

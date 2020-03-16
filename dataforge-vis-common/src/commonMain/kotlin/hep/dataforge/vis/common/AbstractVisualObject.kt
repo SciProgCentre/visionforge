@@ -1,8 +1,10 @@
 package hep.dataforge.vis.common
 
 import hep.dataforge.meta.*
+import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
+import hep.dataforge.values.Value
 import hep.dataforge.vis.common.VisualObject.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
@@ -22,7 +24,7 @@ abstract class AbstractVisualObject : VisualObject {
         get() = properties?.get(STYLE_KEY).stringList
         set(value) {
             //val allStyles = (field + value).distinct()
-            setProperty(STYLE_KEY, value)
+            setProperty(STYLE_KEY, Value.of(value))
             updateStyles(value)
         }
 
