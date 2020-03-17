@@ -1,5 +1,7 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
+import hep.dataforge.meta.scheme.setProperty
+import hep.dataforge.values.asValue
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
@@ -10,8 +12,6 @@ import scientifik.gdml.GDML
 import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
-import hep.dataforge.meta.*
-import hep.dataforge.values.*
 
 fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
     file.extension == "gdml" || file.extension == "xml" -> {

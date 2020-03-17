@@ -4,11 +4,12 @@ package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.meta.int
 import hep.dataforge.meta.number
+import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
+import hep.dataforge.values.asValue
 import hep.dataforge.vis.common.getProperty
 import hep.dataforge.vis.common.set
-import hep.dataforge.vis.common.setProperty
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.Z_SIZE_KEY
@@ -25,13 +26,13 @@ import kotlin.reflect.KClass
 internal var VisualObject3D.variableZSize: Number
     get() = getProperty(Z_SIZE_KEY, false).number ?: 0f
     set(value) {
-        setProperty(Z_SIZE_KEY, value)
+        setProperty(Z_SIZE_KEY, value.asValue())
     }
 
 internal var VisualObject3D.value: Int
     get() = getProperty("value", false).int ?: 0
     set(value) {
-        setProperty("value", value)
+        setProperty("value", value.asValue())
         val size = value.toFloat() / 255f * 20f
         scaleZ = size
         z = -size / 2

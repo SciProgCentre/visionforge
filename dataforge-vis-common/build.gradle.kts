@@ -33,6 +33,7 @@ kotlin {
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
                 //api(npm("bootstrap","4.4.1"))
+                implementation(npm("uri-js","4.2.2"))
                 implementation(npm("jsoneditor","8.6.1"))
                 implementation(npm("file-saver"))
             }

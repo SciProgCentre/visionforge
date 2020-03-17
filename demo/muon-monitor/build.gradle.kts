@@ -7,19 +7,11 @@ plugins {
 
 group = "ru.mipt.npm"
 
-val ktor_version = "1.3.0-rc"
+val ktor_version = "1.3.2"
 
 kotlin {
 
-    js {
-        browser {
-            webpackTask {
-                sourceMaps = true
-            }
-        }
-    }
-
-    val installJS = tasks.getByName("jsBrowserWebpack")
+    val installJS = tasks.getByName("jsBrowserDistribution")
 
     jvm {
         withJava()

@@ -14,7 +14,7 @@ import io.ktor.http.content.static
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import io.ktor.serialization.serialization
+import io.ktor.serialization.json
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
 import org.apache.commons.math3.random.JDKRandomGenerator
@@ -35,7 +35,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        serialization(json = Visual3D.json)
+        json(json = Visual3D.json)
     }
     install(Routing) {
         get("/event") {
