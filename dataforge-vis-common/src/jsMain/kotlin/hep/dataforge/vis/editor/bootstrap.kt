@@ -1,4 +1,4 @@
-package hep.dataforge.vis.js.editor
+package hep.dataforge.vis.editor
 
 import kotlinx.html.*
 import kotlinx.html.js.div

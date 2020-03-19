@@ -1,11 +1,11 @@
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.update
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.findStyle
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.findStyle
 import javafx.beans.binding.Binding
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node

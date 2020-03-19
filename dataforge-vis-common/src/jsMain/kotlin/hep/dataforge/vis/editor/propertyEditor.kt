@@ -1,4 +1,4 @@
-package hep.dataforge.vis.js.editor
+package hep.dataforge.vis.editor
 
 import hep.dataforge.js.jsObject
 import hep.dataforge.meta.DynamicMeta
@@ -7,8 +7,8 @@ import hep.dataforge.meta.toJson
 import hep.dataforge.meta.update
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.findStyle
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.findStyle
 import kotlinx.html.dom.append
 import kotlinx.html.js.*
 import org.w3c.dom.Element

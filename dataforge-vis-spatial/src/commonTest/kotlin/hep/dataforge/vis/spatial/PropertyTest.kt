@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.int
 import hep.dataforge.meta.set
 import hep.dataforge.names.asName
-import hep.dataforge.vis.common.useStyle
+import hep.dataforge.vis.useStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -4,8 +4,8 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.scheme.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
-import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.Colors
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.specifications.Canvas
 import kotlinx.coroutines.*

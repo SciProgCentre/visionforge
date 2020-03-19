@@ -3,7 +3,7 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
+import hep.dataforge.vis.AbstractVisualObject
 import hep.dataforge.vis.spatial.Point3D
 import hep.dataforge.vis.spatial.Point3DSerializer
 import hep.dataforge.vis.spatial.VisualObject3D

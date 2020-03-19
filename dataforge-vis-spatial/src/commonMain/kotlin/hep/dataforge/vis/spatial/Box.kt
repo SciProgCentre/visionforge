@@ -6,10 +6,10 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.VisualFactory
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.VisualFactory
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.set
 import hep.dataforge.vis.spatial.Box.Companion.TYPE_NAME
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

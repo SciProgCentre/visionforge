@@ -7,7 +7,7 @@ import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output

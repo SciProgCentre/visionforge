@@ -14,18 +14,23 @@
  *  limitations under the License.
  */
 
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.vis.fx.dfIconView
+import hep.dataforge.vis.dfIconView
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeSortMode
 import javafx.scene.control.TreeTableView
 import tornadofx.*
 
-class MetaViewer(val rootNode: FXMetaNode<*>, title: String = "Meta viewer") : Fragment(title, dfIconView) {
-    constructor(meta: Meta, title: String = "Meta viewer"): this(FXMeta.root(meta),title = title)
+class MetaViewer(val rootNode: FXMetaNode<*>, title: String = "Meta viewer") : Fragment(title,
+    dfIconView
+) {
+    constructor(meta: Meta, title: String = "Meta viewer"): this(
+        FXMeta.root(
+            meta
+        ),title = title)
 
     override val root = borderpane {
         center {

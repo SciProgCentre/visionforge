@@ -10,6 +10,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import hep.dataforge.vis.*
 import hep.dataforge.vis.common.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -24,7 +25,8 @@ import kotlin.collections.set
  */
 @Serializable
 @SerialName("3d.proxy")
-class Proxy private constructor(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+class Proxy private constructor(val templateName: Name) : AbstractVisualObject(),
+    VisualGroup, VisualObject3D {
 
     constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
         this.parent = parent
@@ -44,7 +46,9 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
             ?: error("Template with name $templateName not found in $parent")
 
     override val styleSheet: StyleSheet
-        get() = (parent as? VisualGroup)?.styleSheet ?: StyleSheet(this)
+        get() = (parent as? VisualGroup)?.styleSheet ?: StyleSheet(
+            this
+        )
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -86,7 +90,8 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
-    inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
+    inner class ProxyChild(val name: Name) : AbstractVisualObject(),
+        VisualGroup {
 
         val prototype: VisualObject get() = prototypeFor(name)
 

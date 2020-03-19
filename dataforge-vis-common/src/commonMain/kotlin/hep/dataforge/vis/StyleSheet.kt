@@ -1,6 +1,6 @@
 @file:UseSerializers(MetaSerializer::class)
 
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name

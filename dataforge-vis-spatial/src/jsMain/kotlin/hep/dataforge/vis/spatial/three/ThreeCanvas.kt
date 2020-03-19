@@ -8,7 +8,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.Colors
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.specifications.Camera
 import hep.dataforge.vis.spatial.specifications.Canvas

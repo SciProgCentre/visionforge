@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
@@ -105,8 +105,8 @@ fun VisualObject.int(default: Int, name: Name? = null, inherited: Boolean = fals
 
 
 inline fun <reified E : Enum<E>> VisualObject.enum(default: E, name: Name? = null, inherited: Boolean = false) =
-    VisualObjectDelegateWrapper(this, name, default, inherited) {
-            item -> item.string?.let { enumValueOf<E>(it) }
+    VisualObjectDelegateWrapper(this, name, default, inherited) { item ->
+        item.string?.let { enumValueOf<E>(it) }
     }
 
 //merge properties

@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial.three
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.three.ThreeFactory.Companion.TYPE

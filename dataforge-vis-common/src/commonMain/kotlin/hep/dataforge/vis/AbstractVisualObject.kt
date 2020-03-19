@@ -1,11 +1,11 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.Value
-import hep.dataforge.vis.common.VisualObject.Companion.STYLE_KEY
+import hep.dataforge.vis.VisualObject.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(

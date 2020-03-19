@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
@@ -11,7 +11,7 @@ import hep.dataforge.context.Global
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.NameToken
-import hep.dataforge.vis.fx.dfIconView
+import hep.dataforge.vis.dfIconView
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTreeTableCell
@@ -128,7 +128,11 @@ class ConfigEditor(
                     when (item) {
                         is FXMetaValue<Config> -> {
                             text = null
-                            val chooser = ValueChooser.build(Global, item.valueProperty, item.descriptor) {
+                            val chooser = ValueChooser.build(
+                                Global,
+                                item.valueProperty,
+                                item.descriptor
+                            ) {
                                 item.set(it)
                             }
                             graphic = chooser.node

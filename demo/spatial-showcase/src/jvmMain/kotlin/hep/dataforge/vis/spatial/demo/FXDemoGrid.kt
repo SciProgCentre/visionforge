@@ -6,7 +6,7 @@ import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.fx.FX3DPlugin
 import hep.dataforge.vis.spatial.fx.FXCanvas3D
 import hep.dataforge.vis.spatial.specifications.Axes as AxesSpec

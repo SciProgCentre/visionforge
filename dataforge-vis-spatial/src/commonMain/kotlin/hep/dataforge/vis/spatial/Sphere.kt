@@ -3,8 +3,8 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

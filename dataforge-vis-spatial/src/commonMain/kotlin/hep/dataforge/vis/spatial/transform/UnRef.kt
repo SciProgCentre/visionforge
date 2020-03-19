@@ -2,8 +2,8 @@ package hep.dataforge.vis.spatial.transform
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
-import hep.dataforge.vis.common.MutableVisualGroup
-import hep.dataforge.vis.common.VisualGroup
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.prototypes

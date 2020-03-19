@@ -11,8 +11,8 @@ import hep.dataforge.meta.node
 import hep.dataforge.meta.scheme.configure
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.Visual
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.Visual
+import hep.dataforge.vis.VisualObject
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerializersModule

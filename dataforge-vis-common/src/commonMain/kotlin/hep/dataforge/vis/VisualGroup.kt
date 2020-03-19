@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
@@ -6,7 +6,8 @@ import hep.dataforge.provider.Provider
 /**
  * Represents a group of [VisualObject] instances
  */
-interface VisualGroup : Provider, Iterable<VisualObject>, VisualObject {
+interface VisualGroup : Provider, Iterable<VisualObject>,
+    VisualObject {
     /**
      * A map of top level named children
      */

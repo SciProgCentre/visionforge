@@ -1,4 +1,4 @@
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name

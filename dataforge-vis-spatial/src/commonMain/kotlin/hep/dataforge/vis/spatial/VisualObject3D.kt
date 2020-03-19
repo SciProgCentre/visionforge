@@ -8,7 +8,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
 import hep.dataforge.values.asValue
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY

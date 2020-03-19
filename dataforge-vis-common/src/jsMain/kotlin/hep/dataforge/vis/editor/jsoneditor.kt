@@ -6,7 +6,7 @@
     "EXTERNAL_DELEGATION"
 )
 
-package hep.dataforge.vis.js.editor
+package hep.dataforge.vis.editor
 
 import org.w3c.dom.HTMLElement
 

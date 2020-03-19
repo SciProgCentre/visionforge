@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
@@ -11,7 +11,8 @@ import kotlinx.serialization.Transient
 /**
  * Abstract implementation of mutable group of [VisualObject]
  */
-abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup {
+abstract class AbstractVisualGroup : AbstractVisualObject(),
+    MutableVisualGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -37,7 +38,12 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
      * Add listener for children change
      */
     override fun onChildrenChange(owner: Any?, action: (Name, VisualObject?) -> Unit) {
-        structureChangeListeners.add(StructureChangeListeners(owner, action))
+        structureChangeListeners.add(
+            StructureChangeListeners(
+                owner,
+                action
+            )
+        )
     }
 
     /**

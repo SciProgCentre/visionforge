@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.ValueDescriptor

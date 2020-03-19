@@ -10,7 +10,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.Colors
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY

@@ -1,4 +1,4 @@
-package hep.dataforge.vis.fx
+package hep.dataforge.vis
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.EmptyMeta
@@ -96,7 +96,8 @@ class FXPlugin(meta: Meta = EmptyMeta) : AbstractPlugin(meta) {
     companion object : PluginFactory<FXPlugin> {
         override val type: KClass<out FXPlugin> = FXPlugin::class
         override val tag: PluginTag = PluginTag("vis.fx", group = PluginTag.DATAFORGE_GROUP)
-        override fun invoke(meta: Meta, context: Context): FXPlugin = FXPlugin(meta)
+        override fun invoke(meta: Meta, context: Context): FXPlugin =
+            FXPlugin(meta)
     }
 
 }

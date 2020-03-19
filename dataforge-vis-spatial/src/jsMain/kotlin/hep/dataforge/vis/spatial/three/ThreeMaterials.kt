@@ -2,8 +2,8 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
-import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.Colors
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.Material3D
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material

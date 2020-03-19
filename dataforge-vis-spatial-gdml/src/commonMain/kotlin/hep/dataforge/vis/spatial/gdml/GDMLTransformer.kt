@@ -4,7 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.useStyle
+import hep.dataforge.vis.useStyle
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import scientifik.gdml.*

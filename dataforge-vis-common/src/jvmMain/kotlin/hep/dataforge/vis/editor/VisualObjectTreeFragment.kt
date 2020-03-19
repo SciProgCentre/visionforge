@@ -1,7 +1,7 @@
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualGroup
+import hep.dataforge.vis.VisualObject
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeItem

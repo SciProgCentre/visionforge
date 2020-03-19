@@ -1,12 +1,12 @@
-package hep.dataforge.vis.fx.demo
+package hep.dataforge.vis.demo
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.asConfig
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.values.ValueType
-import hep.dataforge.vis.fx.editor.ConfigEditor
-import hep.dataforge.vis.fx.editor.FXMeta
-import hep.dataforge.vis.fx.editor.MetaViewer
+import hep.dataforge.vis.editor.ConfigEditor
+import hep.dataforge.vis.editor.FXMeta
+import hep.dataforge.vis.editor.MetaViewer
 import javafx.geometry.Orientation
 import tornadofx.*
 
@@ -49,7 +49,9 @@ class MetaEditorDemo : View("Meta editor demo") {
     private val rootNode = FXMeta.root(meta, descriptor)
 
     override val root =
-        splitpane(Orientation.HORIZONTAL, MetaViewer(rootNode).root, ConfigEditor(rootNode).root)
+        splitpane(Orientation.HORIZONTAL, MetaViewer(rootNode).root, ConfigEditor(
+            rootNode
+        ).root)
 }
 
 fun main() {

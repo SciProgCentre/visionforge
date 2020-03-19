@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hep.dataforge.vis.fx.editor
+package hep.dataforge.vis.editor
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.Named
@@ -15,8 +15,8 @@ import hep.dataforge.provider.Type
 import hep.dataforge.provider.provideByType
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
-import hep.dataforge.vis.common.widget
-import hep.dataforge.vis.common.widgetType
+import hep.dataforge.vis.widget
+import hep.dataforge.vis.widgetType
 import javafx.beans.property.ObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.scene.Node

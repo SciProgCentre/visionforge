@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.Meta
@@ -8,7 +8,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.vis.common.VisualObject.Companion.TYPE
+import hep.dataforge.vis.VisualObject.Companion.TYPE
 import kotlinx.serialization.Transient
 
 //private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)

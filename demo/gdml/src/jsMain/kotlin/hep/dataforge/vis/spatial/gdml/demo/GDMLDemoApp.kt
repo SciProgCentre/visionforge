@@ -7,10 +7,10 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.js.editor.displayObjectTree
-import hep.dataforge.vis.js.editor.displayPropertyEditor
+import hep.dataforge.vis.VisualGroup
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.editor.displayObjectTree
+import hep.dataforge.vis.editor.displayPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY

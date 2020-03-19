@@ -2,9 +2,9 @@ package hep.dataforge.vis.spatial.transform
 
 import hep.dataforge.meta.update
 import hep.dataforge.names.asName
-import hep.dataforge.vis.common.MutableVisualGroup
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.VisualGroup
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.*
 
 internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject {

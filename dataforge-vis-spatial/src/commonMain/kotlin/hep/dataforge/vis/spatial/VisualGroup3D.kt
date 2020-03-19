@@ -9,10 +9,10 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.common.AbstractVisualGroup
-import hep.dataforge.vis.common.StyleSheet
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualGroup
+import hep.dataforge.vis.StyleSheet
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers

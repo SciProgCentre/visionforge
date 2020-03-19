@@ -8,8 +8,8 @@ import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
-import hep.dataforge.vis.common.getProperty
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.getProperty
+import hep.dataforge.vis.set
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vis.spatial.demo.VariableBoxThreeFactory.Z_SIZE_KEY

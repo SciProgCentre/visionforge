@@ -1,4 +1,4 @@
-package hep.dataforge.vis.common
+package hep.dataforge.vis
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
@@ -31,7 +31,8 @@ class Visual(meta: Meta) : AbstractPlugin(meta) {
         override val tag: PluginTag = PluginTag(name = "visual", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out Visual> = Visual::class
 
-        override fun invoke(meta: Meta, context: Context): Visual = Visual(meta)
+        override fun invoke(meta: Meta, context: Context): Visual =
+            Visual(meta)
 
         const val VISUAL_FACTORY_TYPE = "visual.factory"
     }
