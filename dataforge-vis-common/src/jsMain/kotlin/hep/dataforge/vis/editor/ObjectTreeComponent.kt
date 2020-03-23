@@ -90,11 +90,13 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
 fun RBuilder.objectTree(
     obj: VisualObject,
     clickCallback: (Name) -> Unit = {}
-) = child(ObjectTreeComponent::class) {
-    attrs {
-        name = Name.EMPTY
-        this.obj = obj
-        this.clickCallback = clickCallback
+) = card("Object tree") {
+    child(ObjectTreeComponent::class) {
+        attrs {
+            name = Name.EMPTY
+            this.obj = obj
+            this.clickCallback = clickCallback
+        }
     }
 }
 

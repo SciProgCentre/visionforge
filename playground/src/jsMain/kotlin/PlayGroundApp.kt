@@ -25,10 +25,10 @@ private class PlayGroundApp : Application {
             document.getElementById("app") as? HTMLElement ?: error("Element with id 'canvas' not found on page")
 
         val obj = VisualGroup3D().apply {
-            box(100, 100, 100)
-            group {
+            box(100, 100, 100, name = "A")
+            group("B") {
                 position = Point3D(120, 0, 0)
-                box(100, 100, 100)
+                box(100, 100, 100, name = "C")
             }
         }
 

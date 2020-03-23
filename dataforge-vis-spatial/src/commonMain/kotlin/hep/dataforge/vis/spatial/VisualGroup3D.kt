@@ -124,10 +124,10 @@ inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
 }
 
 /**
- * Define a group with given [key], attach it to this parent and return it.
+ * Define a group with given [name], attach it to this parent and return it.
  */
-fun VisualGroup3D.group(key: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
+fun VisualGroup3D.group(name: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also {
-        set(key, it)
+        set(name, it)
     }
 
