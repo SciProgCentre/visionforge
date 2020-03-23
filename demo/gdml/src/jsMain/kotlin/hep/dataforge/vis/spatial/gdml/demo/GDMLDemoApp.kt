@@ -9,8 +9,8 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.editor.displayObjectTree
-import hep.dataforge.vis.editor.displayPropertyEditor
+import hep.dataforge.vis.editor.objectTree
+import hep.dataforge.vis.editor.visualPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
@@ -163,26 +163,35 @@ private class GDMLDemoApp : Application {
                     visual is VisualGroup -> visual[name] ?: return
                     else -> return
                 }
-                editorElement.displayPropertyEditor(name, child) { item ->
-                    //val descriptorMeta = Material3D.descriptor
 
-                    val properties = item.allProperties()
-                    val bottom = Meta {
-                        VISIBLE_KEY put (item.visible ?: true)
-                        if (item is VisualObject3D) {
-                            MATERIAL_COLOR_KEY put "#ffffff"
-                            MATERIAL_OPACITY_KEY put 1.0
-                            MATERIAL_WIREFRAME_KEY put false
-                        }
+                editorElement.visualPropertyEditor(name, child) {
+                    VISIBLE_KEY put true
+                    if (child is VisualObject3D) {
+                        MATERIAL_COLOR_KEY put "#ffffff"
+                        MATERIAL_OPACITY_KEY put 1.0
+                        MATERIAL_WIREFRAME_KEY put false
                     }
-                    properties.withBottom(bottom)
                 }
+//                editorElement.displayPropertyEditor(name, child) { item ->
+//                    //val descriptorMeta = Material3D.descriptor
+//
+//                    val properties = item.allProperties()
+//                    val bottom = Meta {
+//                        VISIBLE_KEY put (item.visible ?: true)
+//                        if (item is VisualObject3D) {
+//                            MATERIAL_COLOR_KEY put "#ffffff"
+//                            MATERIAL_OPACITY_KEY put 1.0
+//                            MATERIAL_WIREFRAME_KEY put false
+//                        }
+//                    }
+//                    properties.withBottom(bottom)
+//                }
             }
 
 //        canvas.clickListener = ::selectElement
 
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.displayObjectTree(visual) { treeName ->
+            treeElement.objectTree(visual) { treeName ->
                 selectElement(treeName)
                 canvas.highlight(treeName)
             }

@@ -7,7 +7,7 @@ plugins {
 
 group = "ru.mipt.npm"
 
-val ktor_version = "1.3.2"
+val ktorVersion = "1.3.2"
 
 kotlin {
 
@@ -34,23 +34,28 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation("io.ktor:ktor-server-cio:$ktor_version")
-                implementation("io.ktor:ktor-serialization:$ktor_version")
+                implementation("io.ktor:ktor-server-cio:$ktorVersion")
+                implementation("io.ktor:ktor-serialization:$ktorVersion")
             }
         }
         jsMain {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktor_version")
-                implementation("io.ktor:ktor-client-serialization-js:$ktor_version")
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
                 implementation(npm("text-encoding"))
                 implementation(npm("abort-controller"))
+                implementation(npm("bufferutil"))
+                implementation(npm("utf-8-validate"))
+//                implementation(npm("jquery"))
+//                implementation(npm("popper.js"))
+//                implementation(npm("react-is"))
             }
         }
     }
 }
 
 application {
-    mainClassName = "ru.mipt.npm.muon.monitor.server/MMServerKt"
+    mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
 }
 
 //configure<JavaFXOptions> {

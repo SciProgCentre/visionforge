@@ -68,7 +68,7 @@ abstract class AbstractVisualObject : VisualObject {
     private var styleCache: Meta? = null
 
     /**
-     * Collect all styles for this object in a laminate
+     * Collect all styles for this object in a single cached meta
      */
     protected val mergedStyles: Meta
         get() = styleCache ?: findAllStyles().merge().also {

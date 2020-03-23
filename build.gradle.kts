@@ -18,6 +18,7 @@ allprojects {
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")
         maven("https://kotlin.bintray.com/js-externals")
+        maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
 //        maven("https://dl.bintray.com/gbaldeck/kotlin")
 //        maven("https://dl.bintray.com/rjaros/kotlin")
     }

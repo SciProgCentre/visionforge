@@ -13,18 +13,18 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLSpanElement
 import kotlin.dom.clear
 
-fun Element.displayObjectTree(
-    obj: VisualObject,
-    clickCallback: (Name) -> Unit = {}
-) {
-    clear()
-    append {
-        card("Object tree") {
-            subTree(Name.EMPTY, obj, clickCallback)
-        }
-    }
-}
-
+//fun Element.displayObjectTree(
+//    obj: VisualObject,
+//    clickCallback: (Name) -> Unit = {}
+//) {
+//    clear()
+//    append {
+//        card("Object tree") {
+//            subTree(Name.EMPTY, obj, clickCallback)
+//        }
+//    }
+//}
+//
 private fun TagConsumer<HTMLElement>.subTree(
     name: Name,
     obj: VisualObject,

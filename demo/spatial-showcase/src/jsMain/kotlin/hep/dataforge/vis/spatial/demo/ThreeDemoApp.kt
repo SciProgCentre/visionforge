@@ -39,7 +39,6 @@ private class ThreeDemoApp : Application {
 
     }
 
-    override fun dispose() = emptyMap<String, Any>()//mapOf("lines" put presenter.dispose())
 }
 
 fun main() {

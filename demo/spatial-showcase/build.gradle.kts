@@ -16,14 +16,6 @@ kotlin {
         withJava()
     }
 
-    js {
-        browser {
-            webpackTask {
-                sourceMaps = false
-            }
-        }
-    }
-
     sourceSets {
         commonMain {
             dependencies {

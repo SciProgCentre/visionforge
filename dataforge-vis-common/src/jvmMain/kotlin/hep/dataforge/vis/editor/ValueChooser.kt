@@ -108,8 +108,7 @@ interface ValueChooser {
             descriptor: ValueDescriptor? = null,
             setter: (Value) -> Unit
         ): ValueChooser {
-            val chooser =
-                build(context, descriptor)
+            val chooser = build(context, descriptor)
             chooser.setDisplayValue(value.value ?: Null)
             value.onChange {
                 chooser.setDisplayValue(it ?: Null)

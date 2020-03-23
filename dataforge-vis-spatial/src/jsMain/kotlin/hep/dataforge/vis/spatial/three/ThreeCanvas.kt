@@ -213,3 +213,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
 
 fun ThreePlugin.output(element: HTMLElement, spec: Canvas = Canvas.empty()): ThreeCanvas =
     ThreeCanvas(element, this, spec)
+
+fun ThreePlugin.render(element: HTMLElement, obj: VisualObject3D, spec: Canvas = Canvas.empty()): Unit =
+    output(element, spec).render(obj)
+

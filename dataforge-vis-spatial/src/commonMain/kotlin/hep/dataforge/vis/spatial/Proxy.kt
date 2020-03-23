@@ -11,7 +11,6 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.*
-import hep.dataforge.vis.common.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

@@ -3,15 +3,13 @@ package ru.mipt.npm.muon.monitor
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.editor.card
-import hep.dataforge.vis.editor.displayObjectTree
-import hep.dataforge.vis.editor.displayPropertyEditor
+import hep.dataforge.vis.editor.objectTree
+import hep.dataforge.vis.editor.visualPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
@@ -21,7 +19,6 @@ import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.visible
 import info.laht.threekt.math.Vector3
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
@@ -66,7 +63,7 @@ private class MMDemoApp : Application {
         canvas.camera.layers.set(0)
         canvas.camera.position.z = -2000.0
         canvas.camera.position.y = 500.0
-        canvas.camera.lookAt(Vector3(0,0,0))
+        canvas.camera.lookAt(Vector3(0, 0, 0))
         settingsElement.displayCanvasControls(canvas) {
             card("Events") {
                 button {
@@ -94,26 +91,34 @@ private class MMDemoApp : Application {
                 visual is VisualGroup -> visual[name] ?: return
                 else -> return
             }
-            editorElement.displayPropertyEditor(name, child) { item ->
-                //val descriptorMeta = Material3D.descriptor
-
-                val properties = item.allProperties()
-                val bottom = Meta {
-                    VISIBLE_KEY put (item.visible ?: true)
-                    if (item is VisualObject3D) {
-                        MATERIAL_COLOR_KEY put "#ffffff"
-                        MATERIAL_OPACITY_KEY put 1.0
-                        MATERIAL_WIREFRAME_KEY put false
-                    }
+            editorElement.visualPropertyEditor(name, child) {
+                VISIBLE_KEY put true
+                if (child is VisualObject3D) {
+                    MATERIAL_COLOR_KEY put "#ffffff"
+                    MATERIAL_OPACITY_KEY put 1.0
+                    MATERIAL_WIREFRAME_KEY put false
                 }
-                properties.withBottom(bottom)
             }
+//            editorElement.displayPropertyEditor(name, child) { item ->
+//                //val descriptorMeta = Material3D.descriptor
+//
+//                val properties = item.allProperties()
+//                val bottom = Meta {
+//                    VISIBLE_KEY put (item.visible ?: true)
+//                    if (item is VisualObject3D) {
+//                        MATERIAL_COLOR_KEY put "#ffffff"
+//                        MATERIAL_OPACITY_KEY put 1.0
+//                        MATERIAL_WIREFRAME_KEY put false
+//                    }
+//                }
+//                properties.withBottom(bottom)
+//            }
         }
 
 //        canvas.clickListener = ::selectElement
 
         //tree.visualObjectTree(visual, editor::propertyEditor)
-        treeElement.displayObjectTree(visual) { name ->
+        treeElement.objectTree(visual) { name ->
             selectElement(name)
             canvas.highlight(name)
         }

@@ -3,6 +3,10 @@ package hep.dataforge.vis.editor
 import kotlinx.html.*
 import kotlinx.html.js.div
 import org.w3c.dom.HTMLElement
+import react.RBuilder
+import react.ReactElement
+import react.dom.div
+import react.dom.h3
 
 inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
     div("card w-100") {
@@ -12,6 +16,14 @@ inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagCo
         }
     }
 }
+
+inline fun RBuilder.card(title: String, crossinline block: RBuilder.() -> Unit): ReactElement = div("card w-100") {
+    div("card-body") {
+        h3(classes = "card-title") { +title }
+        block()
+    }
+}
+
 
 fun TagConsumer<HTMLElement>.accordion(id: String, elements: Map<String, DIV.() -> Unit>) {
     div("container-fluid") {
