@@ -8,6 +8,7 @@ import hep.dataforge.vis.isEmpty
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
 
@@ -27,6 +28,12 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
         expanded = false
     }
 
+    private val onClick: (Event) -> Unit = {
+        setState {
+            expanded = !expanded
+        }
+    }
+
     override fun RBuilder.render() {
         val token = props.name.last()?.toString() ?: "World"
         val obj = props.obj
@@ -36,16 +43,10 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
             div("d-inline-block text-truncate") {
                 span("objTree-caret") {
                     attrs {
-                        classes = if (state.expanded) {
-                            setOf("objTree-caret", "objTree-caret-down")
-                        } else {
-                            setOf("objTree-caret")
+                        if (state.expanded) {
+                            classes += "objTree-caret-down"
                         }
-                        onClickFunction = {
-                            setState {
-                                expanded = !expanded
-                            }
-                        }
+                        onClickFunction = onClick
                     }
                 }
                 label("objTree-label") {

@@ -1,14 +1,17 @@
 package hep.dataforge.vis.editor
 
-import hep.dataforge.js.initState
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.NameToken
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
-import react.*
+import org.w3c.dom.events.Event
+import react.RBuilder
+import react.RComponent
+import react.RProps
 import react.dom.*
+import react.setState
 
 interface MetaViewerProps : RProps {
     var name: NameToken
@@ -22,21 +25,21 @@ class MetaViewerComponent : RComponent<MetaViewerProps, TreeState>() {
         expanded = false
     }
 
+    private val onClick: (Event) -> Unit = {
+        setState {
+            expanded = !expanded
+        }
+    }
+
     override fun RBuilder.render() {
         div("d-inline-block text-truncate") {
             if (props.meta.items.isNotEmpty()) {
                 span("objTree-caret") {
                     attrs {
-                        classes = if (state.expanded) {
-                            setOf("objTree-caret", "objTree-caret-down")
-                        } else {
-                            setOf("objTree-caret")
+                        if (state.expanded) {
+                            classes += "objTree-caret-down"
                         }
-                        onClickFunction = {
-                            setState {
-                                expanded = !expanded
-                            }
-                        }
+                        onClickFunction = onClick
                     }
                 }
             }

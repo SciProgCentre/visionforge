@@ -1,7 +1,7 @@
 import scientifik.fx
 import scientifik.serialization
 
-val dataforgeVersion by extra("0.1.5")
+val dataforgeVersion by extra("0.1.6-dev")
 
 plugins {
     val toolsVersion = "0.4.0"

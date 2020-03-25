@@ -3,10 +3,13 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.scheme.node
 import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
+import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
@@ -26,7 +29,8 @@ interface VisualObject3D : VisualObject {
     companion object {
 
         val VISIBLE_KEY = "visible".asName()
-//        val SELECTED_KEY = "selected".asName()
+
+        //        val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
         val IGNORE_KEY = "ignore".asName()
@@ -56,6 +60,20 @@ interface VisualObject3D : VisualObject {
         val xScale = scale + x
         val yScale = scale + y
         val zScale = scale + z
+
+        val descriptor = NodeDescriptor {
+            defineValue(VISIBLE_KEY) {
+                type(ValueType.BOOLEAN)
+                default(true)
+            }
+
+            defineItem(Material3D.MATERIAL_KEY, Material3D.descriptor)
+
+//                Material3D.MATERIAL_COLOR_KEY put "#ffffff"
+//                Material3D.MATERIAL_OPACITY_KEY put 1.0
+//                Material3D.MATERIAL_WIREFRAME_KEY put false
+
+        }
     }
 }
 
@@ -106,7 +124,7 @@ var VisualObject.visible: Boolean?
  * Property is not inherited.
  */
 var VisualObject.ignore: Boolean?
-    get() = getProperty(IGNORE_KEY,false).boolean
+    get() = getProperty(IGNORE_KEY, false).boolean
     set(value) = setProperty(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?

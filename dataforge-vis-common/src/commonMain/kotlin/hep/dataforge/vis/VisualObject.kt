@@ -3,11 +3,13 @@ package hep.dataforge.vis
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.scheme.Configurable
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
+import hep.dataforge.values.ValueType
 import hep.dataforge.vis.VisualObject.Companion.TYPE
 import kotlinx.serialization.Transient
 
@@ -64,7 +66,7 @@ interface VisualObject : Configurable {
         const val TYPE = "visual"
         val STYLE_KEY = "@style".asName()
 
-        //const val META_KEY = "@meta"
+            //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"
 
     }

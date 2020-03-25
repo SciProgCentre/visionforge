@@ -1,6 +1,5 @@
 package hep.dataforge.vis.editor
 
-import hep.dataforge.js.initState
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
@@ -14,8 +13,12 @@ import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
-import react.*
+import org.w3c.dom.events.Event
+import react.RBuilder
+import react.RComponent
+import react.RProps
 import react.dom.*
+import react.setState
 
 interface ConfigEditorProps : RProps {
     /**
@@ -61,6 +64,13 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
         props.root.removeListener(this)
     }
 
+    private val onClick: (Event) -> Unit = {
+        setState {
+            expanded = !expanded
+        }
+    }
+
+
     override fun RBuilder.render() {
         val item = props.root[props.name]
         val descriptorItem = props.descriptor?.get(props.name)
@@ -81,11 +91,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                             if (state.expanded) {
                                 classes += "rotate"
                             }
-                            onClickFunction = {
-                                setState {
-                                    expanded = !expanded
-                                }
-                            }
+                            onClickFunction = onClick
                         }
                     }
                 }

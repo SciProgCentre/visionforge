@@ -2,6 +2,7 @@ package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualObject
@@ -74,8 +75,10 @@ import kotlin.collections.set
 fun RBuilder.visualPropertyEditor(
     path: Name,
     item: VisualObject,
+    descriptor: NodeDescriptor? = item.descriptor,
+    title: String = "Properties",
     default: MetaBuilder.() -> Unit = {}
-): ReactElement = card("Properties") {
+): ReactElement = card(title) {
     if (!path.isEmpty()) {
         nav {
             attrs {
@@ -90,13 +93,15 @@ fun RBuilder.visualPropertyEditor(
             }
         }
     }
-    configEditor(item.config, item.descriptor, Meta(default))
+    configEditor(item.config, descriptor, Meta(default))
 }
 
 fun Element.visualPropertyEditor(
     path: Name,
     item: VisualObject,
+    descriptor: NodeDescriptor? = item.descriptor,
+    title: String = "Properties",
     default: MetaBuilder.() -> Unit = {}
 ) = render(this) {
-    visualPropertyEditor(path, item, default)
+    visualPropertyEditor(path, item, descriptor, title, default)
 }
