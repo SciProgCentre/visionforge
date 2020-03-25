@@ -26,7 +26,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.1.1-dev"
+    version = "0.1.1"
 }
 
 subprojects{
