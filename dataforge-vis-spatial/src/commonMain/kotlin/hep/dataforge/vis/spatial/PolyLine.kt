@@ -3,7 +3,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.scheme.number
+import hep.dataforge.meta.number
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.AbstractVisualObject

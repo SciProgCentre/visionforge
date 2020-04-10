@@ -1,6 +1,6 @@
 package hep.dataforge.vis.spatial.gdml
 
-import hep.dataforge.meta.scheme.setProperty
+import hep.dataforge.meta.setProperty
 import hep.dataforge.meta.string
 import hep.dataforge.names.toName
 import hep.dataforge.values.asValue

@@ -1,7 +1,6 @@
 package hep.dataforge.vis
 
 import hep.dataforge.meta.*
-import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.Value

@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.scheme.invoke
+import hep.dataforge.meta.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
 import hep.dataforge.vis.Colors

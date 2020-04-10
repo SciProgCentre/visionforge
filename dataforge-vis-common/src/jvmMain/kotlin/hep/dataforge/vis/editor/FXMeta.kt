@@ -174,10 +174,10 @@ private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boo
         val name = token.asName()
         val index = (getIndexed(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
         val newName = name.withIndex(index.toString())
-        set(newName, EmptyMeta)
+        set(newName, Meta.EMPTY)
         get(newName).node!!
     } else {
-        this.setNode(token.asName(), EmptyMeta)
+        this.setNode(token.asName(), Meta.EMPTY)
         //FIXME possible concurrency bug
         get(token).node!!
     }
@@ -211,9 +211,9 @@ fun <M : MutableMeta<M>> FXMetaNode<M>.addValue(key: String) {
 fun <M : MutableMeta<M>> FXMetaNode<M>.addNode(key: String) {
     val parent = getOrCreateNode()
     if (descriptor?.multiple == true) {
-        parent.append(key, EmptyMeta)
+        parent.append(key, Meta.EMPTY)
     } else {
-        parent[key] = EmptyMeta
+        parent[key] = Meta.EMPTY
     }
 }
 

@@ -1,6 +1,6 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
-import hep.dataforge.meta.scheme.setProperty
+import hep.dataforge.meta.setProperty
 import hep.dataforge.values.asValue
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Visual3D

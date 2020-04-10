@@ -4,8 +4,6 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.scheme.node
-import hep.dataforge.meta.scheme.setProperty
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
@@ -61,18 +59,20 @@ interface VisualObject3D : VisualObject {
         val yScale = scale + y
         val zScale = scale + z
 
-        val descriptor = NodeDescriptor {
-            defineValue(VISIBLE_KEY) {
-                type(ValueType.BOOLEAN)
-                default(true)
-            }
+        val descriptor by lazy {
+            NodeDescriptor {
+                defineValue(VISIBLE_KEY) {
+                    type(ValueType.BOOLEAN)
+                    default(true)
+                }
 
-            defineItem(Material3D.MATERIAL_KEY, Material3D.descriptor)
+                defineItem(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
 
 //                Material3D.MATERIAL_COLOR_KEY put "#ffffff"
 //                Material3D.MATERIAL_OPACITY_KEY put 1.0
 //                Material3D.MATERIAL_WIREFRAME_KEY put false
 
+            }
         }
     }
 }
@@ -86,7 +86,7 @@ var VisualObject3D.layer: Int
         setProperty(LAYER_KEY, value.asValue())
     }
 
-fun Renderer<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
+fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)
 
 // Common properties

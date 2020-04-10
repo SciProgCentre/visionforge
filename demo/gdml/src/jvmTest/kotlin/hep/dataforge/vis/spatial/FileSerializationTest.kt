@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.names.asName
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.Ignore
 
 class FileSerializationTest {

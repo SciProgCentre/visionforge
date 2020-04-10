@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial.gdml
 
 import nl.adaptivity.xmlutil.StAXReader
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import scientifik.gdml.GDML
 import java.io.File
 import java.net.URL

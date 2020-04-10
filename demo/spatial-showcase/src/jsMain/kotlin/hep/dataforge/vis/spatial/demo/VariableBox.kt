@@ -4,7 +4,7 @@ package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.meta.int
 import hep.dataforge.meta.number
-import hep.dataforge.meta.scheme.setProperty
+import hep.dataforge.meta.setProperty
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue

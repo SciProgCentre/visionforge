@@ -1,9 +1,9 @@
 package hep.dataforge.vis.spatial.specifications
 
-import hep.dataforge.meta.scheme.Scheme
-import hep.dataforge.meta.scheme.SchemeSpec
-import hep.dataforge.meta.scheme.double
-import hep.dataforge.meta.scheme.int
+import hep.dataforge.meta.Scheme
+import hep.dataforge.meta.SchemeSpec
+import hep.dataforge.meta.double
+import hep.dataforge.meta.int
 import kotlin.math.PI
 
 class Camera : Scheme() {

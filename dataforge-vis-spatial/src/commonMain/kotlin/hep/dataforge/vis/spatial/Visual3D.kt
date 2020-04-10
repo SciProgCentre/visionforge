@@ -4,11 +4,7 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.float
-import hep.dataforge.meta.get
-import hep.dataforge.meta.node
-import hep.dataforge.meta.scheme.configure
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vis.Visual

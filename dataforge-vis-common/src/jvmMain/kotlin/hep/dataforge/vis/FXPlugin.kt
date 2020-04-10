@@ -1,7 +1,6 @@
 package hep.dataforge.vis
 
 import hep.dataforge.context.*
-import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.boolean
 import javafx.application.Application
@@ -20,7 +19,7 @@ import kotlin.reflect.KClass
 /**
  * Plugin holding JavaFX application instance and its root stage
  */
-class FXPlugin(meta: Meta = EmptyMeta) : AbstractPlugin(meta) {
+class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
     override val tag: PluginTag get() = Companion.tag
 
     private val stages: ObservableSet<Stage> = FXCollections.observableSet()

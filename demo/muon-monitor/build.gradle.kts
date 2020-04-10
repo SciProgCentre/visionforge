@@ -46,6 +46,7 @@ kotlin {
                 implementation(npm("abort-controller"))
                 implementation(npm("bufferutil"))
                 implementation(npm("utf-8-validate"))
+                implementation(npm("fs"))
 //                implementation(npm("jquery"))
 //                implementation(npm("popper.js"))
 //                implementation(npm("react-is"))

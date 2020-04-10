@@ -1,10 +1,10 @@
 import scientifik.fx
 import scientifik.serialization
 
-val dataforgeVersion by extra("0.1.6-dev")
+val dataforgeVersion by extra("0.1.7")
 
 plugins {
-    val toolsVersion = "0.4.0"
+    val toolsVersion = "0.4.2"
     id("scientifik.mpp") version toolsVersion apply false
     id("scientifik.jvm") version toolsVersion apply false
     id("scientifik.js") version toolsVersion apply false
@@ -24,7 +24,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.1.2-dev"
+    version = "0.1.3-dev"
 }
 
 val githubProject by extra("dataforge-vis")

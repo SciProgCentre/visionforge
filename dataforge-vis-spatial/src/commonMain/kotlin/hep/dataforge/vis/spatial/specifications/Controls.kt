@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial.specifications
 
-import hep.dataforge.meta.scheme.Scheme
-import hep.dataforge.meta.scheme.SchemeSpec
+import hep.dataforge.meta.Scheme
+import hep.dataforge.meta.SchemeSpec
 
 
 class Controls : Scheme() {

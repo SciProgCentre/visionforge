@@ -1,10 +1,6 @@
 package hep.dataforge.vis.spatial.specifications
 
-import hep.dataforge.meta.isEmpty
-import hep.dataforge.meta.scheme.Scheme
-import hep.dataforge.meta.scheme.SchemeSpec
-import hep.dataforge.meta.scheme.boolean
-import hep.dataforge.meta.scheme.double
+import hep.dataforge.meta.*
 
 class Axes : Scheme() {
     var visible by boolean(!config.isEmpty())

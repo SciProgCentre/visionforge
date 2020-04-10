@@ -2,7 +2,7 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.scheme.getProperty
+import hep.dataforge.meta.getProperty
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus

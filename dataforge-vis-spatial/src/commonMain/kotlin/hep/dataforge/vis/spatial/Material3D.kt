@@ -1,11 +1,7 @@
 package hep.dataforge.vis.spatial
 
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.double
-import hep.dataforge.meta.get
-import hep.dataforge.meta.node
-import hep.dataforge.meta.scheme.*
-import hep.dataforge.meta.set
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
@@ -48,23 +44,26 @@ class Material3D : Scheme() {
         internal val WIREFRAME_KEY = "wireframe".asName()
         val MATERIAL_WIREFRAME_KEY = MATERIAL_KEY + WIREFRAME_KEY
 
-        val descriptor = NodeDescriptor {
-            defineValue(VisualObject3D.VISIBLE_KEY) {
-                type(ValueType.BOOLEAN)
-                default(true)
-            }
-            defineNode(MATERIAL_KEY) {
-                defineValue(COLOR_KEY) {
-                    type(ValueType.STRING, ValueType.NUMBER)
-                    default("#ffffff")
-                }
-                defineValue(OPACITY_KEY) {
-                    type(ValueType.NUMBER)
-                    default(1.0)
-                }
-                defineValue(WIREFRAME_KEY) {
+        val descriptor by lazy {
+            //must be lazy to avoid initialization bug
+            NodeDescriptor {
+                defineValue(VisualObject3D.VISIBLE_KEY) {
                     type(ValueType.BOOLEAN)
-                    default(false)
+                    default(true)
+                }
+                defineNode(MATERIAL_KEY) {
+                    defineValue(COLOR_KEY) {
+                        type(ValueType.STRING, ValueType.NUMBER)
+                        default("#ffffff")
+                    }
+                    defineValue(OPACITY_KEY) {
+                        type(ValueType.NUMBER)
+                        default(1.0)
+                    }
+                    defineValue(WIREFRAME_KEY) {
+                        type(ValueType.BOOLEAN)
+                        default(false)
+                    }
                 }
             }
         }

@@ -7,7 +7,6 @@ package hep.dataforge.vis.editor
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.Named
-import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.names.toName
@@ -66,7 +65,7 @@ interface ValueChooser {
 
     @Type("hep.dataforge.vis.fx.valueChooserFactory")
     interface Factory : Named {
-        operator fun invoke(meta: Meta = EmptyMeta): ValueChooser
+        operator fun invoke(meta: Meta = Meta.EMPTY): ValueChooser
     }
 
     companion object {
