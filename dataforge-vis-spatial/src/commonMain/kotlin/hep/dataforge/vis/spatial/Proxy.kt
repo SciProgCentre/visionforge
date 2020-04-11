@@ -6,10 +6,7 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.get
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.plus
+import hep.dataforge.names.*
 import hep.dataforge.vis.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -24,8 +21,9 @@ import kotlin.collections.set
  */
 @Serializable
 @SerialName("3d.proxy")
-class Proxy private constructor(val templateName: Name) : AbstractVisualObject(),
-    VisualGroup, VisualObject3D {
+class Proxy private constructor(
+    val templateName: Name
+) : AbstractVisualObject(), VisualGroup, VisualObject3D {
 
     constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
         this.parent = parent
@@ -42,10 +40,10 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
      */
     val prototype: VisualObject3D
         get() = (parent as? VisualGroup3D)?.getPrototype(templateName)
-            ?: error("Template with name $templateName not found in $parent")
+            ?: error("Prototype with name $templateName not found in $parent")
 
     override val styleSheet: StyleSheet
-        get() = (parent as? VisualGroup)?.styleSheet ?: StyleSheet(
+        get() = parent?.styleSheet ?: StyleSheet(
             this
         )
 
@@ -166,9 +164,9 @@ inline fun VisualGroup3D.ref(
  * Add new proxy wrapping given object and automatically adding it to the prototypes
  */
 fun VisualGroup3D.proxy(
-    templateName: Name,
+    name: String,
     obj: VisualObject3D,
-    name: String = "",
+    templateName: Name = name.toName(),
     block: Proxy.() -> Unit = {}
 ): Proxy {
     val existing = getPrototype(templateName)

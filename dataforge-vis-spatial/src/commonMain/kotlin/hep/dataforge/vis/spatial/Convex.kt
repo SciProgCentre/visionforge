@@ -4,6 +4,7 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
 import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -24,7 +25,7 @@ class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D
     }
 }
 
-inline fun VisualGroup3D.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}) =
+inline fun MutableVisualGroup.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}) =
     ConvexBuilder().apply(action).build().also { set(name, it) }
 
 class ConvexBuilder {

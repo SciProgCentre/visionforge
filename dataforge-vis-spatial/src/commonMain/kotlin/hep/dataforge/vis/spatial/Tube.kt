@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
 import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -127,7 +128,7 @@ class Tube(
 
 }
 
-inline fun VisualGroup3D.tube(
+inline fun MutableVisualGroup.tube(
     r: Number,
     height: Number,
     innerRadius: Number = 0f,

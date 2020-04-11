@@ -6,7 +6,6 @@ import hep.dataforge.vis.MutableVisualGroup
 import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.spatial.Proxy
 import hep.dataforge.vis.spatial.VisualGroup3D
-import hep.dataforge.vis.spatial.prototypes
 
 object UnRef : VisualTreeTransform<VisualGroup3D>() {
     private fun VisualGroup.countRefs(): Map<Name, Int> {

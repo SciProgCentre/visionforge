@@ -1,5 +1,6 @@
 package hep.dataforge.vis.spatial.gdml
 
+import hep.dataforge.meta.JSON_PRETTY
 import hep.dataforge.meta.Meta
 import hep.dataforge.vis.spatial.*
 import kotlinx.serialization.*
@@ -157,7 +158,7 @@ fun main() {
     }
 
     println(
-        Json.indented.stringify(
+        JSON_PRETTY.stringify(
             JsonObjectSerializer,
             json {
                 "definitions" to definitions

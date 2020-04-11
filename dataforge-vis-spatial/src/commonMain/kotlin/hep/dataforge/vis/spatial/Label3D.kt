@@ -4,6 +4,7 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
 import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,7 +21,7 @@ class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : 
 
 }
 
-fun VisualGroup3D.label(
+fun MutableVisualGroup.label(
     text: String,
     fontSize: Number = 20,
     fontFamily: String = "Arial",

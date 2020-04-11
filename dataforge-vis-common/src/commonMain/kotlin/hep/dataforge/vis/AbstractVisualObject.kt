@@ -15,7 +15,7 @@ internal data class PropertyListener(
 abstract class AbstractVisualObject : VisualObject {
 
     @Transient
-    override var parent: VisualObject? = null
+    override var parent: VisualGroup? = null
 
     protected abstract var properties: Config?
 

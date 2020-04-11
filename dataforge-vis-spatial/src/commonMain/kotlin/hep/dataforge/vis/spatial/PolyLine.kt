@@ -7,6 +7,7 @@ import hep.dataforge.meta.number
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
 import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,5 +31,5 @@ class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject
 
 }
 
-fun VisualGroup3D.polyline(vararg points: Point3D, name: String = "", action: PolyLine.() -> Unit = {}) =
+fun MutableVisualGroup.polyline(vararg points: Point3D, name: String = "", action: PolyLine.() -> Unit = {}) =
     PolyLine(points.toList()).apply(action).also { set(name, it) }

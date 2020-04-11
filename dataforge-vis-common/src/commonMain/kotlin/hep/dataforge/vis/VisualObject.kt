@@ -24,7 +24,7 @@ interface VisualObject : Configurable {
      * The parent object of this one. If null, this one is a root.
      */
     @Transient
-    var parent: VisualObject?
+    var parent: VisualGroup?
 
     /**
      * All properties including styles and prototypes if present, but without inheritance

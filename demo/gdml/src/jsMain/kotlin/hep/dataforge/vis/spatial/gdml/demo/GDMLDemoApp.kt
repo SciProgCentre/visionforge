@@ -3,8 +3,6 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualGroup
@@ -23,7 +21,6 @@ import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.visible
 import org.w3c.dom.*
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
@@ -139,7 +136,7 @@ private class GDMLDemoApp : Application {
                     message("Converting GDML into DF-VIS format")
                     gdml.toVisual(gdmlConfiguration)
                 }
-                name.endsWith(".json") -> VisualGroup3D.fromJson(data)
+                name.endsWith(".json") -> VisualGroup3D.parseJson(data)
                 else -> {
                     window.alert("File extension is not recognized: $name")
                     error("File extension is not recognized: $name")

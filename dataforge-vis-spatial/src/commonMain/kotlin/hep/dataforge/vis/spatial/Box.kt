@@ -6,10 +6,7 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
-import hep.dataforge.vis.AbstractVisualObject
-import hep.dataforge.vis.VisualFactory
-import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.set
+import hep.dataforge.vis.*
 import hep.dataforge.vis.spatial.Box.Companion.TYPE_NAME
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -67,7 +64,7 @@ class Box(
     }
 }
 
-inline fun VisualGroup3D.box(
+inline fun MutableVisualGroup.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,

@@ -6,12 +6,14 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 
 /**
  * A container for styles
  */
 @Serializable
-class StyleSheet() {
+class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta> = LinkedHashMap()) {
     @Transient
     internal var owner: VisualObject? = null
 
@@ -19,12 +21,10 @@ class StyleSheet() {
         this.owner = owner
     }
 
-    private val styleMap = HashMap<String, Meta>()
-
     val items: Map<String, Meta> get() = styleMap
 
     operator fun get(key: String): Meta? {
-        return styleMap[key] ?: (owner?.parent as? VisualGroup)?.styleSheet?.get(key)
+        return styleMap[key] ?: owner?.parent?.styleSheet?.get(key)
     }
 
     /**
@@ -49,16 +49,19 @@ class StyleSheet() {
         set(key, newStyle.seal())
     }
 
-    companion object: KSerializer<StyleSheet>{
-        override val descriptor: SerialDescriptor
-            get() = TODO("Not yet implemented")
+    @Serializer(StyleSheet::class)
+    companion object : KSerializer<StyleSheet> {
+        private val mapSerializer = MapSerializer(String.serializer(), MetaSerializer)
+        override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
+
 
         override fun deserialize(decoder: Decoder): StyleSheet {
-            TODO("Not yet implemented")
+            val map = mapSerializer.deserialize(decoder)
+            return StyleSheet(map as? MutableMap<String, Meta> ?: LinkedHashMap(map))
         }
 
         override fun serialize(encoder: Encoder, value: StyleSheet) {
-            TODO("Not yet implemented")
+            mapSerializer.serialize(encoder, value.items)
         }
 
     }

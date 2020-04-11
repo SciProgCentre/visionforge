@@ -8,22 +8,23 @@ import hep.dataforge.meta.Config
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
-import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.AbstractVisualGroup
-import hep.dataforge.vis.StyleSheet
-import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.set
+import hep.dataforge.vis.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
+
+interface PrototypeHolder {
+    val parent: VisualGroup?
+    val prototypes: MutableVisualGroup?
+}
 
 /**
  * Represents 3-dimensional Visual Group
  */
 @Serializable
 @SerialName("group.3d")
-class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
+class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
 
     override var styleSheet: StyleSheet? = null
         private set
@@ -31,11 +32,19 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     /**
      * A container for templates visible inside this group
      */
-    var prototypes: VisualGroup3D? = null
-        set(value) {
-            value?.parent = this
-            field = value
-        }
+    @Serializable(PrototypesSerializer::class)
+    override var prototypes: MutableVisualGroup? = null
+        private set
+
+    /**
+     * Create or edit prototype node as a group
+     */
+    fun prototypes(builder: MutableVisualGroup.() -> Unit): Unit {
+        (prototypes ?: Prototypes().also {
+            attach(it)
+            prototypes = it
+        }).run(builder)
+    }
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
@@ -47,11 +56,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()
     override val children: Map<NameToken, VisualObject> get() = _children
-
-//    init {
-//        //Do after deserialization
-//        attachChildren()
-//    }
 
     override fun attachChildren() {
         prototypes?.parent = this
@@ -68,18 +72,11 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
     }
 
     override fun removeChild(token: NameToken) {
-        _children.remove(token)?.run { parent = null }
-        childrenChanged(token.asName(), null)
+        _children.remove(token)?.apply { parent = null }
     }
 
     override fun setChild(token: NameToken, child: VisualObject) {
-        if (child.parent == null) {
-            child.parent = this
-        } else if (child.parent !== this) {
-            error("Can't reassign existing parent for $child")
-        }
         _children[token] = child
-        childrenChanged(token.asName(), child)
     }
 
 //    /**
@@ -87,47 +84,72 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D {
 //     */
 //    override fun addStatic(child: VisualObject) = setChild(NameToken("@static(${child.hashCode()})"), child)
 
-    override fun createGroup(name: Name): VisualGroup3D {
-        return when {
-            name.isEmpty() -> error("Should be unreachable")
-            name.length == 1 -> {
-                val token = name.first()!!
-                when (val current = children[token]) {
-                    null -> VisualGroup3D().also { setChild(token, it) }
-                    is VisualGroup3D -> current
-                    else -> error("Can't create group with name $name because it exists and not a group")
-                }
-            }
-            else -> createGroup(name.first()!!.asName()).createGroup(name.cutFirst())
-        }
-    }
+    override fun createGroup(): VisualGroup3D = VisualGroup3D()
+
+//        return when {
+//            name.isEmpty() -> error("Should be unreachable")
+//            name.length == 1 -> {
+//                val token = name.first()!!
+//                when (val current = children[token]) {
+//                    null -> VisualGroup3D().also { setChild(token, it) }
+//                    is VisualGroup3D -> current
+//                    else -> error("Can't create group with name $name because it exists and not a group")
+//                }
+//            }
+//            else -> createGroup(name.first()!!.asName()).createGroup(name.cutFirst())
+//        }
+//    }
+
 
     companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
-        fun fromJson(json: String): VisualGroup3D =
+        fun parseJson(json: String): VisualGroup3D =
             Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
 
+fun VisualGroup3D.stringify(): String = Visual3D.json.stringify(VisualGroup3D.serializer(),this)
+
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-tailrec fun VisualGroup3D.getPrototype(name: Name): VisualObject3D? =
+tailrec fun PrototypeHolder.getPrototype(name: Name): VisualObject3D? =
     prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
-
-/**
- * Create or edit prototype node as a group
- */
-inline fun VisualGroup3D.prototypes(builder: VisualGroup3D.() -> Unit): Unit {
-    (prototypes ?: VisualGroup3D().also { prototypes = it }).run(builder)
-}
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
-fun VisualGroup3D.group(name: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
+fun MutableVisualGroup.group(name: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
     VisualGroup3D().apply(action).also {
         set(name, it)
     }
 
+internal class Prototypes(
+    override var children: MutableMap<NameToken, VisualObject> = LinkedHashMap()
+) : AbstractVisualGroup(), MutableVisualGroup, PrototypeHolder {
+
+    override val styleSheet: StyleSheet? get() = null
+
+    override fun removeChild(token: NameToken) {
+        children.remove(token)
+        childrenChanged(token.asName(), null)
+    }
+
+    override fun setChild(token: NameToken, child: VisualObject) {
+        children[token] = child
+    }
+
+    override fun createGroup(): Prototypes = Prototypes()
+
+    override var properties: Config? = null
+
+    override val prototypes: MutableVisualGroup get() = this
+
+    override fun attachChildren() {
+        children.values.forEach {
+            it.parent = parent
+            (it as? VisualGroup)?.attachChildren()
+        }
+    }
+}

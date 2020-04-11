@@ -1,7 +1,11 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.double
+import hep.dataforge.names.NameToken
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.VisualObject
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 
@@ -90,4 +94,25 @@ object Point2DSerializer : KSerializer<Point2D> {
             if (value.y != 0.0) encodeDoubleElement(descriptor, 1, value.y)
         }
     }
+}
+
+@Serializer(MutableVisualGroup::class)
+internal object PrototypesSerializer : KSerializer<MutableVisualGroup> {
+    private val mapSerializer: KSerializer<Map<NameToken, VisualObject>> =
+        MapSerializer(
+            NameToken.serializer(),
+            PolymorphicSerializer(VisualObject::class)
+        )
+    override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
+
+    override fun deserialize(decoder: Decoder): MutableVisualGroup {
+        val map = mapSerializer.deserialize(decoder)
+        return Prototypes(map as? MutableMap<NameToken, VisualObject> ?: LinkedHashMap(map))
+    }
+
+    override fun serialize(encoder: Encoder, value: MutableVisualGroup) {
+        mapSerializer.serialize(encoder, value.children)
+    }
+
+
 }
