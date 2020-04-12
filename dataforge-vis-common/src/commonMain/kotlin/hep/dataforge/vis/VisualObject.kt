@@ -9,6 +9,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vis.VisualObject.Companion.TYPE
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
 
 //private fun Laminate.withTop(meta: Meta): Laminate = Laminate(listOf(meta) + layers)
@@ -63,6 +64,10 @@ interface VisualObject : Configurable {
     companion object {
         const val TYPE = "visual"
         val STYLE_KEY = "@style".asName()
+
+        private val VISUAL_OBJECT_SERIALIZER = PolymorphicSerializer(VisualObject::class)
+
+        fun serializer() = VISUAL_OBJECT_SERIALIZER
 
         //const val META_KEY = "@meta"
         //const val TAGS_KEY = "@tags"

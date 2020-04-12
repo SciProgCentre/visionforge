@@ -27,7 +27,6 @@ interface PrototypeHolder {
 class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
 
     override var styleSheet: StyleSheet? = null
-        private set
 
     /**
      * A container for templates visible inside this group
@@ -63,14 +62,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
         super.attachChildren()
     }
 
-    /**
-     * Update or create stylesheet
-     */
-    fun styleSheet(block: StyleSheet.() -> Unit) {
-        val res = styleSheet ?: StyleSheet(this).also { styleSheet = it }
-        res.block()
-    }
-
     override fun removeChild(token: NameToken) {
         _children.remove(token)?.apply { parent = null }
     }
@@ -86,20 +77,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
 
     override fun createGroup(): VisualGroup3D = VisualGroup3D()
 
-//        return when {
-//            name.isEmpty() -> error("Should be unreachable")
-//            name.length == 1 -> {
-//                val token = name.first()!!
-//                when (val current = children[token]) {
-//                    null -> VisualGroup3D().also { setChild(token, it) }
-//                    is VisualGroup3D -> current
-//                    else -> error("Can't create group with name $name because it exists and not a group")
-//                }
-//            }
-//            else -> createGroup(name.first()!!.asName()).createGroup(name.cutFirst())
-//        }
-//    }
-
 
     companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
@@ -108,8 +85,6 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
             Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
-
-fun VisualGroup3D.stringify(): String = Visual3D.json.stringify(VisualGroup3D.serializer(),this)
 
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found
@@ -129,7 +104,11 @@ internal class Prototypes(
     override var children: MutableMap<NameToken, VisualObject> = LinkedHashMap()
 ) : AbstractVisualGroup(), MutableVisualGroup, PrototypeHolder {
 
-    override val styleSheet: StyleSheet? get() = null
+    override var styleSheet: StyleSheet?
+        get() = null
+        set(value) {
+            error("Can't define stylesheet for prototypes block")
+        }
 
     override fun removeChild(token: NameToken) {
         children.remove(token)
@@ -140,9 +119,13 @@ internal class Prototypes(
         children[token] = child
     }
 
-    override fun createGroup(): Prototypes = Prototypes()
+    override fun createGroup() = SimpleVisualGroup()
 
-    override var properties: Config? = null
+    override var properties: Config?
+        get() = null
+        set(value) {
+            error("Can't define properties for prototypes block")
+        }
 
     override val prototypes: MutableVisualGroup get() = this
 

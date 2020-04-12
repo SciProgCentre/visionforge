@@ -154,11 +154,10 @@ val VisualObject.prototype: VisualObject
 /**
  * Create ref for existing prototype
  */
-inline fun VisualGroup3D.ref(
+fun VisualGroup3D.ref(
     templateName: Name,
-    name: String = "",
-    block: Proxy.() -> Unit = {}
-) = Proxy(this, templateName).apply(block).also { set(name, it) }
+    name: String = ""
+): Proxy = Proxy(this, templateName).also { set(name, it) }
 
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
@@ -166,8 +165,7 @@ inline fun VisualGroup3D.ref(
 fun VisualGroup3D.proxy(
     name: String,
     obj: VisualObject3D,
-    templateName: Name = name.toName(),
-    block: Proxy.() -> Unit = {}
+    templateName: Name = name.toName()
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
@@ -177,5 +175,14 @@ fun VisualGroup3D.proxy(
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }
-    return ref(templateName, name, block)
+    return ref(templateName, name)
+}
+
+fun VisualGroup3D.proxyGroup(
+    name: String,
+    templateName: Name = name.toName(),
+    block: MutableVisualGroup.() -> Unit
+): Proxy {
+    val group = VisualGroup3D().apply(block)
+    return proxy(name, group, templateName)
 }

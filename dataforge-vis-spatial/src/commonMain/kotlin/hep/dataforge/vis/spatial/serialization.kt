@@ -3,6 +3,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.double
 import hep.dataforge.names.NameToken
 import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
@@ -98,11 +99,13 @@ object Point2DSerializer : KSerializer<Point2D> {
 
 @Serializer(MutableVisualGroup::class)
 internal object PrototypesSerializer : KSerializer<MutableVisualGroup> {
+
     private val mapSerializer: KSerializer<Map<NameToken, VisualObject>> =
         MapSerializer(
             NameToken.serializer(),
-            PolymorphicSerializer(VisualObject::class)
+            VisualObject.serializer()
         )
+
     override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
 
     override fun deserialize(decoder: Decoder): MutableVisualGroup {
@@ -113,6 +116,12 @@ internal object PrototypesSerializer : KSerializer<MutableVisualGroup> {
     override fun serialize(encoder: Encoder, value: MutableVisualGroup) {
         mapSerializer.serialize(encoder, value.children)
     }
+}
 
+fun VisualObject.stringify(): String = Visual3D.json.stringify(VisualObject.serializer(), this)
 
+fun VisualObject.Companion.parseJson(str: String) = Visual3D.json.parse(VisualObject.serializer(), str).also {
+    if(it is VisualGroup){
+        it.attachChildren()
+    }
 }

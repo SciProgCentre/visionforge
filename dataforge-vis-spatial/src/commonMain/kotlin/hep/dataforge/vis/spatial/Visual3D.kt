@@ -7,6 +7,7 @@ import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
+import hep.dataforge.vis.SimpleVisualGroup
 import hep.dataforge.vis.Visual
 import hep.dataforge.vis.VisualObject
 import kotlinx.serialization.json.Json
@@ -38,23 +39,26 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
             contextual(Point2DSerializer)
 
             polymorphic(VisualObject::class, VisualObject3D::class) {
-                VisualGroup3D::class with VisualGroup3D.serializer()
-                Proxy::class with Proxy.serializer()
-                Composite::class with Composite.serializer()
-                Tube::class with Tube.serializer()
-                Box::class with Box.serializer()
-                Convex::class with Convex.serializer()
-                Extruded::class with Extruded.serializer()
+                subclass(SimpleVisualGroup.serializer())
+                subclass(VisualGroup3D.serializer())
+                subclass(Proxy.serializer())
+                subclass(Composite.serializer())
+                subclass(Tube.serializer())
+                subclass(Box.serializer())
+                subclass(Convex.serializer())
+                subclass(Extruded.serializer())
                 subclass(PolyLine.serializer())
                 subclass(Label3D.serializer())
+                subclass(Sphere.serializer())
             }
         }
 
-        val json = Json(
+        internal val json = Json(
             JsonConfiguration(
                 prettyPrint = true,
                 useArrayPolymorphism = false,
-                encodeDefaults = false
+                encodeDefaults = false,
+                ignoreUnknownKeys = true
             ),
             context = serialModule
         )

@@ -11,8 +11,7 @@ import kotlinx.serialization.Transient
 /**
  * Abstract implementation of mutable group of [VisualObject]
  */
-abstract class AbstractVisualGroup : AbstractVisualObject(),
-    MutableVisualGroup {
+abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -20,6 +19,17 @@ abstract class AbstractVisualGroup : AbstractVisualObject(),
      * A map of top level named children
      */
     abstract override val children: Map<NameToken, VisualObject>
+
+    abstract override var styleSheet: StyleSheet?
+        protected set
+
+    /**
+     * Update or create stylesheet
+     */
+    fun styleSheet(block: StyleSheet.() -> Unit) {
+        val res = styleSheet ?: StyleSheet(this).also { styleSheet = it }
+        res.block()
+    }
 
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
         super.propertyChanged(name, before, after)
