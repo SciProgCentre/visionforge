@@ -28,6 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.js.button
 import kotlinx.html.js.onClickFunction
+import kotlinx.serialization.json.Json
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 import kotlin.dom.clear
@@ -38,7 +39,7 @@ private class MMDemoApp : Application {
 
     private val connection = HttpClient {
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Visual3D.json)
+            serializer = KotlinxSerializer(Json(context = Visual3D.serialModule))
         }
     }
 

@@ -35,7 +35,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(json = Visual3D.json)
+        json(module = Visual3D.serialModule)
     }
     install(Routing) {
         get("/event") {

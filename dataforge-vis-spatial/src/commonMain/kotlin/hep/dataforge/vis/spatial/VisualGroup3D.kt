@@ -106,7 +106,7 @@ internal class Prototypes(
 
     override var styleSheet: StyleSheet?
         get() = null
-        set(value) {
+        set(_) {
             error("Can't define stylesheet for prototypes block")
         }
 
@@ -123,7 +123,7 @@ internal class Prototypes(
 
     override var properties: Config?
         get() = null
-        set(value) {
+        set(_) {
             error("Can't define properties for prototypes block")
         }
 

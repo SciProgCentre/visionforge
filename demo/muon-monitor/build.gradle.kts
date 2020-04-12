@@ -15,7 +15,7 @@ kotlin {
 
     jvm {
         withJava()
-        compilations.findByName("main").apply {
+        compilations.findByName("jvmMain").apply {
             tasks.getByName<ProcessResources>("jvmProcessResources") {
                 dependsOn(installJS)
                 afterEvaluate {

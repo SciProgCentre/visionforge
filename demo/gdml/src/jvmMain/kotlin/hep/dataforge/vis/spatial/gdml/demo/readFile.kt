@@ -34,14 +34,14 @@ fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
     file.name.endsWith("json.zip") -> {
         file.inputStream().use {
             val unzip = ZipInputStream(it, Charsets.UTF_8)
-            val text = unzip.readAllBytes().decodeToString()
+            val text = unzip.readBytes().decodeToString()
             VisualGroup3D.parseJson(text)
         }
     }
     file.name.endsWith("json.gz") -> {
         file.inputStream().use {
             val unzip = GZIPInputStream(it)
-            val text = unzip.readAllBytes().decodeToString()
+            val text = unzip.readBytes().decodeToString()
             VisualGroup3D.parseJson(text)
         }
     }
