@@ -1,24 +1,24 @@
-package hep.dataforge.vis.spatial.gdml
+package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.JSON_PRETTY
-import hep.dataforge.meta.Meta
-import hep.dataforge.vis.spatial.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerialModule
 import kotlinx.serialization.modules.SerialModuleCollector
 import kotlin.reflect.KClass
 
-internal val SerialDescriptor.jsonType
-    get() = when (this.kind) {
-        StructureKind.LIST -> "array"
-        PrimitiveKind.BYTE, PrimitiveKind.SHORT, PrimitiveKind.INT, PrimitiveKind.LONG,
-        PrimitiveKind.FLOAT, PrimitiveKind.DOUBLE -> "number"
-        PrimitiveKind.STRING, PrimitiveKind.CHAR, UnionKind.ENUM_KIND -> "string"
-        PrimitiveKind.BOOLEAN -> "boolean"
-        else -> "object"
-    }
+private fun SerialDescriptor.getJsonType() = when (this.kind) {
+    StructureKind.LIST -> "array"
+    PrimitiveKind.BYTE, PrimitiveKind.SHORT, PrimitiveKind.INT, PrimitiveKind.LONG,
+    PrimitiveKind.FLOAT, PrimitiveKind.DOUBLE -> "number"
+    PrimitiveKind.STRING, PrimitiveKind.CHAR, UnionKind.ENUM_KIND -> "string"
+    PrimitiveKind.BOOLEAN -> "boolean"
+    else -> "object"
+}
 
+private fun SerialDescriptor.isVisualObject() = serialName.startsWith("3d")||serialName.startsWith("group")
+
+private const val definitionNode = "\$defs"
 
 private fun SerialModule.enumerate(type: KClass<*>): Sequence<SerialDescriptor> {
     val list = ArrayList<SerialDescriptor>()
@@ -63,11 +63,14 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
 
     if (descriptor.serialName in arrayOf(
             "hep.dataforge.vis.spatial.Point3D",
+            "hep.dataforge.vis.spatial.Point3D?",
             "hep.dataforge.vis.spatial.Point2D",
-            Meta::class.qualifiedName
+            "hep.dataforge.vis.spatial.Point2D?",
+            "hep.dataforge.meta.Meta",
+            "hep.dataforge.meta.Meta?"
         )
     ) return json {
-        "\$ref" to "#/definitions/${descriptor.serialName}"
+        "\$ref" to "#/$definitionNode/${descriptor.serialName.replace("?", "")}"
     }
 
 
@@ -80,35 +83,33 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
     if (!isEnum && !isPolymorphic) descriptor.elementDescriptors().forEachIndexed { index, child ->
         val elementName = descriptor.getElementName(index)
 
-        properties[elementName] = when (elementName) {
-            "templates" ->  json {
-                "\$ref" to "#/definitions/hep.dataforge.vis.spatial.VisualGroup3D"
+        val elementSchema = when (elementName) {
+            "properties" -> json {
+                "\$ref" to "#/$definitionNode/hep.dataforge.meta.Meta"
             }
-            "properties" ->  json {
-                "\$ref" to "#/definitions/${Meta::class.qualifiedName}"
-            }
-            "first", "second" -> json{
-                "\$ref" to "#/definitions/children"
+            "first", "second" -> json {
+                "\$ref" to "#/$definitionNode/children"
             }
             "styleSheet" -> json {
                 "type" to "object"
                 "additionalProperties" to json {
-                    "\$ref" to "#/definitions/${Meta::class.qualifiedName}"
+                    "\$ref" to "#/$definitionNode/hep.dataforge.meta.Meta"
                 }
             }
-            in arrayOf("children") ->  json {
+            in arrayOf("children", "prototypes") -> json {
                 "type" to "object"
                 "additionalProperties" to json {
-                    "\$ref" to "#/definitions/children"
+                    "\$ref" to "#/$definitionNode/children"
                 }
             }
             else -> jsonSchema(child, context)
         }
+        properties[elementName] = elementSchema
 
         if (!descriptor.isElementOptional(index)) requiredProperties.add(elementName)
     }
 
-    val jsonType = descriptor.jsonType
+    val jsonType = descriptor.getJsonType()
     val objectData: MutableMap<String, JsonElement> = mutableMapOf(
         "description" to JsonLiteral(descriptor.serialName),
         "type" to JsonLiteral(jsonType)
@@ -119,6 +120,11 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
     }
     when (jsonType) {
         "object" -> {
+            if(descriptor.isVisualObject()) {
+                properties["type"] = json {
+                    "const" to descriptor.serialName
+                }
+            }
             objectData["properties"] = JsonObject(properties)
             val required = requiredProperties.map { JsonLiteral(it) }
             if (required.isNotEmpty()) {
@@ -143,7 +149,7 @@ fun main() {
                 context.enumerate(VisualObject3D::class).forEach {
                     if (it.serialName == "hep.dataforge.vis.spatial.VisualGroup3D") {
                         +json {
-                            "\$ref" to "#/definitions/${it.serialName}"
+                            "\$ref" to "#/$definitionNode/${it.serialName}"
                         }
                     } else {
                         +jsonSchema(it, context)
@@ -151,9 +157,38 @@ fun main() {
                 }
             }
         }
-        "hep.dataforge.vis.spatial.Point3D" to jsonSchema(Point3DSerializer.descriptor, context)
-        "hep.dataforge.vis.spatial.Point2D" to jsonSchema(Point2DSerializer.descriptor, context)
-        "hep.dataforge.vis.spatial.VisualGroup3D" to jsonSchema(VisualGroup3D.serializer().descriptor, context)
+        "hep.dataforge.meta.Meta" to json {
+            "type" to "object"
+        }
+        "hep.dataforge.vis.spatial.Point3D" to json {
+            "type" to "object"
+            "properties" to json {
+                "x" to json {
+                    "type" to "number"
+                }
+                "y" to json {
+                    "type" to "number"
+                }
+                "z" to json {
+                    "type" to "number"
+                }
+            }
+        }
+        "hep.dataforge.vis.spatial.Point2D" to json {
+            "type" to "object"
+            "properties" to json {
+                "x" to json {
+                    "type" to "number"
+                }
+                "y" to json {
+                    "type" to "number"
+                }
+            }
+        }
+        "hep.dataforge.vis.spatial.VisualGroup3D" to jsonSchema(
+            VisualGroup3D.serializer().descriptor,
+            context
+        )
 
     }
 
@@ -161,8 +196,8 @@ fun main() {
         JSON_PRETTY.stringify(
             JsonObjectSerializer,
             json {
-                "definitions" to definitions
-                "\$ref" to "#/definitions/hep.dataforge.vis.spatial.VisualGroup3D"
+                "\$defs" to definitions
+                "\$ref" to "#/$definitionNode/hep.dataforge.vis.spatial.VisualGroup3D"
             }
         )
     )
