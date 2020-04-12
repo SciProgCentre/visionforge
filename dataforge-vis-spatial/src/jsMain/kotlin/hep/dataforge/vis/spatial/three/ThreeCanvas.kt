@@ -2,17 +2,17 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.get
+import hep.dataforge.meta.getProperty
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.Colors
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.specifications.CameraSpec
-import hep.dataforge.vis.spatial.specifications.CanvasSpec
-import hep.dataforge.vis.spatial.specifications.ControlsSpec
+import hep.dataforge.vis.spatial.specifications.Camera
+import hep.dataforge.vis.spatial.specifications.Canvas
+import hep.dataforge.vis.spatial.specifications.Controls
 import hep.dataforge.vis.spatial.three.ThreeMaterials.HIGHLIGHT_MATERIAL
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
@@ -39,7 +39,7 @@ import kotlin.math.sin
 /**
  *
  */
-class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: CanvasSpec) : Renderer<VisualObject3D> {
+class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canvas) : Renderer<VisualObject3D> {
 
     override val context: Context get() = three.context
 
@@ -53,15 +53,15 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
 
     var clickListener: ((Name) -> Unit)? = null
 
-    val axes = AxesHelper(spec.axes.size.toInt()).apply {
-        visible = spec.axes.visible
+    val axes = AxesHelper(canvas.axes.size.toInt()).apply {
+        visible = canvas.axes.visible
     }
 
     val scene: Scene = Scene().apply {
         add(axes)
     }
 
-    val camera = buildCamera(spec.camera)
+    val camera = buildCamera(canvas.camera)
 
     init {
         element.clear()
@@ -90,7 +90,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
 
         }
 
-        addControls(renderer.domElement, spec.controls)
+        addControls(renderer.domElement, canvas.controls)
 
         fun animate() {
             val mesh = pick()
@@ -108,7 +108,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
 
         element.appendChild(renderer.domElement)
 
-        renderer.setSize(max(spec.minSize, element.offsetWidth), max(spec.minSize, element.offsetWidth))
+        renderer.setSize(max(canvas.minSize, element.offsetWidth), max(canvas.minSize, element.offsetWidth))
 
         element.onresize = {
             renderer.setSize(element.offsetWidth, element.offsetWidth)
@@ -142,7 +142,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
         }
     }
 
-    private fun buildCamera(spec: CameraSpec) = PerspectiveCamera(
+    private fun buildCamera(spec: Camera) = PerspectiveCamera(
         spec.fov,
         1.0,
         spec.nearClip,
@@ -153,8 +153,8 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
         translateZ(spec.distance * sin(spec.zenith) * cos(spec.azimuth))
     }
 
-    private fun addControls(element: Node, controlsSpec: ControlsSpec) {
-        when (controlsSpec["type"].string) {
+    private fun addControls(element: Node, controls: Controls) {
+        when (controls.getProperty("type").string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }
@@ -211,5 +211,9 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val spec: Canvas
     }
 }
 
-fun ThreePlugin.output(element: HTMLElement, spec: CanvasSpec = CanvasSpec.empty()): ThreeCanvas =
+fun ThreePlugin.output(element: HTMLElement, spec: Canvas = Canvas.empty()): ThreeCanvas =
     ThreeCanvas(element, this, spec)
+
+fun ThreePlugin.render(element: HTMLElement, obj: VisualObject3D, spec: Canvas = Canvas.empty()): Unit =
+    output(element, spec).render(obj)
+

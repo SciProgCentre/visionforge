@@ -2,15 +2,11 @@
 package hep.dataforge.vis.spatial
 
 import hep.dataforge.context.Context
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.VisualFactory
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.*
 import hep.dataforge.vis.spatial.Box.Companion.TYPE_NAME
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -29,7 +25,6 @@ class Box(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     //TODO add helper for color configuration
@@ -69,7 +64,7 @@ class Box(
     }
 }
 
-inline fun VisualGroup3D.box(
+inline fun MutableVisualGroup.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,

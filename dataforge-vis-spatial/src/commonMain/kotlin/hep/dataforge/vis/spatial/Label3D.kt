@@ -2,19 +2,17 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("3d.label")
-class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVisualObject(),
-    VisualObject3D {
-    @Serializable(ConfigSerializer::class)
+class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVisualObject(), VisualObject3D {
     override var properties: Config? = null
 
     override var position: Point3D? = null
@@ -23,7 +21,7 @@ class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : 
 
 }
 
-fun VisualGroup3D.label(
+fun MutableVisualGroup.label(
     text: String,
     fontSize: Number = 20,
     fontFamily: String = "Arial",

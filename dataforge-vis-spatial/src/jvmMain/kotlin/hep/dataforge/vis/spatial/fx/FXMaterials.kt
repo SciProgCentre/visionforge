@@ -5,7 +5,7 @@ import hep.dataforge.meta.double
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
-import hep.dataforge.vis.common.Colors
+import hep.dataforge.vis.Colors
 import hep.dataforge.vis.spatial.Material3D
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material

@@ -1,4 +1,4 @@
-@file:JsModule("@hi-level/three-csg")
+@file:JsModule("three-csg-ts")
 @file:JsNonModule
 @file:Suppress(
     "INTERFACE_WITH_SUPERCLASS",

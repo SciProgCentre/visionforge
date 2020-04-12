@@ -1,6 +1,6 @@
 package hep.dataforge.vis.spatial.transform
 
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 
 /**
  * A root class for [VisualObject] tree optimization

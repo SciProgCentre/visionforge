@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial.fx
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.Proxy
 import javafx.scene.Group
 import javafx.scene.Node

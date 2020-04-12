@@ -6,11 +6,11 @@ import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.fx.FX3DPlugin
 import hep.dataforge.vis.spatial.fx.FXCanvas3D
-import hep.dataforge.vis.spatial.specifications.AxesSpec
-import hep.dataforge.vis.spatial.specifications.CanvasSpec
+import hep.dataforge.vis.spatial.specifications.Axes as AxesSpec
+import hep.dataforge.vis.spatial.specifications.Canvas as CanvasSpec
 import javafx.collections.FXCollections
 import javafx.scene.Parent
 import javafx.scene.control.Tab

@@ -1,13 +1,15 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, NameTokenSerializer::class)
+@file:UseSerializers(Point3DSerializer::class)
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.values.ValueType
+import hep.dataforge.values.asValue
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
@@ -25,7 +27,8 @@ interface VisualObject3D : VisualObject {
     companion object {
 
         val VISIBLE_KEY = "visible".asName()
-//        val SELECTED_KEY = "selected".asName()
+
+        //        val SELECTED_KEY = "selected".asName()
         val DETAIL_KEY = "detail".asName()
         val LAYER_KEY = "layer".asName()
         val IGNORE_KEY = "ignore".asName()
@@ -55,6 +58,22 @@ interface VisualObject3D : VisualObject {
         val xScale = scale + x
         val yScale = scale + y
         val zScale = scale + z
+
+        val descriptor by lazy {
+            NodeDescriptor {
+                defineValue(VISIBLE_KEY) {
+                    type(ValueType.BOOLEAN)
+                    default(true)
+                }
+
+                defineItem(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
+
+//                Material3D.MATERIAL_COLOR_KEY put "#ffffff"
+//                Material3D.MATERIAL_OPACITY_KEY put 1.0
+//                Material3D.MATERIAL_WIREFRAME_KEY put false
+
+            }
+        }
     }
 }
 
@@ -64,10 +83,10 @@ interface VisualObject3D : VisualObject {
 var VisualObject3D.layer: Int
     get() = getProperty(LAYER_KEY).int ?: 0
     set(value) {
-        setProperty(LAYER_KEY, value)
+        setProperty(LAYER_KEY, value.asValue())
     }
 
-fun Renderer<VisualObject3D>.render(meta: Meta = EmptyMeta, action: VisualGroup3D.() -> Unit) =
+fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisualGroup3D.() -> Unit) =
     render(VisualGroup3D().apply(action), meta)
 
 // Common properties
@@ -86,7 +105,7 @@ enum class RotationOrder {
  */
 var VisualObject3D.rotationOrder: RotationOrder
     get() = getProperty(VisualObject3D.rotationOrder).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(VisualObject3D.rotationOrder, value.name)
+    set(value) = setProperty(VisualObject3D.rotationOrder, value.name.asValue())
 
 
 /**
@@ -94,19 +113,19 @@ var VisualObject3D.rotationOrder: RotationOrder
  */
 var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setProperty(DETAIL_KEY, value)
+    set(value) = setProperty(DETAIL_KEY, value?.asValue())
 
 var VisualObject.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
-    set(value) = setProperty(VISIBLE_KEY, value)
+    set(value) = setProperty(VISIBLE_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
  * Property is not inherited.
  */
 var VisualObject.ignore: Boolean?
-    get() = getProperty(IGNORE_KEY,false).boolean
-    set(value) = setProperty(IGNORE_KEY, value)
+    get() = getProperty(IGNORE_KEY, false).boolean
+    set(value) = setProperty(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean

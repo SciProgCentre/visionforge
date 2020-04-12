@@ -4,7 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import javafx.application.Platform
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*

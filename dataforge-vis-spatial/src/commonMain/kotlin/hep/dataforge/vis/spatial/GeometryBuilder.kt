@@ -1,6 +1,5 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.meta.EmptyMeta
 import hep.dataforge.meta.Meta
 
 /**
@@ -14,7 +13,7 @@ interface GeometryBuilder<T : Any> {
      * @param normal optional external normal to the face
      * @param meta optional additional platform-specific parameters like color or texture index
      */
-    fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D? = null, meta: Meta = EmptyMeta)
+    fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D? = null, meta: Meta = Meta.EMPTY)
 
     fun build(): T
 }
@@ -25,7 +24,7 @@ fun GeometryBuilder<*>.face4(
     vertex3: Point3D,
     vertex4: Point3D,
     normal: Point3D? = null,
-    meta: Meta = EmptyMeta
+    meta: Meta = Meta.EMPTY
 ) {
     face(vertex1, vertex2, vertex3, normal, meta)
     face(vertex1, vertex3, vertex4, normal, meta)

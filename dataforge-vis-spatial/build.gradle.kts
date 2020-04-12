@@ -1,17 +1,12 @@
-import org.openjfx.gradle.JavaFXOptions
-import scientifik.useSerialization
+import scientifik.serialization
 
 plugins {
     id("scientifik.mpp")
-    id("org.openjfx.javafxplugin")
 }
 
-useSerialization()
+serialization()
 
 kotlin {
-    jvm {
-        withJava()
-    }
     sourceSets {
         commonMain {
             dependencies {
@@ -32,14 +27,9 @@ kotlin {
         jsMain {
             dependencies {
 //                api(project(":wrappers"))
-                implementation(npm("three", "0.106.2"))
-                implementation(npm("@hi-level/three-csg", "1.0.6"))
+                implementation(npm("three", "0.114.0"))
+                implementation(npm("three-csg-ts", "1.0.1"))
             }
         }
     }
 }
-
-configure<JavaFXOptions> {
-    modules("javafx.controls")
-}
-

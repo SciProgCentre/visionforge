@@ -1,5 +1,7 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
+import hep.dataforge.meta.setProperty
+import hep.dataforge.values.asValue
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
@@ -18,7 +20,7 @@ fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
 
             solidConfiguration = { parent, solid ->
                 if (solid.name == "cave") {
-                    setProperty(Material3D.MATERIAL_WIREFRAME_KEY, true)
+                    setProperty(Material3D.MATERIAL_WIREFRAME_KEY, true.asValue())
                 }
                 if (parent.physVolumes.isNotEmpty()) {
                     useStyle("opaque") {
@@ -28,19 +30,19 @@ fun Visual3D.Companion.readFile(file: File): VisualGroup3D = when {
             }
         }
     }
-    file.extension == "json" -> VisualGroup3D.fromJson(file.readText())
+    file.extension == "json" -> VisualGroup3D.parseJson(file.readText())
     file.name.endsWith("json.zip") -> {
         file.inputStream().use {
             val unzip = ZipInputStream(it, Charsets.UTF_8)
-            val text = unzip.readAllBytes().decodeToString()
-            VisualGroup3D.fromJson(text)
+            val text = unzip.readBytes().decodeToString()
+            VisualGroup3D.parseJson(text)
         }
     }
     file.name.endsWith("json.gz") -> {
         file.inputStream().use {
             val unzip = GZIPInputStream(it)
-            val text = unzip.readAllBytes().decodeToString()
-            VisualGroup3D.fromJson(text)
+            val text = unzip.readBytes().decodeToString()
+            VisualGroup3D.parseJson(text)
         }
     }
     else -> error("Unknown extension ${file.extension}")

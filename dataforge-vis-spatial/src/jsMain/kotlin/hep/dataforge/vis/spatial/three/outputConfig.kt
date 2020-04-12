@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.js.requireJS
-import hep.dataforge.vis.js.editor.accordion
+import hep.dataforge.vis.editor.accordion
 import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import kotlinx.html.InputType

@@ -3,7 +3,7 @@ package hep.dataforge.vis.spatial.three
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.*
 import info.laht.threekt.core.Object3D
 import kotlin.collections.set

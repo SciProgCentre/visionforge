@@ -5,7 +5,7 @@ import hep.dataforge.context.ContextAware
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Renderer
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.specifications.CanvasSpec
+import hep.dataforge.vis.spatial.specifications.Canvas
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -14,7 +14,7 @@ import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
 import tornadofx.*
 
-class FXCanvas3D(val plugin: FX3DPlugin, val spec: CanvasSpec = CanvasSpec.empty()) :
+class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas = Canvas.empty()) :
     Fragment(), Renderer<VisualObject3D>, ContextAware {
 
     override val context: Context get() = plugin.context
