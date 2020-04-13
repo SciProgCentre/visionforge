@@ -75,7 +75,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
     private val onValueChange: (Event) -> Unit = {
         val value = (it.target as HTMLInputElement).value
         try {
-            if(value.isEmpty()){
+            if (value.isEmpty()) {
                 props.root.remove(props.name)
             }
             props.root.setValue(props.name, value.asValue())
@@ -94,7 +94,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
 
         when (actualItem) {
             is MetaItem.NodeItem -> {
-                div("d-inline-block text-truncate") {
+                div("d-block text-truncate") {
                     span("tree-caret") {
                         attrs {
                             if (state.expanded) {
@@ -139,7 +139,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                 }
             }
             is MetaItem.ValueItem -> {
-                div("d-inline-block text-truncate") {
+                div("d-block text-truncate") {
                     div("row") {
                         div("col") {
                             p("tree-label") {
@@ -152,15 +152,13 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                             }
                         }
                         div("col") {
-                            div("float-right") {
-                                input(type = InputType.text) {
-                                    attrs {
-                                        defaultValue = actualItem.value.string
-                                        onChangeFunction = onValueChange
-                                    }
+                            input(type = InputType.text, classes = "float-right") {
+                                attrs {
+                                    defaultValue = actualItem.value.string
+                                    onChangeFunction = onValueChange
                                 }
-                                //+actualItem.value.toString()
                             }
+                            //+actualItem.value.toString()
                         }
                     }
                 }
