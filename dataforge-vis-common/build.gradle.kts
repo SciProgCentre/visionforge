@@ -39,8 +39,10 @@ kotlin {
                 api(npm("styled-components"))
                 api(npm("inline-style-prefixer"))
 
-
+                api(npm("source-map-resolve","0.6.0"))
                 api(npm("bootstrap","4.3.1"))
+                api(npm("popper.js","1.14.7"))
+                api(npm("jquery","3.5.0"))
                 //api(npm("jsoneditor", "8.6.1"))
                 api(npm("file-saver","2.0.2"))
             }

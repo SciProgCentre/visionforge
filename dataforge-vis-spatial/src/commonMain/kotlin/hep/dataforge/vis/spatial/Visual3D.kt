@@ -10,6 +10,7 @@ import hep.dataforge.names.toName
 import hep.dataforge.vis.SimpleVisualGroup
 import hep.dataforge.vis.Visual
 import hep.dataforge.vis.VisualObject
+import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerializersModule
@@ -53,6 +54,7 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
+        @OptIn(UnstableDefault::class)
         internal val json = Json(
             JsonConfiguration(
                 prettyPrint = true,

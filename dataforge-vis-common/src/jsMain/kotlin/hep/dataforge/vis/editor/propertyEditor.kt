@@ -93,7 +93,7 @@ fun RBuilder.visualPropertyEditor(
             }
         }
     }
-    configEditor(item.config, descriptor, Meta(default))
+    configEditor(item, descriptor, Meta(default))
 }
 
 fun Element.visualPropertyEditor(

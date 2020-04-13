@@ -41,15 +41,15 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
         //display as node if any child is visible
         if (obj is VisualGroup && obj.children.keys.any { !it.body.startsWith("@") }) {
             div("d-inline-block text-truncate") {
-                span("objTree-caret") {
+                span("tree-caret") {
                     attrs {
                         if (state.expanded) {
-                            classes += "objTree-caret-down"
+                            classes += "tree-caret-down"
                         }
                         onClickFunction = onClick
                     }
                 }
-                label("objTree-label") {
+                a("#",classes = "tree-label") {
                     +token
                     attrs {
                         onClickFunction = { props.clickCallback(props.name) }
@@ -57,12 +57,12 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
                 }
             }
             if (state.expanded) {
-                ul("objTree-subtree") {
+                ul("tree") {
                     obj.children.entries
                         .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
                         .sortedBy { (it.value as? VisualGroup)?.isEmpty ?: true }
                         .forEach { (childToken, child) ->
-                            li {
+                            li("tree-item") {
                                 child(ObjectTreeComponent::class) {
                                     attrs {
                                         name = props.name + childToken
@@ -76,8 +76,8 @@ class ObjectTreeComponent : RComponent<ObjectTreeProps, TreeState>() {
             }
         } else {
             div("d-inline-block text-truncate") {
-                span("objTree-leaf") {}
-                label("objTree-label") {
+                span("tree-leaf") {}
+                a("#",classes = "tree-label") {
                     +token
                     attrs {
                         onClickFunction = { props.clickCallback(props.name) }

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define/>
+  <materials>
+    <material name="Vacuum" Z="1">
+      <D unit="g/cm3" value="0"/>
+      <atom unit="g/mole" value="0"/>
+    </material>
+    <material name="Al" Z="13">
+      <D unit="g/cm3" value="2.7000000000000002"/>
+      <atom unit="g/mole" value="26.98"/>
+    </material>
+  </materials>
+  <solids>
+    <box name="R" x="50" y="50" z="10" lunit="cm"/>
+  </solids>
+  <structure>
+    <volume name="R">
+      <materialref ref="Vacuum"/>
+      <solidref ref="R"/>
+    </volume>
+  </structure>
+  <setup name="default" version="1.0">
+    <world ref="R"/>
+  </setup>
+</gdml>

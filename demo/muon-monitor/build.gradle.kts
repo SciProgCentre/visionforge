@@ -13,9 +13,19 @@ kotlin {
 
     val installJS = tasks.getByName("jsBrowserDistribution")
 
+    js{
+        browser {
+            dceTask {
+                dceOptions {
+                    keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
+                }
+            }
+        }
+    }
+
     jvm {
         withJava()
-        compilations.findByName("jvmMain").apply {
+        compilations.findByName("main").apply {
             tasks.getByName<ProcessResources>("jvmProcessResources") {
                 dependsOn(installJS)
                 afterEvaluate {

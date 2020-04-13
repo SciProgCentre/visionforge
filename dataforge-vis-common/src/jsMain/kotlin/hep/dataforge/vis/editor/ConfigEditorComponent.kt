@@ -1,6 +1,7 @@
 package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.ItemDescriptor
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
 import hep.dataforge.meta.descriptors.get
@@ -13,6 +14,7 @@ import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
+import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.RBuilder
 import react.RComponent
@@ -47,7 +49,7 @@ interface ConfigEditorProps : RProps {
 class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
 
     override fun TreeState.init() {
-        expanded = false
+        expanded = true
     }
 
     override fun componentDidMount() {
@@ -70,85 +72,96 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
         }
     }
 
+    private val onValueChange: (Event) -> Unit = {
+        val value = (it.target as HTMLInputElement).value
+        try {
+            if(value.isEmpty()){
+                props.root.remove(props.name)
+            }
+            props.root.setValue(props.name, value.asValue())
+        } catch (ex: Exception) {
+            console.error("Can't set config property ${props.name} to $value")
+        }
+    }
+
 
     override fun RBuilder.render() {
         val item = props.root[props.name]
-        val descriptorItem = props.descriptor?.get(props.name)
+        val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
         val defaultItem = props.default?.get(props.name)
         val actualItem = item ?: defaultItem ?: descriptorItem?.defaultItem()
-        val token = props.name.last()
+        val token = props.name.last()?.toString() ?: "Properties"
 
-        div("d-inline-block text-truncate") {
-            when (actualItem) {
-                null -> {
-                }
-                is MetaItem.ValueItem -> {
-                    i("tree-caret") { }
-                }
-                is MetaItem.NodeItem -> {
-                    i("tree-caret fa fa-caret-right") {
+        when (actualItem) {
+            is MetaItem.NodeItem -> {
+                div("d-inline-block text-truncate") {
+                    span("tree-caret") {
                         attrs {
                             if (state.expanded) {
-                                classes += "rotate"
+                                classes += "tree-caret-down"
                             }
                             onClickFunction = onClick
                         }
                     }
-                }
-            }
-            label("tree-label") {
-                +token.toString()
-                attrs {
-                    if (item == null) {
-                        classes += "tree-label-inactive"
-                    }
-                }
-            }
-
-            if (actualItem is MetaItem.NodeItem && state.expanded) {
-                ul("tree") {
-                    val keys = buildList<NameToken> {
-                        item?.node?.items?.keys?.let { addAll(it) }
-                        defaultItem?.node?.items?.keys?.let { addAll(it) }
-                        (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
-                            add(NameToken(it))
-                        }
-                    }
-                    keys.forEach { token ->
-                        li("tree-item") {
-                            child(ConfigEditorComponent::class) {
-                                attrs {
-                                    root = props.root
-                                    name = props.name + token
-                                    this.default = props.default
-                                    this.descriptor = props.descriptor
-                                    listen = false
-                                }
+                    span("tree-label") {
+                        +token
+                        attrs {
+                            if (item == null) {
+                                classes += "tree-label-inactive"
                             }
                         }
                     }
                 }
-            } else if (actualItem is MetaItem.ValueItem) {
-                div("row") {
-                    div("col") {
-                        label("tree-label") {
-                            +token.toString()
+                if (state.expanded) {
+                    ul("tree") {
+                        val keys = buildSet<NameToken> {
+                            item?.node?.items?.keys?.let { addAll(it) }
+                            defaultItem?.node?.items?.keys?.let { addAll(it) }
+                            (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
+                                add(NameToken(it))
+                            }
                         }
-                    }
-                    div("col") {
-                        input(type = InputType.text) {
-                            attrs {
-                                value = actualItem.value.toString()
-                                onChangeFunction = {
-                                    try {
-                                        props.root.setValue(props.name, value.asValue())
-                                    } catch (ex: Exception) {
-                                        console.error("Can't set config property $name to $value")
+
+                        keys.forEach { token ->
+                            li("tree-item") {
+                                child(ConfigEditorComponent::class) {
+                                    attrs {
+                                        root = props.root
+                                        name = props.name + token
+                                        this.default = props.default
+                                        this.descriptor = props.descriptor
+                                        listen = false
                                     }
                                 }
                             }
                         }
-                        //+actualItem.value.toString()
+                    }
+                }
+            }
+            is MetaItem.ValueItem -> {
+                div("d-inline-block text-truncate") {
+                    div("row") {
+                        div("col") {
+                            p("tree-label") {
+                                +token
+                                attrs {
+                                    if (item == null) {
+                                        classes += "tree-label-inactive"
+                                    }
+                                }
+                            }
+                        }
+                        div("col") {
+                            div("float-right") {
+                                input(type = InputType.text) {
+                                    attrs {
+                                        defaultValue = actualItem.value.string
+                                        onChangeFunction = onValueChange
+                                    }
+                                }
+                                //+actualItem.value.toString()
+                            }
+                        }
                     }
                 }
             }
@@ -175,6 +188,18 @@ fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, de
     child(ConfigEditorComponent::class) {
         attrs {
             root = config
+            name = Name.EMPTY
+            this.descriptor = descriptor
+            this.default = default
+            listen = true
+        }
+    }
+}
+
+fun RBuilder.configEditor(obj: Configurable, descriptor: NodeDescriptor? = obj.descriptor, default: Meta? = null) {
+    child(ConfigEditorComponent::class) {
+        attrs {
+            root = obj.config
             name = Name.EMPTY
             this.descriptor = descriptor
             this.default = default

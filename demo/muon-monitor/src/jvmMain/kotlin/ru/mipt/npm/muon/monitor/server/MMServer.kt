@@ -17,6 +17,7 @@ import io.ktor.routing.get
 import io.ktor.serialization.json
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
+import io.ktor.util.KtorExperimentalAPI
 import org.apache.commons.math3.random.JDKRandomGenerator
 import ru.mipt.npm.muon.monitor.Model
 import ru.mipt.npm.muon.monitor.sim.Cos2TrackGenerator
@@ -56,6 +57,7 @@ fun Application.module() {
     }
 }
 
+@OptIn(KtorExperimentalAPI::class)
 fun main() {
     embeddedServer(CIO, 8080, host = "localhost", module = Application::module).start(wait = true)
 }

@@ -47,23 +47,17 @@ class Material3D : Scheme() {
         val descriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
-                defineValue(VisualObject3D.VISIBLE_KEY) {
-                    type(ValueType.BOOLEAN)
-                    default(true)
+                defineValue(COLOR_KEY) {
+                    type(ValueType.STRING, ValueType.NUMBER)
+                    default("#ffffff")
                 }
-                defineNode(MATERIAL_KEY) {
-                    defineValue(COLOR_KEY) {
-                        type(ValueType.STRING, ValueType.NUMBER)
-                        default("#ffffff")
-                    }
-                    defineValue(OPACITY_KEY) {
-                        type(ValueType.NUMBER)
-                        default(1.0)
-                    }
-                    defineValue(WIREFRAME_KEY) {
-                        type(ValueType.BOOLEAN)
-                        default(false)
-                    }
+                defineValue(OPACITY_KEY) {
+                    type(ValueType.NUMBER)
+                    default(1.0)
+                }
+                defineValue(WIREFRAME_KEY) {
+                    type(ValueType.BOOLEAN)
+                    default(false)
                 }
             }
         }
