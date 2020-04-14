@@ -1,20 +1,19 @@
 package hep.dataforge.vis.editor
 
 import hep.dataforge.meta.*
-import hep.dataforge.meta.descriptors.ItemDescriptor
-import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.descriptors.defaultItem
-import hep.dataforge.meta.descriptors.get
+import hep.dataforge.meta.descriptors.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
-import hep.dataforge.values.asValue
+import hep.dataforge.values.*
+import hep.dataforge.vis.widgetType
 import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.RBuilder
 import react.RComponent
@@ -43,7 +42,6 @@ interface ConfigEditorProps : RProps {
      */
     var descriptor: NodeDescriptor?
 
-    var listen: Boolean
 }
 
 class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
@@ -53,11 +51,9 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
     }
 
     override fun componentDidMount() {
-        if (props.listen) {
-            props.root.onChange(this) { name, _, _ ->
-                if (name == props.name) {
-                    forceUpdate()
-                }
+        props.root.onChange(this) { name, _, _ ->
+            if (name == props.name) {
+                forceUpdate()
             }
         }
     }
@@ -73,15 +69,64 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
     }
 
     private val onValueChange: (Event) -> Unit = {
-        val value = (it.target as HTMLInputElement).value
-        try {
-            if (value.isEmpty()) {
-                props.root.remove(props.name)
+        val value = when (val t = it.target) {
+            // (it.target as HTMLInputElement).value
+            is HTMLInputElement -> if (t.type == "checkbox") {
+                if (t.checked) True else False
+            } else {
+                t.value.asValue()
             }
-            props.root.setValue(props.name, value.asValue())
+            is HTMLSelectElement -> t.value.asValue()
+            else -> error("Unknown event target: $t")
+        }
+        try {
+            props.root.setValue(props.name, value)
         } catch (ex: Exception) {
             console.error("Can't set config property ${props.name} to $value")
         }
+    }
+
+    //TODO replace by separate components
+    private fun RBuilder.valueChooser(value: Value, descriptor: ValueDescriptor?) {
+        val type = descriptor?.type?.firstOrNull()
+        when {
+            type == ValueType.BOOLEAN -> input(type = InputType.checkBox, classes = "float-right") {
+                attrs {
+                    defaultChecked = value.boolean
+                    onChangeFunction = onValueChange
+                }
+            }
+            type == ValueType.NUMBER -> input(type = InputType.number, classes = "float-right") {
+                attrs {
+                    defaultValue = value.string
+                    onChangeFunction = onValueChange
+                }
+            }
+            descriptor?.allowedValues?.isNotEmpty() ?: false -> select("float-right") {
+                descriptor!!.allowedValues.forEach {
+                    option {
+                        +it.string
+                    }
+                }
+                attrs {
+                    multiple = false
+                    onChangeFunction = onValueChange
+                }
+            }
+            descriptor?.widgetType == "color" -> input(type = InputType.color, classes = "float-right") {
+                attrs {
+                    defaultValue = value.string
+                    onChangeFunction = onValueChange
+                }
+            }
+            else -> input(type = InputType.text, classes = "float-right") {
+                attrs {
+                    defaultValue = value.string
+                    onChangeFunction = onValueChange
+                }
+            }
+        }
+
     }
 
 
@@ -130,7 +175,6 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                                         name = props.name + token
                                         this.default = props.default
                                         this.descriptor = props.descriptor
-                                        listen = false
                                     }
                                 }
                             }
@@ -152,12 +196,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                             }
                         }
                         div("col") {
-                            input(type = InputType.text, classes = "float-right") {
-                                attrs {
-                                    defaultValue = actualItem.value.string
-                                    onChangeFunction = onValueChange
-                                }
-                            }
+                            valueChooser(actualItem.value, descriptorItem as? ValueDescriptor)
                             //+actualItem.value.toString()
                         }
                     }
@@ -165,7 +204,6 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
             }
         }
     }
-
 }
 
 fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null) {
@@ -176,7 +214,6 @@ fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, def
                 name = Name.EMPTY
                 this.descriptor = descriptor
                 this.default = default
-                listen = true
             }
         }
     }
@@ -189,7 +226,6 @@ fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, de
             name = Name.EMPTY
             this.descriptor = descriptor
             this.default = default
-            listen = true
         }
     }
 }
@@ -201,7 +237,6 @@ fun RBuilder.configEditor(obj: Configurable, descriptor: NodeDescriptor? = obj.d
             name = Name.EMPTY
             this.descriptor = descriptor
             this.default = default
-            listen = true
         }
     }
 }

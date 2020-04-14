@@ -10,6 +10,7 @@ import hep.dataforge.vis.Colors
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
+import hep.dataforge.vis.widgetType
 
 class Material3D : Scheme() {
 
@@ -50,6 +51,7 @@ class Material3D : Scheme() {
                 defineValue(COLOR_KEY) {
                     type(ValueType.STRING, ValueType.NUMBER)
                     default("#ffffff")
+                    widgetType = "color"
                 }
                 defineValue(OPACITY_KEY) {
                     type(ValueType.NUMBER)

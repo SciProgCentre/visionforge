@@ -11,7 +11,7 @@ import java.nio.file.Paths
 fun main(args: Array<String>) {
     require(args.isNotEmpty()){"At least one argument is required"}
     val inputFileName = args[0]
-    require(inputFileName.endsWith(".gdml")){"GDML requires"}
+    require(inputFileName.endsWith(".gdml")){"GDML required"}
     val outputFileName = args.getOrNull(1)?:inputFileName.replace(".gdml",".json")
 
     val gdml = GDML.readFile(Paths.get(inputFileName))

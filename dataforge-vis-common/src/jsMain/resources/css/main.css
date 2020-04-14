@@ -36,7 +36,5 @@ ul, .tree {
 }
 
 .tree-label-inactive {
-    background-color: lightgrey;
     color: gray;
-    display: inline-block;
 }
