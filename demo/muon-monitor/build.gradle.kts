@@ -72,3 +72,12 @@ application {
 //configure<JavaFXOptions> {
 //    modules("javafx.controls")
 //}
+
+val common = project(":dataforge-vis-common")
+
+val copyJsResourcesFromCommon by tasks.creating(Copy::class){
+    from(common.buildDir.resolve("processedResources\\js\\main\\"))
+    into(buildDir.resolve("processedResources\\js\\main\\"))
+}
+
+tasks.getByPath("jsProcessResources").dependsOn(copyJsResourcesFromCommon)

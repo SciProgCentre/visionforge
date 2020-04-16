@@ -7,6 +7,10 @@ plugins {
 serialization()
 
 kotlin {
+    js {
+        useCommonJs()
+    }
+
     sourceSets {
         commonMain {
             dependencies {

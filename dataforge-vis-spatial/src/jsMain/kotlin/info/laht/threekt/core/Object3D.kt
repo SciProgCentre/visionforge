@@ -153,7 +153,7 @@ open external class Object3D {
      * An object that can be used to store custom data about the Object3D.
      * It should not hold references to functions as these will not be cloned.
      */
-    var userData: Map<String, Any>
+    var userData: dynamic
 
     /**
      * An optional callback that is executed immediately before the Object3D is rendered.

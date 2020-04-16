@@ -7,14 +7,11 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.editor.objectTree
+import hep.dataforge.vis.editor.renderObjectTree
 import hep.dataforge.vis.editor.visualPropertyEditor
-import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
-import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
@@ -160,37 +157,15 @@ private class GDMLDemoApp : Application {
                     visual is VisualGroup -> visual[name] ?: return
                     else -> return
                 }
-
-                editorElement.visualPropertyEditor(name, child) {
-                    VISIBLE_KEY put true
-                    if (child is VisualObject3D) {
-                        MATERIAL_COLOR_KEY put "#ffffff"
-                        MATERIAL_OPACITY_KEY put 1.0
-                        MATERIAL_WIREFRAME_KEY put false
-                    }
-                }
-//                editorElement.displayPropertyEditor(name, child) { item ->
-//                    //val descriptorMeta = Material3D.descriptor
-//
-//                    val properties = item.allProperties()
-//                    val bottom = Meta {
-//                        VISIBLE_KEY put (item.visible ?: true)
-//                        if (item is VisualObject3D) {
-//                            MATERIAL_COLOR_KEY put "#ffffff"
-//                            MATERIAL_OPACITY_KEY put 1.0
-//                            MATERIAL_WIREFRAME_KEY put false
-//                        }
-//                    }
-//                    properties.withBottom(bottom)
-//                }
+                canvas.select(name)
+                editorElement.visualPropertyEditor(name, child)
             }
 
 //        canvas.clickListener = ::selectElement
 
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.objectTree(visual) { treeName ->
+            treeElement.renderObjectTree(visual) { treeName ->
                 selectElement(treeName)
-                canvas.highlight(treeName)
             }
             canvas.render(visual)
             message(null)

@@ -34,10 +34,10 @@ class MetaViewerComponent : RComponent<MetaViewerProps, TreeState>() {
     override fun RBuilder.render() {
         div("d-inline-block text-truncate") {
             if (props.meta.items.isNotEmpty()) {
-                span("objTree-caret") {
+                span("tree-caret") {
                     attrs {
                         if (state.expanded) {
-                            classes += "objTree-caret-down"
+                            classes += "tree-caret-down"
                         }
                         onClickFunction = onClick
                     }

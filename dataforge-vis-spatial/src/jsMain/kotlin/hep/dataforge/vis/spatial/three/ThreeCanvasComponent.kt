@@ -1,55 +1,73 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.context.Global
+import hep.dataforge.context.Context
+import hep.dataforge.names.Name
 import hep.dataforge.vis.spatial.VisualObject3D
 import hep.dataforge.vis.spatial.specifications.Canvas
-import kotlinx.html.id
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
 import react.dom.div
-import kotlin.browser.document
+import react.dom.findDOMNode
 import kotlin.dom.clear
 
 interface ThreeCanvasProps : RProps {
+    var context: Context
     var obj: VisualObject3D
-    var canvasId: String
-    var options: Canvas
+    var options: Canvas?
+    var selected: Name?
+    var clickCallback: (Name?) -> Unit
+    var canvasCallback: ((ThreeCanvas?) -> Unit)?
 }
 
-class ThreeCanvasComponent : RComponent<ThreeCanvasProps, RState>() {
+interface ThreeCanvasState : RState {
+    var element: Element?
+//    var canvas: ThreeCanvas?
+}
 
-    private val three: ThreePlugin = Global.plugins.fetch(ThreePlugin)
+class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
+
+    var canvas: ThreeCanvas? = null
 
     override fun componentDidMount() {
-        val element = document.getElementById(props.canvasId) as? HTMLElement
-            ?: error("Element with id 'canvas' not found on page")
-        val output = three.output(element, props.options)
-        output.render(props.obj)
+        val element = state.element as? HTMLElement ?: error("Canvas element not found")
+        val three: ThreePlugin = props.context.plugins.load(ThreePlugin)
+        canvas = three.output(element, props.options ?: Canvas.empty())
+        props.canvasCallback?.invoke(canvas)
+        canvas?.render(props.obj)
+        canvas?.onClick = props.clickCallback
     }
 
     override fun componentWillUnmount() {
-        val element = document.getElementById(props.canvasId) as? HTMLElement
-            ?: error("Element with id 'canvas' not found on page")
-        element.clear()
+        state.element?.clear()
+        props.canvasCallback?.invoke(null)
+    }
+
+    override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
+        if (prevProps.obj != props.obj) {
+            componentDidMount()
+        }
+        if (prevProps.selected != props.selected) {
+            canvas?.select(props.selected)
+        }
     }
 
     override fun RBuilder.render() {
         div {
-            attrs {
-                id = props.canvasId
+            ref {
+                state.element = findDOMNode(it)
             }
         }
     }
 }
 
-fun RBuilder.threeCanvas(object3D: VisualObject3D, id: String = "threeCanvas", options: Canvas.() -> Unit = {}) {
+fun RBuilder.threeCanvas(object3D: VisualObject3D, options: Canvas.() -> Unit = {}) {
     child(ThreeCanvasComponent::class) {
         attrs {
             this.obj = object3D
-            this.canvasId = id
             this.options = Canvas.invoke(options)
         }
     }

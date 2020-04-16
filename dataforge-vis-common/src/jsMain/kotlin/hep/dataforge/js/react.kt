@@ -15,3 +15,4 @@ fun <T> RComponent<*, *>.initState(init: () -> T): ReadWriteProperty<RComponent<
             pair.second(value)
         }
     }
+
