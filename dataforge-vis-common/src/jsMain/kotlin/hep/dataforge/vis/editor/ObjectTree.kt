@@ -50,7 +50,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
 
     //display as node if any child is visible
     if (obj is VisualGroup) {
-        div("d-inline-block text-truncate") {
+        div("d-block text-truncate") {
             if (obj.children.any { !it.key.body.startsWith("@") }) {
                 span("tree-caret") {
                     attrs {
@@ -72,10 +72,10 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
                         li("tree-item") {
                             child(ObjectTree) {
                                 attrs {
-                                    name = props.name + childToken
+                                    this.name = props.name + childToken
                                     this.obj = child
                                     this.selected = props.selected
-                                    clickCallback = props.clickCallback
+                                    this.clickCallback = props.clickCallback
                                 }
                             }
                         }
@@ -83,7 +83,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
             }
         }
     } else {
-        div("d-inline-block text-truncate") {
+        div("d-block text-truncate") {
             span("tree-leaf") {}
             treeLabel(token)
         }

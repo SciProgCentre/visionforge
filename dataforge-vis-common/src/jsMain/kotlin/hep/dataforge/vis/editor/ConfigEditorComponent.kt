@@ -7,6 +7,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
 import hep.dataforge.values.*
 import hep.dataforge.vis.widgetType
+import kotlinx.html.ButtonType
 import kotlinx.html.InputType
 import kotlinx.html.classes
 import kotlinx.html.js.onChangeFunction
@@ -94,10 +95,12 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
     private fun RBuilder.valueChooser(value: Value, descriptor: ValueDescriptor?) {
         val type = descriptor?.type?.firstOrNull()
         when {
-            type == ValueType.BOOLEAN -> input(type = InputType.checkBox, classes = "float-right") {
-                attrs {
-                    defaultChecked = value.boolean
-                    onChangeFunction = onValueChange
+            type == ValueType.BOOLEAN -> {
+                input(type = InputType.checkBox, classes = "float-right") {
+                    attrs {
+                        defaultChecked = value.boolean
+                        onChangeFunction = onValueChange
+                    }
                 }
             }
             type == ValueType.NUMBER -> input(type = InputType.number, classes = "float-right") {
@@ -152,7 +155,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
 
         when (actualItem) {
             is MetaItem.NodeItem -> {
-                div("d-block text-truncate") {
+                div {
                     span("tree-caret") {
                         attrs {
                             if (state.expanded) {
@@ -184,8 +187,8 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                             li("tree-item") {
                                 child(ConfigEditorComponent::class) {
                                     attrs {
-                                        root = props.root
-                                        name = props.name + token
+                                        this.root = props.root
+                                        this.name = props.name + token
                                         this.default = props.default
                                         this.descriptor = props.descriptor
                                     }
@@ -196,7 +199,7 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                 }
             }
             is MetaItem.ValueItem -> {
-                div("d-block text-truncate") {
+                div {
                     div("row") {
                         div("col") {
                             p("tree-label") {
@@ -208,22 +211,36 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                                 }
                             }
                         }
-                        if (item != null) {
-                            div("col-auto") {
-                                button(classes = "btn btn-default") {
-                                    span("glyphicon glyphicon-remove") {
-                                        attrs {
-                                            attributes["aria-hidden"] = "true"
-                                        }
-                                    }
-                                    attrs {
-                                        onClickFunction = removeValue
-                                    }
-                                }
-                            }
-                        }
                         div("col") {
                             valueChooser(actualItem.value, descriptorItem as? ValueDescriptor)
+                        }
+                        div("col-auto") {
+                            div("dropleft p-0") {
+                                button(classes = "btn btn-outline-primary") {
+                                    attrs {
+                                        type = ButtonType.button
+                                        attributes["data-toggle"] = "dropdown"
+                                        attributes["aria-haspopup"] = "true"
+                                        attributes["aria-expanded"] = "false"
+                                        attributes["data-boundary"] = "viewport"
+                                    }
+                                    +"\u22ee"
+                                }
+                                div(classes = "dropdown-menu") {
+                                    button(classes = "btn btn-outline dropdown-item") {
+                                        +"Info"
+                                    }
+                                    if (item != null) {
+                                        button(classes = "btn btn-outline dropdown-item") {
+                                            +"""Clear"""
+                                        }
+                                        attrs {
+                                            onClickFunction = removeValue
+                                        }
+                                    }
+
+                                }
+                            }
                         }
                     }
                 }
