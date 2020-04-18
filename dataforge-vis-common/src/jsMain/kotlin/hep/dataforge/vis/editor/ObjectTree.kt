@@ -1,6 +1,7 @@
 package hep.dataforge.vis.editor
 
 import hep.dataforge.js.card
+import hep.dataforge.js.initState
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
@@ -25,20 +26,14 @@ interface TreeState : RState {
     var expanded: Boolean
 }
 
-class ObjectTree : RComponent<ObjectTreeProps, TreeState>() {
+private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
+    var expanded: Boolean by initState{ props.selected?.startsWith(props.name) ?: false }
 
-    override fun TreeState.init(props: ObjectTreeProps) {
-        expanded = props.selected?.startsWith(props.name) ?: false
+    val onClick: (Event) -> Unit = {
+        expanded = !expanded
     }
 
-
-    private val onClick: (Event) -> Unit = {
-        setState {
-            expanded = !expanded
-        }
-    }
-
-    private fun RBuilder.treeLabel(text: String) {
+    fun RBuilder.treeLabel(text: String) {
         button(classes = "btn btn-link tree-label p-0") {
             +text
             attrs {
@@ -50,59 +45,61 @@ class ObjectTree : RComponent<ObjectTreeProps, TreeState>() {
         }
     }
 
-    override fun RBuilder.render() {
-        val token = props.name.last()?.toString() ?: "World"
-        val obj = props.obj
+    val token = props.name.last()?.toString() ?: "World"
+    val obj = props.obj
 
-        //display as node if any child is visible
-        if (obj is VisualGroup) {
-            div("d-inline-block text-truncate") {
-                if (obj.children.any { !it.key.body.startsWith("@") }) {
-                    span("tree-caret") {
-                        attrs {
-                            if (state.expanded) {
-                                classes += "tree-caret-down"
-                            }
-                            onClickFunction = onClick
+    //display as node if any child is visible
+    if (obj is VisualGroup) {
+        div("d-inline-block text-truncate") {
+            if (obj.children.any { !it.key.body.startsWith("@") }) {
+                span("tree-caret") {
+                    attrs {
+                        if (expanded) {
+                            classes += "tree-caret-down"
                         }
+                        onClickFunction = onClick
                     }
                 }
-                treeLabel(token)
             }
-            if (state.expanded) {
-                ul("tree") {
-                    obj.children.entries
-                        .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                        .sortedBy { (it.value as? VisualGroup)?.isEmpty ?: true }
-                        .forEach { (childToken, child) ->
-                            li("tree-item") {
-                                child(ObjectTree::class) {
-                                    attrs {
-                                        name = props.name + childToken
-                                        this.obj = child
-                                        this.selected = props.selected
-                                        clickCallback = props.clickCallback
-                                    }
+            treeLabel(token)
+        }
+        if (expanded) {
+            ul("tree") {
+                obj.children.entries
+                    .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
+                    .sortedBy { (it.value as? VisualGroup)?.isEmpty ?: true }
+                    .forEach { (childToken, child) ->
+                        li("tree-item") {
+                            child(ObjectTree) {
+                                attrs {
+                                    name = props.name + childToken
+                                    this.obj = child
+                                    this.selected = props.selected
+                                    clickCallback = props.clickCallback
                                 }
                             }
                         }
-                }
-            }
-        } else {
-            div("d-inline-block text-truncate") {
-                span("tree-leaf") {}
-                treeLabel(token)
+                    }
             }
         }
+    } else {
+        div("d-inline-block text-truncate") {
+            span("tree-leaf") {}
+            treeLabel(token)
+        }
     }
+}
+
+val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent { props ->
+    objectTree(props)
 }
 
 fun Element.renderObjectTree(
     visualObject: VisualObject,
     clickCallback: (Name) -> Unit = {}
-) = render(this){
+) = render(this) {
     card("Object tree") {
-        child(ObjectTree::class) {
+        child(ObjectTree) {
             attrs {
                 this.name = Name.EMPTY
                 this.obj = visualObject
@@ -117,8 +114,8 @@ fun RBuilder.objectTree(
     visualObject: VisualObject,
     selected: Name? = null,
     clickCallback: (Name) -> Unit = {}
-){
-    child(ObjectTree::class) {
+) {
+    child(ObjectTree) {
         attrs {
             this.name = Name.EMPTY
             this.obj = visualObject

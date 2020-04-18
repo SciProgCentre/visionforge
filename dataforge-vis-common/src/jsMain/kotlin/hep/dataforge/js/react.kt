@@ -1,17 +1,17 @@
 package hep.dataforge.js
 
-import react.RComponent
+import react.RBuilder
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun <T> RComponent<*, *>.initState(init: () -> T): ReadWriteProperty<RComponent<*, *>, T> =
-    object : ReadWriteProperty<RComponent<*, *>, T> {
+fun <T> RBuilder.initState(init: () -> T): ReadWriteProperty<Any?, T> =
+    object : ReadWriteProperty<Any?, T> {
         val pair = react.useState(init)
-        override fun getValue(thisRef: RComponent<*, *>, property: KProperty<*>): T {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
             return pair.first
         }
 
-        override fun setValue(thisRef: RComponent<*, *>, property: KProperty<*>, value: T) {
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
             pair.second(value)
         }
     }
