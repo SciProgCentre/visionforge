@@ -159,6 +159,7 @@ private class GDMLDemoApp : Application {
                 }
                 canvas.select(name)
                 editorElement.visualPropertyEditor(name, child)
+
             }
 
 //        canvas.clickListener = ::selectElement

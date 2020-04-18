@@ -39,7 +39,7 @@ class ObjectTree : RComponent<ObjectTreeProps, TreeState>() {
     }
 
     private fun RBuilder.treeLabel(text: String) {
-        a("#", classes = "tree-label") {
+        button(classes = "btn btn-link tree-label p-0") {
             +text
             attrs {
                 if (props.name == props.selected) {

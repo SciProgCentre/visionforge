@@ -12,7 +12,6 @@ import react.RProps
 import react.RState
 import react.dom.div
 import react.dom.findDOMNode
-import kotlin.dom.clear
 
 interface ThreeCanvasProps : RProps {
     var context: Context
@@ -33,18 +32,21 @@ class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
     var canvas: ThreeCanvas? = null
 
     override fun componentDidMount() {
-        val element = state.element as? HTMLElement ?: error("Canvas element not found")
-        val three: ThreePlugin = props.context.plugins.load(ThreePlugin)
-        canvas = three.output(element, props.options ?: Canvas.empty())
-        props.canvasCallback?.invoke(canvas)
+        if(canvas == null) {
+            val element = state.element as? HTMLElement ?: error("Canvas element not found")
+            val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
+            canvas = three.output(element, props.options ?: Canvas.empty()).apply {
+                onClick = props.clickCallback
+            }
+            props.canvasCallback?.invoke(canvas)
+        }
         canvas?.render(props.obj)
-        canvas?.onClick = props.clickCallback
     }
 
-    override fun componentWillUnmount() {
-        state.element?.clear()
-        props.canvasCallback?.invoke(null)
-    }
+//    override fun componentWillUnmount() {
+//        state.element?.clear()
+//        props.canvasCallback?.invoke(null)
+//    }
 
     override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
         if (prevProps.obj != props.obj) {

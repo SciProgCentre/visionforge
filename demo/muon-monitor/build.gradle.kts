@@ -20,6 +20,9 @@ kotlin {
                     keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
                 }
             }
+            webpackTask {
+                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
+            }
         }
     }
 

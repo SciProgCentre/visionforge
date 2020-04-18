@@ -168,11 +168,16 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
         }
     }
 
-    override fun render(obj: VisualObject3D, meta: Meta) {
-        //clear old root
+    fun clear(){
         scene.children.find { it.name == "@root" }?.let {
             scene.remove(it)
         }
+    }
+
+    override fun render(obj: VisualObject3D, meta: Meta) {
+        //clear old root
+        clear()
+
 
         val object3D = three.buildObject3D(obj)
         object3D.name = "@root"

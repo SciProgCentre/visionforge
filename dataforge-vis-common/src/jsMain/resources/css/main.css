@@ -42,3 +42,7 @@ ul, .tree {
 .tree-label-selected{
     background-color: lightblue;
 }
+
+.no-padding{
+    padding: 0;
+}

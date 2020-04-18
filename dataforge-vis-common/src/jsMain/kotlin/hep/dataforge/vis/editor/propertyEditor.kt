@@ -2,7 +2,6 @@ package hep.dataforge.vis.editor
 
 import hep.dataforge.js.card
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
@@ -19,10 +18,9 @@ fun RBuilder.visualPropertyEditor(
     path: Name,
     item: VisualObject,
     descriptor: NodeDescriptor? = item.descriptor,
-    title: String = "Properties",
-    default: MetaBuilder.() -> Unit = {}
+    default: Meta? = null
 ) {
-    card(title) {
+    card("Properties") {
         if (!path.isEmpty()) {
             nav {
                 attrs {
@@ -37,7 +35,7 @@ fun RBuilder.visualPropertyEditor(
                 }
             }
         }
-        configEditor(item, descriptor, Meta(default))
+        configEditor(item, descriptor, default)
     }
 }
 
@@ -45,8 +43,7 @@ fun Element.visualPropertyEditor(
     path: Name,
     item: VisualObject,
     descriptor: NodeDescriptor? = item.descriptor,
-    title: String = "Properties",
-    default: MetaBuilder.() -> Unit = {}
+    default: Meta? = null
 ) = render(this) {
-    visualPropertyEditor(path, item, descriptor, title, default)
+    this.visualPropertyEditor(path, item, descriptor, default)
 }

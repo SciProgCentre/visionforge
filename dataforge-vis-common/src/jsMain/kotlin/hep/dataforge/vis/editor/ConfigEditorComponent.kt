@@ -86,6 +86,10 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
         }
     }
 
+    private val removeValue: (Event) -> Unit = {
+        props.root.remove(props.name)
+    }
+
     //TODO replace by separate components
     private fun RBuilder.valueChooser(value: Value, descriptor: ValueDescriptor?) {
         val type = descriptor?.type?.firstOrNull()
@@ -98,6 +102,15 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
             }
             type == ValueType.NUMBER -> input(type = InputType.number, classes = "float-right") {
                 attrs {
+                    descriptor.attributes["step"].string?.let {
+                        step = it
+                    }
+                    descriptor.attributes["min"].string?.let {
+                        min = it
+                    }
+                    descriptor.attributes["max"].string?.let {
+                        max = it
+                    }
                     defaultValue = value.string
                     onChangeFunction = onValueChange
                 }
@@ -195,9 +208,22 @@ class ConfigEditorComponent : RComponent<ConfigEditorProps, TreeState>() {
                                 }
                             }
                         }
+                        if (item != null) {
+                            div("col-auto") {
+                                button(classes = "btn btn-default") {
+                                    span("glyphicon glyphicon-remove") {
+                                        attrs {
+                                            attributes["aria-hidden"] = "true"
+                                        }
+                                    }
+                                    attrs {
+                                        onClickFunction = removeValue
+                                    }
+                                }
+                            }
+                        }
                         div("col") {
                             valueChooser(actualItem.value, descriptorItem as? ValueDescriptor)
-                            //+actualItem.value.toString()
                         }
                     }
                 }
@@ -220,23 +246,18 @@ fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, def
 }
 
 fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null) {
-    child(ConfigEditorComponent::class) {
-        attrs {
-            root = config
-            name = Name.EMPTY
-            this.descriptor = descriptor
-            this.default = default
+    div {
+        child(ConfigEditorComponent::class) {
+            attrs {
+                root = config
+                name = Name.EMPTY
+                this.descriptor = descriptor
+                this.default = default
+            }
         }
     }
 }
 
 fun RBuilder.configEditor(obj: Configurable, descriptor: NodeDescriptor? = obj.descriptor, default: Meta? = null) {
-    child(ConfigEditorComponent::class) {
-        attrs {
-            root = obj.config
-            name = Name.EMPTY
-            this.descriptor = descriptor
-            this.default = default
-        }
-    }
+    configEditor(obj.config, descriptor ?: obj.descriptor, default)
 }
