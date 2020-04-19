@@ -2,8 +2,8 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
-import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.VisualObject
+import hep.dataforge.vis.Colors
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.Material3D
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
@@ -22,8 +22,14 @@ object ThreeMaterials {
         color.set(DEFAULT_LINE_COLOR)
     }
 
-    val HIGHLIGHT_MATERIAL = LineBasicMaterial().apply {
+    val SELECTED_MATERIAL = LineBasicMaterial().apply {
         color.set(Colors.ivory)
+        linewidth = 8.0
+    }
+
+
+    val HIGHLIGHT_MATERIAL = LineBasicMaterial().apply {
+        color.set(Colors.blue)
         linewidth = 8.0
     }
 

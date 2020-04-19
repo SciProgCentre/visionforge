@@ -2,6 +2,7 @@ package hep.dataforge.vis.spatial.three
 
 import hep.dataforge.vis.spatial.Label3D
 import hep.dataforge.vis.spatial.color
+import hep.dataforge.vis.spatial.three.ThreeCanvas.Companion.DO_NOT_HIGHLIGHT_TAG
 import info.laht.threekt.DoubleSide
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.PlaneBufferGeometry
@@ -18,7 +19,7 @@ import kotlin.reflect.KClass
 /**
  * Using example from http://stemkoski.github.io/Three.js/Texture-From-Canvas.html
  */
-object ThreeCanvasLabelFactory: ThreeFactory<Label3D> {
+object ThreeCanvasLabelFactory : ThreeFactory<Label3D> {
     override val type: KClass<in Label3D> get() = Label3D::class
 
     override fun invoke(obj: Label3D): Object3D {
@@ -31,7 +32,7 @@ object ThreeCanvasLabelFactory: ThreeFactory<Label3D> {
         //canvas.width = metrics.width.toInt()
 
 
-        context.fillText(obj.text, (canvas.width - metrics.width)/2, 0.5*canvas.height)
+        context.fillText(obj.text, (canvas.width - metrics.width) / 2, 0.5 * canvas.height)
 
 
         // canvas contents will be used for a texture
@@ -51,6 +52,7 @@ object ThreeCanvasLabelFactory: ThreeFactory<Label3D> {
 
         mesh.updatePosition(obj)
 
+        mesh.userData[DO_NOT_HIGHLIGHT_TAG] = true
         return mesh
     }
 }

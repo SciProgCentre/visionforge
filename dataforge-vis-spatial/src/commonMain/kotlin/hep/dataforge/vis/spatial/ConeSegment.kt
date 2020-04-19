@@ -2,10 +2,10 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -25,7 +25,6 @@ class ConeSegment(
     var angle: Float = PI2
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override var position: Point3D? = null
@@ -76,7 +75,7 @@ class ConeSegment(
 
 }
 
-inline fun VisualGroup3D.cylinder(
+inline fun MutableVisualGroup.cylinder(
     r: Number,
     height: Number,
     name: String = "",
@@ -88,7 +87,7 @@ inline fun VisualGroup3D.cylinder(
 ).apply(block).also { set(name, it) }
 
 
-inline fun VisualGroup3D.cone(
+inline fun MutableVisualGroup.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,

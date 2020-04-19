@@ -3,15 +3,11 @@ package hep.dataforge.vis.spatial.demo
 import hep.dataforge.context.Global
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
-import hep.dataforge.meta.invoke
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.spatial.specifications.AxesSpec
-import hep.dataforge.vis.spatial.specifications.CameraSpec
-import hep.dataforge.vis.spatial.specifications.CanvasSpec
+import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.output

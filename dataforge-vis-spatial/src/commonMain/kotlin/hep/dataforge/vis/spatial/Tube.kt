@@ -1,10 +1,10 @@
 @file:UseSerializers(Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -29,7 +29,6 @@ class Tube(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     init {
@@ -129,7 +128,7 @@ class Tube(
 
 }
 
-inline fun VisualGroup3D.tube(
+inline fun MutableVisualGroup.tube(
     r: Number,
     height: Number,
     innerRadius: Number = 0f,

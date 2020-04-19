@@ -13,7 +13,6 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
                 "scientifik.mpp", "scientifik.publish", "scientifik.jvm", "scientifik.js" -> useModule("scientifik:gradle-tools:${requested.version}")
                 "org.openjfx.javafxplugin" -> useModule("org.openjfx:javafx-plugin:${requested.version}")
             }
@@ -27,12 +26,12 @@ rootProject.name = "dataforge-vis"
 
 include(
     ":dataforge-vis-common",
-//    ":wrappers",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-gdml",
     ":demo:spatial-showcase",
     ":demo:gdml",
-    ":demo:muon-monitor"
+    ":demo:muon-monitor",
+    ":playground"
 )
 
 //if(file("../dataforge-core").exists()) {

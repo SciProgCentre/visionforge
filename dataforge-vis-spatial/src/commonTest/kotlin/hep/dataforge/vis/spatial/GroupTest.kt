@@ -1,7 +1,7 @@
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.vis.common.Colors
-import hep.dataforge.vis.common.get
+import hep.dataforge.vis.Colors
+import hep.dataforge.vis.get
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals

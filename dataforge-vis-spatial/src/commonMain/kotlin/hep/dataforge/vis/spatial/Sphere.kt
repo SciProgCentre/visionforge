@@ -2,10 +2,10 @@
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -23,7 +23,6 @@ class Sphere(
     var theta: Float = PI.toFloat()
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override var position: Point3D? = null
@@ -61,7 +60,7 @@ class Sphere(
     }
 }
 
-inline fun VisualGroup3D.sphere(
+inline fun MutableVisualGroup.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,

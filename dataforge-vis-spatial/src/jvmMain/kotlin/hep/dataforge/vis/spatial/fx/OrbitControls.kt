@@ -1,6 +1,5 @@
 package hep.dataforge.vis.spatial.fx
 
-import hep.dataforge.vis.spatial.specifications.CameraSpec
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
@@ -15,6 +14,7 @@ import javafx.scene.transform.Rotate
 import javafx.scene.transform.Translate
 import tornadofx.*
 import kotlin.math.*
+import hep.dataforge.vis.spatial.specifications.Camera as CameraSpec
 
 
 class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {

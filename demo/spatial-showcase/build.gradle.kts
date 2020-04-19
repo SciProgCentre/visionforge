@@ -1,23 +1,19 @@
-import org.openjfx.gradle.JavaFXOptions
+import scientifik.DependencyConfiguration
+import scientifik.FXModule
+import scientifik.fx
 
 plugins {
     id("scientifik.mpp")
-    id("org.openjfx.javafxplugin")
     id("application")
 }
+
+val fxVersion: String by rootProject.extra
+fx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
 
 kotlin {
 
     jvm {
         withJava()
-    }
-
-    js {
-        browser {
-            webpackTask {
-                sourceMaps = false
-            }
-        }
     }
 
     sourceSets {
@@ -32,8 +28,4 @@ kotlin {
 
 application {
     mainClassName = "hep.dataforge.vis.spatial.demo.FXDemoAppKt"
-}
-
-configure<JavaFXOptions> {
-    modules("javafx.controls")
 }

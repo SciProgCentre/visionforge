@@ -3,27 +3,21 @@ package hep.dataforge.vis.spatial.gdml.demo
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.meta.buildMeta
-import hep.dataforge.meta.withBottom
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.common.VisualGroup
-import hep.dataforge.vis.common.VisualObject
-import hep.dataforge.vis.js.editor.displayObjectTree
-import hep.dataforge.vis.js.editor.displayPropertyEditor
-import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
+import hep.dataforge.vis.VisualGroup
+import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.editor.renderObjectTree
+import hep.dataforge.vis.editor.visualPropertyEditor
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
-import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_WIREFRAME_KEY
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
-import hep.dataforge.vis.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import hep.dataforge.vis.spatial.three.ThreePlugin
 import hep.dataforge.vis.spatial.three.displayCanvasControls
 import hep.dataforge.vis.spatial.three.output
-import hep.dataforge.vis.spatial.visible
 import org.w3c.dom.*
 import org.w3c.files.FileList
 import org.w3c.files.FileReader
@@ -139,7 +133,7 @@ private class GDMLDemoApp : Application {
                     message("Converting GDML into DF-VIS format")
                     gdml.toVisual(gdmlConfiguration)
                 }
-                name.endsWith(".json") -> VisualGroup3D.fromJson(data)
+                name.endsWith(".json") -> VisualGroup3D.parseJson(data)
                 else -> {
                     window.alert("File extension is not recognized: $name")
                     error("File extension is not recognized: $name")
@@ -163,33 +157,17 @@ private class GDMLDemoApp : Application {
                     visual is VisualGroup -> visual[name] ?: return
                     else -> return
                 }
-                editorElement.displayPropertyEditor(name, child) { item ->
-                    //val descriptorMeta = Material3D.descriptor
+                canvas.select(name)
+                editorElement.visualPropertyEditor(name, child)
 
-                    val properties = item.allProperties()
-                    val bottom = buildMeta {
-                        VISIBLE_KEY put (item.visible ?: true)
-                        if (item is VisualObject3D) {
-                            MATERIAL_COLOR_KEY put "#ffffff"
-                            MATERIAL_OPACITY_KEY put 1.0
-                            MATERIAL_WIREFRAME_KEY put false
-                        }
-                    }
-                    properties.withBottom(bottom)
-                }
             }
 
 //        canvas.clickListener = ::selectElement
 
             //tree.visualObjectTree(visual, editor::propertyEditor)
-            treeElement.displayObjectTree(visual) { treeName ->
+            treeElement.renderObjectTree(visual) { treeName ->
                 selectElement(treeName)
-                canvas.highlight(treeName)
             }
-            canvas.render(visual)
-
-
-
             canvas.render(visual)
             message(null)
             spinner(false)

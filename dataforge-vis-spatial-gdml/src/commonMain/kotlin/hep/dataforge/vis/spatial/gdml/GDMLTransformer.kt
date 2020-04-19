@@ -2,12 +2,12 @@ package hep.dataforge.vis.spatial.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.buildMeta
 import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.names.toName
-import hep.dataforge.vis.common.useStyle
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_COLOR_KEY
+import hep.dataforge.vis.useStyle
 import scientifik.gdml.*
 import kotlin.random.Random
 
@@ -44,7 +44,7 @@ class GDMLTransformer(val root: GDML) {
 
     fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
-            buildMeta(builder)
+            Meta(builder)
         }
         useStyle(name)
     }
@@ -69,7 +69,13 @@ class GDMLTransformer(val root: GDML) {
     var onFinish: GDMLTransformer.() -> Unit = {}
 
     internal fun finalize(final: VisualGroup3D): VisualGroup3D {
-        final.prototypes = proto
+        //final.prototypes = proto
+        final.prototypes {
+            proto.children.forEach { (token, item) ->
+                item.parent = null
+                set(token.asName(), item)
+            }
+        }
         styleCache.forEach {
             final.styleSheet {
                 define(it.key.toString(), it.value)

@@ -4,8 +4,8 @@ package hep.dataforge.vis.spatial.gdml
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.vis.common.get
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.get
+import hep.dataforge.vis.set
 import hep.dataforge.vis.spatial.*
 import hep.dataforge.vis.spatial.World.ONE
 import hep.dataforge.vis.spatial.World.ZERO

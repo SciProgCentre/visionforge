@@ -1,10 +1,10 @@
 @file:UseSerializers(Point2DSerializer::class, Point3DSerializer::class)
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
 import hep.dataforge.meta.Config
-import hep.dataforge.vis.common.AbstractVisualObject
-import hep.dataforge.vis.common.set
+import hep.dataforge.vis.AbstractVisualObject
+import hep.dataforge.vis.MutableVisualGroup
+import hep.dataforge.vis.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
@@ -45,7 +45,6 @@ class Extruded(
     var layers: MutableList<Layer> = ArrayList()
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     override var position: Point3D? = null
@@ -113,5 +112,5 @@ class Extruded(
     }
 }
 
-fun VisualGroup3D.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
+fun MutableVisualGroup.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
     Extruded().apply(action).also { set(name, it) }

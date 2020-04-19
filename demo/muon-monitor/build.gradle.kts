@@ -1,28 +1,30 @@
-import scientifik.useSerialization
+import scientifik.jsDistDirectory
 
 plugins {
     id("scientifik.mpp")
-    //id("org.openjfx.javafxplugin")
     id("application")
 }
 
 group = "ru.mipt.npm"
 
-useSerialization()
-
-val ktor_version = "1.3.0-rc"
+val ktorVersion = "1.3.2"
 
 kotlin {
 
-    js {
+    val installJS = tasks.getByName("jsBrowserDistribution")
+
+    js{
         browser {
+            dceTask {
+                dceOptions {
+                    keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
+                }
+            }
             webpackTask {
-                sourceMaps = true
+                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
             }
         }
     }
-
-    val installJS = tasks.getByName<Copy>("installJsDist")
 
     jvm {
         withJava()
@@ -30,7 +32,7 @@ kotlin {
             tasks.getByName<ProcessResources>("jvmProcessResources") {
                 dependsOn(installJS)
                 afterEvaluate {
-                    from(installJS.destinationDir)
+                    from(project.jsDistDirectory)
                 }
             }
         }
@@ -45,25 +47,40 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation("io.ktor:ktor-server-cio:$ktor_version")
-                implementation("io.ktor:ktor-serialization:$ktor_version")
+                implementation("io.ktor:ktor-server-cio:$ktorVersion")
+                implementation("io.ktor:ktor-serialization:$ktorVersion")
             }
         }
-        jsMain{
-            dependencies{
-                implementation("io.ktor:ktor-client-js:$ktor_version")
-                implementation("io.ktor:ktor-client-serialization-js:$ktor_version")
+        jsMain {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
                 implementation(npm("text-encoding"))
                 implementation(npm("abort-controller"))
+                implementation(npm("bufferutil"))
+                implementation(npm("utf-8-validate"))
+                implementation(npm("fs"))
+//                implementation(npm("jquery"))
+//                implementation(npm("popper.js"))
+//                implementation(npm("react-is"))
             }
         }
     }
 }
 
 application {
-    mainClassName = "ru.mipt.npm.muon.monitor.server/MMServerKt"
+    mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
 }
 
 //configure<JavaFXOptions> {
 //    modules("javafx.controls")
 //}
+
+val common = project(":dataforge-vis-common")
+
+val copyJsResourcesFromCommon by tasks.creating(Copy::class){
+    from(common.buildDir.resolve("processedResources\\js\\main\\"))
+    into(buildDir.resolve("processedResources\\js\\main\\"))
+}
+
+tasks.getByPath("jsProcessResources").dependsOn(copyJsResourcesFromCommon)

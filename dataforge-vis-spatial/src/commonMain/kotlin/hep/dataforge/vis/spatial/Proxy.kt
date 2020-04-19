@@ -1,18 +1,13 @@
-@file:UseSerializers(Point3DSerializer::class, NameSerializer::class, ConfigSerializer::class)
+@file:UseSerializers(Point3DSerializer::class)
 
 package hep.dataforge.vis.spatial
 
-import hep.dataforge.io.serialization.ConfigSerializer
-import hep.dataforge.io.serialization.NameSerializer
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.get
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.plus
-import hep.dataforge.vis.common.*
+import hep.dataforge.names.*
+import hep.dataforge.vis.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -26,7 +21,9 @@ import kotlin.collections.set
  */
 @Serializable
 @SerialName("3d.proxy")
-class Proxy private constructor(val templateName: Name) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+class Proxy private constructor(
+    val templateName: Name
+) : AbstractVisualObject(), VisualGroup, VisualObject3D {
 
     constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
         this.parent = parent
@@ -36,7 +33,6 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    @Serializable(ConfigSerializer::class)
     override var properties: Config? = null
 
     /**
@@ -44,10 +40,12 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
      */
     val prototype: VisualObject3D
         get() = (parent as? VisualGroup3D)?.getPrototype(templateName)
-            ?: error("Template with name $templateName not found in $parent")
+            ?: error("Prototype with name $templateName not found in $parent")
 
     override val styleSheet: StyleSheet
-        get() = (parent as? VisualGroup)?.styleSheet ?: StyleSheet(this)
+        get() = parent?.styleSheet ?: StyleSheet(
+            this
+        )
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -89,7 +87,8 @@ class Proxy private constructor(val templateName: Name) : AbstractVisualObject()
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
-    inner class ProxyChild(val name: Name) : AbstractVisualObject(), VisualGroup {
+    inner class ProxyChild(val name: Name) : AbstractVisualObject(),
+        VisualGroup {
 
         val prototype: VisualObject get() = prototypeFor(name)
 
@@ -155,20 +154,18 @@ val VisualObject.prototype: VisualObject
 /**
  * Create ref for existing prototype
  */
-inline fun VisualGroup3D.ref(
+fun VisualGroup3D.ref(
     templateName: Name,
-    name: String = "",
-    block: Proxy.() -> Unit = {}
-) = Proxy(this, templateName).apply(block).also { set(name, it) }
+    name: String = ""
+): Proxy = Proxy(this, templateName).also { set(name, it) }
 
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
  */
 fun VisualGroup3D.proxy(
-    templateName: Name,
+    name: String,
     obj: VisualObject3D,
-    name: String = "",
-    block: Proxy.() -> Unit = {}
+    templateName: Name = name.toName()
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {
@@ -178,5 +175,14 @@ fun VisualGroup3D.proxy(
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }
-    return ref(templateName, name, block)
+    return ref(templateName, name)
+}
+
+fun VisualGroup3D.proxyGroup(
+    name: String,
+    templateName: Name = name.toName(),
+    block: MutableVisualGroup.() -> Unit
+): Proxy {
+    val group = VisualGroup3D().apply(block)
+    return proxy(name, group, templateName)
 }

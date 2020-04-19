@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial.gdml.demo
 
 import hep.dataforge.context.Global
-import hep.dataforge.vis.fx.editor.VisualObjectEditorFragment
-import hep.dataforge.vis.fx.editor.VisualObjectTreeFragment
+import hep.dataforge.vis.editor.VisualObjectEditorFragment
+import hep.dataforge.vis.editor.VisualObjectTreeFragment
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
