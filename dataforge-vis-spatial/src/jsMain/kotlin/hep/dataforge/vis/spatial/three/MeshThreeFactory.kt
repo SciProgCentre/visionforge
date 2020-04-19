@@ -80,7 +80,7 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
 }
 
 fun Mesh.applyEdges(obj: VisualObject3D) {
-    children.find { it.name == "edges" }?.let {
+    children.find { it.name == "@edges" }?.let {
         remove(it)
         (it as LineSegments).dispose()
     }
@@ -93,14 +93,14 @@ fun Mesh.applyEdges(obj: VisualObject3D) {
                 EdgesGeometry(geometry as BufferGeometry),
                 material
             ).apply {
-                name = "edges"
+                name = "@edges"
             }
         )
     }
 }
 
 fun Mesh.applyWireFrame(obj: VisualObject3D) {
-    children.find { it.name == "wireframe" }?.let {
+    children.find { it.name == "@wireframe" }?.let {
         remove(it)
         (it as LineSegments).dispose()
     }
@@ -112,7 +112,7 @@ fun Mesh.applyWireFrame(obj: VisualObject3D) {
                 WireframeGeometry(geometry as BufferGeometry),
                 material
             ).apply {
-                name = "wireframe"
+                name = "@wireframe"
             }
         )
     }

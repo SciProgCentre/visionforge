@@ -24,6 +24,8 @@ interface VisualObject3D : VisualObject {
     var rotation: Point3D?
     var scale: Point3D?
 
+    override val descriptor: NodeDescriptor? get() = Companion.descriptor
+
     companion object {
 
         val VISIBLE_KEY = "visible".asName()

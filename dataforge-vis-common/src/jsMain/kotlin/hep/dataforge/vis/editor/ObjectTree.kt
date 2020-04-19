@@ -34,7 +34,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
     }
 
     fun RBuilder.treeLabel(text: String) {
-        button(classes = "btn btn-link tree-label p-0") {
+        button(classes = "btn btn-link align-middle tree-label p-0") {
             +text
             attrs {
                 if (props.name == props.selected) {

@@ -43,11 +43,6 @@ class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
         canvas?.render(props.obj)
     }
 
-//    override fun componentWillUnmount() {
-//        state.element?.clear()
-//        props.canvasCallback?.invoke(null)
-//    }
-
     override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
         if (prevProps.obj != props.obj) {
             componentDidMount()
