@@ -137,12 +137,9 @@ private fun RBuilder.configEditorItem(props: ConfigEditorProps) {
                         }
                     }
                     div("col") {
-                        console.log("1: Setting ${props.name} to ${actualItem.value}")
-                        val value = actualItem.value
                         child(ValueChooser) {
                             attrs {
-                                console.log("2: Setting ${props.name} to $value")
-                                this.value = value
+                                this.value = actualItem.value
                                 this.descriptor = descriptorItem as? ValueDescriptor
                                 this.valueChanged = valueChanged
                             }

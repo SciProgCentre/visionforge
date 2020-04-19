@@ -27,8 +27,6 @@ val ValueChooser = functionalComponent<ValueChooserProps> { props ->
 //    var state by initState {props.value }
     val descriptor = props.descriptor
 
-    console.log("3: Set ${props.value}")
-
     val onValueChange: (Event) -> Unit = {
         val res = when (val t = it.target) {
             // (it.target as HTMLInputElement).value
