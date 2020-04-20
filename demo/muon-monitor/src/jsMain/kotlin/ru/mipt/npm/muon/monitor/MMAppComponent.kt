@@ -2,6 +2,7 @@ package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Context
 import hep.dataforge.js.card
+import hep.dataforge.js.component
 import hep.dataforge.js.initState
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
@@ -21,7 +22,6 @@ import kotlinx.coroutines.launch
 import kotlinx.html.js.onClickFunction
 import react.RProps
 import react.dom.*
-import react.functionalComponent
 import kotlin.math.PI
 
 interface MMAppProps : RProps {
@@ -39,7 +39,7 @@ private val canvasConfig = Canvas {
     }
 }
 
-val MMApp = functionalComponent<MMAppProps> { props ->
+val MMApp = component<MMAppProps> { props ->
     var selected by initState { props.selected }
     var canvas: ThreeCanvas? by initState { null }
 

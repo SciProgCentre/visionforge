@@ -1,6 +1,9 @@
 package hep.dataforge.vis.editor
 
+import hep.dataforge.js.RFBuilder
+import hep.dataforge.js.component
 import hep.dataforge.js.initState
+import hep.dataforge.js.memoize
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.*
 import hep.dataforge.names.Name
@@ -37,11 +40,12 @@ interface ConfigEditorProps : RProps {
     var descriptor: NodeDescriptor?
 }
 
-private fun RBuilder.configEditorItem(props: ConfigEditorProps) {
+private fun RFBuilder.configEditorItem(props: ConfigEditorProps) {
     var expanded: Boolean by initState { true }
-    val item = props.root[props.name]
-    val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    val defaultItem = props.default?.get(props.name)
+    val item = memoize(props.root, props.name) { props.root[props.name] }
+    val descriptorItem: ItemDescriptor? = memoize(props.descriptor, props.name) { props.descriptor?.get(props.name) }
+    val defaultItem = memoize(props.default, props.name) { props.default?.get(props.name) }
+    val actualItem: MetaItem<Meta>? = item ?: defaultItem ?: descriptorItem?.defaultItem()
 
     val token = props.name.last()?.toString() ?: "Properties"
 
@@ -59,8 +63,6 @@ private fun RBuilder.configEditorItem(props: ConfigEditorProps) {
         }
         return@useEffectWithCleanup { props.root.removeListener(this) }
     }
-
-    val actualItem: MetaItem<Meta>? = item ?: defaultItem ?: descriptorItem?.defaultItem()
 
     val expanderClick: (Event) -> Unit = {
         expanded = !expanded
@@ -162,7 +164,7 @@ private fun RBuilder.configEditorItem(props: ConfigEditorProps) {
     }
 }
 
-val ConfigEditor: FunctionalComponent<ConfigEditorProps> = functionalComponent { configEditorItem(it) }
+val ConfigEditor: FunctionalComponent<ConfigEditorProps> = component { configEditorItem(it) }
 
 fun RBuilder.configEditor(
     config: Config,

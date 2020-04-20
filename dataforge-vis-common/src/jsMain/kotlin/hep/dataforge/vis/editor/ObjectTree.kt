@@ -1,6 +1,8 @@
 package hep.dataforge.vis.editor
 
+import hep.dataforge.js.RFBuilder
 import hep.dataforge.js.card
+import hep.dataforge.js.component
 import hep.dataforge.js.initState
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
@@ -26,7 +28,7 @@ interface TreeState : RState {
     var expanded: Boolean
 }
 
-private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
+private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
     var expanded: Boolean by initState{ props.selected?.startsWith(props.name) ?: false }
 
     val onClick: (Event) -> Unit = {
@@ -90,7 +92,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
     }
 }
 
-val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent { props ->
+val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
     objectTree(props)
 }
 

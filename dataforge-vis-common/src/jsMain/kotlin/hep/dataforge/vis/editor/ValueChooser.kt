@@ -1,5 +1,6 @@
 package hep.dataforge.vis.editor
 
+import hep.dataforge.js.component
 import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.meta.get
 import hep.dataforge.meta.string
@@ -11,11 +12,11 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.RProps
+import react.RState
 import react.dom.div
 import react.dom.input
 import react.dom.option
 import react.dom.select
-import react.functionalComponent
 
 interface ValueChooserProps : RProps {
     var value: Value
@@ -23,7 +24,35 @@ interface ValueChooserProps : RProps {
     var valueChanged: (Value?) -> Unit
 }
 
-val ValueChooser = functionalComponent<ValueChooserProps> { props ->
+interface ValueChooserState : RState {
+    var value: Value
+}
+
+//class TextValueChooser(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
+//
+//    override fun ValueChooserState.init(props: ValueChooserProps) {
+//        this.value = props.value
+//    }
+//
+//    val valueChanged: (Event) -> Unit = {
+//        val res = (it.target as HTMLInputElement).value.asValue()
+//        setState {
+//            this.value = res
+//        }
+//        props.valueChanged(res)
+//    }
+//
+//    override fun RBuilder.render() {
+//        input(type = InputType.text, classes = "float-right") {
+//            attrs {
+//                this.value = state.value.string
+//                onChangeFunction = valueChanged
+//            }
+//        }
+//    }
+//}
+
+val ValueChooser = component<ValueChooserProps> { props ->
 //    var state by initState {props.value }
     val descriptor = props.descriptor
 

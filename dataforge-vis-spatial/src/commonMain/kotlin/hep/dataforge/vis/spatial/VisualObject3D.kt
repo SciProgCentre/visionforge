@@ -70,6 +70,12 @@ interface VisualObject3D : VisualObject {
 
                 defineItem(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
 
+                //TODO replace by descriptor merge
+                defineValue(VisualObject.STYLE_KEY){
+                    type(ValueType.STRING)
+                    multiple = true
+                }
+
 //                Material3D.MATERIAL_COLOR_KEY put "#ffffff"
 //                Material3D.MATERIAL_OPACITY_KEY put 1.0
 //                Material3D.MATERIAL_WIREFRAME_KEY put false
