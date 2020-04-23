@@ -22,7 +22,7 @@ fun <P : RProps> component(
     }
 }
 
-fun <T> RFBuilder.initState(init: () -> T): ReadWriteProperty<Any?, T> =
+fun <T> RFBuilder.state(init: () -> T): ReadWriteProperty<Any?, T> =
     object : ReadWriteProperty<Any?, T> {
         val pair = react.useState(init)
         override fun getValue(thisRef: Any?, property: KProperty<*>): T {

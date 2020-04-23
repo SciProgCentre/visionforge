@@ -3,7 +3,7 @@ package ru.mipt.npm.muon.monitor
 import hep.dataforge.context.Context
 import hep.dataforge.js.card
 import hep.dataforge.js.component
-import hep.dataforge.js.initState
+import hep.dataforge.js.state
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
@@ -40,17 +40,21 @@ private val canvasConfig = Canvas {
 }
 
 val MMApp = component<MMAppProps> { props ->
-    var selected by initState { props.selected }
-    var canvas: ThreeCanvas? by initState { null }
+    var selected by state { props.selected }
+    var canvas: ThreeCanvas? by state { null }
 
     val select: (Name?) -> Unit = {
         selected = it
     }
 
     val visual = props.model.root
-
     div("row") {
-        div("col-lg-3") {
+        h1("mx-auto") {
+            +"Muon monitor demo"
+        }
+    }
+    div("row") {
+        div("col-lg-3 mh-100 px-0") {
             //tree
             card("Object tree") {
                 objectTree(visual, selected, select)
@@ -156,5 +160,6 @@ val MMApp = component<MMAppProps> { props ->
                 }
             }
         }
+
     }
 }

@@ -109,10 +109,10 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
 
         element.appendChild(renderer.domElement)
 
-        renderer.setSize(max(canvas.minSize, element.offsetWidth), max(canvas.minSize, element.offsetWidth))
+        renderer.setSize(max(canvas.minSize, element.clientWidth), max(canvas.minSize, element.clientWidth))
 
-        element.onresize = {
-            renderer.setSize(element.offsetWidth, element.offsetWidth)
+        window.onresize = {
+            renderer.setSize(element.clientWidth, element.clientWidth)
             camera.updateProjectionMatrix()
         }
 

@@ -2,14 +2,12 @@ package hep.dataforge.vis.editor
 
 import hep.dataforge.js.RFBuilder
 import hep.dataforge.js.component
-import hep.dataforge.js.initState
-import hep.dataforge.js.memoize
+import hep.dataforge.js.state
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
-import hep.dataforge.values.Value
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
@@ -41,15 +39,15 @@ interface ConfigEditorProps : RProps {
 }
 
 private fun RFBuilder.configEditorItem(props: ConfigEditorProps) {
-    var expanded: Boolean by initState { true }
-    val item = memoize(props.root, props.name) { props.root[props.name] }
-    val descriptorItem: ItemDescriptor? = memoize(props.descriptor, props.name) { props.descriptor?.get(props.name) }
-    val defaultItem = memoize(props.default, props.name) { props.default?.get(props.name) }
+    var expanded: Boolean by state { true }
+    val item = props.root[props.name]
+    val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
+    val defaultItem = props.default?.get(props.name)
     val actualItem: MetaItem<Meta>? = item ?: defaultItem ?: descriptorItem?.defaultItem()
 
     val token = props.name.last()?.toString() ?: "Properties"
 
-    var kostyl by initState { false }
+    var kostyl by state { false }
 
     fun update() {
         kostyl = !kostyl
@@ -72,20 +70,6 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorProps) {
         props.root.remove(props.name)
         update()
     }
-
-    val valueChanged: (Value?) -> Unit = { value ->
-        try {
-            if (value == null) {
-                props.root.remove(props.name)
-            } else {
-                props.root.setValue(props.name, value)
-            }
-            update()
-        } catch (ex: Exception) {
-            console.error("Can't set config property ${props.name} to $value")
-        }
-    }
-
 
     when (actualItem) {
         is MetaItem.NodeItem -> {
@@ -127,37 +111,30 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorProps) {
         }
         is MetaItem.ValueItem -> {
             div {
-                div("row") {
-                    div("col") {
-                        p("tree-label") {
-                            +token
+                div("d-flex flex-row align-items-center") {
+                    div("flex-grow-1 p-1 mr-auto tree-label") {
+                        +token
+                        attrs {
+                            if (item == null) {
+                                classes += "tree-label-inactive"
+                            }
+                        }
+                    }
+                    div("d-inline-flex") {
+                        valueChooser(props.root, props.name, actualItem.value, descriptorItem as? ValueDescriptor)
+                    }
+                    div("d-inline-flex p-1") {
+                        button(classes = "btn btn-link") {
+                            +"\u00D7"
                             attrs {
                                 if (item == null) {
-                                    classes += "tree-label-inactive"
+                                    disabled = true
+                                } else {
+                                    onClickFunction = removeClick
                                 }
                             }
                         }
                     }
-                    div("col") {
-                        child(ValueChooser) {
-                            attrs {
-                                this.value = actualItem.value
-                                this.descriptor = descriptorItem as? ValueDescriptor
-                                this.valueChanged = valueChanged
-                            }
-                        }
-                    }
-                    button(classes = "btn btn-link") {
-                        +"\u00D7"
-                        attrs {
-                            if (item == null) {
-                                disabled = true
-                            } else {
-                                onClickFunction = removeClick
-                            }
-                        }
-                    }
-
                 }
             }
         }

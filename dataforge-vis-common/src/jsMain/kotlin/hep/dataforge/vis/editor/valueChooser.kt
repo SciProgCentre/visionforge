@@ -1,9 +1,11 @@
 package hep.dataforge.vis.editor
 
-import hep.dataforge.js.component
+import hep.dataforge.meta.Config
 import hep.dataforge.meta.descriptors.ValueDescriptor
 import hep.dataforge.meta.get
+import hep.dataforge.meta.setValue
 import hep.dataforge.meta.string
+import hep.dataforge.names.Name
 import hep.dataforge.values.*
 import hep.dataforge.vis.widgetType
 import kotlinx.html.InputType
@@ -11,51 +13,10 @@ import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
-import react.RProps
-import react.RState
-import react.dom.div
-import react.dom.input
-import react.dom.option
-import react.dom.select
+import react.RBuilder
+import react.dom.*
 
-interface ValueChooserProps : RProps {
-    var value: Value
-    var descriptor: ValueDescriptor?
-    var valueChanged: (Value?) -> Unit
-}
-
-interface ValueChooserState : RState {
-    var value: Value
-}
-
-//class TextValueChooser(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
-//
-//    override fun ValueChooserState.init(props: ValueChooserProps) {
-//        this.value = props.value
-//    }
-//
-//    val valueChanged: (Event) -> Unit = {
-//        val res = (it.target as HTMLInputElement).value.asValue()
-//        setState {
-//            this.value = res
-//        }
-//        props.valueChanged(res)
-//    }
-//
-//    override fun RBuilder.render() {
-//        input(type = InputType.text, classes = "float-right") {
-//            attrs {
-//                this.value = state.value.string
-//                onChangeFunction = valueChanged
-//            }
-//        }
-//    }
-//}
-
-val ValueChooser = component<ValueChooserProps> { props ->
-//    var state by initState {props.value }
-    val descriptor = props.descriptor
-
+internal fun RBuilder.valueChooser(root: Config, name: Name, value: Value, descriptor: ValueDescriptor?) {
     val onValueChange: (Event) -> Unit = {
         val res = when (val t = it.target) {
             // (it.target as HTMLInputElement).value
@@ -67,22 +28,26 @@ val ValueChooser = component<ValueChooserProps> { props ->
             is HTMLSelectElement -> t.value.asValue()
             else -> error("Unknown event target: $t")
         }
-//        state = res
-        props.valueChanged(res)
+
+        try {
+            root.setValue(name, res)
+        } catch (ex: Exception) {
+            console.error("Can't set config property ${name} to $res")
+        }
     }
 
-    div {
+    div() {
         val type = descriptor?.type?.firstOrNull()
         when {
             type == ValueType.BOOLEAN -> {
-                input(type = InputType.checkBox, classes = "float-right") {
+                input(type = InputType.checkBox) {
                     attrs {
-                        checked = props.value.boolean
+                        checked = value.boolean
                         onChangeFunction = onValueChange
                     }
                 }
             }
-            type == ValueType.NUMBER -> input(type = InputType.number, classes = "float-right") {
+            type == ValueType.NUMBER -> input(type = InputType.number, classes = "form-control w-100") {
                 attrs {
                     descriptor.attributes["step"].string?.let {
                         step = it
@@ -93,11 +58,11 @@ val ValueChooser = component<ValueChooserProps> { props ->
                     descriptor.attributes["max"].string?.let {
                         max = it
                     }
-                    this.value = props.value.string
+                    this.defaultValue = value.string
                     onChangeFunction = onValueChange
                 }
             }
-            descriptor?.allowedValues?.isNotEmpty() ?: false -> select("float-right") {
+            descriptor?.allowedValues?.isNotEmpty() ?: false -> select (classes = "w-100") {
                 descriptor!!.allowedValues.forEach {
                     option {
                         +it.string
@@ -108,19 +73,18 @@ val ValueChooser = component<ValueChooserProps> { props ->
                     onChangeFunction = onValueChange
                 }
             }
-            descriptor?.widgetType == "color" -> input(type = InputType.color, classes = "float-right") {
+            descriptor?.widgetType == "color" -> input(type = InputType.color) {
                 attrs {
-                    this.value = props.value.string
+                    this.value = value.string
                     onChangeFunction = onValueChange
                 }
             }
-            else -> input(type = InputType.text, classes = "float-right") {
+            else -> input(type = InputType.text, classes = "form-control w-100") {
                 attrs {
-                    this.value = props.value.string
+                    this.value = value.string
                     onChangeFunction = onValueChange
                 }
             }
         }
     }
-
 }
