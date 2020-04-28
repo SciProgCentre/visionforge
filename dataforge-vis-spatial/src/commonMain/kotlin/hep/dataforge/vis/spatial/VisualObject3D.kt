@@ -24,6 +24,8 @@ interface VisualObject3D : VisualObject {
     var rotation: Point3D?
     var scale: Point3D?
 
+    override val descriptor: NodeDescriptor? get() = Companion.descriptor
+
     companion object {
 
         val VISIBLE_KEY = "visible".asName()
@@ -66,12 +68,13 @@ interface VisualObject3D : VisualObject {
                     default(true)
                 }
 
+                //TODO replace by descriptor merge
+                defineValue(VisualObject.STYLE_KEY){
+                    type(ValueType.STRING)
+                    multiple = true
+                }
+
                 defineItem(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
-
-//                Material3D.MATERIAL_COLOR_KEY put "#ffffff"
-//                Material3D.MATERIAL_OPACITY_KEY put 1.0
-//                Material3D.MATERIAL_WIREFRAME_KEY put false
-
             }
         }
     }

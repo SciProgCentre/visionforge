@@ -1,9 +1,11 @@
 package hep.dataforge.vis
 
 import hep.dataforge.meta.*
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.Value
+import hep.dataforge.values.ValueType
 import hep.dataforge.vis.VisualObject.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
@@ -19,15 +21,15 @@ abstract class AbstractVisualObject : VisualObject {
 
     protected abstract var properties: Config?
 
-    override var styles: List<String>
+    final override var styles: List<String>
         get() = properties?.get(STYLE_KEY).stringList
         set(value) {
-            //val allStyles = (field + value).distinct()
             setProperty(STYLE_KEY, Value.of(value))
             updateStyles(value)
         }
 
     protected fun updateStyles(names: List<String>) {
+        styleCache = null
         names.mapNotNull { findStyle(it) }.asSequence()
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
@@ -77,7 +79,7 @@ abstract class AbstractVisualObject : VisualObject {
     /**
      * All available properties in a layered form
      */
-    override fun allProperties(): Laminate = Laminate(properties, mergedStyles)
+    override fun allProperties(): Laminate = Laminate(properties, mergedStyles, parent?.allProperties())
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -85,6 +87,16 @@ abstract class AbstractVisualObject : VisualObject {
         } else {
             properties?.get(name) ?: mergedStyles[name]
         }
+    }
+
+    companion object {
+        val descriptor = NodeDescriptor {
+            defineValue(STYLE_KEY){
+                type(ValueType.STRING)
+                multiple = true
+            }
+        }
+
     }
 }
 

@@ -56,12 +56,10 @@ class Material3D : Scheme() {
                 defineValue(OPACITY_KEY) {
                     type(ValueType.NUMBER)
                     default(1.0)
-                    configure {
-                        "attributes" to {
-                            this["min"] = 0.0
-                            this["max"] = 1.0
-                            this["step"] = 0.1
-                        }
+                    config["attributes"] = Meta {
+                        this["min"] = 0.0
+                        this["max"] = 1.0
+                        this["step"] = 0.1
                     }
                 }
                 defineValue(WIREFRAME_KEY) {

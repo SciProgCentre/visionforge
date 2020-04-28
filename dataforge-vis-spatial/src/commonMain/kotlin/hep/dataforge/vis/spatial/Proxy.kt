@@ -79,7 +79,8 @@ class Proxy private constructor(
             ?: error("Prototype with name $name not found in $this")
     }
 
-    override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
+    override fun allProperties(): Laminate =
+        Laminate(properties, mergedStyles, prototype.allProperties(), parent?.allProperties())
 
     override fun attachChildren() {
         //do nothing
@@ -135,7 +136,8 @@ class Proxy private constructor(
             //do nothing
         }
 
-        override fun allProperties(): Laminate = Laminate(properties, mergedStyles, prototype.allProperties())
+        override fun allProperties(): Laminate =
+            Laminate(properties, mergedStyles, prototype.allProperties(), parent?.allProperties())
 
     }
 

@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.serialization.json.Json
+import react.child
 import react.dom.render
 import kotlin.browser.document
 
@@ -29,7 +30,7 @@ private class MMDemoApp : Application {
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
         render(element) {
-            child(MMAppComponent::class) {
+            child(MMApp) {
                 attrs {
                     model = this@MMDemoApp.model
                     connection = this@MMDemoApp.connection

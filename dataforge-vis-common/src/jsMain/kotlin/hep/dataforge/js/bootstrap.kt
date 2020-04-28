@@ -16,9 +16,11 @@ inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagCo
 }
 
 inline fun RBuilder.card(title: String, crossinline block: RBuilder.() -> Unit) {
-    div("card w-100") {
+    div("card w-100 h-100") {
         div("card-body") {
-            h3(classes = "card-title") { +title }
+            h3(classes = "card-title") {
+                +title
+            }
             block()
         }
     }
@@ -78,7 +80,7 @@ fun RBuilder.accordion(id: String, elements: List<Pair<String, RDOMBuilder<DIV>.
             elements.forEachIndexed { index, (title, builder) ->
                 val headerID = "${id}-${index}-heading"
                 val collapseID = "${id}-${index}-collapse"
-                div("card") {
+                div("card p-0 m-0") {
                     div("card-header") {
                         attrs {
                             this.id = headerID
