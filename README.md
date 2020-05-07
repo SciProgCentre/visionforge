@@ -12,9 +12,10 @@
   * [dataforge-vis-spatial](#dataforge-vis-spatial)
   * [dataforge-vis-spatial-gdml](#dataforge-vis-spatial-gdml)
   * [dataforge-vis-jsroot](#dataforge-vis-jsroot)
+* [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
-  * [Simple Example - Spatial Showcase](#simple-example-spatial-showcase)
-  * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example-muon-monitor-visualization)
+  * [Simple Example - Spatial Showcase](#simple-example---spatial-showcase)
+  * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
   * [GDML Example](#gdml-example)
 
 
@@ -26,7 +27,7 @@ used for visualization in various scientific applications.
 The main framework's use case for now is 3D visualization for particle physics experiments. 
 Other applications including 2D plots are planned for the future.
 
-The project is being developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
+The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
 application, currently targeting browser JavaScript and JVM.
 
 
@@ -103,9 +104,19 @@ Some JSROOT bindings.
 Note: Currently, this part is experimental and put here for completeness. This module may not build.
 
 
+## Visualization for External Systems 
+
+The `dataforge-vis` framework can be used to visualize geometry and events from external,
+non-Kotlin based systems, such as ROOT. This will require a plugin to convert data model
+of the external system to that of `dataforge-vis`. Performing such integration is a work 
+currently in progress.
+ 
+
 ## Demonstrations
 
-The `demo` module contains several example projects (demonstrations) of using the `dataforge-vis` framework:
+The `demo` module contains several example projects (demonstrations) of using the `dataforge-vis` framework.
+They are briefly described in this section, for more details please consult the corresponding per-project
+README file.
 
 ### Simple Example - Spatial Showcase
 
@@ -122,7 +133,7 @@ Some shapes will also periodically change their color and visibility.
 ### Full-Stack Application Example - Muon Monitor Visualization
 
 A full-stack application example, showing the 
-[Muon Monitor](http://npm.mipt.ru/projects/physics.html#mounMonitor) experiment set-up.
+[Muon Monitor](http://npm.mipt.ru/en/projects/physics#mounMonitor) experiment set-up.
 
 [More details](demo/muon-monitor/README.md)
 
