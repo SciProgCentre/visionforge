@@ -5,6 +5,7 @@ package hep.dataforge.vis.spatial
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.get
 import hep.dataforge.names.*
 import hep.dataforge.vis.*
@@ -88,6 +89,9 @@ class Proxy private constructor(
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
+    override val descriptor: NodeDescriptor?
+        get() = prototype.descriptor
+
     inner class ProxyChild(val name: Name) : AbstractVisualObject(),
         VisualGroup {
 
@@ -139,6 +143,9 @@ class Proxy private constructor(
         override fun allProperties(): Laminate =
             Laminate(properties, mergedStyles, prototype.allProperties(), parent?.allProperties())
 
+
+        override val descriptor: NodeDescriptor?
+            get() = prototype.descriptor
     }
 
     companion object {

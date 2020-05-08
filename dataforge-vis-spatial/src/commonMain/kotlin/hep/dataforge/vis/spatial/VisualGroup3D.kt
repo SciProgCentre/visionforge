@@ -40,8 +40,8 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
      */
     fun prototypes(builder: MutableVisualGroup.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
-            attach(it)
             prototypes = it
+            attach(it)
         }).run(builder)
     }
 
@@ -90,7 +90,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
 tailrec fun PrototypeHolder.getPrototype(name: Name): VisualObject3D? =
-    prototypes?.get(name) as? VisualObject3D ?: (parent as? VisualGroup3D)?.getPrototype(name)
+    prototypes?.get(name) as? VisualObject3D ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
