@@ -44,6 +44,9 @@ interface VisualObject : Configurable {
      */
     fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?): Unit
 
+    /**
+     * Send a signal that property value should be reevaluated
+     */
     fun propertyInvalidated(name: Name) = propertyChanged(name, null, null)
 
     /**

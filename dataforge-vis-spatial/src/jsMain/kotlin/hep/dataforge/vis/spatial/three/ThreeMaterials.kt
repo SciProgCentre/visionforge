@@ -5,6 +5,7 @@ import hep.dataforge.values.ValueType
 import hep.dataforge.vis.Colors
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.spatial.Material3D
+import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_SPECULAR_COLOR_KEY
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial

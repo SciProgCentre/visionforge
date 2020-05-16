@@ -1,6 +1,5 @@
-package hep.dataforge.vis.editor
+package hep.dataforge.vis.bootstrap
 
-import hep.dataforge.js.card
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name

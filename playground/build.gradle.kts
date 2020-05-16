@@ -21,6 +21,7 @@ kotlin {
             dependencies {
                 api(project(":dataforge-vis-spatial"))
                 api(project(":dataforge-vis-spatial-gdml"))
+                api(project(":ui:bootstrap"))
             }
         }
     }

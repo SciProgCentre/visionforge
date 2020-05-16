@@ -1,4 +1,4 @@
-package hep.dataforge.js
+package hep.dataforge.vis.react
 
 import react.*
 import kotlin.properties.ReadWriteProperty

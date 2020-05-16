@@ -2,6 +2,7 @@ package hep.dataforge.vis.spatial
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.attributes
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
@@ -39,7 +40,8 @@ class Material3D : Scheme() {
         val MATERIAL_KEY = "material".asName()
         internal val COLOR_KEY = "color".asName()
         val MATERIAL_COLOR_KEY = MATERIAL_KEY + COLOR_KEY
-        val SPECULAR_COLOR_KEY = "specularColor".asName()
+        internal val SPECULAR_COLOR_KEY = "specularColor".asName()
+        val MATERIAL_SPECULAR_COLOR_KEY = MATERIAL_KEY + SPECULAR_COLOR_KEY
         internal val OPACITY_KEY = "opacity".asName()
         val MATERIAL_OPACITY_KEY = MATERIAL_KEY + OPACITY_KEY
         internal val WIREFRAME_KEY = "wireframe".asName()
@@ -48,21 +50,22 @@ class Material3D : Scheme() {
         val descriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
-                defineValue(COLOR_KEY) {
+                value(COLOR_KEY) {
                     type(ValueType.STRING, ValueType.NUMBER)
                     default("#ffffff")
                     widgetType = "color"
                 }
-                defineValue(OPACITY_KEY) {
+                value(OPACITY_KEY) {
                     type(ValueType.NUMBER)
                     default(1.0)
-                    config["attributes"] = Meta {
+                    attributes {
                         this["min"] = 0.0
                         this["max"] = 1.0
                         this["step"] = 0.1
                     }
+                    widgetType = "slider"
                 }
-                defineValue(WIREFRAME_KEY) {
+                value(WIREFRAME_KEY) {
                     type(ValueType.BOOLEAN)
                     default(false)
                 }

@@ -83,20 +83,34 @@ abstract class AbstractVisualObject : VisualObject {
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name) ?: mergedStyles[name] ?: parent?.getProperty(name, inherit)
+            sequence {
+                yield(properties?.get(name))
+                yield(mergedStyles[name])
+                yield(parent?.getProperty(name, inherit))
+            }.merge()
         } else {
-            properties?.get(name) ?: mergedStyles[name]
+            sequence {
+                yield(properties?.get(name))
+                yield(mergedStyles[name])
+            }.merge()
         }
+    }
+
+    /**
+     * Reset all properties to their default values
+     */
+    fun resetProperties() {
+        properties?.removeListener(this)
+        properties = null
     }
 
     companion object {
         val descriptor = NodeDescriptor {
-            defineValue(STYLE_KEY){
+            value(STYLE_KEY) {
                 type(ValueType.STRING)
                 multiple = true
             }
         }
-
     }
 }
 

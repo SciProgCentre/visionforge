@@ -29,7 +29,7 @@ interface ThreeCanvasState : RState {
 
 class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
 
-    var canvas: ThreeCanvas? = null
+    private var canvas: ThreeCanvas? = null
 
     override fun componentDidMount() {
         if(canvas == null) {

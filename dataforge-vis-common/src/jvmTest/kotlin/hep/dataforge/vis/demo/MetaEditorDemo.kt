@@ -26,21 +26,21 @@ class MetaEditorDemo : View("Meta editor demo") {
     }.asConfig()
 
     val descriptor = NodeDescriptor {
-        defineNode("aNode") {
+        node("aNode") {
             info = "A root demo node"
-            defineValue("b") {
+            value("b") {
                 info = "b number value"
                 type(ValueType.NUMBER)
             }
-            defineNode("otherNode") {
-                defineValue("otherValue") {
+            node("otherNode") {
+                value("otherValue") {
                     type(ValueType.BOOLEAN)
                     default(false)
                     info = "default value"
                 }
             }
         }
-        defineValue("multiple") {
+        node("multiple") {
             info = "A sns value"
             multiple = true
         }

@@ -1,4 +1,4 @@
-package hep.dataforge.vis.editor
+package hep.dataforge.vis.bootstrap
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem

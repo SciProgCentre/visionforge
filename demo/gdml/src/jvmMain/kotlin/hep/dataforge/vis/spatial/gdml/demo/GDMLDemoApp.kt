@@ -5,9 +5,9 @@ import hep.dataforge.vis.editor.VisualObjectEditorFragment
 import hep.dataforge.vis.editor.VisualObjectTreeFragment
 import hep.dataforge.vis.spatial.Material3D
 import hep.dataforge.vis.spatial.Visual3D
-import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.fx.FX3DPlugin
 import hep.dataforge.vis.spatial.fx.FXCanvas3D
+import hep.dataforge.vis.spatial.gdml.toVisual
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser
@@ -36,10 +36,15 @@ class GDMLView : View() {
             buttonbar {
                 button("Load GDML/json") {
                     action {
-                        val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
-                            ?: return@action
-                        val visual: VisualGroup3D = Visual3D.readFile(file)
-                        canvas.render(visual)
+                        runAsync {
+                            val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
+                                ?: return@runAsync null
+                            Visual3D.readFile(file)
+                        } ui {
+                            if (it != null) {
+                                canvas.render(it)
+                            }
+                        }
                     }
                 }
             }
@@ -48,6 +53,14 @@ class GDMLView : View() {
             splitpane(Orientation.HORIZONTAL, treeFragment.root, canvas.root, propertyEditor.root) {
                 setDividerPositions(0.2, 0.6, 0.2)
             }
+        }
+    }
+
+    init {
+        runAsync {
+            cubes().toVisual()
+        } ui {
+            canvas.render(it)
         }
     }
 

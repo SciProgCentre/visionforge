@@ -1,15 +1,15 @@
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Context
-import hep.dataforge.js.card
-import hep.dataforge.js.component
-import hep.dataforge.js.state
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.editor.configEditor
-import hep.dataforge.vis.editor.objectTree
+import hep.dataforge.vis.bootstrap.card
+import hep.dataforge.vis.bootstrap.configEditor
+import hep.dataforge.vis.bootstrap.objectTree
+import hep.dataforge.vis.react.component
+import hep.dataforge.vis.react.state
 import hep.dataforge.vis.spatial.specifications.Camera
 import hep.dataforge.vis.spatial.specifications.Canvas
 import hep.dataforge.vis.spatial.three.ThreeCanvas
@@ -48,13 +48,14 @@ val MMApp = component<MMAppProps> { props ->
     }
 
     val visual = props.model.root
+
     div("row") {
         h1("mx-auto") {
-            +"Muon monitor demo"
+            +"GDML/JSON render demo"
         }
     }
     div("row") {
-        div("col-lg-3 mh-100 px-0") {
+        div("col-lg-3 px-0 overflow-auto") {
             //tree
             card("Object tree") {
                 objectTree(visual, selected, select)
@@ -154,7 +155,7 @@ val MMApp = component<MMAppProps> { props ->
                             else -> visual[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(selectedObject, default = selectedObject.allProperties())
+                            configEditor(selectedObject, default = selectedObject.allProperties(), key = selected)
                         }
                     }
                 }

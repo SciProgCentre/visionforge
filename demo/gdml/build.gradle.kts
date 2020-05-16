@@ -1,6 +1,4 @@
-import scientifik.DependencyConfiguration
-import scientifik.FXModule
-import scientifik.fx
+import scientifik.*
 
 plugins {
     id("scientifik.mpp")
@@ -8,7 +6,7 @@ plugins {
 }
 
 val fxVersion: String by rootProject.extra
-fx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
 
 kotlin {
 
@@ -17,6 +15,7 @@ kotlin {
     }
 
     js {
+        useCommonJs()
         browser {
             webpackTask {
                 //sourceMaps = false
@@ -27,8 +26,14 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                implementation(project(":dataforge-vis-spatial"))
+                implementation(project(":dataforge-vis-spatial-gdml"))
+            }
+        }
+        jsMain{
+            dependencies {
+                implementation(project(":ui:bootstrap"))
+                implementation(npm("react-file-drop", "3.0.6"))
             }
         }
     }

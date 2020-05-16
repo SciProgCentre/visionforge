@@ -63,18 +63,18 @@ interface VisualObject3D : VisualObject {
 
         val descriptor by lazy {
             NodeDescriptor {
-                defineValue(VISIBLE_KEY) {
+                value(VISIBLE_KEY) {
                     type(ValueType.BOOLEAN)
                     default(true)
                 }
 
                 //TODO replace by descriptor merge
-                defineValue(VisualObject.STYLE_KEY){
+                value(VisualObject.STYLE_KEY){
                     type(ValueType.STRING)
                     multiple = true
                 }
 
-                defineItem(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
+                item(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
             }
         }
     }

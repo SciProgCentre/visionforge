@@ -50,14 +50,18 @@ class Proxy private constructor(
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
-            properties?.get(name)
-                ?: mergedStyles[name]
-                ?: prototype.getProperty(name)
-                ?: parent?.getProperty(name)
+            sequence {
+                yield(properties?.get(name))
+                yield(mergedStyles[name])
+                yield(prototype.getProperty(name))
+                yield(parent?.getProperty(name, inherit))
+            }.merge()
         } else {
-            properties?.get(name)
-                ?: mergedStyles[name]
-                ?: prototype.getProperty(name, false)
+            sequence {
+                yield(properties?.get(name))
+                yield(mergedStyles[name])
+                yield(prototype.getProperty(name, false))
+            }.merge()
         }
     }
 
@@ -125,14 +129,18 @@ class Proxy private constructor(
 
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
-                properties?.get(name)
-                    ?: mergedStyles[name]
-                    ?: prototype.getProperty(name)
-                    ?: parent?.getProperty(name)
+                sequence {
+                    yield(properties?.get(name))
+                    yield(mergedStyles[name])
+                    yield(prototype.getProperty(name))
+                    yield(parent?.getProperty(name, inherit))
+                }.merge()
             } else {
-                properties?.get(name)
-                    ?: mergedStyles[name]
-                    ?: prototype.getProperty(name, false)
+                sequence {
+                    yield(properties?.get(name))
+                    yield(mergedStyles[name])
+                    yield(prototype.getProperty(name, false))
+                }.merge()
             }
         }
 

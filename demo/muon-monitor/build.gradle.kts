@@ -1,3 +1,5 @@
+import kotlinx.atomicfu.plugin.gradle.withKotlinTargets
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import scientifik.jsDistDirectory
 
 plugins {
@@ -13,7 +15,7 @@ kotlin {
 
     val installJS = tasks.getByName("jsBrowserDistribution")
 
-    js{
+    js {
         browser {
             dceTask {
                 dceOptions {
@@ -28,14 +30,15 @@ kotlin {
 
     jvm {
         withJava()
-        compilations.findByName("main").apply {
-            tasks.getByName<ProcessResources>("jvmProcessResources") {
+        compilations[MAIN_COMPILATION_NAME]?.apply {
+            tasks.getByName<ProcessResources>(processResourcesTaskName) {
                 dependsOn(installJS)
                 afterEvaluate {
                     from(project.jsDistDirectory)
                 }
             }
         }
+
     }
 
     sourceSets {
@@ -53,6 +56,7 @@ kotlin {
         }
         jsMain {
             dependencies {
+                implementation(project(":ui:bootstrap"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
                 implementation(npm("text-encoding"))
@@ -71,16 +75,3 @@ kotlin {
 application {
     mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
 }
-
-//configure<JavaFXOptions> {
-//    modules("javafx.controls")
-//}
-
-val common = project(":dataforge-vis-common")
-
-val copyJsResourcesFromCommon by tasks.creating(Copy::class){
-    from(common.buildDir.resolve("processedResources\\js\\main\\"))
-    into(buildDir.resolve("processedResources\\js\\main\\"))
-}
-
-tasks.getByPath("jsProcessResources").dependsOn(copyJsResourcesFromCommon)

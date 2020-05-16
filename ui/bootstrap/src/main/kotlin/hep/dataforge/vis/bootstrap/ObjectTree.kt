@@ -1,15 +1,13 @@
-package hep.dataforge.vis.editor
+package hep.dataforge.vis.bootstrap
 
-import hep.dataforge.js.RFBuilder
-import hep.dataforge.js.card
-import hep.dataforge.js.component
-import hep.dataforge.js.state
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.isEmpty
+import hep.dataforge.vis.react.RFBuilder
+import hep.dataforge.vis.react.component
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
@@ -29,7 +27,7 @@ interface TreeState : RState {
 }
 
 private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
-    var expanded: Boolean by state{ props.selected?.startsWith(props.name) ?: false }
+    var expanded: Boolean by useState{ props.selected?.startsWith(props.name) ?: false }
 
     val onClick: (Event) -> Unit = {
         expanded = !expanded

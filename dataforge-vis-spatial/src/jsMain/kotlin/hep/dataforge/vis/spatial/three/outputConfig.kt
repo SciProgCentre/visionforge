@@ -1,8 +1,8 @@
 package hep.dataforge.vis.spatial.three
 
-import hep.dataforge.js.accordion
-import hep.dataforge.js.entry
 import hep.dataforge.js.requireJS
+import hep.dataforge.vis.bootstrap.accordion
+import hep.dataforge.vis.bootstrap.entry
 import hep.dataforge.vis.spatial.Visual3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import kotlinx.html.*

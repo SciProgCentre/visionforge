@@ -25,6 +25,11 @@ pluginManagement {
 rootProject.name = "dataforge-vis"
 
 include(
+    ":ui",
+    ":ui:react",
+    ":ui:ring",
+    ":ui:material",
+    ":ui:bootstrap",
     ":dataforge-vis-common",
     ":dataforge-vis-spatial",
     ":dataforge-vis-spatial-gdml",
@@ -33,13 +38,3 @@ include(
     ":demo:muon-monitor",
     ":playground"
 )
-
-//if(file("../dataforge-core").exists()) {
-//    includeBuild("../dataforge-core"){
-//        dependencySubstitution {
-//            //substitute(module("hep.dataforge:dataforge-output")).with(project(":dataforge-output"))
-//            substitute(module("hep.dataforge:dataforge-output-jvm")).with(project(":dataforge-output"))
-//            substitute(module("hep.dataforge:dataforge-output-js")).with(project(":dataforge-output"))
-//        }
-//    }
-//}

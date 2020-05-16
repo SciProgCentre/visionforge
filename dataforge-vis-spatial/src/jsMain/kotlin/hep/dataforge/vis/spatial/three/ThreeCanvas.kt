@@ -96,7 +96,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
             val picked = pick()
 
             if (picked != null && this.picked != picked) {
-                this.picked?.toggleHighlight(false,HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
+                this.picked?.toggleHighlight(false, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
                 picked.toggleHighlight(true, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
                 this.picked = picked
             }
@@ -131,10 +131,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
         }
     }
 
-    private fun Object3D.isStatic(): Boolean {
-        return false
-    }
-
+    //find first non-static parent in this object ancestry
     private fun Object3D?.upTrace(): Object3D? = if (this?.name?.startsWith("@") == true) parent else this
 
     private fun pick(): Object3D? {
@@ -144,7 +141,8 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
         // calculate objects intersecting the picking ray
         return root?.let { root ->
             val intersects = raycaster.intersectObject(root, true)
-            val obj = intersects.map { it.`object` }.firstOrNull { !it.isStatic() }
+            //skip invisible objects
+            val obj = intersects.map { it.`object` }.firstOrNull { it.visible }
             obj.upTrace()
         }
     }
@@ -168,7 +166,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
         }
     }
 
-    fun clear(){
+    fun clear() {
         scene.children.find { it.name == "@root" }?.let {
             scene.remove(it)
         }
@@ -186,7 +184,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
         root = object3D
     }
 
-    private var highlighted: Object3D? = null
+    private var selected: Object3D? = null
 
     /**
      * Toggle highlight for the given [Mesh] object
@@ -224,15 +222,15 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val canvas: Canv
      */
     fun select(name: Name?) {
         if (name == null) {
-            highlighted?.toggleHighlight(false, SELECT_NAME, SELECTED_MATERIAL)
-            highlighted = null
+            selected?.toggleHighlight(false, SELECT_NAME, SELECTED_MATERIAL)
+            selected = null
             return
         }
         val obj = root?.findChild(name)
-        if (obj != null && highlighted != obj) {
-            highlighted?.toggleHighlight(false, SELECT_NAME, SELECTED_MATERIAL)
+        if (obj != null && selected != obj) {
+            selected?.toggleHighlight(false, SELECT_NAME, SELECTED_MATERIAL)
             obj.toggleHighlight(true, SELECT_NAME, SELECTED_MATERIAL)
-            highlighted = obj
+            selected = obj
         }
     }
 

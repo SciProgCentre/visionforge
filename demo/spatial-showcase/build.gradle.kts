@@ -1,6 +1,4 @@
-import scientifik.DependencyConfiguration
-import scientifik.FXModule
-import scientifik.fx
+import scientifik.*
 
 plugins {
     id("scientifik.mpp")
@@ -8,7 +6,7 @@ plugins {
 }
 
 val fxVersion: String by rootProject.extra
-fx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
 
 kotlin {
 

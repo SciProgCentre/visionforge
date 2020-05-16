@@ -253,9 +253,7 @@ private fun volume(
 }
 
 fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
-
     val context = GDMLTransformer(this).apply(block)
-
     return context.finalize(volume(context, world))
 }
 

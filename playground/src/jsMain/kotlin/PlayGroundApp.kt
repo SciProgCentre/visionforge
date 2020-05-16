@@ -2,8 +2,8 @@ import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
 import hep.dataforge.names.Name
-import hep.dataforge.vis.editor.objectTree
-import hep.dataforge.vis.editor.visualPropertyEditor
+import hep.dataforge.vis.bootstrap.objectTree
+import hep.dataforge.vis.bootstrap.visualPropertyEditor
 import hep.dataforge.vis.spatial.Point3D
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.box
@@ -45,8 +45,6 @@ private class PlayGroundApp : Application {
                 }
             }
         }
-
-
     }
 
 }
