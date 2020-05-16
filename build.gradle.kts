@@ -1,3 +1,6 @@
+import scientifik.useFx
+import scientifik.useSerialization
+
 val dataforgeVersion by extra("0.1.8-dev-2")
 
 plugins {
@@ -33,5 +36,5 @@ subprojects {
         apply(plugin = "scientifik.publish")
     }
     useSerialization()
-    useFx(FXModule.CONTROLS, version = fxVersion)
+    useFx(scientifik.FXModule.CONTROLS, version = fxVersion)
 }

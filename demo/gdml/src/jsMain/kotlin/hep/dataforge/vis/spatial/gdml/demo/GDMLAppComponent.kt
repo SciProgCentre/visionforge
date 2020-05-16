@@ -7,6 +7,7 @@ import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.bootstrap.*
 import hep.dataforge.vis.react.component
+import hep.dataforge.vis.react.flexColumn
 import hep.dataforge.vis.react.state
 import hep.dataforge.vis.spatial.VisualGroup3D
 import hep.dataforge.vis.spatial.VisualObject3D
@@ -16,12 +17,18 @@ import hep.dataforge.vis.spatial.specifications.Canvas
 import hep.dataforge.vis.spatial.three.ThreeCanvas
 import hep.dataforge.vis.spatial.three.ThreeCanvasComponent
 import hep.dataforge.vis.spatial.three.canvasControls
+import kotlinx.css.FlexBasis
+import kotlinx.css.Overflow
+import kotlinx.css.flex
+import kotlinx.css.overflow
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RProps
 import react.dom.h1
 import scientifik.gdml.GDML
 import scientifik.gdml.parse
+import styled.css
+import styled.styledDiv
 import kotlin.browser.window
 import kotlin.math.PI
 
@@ -63,8 +70,16 @@ val GDMLApp = component<GDMLAppProps> { props ->
     }
 
     flexColumn {
+        css {
+            flex(1.0, 1.0, FlexBasis.auto)
+        }
         h1 { +"GDML/JSON loader demo" }
-        gridRow {
+        styledDiv {
+            css {
+                classes.add("row")
+                classes.add("p-1")
+                overflow = Overflow.auto
+            }
             gridColumn(3) {
                 card("Load data") {
                     fileDrop("(drag file here)") { files ->
@@ -82,7 +97,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     }
                 }
                 //tree
-                card("Object tree") {
+                card("Object tree", "overflow-auto") {
                     visual?.let {
                         objectTree(it, selected, select)
                     }
@@ -106,7 +121,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 }
             }
             gridColumn(3) {
-                gridRow {
+                container {
                     //settings
                     canvas?.let {
                         card("Canvas configuration") {
@@ -114,10 +129,10 @@ val GDMLApp = component<GDMLAppProps> { props ->
                         }
                     }
                 }
-                gridRow {
+                container {
                     namecrumbs(selected, "World") { selected = it }
                 }
-                gridRow {
+                container {
                     //properties
                     card("Properties") {
                         selected.let { selected ->

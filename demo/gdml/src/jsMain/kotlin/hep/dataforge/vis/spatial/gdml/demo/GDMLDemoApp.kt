@@ -8,7 +8,6 @@ import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
 import react.child
-import react.dom.div
 import react.dom.render
 import kotlin.browser.document
 
@@ -47,12 +46,10 @@ private class GDMLDemoApp : Application {
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
         render(element) {
-            div("h-100") {
-                child(GDMLApp) {
-                    attrs {
-                        this.context = context
-                        this.rootObject = cubes().toVisual(gdmlConfiguration)
-                    }
+            child(GDMLApp) {
+                attrs {
+                    this.context = context
+                    this.rootObject = cubes().toVisual(gdmlConfiguration)
                 }
             }
         }

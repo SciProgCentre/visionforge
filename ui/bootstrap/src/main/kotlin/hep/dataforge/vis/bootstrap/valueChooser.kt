@@ -1,10 +1,7 @@
 package hep.dataforge.vis.bootstrap
 
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.ValueDescriptor
-import hep.dataforge.meta.get
-import hep.dataforge.meta.string
-import hep.dataforge.meta.value
 import hep.dataforge.names.Name
 import hep.dataforge.values.*
 import hep.dataforge.vis.Colors
@@ -16,12 +13,8 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
-import org.w3c.dom.events.KeyboardEvent
 import react.*
-import react.dom.div
-import react.dom.input
-import react.dom.option
-import react.dom.select
+import react.dom.*
 
 interface ValueChooserProps : RProps {
     var item: MetaItem<*>?
@@ -30,16 +23,11 @@ interface ValueChooserProps : RProps {
 }
 
 interface ValueChooserState : RState {
-    var value: Value?
     var rawInput: Boolean?
 }
 
 class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
     private val element = createRef<HTMLElement>()
-
-    override fun ValueChooserState.init(props: ValueChooserProps) {
-        value = props.item.value
-    }
 
     private fun getValue(): Value? {
         val element = element.current ?: return null//state.element ?: return null
@@ -54,24 +42,13 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
         }
     }
 
-    private val valueChanged: (Event) -> Unit = { _ ->
-        setState {
-            value = getValue()
-        }
-    }
-
-    private val valueChangeAndCommit: (Event) -> Unit = { event ->
-        val res = getValue()
-        setState {
-            value = res
-        }
-        props.valueChanged?.invoke(res)
-
+    private val commit: (Event) -> Unit = { event ->
+        props.valueChanged?.invoke(getValue())
     }
 
     private val keyDown: (Event) -> Unit = { event ->
-        if (event is KeyboardEvent && event.key == "Enter") {
-            props.valueChanged?.invoke(getValue())
+        if (event.type == "keydown" && event.asDynamic().key == "Enter") {
+            commit(event)
         }
     }
 
@@ -83,11 +60,11 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
     override fun componentDidUpdate(prevProps: ValueChooserProps, prevState: ValueChooserState, snapshot: Any) {
         (element.current as? HTMLInputElement)?.let { element ->
             if (element.type == "checkbox") {
-                element.checked = state.value?.boolean ?: false
+                element.defaultChecked = props.item?.boolean ?: false
             } else {
-                element.value = state.value?.string ?: ""
+                element.defaultValue = props.item?.string ?: ""
             }
-            element.indeterminate = state.value == null
+            element.indeterminate = props.item == null
         }
 //        (state.element as? HTMLSelectElement)?.let { element ->
 //            state.value?.let { element.value = it.string }
@@ -96,8 +73,7 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
 
     private fun RBuilder.stringInput() = input(type = InputType.text) {
         attrs {
-            this.value = state.value?.string ?: ""
-            onChangeFunction = valueChanged
+            this.defaultValue = props.item?.string ?: ""
             onKeyDownFunction = keyDown
         }
         ref = element
@@ -112,19 +88,19 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
                 descriptor?.widgetType == "color" -> input(type = InputType.color) {
                     ref = element
                     attrs {
-                        this.value = state.value?.let { value ->
+                        this.defaultValue = props.item?.value?.let { value ->
                             if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
                             else value.string
                         } ?: "#000000"
-                        onChangeFunction = valueChangeAndCommit
+                        onChangeFunction = commit
                     }
                 }
                 type == ValueType.BOOLEAN -> {
                     input(type = InputType.checkBox) {
                         ref = element
                         attrs {
-                            checked = state.value?.boolean ?: false
-                            onChangeFunction = valueChangeAndCommit
+                            defaultChecked = props.item?.boolean ?: false
+                            onChangeFunction = commit
                         }
                     }
                 }
@@ -140,8 +116,7 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
                         descriptor.attributes["max"].string?.let {
                             max = it
                         }
-                        this.value = state.value?.string ?: ""
-                        onChangeFunction = valueChanged
+                        defaultValue = props.item?.string ?: ""
                         onKeyDownFunction = keyDown
                     }
                 }
@@ -153,9 +128,9 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
                     }
                     ref = element
                     attrs {
-                        this.value = state.value?.string ?: ""
+                        this.value = props.item?.string ?: ""
                         multiple = false
-                        onChangeFunction = valueChangeAndCommit
+                        onChangeFunction = commit
                     }
                 }
                 else -> stringInput()

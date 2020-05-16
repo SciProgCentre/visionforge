@@ -8,13 +8,17 @@ import hep.dataforge.names.plus
 import hep.dataforge.values.Value
 import hep.dataforge.vis.react.RFBuilder
 import hep.dataforge.vis.react.component
+import hep.dataforge.vis.react.flexRow
 import hep.dataforge.vis.react.state
+import kotlinx.css.*
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.*
+import styled.css
+import styled.styledDiv
 
 interface ConfigEditorItemProps : RProps {
 
@@ -132,35 +136,43 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
             }
         }
         is MetaItem.ValueItem -> {
-            div {
-                div("row form-group") {
-                    div("col d-inline-flex") {
-                        span("tree-label align-self-center") {
-                            +token
-                            attrs {
-                                if (item == null) {
-                                    classes += "tree-label-inactive"
-                                }
+            flexRow {
+                css {
+                    alignItems = Align.center
+                    justifyContent= JustifyContent.flexEnd
+                }
+                styledDiv {
+                    css{
+                        flexGrow = 1.0
+                    }
+                    span("tree-label align-self-center") {
+                        +token
+                        attrs {
+                            if (item == null) {
+                                classes += "tree-label-inactive"
                             }
                         }
                     }
-                    div("col-6 d-inline-flex") {
-                        valueChooser(
-                            props.name,
-                            actualItem,
-                            descriptorItem as? ValueDescriptor,
-                            valueChanged
-                        )
+                }
+                styledDiv {
+                    valueChooser(
+                        props.name,
+                        actualItem,
+                        descriptorItem as? ValueDescriptor,
+                        valueChanged
+                    )
+                }
+                styledDiv {
+                    css {
+                        flexShrink = 1.0
                     }
-                    div("col-auto d-inline-flex p-1") {
-                        button(classes = "btn btn-link align-self-center") {
-                            +"\u00D7"
-                            attrs {
-                                if (item == null) {
-                                    disabled = true
-                                } else {
-                                    onClickFunction = removeClick
-                                }
+                    button(classes = "btn btn-link align-self-center") {
+                        +"\u00D7"
+                        attrs {
+                            if (item == null) {
+                                disabled = true
+                            } else {
+                                onClickFunction = removeClick
                             }
                         }
                     }
@@ -176,6 +188,7 @@ interface ConfigEditorProps : RProps {
     var default: Meta?
     var descriptor: NodeDescriptor?
 }
+
 val ConfigEditor = component<ConfigEditorProps> { props ->
     child(ConfigEditorItem) {
         attrs {
@@ -212,7 +225,12 @@ fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, de
     }
 }
 
-fun RBuilder.configEditor(obj: Configurable, descriptor: NodeDescriptor? = obj.descriptor, default: Meta? = null, key: Any? = null) {
+fun RBuilder.configEditor(
+    obj: Configurable,
+    descriptor: NodeDescriptor? = obj.descriptor,
+    default: Meta? = null,
+    key: Any? = null
+) {
     child(ConfigEditor) {
         attrs {
             this.key = key?.toString() ?: ""

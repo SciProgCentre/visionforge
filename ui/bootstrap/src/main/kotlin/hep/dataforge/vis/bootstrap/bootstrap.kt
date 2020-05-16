@@ -19,8 +19,8 @@ inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagCo
     }
 }
 
-inline fun RBuilder.card(title: String, crossinline block: RBuilder.() -> Unit) {
-    div("card w-100") {
+inline fun RBuilder.card(title: String, classes: String? = null, crossinline block: RBuilder.() -> Unit) {
+    div("card w-100 $classes") {
         div("card-body") {
             h3(classes = "card-title") {
                 +title
@@ -165,12 +165,6 @@ fun RBuilder.accordion(id: String, builder: RAccordionBuilder.() -> Unit): React
 }
 
 fun joinStyles(vararg styles: String?) = styles.joinToString(separator = " ") { it ?: "" }
-
-inline fun RBuilder.flexColumn(classes: String? = null, block: RDOMBuilder<DIV>.() -> Unit) =
-    div(joinStyles(classes, "d-flex flex-column"), block)
-
-inline fun RBuilder.flexRow(classes: String? = null, block: RDOMBuilder<DIV>.() -> Unit) =
-    div(joinStyles(classes, "d-flex flex-row"), block)
 
 enum class ContainerSize(val suffix: String) {
     DEFAULT(""),
