@@ -11,12 +11,11 @@ kotlin {
 }
 
 dependencies{
-    api(project(":dataforge-vis-common"))
     api(project(":ui:react"))
 
-    api("subroh0508.net.kotlinmaterialui:core:0.3.16")
-    api("subroh0508.net.kotlinmaterialui:lab:0.3.16")
-    api(npm("@material-ui/core","4.9.13"))
-    api(npm("@material-ui/lab","4.0.0-alpha.52"))
+    api("subroh0508.net.kotlinmaterialui:core:0.4.0")
+    api("subroh0508.net.kotlinmaterialui:lab:0.4.0")
+    api(npm("@material-ui/core","4.9.14"))
+    api(npm("@material-ui/lab","4.0.0-alpha.51"))
     //api(npm("@material-ui/icons","4.9.1"))
 }

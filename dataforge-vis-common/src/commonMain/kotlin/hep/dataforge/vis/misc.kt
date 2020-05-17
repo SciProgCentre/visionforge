@@ -2,9 +2,12 @@ package hep.dataforge.vis
 
 import hep.dataforge.meta.Laminate
 import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.node
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
+import hep.dataforge.values.ValueType
+import hep.dataforge.values.asValue
 
 /**
  * Return nearest selectable parent [Name]
@@ -21,7 +24,7 @@ tailrec fun Name.selectable(): Name? = when {
     }
 }
 
-fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>?{
+fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
     return when (val first = filterNotNull().firstOrNull()) {
         null -> null
         is MetaItem.ValueItem -> first //fast search for first entry if it is value
@@ -31,4 +34,12 @@ fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>?{
             MetaItem.NodeItem(laminate)
         }
     }
+}
+
+inline fun <reified E : Enum<E>> NodeDescriptor.enum(key: Name, default: E?) = value(key) {
+    type(ValueType.STRING)
+    default?.let {
+        default(default)
+    }
+    allowedValues = enumValues<E>().map{it.asValue()}
 }

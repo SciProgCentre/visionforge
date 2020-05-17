@@ -6,9 +6,9 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.bootstrap.card
-import hep.dataforge.vis.bootstrap.configEditor
 import hep.dataforge.vis.bootstrap.objectTree
 import hep.dataforge.vis.react.component
+import hep.dataforge.vis.react.configEditor
 import hep.dataforge.vis.react.state
 import hep.dataforge.vis.spatial.specifications.Camera
 import hep.dataforge.vis.spatial.specifications.Canvas

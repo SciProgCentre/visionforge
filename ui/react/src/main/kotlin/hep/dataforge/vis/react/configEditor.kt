@@ -1,4 +1,4 @@
-package hep.dataforge.vis.bootstrap
+package hep.dataforge.vis.react
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.*
@@ -6,19 +6,15 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
 import hep.dataforge.values.Value
-import hep.dataforge.vis.react.RFBuilder
-import hep.dataforge.vis.react.component
-import hep.dataforge.vis.react.flexRow
-import hep.dataforge.vis.react.state
 import kotlinx.css.*
-import kotlinx.html.classes
+import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.*
-import styled.css
-import styled.styledDiv
+import react.dom.div
+import react.dom.render
+import styled.*
 
 interface ConfigEditorItemProps : RProps {
 
@@ -91,25 +87,32 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
     when (actualItem) {
         is MetaItem.NodeItem -> {
             div {
-                span("tree-caret") {
-                    attrs {
+                styledSpan {
+                    css {
+                        +TreeStyles.treeCaret
                         if (expanded) {
-                            classes += "tree-caret-down"
+                            +TreeStyles.treeCaredDown
                         }
+                    }
+                    attrs {
                         onClickFunction = expanderClick
                     }
                 }
-                span("tree-label") {
-                    +token
-                    attrs {
+                styledSpan {
+                    css {
+                        +TreeStyles.treeLabel
                         if (item == null) {
-                            classes += "tree-label-inactive"
+                            +TreeStyles.treeLabelInactive
                         }
                     }
+                    +token
                 }
             }
             if (expanded) {
-                ul("tree") {
+                styledUl {
+                    css {
+                        +TreeStyles.tree
+                    }
                     val keys = buildSet<NameToken> {
                         (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
                             add(NameToken(it))
@@ -119,7 +122,10 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                     }
 
                     keys.forEach { token ->
-                        li("tree-item align-middle") {
+                        styledLi {
+                            css {
+                                +TreeStyles.treeItem
+                            }
                             child(ConfigEditorItem) {
                                 attrs {
                                     this.key = props.name.toString()
@@ -136,22 +142,23 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
             }
         }
         is MetaItem.ValueItem -> {
-            flexRow {
+            styledDiv {
                 css {
-                    alignItems = Align.center
-                    justifyContent= JustifyContent.flexEnd
+                    +TreeStyles.treeLeaf
+                     justifyContent = JustifyContent.flexEnd
                 }
                 styledDiv {
-                    css{
+                    css {
                         flexGrow = 1.0
                     }
-                    span("tree-label align-self-center") {
-                        +token
-                        attrs {
+                    styledSpan {
+                        css {
+                            +TreeStyles.treeLabel
                             if (item == null) {
-                                classes += "tree-label-inactive"
+                                +TreeStyles.treeLabelInactive
                             }
                         }
+                        +token
                     }
                 }
                 styledDiv {
@@ -166,7 +173,23 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                     css {
                         flexShrink = 1.0
                     }
-                    button(classes = "btn btn-link align-self-center") {
+                    styledButton {
+                        css {
+                            backgroundColor = Color.white
+                            borderStyle = BorderStyle.solid
+                            borderRadius = 2.px
+                            padding(1.px, 5.px)
+                            marginLeft = 4.px
+                            textAlign = TextAlign.center
+                            textDecoration = TextDecoration.none
+                            display = Display.inlineBlock
+                            cursor = Cursor.pointer
+                            disabled {
+                                cursor = Cursor.auto
+                                borderStyle = BorderStyle.dashed
+                                color = Color.lightGray
+                            }
+                        }
                         +"\u00D7"
                         attrs {
                             if (item == null) {

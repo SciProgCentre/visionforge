@@ -10,6 +10,7 @@ import hep.dataforge.output.Renderer
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.enum
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.IGNORE_KEY
 import hep.dataforge.vis.spatial.VisualObject3D.Companion.LAYER_KEY
@@ -37,29 +38,29 @@ interface VisualObject3D : VisualObject {
 
         val GEOMETRY_KEY = "geometry".asName()
 
-        val x = "x".asName()
-        val y = "y".asName()
-        val z = "z".asName()
+        val X_KEY = "x".asName()
+        val Y_KEY = "y".asName()
+        val Z_KEY = "z".asName()
 
-        val position = "pos".asName()
+        val POSITION_KEY = "pos".asName()
 
-        val xPos = position + x
-        val yPos = position + y
-        val zPos = position + z
+        val X_POSITION_KEY = POSITION_KEY + X_KEY
+        val Y_POSITION_KEY = POSITION_KEY + Y_KEY
+        val Z_POSITION_KEY = POSITION_KEY + Z_KEY
 
-        val rotation = "rotation".asName()
+        val ROTATION = "rotation".asName()
 
-        val xRotation = rotation + x
-        val yRotation = rotation + y
-        val zRotation = rotation + z
+        val X_ROTATION_KEY = ROTATION + X_KEY
+        val Y_ROTATION_KEY = ROTATION + Y_KEY
+        val Z_ROTATION_KEY = ROTATION + Z_KEY
 
-        val rotationOrder = rotation + "order"
+        val ROTATION_ORDER_KEY = ROTATION + "order"
 
-        val scale = "scale".asName()
+        val SCALE_KEY = "scale".asName()
 
-        val xScale = scale + x
-        val yScale = scale + y
-        val zScale = scale + z
+        val X_SCALE_KEY = SCALE_KEY + X_KEY
+        val Y_SCALE_KEY = SCALE_KEY + Y_KEY
+        val Z_SCALE_KEY = SCALE_KEY + Z_KEY
 
         val descriptor by lazy {
             NodeDescriptor {
@@ -69,12 +70,14 @@ interface VisualObject3D : VisualObject {
                 }
 
                 //TODO replace by descriptor merge
-                value(VisualObject.STYLE_KEY){
+                value(VisualObject.STYLE_KEY) {
                     type(ValueType.STRING)
                     multiple = true
                 }
 
                 item(Material3D.MATERIAL_KEY.toString(), Material3D.descriptor)
+
+                enum<RotationOrder>(ROTATION_ORDER_KEY,default = RotationOrder.XYZ)
             }
         }
     }
@@ -107,8 +110,8 @@ enum class RotationOrder {
  * Rotation order
  */
 var VisualObject3D.rotationOrder: RotationOrder
-    get() = getProperty(VisualObject3D.rotationOrder).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(VisualObject3D.rotationOrder, value.name.asValue())
+    get() = getProperty(VisualObject3D.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = setProperty(VisualObject3D.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
@@ -141,21 +144,21 @@ var VisualObject3D.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.xPos)
+        propertyInvalidated(VisualObject3D.X_POSITION_KEY)
     }
 
 var VisualObject3D.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.yPos)
+        propertyInvalidated(VisualObject3D.Y_POSITION_KEY)
     }
 
 var VisualObject3D.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.zPos)
+        propertyInvalidated(VisualObject3D.Z_POSITION_KEY)
     }
 
 private fun VisualObject3D.rotation(): Point3D =
@@ -165,21 +168,21 @@ var VisualObject3D.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.xRotation)
+        propertyInvalidated(VisualObject3D.X_ROTATION_KEY)
     }
 
 var VisualObject3D.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.yRotation)
+        propertyInvalidated(VisualObject3D.Y_ROTATION_KEY)
     }
 
 var VisualObject3D.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.zRotation)
+        propertyInvalidated(VisualObject3D.Z_ROTATION_KEY)
     }
 
 private fun VisualObject3D.scale(): Point3D =
@@ -189,19 +192,19 @@ var VisualObject3D.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.xScale)
+        propertyInvalidated(VisualObject3D.X_SCALE_KEY)
     }
 
 var VisualObject3D.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.yScale)
+        propertyInvalidated(VisualObject3D.Y_SCALE_KEY)
     }
 
 var VisualObject3D.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.zScale)
+        propertyInvalidated(VisualObject3D.Z_SCALE_KEY)
     }

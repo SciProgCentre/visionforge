@@ -19,12 +19,8 @@ import javafx.scene.transform.Rotate
 import org.fxyz3d.shapes.composites.PolyLine3D
 import org.fxyz3d.shapes.primitives.CuboidMesh
 import org.fxyz3d.shapes.primitives.SpheroidMesh
-import kotlin.collections.HashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.find
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
 import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.reflect.KClass
@@ -91,23 +87,23 @@ class FX3DPlugin : AbstractPlugin() {
                 }
             }
         }.apply {
-            translateXProperty().bind(binding[VisualObject3D.xPos].float(obj.x.toFloat()))
-            translateYProperty().bind(binding[VisualObject3D.yPos].float(obj.y.toFloat()))
-            translateZProperty().bind(binding[VisualObject3D.zPos].float(obj.z.toFloat()))
-            scaleXProperty().bind(binding[VisualObject3D.xScale].float(obj.scaleX.toFloat()))
-            scaleYProperty().bind(binding[VisualObject3D.yScale].float(obj.scaleY.toFloat()))
-            scaleZProperty().bind(binding[VisualObject3D.zScale].float(obj.scaleZ.toFloat()))
+            translateXProperty().bind(binding[VisualObject3D.X_POSITION_KEY].float(obj.x.toFloat()))
+            translateYProperty().bind(binding[VisualObject3D.Y_POSITION_KEY].float(obj.y.toFloat()))
+            translateZProperty().bind(binding[VisualObject3D.Z_POSITION_KEY].float(obj.z.toFloat()))
+            scaleXProperty().bind(binding[VisualObject3D.X_SCALE_KEY].float(obj.scaleX.toFloat()))
+            scaleYProperty().bind(binding[VisualObject3D.Y_SCALE_KEY].float(obj.scaleY.toFloat()))
+            scaleZProperty().bind(binding[VisualObject3D.Z_SCALE_KEY].float(obj.scaleZ.toFloat()))
 
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.xRotation].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[VisualObject3D.X_ROTATION_KEY].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateY = Rotate(0.0, Rotate.Y_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.yRotation].float(obj.rotationY.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[VisualObject3D.Y_ROTATION_KEY].float(obj.rotationY.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateZ = Rotate(0.0, Rotate.Z_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.zRotation].float(obj.rotationZ.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[VisualObject3D.Z_ROTATION_KEY].float(obj.rotationZ.toFloat()).multiply(180.0 / PI))
             }
 
             when (obj.rotationOrder) {

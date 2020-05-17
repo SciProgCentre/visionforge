@@ -8,7 +8,9 @@ import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.isEmpty
 import hep.dataforge.vis.react.component
 import hep.dataforge.vis.react.state
+import kotlinx.html.UL
 import materialui.lab.components.treeItem.treeItem
+import materialui.lab.components.treeView.SingleSelectTreeViewElementBuilder
 import materialui.lab.components.treeView.treeView
 import react.FunctionalComponent
 import react.RBuilder
@@ -49,11 +51,11 @@ private fun RBuilder.treeBranch(name: Name, obj: VisualObject): Unit {
 val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
     var selected: String? by state { props.selected.toString() }
     treeView {
+        this as SingleSelectTreeViewElementBuilder<UL>
         attrs {
             this.selected = selected
-            this.onNodeSelect = { _, selectedItem ->
-                @Suppress("CAST_NEVER_SUCCEEDS")
-                selected = (selectedItem as? String)
+            this.onNodeSelect{ _, selectedItem ->
+                selected = selectedItem
                 val itemName = selected?.toName()
                 props.clickCallback(itemName)
                 Unit

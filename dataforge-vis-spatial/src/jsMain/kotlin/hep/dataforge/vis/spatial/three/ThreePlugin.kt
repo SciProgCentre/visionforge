@@ -57,9 +57,9 @@ class ThreePlugin : AbstractPlugin() {
 
                     obj.onPropertyChange(this) { name, _, _ ->
                         if (
-                            name.startsWith(VisualObject3D.position) ||
-                            name.startsWith(VisualObject3D.rotation) ||
-                            name.startsWith(VisualObject3D.scale)
+                            name.startsWith(VisualObject3D.POSITION_KEY) ||
+                            name.startsWith(VisualObject3D.ROTATION) ||
+                            name.startsWith(VisualObject3D.SCALE_KEY)
                         ) {
                             //update position of mesh using this object
                             updatePosition(obj)

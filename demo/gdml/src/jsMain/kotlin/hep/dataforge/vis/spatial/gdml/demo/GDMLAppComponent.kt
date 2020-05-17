@@ -7,6 +7,7 @@ import hep.dataforge.vis.VisualGroup
 import hep.dataforge.vis.VisualObject
 import hep.dataforge.vis.bootstrap.*
 import hep.dataforge.vis.react.component
+import hep.dataforge.vis.react.configEditor
 import hep.dataforge.vis.react.flexColumn
 import hep.dataforge.vis.react.state
 import hep.dataforge.vis.spatial.VisualGroup3D
@@ -80,7 +81,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 classes.add("p-1")
                 overflow = Overflow.auto
             }
-            gridColumn(3) {
+            gridColumn(3, maxSize= GridMaxSize.XL, classes = "order-2 order-xl-1") {
                 card("Load data") {
                     fileDrop("(drag file here)") { files ->
                         val file = files?.get(0)
@@ -104,7 +105,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 }
             }
 
-            gridColumn(6) {
+            gridColumn(6, maxSize= GridMaxSize.XL, classes = "order-1 order-xl-2") {
                 //canvas
                 (visual as? VisualObject3D)?.let { visual3D ->
                     child(ThreeCanvasComponent::class) {
@@ -120,7 +121,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     }
                 }
             }
-            gridColumn(3) {
+            gridColumn(3, maxSize= GridMaxSize.XL, classes = "order-3") {
                 container {
                     //settings
                     canvas?.let {

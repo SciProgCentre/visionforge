@@ -5,6 +5,7 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vis.VisualObject
+import hep.dataforge.vis.react.configEditor
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.li

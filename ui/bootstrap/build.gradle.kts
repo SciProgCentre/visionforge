@@ -11,6 +11,5 @@ kotlin {
 }
 
 dependencies{
-    api(project(":dataforge-vis-common"))
     api(project(":ui:react"))
 }

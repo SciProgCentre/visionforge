@@ -7,6 +7,7 @@ import hep.dataforge.vis.useStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Suppress("UNUSED_VARIABLE")
 class PropertyTest {
     @Test
     fun testInheritedProperty() {

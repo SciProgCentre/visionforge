@@ -60,9 +60,9 @@ fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         this.material = getMaterial(source)
     } else if (
-        propertyName.startsWith(VisualObject3D.position)
-        || propertyName.startsWith(VisualObject3D.rotation)
-        || propertyName.startsWith(VisualObject3D.scale)
+        propertyName.startsWith(VisualObject3D.POSITION_KEY)
+        || propertyName.startsWith(VisualObject3D.ROTATION)
+        || propertyName.startsWith(VisualObject3D.SCALE_KEY)
     ) {
         //update position of mesh using this object
         updatePosition(source)

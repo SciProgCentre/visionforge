@@ -7,8 +7,10 @@ import hep.dataforge.vis.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vis.spatial.gdml.GDMLTransformer
 import hep.dataforge.vis.spatial.gdml.LUnit
 import hep.dataforge.vis.spatial.gdml.toVisual
+import kotlinx.css.*
 import react.child
 import react.dom.render
+import styled.injectGlobal
 import kotlin.browser.document
 
 
@@ -41,6 +43,15 @@ val gdmlConfiguration: GDMLTransformer.() -> Unit = {
 private class GDMLDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
+
+        injectGlobal {
+            body {
+                height = 100.pct
+                width = 100.pct
+                margin(0.px)
+                padding(0.px)
+            }
+        }
 
         val context = Global.context("demo") {}
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")

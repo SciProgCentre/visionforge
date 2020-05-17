@@ -1,4 +1,4 @@
-package hep.dataforge.vis.bootstrap
+package hep.dataforge.vis.react
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.ValueDescriptor
@@ -6,6 +6,8 @@ import hep.dataforge.names.Name
 import hep.dataforge.values.*
 import hep.dataforge.vis.Colors
 import hep.dataforge.vis.widgetType
+import kotlinx.css.Align
+import kotlinx.css.alignSelf
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
@@ -14,7 +16,12 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.*
+import react.dom.defaultValue
+import react.dom.input
+import react.dom.option
+import react.dom.select
+import styled.css
+import styled.styledDiv
 
 interface ValueChooserProps : RProps {
     var item: MetaItem<*>?
@@ -66,9 +73,6 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
             }
             element.indeterminate = props.item == null
         }
-//        (state.element as? HTMLSelectElement)?.let { element ->
-//            state.value?.let { element.value = it.string }
-//        }
     }
 
     private fun RBuilder.stringInput() = input(type = InputType.text) {
@@ -80,7 +84,10 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
     }
 
     override fun RBuilder.render() {
-        div("align-self-center") {
+        styledDiv {
+            css {
+                alignSelf = Align.center
+            }
             val descriptor = props.descriptor
             val type = descriptor?.type?.firstOrNull()
             when {

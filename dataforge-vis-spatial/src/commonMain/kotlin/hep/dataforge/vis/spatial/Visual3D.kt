@@ -69,13 +69,13 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
 
 internal fun VisualObject3D.update(meta: Meta) {
     fun Meta.toVector(default: Float = 0f) = Point3D(
-        this[VisualObject3D.x].float ?: default,
-        this[VisualObject3D.y].float ?: default,
-        this[VisualObject3D.z].float ?: default
+        this[VisualObject3D.X_KEY].float ?: default,
+        this[VisualObject3D.Y_KEY].float ?: default,
+        this[VisualObject3D.Z_KEY].float ?: default
     )
 
-    meta[VisualObject3D.position].node?.toVector()?.let { position = it }
-    meta[VisualObject3D.rotation].node?.toVector()?.let { rotation = it }
-    meta[VisualObject3D.scale].node?.toVector(1f)?.let { scale = it }
+    meta[VisualObject3D.POSITION_KEY].node?.toVector()?.let { position = it }
+    meta[VisualObject3D.ROTATION].node?.toVector()?.let { rotation = it }
+    meta[VisualObject3D.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
     meta["properties"].node?.let { configure(it) }
 }

@@ -1,4 +1,6 @@
-import scientifik.*
+import scientifik.DependencyConfiguration
+import scientifik.FXModule
+import scientifik.useFx
 
 plugins {
     id("scientifik.mpp")
@@ -16,11 +18,6 @@ kotlin {
 
     js {
         useCommonJs()
-        browser {
-            webpackTask {
-                //sourceMaps = false
-            }
-        }
     }
 
     sourceSets {
