@@ -40,7 +40,7 @@ include(
     ":ui:ring",
     ":ui:material",
     ":ui:bootstrap",
-    ":visionforge-common",
+    ":visionforge-core",
     ":visionforge-spatial",
     ":visionforge-gdml",
     ":demo:spatial-showcase",

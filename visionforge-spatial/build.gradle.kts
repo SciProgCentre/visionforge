@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-common"))
+                api(project(":visionforge-core"))
             }
         }
         jvmMain {
