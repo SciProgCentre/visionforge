@@ -148,6 +148,7 @@ private fun VisualGroup3D.addSolid(
                 }
             }
         }
+        else -> error("Renderer for $solid not supported yet")
     }.apply(block)
 }
 

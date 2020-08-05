@@ -34,7 +34,7 @@ class Proxy private constructor(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     /**
      * Recursively search for defined template in the parent
@@ -51,14 +51,14 @@ class Proxy private constructor(
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
             sequence {
-                yield(properties?.get(name))
+                yield(ownProperties?.get(name))
                 yield(mergedStyles[name])
-                yield(prototype.getProperty(name))
+                yield(prototype.getItem(name))
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
-                yield(properties?.get(name))
+                yield(ownProperties?.get(name))
                 yield(mergedStyles[name])
                 yield(prototype.getProperty(name, false))
             }.merge()
@@ -84,8 +84,8 @@ class Proxy private constructor(
             ?: error("Prototype with name $name not found in $this")
     }
 
-    override fun allProperties(): Laminate =
-        Laminate(properties, mergedStyles, prototype.allProperties(), parent?.allProperties())
+    override fun properties(): Laminate =
+        Laminate(ownProperties, mergedStyles, prototype.properties(), parent?.properties())
 
     override fun attachChildren() {
         //do nothing
@@ -110,7 +110,7 @@ class Proxy private constructor(
                 )
             } ?: emptyMap()
 
-        override var properties: Config?
+        override var ownProperties: Config?
             get() = propertyCache[name]
             set(value) {
                 if (value == null) {
@@ -130,14 +130,14 @@ class Proxy private constructor(
         override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
             return if (inherit) {
                 sequence {
-                    yield(properties?.get(name))
+                    yield(ownProperties?.get(name))
                     yield(mergedStyles[name])
-                    yield(prototype.getProperty(name))
+                    yield(prototype.getItem(name))
                     yield(parent?.getProperty(name, inherit))
                 }.merge()
             } else {
                 sequence {
-                    yield(properties?.get(name))
+                    yield(ownProperties?.get(name))
                     yield(mergedStyles[name])
                     yield(prototype.getProperty(name, false))
                 }.merge()
@@ -148,8 +148,8 @@ class Proxy private constructor(
             //do nothing
         }
 
-        override fun allProperties(): Laminate =
-            Laminate(properties, mergedStyles, prototype.allProperties(), parent?.allProperties())
+        override fun properties(): Laminate =
+            Laminate(ownProperties, mergedStyles, prototype.properties(), parent?.properties())
 
 
         override val descriptor: NodeDescriptor?

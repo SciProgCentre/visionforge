@@ -73,7 +73,7 @@ class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { it.point },
                 obj.thickness.toFloat(),
-                obj.getProperty(Material3D.MATERIAL_COLOR_KEY)?.color()
+                obj.getItem(Material3D.MATERIAL_COLOR_KEY)?.color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }

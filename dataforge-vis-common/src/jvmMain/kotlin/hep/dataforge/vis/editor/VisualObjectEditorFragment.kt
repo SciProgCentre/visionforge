@@ -36,7 +36,7 @@ class VisualObjectEditorFragment(val selector: (VisualObject) -> Meta) : Fragmen
         val config = Config().apply {
             update(meta)
             onChange(this@VisualObjectEditorFragment) { key, _, after ->
-                visualObject.setProperty(key, after)
+                visualObject.setItem(key, after)
             }
         }
         //remember old config reference to cleanup listeners

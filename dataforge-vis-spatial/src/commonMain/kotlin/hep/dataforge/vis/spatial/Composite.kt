@@ -33,7 +33,7 @@ class Composite(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override val children: Map<NameToken, VisualObject>
         get() = mapOf(NameToken("first") to first, NameToken("second") to second)
@@ -48,7 +48,7 @@ inline fun MutableVisualGroup.composite(
     builder: VisualGroup3D.() -> Unit
 ): Composite {
     val group = VisualGroup3D().apply(builder)
-    val children = group.filterIsInstance<VisualObject3D>()
+    val children = group.children.values.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also {
         it.config.update(group.config)

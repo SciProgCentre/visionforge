@@ -143,7 +143,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                                 else -> (visual as? VisualGroup)?.get(selected)
                             }
                             if (selectedObject != null) {
-                                configEditor(selectedObject, default = selectedObject.allProperties(), key = selected)
+                                configEditor(selectedObject, default = selectedObject.properties(), key = selected)
                             }
                         }
                     }

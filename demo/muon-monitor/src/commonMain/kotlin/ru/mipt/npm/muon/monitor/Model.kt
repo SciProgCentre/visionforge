@@ -63,7 +63,7 @@ class Model {
     fun reset() {
         map.values.forEach {
             it.config
-            it.setProperty(Material3D.MATERIAL_COLOR_KEY, null)
+            it.setItem(Material3D.MATERIAL_COLOR_KEY, null)
         }
         tracks.removeAll()
     }

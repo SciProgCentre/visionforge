@@ -1,4 +1,7 @@
 pluginManagement {
+    val kotlinVersion = "1.3.72"
+    val toolsVersion = "0.5.2"
+
     repositories {
         mavenLocal()
         jcenter()
@@ -10,11 +13,18 @@ pluginManagement {
         maven("https://dl.bintray.com/mipt-npm/dev")
     }
 
+    plugins {
+        kotlin("jvm") version kotlinVersion
+        id("scientifik.mpp") version toolsVersion
+        id("scientifik.jvm") version toolsVersion
+        id("scientifik.js") version toolsVersion
+        id("scientifik.publish") version toolsVersion
+    }
+
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "scientifik.mpp", "scientifik.publish", "scientifik.jvm", "scientifik.js" -> useModule("scientifik:gradle-tools:${requested.version}")
-                "org.openjfx.javafxplugin" -> useModule("org.openjfx:javafx-plugin:${requested.version}")
+                "scientifik.mpp", "scientifik.publish", "scientifik.jvm", "scientifik.js" -> useModule("scientifik:gradle-tools:${toolsVersion}")
             }
         }
     }

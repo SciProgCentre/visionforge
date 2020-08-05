@@ -38,12 +38,18 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
         }
     }
 
+    /**
+     * Set or clear the style
+     */
     operator fun set(key: String, style: Meta?) {
         val oldStyle = styleMap[key]
         define(key, style)
         owner?.styleChanged(key, oldStyle, style)
     }
 
+    /**
+     * Create and set a style
+     */
     operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
         val newStyle = get(key)?.edit(builder) ?: Meta(builder)
         set(key, newStyle.seal())
@@ -75,6 +81,8 @@ private fun VisualObject.styleChanged(key: String, oldStyle: Meta?, newStyle: Me
         tokens.forEach { parent?.propertyChanged(it, oldStyle?.get(it), newStyle?.get(it)) }
     }
     if (this is VisualGroup) {
-        this.forEach { it.styleChanged(key, oldStyle, newStyle) }
+        for (obj in this) {
+            obj.styleChanged(key, oldStyle, newStyle)
+        }
     }
 }

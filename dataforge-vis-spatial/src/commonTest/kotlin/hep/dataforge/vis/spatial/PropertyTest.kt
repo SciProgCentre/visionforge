@@ -18,7 +18,7 @@ class PropertyTest {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getItem("test".asName()).int)
     }
 
     @Test
@@ -36,7 +36,7 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getItem("test".asName()).int)
     }
 
     @Test

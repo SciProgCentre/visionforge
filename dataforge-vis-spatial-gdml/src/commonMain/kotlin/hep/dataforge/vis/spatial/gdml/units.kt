@@ -1,21 +1,14 @@
 package hep.dataforge.vis.spatial.gdml
 
+import scientifik.gdml.AUnit
 import scientifik.gdml.GDMLPosition
 import scientifik.gdml.GDMLRotation
 import scientifik.gdml.GDMLSolid
-import kotlin.math.PI
 
 enum class LUnit(val value: Float) {
     MM(1f),
     CM(10f),
     M(1000f)
-}
-
-enum class AUnit(val value: Float) {
-    DEG(PI.toFloat() / 180),
-    DEGREE(PI.toFloat() / 180),
-    RAD(1f),
-    RADIAN(1f)
 }
 
 fun GDMLPosition.unit(): LUnit = LUnit.valueOf(unit.toUpperCase())

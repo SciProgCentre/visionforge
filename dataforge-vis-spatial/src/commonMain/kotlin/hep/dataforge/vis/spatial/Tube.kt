@@ -29,7 +29,7 @@ class Tube(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     init {
         require(radius > 0)

@@ -40,7 +40,7 @@ interface Application {
 
 fun startApplication(builder: () -> Application) {
     fun start(state: dynamic): Application? {
-        return if (document.body?.hasClass("testApp") == true) {
+        return if (document.body?.hasClass("application") == true) {
             val application = builder()
 
             @Suppress("UnsafeCastFromDynamic")

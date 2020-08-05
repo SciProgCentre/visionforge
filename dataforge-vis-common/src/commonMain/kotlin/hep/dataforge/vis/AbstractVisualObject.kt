@@ -19,12 +19,15 @@ abstract class AbstractVisualObject : VisualObject {
     @Transient
     override var parent: VisualGroup? = null
 
-    protected abstract var properties: Config?
+    /**
+     * Object own properties excluding styles and inheritance
+     */
+    protected abstract var ownProperties: Config?
 
     final override var styles: List<String>
-        get() = properties?.get(STYLE_KEY).stringList
+        get() = ownProperties?.get(STYLE_KEY).stringList
         set(value) {
-            setProperty(STYLE_KEY, Value.of(value))
+            setItem(STYLE_KEY, Value.of(value))
             updateStyles(value)
         }
 
@@ -40,11 +43,11 @@ abstract class AbstractVisualObject : VisualObject {
 
     /**
      * The config is initialized and assigned on-demand.
-     * To avoid unnecessary allocations, one should access [properties] via [getProperty] instead.
+     * To avoid unnecessary allocations, one should access [ownProperties] via [getProperty] instead.
      */
     override val config: Config
-        get() = properties ?: Config().also { config ->
-            properties = config.apply { onChange(this, ::propertyChanged) }
+        get() = ownProperties ?: Config().also { config ->
+            ownProperties = config.apply { onChange(this, ::propertyChanged) }
         }
 
     @Transient
@@ -79,18 +82,18 @@ abstract class AbstractVisualObject : VisualObject {
     /**
      * All available properties in a layered form
      */
-    override fun allProperties(): Laminate = Laminate(properties, mergedStyles, parent?.allProperties())
+    override fun properties(): Laminate = Laminate(ownProperties, mergedStyles, parent?.properties())
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
             sequence {
-                yield(properties?.get(name))
+                yield(ownProperties?.get(name))
                 yield(mergedStyles[name])
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
-                yield(properties?.get(name))
+                yield(ownProperties?.get(name))
                 yield(mergedStyles[name])
             }.merge()
         }
@@ -100,8 +103,8 @@ abstract class AbstractVisualObject : VisualObject {
      * Reset all properties to their default values
      */
     fun resetProperties() {
-        properties?.removeListener(this)
-        properties = null
+        ownProperties?.removeListener(this)
+        ownProperties = null
     }
 
     companion object {

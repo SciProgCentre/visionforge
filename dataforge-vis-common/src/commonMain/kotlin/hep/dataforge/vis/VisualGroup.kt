@@ -6,8 +6,7 @@ import hep.dataforge.provider.Provider
 /**
  * Represents a group of [VisualObject] instances
  */
-interface VisualGroup : Provider, Iterable<VisualObject>,
-    VisualObject {
+interface VisualGroup : Provider, VisualObject {
     /**
      * A map of top level named children
      */
@@ -15,6 +14,10 @@ interface VisualGroup : Provider, Iterable<VisualObject>,
 
     override val defaultTarget: String get() = VisualObject.TYPE
 
+    /**
+     * A stylesheet for this group and its descendants. Stylesheet is not applied directly,
+     * but instead is just a repository for named configutations
+     */
     val styleSheet: StyleSheet?
 
     /**
@@ -34,12 +37,6 @@ interface VisualGroup : Provider, Iterable<VisualObject>,
             STYLE_TARGET -> styleSheet?.items?.mapKeys { it.key.toName() } ?: emptyMap()
             else -> emptyMap()
         }
-
-
-    /**
-     * Iterate over children of this group
-     */
-    override fun iterator(): Iterator<VisualObject> = children.values.iterator()
 
     operator fun get(name: Name): VisualObject? {
         return when {
@@ -65,7 +62,10 @@ interface VisualGroup : Provider, Iterable<VisualObject>,
     }
 }
 
-data class StyleRef(val group: VisualGroup, val styleName: Name)
+/**
+ * Iterate over children of this group
+ */
+operator fun VisualGroup.iterator(): Iterator<VisualObject> = children.values.iterator()
 
 val VisualGroup.isEmpty: Boolean get() = this.children.isEmpty()
 

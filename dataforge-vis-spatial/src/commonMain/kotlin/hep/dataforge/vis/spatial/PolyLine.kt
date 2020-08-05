@@ -16,7 +16,7 @@ import kotlinx.serialization.UseSerializers
 @Serializable
 @SerialName("3d.line")
 class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

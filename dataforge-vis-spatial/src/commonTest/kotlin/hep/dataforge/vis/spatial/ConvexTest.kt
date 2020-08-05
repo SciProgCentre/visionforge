@@ -24,7 +24,7 @@ class ConvexTest {
             }
         }
 
-        val convex = group.first() as Convex
+        val convex = group.children.values.first() as Convex
 
         val json = Visual3D.json.toJson(Convex.serializer(), convex)
         val meta = json.toMetaItem().node!!

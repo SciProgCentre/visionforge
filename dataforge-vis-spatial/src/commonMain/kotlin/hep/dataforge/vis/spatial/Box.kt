@@ -25,7 +25,7 @@ class Box(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {

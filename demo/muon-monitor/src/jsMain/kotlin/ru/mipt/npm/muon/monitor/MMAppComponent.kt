@@ -155,7 +155,7 @@ val MMApp = component<MMAppProps> { props ->
                             else -> visual[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(selectedObject, default = selectedObject.allProperties(), key = selected)
+                            configEditor(selectedObject, default = selectedObject.properties(), key = selected)
                         }
                     }
                 }

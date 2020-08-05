@@ -34,7 +34,7 @@ class VisualObjectFXBinding(val obj: VisualObject) {
     operator fun get(key: Name): ObjectBinding<MetaItem<*>?> {
         return bindings.getOrPut(key) {
             object : ObjectBinding<MetaItem<*>?>() {
-                override fun computeValue(): MetaItem<*>? = obj.getProperty(key)
+                override fun computeValue(): MetaItem<*>? = obj.getItem(key)
             }
         }
     }

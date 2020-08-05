@@ -13,7 +13,7 @@ import kotlinx.serialization.UseSerializers
 @Serializable
 @SerialName("3d.label")
 class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVisualObject(), VisualObject3D {
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

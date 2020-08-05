@@ -44,7 +44,7 @@ class GroupTest {
             }
         }
 
-        assertEquals(3, group.count())
+        assertEquals(3, group.children.count())
         assertEquals(300.0, (group["intersect"] as VisualObject3D).y.toDouble())
         assertEquals(-300.0, (group["subtract"] as VisualObject3D).y.toDouble())
     }

@@ -4,7 +4,7 @@ package hep.dataforge.vis.spatial.demo
 
 import hep.dataforge.meta.int
 import hep.dataforge.meta.number
-import hep.dataforge.meta.setProperty
+import hep.dataforge.meta.setItem
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
@@ -26,13 +26,13 @@ import kotlin.reflect.KClass
 internal var VisualObject3D.variableZSize: Number
     get() = getProperty(Z_SIZE_KEY, false).number ?: 0f
     set(value) {
-        setProperty(Z_SIZE_KEY, value.asValue())
+        setItem(Z_SIZE_KEY, value.asValue())
     }
 
 internal var VisualObject3D.value: Int
     get() = getProperty("value", false).int ?: 0
     set(value) {
-        setProperty("value", value.asValue())
+        setItem("value", value.asValue())
         val size = value.toFloat() / 255f * 20f
         scaleZ = size
         z = -size / 2

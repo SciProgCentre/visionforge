@@ -23,7 +23,7 @@ class Sphere(
     var theta: Float = PI.toFloat()
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

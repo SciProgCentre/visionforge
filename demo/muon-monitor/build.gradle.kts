@@ -1,4 +1,3 @@
-import kotlinx.atomicfu.plugin.gradle.withKotlinTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import scientifik.jsDistDirectory
 
@@ -74,4 +73,15 @@ kotlin {
 
 application {
     mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
+}
+
+distributions {
+    main {
+        contents {
+            from("$buildDir/libs") {
+                rename("${rootProject.name}-jvm", rootProject.name)
+                into("lib")
+            }
+        }
+    }
 }

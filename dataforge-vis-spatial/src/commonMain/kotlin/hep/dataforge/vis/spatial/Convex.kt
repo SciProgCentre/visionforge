@@ -14,7 +14,7 @@ import kotlinx.serialization.UseSerializers
 @SerialName("3d.convex")
 class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

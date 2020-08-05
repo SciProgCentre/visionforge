@@ -13,7 +13,7 @@ class SimpleVisualGroup : AbstractVisualGroup() {
     override var styleSheet: StyleSheet? = null
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     @SerialName("children")
     private val _children = HashMap<NameToken, VisualObject>()

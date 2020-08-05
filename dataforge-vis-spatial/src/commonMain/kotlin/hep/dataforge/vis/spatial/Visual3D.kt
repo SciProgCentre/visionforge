@@ -55,7 +55,7 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
         }
 
         @OptIn(UnstableDefault::class)
-        internal val json = Json(
+        val json = Json(
             JsonConfiguration(
                 prettyPrint = true,
                 useArrayPolymorphism = false,

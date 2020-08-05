@@ -18,7 +18,7 @@ object ThreeLineFactory : ThreeFactory<PolyLine> {
             vertices = obj.points.toTypedArray()
         }
 
-        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node)
+        val material = ThreeMaterials.getLineMaterial(obj.getItem(MeshThreeFactory.EDGES_MATERIAL_KEY).node)
 
         material.linewidth = obj.thickness.toDouble()
         material.color = obj.color?.let { Color(it) } ?: DEFAULT_LINE_COLOR

@@ -33,8 +33,8 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
 
     override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
         super.propertyChanged(name, before, after)
-        forEach {
-            it.propertyChanged(name, before, after)
+        for(obj in this) {
+            obj.propertyChanged(name, before, after)
         }
     }
 

@@ -12,7 +12,7 @@ fun cubes(): GDML = GDML {
         val segment = solids.tube("segment", 20, 5.0) {
             rmin = 17
             deltaphi = 60
-            aunit = DEG
+            aunit = AUnit.DEG.title
         }
         val worldBox = solids.box("LargeBox", 200, 200, 200)
         val smallBox = solids.box("smallBox", 30, 30, 30)
@@ -24,7 +24,7 @@ fun cubes(): GDML = GDML {
                     positionref = center.ref()
                     rotation {
                         z = 60 * i
-                        unit = DEG
+                        unit = AUnit.DEG.title
                     }
                 }
             }

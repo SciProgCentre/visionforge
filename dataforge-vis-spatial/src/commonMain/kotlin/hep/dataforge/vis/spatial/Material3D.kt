@@ -78,17 +78,17 @@ class Material3D : Scheme() {
  * Set color as web-color
  */
 fun VisualObject3D.color(webColor: String) {
-    setProperty(MATERIAL_COLOR_KEY, webColor.asValue())
+    setItem(MATERIAL_COLOR_KEY, webColor.asValue())
 }
 
 /**
  * Set color as integer
  */
 fun VisualObject3D.color(rgb: Int) {
-    setProperty(MATERIAL_COLOR_KEY, rgb.asValue())
+    setItem(MATERIAL_COLOR_KEY, rgb.asValue())
 }
 
-fun VisualObject3D.color(r: UByte, g: UByte, b: UByte) = setProperty(
+fun VisualObject3D.color(r: UByte, g: UByte, b: UByte) = setItem(
     MATERIAL_COLOR_KEY,
     Colors.rgbToMeta(r, g, b)
 )
@@ -97,13 +97,13 @@ fun VisualObject3D.color(r: UByte, g: UByte, b: UByte) = setProperty(
  * Web colors representation of the color in `#rrggbb` format or HTML name
  */
 var VisualObject3D.color: String?
-    get() = getProperty(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
+    get() = getItem(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
     set(value) {
-        setProperty(MATERIAL_COLOR_KEY, value?.asValue())
+        setItem(MATERIAL_COLOR_KEY, value?.asValue())
     }
 
 val VisualObject3D.material: Material3D?
-    get() = getProperty(MATERIAL_KEY).node?.let { Material3D.wrap(it) }
+    get() = getItem(MATERIAL_KEY).node?.let { Material3D.wrap(it) }
 
 fun VisualObject3D.material(builder: Material3D.() -> Unit) {
     val node = config[MATERIAL_KEY].node
@@ -115,7 +115,7 @@ fun VisualObject3D.material(builder: Material3D.() -> Unit) {
 }
 
 var VisualObject3D.opacity: Double?
-    get() = getProperty(MATERIAL_OPACITY_KEY).double
+    get() = getItem(MATERIAL_OPACITY_KEY).double
     set(value) {
-        setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
+        setItem(MATERIAL_OPACITY_KEY, value?.asValue())
     }

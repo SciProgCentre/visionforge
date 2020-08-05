@@ -46,7 +46,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
     }
 
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -121,7 +121,7 @@ internal class Prototypes(
 
     override fun createGroup() = SimpleVisualGroup()
 
-    override var properties: Config?
+    override var ownProperties: Config?
         get() = null
         set(_) {
             error("Can't define properties for prototypes block")

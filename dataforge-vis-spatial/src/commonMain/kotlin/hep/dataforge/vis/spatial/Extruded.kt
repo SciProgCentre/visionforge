@@ -45,7 +45,7 @@ class Extruded(
     var layers: MutableList<Layer> = ArrayList()
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

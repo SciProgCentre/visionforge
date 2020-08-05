@@ -25,7 +25,7 @@ class ConeSegment(
     var angle: Float = PI2
 ) : AbstractVisualObject(), VisualObject3D, Shape {
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null

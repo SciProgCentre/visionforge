@@ -24,7 +24,7 @@ class GDMLView : View() {
     }
 
     private val propertyEditor = VisualObjectEditorFragment {
-        it.allProperties()
+        it.properties()
     }.apply {
         descriptorProperty.set(Material3D.descriptor)
         itemProperty.bind(treeFragment.selectedProperty)

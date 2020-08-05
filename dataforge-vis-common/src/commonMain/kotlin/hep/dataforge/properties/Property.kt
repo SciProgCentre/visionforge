@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 //TODO move to core
 
+@DFExperimental
 interface Property<T> {
     var value: T
 
@@ -18,6 +19,7 @@ interface Property<T> {
     fun removeChangeListener(owner: Any? = null)
 }
 
+@DFExperimental
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T> Property<T>.flow() = callbackFlow<T> {
     send(value)
@@ -35,6 +37,7 @@ fun <T> Property<T>.flow() = callbackFlow<T> {
  *
  * @return a mirroring job
  */
+@DFExperimental
 fun <T> Property<T>.mirror(source: Property<T>, scope: CoroutineScope): Job {
     return scope.launch {
         source.flow().collect {

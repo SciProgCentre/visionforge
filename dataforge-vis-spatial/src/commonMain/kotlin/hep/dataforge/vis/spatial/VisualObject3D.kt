@@ -87,9 +87,9 @@ interface VisualObject3D : VisualObject {
  * Count number of layers to the top object. Return 1 if this is top layer
  */
 var VisualObject3D.layer: Int
-    get() = getProperty(LAYER_KEY).int ?: 0
+    get() = getItem(LAYER_KEY).int ?: 0
     set(value) {
-        setProperty(LAYER_KEY, value.asValue())
+        setItem(LAYER_KEY, value.asValue())
     }
 
 fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisualGroup3D.() -> Unit) =
@@ -110,8 +110,8 @@ enum class RotationOrder {
  * Rotation order
  */
 var VisualObject3D.rotationOrder: RotationOrder
-    get() = getProperty(VisualObject3D.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(VisualObject3D.ROTATION_ORDER_KEY, value.name.asValue())
+    get() = getItem(VisualObject3D.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = setItem(VisualObject3D.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
@@ -119,11 +119,11 @@ var VisualObject3D.rotationOrder: RotationOrder
  */
 var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setProperty(DETAIL_KEY, value?.asValue())
+    set(value) = setItem(DETAIL_KEY, value?.asValue())
 
 var VisualObject.visible: Boolean?
-    get() = getProperty(VISIBLE_KEY).boolean
-    set(value) = setProperty(VISIBLE_KEY, value?.asValue())
+    get() = getItem(VISIBLE_KEY).boolean
+    set(value) = setItem(VISIBLE_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
@@ -131,7 +131,7 @@ var VisualObject.visible: Boolean?
  */
 var VisualObject.ignore: Boolean?
     get() = getProperty(IGNORE_KEY, false).boolean
-    set(value) = setProperty(IGNORE_KEY, value?.asValue())
+    set(value) = setItem(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean

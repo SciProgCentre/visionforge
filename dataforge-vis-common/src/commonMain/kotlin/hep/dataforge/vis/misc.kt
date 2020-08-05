@@ -5,24 +5,8 @@ import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.node
 import hep.dataforge.names.Name
-import hep.dataforge.names.isEmpty
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-
-/**
- * Return nearest selectable parent [Name]
- */
-tailrec fun Name.selectable(): Name? = when {
-    isEmpty() -> {
-        null
-    }
-    last()?.body?.startsWith("@") != true -> {
-        this
-    }
-    else -> {
-        cutLast().selectable()
-    }
-}
 
 fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
     return when (val first = filterNotNull().firstOrNull()) {

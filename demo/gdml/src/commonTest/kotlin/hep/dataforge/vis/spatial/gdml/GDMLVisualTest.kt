@@ -1,6 +1,6 @@
 package hep.dataforge.vis.spatial.gdml
 
-import hep.dataforge.meta.setProperty
+import hep.dataforge.meta.setItem
 import hep.dataforge.meta.string
 import hep.dataforge.names.toName
 import hep.dataforge.values.asValue
@@ -14,7 +14,7 @@ class GDMLVisualTest {
     fun testPrototypeProperty() {
         val gdml = cubes()
         val visual = gdml.toVisual()
-        visual["composite000.segment0".toName()]?.setProperty(Material3D.MATERIAL_COLOR_KEY, "red".asValue())
-        assertEquals("red", visual["composite000.segment0".toName()]?.getProperty(Material3D.MATERIAL_COLOR_KEY).string)
+        visual["composite000.segment0".toName()]?.setItem(Material3D.MATERIAL_COLOR_KEY, "red".asValue())
+        assertEquals("red", visual["composite000.segment0".toName()]?.getItem(Material3D.MATERIAL_COLOR_KEY).string)
     }
 }

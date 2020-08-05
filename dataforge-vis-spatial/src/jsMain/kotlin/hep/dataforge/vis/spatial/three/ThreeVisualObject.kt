@@ -25,7 +25,7 @@ class CustomThreeVisualObject(val threeFactory: ThreeFactory<VisualObject3D>) : 
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    override var properties: Config? = null
+    override var ownProperties: Config? = null
 
     override fun toObject3D(): Object3D = threeFactory(this)
 

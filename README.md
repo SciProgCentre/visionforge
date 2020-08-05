@@ -42,7 +42,6 @@ The main framework's features for now include:
 - Settings export and import
 - Multiple platform support
 
-
 ## About DataForge
 
 DataForge is a software framework for automated scientific data processing. DataForge Visualization
@@ -64,7 +63,7 @@ This module is not specific to 3D-visualization.
 
 The `dataforge-vis-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
 
-##### Class diagram: 
+**Class diagram:**
 
 ![](doc/resources/class-diag-common.png)
 
@@ -73,7 +72,7 @@ The `dataforge-vis-common` module also includes configuration editors for JS (in
 
 Includes common classes and serializers for 3D visualization, Three.js and JavaFX implementations.
 
-##### Class diagram:
+**Class diagram:**
 
 ![](doc/resources/class-diag-3d.png)
 
@@ -125,7 +124,7 @@ Some shapes will also periodically change their color and visibility.
 
 [More details](demo/spatial-showcase/README.md)
 
-##### Example view:
+**Example view:**
 
 ![](doc/resources/spatial-showcase.png)
 
@@ -137,7 +136,7 @@ A full-stack application example, showing the
 
 [More details](demo/muon-monitor/README.md)
 
-##### Example view:
+**Example view:**
 
 ![](doc/resources/muon-monitor.png)
 
