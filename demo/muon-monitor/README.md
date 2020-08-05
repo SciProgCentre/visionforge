@@ -1,7 +1,7 @@
 
 ### Muon Monitor Visualization
 
-This directory contains a full-stack application example built with `dataforge-vis`.
+This directory contains a full-stack application example built with `visionforge`.
 It is visualizing the 
 [Muon Monitor](http://npm.mipt.ru/projects/physics.html#mounMonitor) experiment set-up,
 including experiment's geometry and events (particle tracks).

@@ -1,8 +1,8 @@
 @file:UseSerializers(Point3DSerializer::class)
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vis.spatial.Point3D
-import hep.dataforge.vis.spatial.Point3DSerializer
+import hep.dataforge.vision.spatial.Point3D
+import hep.dataforge.vision.spatial.Point3DSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 

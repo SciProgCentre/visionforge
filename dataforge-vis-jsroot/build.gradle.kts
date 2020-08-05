@@ -12,7 +12,7 @@ plugins {
 val kotlinVersion: String by rootProject.extra
 
 dependencies {
-    implementation(project(":dataforge-vis-spatial-js"))
+    implementation(project(":visionforge-spatial-js"))
     testCompile(kotlin("test-js"))
 }
 

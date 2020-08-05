@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor.server
 
 
-import hep.dataforge.vis.spatial.Visual3D
+import hep.dataforge.vision.spatial.Visual3D
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install

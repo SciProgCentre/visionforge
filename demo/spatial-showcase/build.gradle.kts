@@ -1,4 +1,6 @@
-import scientifik.*
+import scientifik.DependencyConfiguration
+import scientifik.FXModule
+import scientifik.useFx
 
 plugins {
     id("scientifik.mpp")
@@ -17,8 +19,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                api(project(":visionforge-spatial"))
+                api(project(":visionforge-gdml"))
             }
         }
     }

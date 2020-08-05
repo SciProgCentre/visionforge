@@ -3,7 +3,7 @@ package ru.mipt.npm.muon.monitor
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.vis.spatial.Visual3D
+import hep.dataforge.vision.spatial.Visual3D
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer

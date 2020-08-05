@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":dataforge-vis-common"))
+    api(project(":visionforge-common"))
 
     testCompile(kotlin("test-js"))
 }

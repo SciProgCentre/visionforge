@@ -43,7 +43,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":dataforge-vis-spatial"))
+                implementation(project(":visionforge-spatial"))
             }
         }
         jvmMain {

@@ -4,17 +4,17 @@ import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vis.VisualObject
-import hep.dataforge.vis.bootstrap.card
-import hep.dataforge.vis.bootstrap.objectTree
-import hep.dataforge.vis.react.component
-import hep.dataforge.vis.react.configEditor
-import hep.dataforge.vis.react.state
-import hep.dataforge.vis.spatial.specifications.Camera
-import hep.dataforge.vis.spatial.specifications.Canvas
-import hep.dataforge.vis.spatial.three.ThreeCanvas
-import hep.dataforge.vis.spatial.three.ThreeCanvasComponent
-import hep.dataforge.vis.spatial.three.canvasControls
+import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.bootstrap.card
+import hep.dataforge.vision.bootstrap.objectTree
+import hep.dataforge.vision.react.component
+import hep.dataforge.vision.react.configEditor
+import hep.dataforge.vision.react.state
+import hep.dataforge.vision.spatial.specifications.Camera
+import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
+import hep.dataforge.vision.spatial.three.ThreeCanvas
+import hep.dataforge.vision.spatial.three.ThreeCanvasComponent
+import hep.dataforge.vision.spatial.three.canvasControls
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
@@ -31,7 +31,7 @@ interface MMAppProps : RProps {
     var selected: Name?
 }
 
-private val canvasConfig = Canvas {
+private val canvasConfig = Canvas3DOptions {
     camera = Camera {
         distance = 2100.0
         latitude = PI / 6

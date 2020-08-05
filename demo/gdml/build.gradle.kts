@@ -23,8 +23,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":dataforge-vis-spatial"))
-                implementation(project(":dataforge-vis-spatial-gdml"))
+                implementation(project(":visionforge-spatial"))
+                implementation(project(":visionforge-gdml"))
             }
         }
         jsMain{

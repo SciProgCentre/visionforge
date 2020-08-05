@@ -32,7 +32,7 @@ pluginManagement {
 
 //enableFeaturePreview("GRADLE_METADATA")
 
-rootProject.name = "dataforge-vis"
+rootProject.name = "visionforge"
 
 include(
     ":ui",
@@ -40,9 +40,9 @@ include(
     ":ui:ring",
     ":ui:material",
     ":ui:bootstrap",
-    ":dataforge-vis-common",
-    ":dataforge-vis-spatial",
-    ":dataforge-vis-spatial-gdml",
+    ":visionforge-common",
+    ":visionforge-spatial",
+    ":visionforge-gdml",
     ":demo:spatial-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",

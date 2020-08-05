@@ -22,12 +22,12 @@ allprojects {
     version = "0.1.4"
 }
 
-val githubProject by extra("dataforge-vis")
+val githubProject by extra("visionforge")
 val bintrayRepo by extra("dataforge")
 val fxVersion by extra("14")
 
 subprojects {
-    if(name.startsWith("dataforge")) {
+    if(name.startsWith("visionforge")) {
         apply(plugin = "scientifik.publish")
     }
     useSerialization()

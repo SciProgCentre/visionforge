@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vis.removeAll
-import hep.dataforge.vis.spatial.*
+import hep.dataforge.vision.removeAll
+import hep.dataforge.vision.spatial.*
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
@@ -16,7 +16,7 @@ class Model {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
             label(pixel.name) {
-                z = - Monitor.PIXEL_Z_SIZE / 2 - 5
+                z = -Monitor.PIXEL_Z_SIZE / 2 - 5
                 rotationY = PI
             }
         }
@@ -74,7 +74,7 @@ class Model {
             highlight(it)
         }
         event.track?.let {
-            tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]"){
+            tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
                 thickness = 4
             }
         }

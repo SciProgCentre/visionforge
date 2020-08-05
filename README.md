@@ -8,10 +8,10 @@
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
-  * [dataforge-vis-common](#dataforge-vis-common)
-  * [dataforge-vis-spatial](#dataforge-vis-spatial)
-  * [dataforge-vis-spatial-gdml](#dataforge-vis-spatial-gdml)
-  * [dataforge-vis-jsroot](#dataforge-vis-jsroot)
+  * [visionforge-common](#visionforge-common)
+  * [visionforge-spatial](#visionforge-spatial)
+  * [visionforge-spatial-gdml](#visionforge-spatial-gdml)
+  * [visionforge-jsroot](#visionforge-jsroot)
 * [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
   * [Simple Example - Spatial Showcase](#simple-example---spatial-showcase)
@@ -56,19 +56,19 @@ To learn more about DataForge, please consult the following URLs:
 
 ## Modules contained in this repository
 
-### dataforge-vis-common 
+### visionforge-common
 
 Contains a general hierarchy of classes and interfaces useful for visualization. 
 This module is not specific to 3D-visualization.
 
-The `dataforge-vis-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
+The `visionforge-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
 
 **Class diagram:**
 
 ![](doc/resources/class-diag-common.png)
 
 
-### dataforge-vis-spatial
+### visionforge-spatial
 
 Includes common classes and serializers for 3D visualization, Three.js and JavaFX implementations.
 
@@ -91,12 +91,12 @@ level. Styles are applied to child (descendant) objects using `styles: List<Stri
 in `VisualObject`. 
 
 
-### dataforge-vis-spatial-gdml
+### visionforge-spatial-gdml
 
 GDML bindings for 3D visualization (to be moved to gdml project).
 
 
-### dataforge-vis-jsroot
+### visionforge-jsroot
 
 Some JSROOT bindings. 
 
@@ -105,15 +105,15 @@ Note: Currently, this part is experimental and put here for completeness. This m
 
 ## Visualization for External Systems 
 
-The `dataforge-vis` framework can be used to visualize geometry and events from external,
+The `visionforge` framework can be used to visualize geometry and events from external,
 non-Kotlin based systems, such as ROOT. This will require a plugin to convert data model
-of the external system to that of `dataforge-vis`. Performing such integration is a work 
+of the external system to that of `visionforge`. Performing such integration is a work
 currently in progress.
  
 
 ## Demonstrations
 
-The `demo` module contains several example projects (demonstrations) of using the `dataforge-vis` framework.
+The `demo` module contains several example projects (demonstrations) of using the `visionforge` framework.
 They are briefly described in this section, for more details please consult the corresponding per-project
 README file.
 
