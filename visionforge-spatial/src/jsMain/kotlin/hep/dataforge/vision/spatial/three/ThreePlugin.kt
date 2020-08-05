@@ -13,7 +13,7 @@ import info.laht.threekt.objects.Group as ThreeGroup
 class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    private val objectFactories = HashMap<KClass<out VisualObject3D>, ThreeFactory<*>>()
+    private val objectFactories = HashMap<KClass<out Vision3D>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
     private val proxyFactory = ThreeProxyFactory(this)
 
@@ -28,20 +28,20 @@ class ThreePlugin : AbstractPlugin() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<VisualObject3D>? {
+    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Vision3D>? {
         return (objectFactories[type]
             ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
-                as ThreeFactory<VisualObject3D>?
+                as ThreeFactory<Vision3D>?
     }
 
-    fun buildObject3D(obj: VisualObject3D): Object3D {
+    fun buildObject3D(obj: Vision3D): Object3D {
         return when (obj) {
-            is ThreeVisualObject -> obj.toObject3D()
+            is ThreeVision -> obj.toObject3D()
             is Proxy -> proxyFactory(obj)
             is VisionGroup3D -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (token, child) ->
-                    if (child is VisualObject3D && child.ignore != true) {
+                    if (child is Vision3D && child.ignore != true) {
                         try {
                             val object3D = buildObject3D(child)
                             group[token] = object3D
@@ -57,13 +57,13 @@ class ThreePlugin : AbstractPlugin() {
 
                     obj.onPropertyChange(this) { name, _, _ ->
                         if (
-                            name.startsWith(VisualObject3D.POSITION_KEY) ||
-                            name.startsWith(VisualObject3D.ROTATION) ||
-                            name.startsWith(VisualObject3D.SCALE_KEY)
+                            name.startsWith(Vision3D.POSITION_KEY) ||
+                            name.startsWith(Vision3D.ROTATION) ||
+                            name.startsWith(Vision3D.SCALE_KEY)
                         ) {
                             //update position of mesh using this object
                             updatePosition(obj)
-                        } else if (name == VisualObject3D.VISIBLE_KEY) {
+                        } else if (name == Vision3D.VISIBLE_KEY) {
                             visible = obj.visible ?: true
                         }
                     }
@@ -83,7 +83,7 @@ class ThreePlugin : AbstractPlugin() {
                         }
 
                         //adding new object
-                        if (child != null && child is VisualObject3D) {
+                        if (child != null && child is Vision3D) {
                             try {
                                 val object3D = buildObject3D(child)
                                 set(name, object3D)
@@ -97,7 +97,7 @@ class ThreePlugin : AbstractPlugin() {
             is Composite -> compositeFactory(obj)
             else -> {
                 //find specialized factory for this type if it is present
-                val factory: ThreeFactory<VisualObject3D>? = findObjectFactory(obj::class)
+                val factory: ThreeFactory<Vision3D>? = findObjectFactory(obj::class)
                 when {
                     factory != null -> factory(obj)
                     obj is Shape -> ThreeShapeFactory(obj)

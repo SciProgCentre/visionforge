@@ -4,13 +4,8 @@ import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import kotlin.reflect.KClass
 
-interface VisualFactory<T : Vision> {
+interface VisionFactory<T : Vision> : Factory<T> {
     val type: KClass<T>
-    operator fun invoke(
-        context: Context,
-        parent: Vision?,
-        meta: Meta
-    ): T
 }
 
 class VisionManager(meta: Meta) : AbstractPlugin(meta) {
@@ -19,12 +14,18 @@ class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     /**
      * Create a list of factories on first call and cache it
      */
-    val visualFactories by lazy {
-        context.content<VisualFactory<*>>(VISUAL_FACTORY_TYPE).mapKeys { it.value.type }
+    private val factories by lazy {
+        context.content<VisionFactory<*>>(VISION_FACTORY_TYPE).mapKeys { it.value.type }
     }
 
-    inline fun <reified T : Vision> buildVisual(parent: Vision?, meta: Meta): T? {
-        return visualFactories[T::class]?.invoke(context, parent, meta) as T?
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Vision> resolveVisionFactory(type: KClass<out T>): VisionFactory<T>? =
+        factories[type] as VisionFactory<T>
+
+    inline fun <reified T : Vision> buildVision(parent: VisionGroup?, meta: Meta): T? {
+        return resolveVisionFactory(T::class)?.invoke(meta, context)?.apply {
+            this.parent = parent
+        }
     }
 
     companion object : PluginFactory<VisionManager> {
@@ -33,6 +34,6 @@ class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         override fun invoke(meta: Meta, context: Context): VisionManager = VisionManager(meta)
 
-        const val VISUAL_FACTORY_TYPE = "vision.factory"
+        const val VISION_FACTORY_TYPE = "vision.factory"
     }
 }

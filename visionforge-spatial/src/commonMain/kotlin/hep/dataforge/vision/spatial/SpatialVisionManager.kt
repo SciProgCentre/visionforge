@@ -17,29 +17,29 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlin.reflect.KClass
 
-class Visual3D(meta: Meta) : AbstractPlugin(meta) {
+class SpatialVisionManager(meta: Meta) : AbstractPlugin(meta) {
 
-    val visual by require(VisionManager)
+    val visionManager by require(VisionManager)
 
     override val tag: PluginTag get() = Companion.tag
 
-    override fun provideTop(target: String): Map<Name, Any> = if (target == VisionManager.VISUAL_FACTORY_TYPE) {
+    override fun provideTop(target: String): Map<Name, Any> = if (target == VisionManager.VISION_FACTORY_TYPE) {
         mapOf(Box.TYPE_NAME.toName() to Box)
     } else {
         super.provideTop(target)
     }
 
 
-    companion object : PluginFactory<Visual3D> {
+    companion object : PluginFactory<SpatialVisionManager> {
         override val tag: PluginTag = PluginTag(name = "visual.spatial", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out Visual3D> = Visual3D::class
-        override fun invoke(meta: Meta, context: Context): Visual3D = Visual3D(meta)
+        override val type: KClass<out SpatialVisionManager> = SpatialVisionManager::class
+        override fun invoke(meta: Meta, context: Context): SpatialVisionManager = SpatialVisionManager(meta)
 
         val serialModule = SerializersModule {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
 
-            polymorphic(Vision::class, VisualObject3D::class) {
+            polymorphic(Vision::class, Vision3D::class) {
                 subclass(SimpleVisionGroup.serializer())
                 subclass(VisionGroup3D.serializer())
                 subclass(Proxy.serializer())
@@ -67,15 +67,15 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
     }
 }
 
-internal fun VisualObject3D.update(meta: Meta) {
+internal fun Vision3D.update(meta: Meta) {
     fun Meta.toVector(default: Float = 0f) = Point3D(
-        this[VisualObject3D.X_KEY].float ?: default,
-        this[VisualObject3D.Y_KEY].float ?: default,
-        this[VisualObject3D.Z_KEY].float ?: default
+        this[Vision3D.X_KEY].float ?: default,
+        this[Vision3D.Y_KEY].float ?: default,
+        this[Vision3D.Z_KEY].float ?: default
     )
 
-    meta[VisualObject3D.POSITION_KEY].node?.toVector()?.let { position = it }
-    meta[VisualObject3D.ROTATION].node?.toVector()?.let { rotation = it }
-    meta[VisualObject3D.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
+    meta[Vision3D.POSITION_KEY].node?.toVector()?.let { position = it }
+    meta[Vision3D.ROTATION].node?.toVector()?.let { rotation = it }
+    meta[Vision3D.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
     meta["properties"].node?.let { configure(it) }
 }

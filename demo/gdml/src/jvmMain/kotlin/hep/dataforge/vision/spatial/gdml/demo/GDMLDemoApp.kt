@@ -4,10 +4,10 @@ import hep.dataforge.context.Global
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
 import hep.dataforge.vision.spatial.Material3D
-import hep.dataforge.vision.spatial.Visual3D
+import hep.dataforge.vision.spatial.SpatialVisionManager
 import hep.dataforge.vision.spatial.fx.FX3DPlugin
 import hep.dataforge.vision.spatial.fx.FXCanvas3D
-import hep.dataforge.vision.spatial.gdml.toVisual
+import hep.dataforge.vision.spatial.gdml.toVision
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser
@@ -39,7 +39,7 @@ class GDMLView : View() {
                         runAsync {
                             val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
                                 ?: return@runAsync null
-                            Visual3D.readFile(file)
+                            SpatialVisionManager.readFile(file)
                         } ui {
                             if (it != null) {
                                 canvas.render(it)
@@ -58,7 +58,7 @@ class GDMLView : View() {
 
     init {
         runAsync {
-            cubes().toVisual()
+            cubes().toVision()
         } ui {
             canvas.render(it)
         }

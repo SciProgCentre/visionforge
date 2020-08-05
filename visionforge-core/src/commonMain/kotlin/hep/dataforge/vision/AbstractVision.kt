@@ -14,7 +14,7 @@ internal data class PropertyListener(
     val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
 )
 
-abstract class AbstractVisualObject : Vision {
+abstract class AbstractVision : Vision {
 
     @Transient
     override var parent: VisionGroup? = null

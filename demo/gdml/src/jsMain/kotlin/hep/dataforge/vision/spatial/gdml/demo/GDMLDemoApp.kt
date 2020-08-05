@@ -6,7 +6,7 @@ import hep.dataforge.js.startApplication
 import hep.dataforge.vision.spatial.Material3D.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vision.spatial.gdml.GDMLTransformer
 import hep.dataforge.vision.spatial.gdml.LUnit
-import hep.dataforge.vision.spatial.gdml.toVisual
+import hep.dataforge.vision.spatial.gdml.toVision
 import kotlinx.css.*
 import react.child
 import react.dom.render
@@ -60,7 +60,7 @@ private class GDMLDemoApp : Application {
             child(GDMLApp) {
                 attrs {
                     this.context = context
-                    this.rootObject = cubes().toVisual(gdmlConfiguration)
+                    this.rootObject = cubes().toVision(gdmlConfiguration)
                 }
             }
         }

@@ -33,7 +33,7 @@ class GDMLTransformer(val root: GDML) {
     var volumeAction: (GDMLGroup) -> Action = { Action.CACHE }
 
 
-    var solidConfiguration: VisualObject3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
+    var solidConfiguration: Vision3D.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
         lUnit = LUnit.CM
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
@@ -42,14 +42,14 @@ class GDMLTransformer(val root: GDML) {
         }
     }
 
-    fun VisualObject3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+    fun Vision3D.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
             Meta(builder)
         }
         useStyle(name)
     }
 
-    internal fun configureSolid(obj: VisualObject3D, parent: GDMLVolume, solid: GDMLSolid) {
+    internal fun configureSolid(obj: Vision3D, parent: GDMLVolume, solid: GDMLSolid) {
         val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
 
         val styleName = "material[${material.name}]"

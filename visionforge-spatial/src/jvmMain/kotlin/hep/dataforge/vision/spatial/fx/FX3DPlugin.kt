@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 class FX3DPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    private val objectFactories = HashMap<KClass<out VisualObject3D>, FX3DFactory<*>>()
+    private val objectFactories = HashMap<KClass<out Vision3D>, FX3DFactory<*>>()
     private val compositeFactory = FXCompositeFactory(this)
     private val proxyFactory = FXProxyFactory(this)
 
@@ -37,18 +37,18 @@ class FX3DPlugin : AbstractPlugin() {
 
 
     @Suppress("UNCHECKED_CAST")
-    private fun findObjectFactory(type: KClass<out VisualObject3D>): FX3DFactory<VisualObject3D>? {
+    private fun findObjectFactory(type: KClass<out Vision3D>): FX3DFactory<Vision3D>? {
         return (objectFactories[type] ?: context.content<FX3DFactory<*>>(TYPE).values.find { it.type == type })
-                as FX3DFactory<VisualObject3D>?
+                as FX3DFactory<Vision3D>?
     }
 
-    fun buildNode(obj: VisualObject3D): Node {
+    fun buildNode(obj: Vision3D): Node {
         val binding = VisualObjectFXBinding(obj)
         return when (obj) {
             is Proxy -> proxyFactory(obj, binding)
             is VisionGroup3D -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
-                    (obj as? VisualObject3D)?.let {
+                    (obj as? Vision3D)?.let {
                         buildNode(it).apply {
                             properties["name"] = token.toString()
                         }
@@ -77,7 +77,7 @@ class FX3DPlugin : AbstractPlugin() {
             }
             else -> {
                 //find specialized factory for this type if it is present
-                val factory: FX3DFactory<VisualObject3D>? = findObjectFactory(obj::class)
+                val factory: FX3DFactory<Vision3D>? = findObjectFactory(obj::class)
                 when {
                     factory != null -> factory(obj, binding)
                     obj is Shape -> FXShapeFactory(obj, binding)
@@ -85,23 +85,23 @@ class FX3DPlugin : AbstractPlugin() {
                 }
             }
         }.apply {
-            translateXProperty().bind(binding[VisualObject3D.X_POSITION_KEY].float(obj.x.toFloat()))
-            translateYProperty().bind(binding[VisualObject3D.Y_POSITION_KEY].float(obj.y.toFloat()))
-            translateZProperty().bind(binding[VisualObject3D.Z_POSITION_KEY].float(obj.z.toFloat()))
-            scaleXProperty().bind(binding[VisualObject3D.X_SCALE_KEY].float(obj.scaleX.toFloat()))
-            scaleYProperty().bind(binding[VisualObject3D.Y_SCALE_KEY].float(obj.scaleY.toFloat()))
-            scaleZProperty().bind(binding[VisualObject3D.Z_SCALE_KEY].float(obj.scaleZ.toFloat()))
+            translateXProperty().bind(binding[Vision3D.X_POSITION_KEY].float(obj.x.toFloat()))
+            translateYProperty().bind(binding[Vision3D.Y_POSITION_KEY].float(obj.y.toFloat()))
+            translateZProperty().bind(binding[Vision3D.Z_POSITION_KEY].float(obj.z.toFloat()))
+            scaleXProperty().bind(binding[Vision3D.X_SCALE_KEY].float(obj.scaleX.toFloat()))
+            scaleYProperty().bind(binding[Vision3D.Y_SCALE_KEY].float(obj.scaleY.toFloat()))
+            scaleZProperty().bind(binding[Vision3D.Z_SCALE_KEY].float(obj.scaleZ.toFloat()))
 
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.X_ROTATION_KEY].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[Vision3D.X_ROTATION_KEY].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateY = Rotate(0.0, Rotate.Y_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.Y_ROTATION_KEY].float(obj.rotationY.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[Vision3D.Y_ROTATION_KEY].float(obj.rotationY.toFloat()).multiply(180.0 / PI))
             }
 
             val rotateZ = Rotate(0.0, Rotate.Z_AXIS).apply {
-                angleProperty().bind(binding[VisualObject3D.Z_ROTATION_KEY].float(obj.rotationZ.toFloat()).multiply(180.0 / PI))
+                angleProperty().bind(binding[Vision3D.Z_ROTATION_KEY].float(obj.rotationZ.toFloat()).multiply(180.0 / PI))
             }
 
             when (obj.rotationOrder) {
@@ -140,7 +140,7 @@ class FX3DPlugin : AbstractPlugin() {
  * Builder and updater for three.js object
  */
 @Type(TYPE)
-interface FX3DFactory<in T : VisualObject3D> {
+interface FX3DFactory<in T : Vision3D> {
 
     val type: KClass<in T>
 

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("group")
-class SimpleVisionGroup : AbstractVision() {
+class SimpleVisionGroup : AbstractVisionGroup() {
 
     override var styleSheet: StyleSheet? = null
 

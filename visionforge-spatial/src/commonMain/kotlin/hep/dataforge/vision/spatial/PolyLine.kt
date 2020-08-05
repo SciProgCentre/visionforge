@@ -6,7 +6,7 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.number
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -15,7 +15,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("3d.line")
-class PolyLine(var points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
+class PolyLine(var points: List<Point3D>) : AbstractVision(), Vision3D {
     override var ownProperties: Config? = null
 
     override var position: Point3D? = null

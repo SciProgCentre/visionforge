@@ -6,7 +6,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.vision.spatial.Material3D
-import hep.dataforge.vision.spatial.VisualObject3D
+import hep.dataforge.vision.spatial.Vision3D
 import hep.dataforge.vision.spatial.layer
 import hep.dataforge.vision.spatial.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
 /**
  * Basic geometry-based factory
  */
-abstract class MeshThreeFactory<in T : VisualObject3D>(
+abstract class MeshThreeFactory<in T : Vision3D>(
     override val type: KClass<in T>
 ) : ThreeFactory<T> {
     /**
@@ -52,7 +52,7 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
         //add listener to object properties
         obj.onPropertyChange(this) { name, _, _ ->
             when {
-                name.startsWith(VisualObject3D.GEOMETRY_KEY) -> {
+                name.startsWith(Vision3D.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry
                     val newGeometry = buildGeometry(obj)
                     oldGeometry.attributes = newGeometry.attributes
@@ -79,7 +79,7 @@ abstract class MeshThreeFactory<in T : VisualObject3D>(
     }
 }
 
-fun Mesh.applyEdges(obj: VisualObject3D) {
+fun Mesh.applyEdges(obj: Vision3D) {
     children.find { it.name == "@edges" }?.let {
         remove(it)
         (it as LineSegments).dispose()
@@ -99,7 +99,7 @@ fun Mesh.applyEdges(obj: VisualObject3D) {
     }
 }
 
-fun Mesh.applyWireFrame(obj: VisualObject3D) {
+fun Mesh.applyWireFrame(obj: Vision3D) {
     children.find { it.name == "@wireframe" }?.let {
         remove(it)
         (it as LineSegments).dispose()

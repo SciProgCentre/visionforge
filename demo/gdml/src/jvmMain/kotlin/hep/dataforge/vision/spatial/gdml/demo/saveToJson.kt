@@ -2,7 +2,7 @@ package hep.dataforge.vision.spatial.gdml.demo
 
 import hep.dataforge.vision.spatial.gdml.LUnit
 import hep.dataforge.vision.spatial.gdml.readFile
-import hep.dataforge.vision.spatial.gdml.toVisual
+import hep.dataforge.vision.spatial.gdml.toVision
 import hep.dataforge.vision.spatial.stringify
 import scientifik.gdml.GDML
 import java.io.File
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     val gdml = GDML.readFile(Paths.get(inputFileName))
         //GDML.readFile(Paths.get("D:\\Work\\Projects\\visionforge\\visionforge-spatial-gdml\\src\\jvmTest\\resources\\gdml\\simple1.gdml"))
 
-    val visual = gdml.toVisual {
+    val visual = gdml.toVision {
         lUnit = LUnit.CM
     }
 

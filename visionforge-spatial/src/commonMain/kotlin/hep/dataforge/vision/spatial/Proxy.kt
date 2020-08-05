@@ -16,13 +16,13 @@ import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
 /**
- * A proxy [VisualObject3D] to reuse a template object
+ * A proxy [Vision3D] to reuse a template object
  */
 @Serializable
 @SerialName("3d.proxy")
 class Proxy private constructor(
     val templateName: Name
-) : AbstractVisualObject(), VisionGroup, VisualObject3D {
+) : AbstractVision(), VisionGroup, Vision3D {
 
     constructor(parent: VisionGroup3D, templateName: Name) : this(templateName) {
         this.parent = parent
@@ -37,7 +37,7 @@ class Proxy private constructor(
     /**
      * Recursively search for defined template in the parent
      */
-    val prototype: VisualObject3D
+    val prototype: Vision3D
         get() = (parent as? VisionGroup3D)?.getPrototype(templateName)
             ?: error("Prototype with name $templateName not found in $parent")
 
@@ -94,7 +94,7 @@ class Proxy private constructor(
     override val descriptor: NodeDescriptor?
         get() = prototype.descriptor
 
-    inner class ProxyChild(val name: Name) : AbstractVisualObject(),
+    inner class ProxyChild(val name: Name) : AbstractVision(),
         VisionGroup {
 
         val prototype: Vision get() = prototypeFor(name)
@@ -179,7 +179,7 @@ fun VisionGroup3D.ref(
  */
 fun VisionGroup3D.proxy(
     name: String,
-    obj: VisualObject3D,
+    obj: Vision3D,
     templateName: Name = name.toName()
 ): Proxy {
     val existing = getPrototype(templateName)

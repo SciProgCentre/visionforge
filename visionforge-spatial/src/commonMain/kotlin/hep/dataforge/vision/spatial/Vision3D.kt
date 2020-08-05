@@ -11,16 +11,16 @@ import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.enum
-import hep.dataforge.vision.spatial.VisualObject3D.Companion.DETAIL_KEY
-import hep.dataforge.vision.spatial.VisualObject3D.Companion.IGNORE_KEY
-import hep.dataforge.vision.spatial.VisualObject3D.Companion.LAYER_KEY
-import hep.dataforge.vision.spatial.VisualObject3D.Companion.VISIBLE_KEY
+import hep.dataforge.vision.spatial.Vision3D.Companion.DETAIL_KEY
+import hep.dataforge.vision.spatial.Vision3D.Companion.IGNORE_KEY
+import hep.dataforge.vision.spatial.Vision3D.Companion.LAYER_KEY
+import hep.dataforge.vision.spatial.Vision3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
 
 /**
  * Interface for 3-dimensional [Vision]
  */
-interface VisualObject3D : Vision {
+interface Vision3D : Vision {
     var position: Point3D?
     var rotation: Point3D?
     var scale: Point3D?
@@ -86,13 +86,13 @@ interface VisualObject3D : Vision {
 /**
  * Count number of layers to the top object. Return 1 if this is top layer
  */
-var VisualObject3D.layer: Int
+var Vision3D.layer: Int
     get() = getItem(LAYER_KEY).int ?: 0
     set(value) {
         setItem(LAYER_KEY, value.asValue())
     }
 
-fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisionGroup3D.() -> Unit) =
+fun Renderer<Vision3D>.render(meta: Meta = Meta.EMPTY, action: VisionGroup3D.() -> Unit) =
     render(VisionGroup3D().apply(action), meta)
 
 // Common properties
@@ -109,15 +109,15 @@ enum class RotationOrder {
 /**
  * Rotation order
  */
-var VisualObject3D.rotationOrder: RotationOrder
-    get() = getItem(VisualObject3D.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setItem(VisualObject3D.ROTATION_ORDER_KEY, value.name.asValue())
+var Vision3D.rotationOrder: RotationOrder
+    get() = getItem(Vision3D.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = setItem(Vision3D.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
-var VisualObject3D.detail: Int?
+var Vision3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
     set(value) = setItem(DETAIL_KEY, value?.asValue())
 
@@ -137,74 +137,74 @@ var Vision.ignore: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
 //    set(value) = setProperty(SELECTED_KEY, value)
 
-private fun VisualObject3D.position(): Point3D =
+private fun Vision3D.position(): Point3D =
     position ?: Point3D(0.0, 0.0, 0.0).also { position = it }
 
-var VisualObject3D.x: Number
+var Vision3D.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.X_POSITION_KEY)
+        propertyInvalidated(Vision3D.X_POSITION_KEY)
     }
 
-var VisualObject3D.y: Number
+var Vision3D.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.Y_POSITION_KEY)
+        propertyInvalidated(Vision3D.Y_POSITION_KEY)
     }
 
-var VisualObject3D.z: Number
+var Vision3D.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.Z_POSITION_KEY)
+        propertyInvalidated(Vision3D.Z_POSITION_KEY)
     }
 
-private fun VisualObject3D.rotation(): Point3D =
+private fun Vision3D.rotation(): Point3D =
     rotation ?: Point3D(0.0, 0.0, 0.0).also { rotation = it }
 
-var VisualObject3D.rotationX: Number
+var Vision3D.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.X_ROTATION_KEY)
+        propertyInvalidated(Vision3D.X_ROTATION_KEY)
     }
 
-var VisualObject3D.rotationY: Number
+var Vision3D.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.Y_ROTATION_KEY)
+        propertyInvalidated(Vision3D.Y_ROTATION_KEY)
     }
 
-var VisualObject3D.rotationZ: Number
+var Vision3D.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.Z_ROTATION_KEY)
+        propertyInvalidated(Vision3D.Z_ROTATION_KEY)
     }
 
-private fun VisualObject3D.scale(): Point3D =
+private fun Vision3D.scale(): Point3D =
     scale ?: Point3D(1.0, 1.0, 1.0).also { scale = it }
 
-var VisualObject3D.scaleX: Number
+var Vision3D.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyInvalidated(VisualObject3D.X_SCALE_KEY)
+        propertyInvalidated(Vision3D.X_SCALE_KEY)
     }
 
-var VisualObject3D.scaleY: Number
+var Vision3D.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyInvalidated(VisualObject3D.Y_SCALE_KEY)
+        propertyInvalidated(Vision3D.Y_SCALE_KEY)
     }
 
-var VisualObject3D.scaleZ: Number
+var Vision3D.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyInvalidated(VisualObject3D.Z_SCALE_KEY)
+        propertyInvalidated(Vision3D.Z_SCALE_KEY)
     }

@@ -4,7 +4,7 @@ import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
 import hep.dataforge.meta.Meta
 import hep.dataforge.output.Renderer
-import hep.dataforge.vision.spatial.VisualObject3D
+import hep.dataforge.vision.spatial.Vision3D
 import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
@@ -15,7 +15,7 @@ import org.fxyz3d.scene.Axes
 import tornadofx.*
 
 class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOptions.empty()) :
-    Fragment(), Renderer<VisualObject3D>, ContextAware {
+    Fragment(), Renderer<Vision3D>, ContextAware {
 
     override val context: Context get() = plugin.context
 
@@ -58,8 +58,8 @@ class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOpt
         world.add(it.centerMarker)
     }
 
-    val rootObjectProperty: ObjectProperty<VisualObject3D> = SimpleObjectProperty()
-    var rootObject: VisualObject3D? by rootObjectProperty
+    val rootObjectProperty: ObjectProperty<Vision3D> = SimpleObjectProperty()
+    var rootObject: Vision3D? by rootObjectProperty
 
     private val rootNodeProperty = rootObjectProperty.objectBinding {
         it?.let { plugin.buildNode(it) }
@@ -80,7 +80,7 @@ class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOpt
         }
     }
 
-    override fun render(obj: VisualObject3D, meta: Meta) {
+    override fun render(obj: Vision3D, meta: Meta) {
         rootObject = obj
     }
 }

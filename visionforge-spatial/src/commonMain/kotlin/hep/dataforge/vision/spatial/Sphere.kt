@@ -3,7 +3,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -21,7 +21,7 @@ class Sphere(
     var phi: Float = PI2,
     var thetaStart: Float = 0f,
     var theta: Float = PI.toFloat()
-) : AbstractVisualObject(), VisualObject3D, Shape {
+) : AbstractVision(), Vision3D, Shape {
 
     override var ownProperties: Config? = null
 

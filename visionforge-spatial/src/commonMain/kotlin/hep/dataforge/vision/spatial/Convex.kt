@@ -3,7 +3,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -12,7 +12,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("3d.convex")
-class Convex(val points: List<Point3D>) : AbstractVisualObject(), VisualObject3D {
+class Convex(val points: List<Point3D>) : AbstractVision(), Vision3D {
 
     override var ownProperties: Config? = null
 

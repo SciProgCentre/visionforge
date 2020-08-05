@@ -118,9 +118,9 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
     }
 }
 
-fun Vision.stringify(): String = Visual3D.json.stringify(Vision.serializer(), this)
+fun Vision.stringify(): String = SpatialVisionManager.json.stringify(Vision.serializer(), this)
 
-fun Vision.Companion.parseJson(str: String) = Visual3D.json.parse(Vision.serializer(), str).also {
+fun Vision.Companion.parseJson(str: String) = SpatialVisionManager.json.parse(Vision.serializer(), str).also {
     if(it is VisionGroup){
         it.attachChildren()
     }

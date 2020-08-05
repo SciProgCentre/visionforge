@@ -10,9 +10,9 @@ import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.state
+import hep.dataforge.vision.spatial.Vision3D
 import hep.dataforge.vision.spatial.VisionGroup3D
-import hep.dataforge.vision.spatial.VisualObject3D
-import hep.dataforge.vision.spatial.gdml.toVisual
+import hep.dataforge.vision.spatial.gdml.toVision
 import hep.dataforge.vision.spatial.specifications.Camera
 import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
 import hep.dataforge.vision.spatial.three.ThreeCanvas
@@ -60,7 +60,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
         visual = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = GDML.parse(data)
-                gdml.toVisual(gdmlConfiguration)
+                gdml.toVision(gdmlConfiguration)
             }
             name.endsWith(".json") -> VisionGroup3D.parseJson(data)
             else -> {
@@ -107,7 +107,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
 
             gridColumn(6, maxSize= GridMaxSize.XL, classes = "order-1 order-xl-2") {
                 //canvas
-                (visual as? VisualObject3D)?.let { visual3D ->
+                (visual as? Vision3D)?.let { visual3D ->
                     child(ThreeCanvasComponent::class) {
                         attrs {
                             this.context = props.context

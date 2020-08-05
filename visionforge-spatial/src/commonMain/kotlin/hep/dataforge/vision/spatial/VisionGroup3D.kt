@@ -24,7 +24,7 @@ interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.3d")
-class VisionGroup3D : AbstractVision(), VisualObject3D, PrototypeHolder {
+class VisionGroup3D : AbstractVisionGroup(), Vision3D, PrototypeHolder {
 
     override var styleSheet: StyleSheet? = null
 
@@ -82,15 +82,15 @@ class VisionGroup3D : AbstractVision(), VisualObject3D, PrototypeHolder {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
         fun parseJson(json: String): VisionGroup3D =
-            Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
+            SpatialVisionManager.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
 
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-tailrec fun PrototypeHolder.getPrototype(name: Name): VisualObject3D? =
-    prototypes?.get(name) as? VisualObject3D ?: (parent as? PrototypeHolder)?.getPrototype(name)
+tailrec fun PrototypeHolder.getPrototype(name: Name): Vision3D? =
+    prototypes?.get(name) as? Vision3D ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
@@ -102,7 +102,7 @@ fun MutableVisionGroup.group(name: String = "", action: VisionGroup3D.() -> Unit
 
 internal class Prototypes(
     override var children: MutableMap<NameToken, Vision> = LinkedHashMap()
-) : AbstractVision(), MutableVisionGroup, PrototypeHolder {
+) : AbstractVisionGroup(), MutableVisionGroup, PrototypeHolder {
 
     override var styleSheet: StyleSheet?
         get() = null

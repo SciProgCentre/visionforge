@@ -2,7 +2,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -43,7 +43,7 @@ data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 class Extruded(
     var shape: List<Point2D> = ArrayList(),
     var layers: MutableList<Layer> = ArrayList()
-) : AbstractVisualObject(), VisualObject3D, Shape {
+) : AbstractVision(), Vision3D, Shape {
 
     override var ownProperties: Config? = null
 

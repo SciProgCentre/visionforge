@@ -11,7 +11,7 @@ import kotlinx.serialization.Transient
 /**
  * Abstract implementation of mutable group of [Vision]
  */
-abstract class AbstractVision : AbstractVisualObject(), MutableVisionGroup {
+abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -86,7 +86,7 @@ abstract class AbstractVision : AbstractVisualObject(), MutableVisionGroup {
     protected open fun addStatic(child: Vision) =
         set(NameToken("@static(${child.hashCode()})").asName(), child)
 
-    protected abstract fun createGroup(): AbstractVision
+    protected abstract fun createGroup(): AbstractVisionGroup
 
     /**
      * Set this node as parent for given node
@@ -102,7 +102,7 @@ abstract class AbstractVision : AbstractVisualObject(), MutableVisionGroup {
     /**
      * Recursively create a child group
      */
-    private fun createGroups(name: Name): AbstractVision {
+    private fun createGroups(name: Name): AbstractVisionGroup {
         return when {
             name.isEmpty() -> error("Should be unreachable")
             name.length == 1 -> {
@@ -112,7 +112,7 @@ abstract class AbstractVision : AbstractVisualObject(), MutableVisionGroup {
                         attach(child)
                         setChild(token, child)
                     }
-                    is AbstractVision -> current
+                    is AbstractVisionGroup -> current
                     else -> error("Can't create group with name $name because it exists and not a group")
                 }
             }

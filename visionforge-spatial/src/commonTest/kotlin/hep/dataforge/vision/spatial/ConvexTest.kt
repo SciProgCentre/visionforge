@@ -26,7 +26,7 @@ class ConvexTest {
 
         val convex = group.children.values.first() as Convex
 
-        val json = Visual3D.json.toJson(Convex.serializer(), convex)
+        val json = SpatialVisionManager.json.toJson(Convex.serializer(), convex)
         val meta = json.toMetaItem().node!!
 
         val points = meta.getIndexed("points").values.map { (it as MetaItem.NodeItem<*>).node.point3D() }

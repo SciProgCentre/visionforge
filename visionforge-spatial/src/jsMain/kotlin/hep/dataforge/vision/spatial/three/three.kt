@@ -17,7 +17,7 @@ import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
 import kotlin.math.PI
 
-val VisualObject3D.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
+val Vision3D.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
 
 val MetaItem<*>.vector get() = Vector3(node["x"].float ?: 0f, node["y"].float ?: 0f, node["z"].float ?: 0f)
 

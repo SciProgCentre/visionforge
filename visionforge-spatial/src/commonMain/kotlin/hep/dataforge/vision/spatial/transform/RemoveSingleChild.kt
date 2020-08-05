@@ -14,7 +14,7 @@ internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
 
         //parent.properties?.let { config.update(it) }
 
-        if (this is VisualObject3D && parent is VisualObject3D) {
+        if (this is Vision3D && parent is Vision3D) {
             position = (position ?: World.ZERO) + (parent.position ?: World.ZERO)
             rotation = (parent.rotation ?: World.ZERO) + (parent.rotation ?: World.ZERO)
             scale = when {

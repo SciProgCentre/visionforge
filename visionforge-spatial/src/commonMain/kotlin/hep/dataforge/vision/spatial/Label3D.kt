@@ -3,7 +3,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -12,7 +12,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("3d.label")
-class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVisualObject(), VisualObject3D {
+class Label3D(var text: String, var fontSize: Double, var fontFamily: String) : AbstractVision(), Vision3D {
     override var ownProperties: Config? = null
 
     override var position: Point3D? = null

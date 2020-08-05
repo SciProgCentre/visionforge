@@ -2,7 +2,7 @@ package hep.dataforge.vision.spatial.three
 
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
-import hep.dataforge.vision.spatial.VisualObject3D
+import hep.dataforge.vision.spatial.Vision3D
 import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -15,7 +15,7 @@ import react.dom.findDOMNode
 
 interface ThreeCanvasProps : RProps {
     var context: Context
-    var obj: VisualObject3D
+    var obj: Vision3D
     var options: Canvas3DOptions?
     var selected: Name?
     var clickCallback: (Name?) -> Unit
@@ -61,7 +61,7 @@ class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
     }
 }
 
-fun RBuilder.threeCanvas(object3D: VisualObject3D, options: Canvas3DOptions.() -> Unit = {}) {
+fun RBuilder.threeCanvas(object3D: Vision3D, options: Canvas3DOptions.() -> Unit = {}) {
     child(ThreeCanvasComponent::class) {
         attrs {
             this.obj = object3D

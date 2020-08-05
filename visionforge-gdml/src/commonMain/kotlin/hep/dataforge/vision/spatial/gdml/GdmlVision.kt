@@ -14,12 +14,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-private fun VisualObject3D.withPosition(
+private fun Vision3D.withPosition(
     lUnit: LUnit,
     newPos: GDMLPosition? = null,
     newRotation: GDMLRotation? = null,
     newScale: GDMLScale? = null
-): VisualObject3D = apply {
+): Vision3D = apply {
     newPos?.let {
         val point = Point3D(it.x(lUnit), it.y(lUnit), it.z(lUnit))
         if (position != null || point != ZERO) {
@@ -52,8 +52,8 @@ private fun VisionGroup3D.addSolid(
     context: GDMLTransformer,
     solid: GDMLSolid,
     name: String = "",
-    block: VisualObject3D.() -> Unit = {}
-): VisualObject3D {
+    block: Vision3D.() -> Unit = {}
+): Vision3D {
     //context.solidAdded(solid)
     val lScale = solid.lscale(context.lUnit)
     val aScale = solid.ascale()
@@ -253,7 +253,7 @@ private fun volume(
     }
 }
 
-fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisionGroup3D {
+fun GDML.toVision(block: GDMLTransformer.() -> Unit = {}): VisionGroup3D {
     val context = GDMLTransformer(this).apply(block)
     return context.finalize(volume(context, world))
 }
@@ -262,7 +262,7 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisionGroup3D {
  * Append gdml node to the group
  */
 fun VisionGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
-    val visual = gdml.toVisual(transformer)
+    val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)
 }

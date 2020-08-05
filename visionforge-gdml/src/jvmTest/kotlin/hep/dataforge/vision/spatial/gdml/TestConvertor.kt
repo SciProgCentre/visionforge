@@ -13,7 +13,7 @@ class TestConvertor {
 
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        val visual = xml.toVisual()
+        val visual = xml.toVision()
         println(visual.stringify())
     }
 
@@ -23,7 +23,7 @@ class TestConvertor {
 
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        val visual = xml.toVisual()
+        val visual = xml.toVision()
      //   println(visual)
     }
 
@@ -33,7 +33,7 @@ class TestConvertor {
 
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        val visual = xml.toVisual()
+        val visual = xml.toVision()
         println(visual.stringify())
     }
 }

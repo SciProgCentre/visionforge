@@ -3,7 +3,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVisualObject
+import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -23,7 +23,7 @@ class ConeSegment(
     var upperRadius: Float,
     var startAngle: Float = 0f,
     var angle: Float = PI2
-) : AbstractVisualObject(), VisualObject3D, Shape {
+) : AbstractVision(), Vision3D, Shape {
 
     override var ownProperties: Config? = null
 

@@ -3,11 +3,11 @@ package hep.dataforge.vision.spatial.three
 import hep.dataforge.names.toName
 import hep.dataforge.vision.spatial.Proxy
 import hep.dataforge.vision.spatial.Proxy.Companion.PROXY_CHILD_PROPERTY_PREFIX
-import hep.dataforge.vision.spatial.VisualObject3D
+import hep.dataforge.vision.spatial.Vision3D
 import info.laht.threekt.core.Object3D
 
 class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
-    private val cache = HashMap<VisualObject3D, Object3D>()
+    private val cache = HashMap<Vision3D, Object3D>()
 
     override val type = Proxy::class
 

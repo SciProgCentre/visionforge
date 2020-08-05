@@ -142,11 +142,11 @@ private fun jsonSchema(descriptor: SerialDescriptor, context: SerialModule): Jso
 }
 
 fun main() {
-    val context = Visual3D.serialModule
+    val context = SpatialVisionManager.serialModule
     val definitions = json {
         "children" to json {
             "anyOf" to jsonArray {
-                context.enumerate(VisualObject3D::class).forEach {
+                context.enumerate(Vision3D::class).forEach {
                     if (it.serialName == "hep.dataforge.vis.spatial.VisualGroup3D") {
                         +json {
                             "\$ref" to "#/$definitionNode/${it.serialName}"

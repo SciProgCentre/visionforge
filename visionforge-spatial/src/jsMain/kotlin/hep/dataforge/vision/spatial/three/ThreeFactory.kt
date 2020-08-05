@@ -33,7 +33,7 @@ interface ThreeFactory<in T : Vision> {
  */
 fun Object3D.updatePosition(obj: Vision) {
     visible = obj.visible ?: true
-    if(obj is VisualObject3D) {
+    if(obj is Vision3D) {
         position.set(obj.x, obj.y, obj.z)
         setRotationFromEuler(obj.euler)
         scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
@@ -60,13 +60,13 @@ fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         this.material = getMaterial(source)
     } else if (
-        propertyName.startsWith(VisualObject3D.POSITION_KEY)
-        || propertyName.startsWith(VisualObject3D.ROTATION)
-        || propertyName.startsWith(VisualObject3D.SCALE_KEY)
+        propertyName.startsWith(Vision3D.POSITION_KEY)
+        || propertyName.startsWith(Vision3D.ROTATION)
+        || propertyName.startsWith(Vision3D.SCALE_KEY)
     ) {
         //update position of mesh using this object
         updatePosition(source)
-    } else if (propertyName == VisualObject3D.VISIBLE_KEY) {
+    } else if (propertyName == Vision3D.VISIBLE_KEY) {
         visible = source.visible ?: true
     }
 }

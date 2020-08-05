@@ -20,9 +20,9 @@ enum class CompositeType {
 @SerialName("3d.composite")
 class Composite(
     val compositeType: CompositeType,
-    val first: VisualObject3D,
-    val second: VisualObject3D
-) : AbstractVisualObject(), VisualObject3D, VisionGroup {
+    val first: Vision3D,
+    val second: Vision3D
+) : AbstractVision(), Vision3D, VisionGroup {
 
     init {
         first.parent = this
@@ -48,7 +48,7 @@ inline fun MutableVisionGroup.composite(
     builder: VisionGroup3D.() -> Unit
 ): Composite {
     val group = VisionGroup3D().apply(builder)
-    val children = group.children.values.filterIsInstance<VisualObject3D>()
+    val children = group.children.values.filterIsInstance<Vision3D>()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also {
         it.config.update(group.config)

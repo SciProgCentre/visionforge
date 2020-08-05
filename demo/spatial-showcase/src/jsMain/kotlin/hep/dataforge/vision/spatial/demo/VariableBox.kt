@@ -11,7 +11,7 @@ import hep.dataforge.values.asValue
 import hep.dataforge.vision.getProperty
 import hep.dataforge.vision.set
 import hep.dataforge.vision.spatial.*
-import hep.dataforge.vision.spatial.VisualObject3D.Companion.GEOMETRY_KEY
+import hep.dataforge.vision.spatial.Vision3D.Companion.GEOMETRY_KEY
 import hep.dataforge.vision.spatial.demo.VariableBoxThreeFactory.Z_SIZE_KEY
 import hep.dataforge.vision.spatial.three.*
 import hep.dataforge.vision.spatial.three.ThreeMaterials.getMaterial
@@ -23,13 +23,13 @@ import kotlinx.serialization.UseSerializers
 import kotlin.math.max
 import kotlin.reflect.KClass
 
-internal var VisualObject3D.variableZSize: Number
+internal var Vision3D.variableZSize: Number
     get() = getProperty(Z_SIZE_KEY, false).number ?: 0f
     set(value) {
         setItem(Z_SIZE_KEY, value.asValue())
     }
 
-internal var VisualObject3D.value: Int
+internal var Vision3D.value: Int
     get() = getProperty("value", false).int ?: 0
     set(value) {
         setItem("value", value.asValue())
@@ -48,21 +48,21 @@ fun VisionGroup3D.varBox(
     ySize: Number,
     zSize: Number,
     name: String = "",
-    action: VisualObject3D.() -> Unit = {}
-) = CustomThreeVisualObject(VariableBoxThreeFactory).apply {
+    action: Vision3D.() -> Unit = {}
+) = CustomThreeVision(VariableBoxThreeFactory).apply {
     scaleX = xSize
     scaleY = ySize
     scaleZ = zSize
 }.apply(action).also { set(name, it) }
 
-private object VariableBoxThreeFactory : ThreeFactory<VisualObject3D> {
+private object VariableBoxThreeFactory : ThreeFactory<Vision3D> {
     val X_SIZE_KEY = GEOMETRY_KEY + "xSize"
     val Y_SIZE_KEY = GEOMETRY_KEY + "ySize"
     val Z_SIZE_KEY = GEOMETRY_KEY + "zSize"
 
-    override val type: KClass<in VisualObject3D> get() = VisualObject3D::class
+    override val type: KClass<in Vision3D> get() = Vision3D::class
 
-    override fun invoke(obj: VisualObject3D): Object3D {
+    override fun invoke(obj: Vision3D): Object3D {
         val xSize = obj.getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val ySize = obj.getProperty(Y_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val zSize = obj.getProperty(Z_SIZE_KEY, false).number?.toDouble() ?: 1.0

@@ -3,8 +3,8 @@ package hep.dataforge.vision.spatial.three
 import hep.dataforge.js.requireJS
 import hep.dataforge.vision.bootstrap.accordion
 import hep.dataforge.vision.bootstrap.entry
+import hep.dataforge.vision.spatial.SpatialVisionManager
 import hep.dataforge.vision.spatial.VisionGroup3D
-import hep.dataforge.vision.spatial.Visual3D
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.js.onChangeFunction
@@ -53,7 +53,7 @@ fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
                     attrs {
                         onClickFunction = {
                             val json = (canvas.content as? VisionGroup3D)?.let { group ->
-                                Visual3D.json.stringify(
+                                SpatialVisionManager.json.stringify(
                                     VisionGroup3D.serializer(),
                                     group
                                 )
@@ -117,7 +117,7 @@ fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLEl
                             +"Export"
                             onClickFunction = {
                                 val json = (canvas.content as? VisionGroup3D)?.let { group ->
-                                    Visual3D.json.stringify(
+                                    SpatialVisionManager.json.stringify(
                                         VisionGroup3D.serializer(),
                                         group
                                     )

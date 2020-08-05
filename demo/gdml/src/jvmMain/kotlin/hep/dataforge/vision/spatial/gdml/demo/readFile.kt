@@ -3,19 +3,19 @@ package hep.dataforge.vision.spatial.gdml.demo
 import hep.dataforge.meta.setItem
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.spatial.Material3D
+import hep.dataforge.vision.spatial.SpatialVisionManager
 import hep.dataforge.vision.spatial.VisionGroup3D
-import hep.dataforge.vision.spatial.Visual3D
 import hep.dataforge.vision.spatial.gdml.LUnit
 import hep.dataforge.vision.spatial.gdml.readFile
-import hep.dataforge.vision.spatial.gdml.toVisual
+import hep.dataforge.vision.spatial.gdml.toVision
 import scientifik.gdml.GDML
 import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
 
-fun Visual3D.Companion.readFile(file: File): VisionGroup3D = when {
+fun SpatialVisionManager.Companion.readFile(file: File): VisionGroup3D = when {
     file.extension == "gdml" || file.extension == "xml" -> {
-        GDML.readFile(file.toPath()).toVisual {
+        GDML.readFile(file.toPath()).toVision {
             lUnit = LUnit.CM
 
             solidConfiguration = { parent, solid ->
@@ -48,4 +48,4 @@ fun Visual3D.Companion.readFile(file: File): VisionGroup3D = when {
     else -> error("Unknown extension ${file.extension}")
 }
 
-fun Visual3D.Companion.readFile(fileName: String): VisionGroup3D = readFile(File(fileName))
+fun SpatialVisionManager.Companion.readFile(fileName: String): VisionGroup3D = readFile(File(fileName))

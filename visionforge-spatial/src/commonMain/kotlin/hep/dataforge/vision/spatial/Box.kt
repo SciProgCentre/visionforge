@@ -6,7 +6,10 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
-import hep.dataforge.vision.*
+import hep.dataforge.vision.AbstractVision
+import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionFactory
+import hep.dataforge.vision.set
 import hep.dataforge.vision.spatial.Box.Companion.TYPE_NAME
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,7 +22,7 @@ class Box(
     val xSize: Float,
     val ySize: Float,
     val zSize: Float
-) : AbstractVisualObject(), VisualObject3D, Shape {
+) : AbstractVision(), Vision3D, Shape {
 
     override var position: Point3D? = null
     override var rotation: Point3D? = null
@@ -48,13 +51,13 @@ class Box(
         geometryBuilder.face4(node8, node5, node6, node7)
     }
 
-    companion object : VisualFactory<Box> {
+    companion object : VisionFactory<Box> {
 
         const val TYPE_NAME = "3d.box"
 
         override val type: KClass<Box> get() = Box::class
 
-        override fun invoke(context: Context, parent: Vision?, meta: Meta): Box = Box(
+        override fun invoke(meta: Meta, context: Context): Box = Box(
             meta["xSize"].float!!,
             meta["ySize"].float!!,
             meta["zSize"].float!!

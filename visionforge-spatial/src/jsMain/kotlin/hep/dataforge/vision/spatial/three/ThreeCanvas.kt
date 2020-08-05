@@ -9,7 +9,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.output.Renderer
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.spatial.VisualObject3D
+import hep.dataforge.vision.spatial.Vision3D
 import hep.dataforge.vision.spatial.specifications.Camera
 import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
 import hep.dataforge.vision.spatial.specifications.Controls
@@ -41,11 +41,11 @@ import kotlin.math.sin
 /**
  *
  */
-class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Canvas3DOptions) : Renderer<VisualObject3D> {
+class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Canvas3DOptions) : Renderer<Vision3D> {
 
     override val context: Context get() = three.context
 
-    var content: VisualObject3D? = null
+    var content: Vision3D? = null
         private set
 
     private var root: Object3D? = null
@@ -172,7 +172,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
         }
     }
 
-    override fun render(obj: VisualObject3D, meta: Meta) {
+    override fun render(obj: Vision3D, meta: Meta) {
         //clear old root
         clear()
 
@@ -244,5 +244,5 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
 fun ThreePlugin.output(element: HTMLElement, spec: Canvas3DOptions = Canvas3DOptions.empty()): ThreeCanvas =
     ThreeCanvas(element, this, spec)
 
-fun ThreePlugin.render(element: HTMLElement, obj: VisualObject3D, spec: Canvas3DOptions = Canvas3DOptions.empty()): Unit =
+fun ThreePlugin.render(element: HTMLElement, obj: Vision3D, spec: Canvas3DOptions = Canvas3DOptions.empty()): Unit =
     output(element, spec).render(obj)
