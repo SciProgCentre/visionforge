@@ -7,9 +7,9 @@ import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vision.SimpleVisualGroup
-import hep.dataforge.vision.Visual
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.SimpleVisionGroup
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionManager
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -19,11 +19,11 @@ import kotlin.reflect.KClass
 
 class Visual3D(meta: Meta) : AbstractPlugin(meta) {
 
-    val visual by require(Visual)
+    val visual by require(VisionManager)
 
     override val tag: PluginTag get() = Companion.tag
 
-    override fun provideTop(target: String): Map<Name, Any> = if (target == Visual.VISUAL_FACTORY_TYPE) {
+    override fun provideTop(target: String): Map<Name, Any> = if (target == VisionManager.VISUAL_FACTORY_TYPE) {
         mapOf(Box.TYPE_NAME.toName() to Box)
     } else {
         super.provideTop(target)
@@ -39,9 +39,9 @@ class Visual3D(meta: Meta) : AbstractPlugin(meta) {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
 
-            polymorphic(VisualObject::class, VisualObject3D::class) {
-                subclass(SimpleVisualGroup.serializer())
-                subclass(VisualGroup3D.serializer())
+            polymorphic(Vision::class, VisualObject3D::class) {
+                subclass(SimpleVisionGroup.serializer())
+                subclass(VisionGroup3D.serializer())
                 subclass(Proxy.serializer())
                 subclass(Composite.serializer())
                 subclass(Tube.serializer())

@@ -1,7 +1,7 @@
 package hep.dataforge.vision.spatial
 
 import hep.dataforge.names.toName
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +16,7 @@ class SerializationTest {
         }
         val string =  cube.stringify()
         println(string)
-        val newCube = VisualObject.parseJson(string)
+        val newCube = Vision.parseJson(string)
         assertEquals(cube.config, newCube.config)
     }
 
@@ -27,7 +27,7 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             proxy("cube", cube)
             proxyGroup("pg", "pg.content".toName()){
                 sphere(50){
@@ -37,7 +37,7 @@ class SerializationTest {
         }
         val string = group.stringify()
         println(string)
-        val reconstructed = VisualGroup3D.parseJson(string)
+        val reconstructed = VisionGroup3D.parseJson(string)
         assertEquals(group["cube"]?.config, reconstructed["cube"]?.config)
     }
 }

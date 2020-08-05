@@ -4,7 +4,7 @@ import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.bootstrap.objectTree
 import hep.dataforge.vision.react.component
@@ -149,7 +149,7 @@ val MMApp = component<MMAppProps> { props ->
                 //properties
                 card("Properties") {
                     selected.let { selected ->
-                        val selectedObject: VisualObject? = when {
+                        val selectedObject: Vision? = when {
                             selected == null -> null
                             selected.isEmpty() -> visual
                             else -> visual[selected]

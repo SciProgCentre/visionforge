@@ -3,7 +3,7 @@ package hep.dataforge.vision.spatial.three
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.*
 import info.laht.threekt.core.Object3D
 import kotlin.collections.set
@@ -28,7 +28,7 @@ class ThreePlugin : AbstractPlugin() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun findObjectFactory(type: KClass<out VisualObject>): ThreeFactory<VisualObject3D>? {
+    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<VisualObject3D>? {
         return (objectFactories[type]
             ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
                 as ThreeFactory<VisualObject3D>?
@@ -38,7 +38,7 @@ class ThreePlugin : AbstractPlugin() {
         return when (obj) {
             is ThreeVisualObject -> obj.toObject3D()
             is Proxy -> proxyFactory(obj)
-            is VisualGroup3D -> {
+            is VisionGroup3D -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (token, child) ->
                     if (child is VisualObject3D && child.ignore != true) {

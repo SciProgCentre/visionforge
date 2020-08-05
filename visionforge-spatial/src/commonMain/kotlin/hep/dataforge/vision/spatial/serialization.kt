@@ -2,9 +2,9 @@ package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.double
 import hep.dataforge.names.NameToken
-import hep.dataforge.vision.MutableVisualGroup
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.nullable
@@ -97,31 +97,31 @@ object Point2DSerializer : KSerializer<Point2D> {
     }
 }
 
-@Serializer(MutableVisualGroup::class)
-internal object PrototypesSerializer : KSerializer<MutableVisualGroup> {
+@Serializer(MutableVisionGroup::class)
+internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 
-    private val mapSerializer: KSerializer<Map<NameToken, VisualObject>> =
+    private val mapSerializer: KSerializer<Map<NameToken, Vision>> =
         MapSerializer(
             NameToken.serializer(),
-            VisualObject.serializer()
+            Vision.serializer()
         )
 
     override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
 
-    override fun deserialize(decoder: Decoder): MutableVisualGroup {
+    override fun deserialize(decoder: Decoder): MutableVisionGroup {
         val map = mapSerializer.deserialize(decoder)
-        return Prototypes(map as? MutableMap<NameToken, VisualObject> ?: LinkedHashMap(map))
+        return Prototypes(map as? MutableMap<NameToken, Vision> ?: LinkedHashMap(map))
     }
 
-    override fun serialize(encoder: Encoder, value: MutableVisualGroup) {
+    override fun serialize(encoder: Encoder, value: MutableVisionGroup) {
         mapSerializer.serialize(encoder, value.children)
     }
 }
 
-fun VisualObject.stringify(): String = Visual3D.json.stringify(VisualObject.serializer(), this)
+fun Vision.stringify(): String = Visual3D.json.stringify(Vision.serializer(), this)
 
-fun VisualObject.Companion.parseJson(str: String) = Visual3D.json.parse(VisualObject.serializer(), str).also {
-    if(it is VisualGroup){
+fun Vision.Companion.parseJson(str: String) = Visual3D.json.parse(Vision.serializer(), str).also {
+    if(it is VisionGroup){
         it.attachChildren()
     }
 }

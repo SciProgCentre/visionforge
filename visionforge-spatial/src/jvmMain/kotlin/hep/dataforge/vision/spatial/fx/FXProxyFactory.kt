@@ -3,7 +3,7 @@ package hep.dataforge.vision.spatial.fx
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.names.toName
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.Proxy
 import javafx.scene.Group
 import javafx.scene.Node
@@ -40,7 +40,7 @@ private fun Node.findChild(name: Name): Node? {
     }
 }
 
-private fun Node.updateProperty(obj: VisualObject, propertyName: Name) {
+private fun Node.updateProperty(obj: Vision, propertyName: Name) {
 //    if (propertyName.startsWith(Material3D.MATERIAL_KEY)) {
 //        (this as? Shape3D)?.let { it.material = obj.getProperty(Material3D.MATERIAL_KEY).material() }
 //    }

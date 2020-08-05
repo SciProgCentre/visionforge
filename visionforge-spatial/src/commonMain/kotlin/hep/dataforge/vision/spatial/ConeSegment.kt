@@ -4,7 +4,7 @@ package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVisualObject
-import hep.dataforge.vision.MutableVisualGroup
+import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -75,7 +75,7 @@ class ConeSegment(
 
 }
 
-inline fun MutableVisualGroup.cylinder(
+inline fun MutableVisionGroup.cylinder(
     r: Number,
     height: Number,
     name: String = "",
@@ -87,7 +87,7 @@ inline fun MutableVisualGroup.cylinder(
 ).apply(block).also { set(name, it) }
 
 
-inline fun MutableVisualGroup.cone(
+inline fun MutableVisionGroup.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,

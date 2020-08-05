@@ -3,7 +3,7 @@ package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVisualObject
-import hep.dataforge.vision.MutableVisualGroup
+import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -112,5 +112,5 @@ class Extruded(
     }
 }
 
-fun MutableVisualGroup.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
+fun MutableVisionGroup.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
     Extruded().apply(action).also { set(name, it) }

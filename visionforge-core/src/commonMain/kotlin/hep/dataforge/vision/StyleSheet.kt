@@ -15,9 +15,9 @@ import kotlinx.serialization.builtins.serializer
 @Serializable
 class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta> = LinkedHashMap()) {
     @Transient
-    internal var owner: VisualObject? = null
+    internal var owner: Vision? = null
 
-    constructor(owner: VisualObject) : this() {
+    constructor(owner: Vision) : this() {
         this.owner = owner
     }
 
@@ -73,14 +73,14 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     }
 }
 
-private fun VisualObject.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) {
+private fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) {
     if (styles.contains(key)) {
         //TODO optimize set concatenation
         val tokens: Collection<Name> = ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
             .map { it.asName() }
         tokens.forEach { parent?.propertyChanged(it, oldStyle?.get(it), newStyle?.get(it)) }
     }
-    if (this is VisualGroup) {
+    if (this is VisionGroup) {
         for (obj in this) {
             obj.styleChanged(key, oldStyle, newStyle)
         }

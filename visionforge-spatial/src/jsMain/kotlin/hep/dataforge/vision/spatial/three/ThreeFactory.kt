@@ -3,7 +3,7 @@ package hep.dataforge.vision.spatial.three
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
 import hep.dataforge.provider.Type
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.*
 import hep.dataforge.vision.spatial.Material3D.Companion.MATERIAL_KEY
 import hep.dataforge.vision.spatial.three.ThreeFactory.Companion.TYPE
@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  * Builder and updater for three.js object
  */
 @Type(TYPE)
-interface ThreeFactory<in T : VisualObject> {
+interface ThreeFactory<in T : Vision> {
 
     val type: KClass<in T>
 
@@ -31,7 +31,7 @@ interface ThreeFactory<in T : VisualObject> {
 /**
  * Update position, rotation and visibility
  */
-fun Object3D.updatePosition(obj: VisualObject) {
+fun Object3D.updatePosition(obj: Vision) {
     visible = obj.visible ?: true
     if(obj is VisualObject3D) {
         position.set(obj.x, obj.y, obj.z)
@@ -56,7 +56,7 @@ fun Object3D.updatePosition(obj: VisualObject) {
 /**
  * Update non-position non-geometry property
  */
-fun Object3D.updateProperty(source: VisualObject, propertyName: Name) {
+fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         this.material = getMaterial(source)
     } else if (

@@ -9,7 +9,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.output.Renderer
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.enum
 import hep.dataforge.vision.spatial.VisualObject3D.Companion.DETAIL_KEY
 import hep.dataforge.vision.spatial.VisualObject3D.Companion.IGNORE_KEY
@@ -18,9 +18,9 @@ import hep.dataforge.vision.spatial.VisualObject3D.Companion.VISIBLE_KEY
 import kotlinx.serialization.UseSerializers
 
 /**
- * Interface for 3-dimensional [VisualObject]
+ * Interface for 3-dimensional [Vision]
  */
-interface VisualObject3D : VisualObject {
+interface VisualObject3D : Vision {
     var position: Point3D?
     var rotation: Point3D?
     var scale: Point3D?
@@ -70,7 +70,7 @@ interface VisualObject3D : VisualObject {
                 }
 
                 //TODO replace by descriptor merge
-                value(VisualObject.STYLE_KEY) {
+                value(Vision.STYLE_KEY) {
                     type(ValueType.STRING)
                     multiple = true
                 }
@@ -92,8 +92,8 @@ var VisualObject3D.layer: Int
         setItem(LAYER_KEY, value.asValue())
     }
 
-fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisualGroup3D.() -> Unit) =
-    render(VisualGroup3D().apply(action), meta)
+fun Renderer<VisualObject3D>.render(meta: Meta = Meta.EMPTY, action: VisionGroup3D.() -> Unit) =
+    render(VisionGroup3D().apply(action), meta)
 
 // Common properties
 
@@ -121,7 +121,7 @@ var VisualObject3D.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
     set(value) = setItem(DETAIL_KEY, value?.asValue())
 
-var VisualObject.visible: Boolean?
+var Vision.visible: Boolean?
     get() = getItem(VISIBLE_KEY).boolean
     set(value) = setItem(VISIBLE_KEY, value?.asValue())
 
@@ -129,7 +129,7 @@ var VisualObject.visible: Boolean?
  * If this property is true, the object will be ignored on render.
  * Property is not inherited.
  */
-var VisualObject.ignore: Boolean?
+var Vision.ignore: Boolean?
     get() = getProperty(IGNORE_KEY, false).boolean
     set(value) = setItem(IGNORE_KEY, value?.asValue())
 

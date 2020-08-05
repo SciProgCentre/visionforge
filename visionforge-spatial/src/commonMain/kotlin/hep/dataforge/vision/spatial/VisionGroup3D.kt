@@ -15,8 +15,8 @@ import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
 interface PrototypeHolder {
-    val parent: VisualGroup?
-    val prototypes: MutableVisualGroup?
+    val parent: VisionGroup?
+    val prototypes: MutableVisionGroup?
 }
 
 /**
@@ -24,7 +24,7 @@ interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.3d")
-class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
+class VisionGroup3D : AbstractVision(), VisualObject3D, PrototypeHolder {
 
     override var styleSheet: StyleSheet? = null
 
@@ -32,13 +32,13 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
      * A container for templates visible inside this group
      */
     @Serializable(PrototypesSerializer::class)
-    override var prototypes: MutableVisualGroup? = null
+    override var prototypes: MutableVisionGroup? = null
         private set
 
     /**
      * Create or edit prototype node as a group
      */
-    fun prototypes(builder: MutableVisualGroup.() -> Unit): Unit {
+    fun prototypes(builder: MutableVisionGroup.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
             attach(it)
@@ -53,8 +53,8 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
     override var scale: Point3D? = null
 
     @SerialName("children")
-    private val _children = HashMap<NameToken, VisualObject>()
-    override val children: Map<NameToken, VisualObject> get() = _children
+    private val _children = HashMap<NameToken, Vision>()
+    override val children: Map<NameToken, Vision> get() = _children
 
     override fun attachChildren() {
         prototypes?.parent = this
@@ -66,7 +66,7 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
         _children.remove(token)?.apply { parent = null }
     }
 
-    override fun setChild(token: NameToken, child: VisualObject) {
+    override fun setChild(token: NameToken, child: Vision) {
         _children[token] = child
     }
 
@@ -75,13 +75,13 @@ class VisualGroup3D : AbstractVisualGroup(), VisualObject3D, PrototypeHolder {
 //     */
 //    override fun addStatic(child: VisualObject) = setChild(NameToken("@static(${child.hashCode()})"), child)
 
-    override fun createGroup(): VisualGroup3D = VisualGroup3D()
+    override fun createGroup(): VisionGroup3D = VisionGroup3D()
 
 
     companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
-        fun parseJson(json: String): VisualGroup3D =
+        fun parseJson(json: String): VisionGroup3D =
             Visual3D.json.parse(serializer(), json).also { it.attachChildren() }
     }
 }
@@ -95,14 +95,14 @@ tailrec fun PrototypeHolder.getPrototype(name: Name): VisualObject3D? =
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
-fun MutableVisualGroup.group(name: String = "", action: VisualGroup3D.() -> Unit = {}): VisualGroup3D =
-    VisualGroup3D().apply(action).also {
+fun MutableVisionGroup.group(name: String = "", action: VisionGroup3D.() -> Unit = {}): VisionGroup3D =
+    VisionGroup3D().apply(action).also {
         set(name, it)
     }
 
 internal class Prototypes(
-    override var children: MutableMap<NameToken, VisualObject> = LinkedHashMap()
-) : AbstractVisualGroup(), MutableVisualGroup, PrototypeHolder {
+    override var children: MutableMap<NameToken, Vision> = LinkedHashMap()
+) : AbstractVision(), MutableVisionGroup, PrototypeHolder {
 
     override var styleSheet: StyleSheet?
         get() = null
@@ -115,11 +115,11 @@ internal class Prototypes(
         childrenChanged(token.asName(), null)
     }
 
-    override fun setChild(token: NameToken, child: VisualObject) {
+    override fun setChild(token: NameToken, child: Vision) {
         children[token] = child
     }
 
-    override fun createGroup() = SimpleVisualGroup()
+    override fun createGroup() = SimpleVisionGroup()
 
     override var ownProperties: Config?
         get() = null
@@ -127,12 +127,12 @@ internal class Prototypes(
             error("Can't define properties for prototypes block")
         }
 
-    override val prototypes: MutableVisualGroup get() = this
+    override val prototypes: MutableVisionGroup get() = this
 
     override fun attachChildren() {
         children.values.forEach {
             it.parent = parent
-            (it as? VisualGroup)?.attachChildren()
+            (it as? VisionGroup)?.attachChildren()
         }
     }
 }

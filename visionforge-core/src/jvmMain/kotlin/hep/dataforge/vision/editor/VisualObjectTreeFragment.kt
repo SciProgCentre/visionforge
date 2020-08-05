@@ -1,20 +1,20 @@
 package hep.dataforge.vision.editor
 
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeItem
 import tornadofx.*
 
-private fun toTreeItem(visualObject: VisualObject, title: String): TreeItem<Pair<String, VisualObject>> {
-    return object : TreeItem<Pair<String, VisualObject>>(title to visualObject) {
+private fun toTreeItem(vision: Vision, title: String): TreeItem<Pair<String, Vision>> {
+    return object : TreeItem<Pair<String, Vision>>(title to vision) {
         init {
-            if (visualObject is VisualGroup) {
+            if (vision is VisionGroup) {
                 //lazy populate the tree
                 expandedProperty().onChange { expanded ->
                     if (expanded && children.isEmpty()) {
-                        children.setAll(visualObject.children.map {
+                        children.setAll(vision.children.map {
                             toTreeItem(it.value, it.key.toString())
                         })
                     }
@@ -23,21 +23,21 @@ private fun toTreeItem(visualObject: VisualObject, title: String): TreeItem<Pair
         }
 
         override fun isLeaf(): Boolean {
-            return !(visualObject is VisualGroup && visualObject.children.isNotEmpty())
+            return !(vision is VisionGroup && vision.children.isNotEmpty())
         }
     }
 }
 
 
 class VisualObjectTreeFragment : Fragment() {
-    val itemProperty = SimpleObjectProperty<VisualObject>()
-    var item: VisualObject? by itemProperty
+    val itemProperty = SimpleObjectProperty<Vision>()
+    var item: Vision? by itemProperty
 
-    val selectedProperty = SimpleObjectProperty<VisualObject>()
+    val selectedProperty = SimpleObjectProperty<Vision>()
 
     override val root = vbox {
         titledpane("Object tree", collapsible = false) {
-            treeview<Pair<String, VisualObject>> {
+            treeview<Pair<String, Vision>> {
                 cellFormat {
                     text = item.first
                 }

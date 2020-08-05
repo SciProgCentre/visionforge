@@ -3,7 +3,7 @@ package hep.dataforge.vision.spatial.three
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.Material3D
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
@@ -43,8 +43,8 @@ object ThreeMaterials {
         }
     }
 
-    fun getMaterial(visualObject3D: VisualObject): Material {
-        val meta = visualObject3D.getItem(Material3D.MATERIAL_KEY).node ?: return ThreeMaterials.DEFAULT
+    fun getMaterial(vision3D: Vision): Material {
+        val meta = vision3D.getItem(Material3D.MATERIAL_KEY).node ?: return ThreeMaterials.DEFAULT
         return if (meta[Material3D.SPECULAR_COLOR_KEY] != null) {
             MeshPhongMaterial().apply {
                 color = meta[Material3D.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR

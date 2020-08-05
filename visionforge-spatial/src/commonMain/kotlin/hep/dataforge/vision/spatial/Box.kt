@@ -54,7 +54,7 @@ class Box(
 
         override val type: KClass<Box> get() = Box::class
 
-        override fun invoke(context: Context, parent: VisualObject?, meta: Meta): Box = Box(
+        override fun invoke(context: Context, parent: Vision?, meta: Meta): Box = Box(
             meta["xSize"].float!!,
             meta["ySize"].float!!,
             meta["zSize"].float!!
@@ -64,7 +64,7 @@ class Box(
     }
 }
 
-inline fun MutableVisualGroup.box(
+inline fun MutableVisionGroup.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,

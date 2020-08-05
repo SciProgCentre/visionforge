@@ -4,7 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.react.configEditor
 import org.w3c.dom.Element
 import react.RBuilder
@@ -16,7 +16,7 @@ import kotlin.collections.set
 
 fun RBuilder.visualPropertyEditor(
     path: Name,
-    item: VisualObject,
+    item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
     default: Meta? = null
 ) {
@@ -41,7 +41,7 @@ fun RBuilder.visualPropertyEditor(
 
 fun Element.visualPropertyEditor(
     path: Name,
-    item: VisualObject,
+    item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
     default: Meta? = null
 ) = render(this) {

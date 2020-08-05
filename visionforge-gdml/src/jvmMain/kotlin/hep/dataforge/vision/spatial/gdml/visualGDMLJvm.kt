@@ -1,6 +1,6 @@
 package hep.dataforge.vision.spatial.gdml
 
-import hep.dataforge.vision.spatial.VisualGroup3D
+import hep.dataforge.vision.spatial.VisionGroup3D
 import nl.adaptivity.xmlutil.StAXReader
 import scientifik.gdml.GDML
 import java.nio.file.Files
@@ -11,7 +11,7 @@ fun GDML.Companion.readFile(file: Path): GDML {
     return format.parse(GDML.serializer(), xmlReader)
 }
 
-fun VisualGroup3D.gdml(file: Path, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+fun VisionGroup3D.gdml(file: Path, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
     val gdml = GDML.readFile(file)
     gdml(gdml, key, transformer)
 }

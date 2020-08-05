@@ -8,10 +8,10 @@ import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import kotlin.math.PI
 
 class Model {
-    private val map = HashMap<String, VisualGroup3D>()
+    private val map = HashMap<String, VisionGroup3D>()
     private val events = HashSet<Event>()
 
-    private fun VisualGroup3D.pixel(pixel: SC1) {
+    private fun VisionGroup3D.pixel(pixel: SC1) {
         val group = group(pixel.name) {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
@@ -23,7 +23,7 @@ class Model {
         map[pixel.name] = group
     }
 
-    private fun VisualGroup3D.detector(detector: SC16) {
+    private fun VisionGroup3D.detector(detector: SC16) {
         group(detector.name) {
             detector.pixels.forEach {
                 pixel(it)
@@ -31,9 +31,9 @@ class Model {
         }
     }
 
-    var tracks: VisualGroup3D
+    var tracks: VisionGroup3D
 
-    val root: VisualGroup3D = VisualGroup3D().apply {
+    val root: VisionGroup3D = VisionGroup3D().apply {
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {

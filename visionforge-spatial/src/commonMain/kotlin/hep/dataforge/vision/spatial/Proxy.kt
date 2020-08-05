@@ -22,9 +22,9 @@ import kotlin.collections.set
 @SerialName("3d.proxy")
 class Proxy private constructor(
     val templateName: Name
-) : AbstractVisualObject(), VisualGroup, VisualObject3D {
+) : AbstractVisualObject(), VisionGroup, VisualObject3D {
 
-    constructor(parent: VisualGroup3D, templateName: Name) : this(templateName) {
+    constructor(parent: VisionGroup3D, templateName: Name) : this(templateName) {
         this.parent = parent
     }
 
@@ -38,7 +38,7 @@ class Proxy private constructor(
      * Recursively search for defined template in the parent
      */
     val prototype: VisualObject3D
-        get() = (parent as? VisualGroup3D)?.getPrototype(templateName)
+        get() = (parent as? VisionGroup3D)?.getPrototype(templateName)
             ?: error("Prototype with name $templateName not found in $parent")
 
     override val styleSheet: StyleSheet
@@ -64,7 +64,7 @@ class Proxy private constructor(
     }
 
     override val children: Map<NameToken, ProxyChild>
-        get() = (prototype as? VisualGroup)?.children
+        get() = (prototype as? VisionGroup)?.children
             ?.filter { !it.key.toString().startsWith("@") }
             ?.mapValues {
                 ProxyChild(it.key.asName())
@@ -77,8 +77,8 @@ class Proxy private constructor(
         return NameToken(PROXY_CHILD_PROPERTY_PREFIX, childName.toString()) + propertyName
     }
 
-    private fun prototypeFor(name: Name): VisualObject {
-        return (prototype as? VisualGroup)?.get(name)
+    private fun prototypeFor(name: Name): Vision {
+        return (prototype as? VisionGroup)?.get(name)
             ?: error("Prototype with name $name not found in $this")
     }
 
@@ -95,14 +95,14 @@ class Proxy private constructor(
         get() = prototype.descriptor
 
     inner class ProxyChild(val name: Name) : AbstractVisualObject(),
-        VisualGroup {
+        VisionGroup {
 
-        val prototype: VisualObject get() = prototypeFor(name)
+        val prototype: Vision get() = prototypeFor(name)
 
         override val styleSheet: StyleSheet get() = this@Proxy.styleSheet
 
-        override val children: Map<NameToken, VisualObject>
-            get() = (prototype as? VisualGroup)?.children?.mapValues { (key, _) ->
+        override val children: Map<NameToken, Vision>
+            get() = (prototype as? VisionGroup)?.children?.mapValues { (key, _) ->
                 ProxyChild(
                     name + key.asName()
                 )
@@ -159,7 +159,7 @@ class Proxy private constructor(
     }
 }
 
-val VisualObject.prototype: VisualObject
+val Vision.prototype: Vision
     get() = when (this) {
         is Proxy -> prototype
         is Proxy.ProxyChild -> prototype
@@ -169,7 +169,7 @@ val VisualObject.prototype: VisualObject
 /**
  * Create ref for existing prototype
  */
-fun VisualGroup3D.ref(
+fun VisionGroup3D.ref(
     templateName: Name,
     name: String = ""
 ): Proxy = Proxy(this, templateName).also { set(name, it) }
@@ -177,7 +177,7 @@ fun VisualGroup3D.ref(
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
  */
-fun VisualGroup3D.proxy(
+fun VisionGroup3D.proxy(
     name: String,
     obj: VisualObject3D,
     templateName: Name = name.toName()
@@ -193,11 +193,11 @@ fun VisualGroup3D.proxy(
     return ref(templateName, name)
 }
 
-fun VisualGroup3D.proxyGroup(
+fun VisionGroup3D.proxyGroup(
     name: String,
     templateName: Name = name.toName(),
-    block: MutableVisualGroup.() -> Unit
+    block: MutableVisionGroup.() -> Unit
 ): Proxy {
-    val group = VisualGroup3D().apply (block)
+    val group = VisionGroup3D().apply (block)
     return proxy(name, group, templateName)
 }

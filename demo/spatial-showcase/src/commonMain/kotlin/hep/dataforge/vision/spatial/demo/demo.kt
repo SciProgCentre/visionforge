@@ -5,7 +5,7 @@ import hep.dataforge.meta.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.output.OutputManager
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.*
 import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
 import kotlinx.coroutines.*
@@ -15,11 +15,11 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-fun OutputManager.demo(name: String, title: String = name, block: VisualGroup3D.() -> Unit) {
+fun OutputManager.demo(name: String, title: String = name, block: VisionGroup3D.() -> Unit) {
     val meta = Meta {
         "title" put title
     }
-    val output = get(VisualObject::class, name.toName(), meta = meta)
+    val output = get(Vision::class, name.toName(), meta = meta)
     output.render (action = block)
 }
 

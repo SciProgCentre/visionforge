@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("group")
-class SimpleVisualGroup : AbstractVisualGroup() {
+class SimpleVisionGroup : AbstractVision() {
 
     override var styleSheet: StyleSheet? = null
 
@@ -16,16 +16,16 @@ class SimpleVisualGroup : AbstractVisualGroup() {
     override var ownProperties: Config? = null
 
     @SerialName("children")
-    private val _children = HashMap<NameToken, VisualObject>()
-    override val children: Map<NameToken, VisualObject> get() = _children
+    private val _children = HashMap<NameToken, Vision>()
+    override val children: Map<NameToken, Vision> get() = _children
 
     override fun removeChild(token: NameToken) {
         _children.remove(token)?.apply { parent = null }
     }
 
-    override fun setChild(token: NameToken, child: VisualObject) {
+    override fun setChild(token: NameToken, child: Vision) {
         _children[token] = child
     }
 
-    override fun createGroup(): SimpleVisualGroup = SimpleVisualGroup()
+    override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
 }

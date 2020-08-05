@@ -9,16 +9,16 @@ import kotlinx.serialization.Transient
 
 
 /**
- * Abstract implementation of mutable group of [VisualObject]
+ * Abstract implementation of mutable group of [Vision]
  */
-abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup {
+abstract class AbstractVision : AbstractVisualObject(), MutableVisionGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
     /**
      * A map of top level named children
      */
-    abstract override val children: Map<NameToken, VisualObject>
+    abstract override val children: Map<NameToken, Vision>
 
     abstract override var styleSheet: StyleSheet?
         protected set
@@ -39,7 +39,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     }
 
     // TODO Consider renaming to `StructureChangeListener` (singular)
-    private data class StructureChangeListeners(val owner: Any?, val callback: (Name, VisualObject?) -> Unit)
+    private data class StructureChangeListeners(val owner: Any?, val callback: (Name, Vision?) -> Unit)
 
     @Transient
     private val structureChangeListeners = HashSet<StructureChangeListeners>()
@@ -47,7 +47,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     /**
      * Add listener for children change
      */
-    override fun onChildrenChange(owner: Any?, action: (Name, VisualObject?) -> Unit) {
+    override fun onChildrenChange(owner: Any?, action: (Name, Vision?) -> Unit) {
         structureChangeListeners.add(
             StructureChangeListeners(
                 owner,
@@ -66,7 +66,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     /**
      * Propagate children change event upwards
      */
-    protected fun childrenChanged(name: Name, child: VisualObject?) {
+    protected fun childrenChanged(name: Name, child: Vision?) {
         structureChangeListeners.forEach { it.callback(name, child) }
     }
 
@@ -78,20 +78,20 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     /**
      * Add, remove or replace child with given name
      */
-    protected abstract fun setChild(token: NameToken, child: VisualObject)
+    protected abstract fun setChild(token: NameToken, child: Vision)
 
     /**
      * Add a static child. Statics could not be found by name, removed or replaced
      */
-    protected open fun addStatic(child: VisualObject) =
+    protected open fun addStatic(child: Vision) =
         set(NameToken("@static(${child.hashCode()})").asName(), child)
 
-    protected abstract fun createGroup(): AbstractVisualGroup
+    protected abstract fun createGroup(): AbstractVision
 
     /**
      * Set this node as parent for given node
      */
-    protected fun attach(child: VisualObject) {
+    protected fun attach(child: Vision) {
         if (child.parent == null) {
             child.parent = this
         } else if (child.parent !== this) {
@@ -102,7 +102,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
     /**
      * Recursively create a child group
      */
-    private fun createGroups(name: Name): AbstractVisualGroup {
+    private fun createGroups(name: Name): AbstractVision {
         return when {
             name.isEmpty() -> error("Should be unreachable")
             name.length == 1 -> {
@@ -112,7 +112,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
                         attach(child)
                         setChild(token, child)
                     }
-                    is AbstractVisualGroup -> current
+                    is AbstractVision -> current
                     else -> error("Can't create group with name $name because it exists and not a group")
                 }
             }
@@ -124,7 +124,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
      * Add named or unnamed child to the group. If key is null the child is considered unnamed. Both key and value are not
      * allowed to be null in the same time. If name is present and [child] is null, the appropriate element is removed.
      */
-    override fun set(name: Name, child: VisualObject?): Unit {
+    override fun set(name: Name, child: Vision?): Unit {
         when {
             name.isEmpty() -> {
                 if (child != null) {
@@ -142,7 +142,7 @@ abstract class AbstractVisualGroup : AbstractVisualObject(), MutableVisualGroup 
             }
             else -> {
                 //TODO add safety check
-                val parent = (get(name.cutLast()) as? MutableVisualGroup) ?: createGroups(name.cutLast())
+                val parent = (get(name.cutLast()) as? MutableVisionGroup) ?: createGroups(name.cutLast())
                 parent[name.last()!!.asName()] = child
             }
         }

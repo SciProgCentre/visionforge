@@ -4,15 +4,15 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
 import hep.dataforge.names.toName
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import javafx.application.Platform
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 
 /**
- * A caching binding collection for [VisualObject] properties
+ * A caching binding collection for [Vision] properties
  */
-class VisualObjectFXBinding(val obj: VisualObject) {
+class VisualObjectFXBinding(val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
 
     init {

@@ -3,8 +3,8 @@ package hep.dataforge.vision.material
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.isEmpty
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.state
@@ -21,11 +21,11 @@ import react.dom.span
 interface ObjectTreeProps : RProps {
     var name: Name
     var selected: Name?
-    var obj: VisualObject
+    var obj: Vision
     var clickCallback: (Name?) -> Unit
 }
 
-private fun RBuilder.treeBranch(name: Name, obj: VisualObject): Unit {
+private fun RBuilder.treeBranch(name: Name, obj: Vision): Unit {
     treeItem {
         val token = name.last()?.toString() ?: "World"
         attrs {
@@ -37,10 +37,10 @@ private fun RBuilder.treeBranch(name: Name, obj: VisualObject): Unit {
             }
         }
 
-        if (obj is VisualGroup) {
+        if (obj is VisionGroup) {
             obj.children.entries
                 .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                .sortedBy { (it.value as? VisualGroup)?.isEmpty ?: true }
+                .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true }
                 .forEach { (childToken, child) ->
                     treeBranch(name + childToken, child)
                 }
@@ -78,14 +78,14 @@ val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
 }
 
 fun RBuilder.objectTree(
-    visualObject: VisualObject,
+    vision: Vision,
     selected: Name? = null,
     clickCallback: (Name?) -> Unit = {}
 ) {
     child(ObjectTree) {
         attrs {
             this.name = Name.EMPTY
-            this.obj = visualObject
+            this.obj = vision
             this.selected = selected
             this.clickCallback = clickCallback
         }

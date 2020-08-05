@@ -48,7 +48,7 @@ private inline operator fun Number.times(d: Double) = toDouble() * d
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
-private fun VisualGroup3D.addSolid(
+private fun VisionGroup3D.addSolid(
     context: GDMLTransformer,
     solid: GDMLSolid,
     name: String = "",
@@ -154,7 +154,7 @@ private fun VisualGroup3D.addSolid(
 
 private val volumesName = "volumes".asName()
 
-private fun VisualGroup3D.addPhysicalVolume(
+private fun VisionGroup3D.addPhysicalVolume(
     context: GDMLTransformer,
     physVolume: GDMLPhysVolume
 ) {
@@ -194,7 +194,7 @@ private fun VisualGroup3D.addPhysicalVolume(
     }
 }
 
-private fun VisualGroup3D.addDivisionVolume(
+private fun VisionGroup3D.addDivisionVolume(
     context: GDMLTransformer,
     divisionVolume: GDMLDivisionVolume
 ) {
@@ -216,8 +216,8 @@ private val solidsName = "solids".asName()
 private fun volume(
     context: GDMLTransformer,
     group: GDMLGroup
-): VisualGroup3D {
-    return VisualGroup3D().apply {
+): VisionGroup3D {
+    return VisionGroup3D().apply {
         if (group is GDMLVolume) {
             val solid = group.solidref.resolve(context.root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
@@ -253,7 +253,7 @@ private fun volume(
     }
 }
 
-fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
+fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisionGroup3D {
     val context = GDMLTransformer(this).apply(block)
     return context.finalize(volume(context, world))
 }
@@ -261,7 +261,7 @@ fun GDML.toVisual(block: GDMLTransformer.() -> Unit = {}): VisualGroup3D {
 /**
  * Append gdml node to the group
  */
-fun VisualGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+fun VisionGroup3D.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
     val visual = gdml.toVisual(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

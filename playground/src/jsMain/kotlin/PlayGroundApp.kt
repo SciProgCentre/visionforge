@@ -5,7 +5,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.vision.bootstrap.objectTree
 import hep.dataforge.vision.bootstrap.visualPropertyEditor
 import hep.dataforge.vision.spatial.Point3D
-import hep.dataforge.vision.spatial.VisualGroup3D
+import hep.dataforge.vision.spatial.VisionGroup3D
 import hep.dataforge.vision.spatial.box
 import hep.dataforge.vision.spatial.group
 import hep.dataforge.vision.spatial.three.ThreePlugin
@@ -24,7 +24,7 @@ private class PlayGroundApp : Application {
         val element =
             document.getElementById("app") as? HTMLElement ?: error("Element with id 'canvas' not found on page")
 
-        val obj = VisualGroup3D().apply {
+        val obj = VisionGroup3D().apply {
             box(100, 100, 100, name = "A")
             group("B") {
                 position = Point3D(120, 0, 0)

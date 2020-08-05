@@ -5,7 +5,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.fx.FX3DPlugin
 import hep.dataforge.vision.spatial.fx.FXCanvas3D
 import javafx.collections.FXCollections
@@ -30,7 +30,7 @@ class FXDemoGrid : View(title = "DataForge-vis FX demo"), OutputManager {
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Renderer<T> {
         return outputs.getOrPut(name) {
-            if (type != VisualObject::class) kotlin.error("Supports only DisplayObject")
+            if (type != Vision::class) kotlin.error("Supports only DisplayObject")
             val output = FXCanvas3D(fx3d, canvasOptions)
 
             output

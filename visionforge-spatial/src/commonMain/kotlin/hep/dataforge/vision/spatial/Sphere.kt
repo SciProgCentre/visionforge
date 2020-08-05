@@ -4,7 +4,7 @@ package hep.dataforge.vision.spatial
 
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVisualObject
-import hep.dataforge.vision.MutableVisualGroup
+import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -60,7 +60,7 @@ class Sphere(
     }
 }
 
-inline fun MutableVisualGroup.sphere(
+inline fun MutableVisionGroup.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,

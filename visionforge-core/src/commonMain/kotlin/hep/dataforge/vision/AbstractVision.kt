@@ -6,7 +6,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
-import hep.dataforge.vision.VisualObject.Companion.STYLE_KEY
+import hep.dataforge.vision.Vision.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
@@ -14,10 +14,10 @@ internal data class PropertyListener(
     val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
 )
 
-abstract class AbstractVisualObject : VisualObject {
+abstract class AbstractVisualObject : Vision {
 
     @Transient
-    override var parent: VisualGroup? = null
+    override var parent: VisionGroup? = null
 
     /**
      * Object own properties excluding styles and inheritance

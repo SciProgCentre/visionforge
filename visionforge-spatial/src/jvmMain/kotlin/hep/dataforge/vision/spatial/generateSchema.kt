@@ -186,7 +186,7 @@ fun main() {
             }
         }
         "hep.dataforge.vis.spatial.VisualGroup3D" to jsonSchema(
-            VisualGroup3D.serializer().descriptor,
+            VisionGroup3D.serializer().descriptor,
             context
         )
 

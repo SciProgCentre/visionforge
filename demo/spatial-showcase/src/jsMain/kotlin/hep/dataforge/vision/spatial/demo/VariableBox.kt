@@ -43,7 +43,7 @@ internal var VisualObject3D.value: Int
         color(r.toUByte(), g.toUByte(), b.toUByte())
     }
 
-fun VisualGroup3D.varBox(
+fun VisionGroup3D.varBox(
     xSize: Number,
     ySize: Number,
     zSize: Number,

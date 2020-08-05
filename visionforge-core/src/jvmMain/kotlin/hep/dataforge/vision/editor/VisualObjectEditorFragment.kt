@@ -4,7 +4,7 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.update
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.findStyle
 import javafx.beans.binding.Binding
 import javafx.beans.property.SimpleObjectProperty
@@ -13,16 +13,16 @@ import javafx.scene.Parent
 import javafx.scene.layout.VBox
 import tornadofx.*
 
-class VisualObjectEditorFragment(val selector: (VisualObject) -> Meta) : Fragment() {
+class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
 
-    val itemProperty = SimpleObjectProperty<VisualObject>()
-    var item: VisualObject? by itemProperty
+    val itemProperty = SimpleObjectProperty<Vision>()
+    var item: Vision? by itemProperty
     val descriptorProperty = SimpleObjectProperty<NodeDescriptor>()
 
     constructor(
-        item: VisualObject?,
+        item: Vision?,
         descriptor: NodeDescriptor?,
-        selector: (VisualObject) -> Config = { it.config }
+        selector: (Vision) -> Config = { it.config }
     ) : this(selector) {
         this.item = item
         this.descriptorProperty.set(descriptor)

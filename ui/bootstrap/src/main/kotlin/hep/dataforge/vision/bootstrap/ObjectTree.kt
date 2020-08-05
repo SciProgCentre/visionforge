@@ -3,8 +3,8 @@ package hep.dataforge.vision.bootstrap
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.isEmpty
 import hep.dataforge.vision.react.RFBuilder
 import hep.dataforge.vision.react.component
@@ -18,7 +18,7 @@ import react.dom.*
 interface ObjectTreeProps : RProps {
     var name: Name
     var selected: Name?
-    var obj: VisualObject
+    var obj: Vision
     var clickCallback: (Name) -> Unit
 }
 
@@ -49,7 +49,7 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
     val obj = props.obj
 
     //display as node if any child is visible
-    if (obj is VisualGroup) {
+    if (obj is VisionGroup) {
         div("d-block text-truncate") {
             if (obj.children.any { !it.key.body.startsWith("@") }) {
                 span("tree-caret") {
@@ -67,7 +67,7 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
             ul("tree") {
                 obj.children.entries
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisualGroup)?.isEmpty ?: true }
+                    .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true }
                     .forEach { (childToken, child) ->
                         li("tree-item") {
                             child(ObjectTree) {
@@ -95,14 +95,14 @@ val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
 }
 
 fun Element.renderObjectTree(
-    visualObject: VisualObject,
+    vision: Vision,
     clickCallback: (Name) -> Unit = {}
 ) = render(this) {
     card("Object tree") {
         child(ObjectTree) {
             attrs {
                 this.name = Name.EMPTY
-                this.obj = visualObject
+                this.obj = vision
                 this.selected = null
                 this.clickCallback = clickCallback
             }
@@ -111,14 +111,14 @@ fun Element.renderObjectTree(
 }
 
 fun RBuilder.objectTree(
-    visualObject: VisualObject,
+    vision: Vision,
     selected: Name? = null,
     clickCallback: (Name) -> Unit = {}
 ) {
     child(ObjectTree) {
         attrs {
             this.name = Name.EMPTY
-            this.obj = visualObject
+            this.obj = vision
             this.selected = selected
             this.clickCallback = clickCallback
         }

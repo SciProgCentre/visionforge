@@ -24,7 +24,7 @@ class GDMLTransformer(val root: GDML) {
     /**
      * A special group for local templates
      */
-    val proto by lazy { VisualGroup3D() }
+    val proto by lazy { VisionGroup3D() }
     private val styleCache = HashMap<Name, Meta>()
 
     var lUnit: LUnit = LUnit.MM
@@ -68,7 +68,7 @@ class GDMLTransformer(val root: GDML) {
 
     var onFinish: GDMLTransformer.() -> Unit = {}
 
-    internal fun finalize(final: VisualGroup3D): VisualGroup3D {
+    internal fun finalize(final: VisionGroup3D): VisionGroup3D {
         //final.prototypes = proto
         final.prototypes {
             proto.children.forEach { (token, item) ->

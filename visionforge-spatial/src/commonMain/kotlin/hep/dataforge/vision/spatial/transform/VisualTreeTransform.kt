@@ -1,11 +1,11 @@
 package hep.dataforge.vision.spatial.transform
 
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 
 /**
- * A root class for [VisualObject] tree optimization
+ * A root class for [Vision] tree optimization
  */
-abstract class VisualTreeTransform<T : VisualObject> {
+abstract class VisualTreeTransform<T : Vision> {
     protected abstract fun T.transformInPlace()
     protected abstract fun T.clone(): T
 
@@ -21,7 +21,7 @@ abstract class VisualTreeTransform<T : VisualObject> {
     }
 }
 
-fun <T : VisualObject> T.transform(vararg transform: VisualTreeTransform<T>): T {
+fun <T : Vision> T.transform(vararg transform: VisualTreeTransform<T>): T {
     var res = this
     transform.forEach {
         res = it(res)
@@ -29,6 +29,6 @@ fun <T : VisualObject> T.transform(vararg transform: VisualTreeTransform<T>): T 
     return res
 }
 
-fun <T : VisualObject> T.transformInPlace(vararg transform: VisualTreeTransform<in T>) {
+fun <T : Vision> T.transformInPlace(vararg transform: VisualTreeTransform<in T>) {
     transform.forEach { it(this) }
 }

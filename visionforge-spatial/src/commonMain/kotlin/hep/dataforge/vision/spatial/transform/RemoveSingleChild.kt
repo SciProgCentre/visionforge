@@ -2,12 +2,12 @@ package hep.dataforge.vision.spatial.transform
 
 import hep.dataforge.meta.update
 import hep.dataforge.names.asName
-import hep.dataforge.vision.MutableVisualGroup
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.spatial.*
 
-internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject {
+internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
     return child.apply {
 
         config.update(parent.config)
@@ -32,16 +32,16 @@ internal fun mergeChild(parent: VisualGroup, child: VisualObject): VisualObject 
     }
 }
 
-object RemoveSingleChild : VisualTreeTransform<VisualGroup3D>() {
+object RemoveSingleChild : VisualTreeTransform<VisionGroup3D>() {
 
-    override fun VisualGroup3D.transformInPlace() {
-        fun MutableVisualGroup.replaceChildren() {
+    override fun VisionGroup3D.transformInPlace() {
+        fun MutableVisionGroup.replaceChildren() {
             children.forEach { (childName, parent) ->
                 if (parent is Proxy) return@forEach //ignore refs
-                if (parent is MutableVisualGroup) {
+                if (parent is MutableVisionGroup) {
                     parent.replaceChildren()
                 }
-                if (parent is VisualGroup && parent.children.size == 1) {
+                if (parent is VisionGroup && parent.children.size == 1) {
                     val child = parent.children.values.first()
                     val newParent = mergeChild(parent, child)
                     newParent.parent = null
@@ -56,7 +56,7 @@ object RemoveSingleChild : VisualTreeTransform<VisualGroup3D>() {
         }
     }
 
-    override fun VisualGroup3D.clone(): VisualGroup3D {
+    override fun VisionGroup3D.clone(): VisionGroup3D {
         TODO()
     }
 }

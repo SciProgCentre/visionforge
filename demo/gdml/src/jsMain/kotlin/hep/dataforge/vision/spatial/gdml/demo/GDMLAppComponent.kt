@@ -3,14 +3,14 @@ package hep.dataforge.vision.spatial.gdml.demo
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
-import hep.dataforge.vision.VisualGroup
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.bootstrap.*
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.state
-import hep.dataforge.vision.spatial.VisualGroup3D
+import hep.dataforge.vision.spatial.VisionGroup3D
 import hep.dataforge.vision.spatial.VisualObject3D
 import hep.dataforge.vision.spatial.gdml.toVisual
 import hep.dataforge.vision.spatial.specifications.Camera
@@ -35,7 +35,7 @@ import kotlin.math.PI
 
 interface GDMLAppProps : RProps {
     var context: Context
-    var rootObject: VisualObject?
+    var rootObject: Vision?
     var selected: Name?
 }
 
@@ -50,7 +50,7 @@ private val canvasConfig = Canvas3DOptions {
 val GDMLApp = component<GDMLAppProps> { props ->
     var selected by state { props.selected }
     var canvas: ThreeCanvas? by state { null }
-    var visual: VisualObject? by state { props.rootObject }
+    var visual: Vision? by state { props.rootObject }
 
     val select: (Name?) -> Unit = {
         selected = it
@@ -62,7 +62,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 val gdml = GDML.parse(data)
                 gdml.toVisual(gdmlConfiguration)
             }
-            name.endsWith(".json") -> VisualGroup3D.parseJson(data)
+            name.endsWith(".json") -> VisionGroup3D.parseJson(data)
             else -> {
                 window.alert("File extension is not recognized: $name")
                 error("File extension is not recognized: $name")
@@ -137,10 +137,10 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     //properties
                     card("Properties") {
                         selected.let { selected ->
-                            val selectedObject: VisualObject? = when {
+                            val selectedObject: Vision? = when {
                                 selected == null -> null
                                 selected.isEmpty() -> visual
-                                else -> (visual as? VisualGroup)?.get(selected)
+                                else -> (visual as? VisionGroup)?.get(selected)
                             }
                             if (selectedObject != null) {
                                 configEditor(selectedObject, default = selectedObject.properties(), key = selected)

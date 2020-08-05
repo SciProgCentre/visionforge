@@ -46,7 +46,7 @@ class FX3DPlugin : AbstractPlugin() {
         val binding = VisualObjectFXBinding(obj)
         return when (obj) {
             is Proxy -> proxyFactory(obj, binding)
-            is VisualGroup3D -> {
+            is VisionGroup3D -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
                     (obj as? VisualObject3D)?.let {
                         buildNode(it).apply {

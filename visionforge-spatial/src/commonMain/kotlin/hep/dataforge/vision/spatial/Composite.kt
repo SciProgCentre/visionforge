@@ -22,7 +22,7 @@ class Composite(
     val compositeType: CompositeType,
     val first: VisualObject3D,
     val second: VisualObject3D
-) : AbstractVisualObject(), VisualObject3D, VisualGroup {
+) : AbstractVisualObject(), VisualObject3D, VisionGroup {
 
     init {
         first.parent = this
@@ -35,19 +35,19 @@ class Composite(
 
     override var ownProperties: Config? = null
 
-    override val children: Map<NameToken, VisualObject>
+    override val children: Map<NameToken, Vision>
         get() = mapOf(NameToken("first") to first, NameToken("second") to second)
 
     override val styleSheet: StyleSheet?
         get() = null
 }
 
-inline fun MutableVisualGroup.composite(
+inline fun MutableVisionGroup.composite(
     type: CompositeType,
     name: String = "",
-    builder: VisualGroup3D.() -> Unit
+    builder: VisionGroup3D.() -> Unit
 ): Composite {
-    val group = VisualGroup3D().apply(builder)
+    val group = VisionGroup3D().apply(builder)
     val children = group.children.values.filterIsInstance<VisualObject3D>()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also {
@@ -67,11 +67,11 @@ inline fun MutableVisualGroup.composite(
     }
 }
 
-inline fun MutableVisualGroup.union(name: String = "", builder: VisualGroup3D.() -> Unit) =
+inline fun MutableVisionGroup.union(name: String = "", builder: VisionGroup3D.() -> Unit) =
     composite(CompositeType.UNION, name, builder = builder)
 
-inline fun MutableVisualGroup.subtract(name: String = "", builder: VisualGroup3D.() -> Unit) =
+inline fun MutableVisionGroup.subtract(name: String = "", builder: VisionGroup3D.() -> Unit) =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
-inline fun MutableVisualGroup.intersect(name: String = "", builder: VisualGroup3D.() -> Unit) =
+inline fun MutableVisionGroup.intersect(name: String = "", builder: VisionGroup3D.() -> Unit) =
     composite(CompositeType.INTERSECT, name, builder = builder)

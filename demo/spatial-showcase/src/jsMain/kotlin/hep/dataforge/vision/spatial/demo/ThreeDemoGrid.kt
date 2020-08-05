@@ -7,7 +7,7 @@ import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.output.OutputManager
 import hep.dataforge.output.Renderer
-import hep.dataforge.vision.VisualObject
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.spatial.three.ThreeCanvas
 import hep.dataforge.vision.spatial.three.ThreePlugin
 import hep.dataforge.vision.spatial.three.output
@@ -39,7 +39,7 @@ class ThreeDemoGrid(element: Element, meta: Meta = Meta.EMPTY) : OutputManager {
     override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Renderer<T> {
 
         return outputs.getOrPut(name) {
-            if (type != VisualObject::class) error("Supports only DisplayObject")
+            if (type != Vision::class) error("Supports only DisplayObject")
             lateinit var output: ThreeCanvas
             //TODO calculate cell width here using jquery
             gridRoot.append {

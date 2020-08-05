@@ -12,7 +12,7 @@ class PropertyTest {
     @Test
     fun testInheritedProperty() {
         var box: Box? = null
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             config["test"] = 22
             group {
                 box = box(100, 100, 100)
@@ -24,7 +24,7 @@ class PropertyTest {
     @Test
     fun testStyleProperty() {
         var box: Box? = null
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             styleSheet {
                 set("testStyle") {
                     "test" put 22
@@ -42,7 +42,7 @@ class PropertyTest {
     @Test
     fun testColor() {
         var box: Box? = null
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             styleSheet {
                 set("testStyle") {
                     Material3D.MATERIAL_COLOR_KEY put "#555555"
@@ -60,7 +60,7 @@ class PropertyTest {
     @Test
     fun testProxyStyleProperty() {
         var box: Proxy? = null
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             styleSheet {
                 set("testStyle") {
                     Material3D.MATERIAL_COLOR_KEY put "#555555"

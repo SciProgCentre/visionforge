@@ -8,7 +8,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.vision.VisualObject.Companion.TYPE
+import hep.dataforge.vision.Vision.Companion.TYPE
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
 
@@ -16,13 +16,13 @@ import kotlinx.serialization.Transient
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface VisualObject : Configurable {
+interface Vision : Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
      */
     @Transient
-    var parent: VisualGroup?
+    var parent: VisionGroup?
 
     /**
      * All properties including styles and prototypes if present, including inherited ones
@@ -68,26 +68,26 @@ interface VisualObject : Configurable {
         const val TYPE = "visual"
         val STYLE_KEY = "@style".asName()
 
-        private val VISUAL_OBJECT_SERIALIZER = PolymorphicSerializer(VisualObject::class)
+        private val VISUAL_OBJECT_SERIALIZER = PolymorphicSerializer(Vision::class)
 
         fun serializer() = VISUAL_OBJECT_SERIALIZER
     }
 }
 
 /**
- * Get [VisualObject] property using key as a String
+ * Get [Vision] property using key as a String
  */
-fun VisualObject.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
+fun Vision.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
     getProperty(key.toName(), inherit)
 
 /**
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
-fun VisualObject.useStyle(name: String) {
+fun Vision.useStyle(name: String) {
     styles = styles + name
 }
 
-tailrec fun VisualObject.findStyle(name: String): Meta? =
-    (this as? VisualGroup)?.styleSheet?.get(name) ?: parent?.findStyle(name)
+tailrec fun Vision.findStyle(name: String): Meta? =
+    (this as? VisionGroup)?.styleSheet?.get(name) ?: parent?.findStyle(name)
 
-fun VisualObject.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))
+fun Vision.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))

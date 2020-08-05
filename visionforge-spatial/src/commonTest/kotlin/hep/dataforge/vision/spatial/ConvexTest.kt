@@ -11,7 +11,7 @@ class ConvexTest {
     @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {
-        val group = VisualGroup3D().apply {
+        val group = VisionGroup3D().apply {
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)
