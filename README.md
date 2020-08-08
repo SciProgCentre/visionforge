@@ -8,10 +8,9 @@
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
-  * [visionforge-common](#visionforge-common)
-  * [visionforge-spatial](#visionforge-spatial)
-  * [visionforge-spatial-gdml](#visionforge-spatial-gdml)
-  * [visionforge-jsroot](#visionforge-jsroot)
+  * [visionforge-core](#visionforge-core)
+  * [visionforge-solid](#visionforge-solid)
+  * [visionforge-gdml](#visionforge-gdml)
 * [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
   * [Simple Example - Spatial Showcase](#simple-example---spatial-showcase)
@@ -56,25 +55,25 @@ To learn more about DataForge, please consult the following URLs:
 
 ## Modules contained in this repository
 
-### visionforge-common
+### visionforge-core
 
 Contains a general hierarchy of classes and interfaces useful for visualization. 
 This module is not specific to 3D-visualization.
 
-The `visionforge-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
+The `visionforge-core` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
 
 **Class diagram:**
 
-![](doc/resources/class-diag-common.png)
+![](doc/resources/class-diag-core.png)
 
 
-### visionforge-spatial
+### visionforge-solid
 
-Includes common classes and serializers for 3D visualization, Three.js and JavaFX implementations.
+Includes common classes and serializers for 3D visualization, as well as Three.js and JavaFX implementations.
 
 **Class diagram:**
 
-![](doc/resources/class-diag-3d.png)
+![](doc/resources/class-diag-solid.png)
 
 ##### Prototypes
 
@@ -82,25 +81,18 @@ One of the important features of the framework is support for 3D object prototyp
 also referred to as templates). The idea is that prototype geometry can be rendered once and reused 
 for multiple objects. This helps to significantly decrease memory usage.
 
-The `prototypes` property tree is defined in `VisualGroup3D` class, and `Proxy` class helps to reuse a template object. 
+The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and 
+`Proxy` class helps to reuse a template object. 
 
 ##### Styles
 
-`VisualGroup3D` has a `styleSheet` property that can optionally define styles at the Group's 
-level. Styles are applied to child (descendant) objects using `styles: List<String>` property defined 
-in `VisualObject`. 
+`SolidGroup` has a `styleSheet` property that can optionally define styles at the Group's 
+level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property. 
 
 
-### visionforge-spatial-gdml
+### visionforge-gdml
 
 GDML bindings for 3D visualization (to be moved to gdml project).
-
-
-### visionforge-jsroot
-
-Some JSROOT bindings. 
-
-Note: Currently, this part is experimental and put here for completeness. This module may not build.
 
 
 ## Visualization for External Systems 

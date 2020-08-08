@@ -8,7 +8,7 @@ Some shapes will also periodically change their color and visibility.
 To see the JS demo: run `demo/spatial-showcase/Tasks/distribution/jsBrowserDistribution` Gradle task, then open
 `build/distribuions/spatial-showcase-js-0.1.3-dev/index.html` file in your browser.
 
-To see Java FX demo, run `main()` from `FXDemoApp.kt`.
+To see Java FX demo, run `demo/spatial-showcase/Tasks/application/run` Gradle task, or `main()` from `FXDemoApp.kt`.
 
 ##### Example view for JS:
 

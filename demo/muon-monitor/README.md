@@ -20,7 +20,8 @@ object describes general geometry definitions needed in all parts of the applica
 client requests them.
 
 Note that in a more traditional approach when client and server are developed separately
-and possibly using different languages, there would be no benefit of reusing common code. 
+and possibly using different languages, there would be no common code and benefits associated
+with it. 
 
 ##### Building project
 
