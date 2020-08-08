@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.double
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.MutableVisionGroup
@@ -118,8 +119,10 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
     }
 }
 
+@OptIn(DFExperimental::class)
 fun Vision.stringify(): String = SolidManager.jsonForSolids.stringify(Vision.serializer(), this)
 
+@OptIn(DFExperimental::class)
 fun Vision.Companion.parseJson(str: String) = SolidManager.jsonForSolids.parse(Vision.serializer(), str).also {
     if(it is VisionGroup){
         it.attachChildren()

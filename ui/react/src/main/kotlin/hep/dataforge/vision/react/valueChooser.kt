@@ -49,7 +49,7 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
         }
     }
 
-    private val commit: (Event) -> Unit = { event ->
+    private val commit: (Event) -> Unit = { _ ->
         props.valueChanged?.invoke(getValue())
     }
 
