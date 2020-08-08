@@ -35,7 +35,7 @@ fun main() {
 }
 
 fun start(state: dynamic): ApplicationBase? {
-    return if (document.body?.hasClass("testApp") == true) {
+    return if (document.body?.hasClass("application") == true) {
         val application = JSRootDemoApp()
 
         @Suppress("UnsafeCastFromDynamic")

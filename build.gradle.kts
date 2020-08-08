@@ -1,15 +1,14 @@
-import scientifik.fx
-import scientifik.serialization
+import scientifik.useFx
+import scientifik.useSerialization
 
-val dataforgeVersion by extra("0.1.7")
+val dataforgeVersion by extra("0.1.8")
 
 plugins {
-    val toolsVersion = "0.4.2"
-    id("scientifik.mpp") version toolsVersion apply false
-    id("scientifik.jvm") version toolsVersion apply false
-    id("scientifik.js") version toolsVersion apply false
-    id("scientifik.publish") version toolsVersion apply false
-    id("org.openjfx.javafxplugin") version "0.0.8" apply false
+    id("scientifik.mpp") apply false
+    id("scientifik.jvm") apply false
+    id("scientifik.js") apply false
+    id("scientifik.publish") apply false
+    id("org.jetbrains.changelog") version "0.4.0"
 }
 
 allprojects {
@@ -17,24 +16,20 @@ allprojects {
         mavenLocal()
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")
-        maven("https://kotlin.bintray.com/js-externals")
-        maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
-//        maven("https://dl.bintray.com/gbaldeck/kotlin")
-//        maven("https://dl.bintray.com/rjaros/kotlin")
     }
 
     group = "hep.dataforge"
-    version = "0.1.3-dev"
+    version = "0.1.5-dev"
 }
 
-val githubProject by extra("dataforge-vis")
+val githubProject by extra("visionforge")
 val bintrayRepo by extra("dataforge")
 val fxVersion by extra("14")
 
 subprojects {
-    apply(plugin = "scientifik.publish")
-    serialization()
-    afterEvaluate {
-        fx(scientifik.FXModule.CONTROLS, version = fxVersion)
+    if(name.startsWith("visionforge")) {
+        apply(plugin = "scientifik.publish")
     }
+    useSerialization()
+    useFx(scientifik.FXModule.CONTROLS, version = fxVersion)
 }

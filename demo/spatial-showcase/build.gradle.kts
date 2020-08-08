@@ -1,6 +1,6 @@
 import scientifik.DependencyConfiguration
 import scientifik.FXModule
-import scientifik.fx
+import scientifik.useFx
 
 plugins {
     id("scientifik.mpp")
@@ -8,7 +8,7 @@ plugins {
 }
 
 val fxVersion: String by rootProject.extra
-fx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
 
 kotlin {
 
@@ -19,13 +19,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                api(project(":visionforge-solid"))
+                api(project(":visionforge-gdml"))
             }
         }
     }
 }
 
 application {
-    mainClassName = "hep.dataforge.vis.spatial.demo.FXDemoAppKt"
+    mainClassName = "hep.dataforge.vision.solid.demo.FXDemoAppKt"
 }

@@ -1,14 +1,14 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vis.spatial.Point3D
-import hep.dataforge.vis.spatial.plus
+import hep.dataforge.vision.solid.Point3D
+import hep.dataforge.vision.solid.plus
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
 
 /**
  * A single pixel
  */
-open class SC1(
+class SC1(
     val name: String,
     val center: Point3D,
     val xSize: Double = PIXEL_XY_SIZE, val ySize: Double = PIXEL_XY_SIZE, val zSize: Double = PIXEL_Z_SIZE

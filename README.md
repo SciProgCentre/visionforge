@@ -2,19 +2,19 @@
 
 # DataForge Visualization Platform
 
-## Table of contents
+## Table of Contents
 
 * [Introduction](#introduction)
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
-  * [dataforge-vis-common](#dataforge-vis-common)
-  * [dataforge-vis-spatial](#dataforge-vis-spatial)
-  * [dataforge-vis-spatial-gdml](#dataforge-vis-spatial-gdml)
-  * [dataforge-vis-jsroot](#dataforge-vis-jsroot)
+  * [visionforge-core](#visionforge-core)
+  * [visionforge-solid](#visionforge-solid)
+  * [visionforge-gdml](#visionforge-gdml)
+* [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
-  * [Spatial Showcase](#spatial-showcase)
-  * [Muon Monitor](#muon-monitor-visualization)
+  * [Simple Example - Spatial Showcase](#simple-example---spatial-showcase)
+  * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
   * [GDML Example](#gdml-example)
 
 
@@ -26,8 +26,8 @@ used for visualization in various scientific applications.
 The main framework's use case for now is 3D visualization for particle physics experiments. 
 Other applications including 2D plots are planned for the future.
 
-The project is being developed as a Kotlin multiplatform application, currently targeting browser 
-JavaScript and JVM.
+The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
+application, currently targeting browser JavaScript and JVM.
 
 
 ## Features
@@ -40,7 +40,6 @@ The main framework's features for now include:
 - Scene graph as an object tree with property editor
 - Settings export and import
 - Multiple platform support
-
 
 ## About DataForge
 
@@ -56,25 +55,25 @@ To learn more about DataForge, please consult the following URLs:
 
 ## Modules contained in this repository
 
-### dataforge-vis-common 
+### visionforge-core
 
 Contains a general hierarchy of classes and interfaces useful for visualization. 
 This module is not specific to 3D-visualization.
 
-The `dataforge-vis-common` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
+The `visionforge-core` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
 
-##### Class diagram: 
+**Class diagram:**
 
-![](doc/resources/class-diag-common.png)
+![](doc/resources/class-diag-core.png)
 
 
-### dataforge-vis-spatial
+### visionforge-solid
 
-Includes common classes and serializers for 3D visualization, Three.js and JavaFX implementations.
+Includes common classes and serializers for 3D visualization, as well as Three.js and JavaFX implementations.
 
-##### Class diagram:
+**Class diagram:**
 
-![](doc/resources/class-diag-3d.png)
+![](doc/resources/class-diag-solid.png)
 
 ##### Prototypes
 
@@ -82,65 +81,63 @@ One of the important features of the framework is support for 3D object prototyp
 also referred to as templates). The idea is that prototype geometry can be rendered once and reused 
 for multiple objects. This helps to significantly decrease memory usage.
 
-The `prototypes` property tree is defined in `VisualGroup3D` class, and `Proxy` class helps to reuse a template object. 
+The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and 
+`Proxy` class helps to reuse a template object. 
 
 ##### Styles
 
-`VisualGroup3D` has a `styleSheet` property that can optionally define styles at the Group's 
-level. Styles are applied to child (descendant) objects using `styles: List<String>` property defined 
-in `VisualObject`. 
+`SolidGroup` has a `styleSheet` property that can optionally define styles at the Group's 
+level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property. 
 
 
-### dataforge-vis-spatial-gdml
+### visionforge-gdml
 
 GDML bindings for 3D visualization (to be moved to gdml project).
 
 
-### dataforge-vis-jsroot
+## Visualization for External Systems 
 
-Some JSROOT bindings. 
-
-Note: Currently, this part is experimental and put here for completeness. This module may not build.
-
+The `visionforge` framework can be used to visualize geometry and events from external,
+non-Kotlin based systems, such as ROOT. This will require a plugin to convert data model
+of the external system to that of `visionforge`. Performing such integration is a work
+currently in progress.
+ 
 
 ## Demonstrations
 
-The `demo` module contains several demonstrations of using the `dataforge-vis` framework:
+The `demo` module contains several example projects (demonstrations) of using the `visionforge` framework.
+They are briefly described in this section, for more details please consult the corresponding per-project
+README file.
 
-### Spatial Showcase
+### Simple Example - Spatial Showcase
 
 Contains a simple demonstration with a grid including a few shapes that you can rotate, move camera, and so on.
-Some shapes will also periodically change their color and visibility. 
- 
-To see the demo: run `demo/spatial-showcase/Tasks/distribution/installJsDist` Gradle task, then open
-`build/distribuions/spatial-showcase-js-0.1.0-dev/index.html` file in your browser.
+Some shapes will also periodically change their color and visibility.
 
-##### Example view:
+[More details](demo/spatial-showcase/README.md)
+
+**Example view:**
 
 ![](doc/resources/spatial-showcase.png)
 
-### Muon Monitor Visualization
+
+### Full-Stack Application Example - Muon Monitor Visualization
 
 A full-stack application example, showing the 
-[Muon Monitor](http://npm.mipt.ru/projects/physics.html#mounMonitor) experiment set-up.
+[Muon Monitor](http://npm.mipt.ru/en/projects/physics#mounMonitor) experiment set-up.
 
-Includes server back-end generating events, as well as visualization front-end. 
+[More details](demo/muon-monitor/README.md)
 
-To run full-stack app (both server and browser front-end), run 
-`demo/muon-monitor/application/run` task.
-
-##### Example view:
+**Example view:**
 
 ![](doc/resources/muon-monitor.png)
+
 
 ### GDML Example
 
 Visualization example for geometry defined as GDML file. 
 
-To build the app, run `demo/gdml/Tasks/distribution/installJsDist` task, then open
-`build/distribuions/gdml-js-0.1.0-dev/index.html` file in your browser, and
-drag-and-drop GDML file to the window to see visualization. For an example file, use 
-`demo/gdml/src/jsMain/resources/cubes.gdml`.
+[More details](demo/gdml/README.md)
 
 ##### Example view:
 

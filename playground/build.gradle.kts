@@ -19,8 +19,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                api(project(":visionforge-solid"))
+                api(project(":visionforge-gdml"))
+                api(project(":ui:bootstrap"))
             }
         }
     }

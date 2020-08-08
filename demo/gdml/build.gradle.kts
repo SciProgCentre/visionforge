@@ -1,6 +1,6 @@
 import scientifik.DependencyConfiguration
 import scientifik.FXModule
-import scientifik.fx
+import scientifik.useFx
 
 plugins {
     id("scientifik.mpp")
@@ -8,7 +8,7 @@ plugins {
 }
 
 val fxVersion: String by rootProject.extra
-fx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
 
 kotlin {
 
@@ -17,23 +17,31 @@ kotlin {
     }
 
     js {
-        browser {
-            webpackTask {
-                //sourceMaps = false
-            }
-        }
+        useCommonJs()
     }
 
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":dataforge-vis-spatial"))
-                api(project(":dataforge-vis-spatial-gdml"))
+                implementation(project(":visionforge-solid"))
+                implementation(project(":visionforge-gdml"))
+            }
+        }
+        jsMain{
+            dependencies {
+                implementation(project(":ui:bootstrap"))
+                implementation(npm("react-file-drop", "3.0.6"))
             }
         }
     }
 }
 
 application {
-    mainClassName = "hep.dataforge.vis.spatial.gdml.demo.GDMLDemoAppKt"
+    mainClassName = "hep.dataforge.vision.gdml.demo.GDMLDemoAppKt"
+}
+
+val convertGdmlToJson by tasks.creating(JavaExec::class) {
+    group = "application"
+    classpath = sourceSets["main"].runtimeClasspath
+    main = "hep.dataforge.vis.spatial.gdml.demo.SaveToJsonKt"
 }

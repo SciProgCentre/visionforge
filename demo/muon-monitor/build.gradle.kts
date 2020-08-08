@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import scientifik.jsDistDirectory
 
 plugins {
@@ -13,32 +14,36 @@ kotlin {
 
     val installJS = tasks.getByName("jsBrowserDistribution")
 
-    js{
+    js {
         browser {
             dceTask {
                 dceOptions {
                     keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
                 }
             }
+            webpackTask {
+                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
+            }
         }
     }
 
     jvm {
         withJava()
-        compilations.findByName("main").apply {
-            tasks.getByName<ProcessResources>("jvmProcessResources") {
+        compilations[MAIN_COMPILATION_NAME]?.apply {
+            tasks.getByName<ProcessResources>(processResourcesTaskName) {
                 dependsOn(installJS)
                 afterEvaluate {
                     from(project.jsDistDirectory)
                 }
             }
         }
+
     }
 
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":dataforge-vis-spatial"))
+                implementation(project(":visionforge-solid"))
             }
         }
         jvmMain {
@@ -50,6 +55,7 @@ kotlin {
         }
         jsMain {
             dependencies {
+                implementation(project(":ui:bootstrap"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
                 implementation(npm("text-encoding"))
@@ -69,6 +75,13 @@ application {
     mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
 }
 
-//configure<JavaFXOptions> {
-//    modules("javafx.controls")
-//}
+distributions {
+    main {
+        contents {
+            from("$buildDir/libs") {
+                rename("${rootProject.name}-jvm", rootProject.name)
+                into("lib")
+            }
+        }
+    }
+}
