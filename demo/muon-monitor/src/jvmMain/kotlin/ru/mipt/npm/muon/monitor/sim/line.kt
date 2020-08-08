@@ -1,6 +1,6 @@
 package ru.mipt.npm.muon.monitor.sim
 
-import hep.dataforge.vision.spatial.Point3D
+import hep.dataforge.vision.solid.Point3D
 import org.apache.commons.math3.geometry.euclidean.threed.Line
 import org.apache.commons.math3.geometry.euclidean.threed.Plane
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D

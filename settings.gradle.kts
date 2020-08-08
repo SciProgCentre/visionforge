@@ -41,7 +41,7 @@ include(
     ":ui:material",
     ":ui:bootstrap",
     ":visionforge-core",
-    ":visionforge-spatial",
+    ":visionforge-solid",
     ":visionforge-gdml",
     ":demo:spatial-showcase",
     ":demo:gdml",

@@ -19,7 +19,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-spatial"))
+                api(project(":visionforge-solid"))
                 api(project(":visionforge-gdml"))
             }
         }
@@ -27,5 +27,5 @@ kotlin {
 }
 
 application {
-    mainClassName = "hep.dataforge.vis.spatial.demo.FXDemoAppKt"
+    mainClassName = "hep.dataforge.vis.solid.demo.FXDemoAppKt"
 }

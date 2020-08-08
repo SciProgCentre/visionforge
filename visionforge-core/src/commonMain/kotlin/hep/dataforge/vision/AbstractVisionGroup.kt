@@ -1,6 +1,5 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.MetaItem
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
@@ -31,10 +30,10 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
         res.block()
     }
 
-    override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
-        super.propertyChanged(name, before, after)
+    override fun propertyChanged(name: Name) {
+        super.propertyChanged(name)
         for(obj in this) {
-            obj.propertyChanged(name, before, after)
+            obj.propertyChanged(name)
         }
     }
 

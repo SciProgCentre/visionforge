@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.spatial.Point3D
-import hep.dataforge.vision.spatial.plus
+import hep.dataforge.vision.solid.Point3D
+import hep.dataforge.vision.solid.plus
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
 

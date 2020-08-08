@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":visionforge-spatial"))
+                api(project(":visionforge-solid"))
                 api("scientifik:gdml:0.1.8")
             }
         }

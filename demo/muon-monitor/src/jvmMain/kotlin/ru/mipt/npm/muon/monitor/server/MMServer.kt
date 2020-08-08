@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor.server
 
 
-import hep.dataforge.vision.spatial.SpatialVisionManager
+import hep.dataforge.vision.solid.SolidManager
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -36,7 +36,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(module = SpatialVisionManager.serialModule)
+        json(module = SolidManager.serialModule)
     }
     install(Routing) {
         get("/event") {

@@ -27,10 +27,10 @@ interface Vision : Configurable {
     /**
      * All properties including styles and prototypes if present, including inherited ones
      */
-    fun properties(): Laminate
+    fun getAllProperties(): Laminate
 
     /**
-     * Get property including or excluding parent properties
+     * Get property (including styles). [inherit] toggles parent node property lookup
      */
     fun getProperty(name: Name, inherit: Boolean): MetaItem<*>?
 
@@ -42,27 +42,17 @@ interface Vision : Configurable {
     /**
      * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
      */
-    fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?): Unit
-
-    /**
-     * Send a signal that property value should be reevaluated
-     */
-    fun propertyInvalidated(name: Name) = propertyChanged(name, null, null)
+    fun propertyChanged(name: Name): Unit
 
     /**
      * Add listener triggering on property change
      */
-    fun onPropertyChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit): Unit
+    fun onPropertyChange(owner: Any?, action: (Name) -> Unit): Unit
 
     /**
      * Remove change listeners with given owner.
      */
     fun removeChangeListener(owner: Any?)
-
-    /**
-     * List of names of styles applied to this object. Order matters. Not inherited
-     */
-    var styles: List<String>
 
     companion object {
         const val TYPE = "visual"
@@ -81,13 +71,8 @@ fun Vision.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
     getProperty(key.toName(), inherit)
 
 /**
- * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
+ * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
  */
-fun Vision.useStyle(name: String) {
-    styles = styles + name
-}
+tailrec fun Vision.resolveStyle(name: String): Meta? =
+    (this as? VisionGroup)?.styleSheet?.get(name) ?: parent?.resolveStyle(name)
 
-tailrec fun Vision.findStyle(name: String): Meta? =
-    (this as? VisionGroup)?.styleSheet?.get(name) ?: parent?.findStyle(name)
-
-fun Vision.findAllStyles(): Laminate = Laminate(styles.mapNotNull(::findStyle))

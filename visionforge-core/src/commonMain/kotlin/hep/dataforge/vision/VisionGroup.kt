@@ -16,7 +16,7 @@ interface VisionGroup : Provider, Vision {
 
     /**
      * A stylesheet for this group and its descendants. Stylesheet is not applied directly,
-     * but instead is just a repository for named configutations
+     * but instead is just a repository for named configurations.
      */
     val styleSheet: StyleSheet?
 

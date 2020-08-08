@@ -5,6 +5,7 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
+import hep.dataforge.values.asValue
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -22,6 +23,21 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     }
 
     val items: Map<String, Meta> get() = styleMap
+
+
+    private fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) {
+        if (styles.contains(key)) {
+            //TODO optimize set concatenation
+            val tokens: Collection<Name> = ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
+                .map { it.asName() }
+            tokens.forEach { parent?.propertyChanged(it) }
+        }
+        if (this is VisionGroup) {
+            for (obj in this) {
+                obj.styleChanged(key, oldStyle, newStyle)
+            }
+        }
+    }
 
     operator fun get(key: String): Meta? {
         return styleMap[key] ?: owner?.parent?.styleSheet?.get(key)
@@ -73,16 +89,19 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     }
 }
 
-private fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) {
-    if (styles.contains(key)) {
-        //TODO optimize set concatenation
-        val tokens: Collection<Name> = ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
-            .map { it.asName() }
-        tokens.forEach { parent?.propertyChanged(it, oldStyle?.get(it), newStyle?.get(it)) }
+
+/**
+ * List of names of styles applied to this object. Order matters. Not inherited
+ */
+var Vision.styles: List<String>
+    get() = getItem(Vision.STYLE_KEY).stringList
+    set(value) {
+        setItem(Vision.STYLE_KEY,value.map { it.asValue() }.asValue())
     }
-    if (this is VisionGroup) {
-        for (obj in this) {
-            obj.styleChanged(key, oldStyle, newStyle)
-        }
-    }
+
+/**
+ * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
+ */
+fun Vision.useStyle(name: String) {
+    styles = styles + name
 }

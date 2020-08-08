@@ -4,14 +4,13 @@ import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
-import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
     val owner: Any? = null,
-    val action: (name: Name, oldItem: MetaItem<*>?, newItem: MetaItem<*>?) -> Unit
+    val action: (name: Name) -> Unit
 )
 
 abstract class AbstractVision : Vision {
@@ -22,46 +21,42 @@ abstract class AbstractVision : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    protected abstract var ownProperties: Config?
-
-    final override var styles: List<String>
-        get() = ownProperties?.get(STYLE_KEY).stringList
-        set(value) {
-            setItem(STYLE_KEY, Value.of(value))
-            updateStyles(value)
-        }
+    protected abstract var properties: Config?
 
     protected fun updateStyles(names: List<String>) {
         styleCache = null
-        names.mapNotNull { findStyle(it) }.asSequence()
+        names.mapNotNull { resolveStyle(it) }.asSequence()
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
             .forEach {
-                propertyChanged(it.key.asName(), null, it.value)
+                propertyChanged(it.key.asName())
             }
     }
 
     /**
      * The config is initialized and assigned on-demand.
-     * To avoid unnecessary allocations, one should access [ownProperties] via [getProperty] instead.
+     * To avoid unnecessary allocations, one should access [getAllProperties] via [getProperty] instead.
      */
     override val config: Config
-        get() = ownProperties ?: Config().also { config ->
-            ownProperties = config.apply { onChange(this, ::propertyChanged) }
+        get() = properties ?: Config().also { config ->
+            properties = config.also {
+                it.onChange(this) { name, _, _ -> propertyChanged(name) }
+            }
         }
 
     @Transient
     private val listeners = HashSet<PropertyListener>()
 
-    override fun propertyChanged(name: Name, before: MetaItem<*>?, after: MetaItem<*>?) {
-        if (before != after) {
-            for (l in listeners) {
-                l.action(name, before, after)
-            }
+    override fun propertyChanged(name: Name) {
+        if (name == STYLE_KEY) {
+            updateStyles(properties?.get(STYLE_KEY)?.stringList ?: emptyList())
+        }
+        for (listener in listeners) {
+            listener.action(name)
         }
     }
 
-    override fun onPropertyChange(owner: Any?, action: (Name, before: MetaItem<*>?, after: MetaItem<*>?) -> Unit) {
+    override fun onPropertyChange(owner: Any?, action: (Name) -> Unit) {
         listeners.add(PropertyListener(owner, action))
     }
 
@@ -75,25 +70,25 @@ abstract class AbstractVision : Vision {
      * Collect all styles for this object in a single cached meta
      */
     protected val mergedStyles: Meta
-        get() = styleCache ?: findAllStyles().merge().also {
+        get() = styleCache ?: Laminate(styles.mapNotNull(::resolveStyle)).merge().also {
             styleCache = it
         }
 
     /**
      * All available properties in a layered form
      */
-    override fun properties(): Laminate = Laminate(ownProperties, mergedStyles, parent?.properties())
+    override fun getAllProperties(): Laminate = Laminate(properties, mergedStyles, parent?.getAllProperties())
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
             sequence {
-                yield(ownProperties?.get(name))
+                yield(properties?.get(name))
                 yield(mergedStyles[name])
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
-                yield(ownProperties?.get(name))
+                yield(properties?.get(name))
                 yield(mergedStyles[name])
             }.merge()
         }
@@ -103,8 +98,8 @@ abstract class AbstractVision : Vision {
      * Reset all properties to their default values
      */
     fun resetProperties() {
-        ownProperties?.removeListener(this)
-        ownProperties = null
+        properties?.removeListener(this)
+        properties = null
     }
 
     companion object {

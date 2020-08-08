@@ -10,11 +10,11 @@ import hep.dataforge.vision.bootstrap.objectTree
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.state
-import hep.dataforge.vision.spatial.specifications.Camera
-import hep.dataforge.vision.spatial.specifications.Canvas3DOptions
-import hep.dataforge.vision.spatial.three.ThreeCanvas
-import hep.dataforge.vision.spatial.three.ThreeCanvasComponent
-import hep.dataforge.vision.spatial.three.canvasControls
+import hep.dataforge.vision.solid.specifications.Camera
+import hep.dataforge.vision.solid.specifications.Canvas3DOptions
+import hep.dataforge.vision.solid.three.ThreeCanvas
+import hep.dataforge.vision.solid.three.ThreeCanvasComponent
+import hep.dataforge.vision.solid.three.canvasControls
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
@@ -155,7 +155,7 @@ val MMApp = component<MMAppProps> { props ->
                             else -> visual[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(selectedObject, default = selectedObject.properties(), key = selected)
+                            configEditor(selectedObject, default = selectedObject.getAllProperties(), key = selected)
                         }
                     }
                 }

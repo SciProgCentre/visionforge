@@ -1,17 +1,17 @@
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.vision.removeAll
-import hep.dataforge.vision.spatial.*
+import hep.dataforge.vision.solid.*
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import kotlin.math.PI
 
 class Model {
-    private val map = HashMap<String, VisionGroup3D>()
+    private val map = HashMap<String, SolidGroup>()
     private val events = HashSet<Event>()
 
-    private fun VisionGroup3D.pixel(pixel: SC1) {
+    private fun SolidGroup.pixel(pixel: SC1) {
         val group = group(pixel.name) {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
@@ -23,7 +23,7 @@ class Model {
         map[pixel.name] = group
     }
 
-    private fun VisionGroup3D.detector(detector: SC16) {
+    private fun SolidGroup.detector(detector: SC16) {
         group(detector.name) {
             detector.pixels.forEach {
                 pixel(it)
@@ -31,9 +31,9 @@ class Model {
         }
     }
 
-    var tracks: VisionGroup3D
+    var tracks: SolidGroup
 
-    val root: VisionGroup3D = VisionGroup3D().apply {
+    val root: SolidGroup = SolidGroup().apply {
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {
@@ -63,7 +63,7 @@ class Model {
     fun reset() {
         map.values.forEach {
             it.config
-            it.setItem(Material3D.MATERIAL_COLOR_KEY, null)
+            it.setItem(SolidMaterial.MATERIAL_COLOR_KEY, null)
         }
         tracks.removeAll()
     }

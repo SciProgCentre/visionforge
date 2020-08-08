@@ -23,7 +23,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":visionforge-spatial"))
+                implementation(project(":visionforge-solid"))
                 implementation(project(":visionforge-gdml"))
             }
         }
