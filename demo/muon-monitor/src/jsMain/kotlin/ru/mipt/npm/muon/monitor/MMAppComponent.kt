@@ -51,7 +51,7 @@ val MMApp = component<MMAppProps> { props ->
 
     div("row") {
         h1("mx-auto") {
-            +"GDML/JSON render demo"
+            +"Muon monitor demo"
         }
     }
     div("row") {

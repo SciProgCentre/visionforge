@@ -25,8 +25,6 @@ interface Solid : Vision {
     var rotation: Point3D?
     var scale: Point3D?
 
-    val properties: Config?
-
     override val descriptor: NodeDescriptor? get() = Companion.descriptor
 
     companion object {

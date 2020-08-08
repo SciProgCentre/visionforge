@@ -94,7 +94,7 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
  * List of names of styles applied to this object. Order matters. Not inherited
  */
 var Vision.styles: List<String>
-    get() = getItem(Vision.STYLE_KEY).stringList
+    get() = properties?.get(Vision.STYLE_KEY).stringList
     set(value) {
         setItem(Vision.STYLE_KEY,value.map { it.asValue() }.asValue())
     }

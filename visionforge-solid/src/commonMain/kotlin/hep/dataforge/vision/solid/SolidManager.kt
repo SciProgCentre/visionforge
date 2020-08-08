@@ -51,16 +51,6 @@ private class SolidForm<T :Solid>(
 private fun SerialModule.extractFactories(): List<SolidForm<*>> {
     val list = ArrayList<SolidForm<*>>()
 
-    val jsonEngine = Json(
-        JsonConfiguration(
-            prettyPrint = true,
-            useArrayPolymorphism = false,
-            encodeDefaults = false,
-            ignoreUnknownKeys = true
-        ),
-        context = this
-    )
-
     val collector = object : SerialModuleCollector {
         override fun <T : Any> contextual(kClass: KClass<T>, serializer: KSerializer<T>) {
             //Do nothing

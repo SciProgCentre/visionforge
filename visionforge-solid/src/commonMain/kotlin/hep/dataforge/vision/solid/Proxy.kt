@@ -48,14 +48,14 @@ class Proxy private constructor(
         return if (inherit) {
             sequence {
                 yield(properties?.get(name))
-                yield(mergedStyles[name])
+                yield(getStyleItem(name))
                 yield(prototype.getItem(name))
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
                 yield(properties?.get(name))
-                yield(mergedStyles[name])
+                yield(getStyleItem(name))
                 yield(prototype.getProperty(name, false))
             }.merge()
         }
@@ -92,8 +92,7 @@ class Proxy private constructor(
     override val descriptor: NodeDescriptor?
         get() = prototype.descriptor
 
-    inner class ProxyChild(val name: Name) : AbstractVision(),
-        VisionGroup {
+    inner class ProxyChild(val name: Name) : AbstractVision(), VisionGroup {
 
         val prototype: Vision get() = prototypeFor(name)
 
@@ -127,14 +126,14 @@ class Proxy private constructor(
             return if (inherit) {
                 sequence {
                     yield(properties?.get(name))
-                    yield(mergedStyles[name])
+                    yield(getStyleItem(name))
                     yield(prototype.getItem(name))
                     yield(parent?.getProperty(name, inherit))
                 }.merge()
             } else {
                 sequence {
                     yield(properties?.get(name))
-                    yield(mergedStyles[name])
+                    yield(getStyleItem(name))
                     yield(prototype.getProperty(name, false))
                 }.merge()
             }

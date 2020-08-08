@@ -9,7 +9,7 @@ import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 
 fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
-    return when (val first = filterNotNull().firstOrNull()) {
+    return when (val first = firstOrNull { it != null }) {
         null -> null
         is MetaItem.ValueItem -> first //fast search for first entry if it is value
         is MetaItem.NodeItem -> {
@@ -25,5 +25,5 @@ inline fun <reified E : Enum<E>> NodeDescriptor.enum(key: Name, default: E?) = v
     default?.let {
         default(default)
     }
-    allowedValues = enumValues<E>().map{it.asValue()}
+    allowedValues = enumValues<E>().map { it.asValue() }
 }

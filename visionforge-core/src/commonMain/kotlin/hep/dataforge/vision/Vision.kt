@@ -1,9 +1,6 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.Configurable
-import hep.dataforge.meta.Laminate
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -23,6 +20,11 @@ interface Vision : Configurable {
      */
     @Transient
     var parent: VisionGroup?
+
+    /**
+     * Nullable version of [config] used to check if this [Vision] has custom properties
+     */
+    val properties: Config?
 
     /**
      * All properties including styles and prototypes if present, including inherited ones

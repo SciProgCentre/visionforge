@@ -21,7 +21,8 @@ abstract class AbstractVision : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    protected abstract var properties: Config?
+    abstract override var properties: Config?
+        protected set
 
     protected fun updateStyles(names: List<String>) {
         styleCache = null
@@ -64,6 +65,10 @@ abstract class AbstractVision : Vision {
         listeners.removeAll { it.owner == owner }
     }
 
+    protected fun getStyleItem(name: Name): MetaItem<*>?{
+        return styles.asSequence().map { resolveStyle(it) }.map { it[name] }.firstOrNull()
+    }
+
     private var styleCache: Meta? = null
 
     /**
@@ -83,13 +88,13 @@ abstract class AbstractVision : Vision {
         return if (inherit) {
             sequence {
                 yield(properties?.get(name))
-                yield(mergedStyles[name])
+                yield(getStyleItem(name))
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
                 yield(properties?.get(name))
-                yield(mergedStyles[name])
+                yield(getStyleItem(name))
             }.merge()
         }
     }
