@@ -1,13 +1,13 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
+import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.fx.FX3DPlugin
 import hep.dataforge.vision.solid.fx.FXCanvas3D
-import hep.dataforge.vision.solid.gdml.toVision
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser

@@ -1,12 +1,12 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
+import hep.dataforge.vision.gdml.GDMLTransformer
+import hep.dataforge.vision.gdml.LUnit
+import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
-import hep.dataforge.vision.solid.gdml.GDMLTransformer
-import hep.dataforge.vision.solid.gdml.LUnit
-import hep.dataforge.vision.solid.gdml.toVision
 import kotlinx.css.*
 import react.child
 import react.dom.render

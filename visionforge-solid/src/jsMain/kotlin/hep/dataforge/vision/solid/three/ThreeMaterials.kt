@@ -44,7 +44,7 @@ object ThreeMaterials {
     }
 
     fun getMaterial(vision3D: Vision): Material {
-        val meta = vision3D.getItem(SolidMaterial.MATERIAL_KEY).node ?: return ThreeMaterials.DEFAULT
+        val meta = vision3D.getItem(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
         return if (meta[SolidMaterial.SPECULAR_COLOR_KEY] != null) {
             MeshPhongMaterial().apply {
                 color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR

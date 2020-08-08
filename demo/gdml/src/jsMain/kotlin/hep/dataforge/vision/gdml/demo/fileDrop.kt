@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
 import drop.FileDrop
 import kotlinx.css.*

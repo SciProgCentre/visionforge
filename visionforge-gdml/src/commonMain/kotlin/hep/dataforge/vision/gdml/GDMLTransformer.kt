@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.gdml
+package hep.dataforge.vision.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder

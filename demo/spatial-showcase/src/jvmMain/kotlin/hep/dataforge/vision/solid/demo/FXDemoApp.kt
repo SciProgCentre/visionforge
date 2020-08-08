@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.demo
 
-import hep.dataforge.vision.solid.gdml.gdml
+import hep.dataforge.vision.gdml.gdml
 import javafx.stage.Stage
 import tornadofx.*
 import java.nio.file.NoSuchFileException

@@ -1,8 +1,8 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
-import hep.dataforge.vision.solid.gdml.LUnit
-import hep.dataforge.vision.solid.gdml.readFile
-import hep.dataforge.vision.solid.gdml.toVision
+import hep.dataforge.vision.gdml.LUnit
+import hep.dataforge.vision.gdml.readFile
+import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.stringify
 import scientifik.gdml.GDML
 import java.io.File

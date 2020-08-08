@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.gdml
+package hep.dataforge.vision.gdml
 
 import scientifik.gdml.AUnit
 import scientifik.gdml.GDMLPosition

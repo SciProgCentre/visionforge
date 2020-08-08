@@ -106,8 +106,15 @@ fun Vision.useStyle(name: String) {
     styles = styles + name
 }
 
-fun Vision.getStyleItem(name: Name): MetaItem<*>? {
-    return styles.asSequence().map { resolveStyle(it) }.map { it[name] }.firstOrNull()
+/**
+ * Resolve an item in all style layers
+ */
+fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
+    return styles.asSequence().map {
+        resolveStyle(it)
+    }.map {
+        it[name]
+    }.filterNotNull()
 }
 
 /**

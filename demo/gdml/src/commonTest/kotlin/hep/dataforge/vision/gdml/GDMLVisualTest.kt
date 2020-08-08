@@ -1,11 +1,11 @@
-package hep.dataforge.vision.solid.gdml
+package hep.dataforge.vision.gdml
 
 import hep.dataforge.meta.setItem
 import hep.dataforge.meta.string
 import hep.dataforge.names.toName
 import hep.dataforge.values.asValue
+import hep.dataforge.vision.gdml.demo.cubes
 import hep.dataforge.vision.solid.SolidMaterial
-import hep.dataforge.vision.solid.gdml.demo.cubes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

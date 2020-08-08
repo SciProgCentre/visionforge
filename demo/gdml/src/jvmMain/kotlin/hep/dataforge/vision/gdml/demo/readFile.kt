@@ -1,14 +1,14 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.setItem
 import hep.dataforge.values.asValue
+import hep.dataforge.vision.gdml.LUnit
+import hep.dataforge.vision.gdml.readFile
+import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.SolidMaterial
-import hep.dataforge.vision.solid.gdml.LUnit
-import hep.dataforge.vision.solid.gdml.readFile
-import hep.dataforge.vision.solid.gdml.toVision
 import scientifik.gdml.GDML
 import java.io.File
 import java.util.zip.GZIPInputStream

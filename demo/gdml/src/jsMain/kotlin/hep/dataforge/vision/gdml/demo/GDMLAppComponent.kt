@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.gdml.demo
+package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
@@ -6,13 +6,13 @@ import hep.dataforge.names.isEmpty
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.bootstrap.*
+import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.state
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.gdml.toVision
 import hep.dataforge.vision.solid.specifications.Camera
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas

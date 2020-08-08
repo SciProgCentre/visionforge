@@ -48,14 +48,14 @@ class Proxy private constructor(
         return if (inherit) {
             sequence {
                 yield(properties?.get(name))
-                yield(getStyleItem(name))
+                yieldAll(getStyleItems(name))
                 yield(prototype.getItem(name))
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
                 yield(properties?.get(name))
-                yield(getStyleItem(name))
+                yieldAll(getStyleItems(name))
                 yield(prototype.getProperty(name, false))
             }.merge()
         }
@@ -126,14 +126,14 @@ class Proxy private constructor(
             return if (inherit) {
                 sequence {
                     yield(properties?.get(name))
-                    yield(getStyleItem(name))
+                    yieldAll(getStyleItems(name))
                     yield(prototype.getItem(name))
                     yield(parent?.getProperty(name, inherit))
                 }.merge()
             } else {
                 sequence {
                     yield(properties?.get(name))
-                    yield(getStyleItem(name))
+                    yieldAll(getStyleItems(name))
                     yield(prototype.getProperty(name, false))
                 }.merge()
             }
