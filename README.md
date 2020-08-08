@@ -1,4 +1,7 @@
 [![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![DOI](https://zenodo.org/badge/174502624.svg)](https://zenodo.org/badge/latestdoi/174502624)
+
+![Gradle build](https://github.com/mipt-npm/visionforge/workflows/Gradle%20build/badge.svg)
 
 # DataForge Visualization Platform
 
@@ -142,3 +145,9 @@ Visualization example for geometry defined as GDML file.
 ##### Example view:
 
 ![](doc/resources/gdml-demo.png)
+
+
+## Thanks and references
+The original three.js bindings were made by [Lars Ivar Hatledal](https://github.com/markaren), but the project is discontinued right now.
+
+All other libraries are explicitly shown as dependencies. We would like to express specific thanks to JetBrains Kotlin-JS team for consulting us during the work.
