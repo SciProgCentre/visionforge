@@ -81,7 +81,7 @@ class Proxy private constructor(
     }
 
     override fun getAllProperties(): Laminate =
-        Laminate(properties, mergedStyles, prototype.getAllProperties(), parent?.getAllProperties())
+        Laminate(properties, allStyles, prototype.getAllProperties(), parent?.getAllProperties())
 
     override fun attachChildren() {
         //do nothing
@@ -144,7 +144,7 @@ class Proxy private constructor(
         }
 
         override fun getAllProperties(): Laminate =
-            Laminate(properties, mergedStyles, prototype.getAllProperties(), parent?.getAllProperties())
+            Laminate(properties, allStyles, prototype.getAllProperties(), parent?.getAllProperties())
 
 
         override val descriptor: NodeDescriptor?

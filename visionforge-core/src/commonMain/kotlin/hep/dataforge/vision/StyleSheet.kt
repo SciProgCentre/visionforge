@@ -105,3 +105,12 @@ var Vision.styles: List<String>
 fun Vision.useStyle(name: String) {
     styles = styles + name
 }
+
+fun Vision.getStyleItem(name: Name): MetaItem<*>? {
+    return styles.asSequence().map { resolveStyle(it) }.map { it[name] }.firstOrNull()
+}
+
+/**
+ * Collect all styles for this object in a single laminate
+ */
+val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::resolveStyle))

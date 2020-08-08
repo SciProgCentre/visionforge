@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid.gdml.demo
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.setItem
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.solid.SolidGroup
@@ -13,6 +14,7 @@ import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
 
+@OptIn(DFExperimental::class)
 fun SolidManager.Companion.readFile(file: File): SolidGroup = when {
     file.extension == "gdml" || file.extension == "xml" -> {
         GDML.readFile(file.toPath()).toVision {
@@ -48,4 +50,5 @@ fun SolidManager.Companion.readFile(file: File): SolidGroup = when {
     else -> error("Unknown extension ${file.extension}")
 }
 
+@OptIn(DFExperimental::class)
 fun SolidManager.Companion.readFile(fileName: String): SolidGroup = readFile(File(fileName))

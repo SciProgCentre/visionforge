@@ -25,7 +25,6 @@ abstract class AbstractVision : Vision {
         protected set
 
     protected fun updateStyles(names: List<String>) {
-        styleCache = null
         names.mapNotNull { resolveStyle(it) }.asSequence()
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
@@ -65,24 +64,10 @@ abstract class AbstractVision : Vision {
         listeners.removeAll { it.owner == owner }
     }
 
-    protected fun getStyleItem(name: Name): MetaItem<*>?{
-        return styles.asSequence().map { resolveStyle(it) }.map { it[name] }.firstOrNull()
-    }
-
-    private var styleCache: Meta? = null
-
-    /**
-     * Collect all styles for this object in a single cached meta
-     */
-    protected val mergedStyles: Meta
-        get() = styleCache ?: Laminate(styles.mapNotNull(::resolveStyle)).merge().also {
-            styleCache = it
-        }
-
     /**
      * All available properties in a layered form
      */
-    override fun getAllProperties(): Laminate = Laminate(properties, mergedStyles, parent?.getAllProperties())
+    override fun getAllProperties(): Laminate = Laminate(properties, allStyles, parent?.getAllProperties())
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

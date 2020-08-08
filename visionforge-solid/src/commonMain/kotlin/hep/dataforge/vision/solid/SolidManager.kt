@@ -66,7 +66,6 @@ private fun SerialModule.extractFactories(): List<SolidForm<*>> {
                     actualClass as KClass<Solid>,
                     actualSerializer as KSerializer<Solid>
                 )
-                val name = actualSerializer.descriptor.serialName.toName()
                 list.add(factory)
             }
         }

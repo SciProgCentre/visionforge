@@ -5,6 +5,7 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.Config
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
@@ -81,6 +82,7 @@ class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
+        @OptIn(DFExperimental::class)
         fun parseJson(json: String): SolidGroup =
             SolidManager.jsonForSolids.parse(serializer(), json).also { it.attachChildren() }
     }
