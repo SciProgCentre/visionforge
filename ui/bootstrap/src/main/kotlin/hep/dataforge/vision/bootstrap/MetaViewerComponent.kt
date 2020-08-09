@@ -7,11 +7,8 @@ import hep.dataforge.names.NameToken
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
-import react.RBuilder
-import react.RComponent
-import react.RProps
+import react.*
 import react.dom.*
-import react.setState
 
 interface MetaViewerProps : RProps {
     var name: NameToken
@@ -19,6 +16,12 @@ interface MetaViewerProps : RProps {
     var descriptor: NodeDescriptor?
 }
 
+
+interface TreeState : RState {
+    var expanded: Boolean
+}
+
+@Deprecated("To be replaced by react functional component")
 class MetaViewerComponent : RComponent<MetaViewerProps, TreeState>() {
 
     override fun TreeState.init() {

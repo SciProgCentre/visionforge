@@ -6,8 +6,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.values.*
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.widgetType
-import kotlinx.css.Align
-import kotlinx.css.alignSelf
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
@@ -17,11 +15,9 @@ import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.defaultValue
-import react.dom.input
 import react.dom.option
-import react.dom.select
-import styled.css
-import styled.styledDiv
+import styled.styledInput
+import styled.styledSelect
 
 interface ValueChooserProps : RProps {
     var item: MetaItem<*>?
@@ -75,7 +71,7 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
         }
     }
 
-    private fun RBuilder.stringInput() = input(type = InputType.text) {
+    private fun RBuilder.stringInput() = styledInput(type = InputType.text) {
         attrs {
             this.defaultValue = props.item?.string ?: ""
             onKeyDownFunction = keyDown
@@ -84,67 +80,61 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
     }
 
     override fun RBuilder.render() {
-        styledDiv {
-            css {
-                alignSelf = Align.center
+        val descriptor = props.descriptor
+        val type = descriptor?.type?.firstOrNull()
+        when {
+            state.rawInput == true -> stringInput()
+            descriptor?.widgetType == "color" -> styledInput(type = InputType.color) {
+                ref = element
+                attrs {
+                    this.defaultValue = props.item?.value?.let { value ->
+                        if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
+                        else value.string
+                    } ?: "#000000"
+                    onChangeFunction = commit
+                }
             }
-            val descriptor = props.descriptor
-            val type = descriptor?.type?.firstOrNull()
-            when {
-                state.rawInput == true -> stringInput()
-                descriptor?.widgetType == "color" -> input(type = InputType.color) {
+            type == ValueType.BOOLEAN -> {
+                styledInput(type = InputType.checkBox) {
                     ref = element
                     attrs {
-                        this.defaultValue = props.item?.value?.let { value ->
-                            if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                            else value.string
-                        } ?: "#000000"
+                        defaultChecked = props.item?.boolean ?: false
                         onChangeFunction = commit
                     }
                 }
-                type == ValueType.BOOLEAN -> {
-                    input(type = InputType.checkBox) {
-                        ref = element
-                        attrs {
-                            defaultChecked = props.item?.boolean ?: false
-                            onChangeFunction = commit
-                        }
-                    }
-                }
-                type == ValueType.NUMBER -> input(type = InputType.number) {
-                    ref = element
-                    attrs {
-                        descriptor.attributes["step"].string?.let {
-                            step = it
-                        }
-                        descriptor.attributes["min"].string?.let {
-                            min = it
-                        }
-                        descriptor.attributes["max"].string?.let {
-                            max = it
-                        }
-                        defaultValue = props.item?.string ?: ""
-                        onKeyDownFunction = keyDown
-                    }
-                }
-                descriptor?.allowedValues?.isNotEmpty() ?: false -> select {
-                    descriptor!!.allowedValues.forEach {
-                        option {
-                            +it.string
-                        }
-                    }
-                    ref = element
-                    attrs {
-                        this.value = props.item?.string ?: ""
-                        multiple = false
-                        onChangeFunction = commit
-                    }
-                }
-                else -> stringInput()
             }
+            type == ValueType.NUMBER -> styledInput(type = InputType.number) {
+                ref = element
+                attrs {
+                    descriptor.attributes["step"].string?.let {
+                        step = it
+                    }
+                    descriptor.attributes["min"].string?.let {
+                        min = it
+                    }
+                    descriptor.attributes["max"].string?.let {
+                        max = it
+                    }
+                    defaultValue = props.item?.string ?: ""
+                    onKeyDownFunction = keyDown
+                }
+            }
+            descriptor?.allowedValues?.isNotEmpty() ?: false -> styledSelect {
+                descriptor!!.allowedValues.forEach {
+                    option {
+                        +it.string
+                    }
+                }
+                ref = element
+                attrs {
+                    this.value = props.item?.string ?: ""
+                    multiple = false
+                    onChangeFunction = commit
+                }
+            }
+            else -> stringInput()
         }
     }
-
 }
 
 internal fun RBuilder.valueChooser(

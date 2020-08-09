@@ -2,12 +2,16 @@ package hep.dataforge.vision.bootstrap
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.react.ObjectTree
 import kotlinx.html.*
 import kotlinx.html.js.div
 import kotlinx.html.js.onClickFunction
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.RBuilder
 import react.ReactElement
+import react.child
 import react.dom.*
 
 inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
@@ -205,4 +209,20 @@ inline fun RBuilder.gridRow(
     block: RDOMBuilder<DIV>.() -> Unit
 ): ReactElement {
     return div(joinStyles(classes, "row"), block)
+}
+
+fun Element.renderObjectTree(
+    vision: Vision,
+    clickCallback: (Name) -> Unit = {}
+) = render(this) {
+    card("Object tree") {
+        child(ObjectTree) {
+            attrs {
+                this.name = Name.EMPTY
+                this.obj = vision
+                this.selected = null
+                this.clickCallback = clickCallback
+            }
+        }
+    }
 }

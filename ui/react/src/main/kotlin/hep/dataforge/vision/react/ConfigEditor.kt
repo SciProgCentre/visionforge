@@ -6,13 +6,10 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
 import hep.dataforge.values.Value
-import kotlinx.css.*
-import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.div
 import react.dom.render
 import styled.*
 
@@ -86,7 +83,10 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
 
     when (actualItem) {
         is MetaItem.NodeItem -> {
-            div {
+            styledDiv {
+                css {
+                    +TreeStyles.treeLeaf
+                }
                 styledSpan {
                     css {
                         +TreeStyles.treeCaret
@@ -145,15 +145,14 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
             styledDiv {
                 css {
                     +TreeStyles.treeLeaf
-                     justifyContent = JustifyContent.flexEnd
+//                     justifyContent = JustifyContent.flexEnd
                 }
                 styledDiv {
                     css {
-                        flexGrow = 1.0
+                        +TreeStyles.treeLabel
                     }
                     styledSpan {
                         css {
-                            +TreeStyles.treeLabel
                             if (item == null) {
                                 +TreeStyles.treeLabelInactive
                             }
@@ -162,6 +161,9 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                     }
                 }
                 styledDiv {
+                    css {
+                        +TreeStyles.resizeableInput
+                    }
                     valueChooser(
                         props.name,
                         actualItem,
@@ -169,37 +171,20 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                         valueChanged
                     )
                 }
-                styledDiv {
+                styledButton {
                     css {
-                        flexShrink = 1.0
+                        +TreeStyles.removeButton
                     }
-                    styledButton {
-                        css {
-                            backgroundColor = Color.white
-                            borderStyle = BorderStyle.solid
-                            borderRadius = 2.px
-                            padding(1.px, 5.px)
-                            marginLeft = 4.px
-                            textAlign = TextAlign.center
-                            textDecoration = TextDecoration.none
-                            display = Display.inlineBlock
-                            cursor = Cursor.pointer
-                            disabled {
-                                cursor = Cursor.auto
-                                borderStyle = BorderStyle.dashed
-                                color = Color.lightGray
-                            }
-                        }
-                        +"\u00D7"
-                        attrs {
-                            if (item == null) {
-                                disabled = true
-                            } else {
-                                onClickFunction = removeClick
-                            }
+                    +"\u00D7"
+                    attrs {
+                        if (item == null) {
+                            disabled = true
+                        } else {
+                            onClickFunction = removeClick
                         }
                     }
                 }
+
             }
         }
     }

@@ -7,10 +7,7 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.bootstrap.*
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.react.component
-import hep.dataforge.vision.react.configEditor
-import hep.dataforge.vision.react.flexColumn
-import hep.dataforge.vision.react.state
+import hep.dataforge.vision.react.*
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.specifications.Camera
@@ -98,7 +95,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     }
                 }
                 //tree
-                card("Object tree", "overflow-auto") {
+                card("Object tree") {
                     visual?.let {
                         objectTree(it, selected, select)
                     }

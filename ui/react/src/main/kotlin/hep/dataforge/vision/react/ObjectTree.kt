@@ -1,4 +1,4 @@
-package hep.dataforge.vision.bootstrap
+package hep.dataforge.vision.react
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
@@ -6,14 +6,10 @@ import hep.dataforge.names.startsWith
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.isEmpty
-import hep.dataforge.vision.react.RFBuilder
-import hep.dataforge.vision.react.component
-import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.*
+import styled.*
 
 interface ObjectTreeProps : RProps {
     var name: Name
@@ -22,24 +18,25 @@ interface ObjectTreeProps : RProps {
     var clickCallback: (Name) -> Unit
 }
 
-interface TreeState : RState {
-    var expanded: Boolean
-}
-
 private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
-    var expanded: Boolean by useState{ props.selected?.startsWith(props.name) ?: false }
+    var expanded: Boolean by useState { props.selected?.startsWith(props.name) ?: false }
 
     val onClick: (Event) -> Unit = {
         expanded = !expanded
     }
 
     fun RBuilder.treeLabel(text: String) {
-        button(classes = "btn btn-link align-middle tree-label p-0") {
+        styledButton {
+            css {
+                //classes = mutableListOf("btn", "btn-link", "align-middle", "text-truncate", "p-0")
+                +TreeStyles.treeLabel
+                +TreeStyles.linkButton
+                if (props.name == props.selected) {
+                    +TreeStyles.treeLabelSelected
+                }
+            }
             +text
             attrs {
-                if (props.name == props.selected) {
-                    classes += "tree-label-selected"
-                }
                 onClickFunction = { props.clickCallback(props.name) }
             }
         }
@@ -50,13 +47,19 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
 
     //display as node if any child is visible
     if (obj is VisionGroup) {
-        div("d-block text-truncate") {
+        styledDiv {
+            css {
+                +TreeStyles.treeLeaf
+            }
             if (obj.children.any { !it.key.body.startsWith("@") }) {
-                span("tree-caret") {
-                    attrs {
+                styledSpan {
+                    css {
+                        +TreeStyles.treeCaret
                         if (expanded) {
-                            classes += "tree-caret-down"
+                            +TreeStyles.treeCaredDown
                         }
+                    }
+                    attrs {
                         onClickFunction = onClick
                     }
                 }
@@ -64,12 +67,18 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
             treeLabel(token)
         }
         if (expanded) {
-            ul("tree") {
+            styledUl {
+                css {
+                    +TreeStyles.tree
+                }
                 obj.children.entries
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true }
+                    .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
-                        li("tree-item") {
+                        styledLi {
+                            css {
+                                +TreeStyles.treeItem
+                            }
                             child(ObjectTree) {
                                 attrs {
                                     this.name = props.name + childToken
@@ -83,8 +92,10 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
             }
         }
     } else {
-        div("d-block text-truncate") {
-            span("tree-leaf") {}
+        styledDiv {
+            css {
+                +TreeStyles.treeLeaf
+            }
             treeLabel(token)
         }
     }
@@ -92,22 +103,6 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
 
 val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
     objectTree(props)
-}
-
-fun Element.renderObjectTree(
-    vision: Vision,
-    clickCallback: (Name) -> Unit = {}
-) = render(this) {
-    card("Object tree") {
-        child(ObjectTree) {
-            attrs {
-                this.name = Name.EMPTY
-                this.obj = vision
-                this.selected = null
-                this.clickCallback = clickCallback
-            }
-        }
-    }
 }
 
 fun RBuilder.objectTree(
