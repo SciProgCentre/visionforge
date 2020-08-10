@@ -5,6 +5,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
+import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
@@ -56,13 +57,22 @@ interface Vision : Configurable {
      */
     fun removeChangeListener(owner: Any?)
 
+    /**
+     * List of names of styles applied to this object. Order matters. Not inherited.
+     */
+    var styles: List<String>
+        get() =  properties[STYLE_KEY].stringList
+        set(value) {
+            setItem(STYLE_KEY,value.map { it.asValue() }.asValue())
+        }
+
     companion object {
-        const val TYPE = "visual"
+        const val TYPE = "vision"
         val STYLE_KEY = "@style".asName()
 
-        private val VISUAL_OBJECT_SERIALIZER = PolymorphicSerializer(Vision::class)
+        private val VISION_SERIALIZER = PolymorphicSerializer(Vision::class)
 
-        fun serializer() = VISUAL_OBJECT_SERIALIZER
+        fun serializer() = VISION_SERIALIZER
     }
 }
 

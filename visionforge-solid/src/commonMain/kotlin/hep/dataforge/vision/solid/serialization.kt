@@ -123,7 +123,7 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 fun Vision.stringify(): String = SolidManager.jsonForSolids.stringify(Vision.serializer(), this)
 
 @OptIn(DFExperimental::class)
-fun Vision.Companion.parseJson(str: String) = SolidManager.jsonForSolids.parse(Vision.serializer(), str).also {
+fun Vision.Companion.parseJson(str: String) = SolidManager.jsonForSolids.parse(serializer(), str).also {
     if(it is VisionGroup){
         it.attachChildren()
     }

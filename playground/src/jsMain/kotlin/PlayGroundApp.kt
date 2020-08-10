@@ -1,8 +1,7 @@
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
-import hep.dataforge.names.Name
-import hep.dataforge.vision.bootstrap.visualPropertyEditor
+import hep.dataforge.vision.bootstrap.visionPropertyEditor
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.Point3D
 import hep.dataforge.vision.solid.SolidGroup
@@ -41,7 +40,7 @@ private class PlayGroundApp : Application {
                     threeCanvas(obj)
                 }
                 div("col-3") {
-                    visualPropertyEditor(Name.EMPTY, obj)
+                    visionPropertyEditor(obj)
                 }
             }
         }

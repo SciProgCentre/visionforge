@@ -1,13 +1,11 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.getIndexed
-import hep.dataforge.meta.node
-import hep.dataforge.meta.toMetaItem
+import hep.dataforge.meta.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConvexTest {
+    @OptIn(DFExperimental::class)
     @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {

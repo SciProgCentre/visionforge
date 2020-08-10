@@ -7,7 +7,10 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.bootstrap.*
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.react.*
+import hep.dataforge.vision.react.component
+import hep.dataforge.vision.react.flexColumn
+import hep.dataforge.vision.react.objectTree
+import hep.dataforge.vision.react.state
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.specifications.Camera
@@ -78,7 +81,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 classes.add("p-1")
                 overflow = Overflow.auto
             }
-            gridColumn(3, maxSize= GridMaxSize.XL, classes = "order-2 order-xl-1") {
+            gridColumn(3, maxSize = GridMaxSize.XL, classes = "order-2 order-xl-1") {
                 card("Load data") {
                     fileDrop("(drag file here)") { files ->
                         val file = files?.get(0)
@@ -102,7 +105,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 }
             }
 
-            gridColumn(6, maxSize= GridMaxSize.XL, classes = "order-1 order-xl-2") {
+            gridColumn(6, maxSize = GridMaxSize.XL, classes = "order-1 order-xl-2") {
                 //canvas
                 (visual as? Solid)?.let { visual3D ->
                     child(ThreeCanvasComponent::class) {
@@ -118,7 +121,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     }
                 }
             }
-            gridColumn(3, maxSize= GridMaxSize.XL, classes = "order-3") {
+            gridColumn(3, maxSize = GridMaxSize.XL, classes = "order-3") {
                 container {
                     //settings
                     canvas?.let {
@@ -128,20 +131,20 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     }
                 }
                 container {
-                    namecrumbs(selected, "World") { selected = it }
-                }
-                container {
                     //properties
-                    card("Properties") {
-                        selected.let { selected ->
-                            val selectedObject: Vision? = when {
-                                selected == null -> null
-                                selected.isEmpty() -> visual
-                                else -> (visual as? VisionGroup)?.get(selected)
-                            }
-                            if (selectedObject != null) {
-                                configEditor(selectedObject, default = selectedObject.getAllProperties(), key = selected)
-                            }
+                    namecrumbs(selected, "World") { selected = it }
+                    selected.let { selected ->
+                        val selectedObject: Vision? = when {
+                            selected == null -> null
+                            selected.isEmpty() -> visual
+                            else -> (visual as? VisionGroup)?.get(selected)
+                        }
+                        if (selectedObject != null) {
+                            visionPropertyEditor(
+                                selectedObject,
+                                default = selectedObject.getAllProperties(),
+                                key = selected
+                            )
                         }
                     }
                 }

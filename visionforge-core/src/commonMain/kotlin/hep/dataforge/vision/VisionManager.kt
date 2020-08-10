@@ -84,7 +84,7 @@ class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     }
 
     fun buildVision(meta: Meta): Vision {
-        val type = meta["type"].string ?: SimpleVisionGroup.serializer().descriptor.serialName
+        val type = meta["type"].string ?: Vision.serializer().descriptor.serialName
         val form = forms.values.find { it.name.toString() == type } ?: error("Could not resolve a form for type $type")
         return form.buildVision(meta, visionSerialModule)
     }

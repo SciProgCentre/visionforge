@@ -2,12 +2,10 @@
 
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.Laminate
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.get
 import hep.dataforge.names.*
+import hep.dataforge.values.asValue
 import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -89,6 +87,12 @@ class Proxy private constructor(
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
+    override var styles: List<String>
+        get() = properties[Vision.STYLE_KEY].stringList + prototype.styles
+        set(value) {
+            setItem(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
+        }
+
     override val descriptor: NodeDescriptor?
         get() = prototype.descriptor
 
@@ -146,6 +150,12 @@ class Proxy private constructor(
         override fun getAllProperties(): Laminate =
             Laminate(properties, allStyles, prototype.getAllProperties(), parent?.getAllProperties())
 
+
+        override var styles: List<String>
+            get() = properties[Vision.STYLE_KEY].stringList + prototype.styles
+            set(value) {
+                setItem(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
+            }
 
         override val descriptor: NodeDescriptor?
             get() = prototype.descriptor

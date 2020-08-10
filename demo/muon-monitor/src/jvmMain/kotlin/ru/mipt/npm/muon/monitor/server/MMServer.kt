@@ -1,6 +1,7 @@
 package ru.mipt.npm.muon.monitor.server
 
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.solid.SolidManager
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -28,6 +29,7 @@ import java.net.URI
 
 private val generator = Cos2TrackGenerator(JDKRandomGenerator(223))
 
+@OptIn(DFExperimental::class)
 fun Application.module() {
     val currentDir = File(".").absoluteFile
     environment.log.info("Current directory: $currentDir")

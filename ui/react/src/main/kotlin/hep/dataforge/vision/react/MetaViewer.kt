@@ -1,24 +1,26 @@
 package hep.dataforge.vision.react
 
-import hep.dataforge.meta.*
-import hep.dataforge.meta.descriptors.*
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.descriptors.ItemDescriptor
+import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.defaultItem
+import hep.dataforge.meta.descriptors.get
+import hep.dataforge.meta.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.plus
-import hep.dataforge.values.Value
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.render
+import react.dom.a
 import styled.*
 
-interface ConfigEditorItemProps : RProps {
-
+interface MetaViewerProps : RProps {
     /**
-     * Root config object - always non null
+     * Root meta
      */
-    var root: Config
+    var root: Meta
 
     /**
      * Full path to the displayed node in [root]. Could be empty
@@ -26,59 +28,25 @@ interface ConfigEditorItemProps : RProps {
     var name: Name
 
     /**
-     * Root default
-     */
-    var default: Meta?
-
-    /**
      * Root descriptor
      */
     var descriptor: NodeDescriptor?
 }
 
-private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> = component { props ->
-    configEditorItem(props)
+private val MetaViewerItem: FunctionalComponent<MetaViewerProps> = component { props ->
+    metaViewerItem(props)
 }
 
-private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
+private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
     var expanded: Boolean by state { true }
-    var item: MetaItem<Config>? by state { props.root[props.name] }
+    val item = props.root[props.name]
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    val defaultItem = props.default?.get(props.name)
-    var actualItem: MetaItem<Meta>? by state { item ?: defaultItem ?: descriptorItem?.defaultItem() }
+    val actualItem = item ?: descriptorItem?.defaultItem()
 
-    val token = props.name.last()?.toString() ?: "Properties"
-
-    fun update() {
-        item = props.root[props.name]
-        actualItem = item ?: defaultItem ?: descriptorItem?.defaultItem()
-    }
-
-    useEffectWithCleanup(listOf(props.root)) {
-        props.root.onChange(this) { name, _, _ ->
-            if (name == props.name) {
-                update()
-            }
-        }
-        return@useEffectWithCleanup { props.root.removeListener(this) }
-    }
+    val token = props.name.last()?.toString() ?: "Meta"
 
     val expanderClick: (Event) -> Unit = {
         expanded = !expanded
-    }
-
-    val valueChanged: (Value?) -> Unit = {
-        if (it == null) {
-            props.root.remove(props.name)
-        } else {
-            props.root[props.name] = it
-        }
-        update()
-    }
-
-    val removeClick: (Event) -> Unit = {
-        props.root.remove(props.name)
-        update()
     }
 
     when (actualItem) {
@@ -117,8 +85,7 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                         (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
                             add(NameToken(it))
                         }
-                        item?.node?.items?.keys?.let { addAll(it) }
-                        defaultItem?.node?.items?.keys?.let { addAll(it) }
+                        actualItem.node.items.keys.let { addAll(it) }
                     }
 
                     keys.filter { !it.body.startsWith("@") }.forEach { token ->
@@ -126,12 +93,11 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                             css {
                                 +TreeStyles.treeItem
                             }
-                            child(ConfigEditorItem) {
+                            child(MetaViewerItem) {
                                 attrs {
                                     this.key = props.name.toString()
                                     this.root = props.root
                                     this.name = props.name + token
-                                    this.default = props.default
                                     this.descriptor = props.descriptor
                                 }
                             }
@@ -160,81 +126,32 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
                     }
                 }
                 styledDiv {
-                    css {
-                        +TreeStyles.resizeableInput
-                    }
-                    valueChooser(
-                        props.name,
-                        actualItem,
-                        descriptorItem as? ValueDescriptor,
-                        valueChanged
-                    )
-                }
-                styledButton {
-                    css {
-                        +TreeStyles.removeButton
-                    }
-                    +"\u00D7"
-                    attrs {
-                        if (item == null) {
-                            disabled = true
-                        } else {
-                            onClickFunction = removeClick
-                        }
+                    a {
+                        +actualItem.value.toString()
                     }
                 }
-
             }
         }
     }
 }
 
-interface ConfigEditorProps : RProps {
-    var id: Name
-    var root: Config
-    var default: Meta?
-    var descriptor: NodeDescriptor?
-}
-
-val ConfigEditor = component<ConfigEditorProps> { props ->
-    child(ConfigEditorItem) {
+val MetaViewer = component<MetaViewerProps> { props ->
+    child(MetaViewerItem) {
         attrs {
             this.key = ""
             this.root = props.root
             this.name = Name.EMPTY
-            this.default = props.default
             this.descriptor = props.descriptor
         }
     }
 }
 
-fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
-    render(this) {
-        child(ConfigEditor) {
-            attrs {
-                this.key = key?.toString() ?: ""
-                this.root = config
-                this.descriptor = descriptor
-                this.default = default
-            }
-        }
-    }
-}
-
-fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
-    child(ConfigEditor) {
+fun RBuilder.metaViewer(meta: Meta, descriptor: NodeDescriptor? = null, key: Any? = null) {
+    child(MetaViewer) {
         attrs {
             this.key = key?.toString() ?: ""
-            this.root = config
+            this.root = meta
             this.descriptor = descriptor
-            this.default = default
         }
     }
 }
-
-fun RBuilder.configEditor(
-    obj: Configurable,
-    descriptor: NodeDescriptor? = obj.descriptor,
-    default: Meta? = null,
-    key: Any? = null
-) = configEditor(obj.config,descriptor, default, key)

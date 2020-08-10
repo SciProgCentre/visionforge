@@ -6,7 +6,6 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.update
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.resolveStyle
-import hep.dataforge.vision.styles
 import javafx.beans.binding.Binding
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node

@@ -5,7 +5,6 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
-import hep.dataforge.values.asValue
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -89,15 +88,6 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     }
 }
 
-
-/**
- * List of names of styles applied to this object. Order matters. Not inherited
- */
-var Vision.styles: List<String>
-    get() = properties?.get(Vision.STYLE_KEY).stringList
-    set(value) {
-        setItem(Vision.STYLE_KEY,value.map { it.asValue() }.asValue())
-    }
 
 /**
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
