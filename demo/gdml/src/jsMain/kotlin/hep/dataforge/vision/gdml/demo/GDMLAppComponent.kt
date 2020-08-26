@@ -59,7 +59,7 @@ val GDMLApp = component<GDMLAppProps> { props ->
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = GDML.parse(data)
-                gdml.toVision(gdmlConfiguration)
+                gdml.toVision()
             }
             name.endsWith(".json") -> SolidGroup.parseJson(data)
             else -> {

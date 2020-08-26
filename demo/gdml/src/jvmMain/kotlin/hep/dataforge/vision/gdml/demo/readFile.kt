@@ -18,18 +18,18 @@ import java.util.zip.ZipInputStream
 fun SolidManager.Companion.readFile(file: File): SolidGroup = when {
     file.extension == "gdml" || file.extension == "xml" -> {
         GDML.readFile(file.toPath()).toVision {
-            lUnit = LUnit.CM
-
-            solidConfiguration = { parent, solid ->
-                if (solid.name == "cave") {
-                    setItem(SolidMaterial.MATERIAL_WIREFRAME_KEY, true.asValue())
-                }
-                if (parent.physVolumes.isNotEmpty()) {
-                    useStyle("opaque") {
-                        SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
-                    }
-                }
-            }
+//            lUnit = LUnit.CM
+//
+//            solidConfiguration = { parent, solid ->
+//                if (solid.name == "cave") {
+//                    setItem(SolidMaterial.MATERIAL_WIREFRAME_KEY, true.asValue())
+//                }
+//                if (parent.physVolumes.isNotEmpty()) {
+//                    useStyle("opaque") {
+//                        SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
+//                    }
+//                }
+//            }
         }
     }
     file.extension == "json" -> SolidGroup.parseJson(file.readText())

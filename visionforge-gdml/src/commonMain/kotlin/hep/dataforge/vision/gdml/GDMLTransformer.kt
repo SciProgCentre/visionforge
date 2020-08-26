@@ -47,9 +47,7 @@ class GDMLTransformer(val root: GDML) {
     }
 
     internal val volumes by lazy {
-        proto.group(volumesName) {
-            config["edges.enabled"] = true
-        }
+        proto.group(volumesName)
     }
     private val styleCache = HashMap<Name, Meta>()
 
@@ -58,6 +56,7 @@ class GDMLTransformer(val root: GDML) {
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
                 SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
+                "edges.enabled" put true
             }
         }
     }

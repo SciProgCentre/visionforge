@@ -14,18 +14,6 @@ import styled.injectGlobal
 import kotlin.browser.document
 
 
-val gdmlConfiguration: GDMLTransformer.() -> Unit = {
-    lUnit = LUnit.CM
-
-    solidConfiguration = { parent, _ ->
-        if (parent.physVolumes.isNotEmpty()) {
-            useStyle("opaque") {
-                MATERIAL_OPACITY_KEY put 0.3
-            }
-        }
-    }
-}
-
 private class GDMLDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
@@ -46,7 +34,7 @@ private class GDMLDemoApp : Application {
             child(GDMLApp) {
                 attrs {
                     this.context = context
-                    this.rootObject = cubes().toVision(gdmlConfiguration)
+                    this.rootObject = cubes().toVision()
                 }
             }
         }
