@@ -36,12 +36,11 @@ class GDMLView : View() {
             buttonbar {
                 button("Load GDML/json") {
                     action {
-                        runAsync {
-                            val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
-                                ?: return@runAsync null
-                            SolidManager.readFile(file)
-                        } ui {
-                            if (it != null) {
+                        val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
+                        if(file!= null) {
+                            runAsync {
+                                SolidManager.readFile(file)
+                            } ui {
                                 canvas.render(it)
                             }
                         }

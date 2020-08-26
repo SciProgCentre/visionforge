@@ -16,23 +16,9 @@ import kotlin.browser.document
 
 val gdmlConfiguration: GDMLTransformer.() -> Unit = {
     lUnit = LUnit.CM
-    volumeAction = { volume ->
-        when {
-            volume.name.startsWith("ecal01lay") -> GDMLTransformer.Action.REJECT
-            volume.name.startsWith("UPBL") -> GDMLTransformer.Action.REJECT
-            volume.name.startsWith("USCL") -> GDMLTransformer.Action.REJECT
-            volume.name.startsWith("VPBL") -> GDMLTransformer.Action.REJECT
-            volume.name.startsWith("VSCL") -> GDMLTransformer.Action.REJECT
-            else -> GDMLTransformer.Action.CACHE
-        }
-    }
 
-    solidConfiguration = { parent, solid ->
-        if (
-            solid.name.startsWith("Yoke")
-            || solid.name.startsWith("Pole")
-            || parent.physVolumes.isNotEmpty()
-        ) {
+    solidConfiguration = { parent, _ ->
+        if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
                 MATERIAL_OPACITY_KEY put 0.3
             }
@@ -64,19 +50,6 @@ private class GDMLDemoApp : Application {
                 }
             }
         }
-//        (document.getElementById("file_load_button") as? HTMLInputElement)?.apply {
-//            addEventListener("change", {
-//                (it.target as HTMLInputElement).files?.asList()?.first()?.let { file ->
-//                    FileReader().apply {
-//                        onload = {
-//                            val string = result as String
-//                            action(file.name, string)
-//                        }
-//                        readAsText(file)
-//                    }
-//                }
-//            }, false)
-//        }
 
     }
 }

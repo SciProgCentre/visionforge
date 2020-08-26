@@ -13,6 +13,9 @@ import react.RBuilder
 import react.ReactElement
 import react.child
 import react.dom.*
+import styled.StyledDOMBuilder
+import styled.css
+import styled.styledDiv
 
 inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
     div("card w-100") {
@@ -180,10 +183,14 @@ enum class ContainerSize(val suffix: String) {
 }
 
 inline fun RBuilder.container(
-    classes: String? = null,
     size: ContainerSize = ContainerSize.FLUID,
-    block: RDOMBuilder<DIV>.() -> Unit
-): ReactElement = div(joinStyles(classes, "container${size.suffix}"), block)
+    block: StyledDOMBuilder<DIV>.() -> Unit
+): ReactElement = styledDiv{
+    css{
+        classes.add("container${size.suffix}")
+    }
+    block()
+}
 
 
 enum class GridMaxSize(val suffix: String) {
@@ -196,19 +203,23 @@ enum class GridMaxSize(val suffix: String) {
 
 inline fun RBuilder.gridColumn(
     weight: Int? = null,
-    classes: String? = null,
     maxSize: GridMaxSize = GridMaxSize.NONE,
-    block: RDOMBuilder<DIV>.() -> Unit
-): ReactElement {
+    block: StyledDOMBuilder<DIV>.() -> Unit
+): ReactElement = styledDiv {
     val weightSuffix = weight?.let { "-$it" } ?: ""
-    return div(joinStyles(classes, "col${maxSize.suffix}$weightSuffix"), block)
+    css {
+        classes.add("col${maxSize.suffix}$weightSuffix")
+    }
+    block()
 }
 
 inline fun RBuilder.gridRow(
-    classes: String? = null,
-    block: RDOMBuilder<DIV>.() -> Unit
-): ReactElement {
-    return div(joinStyles(classes, "row"), block)
+    block: StyledDOMBuilder<DIV>.() -> Unit
+): ReactElement = styledDiv{
+    css{
+        classes.add("row")
+    }
+    block()
 }
 
 fun Element.renderObjectTree(

@@ -91,8 +91,7 @@ interface MutableVisionGroup : VisionGroup {
 
 operator fun VisionGroup.get(str: String?): Vision? = get(str?.toName() ?: Name.EMPTY)
 
-operator fun MutableVisionGroup.set(key: String, child: Vision?) {
-    set(key.toName(), child)
-}
+operator fun MutableVisionGroup.set(token: NameToken, child: Vision?): Unit = set(token.asName(), child)
+operator fun MutableVisionGroup.set(key: String, child: Vision?): Unit = set(key.toName(), child)
 
 fun MutableVisionGroup.removeAll() = children.keys.map { it.asName() }.forEach { this[it] = null }

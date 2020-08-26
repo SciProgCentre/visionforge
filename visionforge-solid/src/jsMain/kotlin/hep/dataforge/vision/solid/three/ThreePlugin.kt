@@ -70,7 +70,7 @@ class ThreePlugin : AbstractPlugin() {
 
                     obj.onChildrenChange(this) { name, child ->
                         if (name.isEmpty()) {
-                            logger.error { "Children change with empty namr on $group" }
+                            logger.error { "Children change with empty name on $group" }
                             return@onChildrenChange
                         }
 

@@ -13,6 +13,9 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
+
+class AbstractProxy
+
 /**
  * A proxy [Solid] to reuse a template object
  */
@@ -39,8 +42,7 @@ class Proxy private constructor(
         get() = (parent as? SolidGroup)?.getPrototype(templateName)
             ?: error("Prototype with name $templateName not found in $parent")
 
-    override val styleSheet: StyleSheet
-        get() = parent?.styleSheet ?: StyleSheet(this)
+    override val styleSheet: StyleSheet get() = parent?.styleSheet ?: StyleSheet(this)
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {

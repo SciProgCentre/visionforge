@@ -10,11 +10,10 @@ class TestConvertor {
     @Test
     fun testBMNGeometry() {
         val stream = javaClass.getResourceAsStream("/gdml/BM@N.gdml")
-
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        val visual = xml.toVision()
-        println(visual.stringify())
+        val vision = xml.toVision()
+        println(vision.stringify())
     }
 
     @Test

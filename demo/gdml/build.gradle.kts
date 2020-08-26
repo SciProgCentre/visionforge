@@ -1,6 +1,5 @@
 import scientifik.DependencyConfiguration
 import scientifik.FXModule
-import scientifik.useFx
 
 plugins {
     id("scientifik.mpp")
@@ -37,7 +36,7 @@ kotlin {
 }
 
 application {
-    mainClassName = "hep.dataforge.vision.gdml.demo.GDMLDemoAppKt"
+    mainClassName = "hep.dataforge.vision.gdml.demo.GdmlFxDemoAppKt"
 }
 
 val convertGdmlToJson by tasks.creating(JavaExec::class) {

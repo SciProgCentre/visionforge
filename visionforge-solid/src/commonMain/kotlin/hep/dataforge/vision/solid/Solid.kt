@@ -103,9 +103,9 @@ interface Solid : Vision {
  * Count number of layers to the top object. Return 1 if this is top layer
  */
 var Solid.layer: Int
-    get() = getItem(LAYER_KEY).int ?: 0
+    get() = properties?.getItem(LAYER_KEY).int ?: 0
     set(value) {
-        setItem(LAYER_KEY, value.asValue())
+        config[LAYER_KEY] = value.asValue()
     }
 
 fun Renderer<Solid>.render(meta: Meta = Meta.EMPTY, action: SolidGroup.() -> Unit) =

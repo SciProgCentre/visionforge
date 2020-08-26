@@ -33,18 +33,27 @@ object ThreeMaterials {
         linewidth = 8.0
     }
 
-    fun getLineMaterial(meta: Meta?): LineBasicMaterial {
+    private val lineMaterialCache = HashMap<Meta, LineBasicMaterial>()
+
+    private fun buildLineMaterial(meta: Meta): LineBasicMaterial = LineBasicMaterial().apply {
+        color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_LINE_COLOR
+        opacity = meta[SolidMaterial.OPACITY_KEY].double ?: 1.0
+        transparent = opacity < 1.0
+        linewidth = meta["thickness"].double ?: 1.0
+    }
+
+    fun getLineMaterial(meta: Meta?, cache: Boolean): LineBasicMaterial {
         if (meta == null) return DEFAULT_LINE
-        return LineBasicMaterial().apply {
-            color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_LINE_COLOR
-            opacity = meta[SolidMaterial.OPACITY_KEY].double ?: 1.0
-            transparent = opacity < 1.0
-            linewidth = meta["thickness"].double ?: 1.0
+        return if (cache) {
+            lineMaterialCache.getOrPut(meta) { buildLineMaterial(meta) }
+        } else {
+            buildLineMaterial(meta)
         }
     }
 
-    fun getMaterial(vision3D: Vision): Material {
-        val meta = vision3D.getItem(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
+    private val materialCache = HashMap<Meta, Material>()
+
+    private fun buildMaterial(meta: Meta): Material {
         return if (meta[SolidMaterial.SPECULAR_COLOR_KEY] != null) {
             MeshPhongMaterial().apply {
                 color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
@@ -62,6 +71,15 @@ object ThreeMaterials {
                 wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
                 needsUpdate = true
             }
+        }
+    }
+
+    fun getMaterial(vision3D: Vision, cache: Boolean): Material {
+        val meta = vision3D.getItem(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
+        return if (cache) {
+            materialCache.getOrPut(meta) { buildMaterial(meta) }
+        } else {
+            buildMaterial(meta)
         }
     }
 

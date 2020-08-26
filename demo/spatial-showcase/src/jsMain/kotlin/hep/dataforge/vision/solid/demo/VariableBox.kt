@@ -71,7 +71,7 @@ private object VariableBoxThreeFactory : ThreeFactory<Solid> {
         //JS sometimes tries to pass Geometry as BufferGeometry
         @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
 
-        val mesh = Mesh(geometry, getMaterial(obj)).apply {
+        val mesh = Mesh(geometry, getMaterial(obj,true)).apply {
             applyEdges(obj)
             applyWireFrame(obj)
 

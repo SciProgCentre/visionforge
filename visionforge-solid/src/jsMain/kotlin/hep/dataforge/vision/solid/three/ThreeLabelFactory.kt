@@ -21,7 +21,7 @@ object ThreeLabelFactory : ThreeFactory<SolidLabel> {
             height = 1
             curveSegments = 1
         })
-        return Mesh(textGeo, getMaterial(obj)).apply {
+        return Mesh(textGeo, getMaterial(obj,true)).apply {
             updatePosition(obj)
             obj.onPropertyChange(this@ThreeLabelFactory) { _ ->
                 //TODO

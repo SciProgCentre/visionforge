@@ -58,7 +58,7 @@ fun Object3D.updatePosition(obj: Vision) {
  */
 fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
-        this.material = getMaterial(source)
+        this.material = getMaterial(source, false)
     } else if (
         propertyName.startsWith(Solid.POSITION_KEY)
         || propertyName.startsWith(Solid.ROTATION)
