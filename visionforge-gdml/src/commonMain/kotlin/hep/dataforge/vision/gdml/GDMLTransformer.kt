@@ -2,6 +2,7 @@ package hep.dataforge.vision.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.set
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
@@ -14,6 +15,9 @@ import scientifik.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
+
+private val solidsName = "solids".asName()
+private val volumesName = "volumes".asName()
 
 class GDMLTransformer(val root: GDML) {
     //private val materialCache = HashMap<GDMLMaterial, Meta>()
@@ -35,6 +39,18 @@ class GDMLTransformer(val root: GDML) {
      * A special group for local templates
      */
     internal val proto by lazy { SolidGroup() }
+
+    internal val solids by lazy {
+        proto.group(solidsName) {
+            config["edges.enabled"] = false
+        }
+    }
+
+    internal val volumes by lazy {
+        proto.group(volumesName) {
+            config["edges.enabled"] = true
+        }
+    }
     private val styleCache = HashMap<Name, Meta>()
 
     var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
@@ -231,7 +247,7 @@ private fun SolidGroup.addSolid(
 }
 
 
-private val solidsName = "solids".asName()
+
 
 private fun SolidGroup.addSolidWithCaching(
     context: GDMLTransformer,
@@ -245,8 +261,7 @@ private fun SolidGroup.addSolidWithCaching(
         GDMLTransformer.Action.CACHE -> {
             val fullName = solidsName + solid.name.asName()
             if (context.proto[fullName] == null) {
-                val parent = (context.proto[solidsName] as? SolidGroup) ?: context.proto.group(solidsName)
-                parent.addSolid(context, solid, solid.name)
+                context.solids.addSolid(context, solid, solid.name)
             }
             ref(fullName, name)
         }
@@ -257,7 +272,6 @@ private fun SolidGroup.addSolidWithCaching(
     }
 }
 
-private val volumesName = "volumes".asName()
 
 private fun SolidGroup.addPhysicalVolume(
     context: GDMLTransformer,
@@ -288,7 +302,7 @@ private fun SolidGroup.addPhysicalVolume(
                 context.proto[fullName] = volume(context, volume)
             }
 
-            this[physVolume.name ?: ""] = Proxy(this, fullName).withPosition(context, physVolume)
+            ref(fullName,physVolume.name ?: "").withPosition(context, physVolume)
         }
         GDMLTransformer.Action.REJECT -> {
             //ignore

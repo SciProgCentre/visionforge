@@ -67,7 +67,6 @@ val GDMLApp = component<GDMLAppProps> { props ->
                 error("File extension is not recognized: $name")
             }
         }
-        parsedVision.config["edges.enabled"] = false
 
         vision = parsedVision
     }

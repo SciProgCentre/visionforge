@@ -4,6 +4,7 @@ import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Proxy
 import hep.dataforge.vision.solid.Proxy.Companion.PROXY_CHILD_PROPERTY_PREFIX
 import hep.dataforge.vision.solid.Solid
+import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
@@ -13,16 +14,18 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
 
     override val type: KClass<Proxy> = Proxy::class
 
-//    private fun Object3D.replicate(): Object3D {
-//        return when (this) {
-//            is Mesh -> Mesh(geometry as BufferGeometry, material)
-//            else -> clone(false)
-//        }.also { obj: Object3D ->
-//            children.forEach { child: Object3D ->
-//                obj.add(child.replicate())
-//            }
-//        }
-//    }
+    private fun Object3D.replicate(): Object3D {
+        return when (this) {
+            is Mesh -> Mesh(geometry as BufferGeometry, material).also {
+                it.applyMatrix(matrix)
+            }
+            else -> clone(false)
+        }.also { obj: Object3D ->
+            children.forEach { child: Object3D ->
+                obj.add(child.replicate())
+            }
+        }
+    }
 
     override fun invoke(obj: Proxy): Object3D {
         val template = obj.prototype
@@ -30,7 +33,7 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
             three.buildObject3D(template)
         }
 
-        val object3D: Object3D = cachedObject.clone()//cachedObject.replicate()
+        val object3D: Object3D = cachedObject.replicate()
         object3D.updatePosition(obj)
 
         if(object3D is Mesh){
