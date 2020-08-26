@@ -1,6 +1,7 @@
 package hep.dataforge.vision.solid.three
 
 import hep.dataforge.js.requireJS
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.bootstrap.accordion
 import hep.dataforge.vision.bootstrap.entry
 import hep.dataforge.vision.solid.SolidGroup
@@ -31,6 +32,7 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
     fileSaver.saveAs(blob, fileName)
 }
 
+@OptIn(DFExperimental::class)
 fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
     entry("Settings") {
         div("row") {

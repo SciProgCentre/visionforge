@@ -84,7 +84,6 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
         override fun serialize(encoder: Encoder, value: StyleSheet) {
             mapSerializer.serialize(encoder, value.items)
         }
-
     }
 }
 
@@ -93,7 +92,7 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
 fun Vision.useStyle(name: String) {
-    styles = styles + name
+    styles = properties[Vision.STYLE_KEY].stringList + name
 }
 
 /**

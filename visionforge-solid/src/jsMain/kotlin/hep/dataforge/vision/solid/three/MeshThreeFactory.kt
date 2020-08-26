@@ -35,19 +35,11 @@ abstract class MeshThreeFactory<in T : Solid>(
 
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
-        val mesh = Mesh(geometry, getMaterial(obj, true)).apply {
+        val mesh = Mesh(geometry, null).apply{
             matrixAutoUpdate = false
-            applyEdges(obj)
-            applyWireFrame(obj)
-
             //set position for mesh
             updatePosition(obj)
-
-            layers.enable(obj.layer)
-            children.forEach {
-                it.layers.enable(obj.layer)
-            }
-        }
+        }.applyProperties(obj)
 
         //add listener to object properties
         obj.onPropertyChange(this) { name ->
@@ -76,6 +68,16 @@ abstract class MeshThreeFactory<in T : Solid>(
         val EDGES_MATERIAL_KEY = EDGES_KEY + SolidMaterial.MATERIAL_KEY
         val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
         val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
+    }
+}
+
+fun Mesh.applyProperties(obj: Solid): Mesh = apply{
+    material = getMaterial(obj, true)
+    applyEdges(obj)
+    applyWireFrame(obj)
+    layers.enable(obj.layer)
+    children.forEach {
+        it.layers.enable(obj.layer)
     }
 }
 

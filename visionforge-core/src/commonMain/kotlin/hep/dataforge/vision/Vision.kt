@@ -5,7 +5,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
@@ -63,7 +62,7 @@ interface Vision : Configurable {
     var styles: List<String>
         get() =  properties[STYLE_KEY].stringList
         set(value) {
-            setItem(STYLE_KEY,value.map { it.asValue() }.asValue())
+            config[STYLE_KEY] = value
         }
 
     companion object {

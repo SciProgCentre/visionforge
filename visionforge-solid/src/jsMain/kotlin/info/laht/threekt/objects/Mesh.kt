@@ -33,8 +33,8 @@ import info.laht.threekt.materials.Material
 
 open external class Mesh : Object3D {
 
-    constructor(geometry: Geometry, material: Material)
-    constructor(geometry: BufferGeometry, material: Material)
+    constructor(geometry: Geometry?, material: Material?)
+    constructor(geometry: BufferGeometry?, material: Material?)
 
     var geometry: dynamic
     var material: Material

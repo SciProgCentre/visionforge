@@ -20,7 +20,7 @@ fun cubes(): GDML = GDML {
         val circle = volume("composite", boxMaterial, smallBox.ref()) {
             for (i in 0 until 6) {
                 physVolume(segmentVolume) {
-                    name = "segment$i"
+                    name = "segment_$i"
                     positionref = center.ref()
                     rotation {
                         z = 60 * i

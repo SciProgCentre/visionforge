@@ -41,18 +41,6 @@ fun Object3D.updatePosition(obj: Vision) {
     }
 }
 
-///**
-// * Unsafe invocation of a factory
-// */
-//operator fun <T : VisualObject3D> ThreeFactory<T>.invoke(obj: Any): Object3D {
-//    if (type.isInstance(obj)) {
-//        @Suppress("UNCHECKED_CAST")
-//        return invoke(obj as T)
-//    } else {
-//        error("The object of type ${obj::class} could not be rendered by this factory")
-//    }
-//}
-
 /**
  * Update non-position non-geometry property
  */

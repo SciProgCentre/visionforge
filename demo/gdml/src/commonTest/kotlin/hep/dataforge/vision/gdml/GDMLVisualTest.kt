@@ -10,11 +10,21 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GDMLVisualTest {
+    val gdml = cubes()
+
+//    @Test
+//    fun testCubesStyles(){
+//        val cubes = gdml.toVision()
+//        val segment = cubes["composite000.segment_0".toName()] as Solid
+//        println(segment.styles)
+//        println(segment.material)
+//    }
+
+
     @Test
     fun testPrototypeProperty() {
-        val gdml = cubes()
         val visual = gdml.toVision()
-        visual["composite000.segment0".toName()]?.setItem(SolidMaterial.MATERIAL_COLOR_KEY, "red".asValue())
-        assertEquals("red", visual["composite000.segment0".toName()]?.getItem(SolidMaterial.MATERIAL_COLOR_KEY).string)
+        visual["composite000.segment_0".toName()]?.setItem(SolidMaterial.MATERIAL_COLOR_KEY, "red".asValue())
+        assertEquals("red", visual["composite000.segment_0".toName()]?.getItem(SolidMaterial.MATERIAL_COLOR_KEY).string)
     }
 }

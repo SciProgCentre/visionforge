@@ -99,13 +99,14 @@ fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
 tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
     prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
+fun MutableVisionGroup.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
+    SolidGroup().apply(action).also { set(name, it) }
+
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
-fun MutableVisionGroup.group(name: String = "", action: SolidGroup.() -> Unit = {}): SolidGroup =
-    SolidGroup().apply(action).also {
-        set(name, it)
-    }
+fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
+    SolidGroup().apply(action).also { set(name, it) }
 
 /**
  * A special class which works as a holder for prototypes
