@@ -1,5 +1,8 @@
 package hep.dataforge.vision.gdml
 
+import hep.dataforge.vision.solid.AbstractProxy
+import hep.dataforge.vision.solid.prototype
+import hep.dataforge.vision.visitor.countDistinct
 import hep.dataforge.vision.visitor.countDistinctBy
 import hep.dataforge.vision.visitor.flowStatistics
 import kotlinx.coroutines.Dispatchers
@@ -7,6 +10,7 @@ import kotlinx.coroutines.withContext
 import nl.adaptivity.xmlutil.StAXReader
 import scientifik.gdml.GDML
 import java.io.File
+import kotlin.reflect.KClass
 
 suspend fun main() {
     withContext(Dispatchers.Default) {
@@ -19,16 +23,18 @@ suspend fun main() {
         val vision = xml.toVision()
 
 
-        vision.flowStatistics().countDistinctBy { it.type }.forEach { (depth, size) ->
+        vision.flowStatistics<KClass<*>>{ _, child ->
+            child.prototype::class
+        }.countDistinct().forEach { (depth, size) ->
             println("$depth\t$size")
         }
 
-        println("***REDUCED***")
-
-        vision.optimizeGdml()
-
-        vision.flowStatistics().countDistinctBy { it.type }.forEach { (depth, size) ->
-            println("$depth\t$size")
-        }
+//        println("***REDUCED***")
+//
+//        vision.optimizeGdml()
+//
+//        vision.flowStatistics().countDistinctBy { it.type }.forEach { (depth, size) ->
+//            println("$depth\t$size")
+//        }
     }
 }
