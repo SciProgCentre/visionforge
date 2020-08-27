@@ -165,7 +165,7 @@ open external class Object3D {
     /**
      * Applies the matrix transform to the object and updates the object's position, rotation and scale.
      */
-    fun applyMatrix(matrix: Matrix4)
+    fun applyMatrix4(matrix: Matrix4)
 
     /**
      * Applies the rotation represented by the quaternion to the object.

@@ -99,7 +99,7 @@ open external class BufferGeometry {
     fun merge(bufferGeometry: BufferGeometry, offset: Int = definedExternally): BufferGeometry
 
 
-    fun applyMatrix(matrix: Matrix4)
+    fun applyMatrix4(matrix: Matrix4)
     fun lookAt(vector: Vector3): BufferGeometry
     fun rotateX(radians: Double): BufferGeometry
     fun rotateY(radians: Double): BufferGeometry

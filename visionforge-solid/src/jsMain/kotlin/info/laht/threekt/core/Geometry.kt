@@ -70,7 +70,7 @@ open external class Geometry {
     var lineDistancesNeedUpdate: Boolean
     var groupsNeedUpdate: Boolean
 
-    fun applyMatrix(matrix: Matrix4): Geometry
+    fun applyMatrix4(matrix: Matrix4): Geometry
     fun rotateX(angle: Number): Geometry
     fun rotateY(angle: Number): Geometry
     fun rotateZ(angle: Number): Geometry

@@ -24,16 +24,16 @@ class GDMLTransformer(val root: GDML) {
     private val random = Random(222)
 
     enum class Action {
-        ACCEPT,
+        ADD,
         REJECT,
-        CACHE
+        PROTOTYPE
     }
 
     var lUnit: LUnit = LUnit.MM
     var aUnit: AUnit = AUnit.RADIAN
 
-    var solidAction: (GDMLSolid) -> Action = { Action.CACHE }
-    var volumeAction: (GDMLGroup) -> Action = { Action.CACHE }
+    var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
+    var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
 
     /**
      * A special group for local templates
@@ -49,6 +49,15 @@ class GDMLTransformer(val root: GDML) {
     internal val volumes by lazy {
         proto.group(volumesName)
     }
+
+//    fun proxySolid(group: SolidGroup, solid: GDMLSolid, name: String): Proxy {
+//        val fullName = solidsName + name
+//        if (proto[fullName] == null) {
+//            solids.addSolid(this, solid, name)
+//        }
+//        return group.ref(fullName, name)
+//    }
+
     private val styleCache = HashMap<Name, Meta>()
 
     var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
@@ -245,19 +254,17 @@ private fun SolidGroup.addSolid(
     }
 }
 
-
-
-
 private fun SolidGroup.addSolidWithCaching(
     context: GDMLTransformer,
     solid: GDMLSolid,
     name: String = solid.name
 ): Solid? {
     return when (context.solidAction(solid)) {
-        GDMLTransformer.Action.ACCEPT -> {
+        GDMLTransformer.Action.ADD -> {
             addSolid(context, solid, name)
         }
-        GDMLTransformer.Action.CACHE -> {
+        GDMLTransformer.Action.PROTOTYPE -> {
+//            context.proxySolid(this, solid, name)
             val fullName = solidsName + solid.name.asName()
             if (context.proto[fullName] == null) {
                 context.solids.addSolid(context, solid, solid.name)
@@ -270,7 +277,6 @@ private fun SolidGroup.addSolidWithCaching(
         }
     }
 }
-
 
 private fun SolidGroup.addPhysicalVolume(
     context: GDMLTransformer,
@@ -291,17 +297,16 @@ private fun SolidGroup.addPhysicalVolume(
     }
 
     when (context.volumeAction(volume)) {
-        GDMLTransformer.Action.ACCEPT -> {
+        GDMLTransformer.Action.ADD -> {
             val group: SolidGroup = volume(context, volume)
             this[physVolume.name ?: ""] = group.withPosition(context, physVolume)
         }
-        GDMLTransformer.Action.CACHE -> {
+        GDMLTransformer.Action.PROTOTYPE -> {
             val fullName = volumesName + volume.name.asName()
             if (context.proto[fullName] == null) {
                 context.proto[fullName] = volume(context, volume)
             }
-
-            ref(fullName,physVolume.name ?: "").withPosition(context, physVolume)
+            ref(fullName, physVolume.name ?: "").withPosition(context, physVolume)
         }
         GDMLTransformer.Action.REJECT -> {
             //ignore

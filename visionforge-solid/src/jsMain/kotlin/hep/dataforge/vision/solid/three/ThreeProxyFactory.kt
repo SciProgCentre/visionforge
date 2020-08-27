@@ -17,10 +17,11 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
     private fun Object3D.replicate(): Object3D {
         return when (this) {
             is Mesh -> Mesh(geometry as BufferGeometry, material).also {
-                it.applyMatrix(matrix)
+                it.applyMatrix4(matrix)
             }
             else -> clone(false)
         }.also { obj: Object3D ->
+            obj.name = this.name
             children.forEach { child: Object3D ->
                 obj.add(child.replicate())
             }
