@@ -12,20 +12,17 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForm
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIAL_MODULE_TARGET
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
-import kotlinx.serialization.modules.SerialModule
-import kotlinx.serialization.modules.SerialModuleCollector
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
+import kotlinx.serialization.modules.*
 import kotlin.reflect.KClass
 
 @DFExperimental
-private class SolidForm<T :Solid>(
+private class SolidForm<T : Solid>(
     override val type: KClass<T>,
-    override val serializer: KSerializer<T>
+    override val serializer: KSerializer<T>,
 ) : VisionForm<T> {
 
     private fun Solid.update(meta: Meta) {
@@ -46,12 +43,12 @@ private class SolidForm<T :Solid>(
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @DFExperimental
-@OptIn(UnstableDefault::class)
-private fun SerialModule.extractFactories(): List<SolidForm<*>> {
+private fun SerializersModule.extractFactories(): List<SolidForm<*>> {
     val list = ArrayList<SolidForm<*>>()
 
-    val collector = object : SerialModuleCollector {
+    val collector = object : SerializersModuleCollector {
         override fun <T : Any> contextual(kClass: KClass<T>, serializer: KSerializer<T>) {
             //Do nothing
         }
@@ -59,7 +56,7 @@ private fun SerialModule.extractFactories(): List<SolidForm<*>> {
         override fun <Base : Any, Sub : Base> polymorphic(
             baseClass: KClass<Base>,
             actualClass: KClass<Sub>,
-            actualSerializer: KSerializer<Sub>
+            actualSerializer: KSerializer<Sub>,
         ) {
             if (baseClass == Vision::class) {
                 @Suppress("UNCHECKED_CAST") val factory = SolidForm<Solid>(
@@ -70,34 +67,41 @@ private fun SerialModule.extractFactories(): List<SolidForm<*>> {
             }
         }
 
+        override fun <Base : Any> polymorphicDefault(
+            baseClass: KClass<Base>,
+            defaultSerializerProvider: (className: String?) -> DeserializationStrategy<out Base>?,
+        ) {
+            TODO("Not yet implemented")
+        }
+
     }
     dumpTo(collector)
     return list
 }
 
 @DFExperimental
-class SolidManager(meta: Meta) : AbstractPlugin(meta) {
+public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
 
-    val visionManager by require(VisionManager)
+    public val visionManager: VisionManager by require(VisionManager)
 
     override val tag: PluginTag get() = Companion.tag
 
-    override fun provideTop(target: String): Map<Name, Any> = when (target) {
+    override fun content(target: String): Map<Name, Any> = when (target) {
         VisionForm.TYPE -> serialModule.extractFactories().associateBy { it.name }
         VISION_SERIAL_MODULE_TARGET -> mapOf(tag.name.toName() to serialModule)
-        else -> super.provideTop(target)
+        else -> super.content(target)
     }
 
-    companion object : PluginFactory<SolidManager> {
+    public companion object : PluginFactory<SolidManager> {
         override val tag: PluginTag = PluginTag(name = "visual.spatial", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out SolidManager> = SolidManager::class
         override fun invoke(meta: Meta, context: Context): SolidManager = SolidManager(meta)
 
-        val serialModule = SerializersModule {
+        public val serialModule: SerializersModule = SerializersModule {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
 
-            polymorphic(Vision::class, Solid::class) {
+            polymorphic(Vision::class) {
                 subclass(SimpleVisionGroup.serializer())
                 subclass(SolidGroup.serializer())
                 subclass(Proxy.serializer())
@@ -112,15 +116,12 @@ class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
-        @OptIn(UnstableDefault::class)
-        val jsonForSolids = Json(
-            JsonConfiguration(
-                prettyPrint = true,
-                useArrayPolymorphism = false,
-                encodeDefaults = false,
-                ignoreUnknownKeys = true
-            ),
-            context = serialModule
-        )
+        val jsonForSolids = Json {
+            prettyPrint = true
+            useArrayPolymorphism = false
+            encodeDefaults = false
+            ignoreUnknownKeys = true
+            serializersModule = this@Companion.serialModule
+        }
     }
 }

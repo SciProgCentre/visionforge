@@ -2,6 +2,7 @@ package hep.dataforge.vision.bootstrap
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
+import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.react.ObjectTree
 import kotlinx.html.*
@@ -17,7 +18,7 @@ import styled.StyledDOMBuilder
 import styled.css
 import styled.styledDiv
 
-inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
+public inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
     div("card w-100") {
         div("card-body") {
             h3(classes = "card-title") { +title }
@@ -26,7 +27,7 @@ inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagCo
     }
 }
 
-inline fun RBuilder.card(title: String, classes: String? = null, crossinline block: RBuilder.() -> Unit) {
+public inline fun RBuilder.card(title: String, classes: String? = null, crossinline block: RBuilder.() -> Unit) {
     div("card w-100 $classes") {
         div("card-body") {
             h3(classes = "card-title") {
@@ -37,7 +38,7 @@ inline fun RBuilder.card(title: String, classes: String? = null, crossinline blo
     }
 }
 
-fun TagConsumer<HTMLElement>.accordion(id: String, elements: List<Pair<String, DIV.() -> Unit>>) {
+public fun TagConsumer<HTMLElement>.accordion(id: String, elements: List<Pair<String, DIV.() -> Unit>>) {
     div("container-fluid") {
         div("accordion") {
             this.id = id
@@ -69,18 +70,18 @@ fun TagConsumer<HTMLElement>.accordion(id: String, elements: List<Pair<String, D
     }
 }
 
-typealias AccordionBuilder = MutableList<Pair<String, DIV.() -> Unit>>
+public typealias AccordionBuilder = MutableList<Pair<String, DIV.() -> Unit>>
 
-fun AccordionBuilder.entry(title: String, builder: DIV.() -> Unit) {
+public fun AccordionBuilder.entry(title: String, builder: DIV.() -> Unit) {
     add(title to builder)
 }
 
-fun TagConsumer<HTMLElement>.accordion(id: String, builder: AccordionBuilder.() -> Unit) {
+public fun TagConsumer<HTMLElement>.accordion(id: String, builder: AccordionBuilder.() -> Unit) {
     val list = ArrayList<Pair<String, DIV.() -> Unit>>().apply(builder)
     accordion(id, list)
 }
 
-fun RBuilder.accordion(id: String, elements: List<Pair<String, RDOMBuilder<DIV>.() -> Unit>>): ReactElement {
+public fun RBuilder.accordion(id: String, elements: List<Pair<String, RDOMBuilder<DIV>.() -> Unit>>): ReactElement {
     return div("container-fluid") {
         div("accordion") {
             attrs {
@@ -120,7 +121,7 @@ fun RBuilder.accordion(id: String, elements: List<Pair<String, RDOMBuilder<DIV>.
     }
 }
 
-fun RBuilder.namecrumbs(name: Name?, rootTitle: String, link: (Name) -> Unit) {
+public fun RBuilder.namecrumbs(name: Name?, rootTitle: String, link: (Name) -> Unit) {
     div("container-fluid p-0") {
         nav {
             attrs {
@@ -160,20 +161,18 @@ fun RBuilder.namecrumbs(name: Name?, rootTitle: String, link: (Name) -> Unit) {
     }
 }
 
-typealias RAccordionBuilder = MutableList<Pair<String, RDOMBuilder<DIV>.() -> Unit>>
+public typealias RAccordionBuilder = MutableList<Pair<String, RDOMBuilder<DIV>.() -> Unit>>
 
-fun RAccordionBuilder.entry(title: String, builder: RDOMBuilder<DIV>.() -> Unit) {
+public fun RAccordionBuilder.entry(title: String, builder: RDOMBuilder<DIV>.() -> Unit) {
     add(title to builder)
 }
 
-fun RBuilder.accordion(id: String, builder: RAccordionBuilder.() -> Unit): ReactElement {
+public fun RBuilder.accordion(id: String, builder: RAccordionBuilder.() -> Unit): ReactElement {
     val list = ArrayList<Pair<String, RDOMBuilder<DIV>.() -> Unit>>().apply(builder)
     return accordion(id, list)
 }
 
-fun joinStyles(vararg styles: String?) = styles.joinToString(separator = " ") { it ?: "" }
-
-enum class ContainerSize(val suffix: String) {
+public enum class ContainerSize(public val suffix: String) {
     DEFAULT(""),
     SM("-sm"),
     MD("-md"),
@@ -182,7 +181,7 @@ enum class ContainerSize(val suffix: String) {
     FLUID("-fluid")
 }
 
-inline fun RBuilder.container(
+public inline fun RBuilder.container(
     size: ContainerSize = ContainerSize.FLUID,
     block: StyledDOMBuilder<DIV>.() -> Unit
 ): ReactElement = styledDiv{
@@ -193,7 +192,7 @@ inline fun RBuilder.container(
 }
 
 
-enum class GridMaxSize(val suffix: String) {
+public enum class GridMaxSize(public val suffix: String) {
     NONE(""),
     SM("-sm"),
     MD("-md"),
@@ -201,7 +200,7 @@ enum class GridMaxSize(val suffix: String) {
     XL("-xl")
 }
 
-inline fun RBuilder.gridColumn(
+public inline fun RBuilder.gridColumn(
     weight: Int? = null,
     maxSize: GridMaxSize = GridMaxSize.NONE,
     block: StyledDOMBuilder<DIV>.() -> Unit
@@ -213,7 +212,7 @@ inline fun RBuilder.gridColumn(
     block()
 }
 
-inline fun RBuilder.gridRow(
+public inline fun RBuilder.gridRow(
     block: StyledDOMBuilder<DIV>.() -> Unit
 ): ReactElement = styledDiv{
     css{
@@ -222,10 +221,10 @@ inline fun RBuilder.gridRow(
     block()
 }
 
-fun Element.renderObjectTree(
+public fun Element.renderObjectTree(
     vision: Vision,
     clickCallback: (Name) -> Unit = {}
-) = render(this) {
+): Unit = render(this) {
     card("Object tree") {
         child(ObjectTree) {
             attrs {

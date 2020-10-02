@@ -10,7 +10,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
-enum class CompositeType {
+public enum class CompositeType {
     UNION,
     INTERSECT,
     SUBTRACT
@@ -18,10 +18,10 @@ enum class CompositeType {
 
 @Serializable
 @SerialName("solid.composite")
-class Composite(
-    val compositeType: CompositeType,
-    val first: Solid,
-    val second: Solid
+public class Composite(
+    public val compositeType: CompositeType,
+    public val first: Solid,
+    public val second: Solid
 ) : AbstractVision(), Solid, VisionGroup {
 
     init {
@@ -42,7 +42,7 @@ class Composite(
         get() = null
 }
 
-inline fun MutableVisionGroup.composite(
+public inline fun MutableVisionGroup.composite(
     type: CompositeType,
     name: String = "",
     builder: SolidGroup.() -> Unit
@@ -67,11 +67,11 @@ inline fun MutableVisionGroup.composite(
     }
 }
 
-inline fun MutableVisionGroup.union(name: String = "", builder: SolidGroup.() -> Unit) =
+public inline fun MutableVisionGroup.union(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.UNION, name, builder = builder)
 
-inline fun MutableVisionGroup.subtract(name: String = "", builder: SolidGroup.() -> Unit) =
+public inline fun MutableVisionGroup.subtract(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
-inline fun MutableVisionGroup.intersect(name: String = "", builder: SolidGroup.() -> Unit) =
+public inline fun MutableVisionGroup.intersect(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.INTERSECT, name, builder = builder)

@@ -8,6 +8,7 @@ import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.three.ThreeFactory.Companion.TYPE
 import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
+import hep.dataforge.vision.visible
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
@@ -54,7 +55,7 @@ fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     ) {
         //update position of mesh using this object
         updatePosition(source)
-    } else if (propertyName == Solid.VISIBLE_KEY) {
+    } else if (propertyName == Vision.VISIBLE_KEY) {
         visible = source.visible ?: true
     }
 }

@@ -1,43 +1,38 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import scientifik.jsDistDirectory
 
 plugins {
-    id("scientifik.mpp")
-    id("application")
+    id("ru.mipt.npm.mpp")
+    application
 }
 
 group = "ru.mipt.npm"
 
-val ktorVersion = "1.3.2"
+val ktorVersion: String by rootProject.extra
+
+kscience {
+    application()
+}
 
 kotlin {
+    afterEvaluate {
+        val jsBrowserDistribution by tasks.getting
 
-    val installJS = tasks.getByName("jsBrowserDistribution")
-
-    js {
-        browser {
-            dceTask {
-                dceOptions {
-                    keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
+        jvm {
+            withJava()
+            compilations[MAIN_COMPILATION_NAME]?.apply {
+                tasks.getByName<ProcessResources>(processResourcesTaskName) {
+                    dependsOn(jsBrowserDistribution)
+                    afterEvaluate {
+                        from(jsBrowserDistribution)
+                    }
                 }
             }
-            webpackTask {
-                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
-            }
+
         }
     }
 
-    jvm {
-        withJava()
-        compilations[MAIN_COMPILATION_NAME]?.apply {
-            tasks.getByName<ProcessResources>(processResourcesTaskName) {
-                dependsOn(installJS)
-                afterEvaluate {
-                    from(project.jsDistDirectory)
-                }
-            }
-        }
-
+    js {
+        useCommonJs()
     }
 
     sourceSets {
@@ -58,14 +53,6 @@ kotlin {
                 implementation(project(":ui:bootstrap"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
-                implementation(npm("text-encoding"))
-                implementation(npm("abort-controller"))
-                implementation(npm("bufferutil"))
-                implementation(npm("utf-8-validate"))
-                implementation(npm("fs"))
-//                implementation(npm("jquery"))
-//                implementation(npm("popper.js"))
-//                implementation(npm("react-is"))
             }
         }
     }

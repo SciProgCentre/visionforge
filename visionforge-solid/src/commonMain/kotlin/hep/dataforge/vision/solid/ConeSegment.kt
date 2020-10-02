@@ -5,6 +5,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,12 +18,12 @@ import kotlin.math.sin
  */
 @Serializable
 @SerialName("solid.cone")
-class ConeSegment(
-    var radius: Float,
-    var height: Float,
-    var upperRadius: Float,
-    var startAngle: Float = 0f,
-    var angle: Float = PI2
+public class ConeSegment(
+    public var radius: Float,
+    public var height: Float,
+    public var upperRadius: Float,
+    public var startAngle: Float = 0f,
+    public var angle: Float = PI2
 ) : AbstractVision(), GeometrySolid {
 
     override var properties: Config? = null
@@ -75,7 +76,7 @@ class ConeSegment(
 
 }
 
-inline fun MutableVisionGroup.cylinder(
+public inline fun VisionContainerBuilder<Solid>.cylinder(
     r: Number,
     height: Number,
     name: String = "",
@@ -87,7 +88,7 @@ inline fun MutableVisionGroup.cylinder(
 ).apply(block).also { set(name, it) }
 
 
-inline fun MutableVisionGroup.cone(
+public inline fun VisionContainerBuilder<Solid>.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,

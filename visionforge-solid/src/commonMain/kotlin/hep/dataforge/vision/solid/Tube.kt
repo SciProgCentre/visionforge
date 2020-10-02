@@ -5,6 +5,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,12 +19,12 @@ import kotlin.math.sin
  */
 @Serializable
 @SerialName("solid.tube")
-class Tube(
-    var radius: Float,
-    var height: Float,
-    var innerRadius: Float = 0f,
-    var startAngle: Float = 0f,
-    var angle: Float = PI2
+public class Tube(
+    public var radius: Float,
+    public var height: Float,
+    public var innerRadius: Float = 0f,
+    public var startAngle: Float = 0f,
+    public var angle: Float = PI2
 ) : AbstractVision(), GeometrySolid {
 
     override var position: Point3D? = null
@@ -129,7 +130,7 @@ class Tube(
 
 }
 
-inline fun MutableVisionGroup.tube(
+public inline fun VisionContainerBuilder<Solid>.tube(
     r: Number,
     height: Number,
     innerRadius: Number = 0f,

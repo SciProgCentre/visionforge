@@ -5,6 +5,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.Solid.Companion.solidEquals
 import kotlinx.serialization.SerialName
@@ -13,10 +14,10 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("solid.box")
-class Box(
-    val xSize: Float,
-    val ySize: Float,
-    val zSize: Float
+public class Box(
+    public val xSize: Float,
+    public val ySize: Float,
+    public val zSize: Float
 ) : AbstractVision(), GeometrySolid {
 
     override var position: Point3D? = null
@@ -67,15 +68,15 @@ class Box(
     }
 
 
-    companion object {
+    public companion object {
 
     }
 }
 
-inline fun MutableVisionGroup.box(
+public inline fun VisionContainerBuilder<Solid>.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,
     name: String = "",
     action: Box.() -> Unit = {}
-) = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }
+): Box = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }

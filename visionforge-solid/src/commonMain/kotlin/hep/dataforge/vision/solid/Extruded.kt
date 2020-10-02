@@ -4,6 +4,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,21 +14,21 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-typealias Shape2D = List<Point2D>
+public typealias Shape2D = List<Point2D>
 
 @Serializable
-class Shape2DBuilder(private val points: MutableList<Point2D> = ArrayList()) {
+public class Shape2DBuilder(private val points: MutableList<Point2D> = ArrayList()) {
 
-    fun point(x: Number, y: Number) {
+    public fun point(x: Number, y: Number) {
         points.add(Point2D(x, y))
     }
 
-    infix fun Number.to(y: Number) = point(this, y)
+    public infix fun Number.to(y: Number): Unit = point(this, y)
 
-    fun build(): Shape2D = points
+    public fun build(): Shape2D = points
 }
 
-fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
+public fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
     require(vertices > 2) { "Polygon must have more than 2 vertices" }
     val angle = 2 * PI / vertices
     for (i in 0 until vertices) {
@@ -36,13 +37,13 @@ fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
 }
 
 @Serializable
-data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
+public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
 @Serializable
 @SerialName("solid.extrude")
-class Extruded(
-    var shape: List<Point2D> = ArrayList(),
-    var layers: MutableList<Layer> = ArrayList()
+public class Extruded(
+    public var shape: List<Point2D> = ArrayList(),
+    public var layers: MutableList<Layer> = ArrayList()
 ) : AbstractVision(), GeometrySolid {
 
     override var properties: Config? = null
@@ -51,12 +52,12 @@ class Extruded(
     override var rotation: Point3D? = null
     override var scale: Point3D? = null
 
-    fun shape(block: Shape2DBuilder.() -> Unit) {
+    public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()
         //TODO send invalidation signal
     }
 
-    fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
+    public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
         layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
         //TODO send invalidation signal
     }
@@ -107,10 +108,10 @@ class Extruded(
         geometryBuilder.cap(layers.last())
     }
 
-    companion object {
-        const val TYPE = "geometry.3d.extruded"
+    public companion object {
+        public const val TYPE: String = "solid.extruded"
     }
 }
 
-fun MutableVisionGroup.extrude(name: String = "", action: Extruded.() -> Unit = {}) =
+public fun VisionContainerBuilder<Solid>.extrude(name: String = "", action: Extruded.() -> Unit = {}): Extruded =
     Extruded().apply(action).also { set(name, it) }

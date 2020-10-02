@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid.transform
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.update
 import hep.dataforge.names.asName
 import hep.dataforge.vision.MutableVisionGroup
@@ -7,6 +8,7 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.solid.*
 
+@DFExperimental
 internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
     return child.apply {
 
@@ -32,6 +34,7 @@ internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
     }
 }
 
+@DFExperimental
 object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
 
     override fun SolidGroup.transformInPlace() {

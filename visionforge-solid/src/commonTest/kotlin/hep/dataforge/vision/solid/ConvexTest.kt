@@ -1,6 +1,7 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
+import kotlinx.serialization.json.toJson
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +25,7 @@ class ConvexTest {
 
         val convex = group.children.values.first() as Convex
 
-        val json = SolidManager.jsonForSolids.toJson(Convex.serializer(), convex)
+        val json = SolidManager.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
         val meta = json.toMetaItem().node!!
 
         val points = meta.getIndexed("points").values.map { (it as MetaItem.NodeItem<*>).node.point3D() }

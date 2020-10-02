@@ -15,9 +15,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
-interface PrototypeHolder {
-    val parent: VisionGroup?
-    val prototypes: MutableVisionGroup?
+public interface PrototypeHolder {
+    public val parent: VisionGroup?
+    public val prototypes: MutableVisionGroup?
 }
 
 /**
@@ -25,7 +25,7 @@ interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.solid")
-class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
+public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
 
     override var styleSheet: StyleSheet? = null
 
@@ -39,7 +39,7 @@ class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     /**
      * Create or edit prototype node as a group
      */
-    fun prototypes(builder: MutableVisionGroup.() -> Unit): Unit {
+    public fun prototypes(builder: MutableVisionGroup.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
             attach(it)
@@ -79,33 +79,33 @@ class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     override fun createGroup(): SolidGroup = SolidGroup()
 
 
-    companion object {
+    public companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
 
         @OptIn(DFExperimental::class)
-        fun parseJson(json: String): SolidGroup =
-            SolidManager.jsonForSolids.parse(serializer(), json).also { it.attachChildren() }
+        public fun decodeFromString(json: String): SolidGroup =
+            SolidManager.jsonForSolids.decodeFromString(serializer(), json).also { it.attachChildren() }
     }
 }
 
 @Suppress("FunctionName")
-fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
+public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
     return SolidGroup().apply(block)
 }
 
 /**
  * Ger a prototype redirecting the request to the parent if prototype is not found
  */
-tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
+public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
     prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
-fun MutableVisionGroup.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun MutableVisionGroup.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
-fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**

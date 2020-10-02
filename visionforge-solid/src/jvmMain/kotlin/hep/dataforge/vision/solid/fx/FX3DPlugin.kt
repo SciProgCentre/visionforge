@@ -38,7 +38,7 @@ class FX3DPlugin : AbstractPlugin() {
 
     @Suppress("UNCHECKED_CAST")
     private fun findObjectFactory(type: KClass<out Solid>): FX3DFactory<Solid>? {
-        return (objectFactories[type] ?: context.content<FX3DFactory<*>>(TYPE).values.find { it.type == type })
+        return (objectFactories[type] ?: context.gather<FX3DFactory<*>>(TYPE).values.find { it.type == type })
                 as FX3DFactory<Solid>?
     }
 

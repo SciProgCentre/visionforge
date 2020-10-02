@@ -8,20 +8,23 @@ import hep.dataforge.names.asName
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * A container for styles
  */
 @Serializable
-class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta> = LinkedHashMap()) {
+public class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta> = LinkedHashMap()) {
     @Transient
     internal var owner: Vision? = null
 
-    constructor(owner: Vision) : this() {
+    public constructor(owner: Vision) : this() {
         this.owner = owner
     }
 
-    val items: Map<String, Meta> get() = styleMap
+    public val items: Map<String, Meta> get() = styleMap
 
 
     private fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) {
@@ -38,14 +41,14 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
         }
     }
 
-    operator fun get(key: String): Meta? {
+    public operator fun get(key: String): Meta? {
         return styleMap[key] ?: owner?.parent?.styleSheet?.get(key)
     }
 
     /**
      * Define a style without notifying owner
      */
-    fun define(key: String, style: Meta?) {
+    public fun define(key: String, style: Meta?) {
         if (style == null) {
             styleMap.remove(key)
         } else {
@@ -56,7 +59,7 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     /**
      * Set or clear the style
      */
-    operator fun set(key: String, style: Meta?) {
+    public operator fun set(key: String, style: Meta?) {
         val oldStyle = styleMap[key]
         define(key, style)
         owner?.styleChanged(key, oldStyle, style)
@@ -65,13 +68,14 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
     /**
      * Create and set a style
      */
-    operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
+    public operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
         val newStyle = get(key)?.edit(builder) ?: Meta(builder)
         set(key, newStyle.seal())
     }
 
+    @ExperimentalSerializationApi
     @Serializer(StyleSheet::class)
-    companion object : KSerializer<StyleSheet> {
+    public companion object : KSerializer<StyleSheet> {
         private val mapSerializer = MapSerializer(String.serializer(), MetaSerializer)
         override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
 
@@ -91,14 +95,14 @@ class StyleSheet private constructor(private val styleMap: MutableMap<String, Me
 /**
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
-fun Vision.useStyle(name: String) {
-    styles = properties[Vision.STYLE_KEY].stringList + name
+public fun Vision.useStyle(name: String) {
+    styles = (properties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + name
 }
 
 /**
  * Resolve an item in all style layers
  */
-fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
+public fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
     return styles.asSequence().map {
         resolveStyle(it)
     }.map {
@@ -109,4 +113,4 @@ fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
 /**
  * Collect all styles for this object in a single laminate
  */
-val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::resolveStyle))
+public val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::resolveStyle))

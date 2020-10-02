@@ -5,6 +5,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,12 +16,12 @@ import kotlin.math.sin
 
 @Serializable
 @SerialName("solid.sphere")
-class Sphere(
-    var radius: Float,
-    var phiStart: Float = 0f,
-    var phi: Float = PI2,
-    var thetaStart: Float = 0f,
-    var theta: Float = PI.toFloat()
+public class Sphere(
+    public var radius: Float,
+    public var phiStart: Float = 0f,
+    public var phi: Float = PI2,
+    public var thetaStart: Float = 0f,
+    public var theta: Float = PI.toFloat()
 ) : AbstractVision(), GeometrySolid {
 
     override var properties: Config? = null
@@ -60,13 +61,13 @@ class Sphere(
     }
 }
 
-inline fun MutableVisionGroup.sphere(
+public inline fun VisionContainerBuilder<Solid>.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,
     name: String = "",
     action: Sphere.() -> Unit = {}
-) = Sphere(
+): Sphere = Sphere(
     radius.toFloat(),
     phi = phi.toFloat(),
     theta = theta.toFloat()

@@ -2,13 +2,13 @@ package hep.dataforge.vision.solid.specifications
 
 import hep.dataforge.meta.*
 
-class Axes : Scheme() {
-    var visible by boolean(!config.isEmpty())
-    var size by double(AXIS_SIZE)
-    var width by double(AXIS_WIDTH)
+public class Axes : Scheme() {
+    public var visible: Boolean by boolean(!config.isEmpty())
+    public var size: Double by double(AXIS_SIZE)
+    public var width: Double by double(AXIS_WIDTH)
 
-    companion object : SchemeSpec<Axes>(::Axes) {
-        const val AXIS_SIZE = 1000.0
-        const val AXIS_WIDTH = 3.0
+    public companion object : SchemeSpec<Axes>(::Axes) {
+        public const val AXIS_SIZE: Double = 1000.0
+        public const val AXIS_WIDTH: Double = 3.0
     }
 }

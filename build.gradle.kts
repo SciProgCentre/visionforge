@@ -1,15 +1,11 @@
-import scientifik.useFx
-import scientifik.useSerialization
-
-val dataforgeVersion by extra("0.1.8")
+import ru.mipt.npm.gradle.useFx
 
 plugins {
-    id("scientifik.mpp") apply false
-    id("scientifik.jvm") apply false
-    id("scientifik.js") apply false
-    id("scientifik.publish") apply false
-    id("org.jetbrains.changelog") version "0.4.0"
+    id("ru.mipt.npm.project")
 }
+
+val dataforgeVersion by extra("0.2.0-dev-3")
+val ktorVersion by extra("1.4.1")
 
 allprojects {
     repositories {
@@ -19,7 +15,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.1.5-dev-2"
+    version = "0.2.0-dev-1"
 }
 
 val githubProject by extra("visionforge")
@@ -28,8 +24,17 @@ val fxVersion by extra("14")
 
 subprojects {
     if(name.startsWith("visionforge")) {
-        apply(plugin = "scientifik.publish")
+        apply<ru.mipt.npm.gradle.KSciencePublishPlugin>()
     }
-    useSerialization()
-    useFx(scientifik.FXModule.CONTROLS, version = fxVersion)
+    afterEvaluate {
+        extensions.findByType<ru.mipt.npm.gradle.KScienceExtension>()?.run {
+            useSerialization()
+            useFx(ru.mipt.npm.gradle.FXModule.CONTROLS, version = fxVersion)
+        }
+    }
+}
+
+apiValidation {
+    validationDisabled = true
+    ignoredPackages.add("info.laht.threekt")
 }

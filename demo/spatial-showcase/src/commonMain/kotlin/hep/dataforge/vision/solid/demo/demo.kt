@@ -8,6 +8,7 @@ import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
+import hep.dataforge.vision.visible
 import kotlinx.coroutines.*
 import kotlin.math.PI
 import kotlin.math.cos

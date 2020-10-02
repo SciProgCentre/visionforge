@@ -12,8 +12,8 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
-abstract class AbstractProxy : AbstractVision(), VisionGroup {
-    abstract val prototype: Vision
+public abstract class AbstractProxy : AbstractVision(), VisionGroup {
+    public abstract val prototype: Vision
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
@@ -33,7 +33,7 @@ abstract class AbstractProxy : AbstractVision(), VisionGroup {
     }
 
     override var styles: List<String>
-        get() = properties[Vision.STYLE_KEY].stringList + prototype.styles
+        get() = (properties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + prototype.styles
         set(value) {
             config[Vision.STYLE_KEY] = value
         }
@@ -53,11 +53,11 @@ abstract class AbstractProxy : AbstractVision(), VisionGroup {
  */
 @Serializable
 @SerialName("solid.proxy")
-class Proxy private constructor(
-    val templateName: Name
+public class Proxy private constructor(
+    public val templateName: Name
 ) : AbstractProxy(), Solid {
 
-    constructor(parent: SolidGroup, templateName: Name) : this(templateName) {
+    public constructor(parent: SolidGroup, templateName: Name) : this(templateName) {
         this.parent = parent
     }
 
@@ -104,7 +104,7 @@ class Proxy private constructor(
      * A ProxyChild is created temporarily only to interact with properties, it does not store any values
      * (properties are stored in external cache) and created and destroyed on-demand).
      */
-    inner class ProxyChild(val name: Name) : AbstractProxy() {
+    public inner class ProxyChild(public val name: Name) : AbstractProxy() {
 
         override val prototype: Vision get() = prototypeFor(name)
 
@@ -136,12 +136,15 @@ class Proxy private constructor(
 
     }
 
-    companion object {
-        const val PROXY_CHILD_PROPERTY_PREFIX = "@child"
+    public companion object {
+        public const val PROXY_CHILD_PROPERTY_PREFIX: String = "@child"
     }
 }
 
-val Vision.prototype: Vision
+/**
+ * Get a vision prototype if it is a [Proxy] or vision itself if it is not
+ */
+public val Vision.prototype: Vision
     get() = when (this) {
         is AbstractProxy -> prototype
         else -> this
@@ -150,7 +153,7 @@ val Vision.prototype: Vision
 /**
  * Create ref for existing prototype
  */
-fun SolidGroup.ref(
+public fun SolidGroup.ref(
     templateName: Name,
     name: String = ""
 ): Proxy = Proxy(this, templateName).also { set(name, it) }
@@ -158,7 +161,7 @@ fun SolidGroup.ref(
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
  */
-fun SolidGroup.proxy(
+public fun SolidGroup.proxy(
     name: String,
     obj: Solid,
     templateName: Name = name.toName()
@@ -172,13 +175,4 @@ fun SolidGroup.proxy(
         error("Can't add different prototype on top of existing one")
     }
     return ref(templateName, name)
-}
-
-fun SolidGroup.proxyGroup(
-    name: String,
-    templateName: Name = name.toName(),
-    block: MutableVisionGroup.() -> Unit
-): Proxy {
-    val group = SolidGroup().apply(block)
-    return proxy(name, group, templateName)
 }

@@ -4,6 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
+import hep.dataforge.names.lastOrNull
 import hep.dataforge.names.plus
 import hep.dataforge.values.Value
 import kotlinx.html.js.onClickFunction
@@ -47,7 +48,7 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
     val defaultItem = props.default?.get(props.name)
     var actualItem: MetaItem<Meta>? by state { item ?: defaultItem ?: descriptorItem?.defaultItem() }
 
-    val token = props.name.last()?.toString() ?: "Properties"
+    val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
         item = props.root[props.name]

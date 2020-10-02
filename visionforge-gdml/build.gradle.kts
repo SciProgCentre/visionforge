@@ -1,5 +1,5 @@
 plugins {
-    id("scientifik.mpp")
+    id("ru.mipt.npm.mpp")
 }
 
 kotlin {
@@ -7,7 +7,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":visionforge-solid"))
-                api("scientifik:gdml:0.1.8")
+                api("kscience.gdml:gdml:0.2.0-dev-2")
             }
         }
     }

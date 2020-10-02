@@ -1,6 +1,7 @@
 package hep.dataforge.vision.react
 
 import hep.dataforge.names.Name
+import hep.dataforge.names.lastOrNull
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.vision.Vision
@@ -42,7 +43,7 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
         }
     }
 
-    val token = props.name.last()?.toString() ?: "World"
+    val token = props.name.lastOrNull()?.toString() ?: "World"
     val obj = props.obj
 
     //display as node if any child is visible

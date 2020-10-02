@@ -1,7 +1,6 @@
 package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.set
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vision.Vision
@@ -18,18 +17,18 @@ import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import hep.dataforge.vision.solid.three.canvasControls
+import kotlinx.browser.window
 import kotlinx.css.FlexBasis
 import kotlinx.css.Overflow
 import kotlinx.css.flex
 import kotlinx.css.overflow
+import kscience.gdml.GDML
+import kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RProps
 import react.dom.h1
-import scientifik.gdml.GDML
-import scientifik.gdml.parse
 import styled.css
-import kotlin.browser.window
 import kotlin.math.PI
 
 interface GDMLAppProps : RProps {
@@ -58,10 +57,10 @@ val GDMLApp = component<GDMLAppProps> { props ->
     fun loadData(name: String, data: String) {
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
-                val gdml = GDML.parse(data)
+                val gdml = GDML.decodeFromString(data)
                 gdml.toVision()
             }
-            name.endsWith(".json") -> SolidGroup.parseJson(data)
+            name.endsWith(".json") -> SolidGroup.decodeFromString(data)
             else -> {
                 window.alert("File extension is not recognized: $name")
                 error("File extension is not recognized: $name")

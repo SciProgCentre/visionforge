@@ -1,6 +1,6 @@
 package hep.dataforge.vision.gdml.demo
 
-import scientifik.gdml.*
+import kscience.gdml.*
 
 
 fun cubes(): GDML = GDML {

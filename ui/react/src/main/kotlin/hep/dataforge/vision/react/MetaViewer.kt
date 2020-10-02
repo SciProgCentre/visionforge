@@ -9,6 +9,7 @@ import hep.dataforge.meta.descriptors.get
 import hep.dataforge.meta.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
+import hep.dataforge.names.lastOrNull
 import hep.dataforge.names.plus
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
@@ -43,7 +44,7 @@ private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     val actualItem = item ?: descriptorItem?.defaultItem()
 
-    val token = props.name.last()?.toString() ?: "Meta"
+    val token = props.name.lastOrNull()?.toString() ?: "Meta"
 
     val expanderClick: (Event) -> Unit = {
         expanded = !expanded

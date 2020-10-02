@@ -1,10 +1,25 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.names.Name
 import hep.dataforge.names.toName
+import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
+
+/**
+ * Create and attach new proxied group
+ */
+fun SolidGroup.proxyGroup(
+    name: String,
+    templateName: Name = name.toName(),
+    block: MutableVisionGroup.() -> Unit
+): Proxy {
+    val group = SolidGroup().apply(block)
+    return proxy(name, group, templateName)
+}
+
 
 class SerializationTest {
     @Test
@@ -14,9 +29,9 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val string =  cube.stringify()
+        val string =  cube.encodeToString()
         println(string)
-        val newCube = Vision.parseJson(string)
+        val newCube = Vision.decodeFromString(string)
         assertEquals(cube.config, newCube.config)
     }
 
@@ -35,9 +50,9 @@ class SerializationTest {
                 }
             }
         }
-        val string = group.stringify()
+        val string = group.encodeToString()
         println(string)
-        val reconstructed = SolidGroup.parseJson(string)
+        val reconstructed = SolidGroup.decodeFromString(string)
         assertEquals(group["cube"]?.config, reconstructed["cube"]?.config)
     }
 

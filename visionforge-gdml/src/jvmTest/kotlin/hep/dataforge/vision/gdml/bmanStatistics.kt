@@ -8,7 +8,7 @@ import hep.dataforge.vision.visitor.flowStatistics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import nl.adaptivity.xmlutil.StAXReader
-import scientifik.gdml.GDML
+import kscience.gdml.GDML
 import java.io.File
 import kotlin.reflect.KClass
 

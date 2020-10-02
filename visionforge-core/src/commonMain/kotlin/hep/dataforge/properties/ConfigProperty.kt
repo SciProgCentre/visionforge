@@ -4,7 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 
 @DFExperimental
-class ConfigProperty(val config: Config, val name: Name) : Property<MetaItem<*>?> {
+internal class ConfigProperty(val config: Config, val name: Name) : Property<MetaItem<*>?> {
     override var value: MetaItem<*>?
         get() = config[name]
         set(value) {

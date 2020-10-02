@@ -5,7 +5,9 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
+import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
+import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
 
@@ -13,28 +15,28 @@ import kotlinx.serialization.Transient
  * A root type for display hierarchy
  */
 @Type(TYPE)
-interface Vision : Configurable {
+public interface Vision : Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
      */
     @Transient
-    var parent: VisionGroup?
+    public var parent: VisionGroup?
 
     /**
      * Nullable version of [config] used to check if this [Vision] has custom properties
      */
-    val properties: Config?
+    public val properties: Config?
 
     /**
      * All properties including styles and prototypes if present, including inherited ones
      */
-    fun getAllProperties(): Laminate
+    public fun getAllProperties(): Laminate
 
     /**
      * Get property (including styles). [inherit] toggles parent node property lookup
      */
-    fun getProperty(name: Name, inherit: Boolean): MetaItem<*>?
+    public fun getProperty(name: Name, inherit: Boolean): MetaItem<*>?
 
     /**
      * Ger a property including inherited values
@@ -44,46 +46,55 @@ interface Vision : Configurable {
     /**
      * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
      */
-    fun propertyChanged(name: Name): Unit
+    public fun propertyChanged(name: Name): Unit
 
     /**
      * Add listener triggering on property change
      */
-    fun onPropertyChange(owner: Any?, action: (Name) -> Unit): Unit
+    public fun onPropertyChange(owner: Any?, action: (Name) -> Unit): Unit
 
     /**
      * Remove change listeners with given owner.
      */
-    fun removeChangeListener(owner: Any?)
+    public fun removeChangeListener(owner: Any?)
 
     /**
      * List of names of styles applied to this object. Order matters. Not inherited.
      */
-    var styles: List<String>
-        get() =  properties[STYLE_KEY].stringList
+    public var styles: List<String>
+        get() =  properties[STYLE_KEY]?.stringList?: emptyList()
         set(value) {
             config[STYLE_KEY] = value
         }
 
-    companion object {
-        const val TYPE = "vision"
-        val STYLE_KEY = "@style".asName()
+    public companion object {
+        public const val TYPE: String = "vision"
+        public val STYLE_KEY: Name = "@style".asName()
 
         private val VISION_SERIALIZER = PolymorphicSerializer(Vision::class)
 
-        fun serializer() = VISION_SERIALIZER
+        public fun serializer(): PolymorphicSerializer<Vision> = VISION_SERIALIZER
+
+        public val VISIBLE_KEY: Name = "visible".asName()
     }
 }
 
 /**
  * Get [Vision] property using key as a String
  */
-fun Vision.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
+public fun Vision.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
     getProperty(key.toName(), inherit)
 
 /**
  * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
  */
-tailrec fun Vision.resolveStyle(name: String): Meta? =
+public tailrec fun Vision.resolveStyle(name: String): Meta? =
     (this as? VisionGroup)?.styleSheet?.get(name) ?: parent?.resolveStyle(name)
 
+
+/**
+ * Control visibility of the element
+ */
+public var Vision.visible: Boolean?
+    get() = getItem(VISIBLE_KEY).boolean
+    set(value) = setItem(VISIBLE_KEY, value?.asValue())

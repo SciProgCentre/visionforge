@@ -1,19 +1,24 @@
-import scientifik.DependencyConfiguration
-import scientifik.FXModule
-import scientifik.useFx
+import ru.mipt.npm.gradle.DependencyConfiguration
+import ru.mipt.npm.gradle.FXModule
+import ru.mipt.npm.gradle.useFx
 
 plugins {
-    id("scientifik.mpp")
-    id("application")
+    id("ru.mipt.npm.mpp")
+    application
 }
 
-val fxVersion: String by rootProject.extra
-useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+kscience {
+    val fxVersion: String by rootProject.extra
+    useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+    application()
+}
 
 kotlin {
 
     jvm {
-        withJava()
+        afterEvaluate {
+            withJava()
+        }
     }
 
     js {
@@ -27,7 +32,7 @@ kotlin {
                 implementation(project(":visionforge-gdml"))
             }
         }
-        jsMain{
+        jsMain {
             dependencies {
                 implementation(project(":ui:bootstrap"))
                 implementation(npm("react-file-drop", "3.0.6"))

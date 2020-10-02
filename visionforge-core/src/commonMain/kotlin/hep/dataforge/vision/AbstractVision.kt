@@ -87,13 +87,13 @@ abstract class AbstractVision : Vision {
     /**
      * Reset all properties to their default values
      */
-    fun resetProperties() {
+    public fun resetProperties() {
         properties?.removeListener(this)
         properties = null
     }
 
-    companion object {
-        val descriptor = NodeDescriptor {
+    public companion object {
+        public val descriptor: NodeDescriptor = NodeDescriptor {
             value(STYLE_KEY) {
                 type(ValueType.STRING)
                 multiple = true

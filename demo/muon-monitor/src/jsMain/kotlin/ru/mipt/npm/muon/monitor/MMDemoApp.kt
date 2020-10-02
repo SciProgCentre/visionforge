@@ -7,11 +7,11 @@ import hep.dataforge.vision.solid.SolidManager
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import kotlinx.browser.document
 import kotlinx.serialization.json.Json
 import react.child
 import react.dom.div
 import react.dom.render
-import kotlin.browser.document
 
 private class MMDemoApp : Application {
 
@@ -19,7 +19,7 @@ private class MMDemoApp : Application {
 
     private val connection = HttpClient {
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Json(context = SolidManager.serialModule))
+            serializer = KotlinxSerializer(Json { serializersModule = SolidManager.serialModule })
         }
     }
 
@@ -34,8 +34,8 @@ private class MMDemoApp : Application {
             div("container-fluid h-100") {
                 child(MMApp) {
                     attrs {
-                        model = this@MMDemoApp.model
-                        connection = this@MMDemoApp.connection
+                        this.model = this@MMDemoApp.model
+                        this.connection = this@MMDemoApp.connection
                         this.context = context
                     }
                 }

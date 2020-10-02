@@ -1,5 +1,7 @@
 package hep.dataforge.vision.solid.three
 
+import hep.dataforge.names.cutFirst
+import hep.dataforge.names.firstOrNull
 import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Proxy
 import hep.dataforge.vision.solid.Proxy.Companion.PROXY_CHILD_PROPERTY_PREFIX
@@ -42,8 +44,8 @@ class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
         }
 
         obj.onPropertyChange(this) { name ->
-            if (name.first()?.body == PROXY_CHILD_PROPERTY_PREFIX) {
-                val childName = name.first()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
+            if (name.firstOrNull()?.body == PROXY_CHILD_PROPERTY_PREFIX) {
+                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
                 val propertyName = name.cutFirst()
                 val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")

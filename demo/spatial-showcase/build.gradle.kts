@@ -1,19 +1,22 @@
-import scientifik.DependencyConfiguration
-import scientifik.FXModule
-import scientifik.useFx
+import ru.mipt.npm.gradle.*
 
 plugins {
-    id("scientifik.mpp")
-    id("application")
+    id("ru.mipt.npm.mpp")
+    application
 }
 
-val fxVersion: String by rootProject.extra
-useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+kscience {
+    val fxVersion: String by rootProject.extra
+    useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
+    application()
+}
 
 kotlin {
 
     jvm {
-        withJava()
+        afterEvaluate {
+            withJava()
+        }
     }
 
     sourceSets {

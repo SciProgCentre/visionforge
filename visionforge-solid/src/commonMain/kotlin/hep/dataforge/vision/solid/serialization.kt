@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.double
+import hep.dataforge.meta.transformations.MetaConverter.Companion.double
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.Vision
@@ -10,34 +11,19 @@ import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
+import kotlinx.serialization.encoding.*
 
-inline fun <R> Decoder.decodeStructure(
-    desc: SerialDescriptor,
-    vararg typeParams: KSerializer<*> = emptyArray(),
-    crossinline block: CompositeDecoder.() -> R
-): R {
-    val decoder = beginStructure(desc, *typeParams)
-    val res = decoder.block()
-    decoder.endStructure(desc)
-    return res
-}
 
-inline fun Encoder.encodeStructure(
-    desc: SerialDescriptor,
-    vararg typeParams: KSerializer<*> = emptyArray(),
-    block: CompositeEncoder.() -> Unit
-) {
-    val encoder = beginStructure(desc, *typeParams)
-    encoder.block()
-    encoder.endStructure(desc)
-}
-
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(Point3D::class)
-object Point3DSerializer : KSerializer<Point3D> {
-    override val descriptor: SerialDescriptor = SerialDescriptor("hep.dataforge.vis.spatial.Point3D") {
-        double("x", true)
-        double("y", true)
-        double("z", true)
+public object Point3DSerializer : KSerializer<Point3D> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("hep.dataforge.vis.spatial.Point3D") {
+        element<Double>("x")
+        element<Double>("y")
+        element<Double>("z")
     }
 
     override fun deserialize(decoder: Decoder): Point3D {
@@ -47,7 +33,7 @@ object Point3DSerializer : KSerializer<Point3D> {
         decoder.decodeStructure(descriptor) {
             loop@ while (true) {
                 when (val i = decodeElementIndex(descriptor)) {
-                    CompositeDecoder.READ_DONE -> break@loop
+                    CompositeDecoder.DECODE_DONE -> break@loop
                     0 -> x = decodeNullableSerializableElement(descriptor, 0, Double.serializer().nullable) ?: 0.0
                     1 -> y = decodeNullableSerializableElement(descriptor, 1, Double.serializer().nullable) ?: 0.0
                     2 -> z = decodeNullableSerializableElement(descriptor, 2, Double.serializer().nullable) ?: 0.0
@@ -67,11 +53,12 @@ object Point3DSerializer : KSerializer<Point3D> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(Point2D::class)
-object Point2DSerializer : KSerializer<Point2D> {
-    override val descriptor: SerialDescriptor = SerialDescriptor("hep.dataforge.vis.spatial.Point2D") {
-        double("x", true)
-        double("y", true)
+public object Point2DSerializer : KSerializer<Point2D> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("hep.dataforge.vis.spatial.Point2D") {
+        element<Double>("x")
+        element<Double>("y")
     }
 
     override fun deserialize(decoder: Decoder): Point2D {
@@ -80,7 +67,7 @@ object Point2DSerializer : KSerializer<Point2D> {
         decoder.decodeStructure(descriptor) {
             loop@ while (true) {
                 when (val i = decodeElementIndex(descriptor)) {
-                    CompositeDecoder.READ_DONE -> break@loop
+                    CompositeDecoder.DECODE_DONE -> break@loop
                     0 -> x = decodeNullableSerializableElement(descriptor, 0, Double.serializer().nullable) ?: 0.0
                     1 -> y = decodeNullableSerializableElement(descriptor, 1, Double.serializer().nullable) ?: 0.0
                     else -> throw SerializationException("Unknown index $i")
@@ -98,6 +85,7 @@ object Point2DSerializer : KSerializer<Point2D> {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(MutableVisionGroup::class)
 internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 
@@ -120,10 +108,10 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 }
 
 @OptIn(DFExperimental::class)
-fun Vision.stringify(): String = SolidManager.jsonForSolids.stringify(Vision.serializer(), this)
+public fun Vision.encodeToString(): String = SolidManager.jsonForSolids.encodeToString(Vision.serializer(), this)
 
 @OptIn(DFExperimental::class)
-fun Vision.Companion.parseJson(str: String) = SolidManager.jsonForSolids.parse(serializer(), str).also {
+public fun Vision.Companion.decodeFromString(str: String): Vision = SolidManager.jsonForSolids.decodeFromString(serializer(), str).also {
     if(it is VisionGroup){
         it.attachChildren()
     }

@@ -6,24 +6,24 @@ import hep.dataforge.meta.double
 import hep.dataforge.meta.int
 import kotlin.math.PI
 
-class Camera : Scheme() {
-    var fov by int(FIELD_OF_VIEW)
+public class Camera : Scheme() {
+    public var fov: Int by int(FIELD_OF_VIEW)
 
     //var aspect by double(1.0)
-    var nearClip by double(NEAR_CLIP)
-    var farClip by double(FAR_CLIP)
+    public var nearClip: Double by double(NEAR_CLIP)
+    public var farClip: Double by double(FAR_CLIP)
 
-    var distance by double(INITIAL_DISTANCE)
-    var azimuth by double(INITIAL_AZIMUTH)
-    var latitude by double(INITIAL_LATITUDE)
-    val zenith: Double get() = PI / 2 - latitude
+    public var distance: Double by double(INITIAL_DISTANCE)
+    public var azimuth: Double by double(INITIAL_AZIMUTH)
+    public var latitude: Double by double(INITIAL_LATITUDE)
+    public val zenith: Double get() = PI / 2 - latitude
 
-    companion object : SchemeSpec<Camera>(::Camera) {
-        const val INITIAL_DISTANCE = 300.0
-        const val INITIAL_AZIMUTH = 0.0
-        const val INITIAL_LATITUDE = PI / 6
-        const val NEAR_CLIP = 0.1
-        const val FAR_CLIP = 10000.0
-        const val FIELD_OF_VIEW = 75
+    public companion object : SchemeSpec<Camera>(::Camera) {
+        public const val INITIAL_DISTANCE: Double = 300.0
+        public const val INITIAL_AZIMUTH: Double = 0.0
+        public const val INITIAL_LATITUDE: Double = PI / 6
+        public const val NEAR_CLIP: Double = 0.1
+        public const val FAR_CLIP: Double = 10000.0
+        public const val FIELD_OF_VIEW: Int = 75
     }
 }

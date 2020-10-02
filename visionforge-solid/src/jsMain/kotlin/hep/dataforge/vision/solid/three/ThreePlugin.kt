@@ -5,6 +5,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.*
+import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
@@ -30,7 +31,7 @@ class ThreePlugin : AbstractPlugin() {
     @Suppress("UNCHECKED_CAST")
     private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Solid>? {
         return (objectFactories[type]
-            ?: context.content<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
+            ?: context.gather<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
                 as ThreeFactory<Solid>?
     }
 
@@ -63,7 +64,7 @@ class ThreePlugin : AbstractPlugin() {
                         ) {
                             //update position of mesh using this object
                             updatePosition(obj)
-                        } else if (name == Solid.VISIBLE_KEY) {
+                        } else if (name == Vision.VISIBLE_KEY) {
                             visible = obj.visible ?: true
                         }
                     }
@@ -123,28 +124,28 @@ internal fun Object3D.getOrCreateGroup(name: Name): Object3D {
     return when {
         name.isEmpty() -> this
         name.length == 1 -> {
-            val token = name.first()!!
+            val token = name.tokens.first()
             children.find { it.name == token.toString() } ?: info.laht.threekt.objects.Group().also { group ->
                 group.name = token.toString()
                 this.add(group)
             }
         }
-        else -> getOrCreateGroup(name.first()!!.asName()).getOrCreateGroup(name.cutFirst())
+        else -> getOrCreateGroup(name.tokens.first().asName()).getOrCreateGroup(name.cutFirst())
     }
 }
 
 internal operator fun Object3D.set(name: Name, obj: Object3D) {
     when (name.length) {
         0 -> error("Can't set object with an empty name")
-        1 -> set(name.first()!!, obj)
-        else -> getOrCreateGroup(name.cutLast())[name.last()!!] = obj
+        1 -> set(name.tokens.first(), obj)
+        else -> getOrCreateGroup(name.cutLast())[name.tokens.last()] = obj
     }
 }
 
 internal fun Object3D.findChild(name: Name): Object3D? {
     return when {
         name.isEmpty() -> this
-        name.length == 1 -> this.children.find { it.name == name.first()!!.toString() }
-        else -> findChild(name.first()!!.asName())?.findChild(name.cutFirst())
+        name.length == 1 -> this.children.find { it.name == name.tokens.first().toString() }
+        else -> findChild(name.tokens.first().asName())?.findChild(name.cutFirst())
     }
 }

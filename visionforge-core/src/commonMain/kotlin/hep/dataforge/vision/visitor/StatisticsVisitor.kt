@@ -1,6 +1,7 @@
 package hep.dataforge.vision.visitor
 
 import hep.dataforge.names.Name
+import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job

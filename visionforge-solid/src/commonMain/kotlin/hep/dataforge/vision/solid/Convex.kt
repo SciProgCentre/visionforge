@@ -5,6 +5,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.Config
 import hep.dataforge.vision.AbstractVision
 import hep.dataforge.vision.MutableVisionGroup
+import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -12,7 +13,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("solid.convex")
-class Convex(val points: List<Point3D>) : AbstractVision(), Solid {
+public class Convex(public val points: List<Point3D>) : AbstractVision(), Solid {
 
     override var properties: Config? = null
 
@@ -23,17 +24,17 @@ class Convex(val points: List<Point3D>) : AbstractVision(), Solid {
 
 }
 
-inline fun MutableVisionGroup.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}) =
+public inline fun VisionContainerBuilder<Solid>.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}): Convex =
     ConvexBuilder().apply(action).build().also { set(name, it) }
 
-class ConvexBuilder {
+public class ConvexBuilder {
     private val points = ArrayList<Point3D>()
 
-    fun point(x: Number, y: Number, z: Number) {
+    public fun point(x: Number, y: Number, z: Number) {
         points.add(Point3D(x, y, z))
     }
 
-    fun build(): Convex {
+    public fun build(): Convex {
         return Convex(points)
     }
 }

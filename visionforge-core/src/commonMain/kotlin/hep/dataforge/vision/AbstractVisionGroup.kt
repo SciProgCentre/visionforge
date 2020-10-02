@@ -1,9 +1,6 @@
 package hep.dataforge.vision
 
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.isEmpty
+import hep.dataforge.names.*
 import kotlinx.serialization.Transient
 
 
@@ -105,7 +102,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
         return when {
             name.isEmpty() -> error("Should be unreachable")
             name.length == 1 -> {
-                val token = name.first()!!
+                val token = name.tokens.first()
                 when (val current = children[token]) {
                     null -> createGroup().also { child ->
                         attach(child)
@@ -115,7 +112,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
                     else -> error("Can't create group with name $name because it exists and not a group")
                 }
             }
-            else -> createGroups(name.first()!!.asName()).createGroups(name.cutFirst())
+            else -> createGroups(name.tokens.first().asName()).createGroups(name.cutFirst())
         }
     }
 
@@ -131,7 +128,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
                 }
             }
             name.length == 1 -> {
-                val token = name.first()!!
+                val token = name.tokens.first()
                 if (child == null) {
                     removeChild(token)
                 } else {
@@ -142,7 +139,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
             else -> {
                 //TODO add safety check
                 val parent = (get(name.cutLast()) as? MutableVisionGroup) ?: createGroups(name.cutLast())
-                parent[name.last()!!.asName()] = child
+                parent[name.tokens.last().asName()] = child
             }
         }
         childrenChanged(name, child)

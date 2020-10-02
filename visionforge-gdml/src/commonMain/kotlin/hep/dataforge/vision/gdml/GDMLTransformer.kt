@@ -12,7 +12,7 @@ import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.useStyle
-import scientifik.gdml.*
+import kscience.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -20,7 +20,7 @@ import kotlin.random.Random
 private val solidsName = "solids".asName()
 private val volumesName = "volumes".asName()
 
-class GDMLTransformer internal constructor(val root: GDML) {
+public class GDMLTransformer internal constructor(val root: GDML) {
     //private val materialCache = HashMap<GDMLMaterial, Meta>()
     private val random = Random(222)
 

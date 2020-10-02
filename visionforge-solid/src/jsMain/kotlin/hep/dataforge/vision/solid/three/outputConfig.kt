@@ -38,7 +38,7 @@ fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
         div("row") {
             div("col-2") {
                 label("checkbox-inline") {
-                    input(type = InputType.checkBox){
+                    input(type = InputType.checkBox) {
                         attrs {
                             defaultChecked = canvas.axes.visible
                             onChangeFunction = {
@@ -55,7 +55,7 @@ fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
                     attrs {
                         onClickFunction = {
                             val json = (canvas.content as? SolidGroup)?.let { group ->
-                                SolidManager.jsonForSolids.stringify(
+                                SolidManager.jsonForSolids.encodeToString(
                                     SolidGroup.serializer(),
                                     group
                                 )
@@ -76,7 +76,7 @@ fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
             (0..11).forEach { layer ->
                 div("col-1") {
                     label { +layer.toString() }
-                    input(type = InputType.checkBox){
+                    input(type = InputType.checkBox) {
                         attrs {
                             if (layer == 0) {
                                 defaultChecked = true
@@ -119,7 +119,7 @@ fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLEl
                             +"Export"
                             onClickFunction = {
                                 val json = (canvas.content as? SolidGroup)?.let { group ->
-                                    SolidManager.jsonForSolids.stringify(
+                                    SolidManager.jsonForSolids.encodeToString(
                                         SolidGroup.serializer(),
                                         group
                                     )

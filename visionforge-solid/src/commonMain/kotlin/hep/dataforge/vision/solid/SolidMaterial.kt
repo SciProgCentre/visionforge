@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.attributes
+import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
@@ -13,41 +14,41 @@ import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vision.widgetType
 
-class SolidMaterial : Scheme() {
+public class SolidMaterial : Scheme() {
 
     /**
      * Primary web-color for the material
      */
-    var color by string(key = COLOR_KEY)
+    public var color: String? by string(key = COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    var specularColor by string(key = SPECULAR_COLOR_KEY)
+    public var specularColor: String? by string(key = SPECULAR_COLOR_KEY)
 
     /**
      * Opacity
      */
-    var opacity by float(1f, key = OPACITY_KEY)
+    public var opacity: Float by float(1f, key = OPACITY_KEY)
 
     /**
      * Replace material by wire frame
      */
-    var wireframe by boolean(false, WIREFRAME_KEY)
+    public var wireframe: Boolean by boolean(false, WIREFRAME_KEY)
 
-    companion object : SchemeSpec<SolidMaterial>(::SolidMaterial) {
+    public companion object : SchemeSpec<SolidMaterial>(::SolidMaterial) {
 
-        val MATERIAL_KEY = "material".asName()
+        public val MATERIAL_KEY: Name = "material".asName()
         internal val COLOR_KEY = "color".asName()
-        val MATERIAL_COLOR_KEY = MATERIAL_KEY + COLOR_KEY
+        public val MATERIAL_COLOR_KEY: Name = MATERIAL_KEY + COLOR_KEY
         internal val SPECULAR_COLOR_KEY = "specularColor".asName()
-        val MATERIAL_SPECULAR_COLOR_KEY = MATERIAL_KEY + SPECULAR_COLOR_KEY
+        public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
         internal val OPACITY_KEY = "opacity".asName()
-        val MATERIAL_OPACITY_KEY = MATERIAL_KEY + OPACITY_KEY
+        public val MATERIAL_OPACITY_KEY: Name = MATERIAL_KEY + OPACITY_KEY
         internal val WIREFRAME_KEY = "wireframe".asName()
-        val MATERIAL_WIREFRAME_KEY = MATERIAL_KEY + WIREFRAME_KEY
+        public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
-        val descriptor by lazy {
+        public val descriptor: NodeDescriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
                 value(COLOR_KEY) {
@@ -77,18 +78,18 @@ class SolidMaterial : Scheme() {
 /**
  * Set color as web-color
  */
-fun Solid.color(webColor: String) {
+public fun Solid.color(webColor: String) {
     setItem(MATERIAL_COLOR_KEY, webColor.asValue())
 }
 
 /**
  * Set color as integer
  */
-fun Solid.color(rgb: Int) {
+public fun Solid.color(rgb: Int) {
     setItem(MATERIAL_COLOR_KEY, rgb.asValue())
 }
 
-fun Solid.color(r: UByte, g: UByte, b: UByte) = setItem(
+public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setItem(
     MATERIAL_COLOR_KEY,
     Colors.rgbToMeta(r, g, b)
 )
@@ -96,16 +97,16 @@ fun Solid.color(r: UByte, g: UByte, b: UByte) = setItem(
 /**
  * Web colors representation of the color in `#rrggbb` format or HTML name
  */
-var Solid.color: String?
+public var Solid.color: String?
     get() = getItem(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
     set(value) {
         setItem(MATERIAL_COLOR_KEY, value?.asValue())
     }
 
-val Solid.material: SolidMaterial?
+public val Solid.material: SolidMaterial?
     get() = getItem(MATERIAL_KEY).node?.let { SolidMaterial.wrap(it) }
 
-fun Solid.material(builder: SolidMaterial.() -> Unit) {
+public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     val node = config[MATERIAL_KEY].node
     if (node != null) {
         SolidMaterial.update(node, builder)
@@ -114,7 +115,7 @@ fun Solid.material(builder: SolidMaterial.() -> Unit) {
     }
 }
 
-var Solid.opacity: Double?
+public var Solid.opacity: Double?
     get() = getItem(MATERIAL_OPACITY_KEY).double
     set(value) {
         setItem(MATERIAL_OPACITY_KEY, value?.asValue())

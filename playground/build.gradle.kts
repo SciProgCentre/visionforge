@@ -7,12 +7,12 @@ repositories{
     maven("https://kotlin.bintray.com/kotlinx")
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
     maven("https://dl.bintray.com/mipt-npm/dataforge")
-    maven("https://dl.bintray.com/mipt-npm/scientifik")
+    maven("https://dl.bintray.com/mipt-npm/kscience")
     maven("https://dl.bintray.com/mipt-npm/dev")
 }
 
 kotlin {
-    js {
+    js(IR) {
         browser {}
     }
 

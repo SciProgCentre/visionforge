@@ -1,8 +1,6 @@
 package hep.dataforge.vision.solid.fx
 
-import hep.dataforge.names.Name
-import hep.dataforge.names.isEmpty
-import hep.dataforge.names.toName
+import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.Proxy
 import javafx.scene.Group
@@ -17,8 +15,8 @@ class FXProxyFactory(val plugin: FX3DPlugin) : FX3DFactory<Proxy> {
         val node = plugin.buildNode(prototype)
 
         obj.onPropertyChange(this) { name->
-            if (name.first()?.body == Proxy.PROXY_CHILD_PROPERTY_PREFIX) {
-                val childName = name.first()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
+            if (name.firstOrNull()?.body == Proxy.PROXY_CHILD_PROPERTY_PREFIX) {
+                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
                 val propertyName = name.cutFirst()
                 val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
@@ -35,7 +33,7 @@ private fun Node.findChild(name: Name): Node? {
     } else {
         (this as? Group)
             ?.children
-            ?.find { it.properties["name"] as String == name.first()?.toString() }
+            ?.find { it.properties["name"] as String == name.firstOrNull()?.toString() }
             ?.findChild(name.cutFirst())
     }
 }

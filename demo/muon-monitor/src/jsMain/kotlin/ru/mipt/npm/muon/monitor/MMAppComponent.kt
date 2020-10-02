@@ -4,6 +4,7 @@ import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
+import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.react.component

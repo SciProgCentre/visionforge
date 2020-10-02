@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid.transform
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.vision.MutableVisionGroup
@@ -7,6 +8,7 @@ import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.solid.Proxy
 import hep.dataforge.vision.solid.SolidGroup
 
+@DFExperimental
 object UnRef : VisualTreeTransform<SolidGroup>() {
     private fun VisionGroup.countRefs(): Map<Name, Int> {
         return children.values.fold(HashMap()) { reducer, obj ->

@@ -4,10 +4,7 @@ import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.ItemDescriptor
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.ValueDescriptor
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
-import hep.dataforge.names.withIndex
+import hep.dataforge.names.*
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
 import javafx.beans.binding.ListBinding
@@ -137,12 +134,12 @@ class FXMetaNode<M : MetaNode<M>>(
     }
 }
 
-class FXMetaValue<M : MetaNode<M>>(
+public class FXMetaValue<M : MetaNode<M>>(
     override val name: NameToken,
     override val parent: FXMetaNode<M>
 ) : FXMeta<M>() {
 
-    val descriptorProperty = parent.descriptorProperty.objectBinding {
+    public val descriptorProperty = parent.descriptorProperty.objectBinding {
         it?.values?.get(name.body)
     }
 
@@ -153,24 +150,24 @@ class FXMetaValue<M : MetaNode<M>>(
 
     //private val innerValueProperty = SimpleObjectProperty(value)
 
-    val valueProperty = descriptorProperty.objectBinding { descriptor ->
+    public val valueProperty = descriptorProperty.objectBinding { descriptor ->
         parent.node[name].value ?: descriptor?.default
     }
 
     override val hasValue: ObservableBooleanValue = parent.nodeProperty.booleanBinding { it[name] != null }
 
-    val value by valueProperty
+    public val value by valueProperty
 
     override val descriptionProperty = descriptorProperty.stringBinding { it?.info ?: "" }
 }
 
-fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
+public fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
     node?.remove(name.asName())
     children.invalidate()
 }
 
 private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boolean): M {
-    return if (append && token.index.isNotEmpty()) {
+    return if (append && token.hasIndex()) {
         val name = token.asName()
         val index = (getIndexed(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
         val newName = name.withIndex(index.toString())

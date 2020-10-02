@@ -1,10 +1,10 @@
 package hep.dataforge.vision.gdml.demo
 
-import hep.dataforge.vision.gdml.LUnit
 import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.solid.stringify
-import scientifik.gdml.GDML
+import hep.dataforge.vision.solid.encodeToString
+import kscience.gdml.GDML
+import kscience.gdml.LUnit
 import java.io.File
 import java.nio.file.Paths
 
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
         lUnit = LUnit.CM
     }
 
-    val json = visual.stringify()
+    val json = visual.encodeToString()
     println(json)
     File(outputFileName).writeText(json)
     //File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.json").writeText(json)

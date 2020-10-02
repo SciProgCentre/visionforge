@@ -2,7 +2,7 @@ package hep.dataforge.vision.gdml
 
 import hep.dataforge.vision.solid.SolidGroup
 import nl.adaptivity.xmlutil.StAXReader
-import scientifik.gdml.GDML
+import kscience.gdml.GDML
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger

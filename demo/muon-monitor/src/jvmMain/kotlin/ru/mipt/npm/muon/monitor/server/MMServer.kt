@@ -10,6 +10,7 @@ import io.ktor.application.log
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.http.ContentType
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.response.respond
@@ -19,6 +20,7 @@ import io.ktor.serialization.json
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.serialization.json.Json
 import org.apache.commons.math3.random.JDKRandomGenerator
 import ru.mipt.npm.muon.monitor.Model
 import ru.mipt.npm.muon.monitor.sim.Cos2TrackGenerator
@@ -38,7 +40,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(module = SolidManager.serialModule)
+        json(Json { serializersModule = SolidManager.serialModule }, ContentType.Application.Json)
     }
     install(Routing) {
         get("/event") {

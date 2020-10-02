@@ -1,47 +1,48 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.get
 import hep.dataforge.meta.number
 import kotlin.math.PI
 
-object World {
-    val ZERO = Point3D(0.0, 0.0, 0.0)
-    val ONE = Point3D(1.0, 1.0, 1.0)
+public object World {
+    public val ZERO: Point3D = Point3D(0.0, 0.0, 0.0)
+    public val ONE: Point3D = Point3D(1.0, 1.0, 1.0)
 }
 
-const val PI2: Float = 2 * PI.toFloat()
+public const val PI2: Float = 2 * PI.toFloat()
 
-expect class Point2D(x: Number, y: Number) {
-    var x: Double
-    var y: Double
+public expect class Point2D(x: Number, y: Number) {
+    public var x: Double
+    public var y: Double
 }
 
-operator fun Point2D.component1() = x
-operator fun Point2D.component2() = y
+public operator fun Point2D.component1(): Double = x
+public operator fun Point2D.component2(): Double = y
 
-fun Point2D.toMeta() = Meta {
+public fun Point2D.toMeta(): Meta = Meta {
     Solid.X_KEY put x
     Solid.Y_KEY put y
 }
 
-fun Meta.point2D() = Point2D(this["x"].number ?: 0, this["y"].number ?: 0)
+internal fun Meta.point2D(): Point2D = Point2D(this["x"].number ?: 0, this["y"].number ?: 0)
 
-expect class Point3D(x: Number, y: Number, z: Number) {
-    var x: Double
-    var y: Double
-    var z: Double
+public expect class Point3D(x: Number, y: Number, z: Number) {
+    public var x: Double
+    public var y: Double
+    public var z: Double
 }
 
-expect operator fun Point3D.plus(other: Point3D): Point3D
+public expect operator fun Point3D.plus(other: Point3D): Point3D
 
-operator fun Point3D.component1() = x
-operator fun Point3D.component2() = y
-operator fun Point3D.component3() = z
+public operator fun Point3D.component1(): Double = x
+public operator fun Point3D.component2(): Double = y
+public operator fun Point3D.component3(): Double = z
 
-fun Meta.point3D() = Point3D(this["x"].number ?: 0, this["y"].number ?: 0, this["y"].number ?: 0)
+internal fun Meta.point3D() = Point3D(this["x"].number ?: 0, this["y"].number ?: 0, this["y"].number ?: 0)
 
-fun Point3D.toMeta() = Meta {
+public fun Point3D.toMeta(): MetaBuilder = Meta {
     Solid.X_KEY put x
     Solid.Y_KEY put y
     Solid.Z_KEY put z

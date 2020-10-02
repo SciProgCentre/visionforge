@@ -1,11 +1,11 @@
 package hep.dataforge.vision.solid
 import org.fxyz3d.geometry.Point3D as FXPoint3D
 
-actual data class Point2D(actual var x: Double, actual var y: Double) {
+public actual data class Point2D(public actual var x: Double, public actual var y: Double) {
     actual constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
 }
 
-actual class Point3D(val point: FXPoint3D) {
+public actual class Point3D(val point: FXPoint3D) {
     actual constructor(x: Number, y: Number, z: Number) : this(
         FXPoint3D(
             x.toFloat(),
@@ -14,19 +14,19 @@ actual class Point3D(val point: FXPoint3D) {
         )
     )
 
-    actual var x: Double
+    public actual var x: Double
         inline get() = point.x.toDouble()
         inline set(value) {
             point.x = value.toFloat()
         }
 
-    actual var y: Double
+    public actual var y: Double
         inline get() = point.y.toDouble()
         inline set(value) {
             point.y = value.toFloat()
         }
 
-    actual var z: Double
+    public actual var z: Double
         inline get() = point.z.toDouble()
         inline set(value) {
             point.z = value.toFloat()
@@ -45,6 +45,6 @@ actual class Point3D(val point: FXPoint3D) {
     }
 }
 
-actual operator fun Point3D.plus(other: Point3D): Point3D {
+public actual operator fun Point3D.plus(other: Point3D): Point3D {
     return Point3D(point.add(other.point))
 }

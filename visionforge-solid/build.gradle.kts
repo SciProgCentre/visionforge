@@ -1,15 +1,14 @@
-import scientifik.useSerialization
+import ru.mipt.npm.gradle.KScienceVersions.coroutinesVersion
 
 plugins {
-    id("scientifik.mpp")
+    id("ru.mipt.npm.mpp")
 }
 
-useSerialization()
+kscience {
+    useSerialization()
+}
 
 kotlin {
-    js {
-        useCommonJs()
-    }
 
     sourceSets {
         commonMain {
@@ -22,7 +21,7 @@ kotlin {
                 api("org.fxyz3d:fxyz3d:0.5.2") {
                     exclude(module = "slf4j-simple")
                 }
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${Scientifik.coroutinesVersion}")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${coroutinesVersion}")
                 implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7") {
                     exclude(module = "slf4j-simple")
                 }
