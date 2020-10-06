@@ -4,6 +4,12 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 
+kotlin{
+    js{
+        useCommonJs()
+    }
+}
+
 dependencies{
     api(project(":ui:react"))
 
