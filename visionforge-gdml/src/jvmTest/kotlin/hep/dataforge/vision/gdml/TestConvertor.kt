@@ -1,9 +1,9 @@
 package hep.dataforge.vision.gdml
 
 import hep.dataforge.vision.solid.encodeToString
+import kscience.gdml.GDML
 import nl.adaptivity.xmlutil.StAXReader
 import org.junit.jupiter.api.Test
-import kscience.gdml.GDML
 
 class TestConvertor {
 

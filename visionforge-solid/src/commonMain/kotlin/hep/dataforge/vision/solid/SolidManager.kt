@@ -12,9 +12,7 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForm
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIAL_MODULE_TARGET
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
+import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.*
 import kotlin.reflect.KClass
@@ -103,6 +101,19 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
 
             polymorphic(Vision::class) {
                 subclass(SimpleVisionGroup.serializer())
+                subclass(SolidGroup.serializer())
+                subclass(Proxy.serializer())
+                subclass(Composite.serializer())
+                subclass(Tube.serializer())
+                subclass(Box.serializer())
+                subclass(Convex.serializer())
+                subclass(Extruded.serializer())
+                subclass(PolyLine.serializer())
+                subclass(SolidLabel.serializer())
+                subclass(Sphere.serializer())
+            }
+
+            polymorphic(Solid::class) {
                 subclass(SolidGroup.serializer())
                 subclass(Proxy.serializer())
                 subclass(Composite.serializer())
