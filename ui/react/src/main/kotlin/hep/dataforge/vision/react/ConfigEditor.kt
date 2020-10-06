@@ -14,7 +14,7 @@ import react.*
 import react.dom.render
 import styled.*
 
-interface ConfigEditorItemProps : RProps {
+public external interface ConfigEditorItemProps : RProps {
 
     /**
      * Root config object - always non null
@@ -190,7 +190,7 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
     }
 }
 
-interface ConfigEditorProps : RProps {
+public external interface ConfigEditorProps : RProps {
     var id: Name
     var root: Config
     var default: Meta?

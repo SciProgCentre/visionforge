@@ -25,7 +25,7 @@ import react.RProps
 import react.dom.*
 import kotlin.math.PI
 
-interface MMAppProps : RProps {
+external interface MMAppProps : RProps {
     var model: Model
     var context: Context
     var connection: HttpClient
@@ -40,6 +40,7 @@ private val canvasConfig = Canvas3DOptions {
     }
 }
 
+@JsExport
 val MMApp = component<MMAppProps> { props ->
     var selected by state { props.selected }
     var canvas: ThreeCanvas? by state { null }

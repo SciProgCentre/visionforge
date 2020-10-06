@@ -31,7 +31,7 @@ import react.dom.h1
 import styled.css
 import kotlin.math.PI
 
-interface GDMLAppProps : RProps {
+external interface GDMLAppProps : RProps {
     var context: Context
     var rootObject: Vision?
     var selected: Name?

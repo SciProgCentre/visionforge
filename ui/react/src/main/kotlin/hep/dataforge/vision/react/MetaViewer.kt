@@ -17,7 +17,7 @@ import react.*
 import react.dom.a
 import styled.*
 
-interface MetaViewerProps : RProps {
+public external interface MetaViewerProps : RProps {
     /**
      * Root meta
      */
@@ -136,6 +136,7 @@ private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
     }
 }
 
+@JsExport
 val MetaViewer = component<MetaViewerProps> { props ->
     child(MetaViewerItem) {
         attrs {

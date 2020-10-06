@@ -31,10 +31,6 @@ kotlin {
         }
     }
 
-    js {
-        useCommonJs()
-    }
-
     sourceSets {
         commonMain {
             dependencies {

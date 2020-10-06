@@ -12,7 +12,7 @@ import org.w3c.dom.events.Event
 import react.*
 import styled.*
 
-interface ObjectTreeProps : RProps {
+public external interface ObjectTreeProps : RProps {
     var name: Name
     var selected: Name?
     var obj: Vision
@@ -102,6 +102,7 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
     }
 }
 
+@JsExport
 val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
     objectTree(props)
 }

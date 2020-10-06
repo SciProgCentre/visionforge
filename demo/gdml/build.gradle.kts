@@ -20,11 +20,6 @@ kotlin {
             withJava()
         }
     }
-
-    js {
-        useCommonJs()
-    }
-
     sourceSets {
         commonMain {
             dependencies {

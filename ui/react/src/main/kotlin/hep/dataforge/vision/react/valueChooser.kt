@@ -19,16 +19,17 @@ import react.dom.option
 import styled.styledInput
 import styled.styledSelect
 
-interface ValueChooserProps : RProps {
+public external interface ValueChooserProps : RProps {
     var item: MetaItem<*>?
     var descriptor: ValueDescriptor?
     var valueChanged: ((Value?) -> Unit)?
 }
 
-interface ValueChooserState : RState {
+public external interface ValueChooserState : RState {
     var rawInput: Boolean?
 }
 
+@JsExport
 class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
     private val element = createRef<HTMLElement>()
 

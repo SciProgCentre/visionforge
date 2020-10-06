@@ -13,7 +13,7 @@ import react.RState
 import react.dom.div
 import react.dom.findDOMNode
 
-interface ThreeCanvasProps : RProps {
+public external interface ThreeCanvasProps : RProps {
     var context: Context
     var obj: Solid
     var options: Canvas3DOptions?
@@ -22,11 +22,12 @@ interface ThreeCanvasProps : RProps {
     var canvasCallback: ((ThreeCanvas?) -> Unit)?
 }
 
-interface ThreeCanvasState : RState {
+public external interface ThreeCanvasState : RState {
     var element: Element?
 //    var canvas: ThreeCanvas?
 }
 
+@JsExport
 class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
 
     private var canvas: ThreeCanvas? = null
