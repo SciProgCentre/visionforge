@@ -13,10 +13,10 @@ import react.*
 import styled.*
 
 public external interface ObjectTreeProps : RProps {
-    var name: Name
-    var selected: Name?
-    var obj: Vision
-    var clickCallback: (Name) -> Unit
+    public var name: Name
+    public var selected: Name?
+    public var obj: Vision
+    public var clickCallback: (Name) -> Unit
 }
 
 private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {

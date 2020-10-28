@@ -9,14 +9,10 @@ import hep.dataforge.vision.bootstrap.*
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.objectTree
-import hep.dataforge.vision.react.state
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.specifications.Camera
-import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreeCanvasComponent
-import hep.dataforge.vision.solid.three.canvasControls
 import kotlinx.browser.window
 import kotlinx.css.FlexBasis
 import kotlinx.css.Overflow
@@ -28,8 +24,10 @@ import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RProps
 import react.dom.h1
+import react.getValue
+import react.setValue
+import react.useState
 import styled.css
-import kotlin.math.PI
 
 external interface GDMLAppProps : RProps {
     var context: Context
@@ -37,18 +35,19 @@ external interface GDMLAppProps : RProps {
     var selected: Name?
 }
 
-private val canvasConfig = Canvas3DOptions {
-    camera = Camera {
-        distance = 2100.0
-        latitude = PI / 6
-        azimuth = PI + PI / 6
-    }
-}
+//private val canvasConfig = Canvas3DOptions {
+//    camera = Camera {
+//        distance = 2100.0
+//        latitude = PI / 6
+//        azimuth = PI + PI / 6
+//    }
+//}
 
+@JsExport
 val GDMLApp = component<GDMLAppProps> { props ->
-    var selected by state { props.selected }
-    var canvas: ThreeCanvas? by state { null }
-    var vision: Vision? by state { props.rootObject }
+    var selected by useState { props.selected }
+    var canvas: ThreeCanvas? by useState { null }
+    var vision: Vision? by useState { props.rootObject }
 
     val select: (Name?) -> Unit = {
         selected = it

@@ -1,11 +1,11 @@
-package hep.dataforge.vision.solid.three
+package hep.dataforge.vision.bootstrap
 
 import hep.dataforge.js.requireJS
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.vision.bootstrap.accordion
-import hep.dataforge.vision.bootstrap.entry
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.three.ThreeCanvas
+import kotlinx.dom.clear
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.js.onChangeFunction
@@ -21,7 +21,6 @@ import react.dom.button
 import react.dom.div
 import react.dom.input
 import react.dom.label
-import kotlin.dom.clear
 
 private fun saveData(event: Event, fileName: String, mimeType: String = "text/plain", dataBuilder: () -> String) {
     event.stopPropagation();

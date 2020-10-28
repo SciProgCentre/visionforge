@@ -39,7 +39,7 @@ private val MetaViewerItem: FunctionalComponent<MetaViewerProps> = component { p
 }
 
 private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
-    var expanded: Boolean by state { true }
+    var expanded: Boolean by useState { true }
     val item = props.root[props.name]
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     val actualItem = item ?: descriptorItem?.defaultItem()

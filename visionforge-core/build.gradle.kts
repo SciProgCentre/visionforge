@@ -31,7 +31,7 @@ kotlin {
 
                 //api("org.jetbrains:kotlin-extensions:1.0.1-pre.105-kotlin-1.3.72")
                 //api("org.jetbrains:kotlin-css-js:1.0.0-pre.105-kotlin-1.3.72")
-                api("org.jetbrains:kotlin-styled:5.2.0-pre.123-kotlin-1.4.10")
+                api("org.jetbrains:kotlin-styled:5.2.0-pre.126-kotlin-1.4.10")
 
                 api(npm("core-js", "2.6.5"))
                 api(npm("inline-style-prefixer", "5.1.0"))

@@ -5,5 +5,6 @@ plugins {
 val dataforgeVersion: String by rootProject.extra
 
 dependencies{
+    api(project(":visionforge-solid"))
     api(project(":ui:react"))
 }

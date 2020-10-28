@@ -55,7 +55,7 @@ kotlin {
 }
 
 application {
-    mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
+    mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
 distributions {

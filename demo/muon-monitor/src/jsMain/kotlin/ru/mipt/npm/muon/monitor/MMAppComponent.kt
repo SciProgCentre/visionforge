@@ -6,16 +6,15 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
 import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.objectTree
-import hep.dataforge.vision.react.state
 import hep.dataforge.vision.solid.specifications.Camera
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreeCanvasComponent
-import hep.dataforge.vision.solid.three.canvasControls
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
@@ -23,6 +22,9 @@ import kotlinx.coroutines.launch
 import kotlinx.html.js.onClickFunction
 import react.RProps
 import react.dom.*
+import react.getValue
+import react.setValue
+import react.useState
 import kotlin.math.PI
 
 external interface MMAppProps : RProps {
@@ -42,14 +44,14 @@ private val canvasConfig = Canvas3DOptions {
 
 @JsExport
 val MMApp = component<MMAppProps> { props ->
-    var selected by state { props.selected }
-    var canvas: ThreeCanvas? by state { null }
+    var selected by useState  { props.selected }
+    var canvas: ThreeCanvas? by useState { null }
 
     val select: (Name?) -> Unit = {
         selected = it
     }
 
-    val visual = props.model.root
+    val root = props.model.root
 
     div("row") {
         h1("mx-auto") {
@@ -60,7 +62,7 @@ val MMApp = component<MMAppProps> { props ->
         div("col-lg-3 px-0 overflow-auto") {
             //tree
             card("Object tree") {
-                objectTree(visual, selected, select)
+                objectTree(root, selected, select)
             }
         }
         div("col-lg-6") {
@@ -68,7 +70,7 @@ val MMApp = component<MMAppProps> { props ->
             child(ThreeCanvasComponent::class) {
                 attrs {
                     this.context = props.context
-                    this.obj = visual
+                    this.obj = root
                     this.options = canvasConfig
                     this.selected = selected
                     this.clickCallback = select
@@ -153,8 +155,8 @@ val MMApp = component<MMAppProps> { props ->
                     selected.let { selected ->
                         val selectedObject: Vision? = when {
                             selected == null -> null
-                            selected.isEmpty() -> visual
-                            else -> visual[selected]
+                            selected.isEmpty() -> root
+                            else -> root[selected]
                         }
                         if (selectedObject != null) {
                             configEditor(selectedObject, default = selectedObject.getAllProperties(), key = selected)

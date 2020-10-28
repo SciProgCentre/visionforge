@@ -4,7 +4,7 @@ plugins {
     id("ru.mipt.npm.project")
 }
 
-val dataforgeVersion by extra("0.2.0-dev-3")
+val dataforgeVersion by extra("0.2.0-dev-4")
 val ktorVersion by extra("1.4.1")
 
 allprojects {

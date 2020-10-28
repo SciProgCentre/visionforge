@@ -7,7 +7,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
@@ -20,21 +19,21 @@ import kotlin.random.Random
 private val solidsName = "solids".asName()
 private val volumesName = "volumes".asName()
 
-public class GDMLTransformer internal constructor(val root: GDML) {
+public class GDMLTransformer internal constructor(public val root: GDML) {
     //private val materialCache = HashMap<GDMLMaterial, Meta>()
     private val random = Random(222)
 
-    enum class Action {
+    public enum class Action {
         ADD,
         REJECT,
         PROTOTYPE
     }
 
-    var lUnit: LUnit = LUnit.MM
-    var aUnit: AUnit = AUnit.RADIAN
+    public var lUnit: LUnit = LUnit.MM
+    public var aUnit: AUnit = AUnit.RADIAN
 
-    var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
-    var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
+    public var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
+    public var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
 
     /**
      * A special group for local templates
@@ -71,7 +70,7 @@ public class GDMLTransformer internal constructor(val root: GDML) {
 
     private val styleCache = HashMap<Name, Meta>()
 
-    var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
+    public var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
         lUnit = LUnit.CM
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
@@ -101,7 +100,7 @@ public class GDMLTransformer internal constructor(val root: GDML) {
         obj.solidConfiguration(parent, solid)
     }
 
-    var onFinish: GDMLTransformer.() -> Unit = {}
+    public var onFinish: GDMLTransformer.() -> Unit = {}
 
 
     private fun <T : Solid> T.withPosition(
@@ -356,13 +355,13 @@ public class GDMLTransformer internal constructor(val root: GDML) {
         return final
     }
 
-    val result by lazy {
+    public val result: SolidGroup by lazy {
         finalize(volume(root.world))
     }
 }
 
 
-fun GDML.toVision(block: GDMLTransformer.() -> Unit = {}): SolidGroup {
+public fun GDML.toVision(block: GDMLTransformer.() -> Unit = {}): SolidGroup {
     val context = GDMLTransformer(this).apply(block)
     return context.result
 }
@@ -370,7 +369,7 @@ fun GDML.toVision(block: GDMLTransformer.() -> Unit = {}): SolidGroup {
 /**
  * Append gdml node to the group
  */
-fun SolidGroup.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

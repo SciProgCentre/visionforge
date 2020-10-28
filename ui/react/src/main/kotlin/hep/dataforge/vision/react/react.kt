@@ -1,16 +1,14 @@
 package hep.dataforge.vision.react
 
 import react.*
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
-class RFBuilder : RBuilder()
+public class RFBuilder : RBuilder()
 
 /**
  * Get functional component from [func]
  */
-fun <P : RProps> component(
-    func: RFBuilder.(props: P) -> Unit
+public inline fun <P : RProps> component(
+    crossinline func: RFBuilder.(props: P) -> Unit,
 ): FunctionalComponent<P> {
     return { props: P ->
         val nodes = RFBuilder().apply { func(props) }.childList
@@ -21,18 +19,6 @@ fun <P : RProps> component(
         }
     }
 }
-
-fun <T> RFBuilder.state(init: () -> T): ReadWriteProperty<Any?, T> =
-    object : ReadWriteProperty<Any?, T> {
-        val pair = react.useState(init)
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            return pair.first
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            pair.second(value)
-        }
-    }
-
-fun <T> RFBuilder.memoize(vararg deps: dynamic, builder: () -> T): T = useMemo(builder, deps)
+//
+//public fun <T> RFBuilder.memoize(vararg deps: dynamic, builder: () -> T): T = useMemo(builder, deps)
 

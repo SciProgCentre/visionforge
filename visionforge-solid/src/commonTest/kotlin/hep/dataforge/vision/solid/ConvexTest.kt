@@ -1,7 +1,7 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
-import kotlinx.serialization.json.toJson
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -42,11 +42,11 @@ private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> = compo
 }
 
 private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
-    var expanded: Boolean by state { true }
-    var item: MetaItem<Config>? by state { props.root[props.name] }
+    var expanded: Boolean by useState { true }
+    var item: MetaItem<Config>? by useState { props.root[props.name] }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     val defaultItem = props.default?.get(props.name)
-    var actualItem: MetaItem<Meta>? by state { item ?: defaultItem ?: descriptorItem?.defaultItem() }
+    var actualItem: MetaItem<Meta>? by useState { item ?: defaultItem ?: descriptorItem?.defaultItem() }
 
     val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
@@ -191,13 +191,14 @@ private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
 }
 
 public external interface ConfigEditorProps : RProps {
-    var id: Name
-    var root: Config
-    var default: Meta?
-    var descriptor: NodeDescriptor?
+    public var id: Name
+    public var root: Config
+    public var default: Meta?
+    public var descriptor: NodeDescriptor?
 }
 
-val ConfigEditor = component<ConfigEditorProps> { props ->
+@JsExport
+public val ConfigEditor: FunctionalComponent<ConfigEditorProps> = component { props ->
     child(ConfigEditorItem) {
         attrs {
             this.key = ""
@@ -209,7 +210,7 @@ val ConfigEditor = component<ConfigEditorProps> { props ->
     }
 }
 
-fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
+public fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
     render(this) {
         child(ConfigEditor) {
             attrs {

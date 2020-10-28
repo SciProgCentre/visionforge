@@ -14,11 +14,8 @@ kscience {
 }
 
 kotlin {
-
     jvm {
-        afterEvaluate {
-            withJava()
-        }
+        withJava()
     }
     sourceSets {
         commonMain {
@@ -37,7 +34,7 @@ kotlin {
 }
 
 application {
-    mainClassName = "hep.dataforge.vision.gdml.demo.GdmlFxDemoAppKt"
+    mainClass.set("hep.dataforge.vision.gdml.demo.GdmlFxDemoAppKt")
 }
 
 val convertGdmlToJson by tasks.creating(JavaExec::class) {

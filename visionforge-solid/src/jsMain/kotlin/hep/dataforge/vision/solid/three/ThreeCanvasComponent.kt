@@ -28,7 +28,7 @@ public external interface ThreeCanvasState : RState {
 }
 
 @JsExport
-class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
+public class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
 
     private var canvas: ThreeCanvas? = null
 
@@ -62,7 +62,7 @@ class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
     }
 }
 
-fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
+public fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
     child(ThreeCanvasComponent::class) {
         attrs {
             this.obj = object3D
