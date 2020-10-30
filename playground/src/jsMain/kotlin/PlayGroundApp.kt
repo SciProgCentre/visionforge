@@ -3,16 +3,25 @@ import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
 import hep.dataforge.vision.bootstrap.visionPropertyEditor
 import hep.dataforge.vision.react.objectTree
-import hep.dataforge.vision.solid.Point3D
-import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.box
-import hep.dataforge.vision.solid.group
+import hep.dataforge.vision.solid.*
+import hep.dataforge.vision.solid.specifications.Canvas3DOptions
+import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import hep.dataforge.vision.solid.three.ThreePlugin
-import hep.dataforge.vision.solid.three.threeCanvas
+import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
+import react.RBuilder
+import react.child
 import react.dom.div
 import react.dom.render
-import kotlin.browser.document
+
+public fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
+    child(ThreeCanvasComponent) {
+        attrs {
+            this.obj = object3D
+            this.options = Canvas3DOptions.invoke(options)
+        }
+    }
+}
 
 private class PlayGroundApp : Application {
 

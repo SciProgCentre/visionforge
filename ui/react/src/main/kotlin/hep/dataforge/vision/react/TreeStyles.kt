@@ -4,11 +4,11 @@ import kotlinx.css.*
 import kotlinx.css.properties.*
 import styled.StyleSheet
 
-object TreeStyles : StyleSheet("treeStyles", true) {
+public object TreeStyles : StyleSheet("treeStyles", true) {
     /**
      * Remove default bullets
      */
-    val tree by css {
+    public val tree by css {
         paddingLeft = 8.px
         marginLeft = 0.px
         listStyleType = ListStyleType.none
@@ -17,7 +17,7 @@ object TreeStyles : StyleSheet("treeStyles", true) {
     /**
      * Style the caret/arrow
      */
-    val treeCaret by css {
+    public val treeCaret by css {
         cursor = Cursor.pointer
         userSelect = UserSelect.none
         /* Create the caret/arrow with a unicode, and style it */

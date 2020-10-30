@@ -19,29 +19,29 @@ public external interface ConfigEditorItemProps : RProps {
     /**
      * Root config object - always non null
      */
-    var root: Config
+    public var root: Config
 
     /**
      * Full path to the displayed node in [root]. Could be empty
      */
-    var name: Name
+    public var name: Name
 
     /**
      * Root default
      */
-    var default: Meta?
+    public var default: Meta?
 
     /**
      * Root descriptor
      */
-    var descriptor: NodeDescriptor?
+    public var descriptor: NodeDescriptor?
 }
 
-private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> = component { props ->
+private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> = functionalComponent("ConfigEditorItem") { props ->
     configEditorItem(props)
 }
 
-private fun RFBuilder.configEditorItem(props: ConfigEditorItemProps) {
+private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
     var expanded: Boolean by useState { true }
     var item: MetaItem<Config>? by useState { props.root[props.name] }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
@@ -198,7 +198,7 @@ public external interface ConfigEditorProps : RProps {
 }
 
 @JsExport
-public val ConfigEditor: FunctionalComponent<ConfigEditorProps> = component { props ->
+public val ConfigEditor: FunctionalComponent<ConfigEditorProps> = functionalComponent("ConfigEditor") { props ->
     child(ConfigEditorItem) {
         attrs {
             this.key = ""
@@ -223,7 +223,7 @@ public fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = nu
     }
 }
 
-fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
+public fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
     child(ConfigEditor) {
         attrs {
             this.key = key?.toString() ?: ""
@@ -234,7 +234,7 @@ fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, de
     }
 }
 
-fun RBuilder.configEditor(
+public fun RBuilder.configEditor(
     obj: Configurable,
     descriptor: NodeDescriptor? = obj.descriptor,
     default: Meta? = null,

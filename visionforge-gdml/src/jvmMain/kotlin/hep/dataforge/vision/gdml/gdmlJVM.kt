@@ -7,7 +7,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicInteger
 
-actual typealias Counter = AtomicInteger
+public actual typealias Counter = AtomicInteger
 
 fun GDML.Companion.readFile(file: Path): GDML {
     val xmlReader = StAXReader(Files.newInputStream(file), "UTF-8")

@@ -6,11 +6,12 @@ import kotlinx.css.display
 import kotlinx.css.flexDirection
 import kotlinx.html.DIV
 import react.RBuilder
+import react.ReactElement
 import styled.StyledDOMBuilder
 import styled.css
 import styled.styledDiv
 
-inline fun RBuilder.flexColumn(block: StyledDOMBuilder<DIV>.() -> Unit) =
+public inline fun RBuilder.flexColumn(block: StyledDOMBuilder<DIV>.() -> Unit): ReactElement =
     styledDiv {
         css {
             display = Display.flex
@@ -19,7 +20,7 @@ inline fun RBuilder.flexColumn(block: StyledDOMBuilder<DIV>.() -> Unit) =
         block()
     }
 
-inline fun RBuilder.flexRow(block: StyledDOMBuilder<DIV>.() -> Unit) =
+public inline fun RBuilder.flexRow(block: StyledDOMBuilder<DIV>.() -> Unit): ReactElement =
     styledDiv {
         css {
             display = Display.flex

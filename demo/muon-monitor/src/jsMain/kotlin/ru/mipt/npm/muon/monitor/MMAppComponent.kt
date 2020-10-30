@@ -8,7 +8,6 @@ import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
-import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.specifications.Camera
@@ -20,11 +19,10 @@ import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.js.onClickFunction
-import react.RProps
+import react.*
 import react.dom.*
-import react.getValue
-import react.setValue
-import react.useState
+import styled.css
+import styled.styledDiv
 import kotlin.math.PI
 
 external interface MMAppProps : RProps {
@@ -43,8 +41,8 @@ private val canvasConfig = Canvas3DOptions {
 }
 
 @JsExport
-val MMApp = component<MMAppProps> { props ->
-    var selected by useState  { props.selected }
+val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
+    var selected by useState { props.selected }
     var canvas: ThreeCanvas? by useState { null }
 
     val select: (Name?) -> Unit = {
@@ -59,7 +57,12 @@ val MMApp = component<MMAppProps> { props ->
         }
     }
     div("row") {
-        div("col-lg-3 px-0 overflow-auto") {
+        styledDiv {
+            css {
+                +"col-lg-3"
+                +"px-0"
+                +"overflow-auto"
+            }
             //tree
             card("Object tree") {
                 objectTree(root, selected, select)
@@ -67,7 +70,7 @@ val MMApp = component<MMAppProps> { props ->
         }
         div("col-lg-6") {
             //canvas
-            child(ThreeCanvasComponent::class) {
+            child(ThreeCanvasComponent) {
                 attrs {
                     this.context = props.context
                     this.obj = root

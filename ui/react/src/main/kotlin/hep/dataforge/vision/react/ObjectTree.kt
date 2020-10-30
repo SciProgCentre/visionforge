@@ -19,7 +19,7 @@ public external interface ObjectTreeProps : RProps {
     public var clickCallback: (Name) -> Unit
 }
 
-private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
+private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
     var expanded: Boolean by useState { props.selected?.startsWith(props.name) ?: false }
 
     val onClick: (Event) -> Unit = {
@@ -103,11 +103,11 @@ private fun RFBuilder.objectTree(props: ObjectTreeProps): Unit {
 }
 
 @JsExport
-val ObjectTree: FunctionalComponent<ObjectTreeProps> = component { props ->
+public val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
     objectTree(props)
 }
 
-fun RBuilder.objectTree(
+public fun RBuilder.objectTree(
     vision: Vision,
     selected: Name? = null,
     clickCallback: (Name) -> Unit = {}

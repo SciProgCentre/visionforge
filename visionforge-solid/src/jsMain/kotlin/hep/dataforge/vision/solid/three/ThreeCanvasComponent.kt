@@ -6,67 +6,88 @@ import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 import react.dom.div
-import react.dom.findDOMNode
 
 public external interface ThreeCanvasProps : RProps {
-    var context: Context
-    var obj: Solid
-    var options: Canvas3DOptions?
-    var selected: Name?
-    var clickCallback: (Name?) -> Unit
-    var canvasCallback: ((ThreeCanvas?) -> Unit)?
+    public var context: Context
+    public var obj: Solid?
+    public var options: Canvas3DOptions?
+    public var selected: Name?
+    public var clickCallback: (Name?) -> Unit
+    public var canvasCallback: ((ThreeCanvas?) -> Unit)?
 }
 
 public external interface ThreeCanvasState : RState {
-    var element: Element?
+    public var element: Element?
 //    var canvas: ThreeCanvas?
 }
 
-@JsExport
-public class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
+public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functionalComponent(
+    "ThreeCanvasComponent"
+) { props ->
+    val elementRef = useRef<Element?>(null)
+    var canvas by useState<ThreeCanvas?>(null)
 
-    private var canvas: ThreeCanvas? = null
-
-    override fun componentDidMount() {
-        if(canvas == null) {
-            val element = state.element as? HTMLElement ?: error("Canvas element not found")
+    useEffect(listOf(props.context, props.obj, props.options, elementRef)) {
+        if (canvas == null) {
+            val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
-            canvas = three.output(element, props.options ?: Canvas3DOptions.empty()).apply {
-                onClick = props.clickCallback
-            }
-            props.canvasCallback?.invoke(canvas)
-        }
-        canvas?.render(props.obj)
-    }
-
-    override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
-        if (prevProps.obj != props.obj) {
-            componentDidMount()
-        }
-        if (prevProps.selected != props.selected) {
-            canvas?.select(props.selected)
+            val newCanvas = three.output(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
+            props.canvasCallback?.invoke(newCanvas)
+            canvas = newCanvas
         }
     }
 
-    override fun RBuilder.render() {
-        div {
-            ref {
-                state.element = findDOMNode(it)
+    useEffect(listOf(canvas, props.obj)) {
+        props.obj?.let { obj ->
+            if (canvas?.content != obj) {
+                canvas?.render(obj)
             }
         }
     }
-}
 
-public fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
-    child(ThreeCanvasComponent::class) {
-        attrs {
-            this.obj = object3D
-            this.options = Canvas3DOptions.invoke(options)
-        }
+    useEffect(listOf(canvas, props.selected)) {
+        canvas?.select(props.selected)
+    }
+
+    div {
+        ref = elementRef
     }
 }
+
+//public class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
+//
+//    private var canvas: ThreeCanvas? = null
+//
+//    override fun componentDidMount() {
+//        props.obj?.let { obj ->
+//            if (canvas == null) {
+//                val element = state.element as? HTMLElement ?: error("Canvas element not found")
+//                val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
+//                canvas = three.output(element, props.options ?: Canvas3DOptions.empty()).apply {
+//                    onClick = props.clickCallback
+//                }
+//                props.canvasCallback?.invoke(canvas)
+//            }
+//            canvas?.render(obj)
+//        }
+//    }
+//
+//    override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
+//        if (prevProps.obj != props.obj) {
+//            componentDidMount()
+//        }
+//        if (prevProps.selected != props.selected) {
+//            canvas?.select(props.selected)
+//        }
+//    }
+//
+//    override fun RBuilder.render() {
+//        div {
+//            ref {
+//                state.element = findDOMNode(it)
+//            }
+//        }
+//    }
+//}

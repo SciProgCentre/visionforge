@@ -29,11 +29,11 @@ import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
+import kotlinx.browser.window
+import kotlinx.dom.clear
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
-import kotlin.browser.window
-import kotlin.dom.clear
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -41,11 +41,16 @@ import kotlin.math.sin
 /**
  *
  */
-class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Canvas3DOptions) : Renderer<Solid> {
+public class ThreeCanvas(
+    element: HTMLElement,
+    public val three: ThreePlugin,
+    public val options: Canvas3DOptions,
+    public val onClick: ((Name?) -> Unit)? = null,
+) : Renderer<Solid> {
 
     override val context: Context get() = three.context
 
-    var content: Solid? = null
+    public var content: Solid? = null
         private set
 
     private var root: Object3D? = null
@@ -53,17 +58,15 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
 
-    var onClick: ((Name?) -> Unit)? = null
-
-    val axes = AxesHelper(options.axes.size.toInt()).apply {
+    public val axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply {
         visible = options.axes.visible
     }
 
-    val scene: Scene = Scene().apply {
+    public val scene: Scene = Scene().apply {
         add(axes)
     }
 
-    val camera = buildCamera(options.camera)
+    public val camera: PerspectiveCamera = buildCamera(options.camera)
 
     private var picked: Object3D? = null
 
@@ -166,7 +169,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
         }
     }
 
-    fun clear() {
+    public fun clear() {
         scene.children.find { it.name == "@root" }?.let {
             scene.remove(it)
         }
@@ -192,7 +195,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
     private fun Object3D.toggleHighlight(
         highlight: Boolean,
         edgesName: String,
-        material: LineBasicMaterial = SELECTED_MATERIAL
+        material: LineBasicMaterial = SELECTED_MATERIAL,
     ) {
         if (userData[DO_NOT_HIGHLIGHT_TAG] == true) {
             return
@@ -220,7 +223,7 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
     /**
      * Toggle highlight for element with given name
      */
-    fun select(name: Name?) {
+    public fun select(name: Name?) {
         if (name == null) {
             selected?.toggleHighlight(false, SELECT_NAME, SELECTED_MATERIAL)
             selected = null
@@ -234,15 +237,21 @@ class ThreeCanvas(element: HTMLElement, val three: ThreePlugin, val options: Can
         }
     }
 
-    companion object {
-        const val DO_NOT_HIGHLIGHT_TAG = "doNotHighlight"
+    public companion object {
+        public const val DO_NOT_HIGHLIGHT_TAG = "doNotHighlight"
         private const val HIGHLIGHT_NAME = "@highlight"
         private const val SELECT_NAME = "@select"
     }
 }
 
-fun ThreePlugin.output(element: HTMLElement, spec: Canvas3DOptions = Canvas3DOptions.empty()): ThreeCanvas =
-    ThreeCanvas(element, this, spec)
+public fun ThreePlugin.output(
+    element: HTMLElement,
+    spec: Canvas3DOptions = Canvas3DOptions.empty(),
+    onClick: ((Name?) -> Unit)? = null,
+): ThreeCanvas = ThreeCanvas(element, this, spec, onClick)
 
-fun ThreePlugin.render(element: HTMLElement, obj: Solid, spec: Canvas3DOptions = Canvas3DOptions.empty()): Unit =
-    output(element, spec).render(obj)
+public fun ThreePlugin.render(
+    element: HTMLElement, obj: Solid,
+    spec: Canvas3DOptions = Canvas3DOptions.empty(),
+    onClick: ((Name?) -> Unit)? = null,
+): Unit = output(element, spec, onClick).render(obj)

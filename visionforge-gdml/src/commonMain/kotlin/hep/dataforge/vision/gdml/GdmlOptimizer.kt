@@ -13,9 +13,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import mu.KotlinLogging
 
-expect class Counter() {
-    fun get(): Int
-    fun incrementAndGet(): Int
+public expect class Counter() {
+    public fun get(): Int
+    public fun incrementAndGet(): Int
 }
 
 private fun Point3D?.safePlus(other: Point3D?): Point3D? = if (this == null && other == null) {

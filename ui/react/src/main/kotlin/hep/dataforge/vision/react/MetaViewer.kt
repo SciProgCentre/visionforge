@@ -21,24 +21,24 @@ public external interface MetaViewerProps : RProps {
     /**
      * Root meta
      */
-    var root: Meta
+    public var root: Meta
 
     /**
      * Full path to the displayed node in [root]. Could be empty
      */
-    var name: Name
+    public var name: Name
 
     /**
      * Root descriptor
      */
-    var descriptor: NodeDescriptor?
+    public var descriptor: NodeDescriptor?
 }
 
-private val MetaViewerItem: FunctionalComponent<MetaViewerProps> = component { props ->
+private val MetaViewerItem: FunctionalComponent<MetaViewerProps> = functionalComponent("MetaViewerItem") { props ->
     metaViewerItem(props)
 }
 
-private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
+private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
     var expanded: Boolean by useState { true }
     val item = props.root[props.name]
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
@@ -137,7 +137,7 @@ private fun RFBuilder.metaViewerItem(props: MetaViewerProps) {
 }
 
 @JsExport
-val MetaViewer = component<MetaViewerProps> { props ->
+public val MetaViewer:FunctionalComponent<MetaViewerProps>  = functionalComponent<MetaViewerProps>("MetaViewer") { props ->
     child(MetaViewerItem) {
         attrs {
             this.key = ""
@@ -148,7 +148,7 @@ val MetaViewer = component<MetaViewerProps> { props ->
     }
 }
 
-fun RBuilder.metaViewer(meta: Meta, descriptor: NodeDescriptor? = null, key: Any? = null) {
+public fun RBuilder.metaViewer(meta: Meta, descriptor: NodeDescriptor? = null, key: Any? = null) {
     child(MetaViewer) {
         attrs {
             this.key = key?.toString() ?: ""

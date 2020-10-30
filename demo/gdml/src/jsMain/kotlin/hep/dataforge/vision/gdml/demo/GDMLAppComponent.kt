@@ -7,7 +7,6 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.bootstrap.*
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.react.component
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
@@ -22,11 +21,8 @@ import kscience.gdml.GDML
 import kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import react.RProps
+import react.*
 import react.dom.h1
-import react.getValue
-import react.setValue
-import react.useState
 import styled.css
 
 external interface GDMLAppProps : RProps {
@@ -44,7 +40,7 @@ external interface GDMLAppProps : RProps {
 //}
 
 @JsExport
-val GDMLApp = component<GDMLAppProps> { props ->
+val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     var selected by useState { props.selected }
     var canvas: ThreeCanvas? by useState { null }
     var vision: Vision? by useState { props.rootObject }
@@ -113,16 +109,14 @@ val GDMLApp = component<GDMLAppProps> { props ->
                     +"order-xl-2"
                 }
                 //canvas
-                (vision as? Solid)?.let { visual3D ->
-                    child(ThreeCanvasComponent::class) {
-                        attrs {
-                            this.context = props.context
-                            this.obj = visual3D
-                            this.selected = selected
-                            this.clickCallback = select
-                            this.canvasCallback = {
-                                canvas = it
-                            }
+                child(ThreeCanvasComponent) {
+                    attrs {
+                        this.context = props.context
+                        this.obj = vision as? Solid
+                        this.selected = selected
+                        this.clickCallback = select
+                        this.canvasCallback = {
+                            canvas = it
                         }
                     }
                 }
