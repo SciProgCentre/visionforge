@@ -3,6 +3,8 @@ plugins {
 }
 
 val dataforgeVersion: String by rootProject.extra
+val kotlinWrappersVersion: String by rootProject.extra
+
 
 kotlin {
 
@@ -27,16 +29,8 @@ kotlin {
         jsMain {
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
-                api("org.jetbrains.kotlinx:kotlinx-html:0.7.2")
-
-                //api("org.jetbrains:kotlin-extensions:1.0.1-pre.105-kotlin-1.3.72")
-                //api("org.jetbrains:kotlin-css-js:1.0.0-pre.105-kotlin-1.3.72")
-                api("org.jetbrains:kotlin-styled:5.2.0-pre.126-kotlin-1.4.10")
-
-                api(npm("core-js", "2.6.5"))
-                api(npm("inline-style-prefixer", "5.1.0"))
-                api(npm("styled-components", "5.2.0"))
-                //api(project(":ringui-wrapper"))
+                api("org.jetbrains:kotlin-styled:5.2.0-$kotlinWrappersVersion")
+                api("org.jetbrains:kotlin-extensions:1.0.1-$kotlinWrappersVersion")
             }
         }
     }

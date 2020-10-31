@@ -19,12 +19,12 @@ import kotlin.reflect.KClass
 /**
  * Plugin holding JavaFX application instance and its root stage
  */
-class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
+public class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
     override val tag: PluginTag get() = Companion.tag
 
     private val stages: ObservableSet<Stage> = FXCollections.observableSet()
 
-    val consoleMode: Boolean by meta.boolean(true)
+    public val consoleMode: Boolean by meta.boolean(true)
 
     init {
         if (consoleMode) {
@@ -65,7 +65,7 @@ class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
     /**
      * Define an application to use in this context
      */
-    fun setApp(app: Application, stage: Stage) {
+    public fun setApp(app: Application, stage: Stage) {
         FX.registerApplication(FX.defaultScope, app, stage)
     }
 
@@ -74,7 +74,7 @@ class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
      *
      * @param cons
      */
-    fun display(action: Stage.() -> Unit) {
+    public fun display(action: Stage.() -> Unit) {
         runLater {
             val stage = Stage()
             stage.initOwner(FX.primaryStage)
@@ -85,14 +85,14 @@ class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
         }
     }
 
-    fun display(component: UIComponent, width: Double = 800.0, height: Double = 600.0) {
+    public fun display(component: UIComponent, width: Double = 800.0, height: Double = 600.0) {
         display {
             scene = Scene(component.root, width, height)
             title = component.title
         }
     }
 
-    companion object : PluginFactory<FXPlugin> {
+    public companion object : PluginFactory<FXPlugin> {
         override val type: KClass<out FXPlugin> = FXPlugin::class
         override val tag: PluginTag = PluginTag("vis.fx", group = PluginTag.DATAFORGE_GROUP)
         override fun invoke(meta: Meta, context: Context): FXPlugin =
@@ -101,19 +101,19 @@ class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
 
 }
 
-val dfIcon: Image = Image(Global::class.java.getResourceAsStream("/img/df.png"))
-val dfIconView = ImageView(dfIcon)
+public val dfIcon: Image = Image(Global::class.java.getResourceAsStream("/img/df.png"))
+public val dfIconView: ImageView = ImageView(dfIcon)
 
 /**
  * An application surrogate without any visible primary stage
  */
-class ApplicationSurrogate : App() {
+public class ApplicationSurrogate : App() {
     override fun start(stage: Stage) {
         FX.registerApplication(this, stage)
         FX.initialized.value = true
     }
 }
 
-fun Context.display(width: Double = 800.0, height: Double = 600.0, component: () -> UIComponent) {
+public fun Context.display(width: Double = 800.0, height: Double = 600.0, component: () -> UIComponent) {
     plugins.fetch(FXPlugin).display(component(), width, height)
 }

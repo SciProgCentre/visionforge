@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun <T> Vision.flowStatistics(statistics: (Name, Vision) -> T): Flow<T> = callbackFlow<T> {
+public suspend fun <T> Vision.flowStatistics(statistics: (Name, Vision) -> T): Flow<T> = callbackFlow<T> {
     val visitor = object : VisionVisitor {
         override suspend fun visit(name: Name, vision: Vision){
             send(statistics(name, vision))
@@ -27,10 +27,10 @@ suspend fun <T> Vision.flowStatistics(statistics: (Name, Vision) -> T): Flow<T> 
     }
 }
 
-data class DefaultVisionStatistics(val name: Name, val type: KClass<out Vision>) {
-    val depth get() = name.length
+public data class DefaultVisionStatistics(val name: Name, val type: KClass<out Vision>) {
+    val depth: Int get() = name.length
 }
 
-suspend fun Vision.flowStatistics(): Flow<DefaultVisionStatistics> = flowStatistics { name, vision ->
+public suspend fun Vision.flowStatistics(): Flow<DefaultVisionStatistics> = flowStatistics { name, vision ->
     DefaultVisionStatistics(name, vision::class)
 }

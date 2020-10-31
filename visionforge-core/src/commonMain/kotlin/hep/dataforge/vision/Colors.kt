@@ -12,7 +12,8 @@ import kotlin.math.max
  * Definitions of common colors. Taken from
  * https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
  */
-object Colors {
+@Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
+public object Colors {
     const val aliceblue = 0xF0F8FF
     const val antiquewhite = 0xFAEBD7
     const val aqua = 0x00FFFF

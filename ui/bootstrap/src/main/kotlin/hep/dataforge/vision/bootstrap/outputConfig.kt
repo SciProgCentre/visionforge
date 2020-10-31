@@ -17,6 +17,7 @@ import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.RBuilder
+import react.ReactElement
 import react.dom.button
 import react.dom.div
 import react.dom.input
@@ -32,7 +33,7 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
 }
 
 @OptIn(DFExperimental::class)
-fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
+public fun RBuilder.canvasControls(canvas: ThreeCanvas): ReactElement = accordion("controls") {
     entry("Settings") {
         div("row") {
             div("col-2") {
@@ -96,7 +97,7 @@ fun RBuilder.canvasControls(canvas: ThreeCanvas) = accordion("controls") {
 }
 
 
-fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLElement>.() -> Unit = {}) {
+public fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer<HTMLElement>.() -> Unit = {}) {
     clear()
     append {
         accordion("controls") {

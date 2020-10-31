@@ -4,7 +4,8 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 
-dependencies{
+dependencies {
     api(project(":visionforge-solid"))
     api(project(":ui:react"))
+    implementation(npm("file-saver", "2.0.2"))
 }

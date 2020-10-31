@@ -6,6 +6,7 @@ plugins {
 
 val dataforgeVersion by extra("0.2.0-dev-4")
 val ktorVersion by extra("1.4.1")
+val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.10")
 
 allprojects {
     repositories {
@@ -15,7 +16,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.2.0-dev-1"
+    version = "0.2.0-dev-2"
 }
 
 val githubProject by extra("visionforge")

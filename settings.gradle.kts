@@ -39,6 +39,7 @@ include(
     ":visionforge-core",
     ":visionforge-solid",
     ":visionforge-gdml",
+    ":visionforge-server",
     ":demo:spatial-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",
