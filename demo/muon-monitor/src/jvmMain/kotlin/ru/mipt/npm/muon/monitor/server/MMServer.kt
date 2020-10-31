@@ -1,6 +1,8 @@
 package ru.mipt.npm.muon.monitor.server
 
 
+import hep.dataforge.context.Context
+import hep.dataforge.context.Global
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.solid.SolidManager
 import io.ktor.application.Application
@@ -32,15 +34,15 @@ import java.net.URI
 private val generator = Cos2TrackGenerator(JDKRandomGenerator(223))
 
 @OptIn(DFExperimental::class)
-fun Application.module() {
+fun Application.module(context: Context = Global) {
     val currentDir = File(".").absoluteFile
     environment.log.info("Current directory: $currentDir")
-
+    val solidManager = context.plugins.load(SolidManager)
 
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(Json { serializersModule = SolidManager.serialModule }, ContentType.Application.Json)
+        json(solidManager.visionManager.jsonFormat, ContentType.Application.Json)
     }
     install(Routing) {
         get("/event") {

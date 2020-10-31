@@ -1,6 +1,6 @@
 package hep.dataforge.vision.gdml
 
-import hep.dataforge.vision.solid.encodeToString
+import hep.dataforge.vision.solid.SolidManager
 import kscience.gdml.GDML
 import nl.adaptivity.xmlutil.StAXReader
 import org.junit.jupiter.api.Test
@@ -13,7 +13,7 @@ class TestConvertor {
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
         val vision = xml.toVision()
-        println(vision.encodeToString())
+        println(SolidManager.encodeToString(vision))
     }
 
     @Test
@@ -32,7 +32,7 @@ class TestConvertor {
 
         val xmlReader = StAXReader(stream, "UTF-8")
         val xml = GDML.format.parse(GDML.serializer(), xmlReader)
-        val visual = xml.toVision()
-        println(visual.encodeToString())
+        val vision = xml.toVision()
+        println(SolidManager.encodeToString(vision))
     }
 }

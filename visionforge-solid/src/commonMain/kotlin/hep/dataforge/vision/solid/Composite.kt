@@ -2,7 +2,6 @@
 
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
 import hep.dataforge.meta.update
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
@@ -22,7 +21,7 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid
-) : AbstractSolid(), Solid, VisionGroup {
+) : BasicSolid(), Solid, VisionGroup {
 
     init {
         first.parent = this

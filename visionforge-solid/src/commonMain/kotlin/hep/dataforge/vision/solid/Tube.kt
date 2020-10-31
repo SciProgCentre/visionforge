@@ -19,7 +19,7 @@ public class Tube(
     public var innerRadius: Float = 0f,
     public var startAngle: Float = 0f,
     public var angle: Float = PI2,
-) : AbstractSolid(), GeometrySolid {
+) : BasicSolid(), GeometrySolid {
 
     init {
         require(radius > 0)

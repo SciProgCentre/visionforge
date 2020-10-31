@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.collections.set
 
-public abstract class AbstractProxy : AbstractSolid(), VisionGroup {
+public abstract class AbstractProxy : BasicSolid(), VisionGroup {
     public abstract val prototype: Vision
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {

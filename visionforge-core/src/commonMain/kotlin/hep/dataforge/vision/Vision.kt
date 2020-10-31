@@ -68,13 +68,16 @@ public interface Vision : Configurable {
             config[STYLE_KEY] = value
         }
 
+    /**
+     * Update this vision using external meta.
+     */
+    public fun update(meta: Meta)
+
     public companion object {
         public const val TYPE: String = "vision"
         public val STYLE_KEY: Name = "@style".asName()
 
-        private val VISION_SERIALIZER = PolymorphicSerializer(Vision::class)
-
-        public fun serializer(): PolymorphicSerializer<Vision> = VISION_SERIALIZER
+        public fun serializer(): PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)
 
         public val VISIBLE_KEY: Name = "visible".asName()
     }

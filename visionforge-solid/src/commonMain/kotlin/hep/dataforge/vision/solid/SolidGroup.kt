@@ -8,7 +8,9 @@ import hep.dataforge.names.asName
 import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializer
 import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.json.Json
 import kotlin.collections.set
 
 public interface PrototypeHolder {
@@ -45,8 +47,13 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
     override var properties: Config? = null
 
+    @Serializable(Point3DSerializer::class)
     override var position: Point3D? = null
+
+    @Serializable(Point3DSerializer::class)
     override var rotation: Point3D? = null
+
+    @Serializable(Point3DSerializer::class)
     override var scale: Point3D? = null
 
     @SerialName("children")
@@ -77,10 +84,6 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
 
     public companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
-
-        @OptIn(DFExperimental::class)
-        public fun decodeFromString(json: String): SolidGroup =
-            SolidManager.jsonForSolids.decodeFromString(serializer(), json).also { it.attachChildren() }
     }
 }
 

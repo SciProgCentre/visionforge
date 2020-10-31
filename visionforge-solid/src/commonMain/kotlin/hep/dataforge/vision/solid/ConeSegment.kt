@@ -2,9 +2,6 @@
 
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVision
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -24,7 +21,7 @@ public class ConeSegment(
     public var upperRadius: Float,
     public var startAngle: Float = 0f,
     public var angle: Float = PI2
-) : AbstractSolid(), GeometrySolid {
+) : BasicSolid(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val segments = detail ?: 8

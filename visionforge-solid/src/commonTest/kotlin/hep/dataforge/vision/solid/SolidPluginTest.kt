@@ -18,10 +18,10 @@ class SolidPluginTest {
     @DFExperimental
     @Test
     fun testPluginConverter(){
-        val plugin = Global.plugins.fetch(SolidManager).visionManager
-        val meta = plugin.writeVisionToMeta(vision)
+        val visionManager = Global.plugins.fetch(SolidManager).visionManager
+        val meta = visionManager.encodeToMeta(vision)
 
-        val reconstructed = plugin.buildSpecificVision<SolidGroup>(meta)
+        val reconstructed = visionManager.decodeFromMeta(meta) as SolidGroup
 
         assertEquals(vision["aBox"],reconstructed["aBox"])
     }

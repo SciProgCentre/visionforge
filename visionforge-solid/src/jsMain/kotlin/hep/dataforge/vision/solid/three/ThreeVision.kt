@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.vision.solid.AbstractSolid
+import hep.dataforge.vision.solid.BasicSolid
 import hep.dataforge.vision.solid.Solid
 import info.laht.threekt.core.Object3D
 import kotlinx.serialization.Serializable
@@ -13,6 +13,6 @@ public interface ThreeVision : Solid {
 }
 
 @Serializable
-public class CustomThreeVision(public val threeFactory: ThreeFactory<Solid>) : AbstractSolid(), ThreeVision {
+public class CustomThreeVision(public val threeFactory: ThreeFactory<Solid>) : BasicSolid(), ThreeVision {
     override fun toObject3D(): Object3D = threeFactory(this)
 }

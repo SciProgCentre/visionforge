@@ -4,6 +4,8 @@ import hep.dataforge.context.Global
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
 import hep.dataforge.vision.gdml.toVision
+import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.fx.FX3DPlugin
@@ -17,6 +19,7 @@ class GDMLDemoApp : App(GDMLView::class)
 
 class GDMLView : View() {
     private val fx3d = Global.plugins.fetch(FX3DPlugin)
+    private val visionManager = Global.plugins.fetch(VisionManager)
     private val canvas = FXCanvas3D(fx3d)
 
     private val treeFragment = VisualObjectTreeFragment().apply {
@@ -39,7 +42,7 @@ class GDMLView : View() {
                         val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
                         if(file!= null) {
                             runAsync {
-                                SolidManager.readFile(file)
+                                visionManager.readFile(file) as Solid
                             } ui {
                                 canvas.render(it)
                             }

@@ -94,6 +94,10 @@ public open class AbstractVision : Vision {
         properties = null
     }
 
+    override fun update(meta: Meta) {
+        meta[Vision::properties.name].node?.let { configure(it) }
+    }
+
     public companion object {
         public val descriptor: NodeDescriptor = NodeDescriptor {
             value(STYLE_KEY) {

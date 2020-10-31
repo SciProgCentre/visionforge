@@ -14,7 +14,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("solid.line")
-public class PolyLine(public var points: List<Point3D>) : AbstractSolid(), Solid {
+public class PolyLine(public var points: List<Point3D>) : BasicSolid(), Solid {
 
     //var lineType by string()
     public var thickness: Number by number(1.0, key = SolidMaterial.MATERIAL_KEY + THICKNESS_KEY)

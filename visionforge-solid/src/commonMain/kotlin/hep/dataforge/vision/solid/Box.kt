@@ -2,9 +2,6 @@
 
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVision
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.Solid.Companion.solidEquals
@@ -18,7 +15,7 @@ public class Box(
     public val xSize: Float,
     public val ySize: Float,
     public val zSize: Float
-) : AbstractSolid(), GeometrySolid {
+) : BasicSolid(), GeometrySolid {
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {

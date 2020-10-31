@@ -2,7 +2,7 @@ package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.solid.encodeToString
+import hep.dataforge.vision.solid.SolidManager
 import kscience.gdml.GDML
 import kscience.gdml.LUnit
 import java.io.File
@@ -17,11 +17,11 @@ fun main(args: Array<String>) {
     val gdml = GDML.readFile(Paths.get(inputFileName))
         //GDML.readFile(Paths.get("D:\\Work\\Projects\\visionforge\\visionforge-spatial-gdml\\src\\jvmTest\\resources\\gdml\\simple1.gdml"))
 
-    val visual = gdml.toVision {
+    val vision = gdml.toVision {
         lUnit = LUnit.CM
     }
 
-    val json = visual.encodeToString()
+    val json = SolidManager.encodeToString(vision)
     println(json)
     File(outputFileName).writeText(json)
     //File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.json").writeText(json)

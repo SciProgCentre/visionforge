@@ -106,13 +106,3 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
         mapSerializer.serialize(encoder, value.children)
     }
 }
-
-@OptIn(DFExperimental::class)
-public fun Vision.encodeToString(): String = SolidManager.jsonForSolids.encodeToString(Vision.serializer(), this)
-
-@OptIn(DFExperimental::class)
-public fun Vision.Companion.decodeFromString(str: String): Vision = SolidManager.jsonForSolids.decodeFromString(serializer(), str).also {
-    if(it is VisionGroup){
-        it.attachChildren()
-    }
-}

@@ -1,9 +1,6 @@
 @file:UseSerializers(Point2DSerializer::class, Point3DSerializer::class)
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVision
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -44,7 +41,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 public class Extruded(
     public var shape: List<Point2D> = ArrayList(),
     public var layers: MutableList<Layer> = ArrayList()
-) : AbstractSolid(), GeometrySolid {
+) : BasicSolid(), GeometrySolid {
 
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()

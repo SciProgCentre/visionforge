@@ -8,6 +8,7 @@ import hep.dataforge.vision.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+
 /**
  * Create and attach new proxied group
  */
@@ -29,9 +30,9 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val string =  cube.encodeToString()
+        val string =  SolidManager.encodeToString(cube)
         println(string)
-        val newCube = Vision.decodeFromString(string)
+        val newCube = SolidManager.decodeFromString(string)
         assertEquals(cube.config, newCube.config)
     }
 
@@ -50,9 +51,9 @@ class SerializationTest {
                 }
             }
         }
-        val string = group.encodeToString()
+        val string = SolidManager.encodeToString(group)
         println(string)
-        val reconstructed = SolidGroup.decodeFromString(string)
+        val reconstructed = SolidManager.decodeFromString(string) as SolidGroup
         assertEquals(group["cube"]?.config, reconstructed["cube"]?.config)
     }
 

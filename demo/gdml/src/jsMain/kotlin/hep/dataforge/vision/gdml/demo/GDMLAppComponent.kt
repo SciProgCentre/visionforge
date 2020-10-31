@@ -10,6 +10,7 @@ import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidGroup
+import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import kotlinx.browser.window
@@ -50,12 +51,13 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     }
 
     fun loadData(name: String, data: String) {
+        val visionManager = props.context.plugins.fetch(SolidManager).visionManager
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = GDML.decodeFromString(data)
                 gdml.toVision()
             }
-            name.endsWith(".json") -> SolidGroup.decodeFromString(data)
+            name.endsWith(".json") -> visionManager.decodeFromString(data)
             else -> {
                 window.alert("File extension is not recognized: $name")
                 error("File extension is not recognized: $name")
