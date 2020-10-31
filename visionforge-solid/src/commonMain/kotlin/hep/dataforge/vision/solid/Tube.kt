@@ -1,15 +1,9 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVision
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -24,14 +18,8 @@ public class Tube(
     public var height: Float,
     public var innerRadius: Float = 0f,
     public var startAngle: Float = 0f,
-    public var angle: Float = PI2
-) : AbstractVision(), GeometrySolid {
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-    override var properties: Config? = null
+    public var angle: Float = PI2,
+) : AbstractSolid(), GeometrySolid {
 
     init {
         require(radius > 0)
@@ -137,7 +125,7 @@ public inline fun VisionContainerBuilder<Solid>.tube(
     startAngle: Number = 0f,
     angle: Number = 2 * PI,
     name: String = "",
-    block: Tube.() -> Unit = {}
+    block: Tube.() -> Unit = {},
 ): Tube = Tube(
     r.toFloat(),
     height.toFloat(),

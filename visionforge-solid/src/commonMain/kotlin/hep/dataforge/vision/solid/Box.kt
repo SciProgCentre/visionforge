@@ -18,13 +18,7 @@ public class Box(
     public val xSize: Float,
     public val ySize: Float,
     public val zSize: Float
-) : AbstractVision(), GeometrySolid {
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-    override var properties: Config? = null
+) : AbstractSolid(), GeometrySolid {
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {

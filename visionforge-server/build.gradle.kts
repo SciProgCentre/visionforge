@@ -1,38 +1,38 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+//import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 
 plugins {
     id("ru.mipt.npm.mpp")
-    application
+//    application
 }
 
 val ktorVersion: String by rootProject.extra
 
-kscience {
-    application()
-}
+//kscience {
+//    application()
+//}
 
 kotlin {
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        jvm {
-            withJava()
-            compilations[MAIN_COMPILATION_NAME]?.apply {
-                tasks.getByName<ProcessResources>(processResourcesTaskName) {
-                    dependsOn(jsBrowserDistribution)
-                    afterEvaluate {
-                        from(jsBrowserDistribution)
-                    }
-                }
-            }
-
-        }
-    }
+//    afterEvaluate {
+//        val jsBrowserDistribution by tasks.getting
+//
+//        jvm {
+//            withJava()
+//            compilations[MAIN_COMPILATION_NAME]?.apply {
+//                tasks.getByName<ProcessResources>(processResourcesTaskName) {
+//                    dependsOn(jsBrowserDistribution)
+//                    afterEvaluate {
+//                        from(jsBrowserDistribution)
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
 
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":visionforge-solid"))
+                implementation(project(":visionforge-core"))
             }
         }
         jvmMain {
@@ -50,9 +50,6 @@ kotlin {
     }
 }
 
-application {
-    mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
-}
 
 //distributions {
 //    main {

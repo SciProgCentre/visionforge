@@ -1,7 +1,3 @@
-@file:UseSerializers(
-    Point3DSerializer::class
-)
-
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.Config

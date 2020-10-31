@@ -1,9 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.js.requireJS
-
 actual fun readResource(path: String): String {
-    return requireJS(path) as String
+    return kotlinext.js.require(path) as String
 }
 
 // TODO replace by resource

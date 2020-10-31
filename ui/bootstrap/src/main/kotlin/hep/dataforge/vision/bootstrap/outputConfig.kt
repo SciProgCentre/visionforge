@@ -1,6 +1,5 @@
 package hep.dataforge.vision.bootstrap
 
-import hep.dataforge.js.requireJS
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
@@ -27,7 +26,7 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
     event.stopPropagation();
     event.preventDefault();
 
-    val fileSaver = requireJS("file-saver")
+    val fileSaver = kotlinext.js.require("file-saver")
     val blob = Blob(arrayOf(dataBuilder()), BlobPropertyBag("$mimeType;charset=utf-8"))
     fileSaver.saveAs(blob, fileName)
 }

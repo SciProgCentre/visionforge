@@ -1,11 +1,12 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.js.jsObject
+
 import hep.dataforge.vision.solid.SolidLabel
 import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.TextBufferGeometry
 import info.laht.threekt.objects.Mesh
+import kotlinext.js.jsObject
 import kotlin.reflect.KClass
 
 /**

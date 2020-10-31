@@ -1,9 +1,9 @@
 package ringui.header
 
-import ringui.ButtonProps
 import react.RElementBuilder
 import react.RHandler
 import react.dom.WithClassName
+import ringui.ButtonProps
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/header/tray.js
 external interface HeaderTrayProps : WithClassName

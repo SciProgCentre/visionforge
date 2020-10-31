@@ -13,16 +13,7 @@ import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("solid.convex")
-public class Convex(public val points: List<Point3D>) : AbstractVision(), Solid {
-
-    override var properties: Config? = null
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-
-}
+public class Convex(public val points: List<Point3D>) : AbstractSolid(), Solid
 
 public inline fun VisionContainerBuilder<Solid>.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}): Convex =
     ConvexBuilder().apply(action).build().also { set(name, it) }

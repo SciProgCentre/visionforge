@@ -10,7 +10,7 @@ import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.render
 
-fun RBuilder.visionPropertyEditor(
+public fun RBuilder.visionPropertyEditor(
     item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
     default: Meta? = null,
@@ -36,7 +36,7 @@ fun RBuilder.visionPropertyEditor(
     }
 }
 
-fun Element.visionPropertyEditor(
+public fun Element.visionPropertyEditor(
     item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
     default: Meta? = null

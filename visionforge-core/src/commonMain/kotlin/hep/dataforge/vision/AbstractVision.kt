@@ -6,6 +6,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
@@ -13,7 +14,8 @@ internal data class PropertyListener(
     val action: (name: Name) -> Unit
 )
 
-abstract class AbstractVision : Vision {
+@Serializable
+public open class AbstractVision : Vision {
 
     @Transient
     override var parent: VisionGroup? = null
@@ -21,7 +23,7 @@ abstract class AbstractVision : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    abstract override var properties: Config?
+    override var properties: Config? = null
         protected set
 
     protected fun updateStyles(names: List<String>) {

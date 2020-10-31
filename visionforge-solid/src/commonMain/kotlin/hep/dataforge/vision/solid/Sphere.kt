@@ -1,15 +1,9 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
-import hep.dataforge.vision.AbstractVision
-import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -21,23 +15,18 @@ public class Sphere(
     public var phiStart: Float = 0f,
     public var phi: Float = PI2,
     public var thetaStart: Float = 0f,
-    public var theta: Float = PI.toFloat()
-) : AbstractVision(), GeometrySolid {
-
-    override var properties: Config? = null
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
+    public var theta: Float = PI.toFloat(),
+) : AbstractSolid(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
             // This transformation matches three.js sphere implementation
             val y = r * cos(theta)
             val z = r * sin(theta) * sin(phi)
-            val x = - r * sin(theta) * cos(phi)
+            val x = -r * sin(theta) * cos(phi)
             return Point3D(x, y, z)
         }
+
         val segments = this.detail ?: 8
         require(segments >= 4) { "The detail for sphere must be >= 4" }
         val phiStep = phi / segments
@@ -66,7 +55,7 @@ public inline fun VisionContainerBuilder<Solid>.sphere(
     phi: Number = 2 * PI,
     theta: Number = PI,
     name: String = "",
-    action: Sphere.() -> Unit = {}
+    action: Sphere.() -> Unit = {},
 ): Sphere = Sphere(
     radius.toFloat(),
     phi = phi.toFloat(),

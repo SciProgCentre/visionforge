@@ -1,9 +1,9 @@
 package ringui.header
 
-import ringui.IconProps
 import kotlinx.html.A
 import react.RElementBuilder
 import react.RHandler
+import ringui.IconProps
 import styled.StyledDOMBuilder
 
 external interface HeaderLogoProps : IconProps

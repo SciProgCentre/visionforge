@@ -1,7 +1,7 @@
 package ringui
 
-import ringui.header.HeaderProps
 import react.RClass
+import ringui.header.HeaderProps
 
 @JsModule("@jetbrains/ring-ui")
 external object RingUI {

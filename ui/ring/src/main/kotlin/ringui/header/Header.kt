@@ -1,10 +1,10 @@
 package ringui.header
 
-import ringui.RingUI
 import react.RBuilder
 import react.RClass
 import react.RHandler
 import react.dom.WithClassName
+import ringui.RingUI
 
 @JsModule("@jetbrains/ring-ui/components/header/header")
 internal external object HeaderModule {

@@ -24,13 +24,7 @@ public class ConeSegment(
     public var upperRadius: Float,
     public var startAngle: Float = 0f,
     public var angle: Float = PI2
-) : AbstractVision(), GeometrySolid {
-
-    override var properties: Config? = null
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
+) : AbstractSolid(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val segments = detail ?: 8

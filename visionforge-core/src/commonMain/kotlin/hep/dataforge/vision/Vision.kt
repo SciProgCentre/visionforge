@@ -9,6 +9,7 @@ import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 /**

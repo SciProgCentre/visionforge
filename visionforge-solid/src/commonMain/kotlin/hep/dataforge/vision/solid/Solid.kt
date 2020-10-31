@@ -1,5 +1,3 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
@@ -75,7 +73,7 @@ public interface Solid : Vision {
 
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
-                enum<RotationOrder>(ROTATION_ORDER_KEY,default = RotationOrder.XYZ)
+                enum(ROTATION_ORDER_KEY,default = RotationOrder.XYZ)
             }
         }
 

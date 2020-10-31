@@ -85,8 +85,8 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
     override val tag: PluginTag get() = Companion.tag
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        VisionForm.TYPE -> serialModule.extractFactories().associateBy { it.name }
-        VISION_SERIAL_MODULE_TARGET -> mapOf(tag.name.toName() to serialModule)
+        VisionForm.TYPE -> serializersModule.extractFactories().associateBy { it.name }
+        VISION_SERIAL_MODULE_TARGET -> mapOf(tag.name.toName() to serializersModule)
         else -> super.content(target)
     }
 
@@ -95,7 +95,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
         override val type: KClass<out SolidManager> = SolidManager::class
         override fun invoke(meta: Meta, context: Context): SolidManager = SolidManager(meta)
 
-        public val serialModule: SerializersModule = SerializersModule {
+        public val serializersModule: SerializersModule = SerializersModule {
             contextual(Point3DSerializer)
             contextual(Point2DSerializer)
 
@@ -132,7 +132,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             useArrayPolymorphism = false
             encodeDefaults = false
             ignoreUnknownKeys = true
-            serializersModule = this@Companion.serialModule
+            serializersModule = this@Companion.serializersModule
         }
     }
 }

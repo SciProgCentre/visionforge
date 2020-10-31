@@ -1,5 +1,3 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
@@ -9,10 +7,9 @@ import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.UseSerializers
 import kotlin.collections.set
 
-public abstract class AbstractProxy : AbstractVision(), VisionGroup {
+public abstract class AbstractProxy : AbstractSolid(), VisionGroup {
     public abstract val prototype: Vision
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
@@ -54,18 +51,12 @@ public abstract class AbstractProxy : AbstractVision(), VisionGroup {
 @Serializable
 @SerialName("solid.proxy")
 public class Proxy private constructor(
-    public val templateName: Name
+    public val templateName: Name,
 ) : AbstractProxy(), Solid {
 
     public constructor(parent: SolidGroup, templateName: Name) : this(templateName) {
         this.parent = parent
     }
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-    override var properties: Config? = null
 
     /**
      * Recursively search for defined template in the parent
@@ -155,7 +146,7 @@ public val Vision.prototype: Vision
  */
 public fun SolidGroup.ref(
     templateName: Name,
-    name: String = ""
+    name: String = "",
 ): Proxy = Proxy(this, templateName).also { set(name, it) }
 
 /**
@@ -164,7 +155,7 @@ public fun SolidGroup.ref(
 public fun SolidGroup.proxy(
     name: String,
     obj: Solid,
-    templateName: Name = name.toName()
+    templateName: Name = name.toName(),
 ): Proxy {
     val existing = getPrototype(templateName)
     if (existing == null) {

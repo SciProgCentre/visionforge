@@ -44,13 +44,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 public class Extruded(
     public var shape: List<Point2D> = ArrayList(),
     public var layers: MutableList<Layer> = ArrayList()
-) : AbstractVision(), GeometrySolid {
-
-    override var properties: Config? = null
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
+) : AbstractSolid(), GeometrySolid {
 
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()

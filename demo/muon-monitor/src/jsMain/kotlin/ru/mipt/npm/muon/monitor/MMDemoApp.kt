@@ -19,7 +19,7 @@ private class MMDemoApp : Application {
 
     private val connection = HttpClient {
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Json { serializersModule = SolidManager.serialModule })
+            serializer = KotlinxSerializer(Json { serializersModule = SolidManager.serializersModule })
         }
     }
 

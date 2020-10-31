@@ -22,18 +22,12 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid
-) : AbstractVision(), Solid, VisionGroup {
+) : AbstractSolid(), Solid, VisionGroup {
 
     init {
         first.parent = this
         second.parent = this
     }
-
-    override var position: Point3D? = null
-    override var rotation: Point3D? = null
-    override var scale: Point3D? = null
-
-    override var properties: Config? = null
 
     override val children: Map<NameToken, Vision>
         get() = mapOf(NameToken("first") to first, NameToken("second") to second)

@@ -7,7 +7,6 @@ val kotlinWrappersVersion: String by rootProject.extra
 
 
 kotlin {
-
     sourceSets {
         commonMain {
             dependencies {
