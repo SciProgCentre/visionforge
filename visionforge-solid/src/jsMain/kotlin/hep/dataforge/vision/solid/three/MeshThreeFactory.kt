@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid.three
 
 import hep.dataforge.meta.boolean
 import hep.dataforge.meta.node
+import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
@@ -19,13 +20,13 @@ import kotlin.reflect.KClass
 /**
  * Basic geometry-based factory
  */
-abstract class MeshThreeFactory<in T : Solid>(
+public abstract class MeshThreeFactory<in T : Solid>(
     override val type: KClass<in T>
 ) : ThreeFactory<T> {
     /**
      * Build a geometry for an object
      */
-    abstract fun buildGeometry(obj: T): BufferGeometry
+    public abstract fun buildGeometry(obj: T): BufferGeometry
 
     override fun invoke(obj: T): Mesh {
         val geometry = buildGeometry(obj)
@@ -60,14 +61,14 @@ abstract class MeshThreeFactory<in T : Solid>(
         return mesh
     }
 
-    companion object {
-        val EDGES_KEY = "edges".asName()
-        val WIREFRAME_KEY = "wireframe".asName()
-        val ENABLED_KEY = "enabled".asName()
-        val EDGES_ENABLED_KEY = EDGES_KEY + ENABLED_KEY
-        val EDGES_MATERIAL_KEY = EDGES_KEY + SolidMaterial.MATERIAL_KEY
-        val WIREFRAME_ENABLED_KEY = WIREFRAME_KEY + ENABLED_KEY
-        val WIREFRAME_MATERIAL_KEY = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
+    public companion object {
+        public val EDGES_KEY: Name = "edges".asName()
+        public val WIREFRAME_KEY: Name = "wireframe".asName()
+        public val ENABLED_KEY: Name = "enabled".asName()
+        public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
+        public val EDGES_MATERIAL_KEY: Name = EDGES_KEY + SolidMaterial.MATERIAL_KEY
+        public val WIREFRAME_ENABLED_KEY: Name = WIREFRAME_KEY + ENABLED_KEY
+        public val WIREFRAME_MATERIAL_KEY: Name = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
     }
 }
 

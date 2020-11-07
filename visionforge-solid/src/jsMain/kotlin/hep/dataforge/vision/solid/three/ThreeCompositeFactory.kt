@@ -8,7 +8,7 @@ import info.laht.threekt.objects.Mesh
 /**
  * This should be inner, because it uses object builder
  */
-class ThreeCompositeFactory(val three: ThreePlugin) : MeshThreeFactory<Composite>(Composite::class) {
+public class ThreeCompositeFactory(public val three: ThreePlugin) : MeshThreeFactory<Composite>(Composite::class) {
 
     override fun buildGeometry(obj: Composite): BufferGeometry {
         val first = three.buildObject3D(obj.first) as? Mesh ?: error("First part of composite is not a mesh")

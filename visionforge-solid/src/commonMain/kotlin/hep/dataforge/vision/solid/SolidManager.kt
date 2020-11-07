@@ -16,43 +16,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.*
 import kotlin.reflect.KClass
 
-//@OptIn(ExperimentalSerializationApi::class)
-//@DFExperimental
-//private fun SerializersModule.extractFactories(): List<SolidForm<*>> {
-//    val list = ArrayList<SolidForm<*>>()
-//
-//    val collector = object : SerializersModuleCollector {
-//        override fun <T : Any> contextual(kClass: KClass<T>, serializer: KSerializer<T>) {
-//            //Do nothing
-//        }
-//
-//        override fun <Base : Any, Sub : Base> polymorphic(
-//            baseClass: KClass<Base>,
-//            actualClass: KClass<Sub>,
-//            actualSerializer: KSerializer<Sub>,
-//        ) {
-//            if (baseClass == Vision::class) {
-//                @Suppress("UNCHECKED_CAST") val factory: SolidForm<Solid> = SolidForm(
-//                    actualClass as KClass<Solid>,
-//                    actualSerializer as KSerializer<Solid>
-//                )
-//                list.add(factory)
-//            }
-//        }
-//
-//        override fun <Base : Any> polymorphicDefault(
-//            baseClass: KClass<Base>,
-//            defaultSerializerProvider: (className: String?) -> DeserializationStrategy<out Base>?,
-//        ) {
-//            TODO("Not yet implemented")
-//        }
-//
-//    }
-//    dumpTo(collector)
-//    return list
-//}
 
-@DFExperimental
 public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
 
     public val visionManager: VisionManager by require(VisionManager)
@@ -96,18 +60,16 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
-        public val jsonForSolids = Json{
+        internal val jsonForSolids: Json = Json{
             prettyPrint = true
             useArrayPolymorphism = false
             encodeDefaults = false
             ignoreUnknownKeys = true
-            serializersModule = SolidManager.serializersModuleForSolids
+            serializersModule = serializersModuleForSolids
         }
 
-        @OptIn(DFExperimental::class)
         public fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(Vision.serializer(), solid)
 
-        @OptIn(DFExperimental::class)
         public fun decodeFromString(str: String): Vision = jsonForSolids.decodeFromString(Vision.serializer(), str).also {
             if(it is VisionGroup){
                 it.attachChildren()

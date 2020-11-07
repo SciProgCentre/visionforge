@@ -18,21 +18,21 @@ import kotlin.reflect.KClass
  * Builder and updater for three.js object
  */
 @Type(TYPE)
-interface ThreeFactory<in T : Vision> {
+public interface ThreeFactory<in T : Vision> {
 
-    val type: KClass<in T>
+    public val type: KClass<in T>
 
-    operator fun invoke(obj: T): Object3D
+    public operator fun invoke(obj: T): Object3D
 
-    companion object {
-        const val TYPE = "threeFactory"
+    public companion object {
+        public const val TYPE: String = "threeFactory"
     }
 }
 
 /**
  * Update position, rotation and visibility
  */
-fun Object3D.updatePosition(obj: Vision) {
+public fun Object3D.updatePosition(obj: Vision) {
     visible = obj.visible ?: true
     if(obj is Solid) {
         position.set(obj.x, obj.y, obj.z)
@@ -45,7 +45,7 @@ fun Object3D.updatePosition(obj: Vision) {
 /**
  * Update non-position non-geometry property
  */
-fun Object3D.updateProperty(source: Vision, propertyName: Name) {
+public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         this.material = getMaterial(source, false)
     } else if (
@@ -63,7 +63,7 @@ fun Object3D.updateProperty(source: Vision, propertyName: Name) {
 /**
  * Generic factory for elements which provide inside geometry builder
  */
-object ThreeShapeFactory : MeshThreeFactory<GeometrySolid>(GeometrySolid::class) {
+public object ThreeShapeFactory : MeshThreeFactory<GeometrySolid>(GeometrySolid::class) {
     override fun buildGeometry(obj: GeometrySolid): BufferGeometry {
         return obj.run {
             ThreeGeometryBuilder().apply { toGeometry(this) }.build()

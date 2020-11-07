@@ -10,7 +10,7 @@ import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
 import kotlin.reflect.KClass
 
-object ThreeLineFactory : ThreeFactory<PolyLine> {
+public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
     override fun invoke(obj: PolyLine): Object3D {

@@ -69,7 +69,7 @@ public interface Vision : Configurable {
         }
 
     /**
-     * Update this vision using external meta.
+     * Update this vision using external meta. Children are not updated.
      */
     public fun update(meta: Meta)
 

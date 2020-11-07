@@ -4,6 +4,6 @@ import hep.dataforge.meta.Scheme
 import hep.dataforge.meta.SchemeSpec
 
 
-class Controls : Scheme() {
-    companion object : SchemeSpec<Controls>(::Controls)
+public class Controls : Scheme() {
+    public companion object : SchemeSpec<Controls>(::Controls)
 }

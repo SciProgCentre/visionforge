@@ -43,5 +43,6 @@ include(
     ":demo:spatial-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",
+    ":demo:sat-demo",
     ":playground"
 )

@@ -9,7 +9,7 @@ import hep.dataforge.vision.solid.Proxy
 import hep.dataforge.vision.solid.SolidGroup
 
 @DFExperimental
-object UnRef : VisualTreeTransform<SolidGroup>() {
+internal object UnRef : VisualTreeTransform<SolidGroup>() {
     private fun VisionGroup.countRefs(): Map<Name, Int> {
         return children.values.fold(HashMap()) { reducer, obj ->
             if (obj is VisionGroup) {

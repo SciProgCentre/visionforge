@@ -5,7 +5,7 @@ import hep.dataforge.vision.solid.detail
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.SphereBufferGeometry
 
-object ThreeSphereFactory : MeshThreeFactory<Sphere>(Sphere::class) {
+public object ThreeSphereFactory : MeshThreeFactory<Sphere>(Sphere::class) {
     override fun buildGeometry(obj: Sphere): BufferGeometry {
         return obj.detail?.let {detail ->
             SphereBufferGeometry(

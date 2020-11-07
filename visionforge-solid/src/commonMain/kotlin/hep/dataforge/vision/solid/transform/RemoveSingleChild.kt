@@ -35,7 +35,7 @@ internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
 }
 
 @DFExperimental
-object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
+internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
 
     override fun SolidGroup.transformInPlace() {
         fun MutableVisionGroup.replaceChildren() {

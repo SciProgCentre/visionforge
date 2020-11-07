@@ -35,7 +35,6 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import kotlin.math.cos
-import kotlin.math.max
 import kotlin.math.sin
 
 /**
@@ -112,7 +111,10 @@ public class ThreeCanvas(
 
         element.appendChild(renderer.domElement)
 
-        renderer.setSize(max(options.minSize, element.clientWidth), max(options.minSize, element.clientWidth))
+        renderer.setSize(
+            element.clientWidth.coerceIn(options.minWith.toInt()..options.maxWith.toInt()),
+            element.clientHeight.coerceIn(options.minHeight.toInt()..options.maxHeight.toInt())
+        )
 
         window.onresize = {
             renderer.setSize(element.clientWidth, element.clientWidth)
@@ -238,7 +240,7 @@ public class ThreeCanvas(
     }
 
     public companion object {
-        public const val DO_NOT_HIGHLIGHT_TAG = "doNotHighlight"
+        public const val DO_NOT_HIGHLIGHT_TAG: String = "doNotHighlight"
         private const val HIGHLIGHT_NAME = "@highlight"
         private const val SELECT_NAME = "@select"
     }
@@ -251,7 +253,8 @@ public fun ThreePlugin.output(
 ): ThreeCanvas = ThreeCanvas(element, this, spec, onClick)
 
 public fun ThreePlugin.render(
-    element: HTMLElement, obj: Solid,
-    spec: Canvas3DOptions = Canvas3DOptions.empty(),
-    onClick: ((Name?) -> Unit)? = null,
-): Unit = output(element, spec, onClick).render(obj)
+    element: HTMLElement,
+    obj: Solid,
+    onSelect: ((Name?) -> Unit)? = null,
+    options: Canvas3DOptions.() -> Unit = {},
+): Unit = output(element, Canvas3DOptions(options), onSelect).render(obj)

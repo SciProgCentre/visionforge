@@ -11,6 +11,8 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreePlugin
 import hep.dataforge.vision.solid.three.output
+import kotlinx.browser.document
+import kotlinx.dom.clear
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.h2
@@ -19,8 +21,6 @@ import kotlinx.html.id
 import kotlinx.html.js.div
 import kotlinx.html.span
 import org.w3c.dom.Element
-import kotlin.browser.document
-import kotlin.dom.clear
 import kotlin.reflect.KClass
 
 class ThreeDemoGrid(element: Element, meta: Meta = Meta.EMPTY) : OutputManager {

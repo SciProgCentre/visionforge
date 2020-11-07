@@ -9,17 +9,17 @@ import info.laht.threekt.geometries.PlaneBufferGeometry
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
+import kotlinx.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.MIDDLE
-import kotlin.browser.document
 import kotlin.reflect.KClass
 
 /**
  * Using example from http://stemkoski.github.io/Three.js/Texture-From-Canvas.html
  */
-object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
+public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
     override fun invoke(obj: SolidLabel): Object3D {

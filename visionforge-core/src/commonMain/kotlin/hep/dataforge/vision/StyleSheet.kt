@@ -16,11 +16,11 @@ import kotlinx.serialization.encoding.Encoder
  * A container for styles
  */
 @Serializable
-public class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta> = LinkedHashMap()) {
+public class StyleSheet private constructor(private val styleMap: MutableMap<String, Meta>) {
     @Transient
     internal var owner: Vision? = null
 
-    public constructor(owner: Vision) : this() {
+    public constructor(owner: Vision) : this(LinkedHashMap()) {
         this.owner = owner
     }
 
@@ -89,6 +89,10 @@ public class StyleSheet private constructor(private val styleMap: MutableMap<Str
             mapSerializer.serialize(encoder, value.items)
         }
     }
+}
+
+public fun StyleSheet.update(styleMeta: Meta){
+    TODO()
 }
 
 

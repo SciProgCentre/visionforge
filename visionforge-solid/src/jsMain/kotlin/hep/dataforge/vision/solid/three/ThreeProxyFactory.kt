@@ -11,7 +11,7 @@ import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
 
-class ThreeProxyFactory(val three: ThreePlugin) : ThreeFactory<Proxy> {
+public class ThreeProxyFactory(public val three: ThreePlugin) : ThreeFactory<Proxy> {
     private val cache = HashMap<Solid, Object3D>()
 
     override val type: KClass<Proxy> = Proxy::class

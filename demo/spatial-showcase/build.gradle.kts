@@ -6,6 +6,7 @@ plugins {
 }
 
 kscience {
+    useCoroutines()
     val fxVersion: String by rootProject.extra
     useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
     application()

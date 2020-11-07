@@ -1,6 +1,5 @@
 package hep.dataforge.vision.bootstrap
 
-import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.three.ThreeCanvas
@@ -15,8 +14,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.RBuilder
-import react.ReactElement
+import react.*
 import react.dom.button
 import react.dom.div
 import react.dom.input
@@ -31,37 +29,51 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
     fileSaver.saveAs(blob, fileName)
 }
 
-@OptIn(DFExperimental::class)
-public fun RBuilder.canvasControls(canvas: ThreeCanvas): ReactElement = accordion("controls") {
-    entry("Settings") {
-        div("row") {
-            div("col-2") {
-                label("checkbox-inline") {
-                    input(type = InputType.checkBox) {
-                        attrs {
-                            defaultChecked = canvas.axes.visible
-                            onChangeFunction = {
-                                canvas.axes.visible = (it.target as HTMLInputElement).checked
+public fun RBuilder.canvasControls(canvas: ThreeCanvas): ReactElement {
+    return child(CanvasControls){
+        attrs{
+            this.canvas = canvas
+        }
+    }
+}
+
+public external interface CanvasControlsProps : RProps {
+    public var canvas: ThreeCanvas
+}
+
+public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent ("CanvasControls") { props ->
+    val visionManager = useMemo(
+        { props.canvas.context.plugins.fetch(SolidManager).visionManager },
+        arrayOf(props.canvas)
+    )
+    accordion("controls") {
+        entry("Settings") {
+            div("row") {
+                div("col-2") {
+                    label("checkbox-inline") {
+                        input(type = InputType.checkBox) {
+                            attrs {
+                                defaultChecked = props.canvas.axes.visible
+                                onChangeFunction = {
+                                    props.canvas.axes.visible = (it.target as HTMLInputElement).checked
+                                }
                             }
                         }
+                        +"Axes"
                     }
-                    +"Axes"
                 }
-            }
-            div("col-1") {
-                button {
-                    +"Export"
-                    attrs {
-                        onClickFunction = {
-                            val json = (canvas.content as? SolidGroup)?.let { group ->
-                                SolidManager.jsonForSolids.encodeToString(
-                                    SolidGroup.serializer(),
-                                    group
-                                )
-                            }
-                            if (json != null) {
-                                saveData(it, "object.json", "text/json") {
-                                    json
+                div("col-1") {
+                    button {
+                        +"Export"
+                        attrs {
+                            onClickFunction = {
+                                val json = (props.canvas.content as? SolidGroup)?.let { group ->
+                                    visionManager.encodeToString(group)
+                                }
+                                if (json != null) {
+                                    saveData(it, "object.json", "text/json") {
+                                        json
+                                    }
                                 }
                             }
                         }
@@ -69,22 +81,22 @@ public fun RBuilder.canvasControls(canvas: ThreeCanvas): ReactElement = accordio
                 }
             }
         }
-    }
-    entry("Layers") {
-        div("row") {
-            (0..11).forEach { layer ->
-                div("col-1") {
-                    label { +layer.toString() }
-                    input(type = InputType.checkBox) {
-                        attrs {
-                            if (layer == 0) {
-                                defaultChecked = true
-                            }
-                            onChangeFunction = {
-                                if ((it.target as HTMLInputElement).checked) {
-                                    canvas.camera.layers.enable(layer)
-                                } else {
-                                    canvas.camera.layers.disable(layer)
+        entry("Layers") {
+            div("row") {
+                (0..11).forEach { layer ->
+                    div("col-1") {
+                        label { +layer.toString() }
+                        input(type = InputType.checkBox) {
+                            attrs {
+                                if (layer == 0) {
+                                    defaultChecked = true
+                                }
+                                onChangeFunction = {
+                                    if ((it.target as HTMLInputElement).checked) {
+                                        props.canvas.camera.layers.enable(layer)
+                                    } else {
+                                        props.canvas.camera.layers.disable(layer)
+                                    }
                                 }
                             }
                         }
@@ -118,10 +130,8 @@ public fun Element.displayCanvasControls(canvas: ThreeCanvas, block: TagConsumer
                             +"Export"
                             onClickFunction = {
                                 val json = (canvas.content as? SolidGroup)?.let { group ->
-                                    SolidManager.jsonForSolids.encodeToString(
-                                        SolidGroup.serializer(),
-                                        group
-                                    )
+                                    val visionManager = canvas.context.plugins.fetch(SolidManager).visionManager
+                                    visionManager.encodeToString(group)
                                 }
                                 if (json != null) {
                                     saveData(it, "object.json", "text/json") {

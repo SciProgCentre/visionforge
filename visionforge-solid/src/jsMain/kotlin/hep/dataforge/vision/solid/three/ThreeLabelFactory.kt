@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 /**
  *
  */
-object ThreeLabelFactory : ThreeFactory<SolidLabel> {
+public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
     override fun invoke(obj: SolidLabel): Object3D {

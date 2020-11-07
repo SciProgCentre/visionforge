@@ -1,5 +1,8 @@
 package hep.dataforge.vision
 
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.get
+import hep.dataforge.meta.node
 import hep.dataforge.names.*
 import kotlinx.serialization.Transient
 
@@ -7,7 +10,7 @@ import kotlinx.serialization.Transient
 /**
  * Abstract implementation of mutable group of [Vision]
  */
-abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
+public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -22,30 +25,31 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
     /**
      * Update or create stylesheet
      */
-    fun styleSheet(block: StyleSheet.() -> Unit) {
-        val res = styleSheet ?: StyleSheet(this).also { styleSheet = it }
-        res.block()
+    public fun styleSheet(block: StyleSheet.() -> Unit) {
+        if (styleSheet == null) {
+            styleSheet = StyleSheet(this@AbstractVisionGroup)
+        }
+        styleSheet!!.block()
     }
 
     override fun propertyChanged(name: Name) {
         super.propertyChanged(name)
-        for(obj in this) {
+        for (obj in this) {
             obj.propertyChanged(name)
         }
     }
 
-    // TODO Consider renaming to `StructureChangeListener` (singular)
-    private data class StructureChangeListeners(val owner: Any?, val callback: (Name, Vision?) -> Unit)
+    private data class StructureChangeListener(val owner: Any?, val callback: (NameToken, Vision?) -> Unit)
 
     @Transient
-    private val structureChangeListeners = HashSet<StructureChangeListeners>()
+    private val structureChangeListeners = HashSet<StructureChangeListener>()
 
     /**
      * Add listener for children change
      */
-    override fun onChildrenChange(owner: Any?, action: (Name, Vision?) -> Unit) {
+    override fun onChildrenChange(owner: Any?, action: (NameToken, Vision?) -> Unit) {
         structureChangeListeners.add(
-            StructureChangeListeners(
+            StructureChangeListener(
                 owner,
                 action
             )
@@ -62,7 +66,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
     /**
      * Propagate children change event upwards
      */
-    protected fun childrenChanged(name: Name, child: Vision?) {
+    protected fun childrenChanged(name: NameToken, child: Vision?) {
         structureChangeListeners.forEach { it.callback(name, child) }
     }
 
@@ -77,10 +81,11 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
     protected abstract fun setChild(token: NameToken, child: Vision)
 
     /**
-     * Add a static child. Statics could not be found by name, removed or replaced
+     * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
      */
-    protected open fun addStatic(child: Vision) =
-        set(NameToken("@static(${child.hashCode()})").asName(), child)
+    protected open fun addStatic(child: Vision): Unit {
+        setChild(NameToken("@static", index = child.hashCode().toString()), child)
+    }
 
     protected abstract fun createGroup(): AbstractVisionGroup
 
@@ -124,6 +129,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
         when {
             name.isEmpty() -> {
                 if (child != null) {
+                    attach(child)
                     addStatic(child)
                 }
             }
@@ -135,6 +141,7 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
                     attach(child)
                     setChild(token, child)
                 }
+                childrenChanged(token, child)
             }
             else -> {
                 //TODO add safety check
@@ -142,7 +149,13 @@ abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
                 parent[name.tokens.last().asName()] = child
             }
         }
-        childrenChanged(name, child)
     }
 
+    override fun update(meta: Meta) {
+        val styleMeta = meta.get("styleSheet").node
+        if (styleMeta != null) {
+            this.styleSheet?.update(styleMeta)
+        }
+        super.update(meta)
+    }
 }

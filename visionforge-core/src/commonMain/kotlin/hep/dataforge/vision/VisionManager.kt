@@ -3,6 +3,10 @@ package hep.dataforge.vision
 import hep.dataforge.context.*
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.names.asName
+import hep.dataforge.values.Null
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.modules.SerializersModule
@@ -10,7 +14,6 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import kotlin.reflect.KClass
 
-@DFExperimental
 public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     override val tag: PluginTag get() = Companion.tag
 
@@ -50,35 +53,29 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             ?: error("Expected node, but value found. Check your serializer!")
 
     public fun updateVision(vision: Vision, meta: Meta) {
-
+        vision.update(meta)
+        if (vision is MutableVisionGroup) {
+            val children by meta.node()
+            children?.items?.forEach { (token, item) ->
+                when {
+                    item.value == Null -> vision[token] = null //Null means removal
+                    item.node != null -> {
+                        val node = item.node!!
+                        val type by node.string()
+                        if (type != null) {
+                            //If the type is present considering it as new node, not an update
+                            vision[token.asName()] = decodeFromMeta(node)
+                        } else {
+                            val existing = vision.children[token]
+                            if (existing != null) {
+                                updateVision(existing, node)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-
-//    public fun <T : Vision> VisionForm<T>.buildVision(meta: Meta, descriptor: NodeDescriptor? = null): T {
-//        val json = meta.toJson(descriptor)
-//        return jsonFormat.decodeFromJsonElement(serializer, json)
-//    }
-//
-//    @OptIn(ExperimentalSerializationApi::class)
-//    public fun buildVision(meta: Meta): Vision {
-//        val type = meta["type"].string ?: Vision.serializer().descriptor.serialName
-//        val form = forms.values.find { it.name.toString() == type } ?: error("Could not resolve a form for type $type")
-//        return form.buildVision(meta)
-//    }
-//
-//    public inline fun <reified T : Vision> buildSpecificVision(meta: Meta): T {
-//        val factory = resolveVisionForm(T::class)
-//        return factory.buildVision(meta)
-//    }
-//
-//    public fun <T : Vision> writeVisionToMeta(vision: T): Meta {
-//        val form = resolveVisionForm(vision::class) ?: error("Could not resolve a form for $vision")
-//        val json = jsonFormat.encodeToJsonElement(form.serializer, vision)
-//        return json.toMetaItem().node!!
-//    }
-//
-//    public fun updateVision(vision: Vision, meta: Meta) {
-//        resolveVisionForm(vision::class).patch(vision, meta)
-//    }
 
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)

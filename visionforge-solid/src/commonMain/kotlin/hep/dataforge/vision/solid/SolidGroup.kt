@@ -57,7 +57,7 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     override var scale: Point3D? = null
 
     @SerialName("children")
-    private val _children = HashMap<NameToken, Vision>()
+    private val _children = LinkedHashMap<NameToken, Vision>()
     override val children: Map<NameToken, Vision> get() = _children
 
     override fun attachChildren() {
@@ -122,7 +122,7 @@ internal class Prototypes(
 
     override fun removeChild(token: NameToken) {
         children.remove(token)
-        childrenChanged(token.asName(), null)
+        childrenChanged(token, null)
     }
 
     override fun setChild(token: NameToken, child: Vision) {

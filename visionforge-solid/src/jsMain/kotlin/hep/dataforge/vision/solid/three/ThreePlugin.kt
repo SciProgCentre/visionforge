@@ -11,7 +11,7 @@ import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
 
-class ThreePlugin : AbstractPlugin() {
+public class ThreePlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
@@ -35,9 +35,9 @@ class ThreePlugin : AbstractPlugin() {
                 as ThreeFactory<Solid>?
     }
 
-    fun buildObject3D(obj: Solid): Object3D {
+    public fun buildObject3D(obj: Solid): Object3D {
         return when (obj) {
-            is ThreeVision -> obj.toObject3D()
+            is ThreeVision -> obj.render()
             is Proxy -> proxyFactory(obj)
             is SolidGroup -> {
                 val group = ThreeGroup()
@@ -69,17 +69,17 @@ class ThreePlugin : AbstractPlugin() {
                         }
                     }
 
-                    obj.onChildrenChange(this) { name, child ->
-                        if (name.isEmpty()) {
-                            logger.error { "Children change with empty name on $group" }
-                            return@onChildrenChange
-                        }
+                    obj.onChildrenChange(this) { nameToken, child ->
+//                        if (name.isEmpty()) {
+//                            logger.error { "Children change with empty name on $group" }
+//                            return@onChildrenChange
+//                        }
 
 //                        val parentName = name.cutLast()
 //                        val childName = name.last()!!
 
                         //removing old object
-                        findChild(name)?.let { oldChild ->
+                        findChild(nameToken.asName())?.let { oldChild ->
                             oldChild.parent?.remove(oldChild)
                         }
 
@@ -87,7 +87,7 @@ class ThreePlugin : AbstractPlugin() {
                         if (child != null && child is Solid) {
                             try {
                                 val object3D = buildObject3D(child)
-                                set(name, object3D)
+                                set(nameToken, object3D)
                             } catch (ex: Throwable) {
                                 logger.error(ex) { "Failed to render $child" }
                             }
@@ -108,10 +108,10 @@ class ThreePlugin : AbstractPlugin() {
         }
     }
 
-    companion object : PluginFactory<ThreePlugin> {
-        override val tag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
-        override val type = ThreePlugin::class
-        override fun invoke(meta: Meta, context: Context) = ThreePlugin()
+    public companion object : PluginFactory<ThreePlugin> {
+        override val tag: PluginTag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
+        override val type: KClass<ThreePlugin> = ThreePlugin::class
+        override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }
 }
 

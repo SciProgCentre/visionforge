@@ -7,7 +7,7 @@ import info.laht.threekt.geometries.CylinderBufferGeometry
 import kotlin.math.PI
 import kotlin.math.pow
 
-object ThreeCylinderFactory : MeshThreeFactory<ConeSegment>(ConeSegment::class) {
+public object ThreeCylinderFactory : MeshThreeFactory<ConeSegment>(ConeSegment::class) {
     override fun buildGeometry(obj: ConeSegment): BufferGeometry {
         val cylinder =  obj.detail?.let {
             val segments = it.toDouble().pow(0.5).toInt()

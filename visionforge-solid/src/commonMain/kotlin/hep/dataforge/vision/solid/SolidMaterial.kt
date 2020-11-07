@@ -91,7 +91,7 @@ public fun Solid.color(rgb: Int) {
 
 public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setItem(
     MATERIAL_COLOR_KEY,
-    Colors.rgbToMeta(r, g, b)
+    Colors.rgbToString(r, g, b).asValue()
 )
 
 /**
