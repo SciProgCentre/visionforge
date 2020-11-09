@@ -48,7 +48,7 @@ kotlin {
             dependencies {
                 implementation(project(":ui:bootstrap"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
             }
         }
     }

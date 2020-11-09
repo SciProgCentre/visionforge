@@ -7,7 +7,7 @@ public class Canvas3DOptions : Scheme() {
     public var camera: Camera by spec(Camera, Camera.empty())
     public var controls: Controls by spec(Controls, Controls.empty())
 
-    public var minSize: Int by int(300)
+    public var minSize: Int by int(400)
     public var minWith: Number by number { minSize }
     public var minHeight: Number by number { minSize }
 
@@ -18,3 +18,9 @@ public class Canvas3DOptions : Scheme() {
 
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions)
 }
+
+public fun Canvas3DOptions.computeWidth(external: Number): Int =
+    (external.toInt()).coerceIn(minWith.toInt()..maxWith.toInt())
+
+public fun Canvas3DOptions.computeHeight(external: Number): Int =
+    (external.toInt()).coerceIn(minHeight.toInt()..maxHeight.toInt())

@@ -2,10 +2,10 @@ import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
 import hep.dataforge.vision.bootstrap.visionPropertyEditor
+import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import hep.dataforge.vision.solid.three.ThreePlugin
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement

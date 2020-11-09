@@ -5,10 +5,7 @@ import hep.dataforge.meta.float
 import hep.dataforge.meta.get
 import hep.dataforge.meta.node
 import hep.dataforge.vision.solid.*
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.DirectGeometry
-import info.laht.threekt.core.Face3
-import info.laht.threekt.core.Geometry
+import info.laht.threekt.core.*
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.materials.Material
 import info.laht.threekt.math.Euler
@@ -77,3 +74,5 @@ internal fun Any.dispose() {
         is Texture -> dispose()
     }
 }
+
+public fun Layers.check(layer: Int): Boolean = (mask shr(layer) and 0x00000001) > 0

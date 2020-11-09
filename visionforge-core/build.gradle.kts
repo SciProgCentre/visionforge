@@ -28,8 +28,8 @@ kotlin {
         jsMain {
             dependencies {
                 api("hep.dataforge:dataforge-output-html:$dataforgeVersion")
-                api("org.jetbrains:kotlin-styled:5.2.0-$kotlinWrappersVersion")
                 api("org.jetbrains:kotlin-extensions:1.0.1-$kotlinWrappersVersion")
+                api("org.jetbrains:kotlin-css:1.0.0-$kotlinWrappersVersion")
             }
         }
     }

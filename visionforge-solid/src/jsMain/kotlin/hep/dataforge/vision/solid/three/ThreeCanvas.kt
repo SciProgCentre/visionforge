@@ -10,9 +10,7 @@ import hep.dataforge.names.toName
 import hep.dataforge.output.Renderer
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.solid.Solid
-import hep.dataforge.vision.solid.specifications.Camera
-import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.solid.specifications.Controls
+import hep.dataforge.vision.solid.specifications.*
 import hep.dataforge.vision.solid.three.ThreeMaterials.HIGHLIGHT_MATERIAL
 import hep.dataforge.vision.solid.three.ThreeMaterials.SELECTED_MATERIAL
 import info.laht.threekt.WebGLRenderer
@@ -28,9 +26,11 @@ import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
+import info.laht.threekt.renderers.WebGLRenderer
 import info.laht.threekt.scenes.Scene
 import kotlinx.browser.window
 import kotlinx.dom.clear
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
@@ -41,7 +41,6 @@ import kotlin.math.sin
  *
  */
 public class ThreeCanvas(
-    element: HTMLElement,
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
     public val onClick: ((Name?) -> Unit)? = null,
@@ -69,7 +68,24 @@ public class ThreeCanvas(
 
     private var picked: Object3D? = null
 
-    init {
+    /**
+     * Attach canvas to given [HTMLElement]
+     */
+    public fun attach(element: HTMLElement) {
+        fun WebGLRenderer.resize() {
+            val canvas = domElement as HTMLCanvasElement
+
+            val width = options.computeWidth(canvas.clientWidth)
+            val height = options.computeHeight(canvas.clientHeight)
+
+            canvas.width = width
+            canvas.height = height
+
+            setSize(width, height, false)
+            camera.aspect = width.toDouble() / height
+            camera.updateProjectionMatrix()
+        }
+
         element.clear()
 
         //Attach listener to track mouse changes
@@ -86,10 +102,16 @@ public class ThreeCanvas(
             onClick?.invoke(picked?.fullName())
         }, false)
 
-        camera.aspect = 1.0
-
         val renderer = WebGLRenderer { antialias = true }.apply {
             setClearColor(Colors.skyblue, 1)
+        }
+
+        val canvas = renderer.domElement as HTMLCanvasElement
+
+        canvas.style.apply {
+            width = "100%"
+            height = "100%"
+            display = "block"
         }
 
         addControls(renderer.domElement, options.controls)
@@ -106,19 +128,15 @@ public class ThreeCanvas(
             window.requestAnimationFrame {
                 animate()
             }
+
             renderer.render(scene, camera)
         }
 
         element.appendChild(renderer.domElement)
+        renderer.resize()
 
-        renderer.setSize(
-            element.clientWidth.coerceIn(options.minWith.toInt()..options.maxWith.toInt()),
-            element.clientHeight.coerceIn(options.minHeight.toInt()..options.maxHeight.toInt())
-        )
-
-        window.onresize = {
-            renderer.setSize(element.clientWidth, element.clientWidth)
-            camera.updateProjectionMatrix()
+        element.onresize = {
+            renderer.resize()
         }
 
         animate()
@@ -250,7 +268,7 @@ public fun ThreePlugin.output(
     element: HTMLElement,
     spec: Canvas3DOptions = Canvas3DOptions.empty(),
     onClick: ((Name?) -> Unit)? = null,
-): ThreeCanvas = ThreeCanvas(element, this, spec, onClick)
+): ThreeCanvas = ThreeCanvas(this, spec, onClick).apply { attach(element) }
 
 public fun ThreePlugin.render(
     element: HTMLElement,

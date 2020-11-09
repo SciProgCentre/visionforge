@@ -8,19 +8,24 @@ import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
+import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.specifications.Camera
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
-import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.css.height
+import kotlinx.css.pct
 import kotlinx.html.js.onClickFunction
-import react.*
+import react.RProps
+import react.child
 import react.dom.*
+import react.functionalComponent
+import react.useState
 import styled.css
 import styled.styledDiv
 import kotlin.math.PI
@@ -62,13 +67,18 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 +"col-lg-3"
                 +"px-0"
                 +"overflow-auto"
+                +"h-100"
             }
             //tree
             card("Object tree") {
                 objectTree(root, selected, select)
             }
         }
-        div("col-lg-6") {
+        styledDiv {
+            css {
+                +"col-lg-6"
+                height = 100.pct
+            }
             //canvas
             child(ThreeCanvasComponent) {
                 attrs {

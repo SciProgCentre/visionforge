@@ -1,13 +1,18 @@
-package hep.dataforge.vision.solid.three
+package hep.dataforge.vision.react
 
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
+import hep.dataforge.vision.solid.three.ThreeCanvas
+import hep.dataforge.vision.solid.three.ThreePlugin
+import hep.dataforge.vision.solid.three.output
+import kotlinx.css.*
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
-import react.dom.div
+import styled.css
+import styled.styledDiv
 
 public external interface ThreeCanvasProps : RProps {
     public var context: Context
@@ -33,7 +38,8 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
-            val newCanvas = three.output(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
+            val newCanvas: ThreeCanvas =
+                three.output(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas
         }
@@ -51,43 +57,13 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
         canvas?.select(props.selected)
     }
 
-    div {
+    styledDiv {
+        css {
+            minWidth = 500.px
+            minHeight = 500.px
+            display = Display.inherit
+            flex(1.0, 1.0, FlexBasis.auto)
+        }
         ref = elementRef
     }
 }
-
-//public class ThreeCanvasComponent : RComponent<ThreeCanvasProps, ThreeCanvasState>() {
-//
-//    private var canvas: ThreeCanvas? = null
-//
-//    override fun componentDidMount() {
-//        props.obj?.let { obj ->
-//            if (canvas == null) {
-//                val element = state.element as? HTMLElement ?: error("Canvas element not found")
-//                val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
-//                canvas = three.output(element, props.options ?: Canvas3DOptions.empty()).apply {
-//                    onClick = props.clickCallback
-//                }
-//                props.canvasCallback?.invoke(canvas)
-//            }
-//            canvas?.render(obj)
-//        }
-//    }
-//
-//    override fun componentDidUpdate(prevProps: ThreeCanvasProps, prevState: ThreeCanvasState, snapshot: Any) {
-//        if (prevProps.obj != props.obj) {
-//            componentDidMount()
-//        }
-//        if (prevProps.selected != props.selected) {
-//            canvas?.select(props.selected)
-//        }
-//    }
-//
-//    override fun RBuilder.render() {
-//        div {
-//            ref {
-//                state.element = findDOMNode(it)
-//            }
-//        }
-//    }
-//}

@@ -2,29 +2,31 @@ package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
-import hep.dataforge.names.isEmpty
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionGroup
-import hep.dataforge.vision.bootstrap.*
+import hep.dataforge.vision.bootstrap.card
+import hep.dataforge.vision.bootstrap.nameCrumbs
+import hep.dataforge.vision.bootstrap.threeControls
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.react.objectTree
+import hep.dataforge.vision.react.ThreeCanvasComponent
+import hep.dataforge.vision.react.flexColumn
+import hep.dataforge.vision.react.flexRow
 import hep.dataforge.vision.solid.Solid
-import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.three.ThreeCanvas
-import hep.dataforge.vision.solid.three.ThreeCanvasComponent
 import kotlinx.browser.window
-import kotlinx.css.FlexBasis
-import kotlinx.css.Overflow
-import kotlinx.css.flex
-import kotlinx.css.overflow
+import kotlinx.css.*
+import kotlinx.css.properties.border
 import kscience.gdml.GDML
 import kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import react.*
+import react.RProps
+import react.child
 import react.dom.h1
+import react.functionalComponent
+import react.useState
 import styled.css
+import styled.styledDiv
 
 external interface GDMLAppProps : RProps {
     var context: Context
@@ -46,7 +48,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     var canvas: ThreeCanvas? by useState { null }
     var vision: Vision? by useState { props.rootObject }
 
-    val select: (Name?) -> Unit = {
+    val onSelect: (Name?) -> Unit = {
         selected = it
     }
 
@@ -67,20 +69,56 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         vision = parsedVision
     }
 
-    gridColumn {
+    flexColumn {
         css {
-            flex(1.0, 1.0, FlexBasis.auto)
+            height = 100.pct
+            width = 100.pct
         }
-        h1 { +"GDML/JSON loader demo" }
-        gridRow {
+        styledDiv {
             css {
-                +"p-1"
-                overflow = Overflow.auto
+                +"page-header"
+                +"justify-content-center"
             }
-            gridColumn(3, maxSize = GridMaxSize.XL) {
+            h1 { +"GDML/JSON loader demo" }
+        }
+        flexRow {
+            css {
+                flex(1.0, 1.0, FlexBasis.auto)
+                flexWrap = FlexWrap.wrap
+            }
+
+            flexColumn {
                 css {
-                    +"order-2"
-                    +"order-xl-1"
+                    flex(1.0, 1.0, FlexBasis.auto)
+                    margin(10.px)
+                }
+                nameCrumbs(selected, "World", onSelect)
+
+                //canvas
+                styledDiv {
+                    css {
+                        flex(1.0, 1.0, FlexBasis.auto)
+                    }
+                    child(ThreeCanvasComponent) {
+                        attrs {
+                            this.context = props.context
+                            this.obj = vision as? Solid
+                            this.selected = selected
+                            this.clickCallback = onSelect
+                            this.canvasCallback = {
+                                canvas = it
+                            }
+                        }
+                    }
+                }
+            }
+            flexColumn {
+                css {
+                    minWidth = 500.px
+                    maxHeight = 100.pct
+                    flex(1.0, 1.0, FlexBasis.zero)
+                    margin(left = 4.px, right = 4.px)
+                    border(1.px, BorderStyle.solid, Color.lightGray)
                 }
                 card("Load data") {
                     fileDrop("(drag file here)") { files ->
@@ -97,61 +135,8 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                         }
                     }
                 }
-                //tree
-                card("Object tree") {
-                    vision?.let {
-                        objectTree(it, selected, select)
-                    }
-                }
-            }
-
-            gridColumn(6, maxSize = GridMaxSize.XL) {
-                css {
-                    +"order-1"
-                    +"order-xl-2"
-                }
-                //canvas
-                child(ThreeCanvasComponent) {
-                    attrs {
-                        this.context = props.context
-                        this.obj = vision as? Solid
-                        this.selected = selected
-                        this.clickCallback = select
-                        this.canvasCallback = {
-                            canvas = it
-                        }
-                    }
-                }
-            }
-            gridColumn(3, maxSize = GridMaxSize.XL) {
-                css {
-                    +"order-3"
-                }
-                container {
-                    //settings
-                    canvas?.let {
-                        card("Canvas configuration") {
-                            canvasControls(it)
-                        }
-                    }
-                }
-                container {
-                    //properties
-                    namecrumbs(selected, "World") { selected = it }
-                    selected.let { selected ->
-                        val selectedObject: Vision? = when {
-                            selected == null -> null
-                            selected.isEmpty() -> vision
-                            else -> (vision as? VisionGroup)?.get(selected)
-                        }
-                        if (selectedObject != null) {
-                            visionPropertyEditor(
-                                selectedObject,
-                                default = selectedObject.getAllProperties(),
-                                key = selected
-                            )
-                        }
-                    }
+                canvas?.let {
+                    threeControls(it, selected, onSelect)
                 }
             }
         }
