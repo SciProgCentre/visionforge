@@ -1,8 +1,5 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.get
-import hep.dataforge.meta.node
 import hep.dataforge.names.*
 import kotlinx.serialization.Transient
 
@@ -10,7 +7,7 @@ import kotlinx.serialization.Transient
 /**
  * Abstract implementation of mutable group of [Vision]
  */
-public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
+public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
 
@@ -19,13 +16,13 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
      */
     abstract override val children: Map<NameToken, Vision>
 
-    abstract override var styleSheet: StyleSheet?
-        protected set
+    final override var styleSheet: StyleSheet? = null
+        private set
 
     /**
      * Update or create stylesheet
      */
-    public fun styleSheet(block: StyleSheet.() -> Unit) {
+    public open fun styleSheet(block: StyleSheet.() -> Unit) {
         if (styleSheet == null) {
             styleSheet = StyleSheet(this@AbstractVisionGroup)
         }
@@ -84,17 +81,18 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
      * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
      */
     protected open fun addStatic(child: Vision): Unit {
-        setChild(NameToken("@static", index = child.hashCode().toString()), child)
+        attach(NameToken("@static", index = child.hashCode().toString()), child)
     }
 
     protected abstract fun createGroup(): AbstractVisionGroup
 
     /**
-     * Set this node as parent for given node
+     * Set parent for given child and attach it
      */
-    protected fun attach(child: Vision) {
+    protected fun attach(token: NameToken, child: Vision) {
         if (child.parent == null) {
             child.parent = this
+            setChild(token, child)
         } else if (child.parent !== this) {
             error("Can't reassign existing parent for $child")
         }
@@ -110,8 +108,7 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
                 val token = name.tokens.first()
                 when (val current = children[token]) {
                     null -> createGroup().also { child ->
-                        attach(child)
-                        setChild(token, child)
+                        attach(token, child)
                     }
                     is AbstractVisionGroup -> current
                     else -> error("Can't create group with name $name because it exists and not a group")
@@ -129,7 +126,6 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
         when {
             name.isEmpty() -> {
                 if (child != null) {
-                    attach(child)
                     addStatic(child)
                 }
             }
@@ -138,8 +134,7 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
                 if (child == null) {
                     removeChild(token)
                 } else {
-                    attach(child)
-                    setChild(token, child)
+                    attach(token, child)
                 }
                 childrenChanged(token, child)
             }
@@ -151,11 +146,23 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
         }
     }
 
-    override fun update(meta: Meta) {
-        val styleMeta = meta.get("styleSheet").node
-        if (styleMeta != null) {
-            this.styleSheet?.update(styleMeta)
+    override fun update(change: Vision) {
+        if (change is VisionGroup) {
+            //update stylesheet
+            val changeStyleSheet = change.styleSheet
+            if (changeStyleSheet != null) {
+                styleSheet {
+                    update(changeStyleSheet)
+                }
+            }
+            change.children.forEach { (token, child) ->
+                when {
+                    child is NullVision -> removeChild(token)
+                    children.containsKey(token) -> children[token]!!.update(child)
+                    else -> attach(token, child)
+                }
+            }
         }
-        super.update(meta)
+        super.update(change)
     }
 }

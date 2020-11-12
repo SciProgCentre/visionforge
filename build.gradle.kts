@@ -4,8 +4,8 @@ plugins {
     id("ru.mipt.npm.project")
 }
 
-val dataforgeVersion by extra("0.2.0-dev-4")
-val ktorVersion by extra("1.4.1")
+val dataforgeVersion by extra("0.2.0-dev-7")
+val ktorVersion by extra("1.4.2")
 val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.10")
 
 allprojects {

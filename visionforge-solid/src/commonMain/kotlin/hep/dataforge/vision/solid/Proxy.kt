@@ -10,14 +10,14 @@ import kotlinx.serialization.Transient
 import kotlin.collections.set
 
 public abstract class AbstractProxy : BasicSolid(), VisionGroup {
-    public abstract val prototype: Vision
+    public abstract val prototype: Solid
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
         return if (inherit) {
             sequence {
                 yield(properties?.get(name))
                 yieldAll(getStyleItems(name))
-                yield(prototype.getItem(name))
+                yield(prototype.getProperty(name))
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
@@ -42,7 +42,7 @@ public abstract class AbstractProxy : BasicSolid(), VisionGroup {
         //do nothing
     }
 
-    override val descriptor: NodeDescriptor? get() = prototype.descriptor
+    override val descriptor: NodeDescriptor get() = prototype.descriptor
 }
 
 /**
@@ -82,12 +82,10 @@ public class Proxy private constructor(
         return NameToken(PROXY_CHILD_PROPERTY_PREFIX, childName.toString()) + propertyName
     }
 
-    private fun prototypeFor(name: Name): Vision {
-        return (prototype as? VisionGroup)?.get(name)
+    private fun prototypeFor(name: Name): Solid {
+        return (prototype as? SolidGroup)?.get(name) as? Solid
             ?: error("Prototype with name $name not found in $this")
     }
-
-    override val descriptor: NodeDescriptor? get() = prototype.descriptor
 
     //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
 
@@ -97,7 +95,7 @@ public class Proxy private constructor(
      */
     public inner class ProxyChild(public val name: Name) : AbstractProxy() {
 
-        override val prototype: Vision get() = prototypeFor(name)
+        override val prototype: Solid get() = prototypeFor(name)
 
         override val styleSheet: StyleSheet get() = this@Proxy.styleSheet
 

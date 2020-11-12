@@ -1,12 +1,8 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.DFExperimental
-import hep.dataforge.meta.double
-import hep.dataforge.meta.transformations.MetaConverter.Companion.double
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionGroup
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.nullable
@@ -18,7 +14,6 @@ import kotlinx.serialization.encoding.*
 
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(Point3D::class)
 public object Point3DSerializer : KSerializer<Point3D> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("hep.dataforge.vis.spatial.Point3D") {
         element<Double>("x")
@@ -54,7 +49,6 @@ public object Point3DSerializer : KSerializer<Point3D> {
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(Point2D::class)
 public object Point2DSerializer : KSerializer<Point2D> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("hep.dataforge.vis.spatial.Point2D") {
         element<Double>("x")
@@ -85,8 +79,6 @@ public object Point2DSerializer : KSerializer<Point2D> {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
-@Serializer(MutableVisionGroup::class)
 internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 
     private val mapSerializer: KSerializer<Map<NameToken, Vision>> =

@@ -1,16 +1,12 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.Config
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
-import hep.dataforge.names.asName
 import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.json.Json
 import kotlin.collections.set
 
 public interface PrototypeHolder {
@@ -25,7 +21,7 @@ public interface PrototypeHolder {
 @SerialName("group.solid")
 public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
 
-    override var styleSheet: StyleSheet? = null
+    override val descriptor: NodeDescriptor get() = Solid.descriptor
 
     /**
      * A container for templates visible inside this group
@@ -43,9 +39,6 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
             attach(it)
         }).run(builder)
     }
-
-    //FIXME to be lifted to AbstractVisualGroup after https://github.com/Kotlin/kotlinx.serialization/issues/378 is fixed
-    override var properties: Config? = null
 
     @Serializable(Point3DSerializer::class)
     override var position: Point3D? = null
@@ -111,14 +104,12 @@ public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit 
  * A special class which works as a holder for prototypes
  */
 internal class Prototypes(
-    override var children: MutableMap<NameToken, Vision> = LinkedHashMap()
+    override var children: MutableMap<NameToken, Vision> = LinkedHashMap(),
 ) : AbstractVisionGroup(), MutableVisionGroup, PrototypeHolder {
 
-    override var styleSheet: StyleSheet?
-        get() = null
-        set(_) {
-            error("Can't define stylesheet for prototypes block")
-        }
+    override fun styleSheet(block: StyleSheet.() -> Unit) {
+        error("Can't define stylesheet for prototypes block")
+    }
 
     override fun removeChild(token: NameToken) {
         children.remove(token)

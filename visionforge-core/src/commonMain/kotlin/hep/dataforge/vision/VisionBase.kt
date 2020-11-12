@@ -2,20 +2,24 @@ package hep.dataforge.vision
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.defaultItem
+import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 internal data class PropertyListener(
     val owner: Any? = null,
-    val action: (name: Name) -> Unit
+    val action: (name: Name) -> Unit,
 )
 
 @Serializable
-public open class AbstractVision : Vision {
+@SerialName("vision")
+public open class VisionBase : Vision {
 
     @Transient
     override var parent: VisionGroup? = null
@@ -25,6 +29,8 @@ public open class AbstractVision : Vision {
      */
     override var properties: Config? = null
         protected set
+
+    override val descriptor: NodeDescriptor? get() = null
 
     protected fun updateStyles(names: List<String>) {
         names.mapNotNull { resolveStyle(it) }.asSequence()
@@ -76,12 +82,14 @@ public open class AbstractVision : Vision {
             sequence {
                 yield(properties?.get(name))
                 yieldAll(getStyleItems(name))
+                yield(descriptor?.get(name)?.defaultItem())
                 yield(parent?.getProperty(name, inherit))
             }.merge()
         } else {
             sequence {
                 yield(properties?.get(name))
                 yieldAll(getStyleItems(name))
+                yield(descriptor?.get(name)?.defaultItem())
             }.merge()
         }
     }
@@ -94,8 +102,10 @@ public open class AbstractVision : Vision {
         properties = null
     }
 
-    override fun update(meta: Meta) {
-        meta[Vision::properties.name].node?.let { configure(it) }
+    override fun update(change: Vision) {
+        if (change.properties != null) {
+            config.update(change.config)
+        }
     }
 
     public companion object {
