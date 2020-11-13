@@ -7,7 +7,6 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.collections.set
 
 public interface PrototypeHolder {
     public val parent: VisionGroup?
@@ -19,7 +18,7 @@ public interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
+public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
@@ -36,7 +35,7 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     public fun prototypes(builder: MutableVisionGroup.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
-            attach(it)
+            it.parent = this
         }).run(builder)
     }
 
@@ -49,23 +48,12 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder {
     @Serializable(Point3DSerializer::class)
     override var scale: Point3D? = null
 
-    @SerialName("children")
-    private val _children = LinkedHashMap<NameToken, Vision>()
-    override val children: Map<NameToken, Vision> get() = _children
-
     override fun attachChildren() {
         prototypes?.parent = this
         prototypes?.attachChildren()
         super.attachChildren()
     }
 
-    override fun removeChild(token: NameToken) {
-        _children.remove(token)?.apply { parent = null }
-    }
-
-    override fun setChild(token: NameToken, child: Vision) {
-        _children[token] = child
-    }
 
 //    /**
 //     * TODO add special static group to hold statics without propagation
@@ -103,24 +91,14 @@ public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit 
 /**
  * A special class which works as a holder for prototypes
  */
+@Serializable(PrototypesSerializer::class)
 internal class Prototypes(
     override var children: MutableMap<NameToken, Vision> = LinkedHashMap(),
-) : AbstractVisionGroup(), MutableVisionGroup, PrototypeHolder {
+) : VisionGroupBase(), PrototypeHolder {
 
     override fun styleSheet(block: StyleSheet.() -> Unit) {
         error("Can't define stylesheet for prototypes block")
     }
-
-    override fun removeChild(token: NameToken) {
-        children.remove(token)
-        childrenChanged(token, null)
-    }
-
-    override fun setChild(token: NameToken, child: Vision) {
-        children[token] = child
-    }
-
-    override fun createGroup() = SimpleVisionGroup()
 
     override var properties: Config?
         get() = null

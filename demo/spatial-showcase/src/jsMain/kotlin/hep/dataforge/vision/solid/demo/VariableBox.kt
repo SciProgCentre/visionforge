@@ -5,12 +5,12 @@ package hep.dataforge.vision.solid.demo
 import hep.dataforge.meta.int
 import hep.dataforge.meta.number
 import hep.dataforge.meta.set
-import hep.dataforge.meta.setItem
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.getProperty
 import hep.dataforge.vision.set
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.Solid.Companion.GEOMETRY_KEY
 import hep.dataforge.vision.solid.three.*
@@ -84,13 +84,13 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
     var variableZSize: Number
         get() = getProperty(Z_SIZE_KEY, false).number ?: 0f
         set(value) {
-            setItem(Z_SIZE_KEY, value.asValue())
+            setProperty(Z_SIZE_KEY, value.asValue())
         }
 
     var value: Int
         get() = getProperty("value", false).int ?: 0
         set(value) {
-            setItem("value", value.asValue())
+            setProperty("value", value.asValue())
             val size = value.toFloat() / 255f * 20f
             scaleZ = size
             z = size / 2

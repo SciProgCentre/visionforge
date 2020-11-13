@@ -233,10 +233,10 @@ public fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = n
         }
     }
 }
-
-public fun RBuilder.configEditor(
-    obj: Configurable,
-    descriptor: NodeDescriptor? = obj.descriptor,
-    default: Meta? = null,
-    key: Any? = null
-) = configEditor(obj.config,descriptor, default, key)
+//
+//public fun RBuilder.configEditor(
+//    obj: Configurable,
+//    descriptor: NodeDescriptor?,
+//    default: Meta? = null,
+//    key: Any? = null
+//): Unit = configEditor(obj.config, descriptor, default, key)

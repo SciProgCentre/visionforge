@@ -1,20 +1,27 @@
 package hep.dataforge.vision
 
 import hep.dataforge.names.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 
 /**
  * Abstract implementation of mutable group of [Vision]
  */
-public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
+@Serializable
+@SerialName("vision.group")
+public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
 
     //protected abstract val _children: MutableMap<NameToken, T>
+
+    @SerialName("children")
+    protected val childrenInternal = LinkedHashMap<NameToken, Vision>()
 
     /**
      * A map of top level named children
      */
-    abstract override val children: Map<NameToken, Vision>
+    override val children: Map<NameToken, Vision> get() = childrenInternal
 
     final override var styleSheet: StyleSheet? = null
         private set
@@ -24,7 +31,7 @@ public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
      */
     public open fun styleSheet(block: StyleSheet.() -> Unit) {
         if (styleSheet == null) {
-            styleSheet = StyleSheet(this@AbstractVisionGroup)
+            styleSheet = StyleSheet(this@VisionGroupBase)
         }
         styleSheet!!.block()
     }
@@ -70,12 +77,9 @@ public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
     /**
      * Remove a child with given name token
      */
-    protected abstract fun removeChild(token: NameToken)
-
-    /**
-     * Add, remove or replace child with given name
-     */
-    protected abstract fun setChild(token: NameToken, child: Vision)
+    public fun removeChild(token: NameToken) {
+        childrenInternal.remove(token)
+    }
 
     /**
      * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
@@ -84,15 +88,15 @@ public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
         attach(NameToken("@static", index = child.hashCode().toString()), child)
     }
 
-    protected abstract fun createGroup(): AbstractVisionGroup
+    protected open fun createGroup(): VisionGroupBase = VisionGroupBase()
 
     /**
      * Set parent for given child and attach it
      */
-    protected fun attach(token: NameToken, child: Vision) {
+    private fun attach(token: NameToken, child: Vision) {
         if (child.parent == null) {
             child.parent = this
-            setChild(token, child)
+            childrenInternal[token] = child
         } else if (child.parent !== this) {
             error("Can't reassign existing parent for $child")
         }
@@ -101,7 +105,7 @@ public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
     /**
      * Recursively create a child group
      */
-    private fun createGroups(name: Name): AbstractVisionGroup {
+    private fun createGroups(name: Name): VisionGroupBase {
         return when {
             name.isEmpty() -> error("Should be unreachable")
             name.length == 1 -> {
@@ -110,7 +114,7 @@ public abstract class AbstractVisionGroup : VisionBase(), MutableVisionGroup {
                     null -> createGroup().also { child ->
                         attach(token, child)
                     }
-                    is AbstractVisionGroup -> current
+                    is VisionGroupBase -> current
                     else -> error("Can't create group with name $name because it exists and not a group")
                 }
             }

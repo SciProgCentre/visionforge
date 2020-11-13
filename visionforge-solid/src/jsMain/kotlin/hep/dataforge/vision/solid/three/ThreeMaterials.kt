@@ -12,23 +12,22 @@ import info.laht.threekt.materials.MeshPhongMaterial
 import info.laht.threekt.math.Color
 
 
-object ThreeMaterials {
-    val DEFAULT_COLOR = Color(Colors.darkgreen)
-    val DEFAULT = MeshBasicMaterial().apply {
+public object ThreeMaterials {
+    public val DEFAULT_COLOR: Color = Color(Colors.darkgreen)
+    public val DEFAULT: MeshBasicMaterial = MeshBasicMaterial().apply {
         color.set(DEFAULT_COLOR)
     }
-    val DEFAULT_LINE_COLOR = Color(Colors.black)
-    val DEFAULT_LINE = LineBasicMaterial().apply {
+    public val DEFAULT_LINE_COLOR: Color = Color(Colors.black)
+    public val DEFAULT_LINE: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(DEFAULT_LINE_COLOR)
     }
 
-    val SELECTED_MATERIAL = LineBasicMaterial().apply {
+    public val SELECTED_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(Colors.ivory)
         linewidth = 8.0
     }
 
-
-    val HIGHLIGHT_MATERIAL = LineBasicMaterial().apply {
+    public val HIGHLIGHT_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(Colors.blue)
         linewidth = 8.0
     }
@@ -75,7 +74,7 @@ object ThreeMaterials {
     }
 
     fun getMaterial(vision3D: Vision, cache: Boolean): Material {
-        val meta = vision3D.getItem(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
+        val meta = vision3D.getProperty(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
         return if (cache) {
             materialCache.getOrPut(meta) { buildMaterial(meta) }
         } else {

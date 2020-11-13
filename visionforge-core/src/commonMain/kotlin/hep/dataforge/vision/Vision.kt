@@ -2,6 +2,7 @@ package hep.dataforge.vision
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.Described
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -70,6 +71,8 @@ public interface Vision : Configurable, Described {
      */
     public fun update(change: Vision)
 
+    override val descriptor: NodeDescriptor?
+
     public companion object {
         public const val TYPE: String = "vision"
         public val STYLE_KEY: Name = "@style".asName()
@@ -133,8 +136,7 @@ public fun Vision.property(
         }
     }
 
-//TODO replace by value
-fun Vision.properties(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
+public fun Vision.properties(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
     override fun getItem(name: Name): MetaItem<*>? {
         return getProperty(name, inherit)
     }

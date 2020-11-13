@@ -85,9 +85,9 @@ fun Mesh.applyProperties(obj: Solid): Mesh = apply{
 fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.getItem(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
+    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.getItem(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
+        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
         if (edges == null) {
             add(
                 LineSegments(
@@ -114,9 +114,9 @@ fun Mesh.applyWireFrame(obj: Solid) {
         (it as LineSegments).dispose()
     }
     //inherited wireframe definition, disabled by default
-    if (obj.getItem(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
+    if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.getItem(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
+        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
         add(
             LineSegments(
                 WireframeGeometry(bufferGeometry),

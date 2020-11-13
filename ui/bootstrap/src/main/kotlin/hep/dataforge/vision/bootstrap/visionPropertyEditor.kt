@@ -17,7 +17,7 @@ public fun RBuilder.visionPropertyEditor(
     key: Any? = null
 ) {
     card("Properties") {
-        configEditor(item, descriptor, default, key)
+        configEditor(item.config, descriptor, default, key)
     }
     val styles = item.styles
     if(styles.isNotEmpty()) {
@@ -40,6 +40,6 @@ public fun Element.visionPropertyEditor(
     item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
     default: Meta? = null
-) = render(this) {
+): Unit = render(this) {
     visionPropertyEditor(item, descriptor, default)
 }

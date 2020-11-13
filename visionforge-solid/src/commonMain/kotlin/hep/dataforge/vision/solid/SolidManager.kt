@@ -4,12 +4,12 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
-import hep.dataforge.vision.SimpleVisionGroup
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
+import hep.dataforge.vision.VisionGroupBase
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIAL_MODULE_TARGET
 import kotlinx.serialization.json.Json
@@ -51,7 +51,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             contextual(Point2DSerializer)
 
             polymorphic(Vision::class) {
-                subclass(SimpleVisionGroup.serializer())
+                subclass(VisionGroupBase.serializer())
                 solids()
             }
 

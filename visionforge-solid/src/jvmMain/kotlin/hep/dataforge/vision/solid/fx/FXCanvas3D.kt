@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid.fx
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.empty
 import hep.dataforge.output.Renderer
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions

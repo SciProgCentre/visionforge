@@ -1,7 +1,7 @@
 package hep.dataforge.vision
 
 import hep.dataforge.meta.*
-import hep.dataforge.meta.descriptors.ItemDescriptor
+import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +43,7 @@ public object NullVision : Vision {
     }
 
     override val config: Config get() = Config()
-    override val descriptor: ItemDescriptor? get() = null
+    override val descriptor: NodeDescriptor? get() = null
 }
 
 private fun Vision.collectChange(scope: CoroutineScope, collector: Vision): Job = scope.launch {
@@ -56,7 +56,7 @@ private fun Vision.collectChange(scope: CoroutineScope, collector: Vision): Job 
         //Subscribe for children changes
         children.forEach { (token, child) ->
             val childCollector: Vision = if (child is VisionGroup) {
-                SimpleVisionGroup()
+                VisionGroupBase()
             } else {
                 VisionBase()
             }
@@ -94,7 +94,7 @@ public fun Vision.flowChanges(scope: CoroutineScope, collectionDuration: Duratio
     emit(this@flowChanges)
     while (true) {
         val collector: Vision = if (this is VisionGroup) {
-            SimpleVisionGroup()
+            VisionGroupBase()
         } else {
             VisionBase()
         }

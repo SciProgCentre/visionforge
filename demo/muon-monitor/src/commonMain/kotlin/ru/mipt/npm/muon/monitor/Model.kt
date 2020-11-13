@@ -1,6 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.vision.removeAll
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
@@ -63,7 +64,7 @@ class Model {
     fun reset() {
         map.values.forEach {
             it.config
-            it.setItem(SolidMaterial.MATERIAL_COLOR_KEY, null)
+            it.setProperty(SolidMaterial.MATERIAL_COLOR_KEY, null)
         }
         tracks.removeAll()
     }

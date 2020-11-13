@@ -1,6 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Context
+import hep.dataforge.meta.invoke
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty
@@ -172,7 +173,12 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                             else -> root[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(selectedObject, default = selectedObject.getAllProperties(), key = selected)
+                            configEditor(
+                                selectedObject.config,
+                                selectedObject.descriptor,
+                                default = selectedObject.getAllProperties(),
+                                key = selected
+                            )
                         }
                     }
                 }

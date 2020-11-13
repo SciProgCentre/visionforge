@@ -11,6 +11,7 @@ import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import hep.dataforge.vision.enum
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.Solid.Companion.DETAIL_KEY
 import hep.dataforge.vision.solid.Solid.Companion.IGNORE_KEY
 import hep.dataforge.vision.solid.Solid.Companion.LAYER_KEY
@@ -121,8 +122,8 @@ public enum class RotationOrder {
  * Rotation order
  */
 public var Solid.rotationOrder: RotationOrder
-    get() = getItem(Solid.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
+    get() = getProperty(Solid.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = setProperty(Solid.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
@@ -130,7 +131,7 @@ public var Solid.rotationOrder: RotationOrder
  */
 public var Solid.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setValue(DETAIL_KEY, value?.asValue())
+    set(value) = setProperty(DETAIL_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
@@ -138,7 +139,7 @@ public var Solid.detail: Int?
  */
 public var Vision.ignore: Boolean?
     get() = getProperty(IGNORE_KEY, false).boolean
-    set(value) = setValue(IGNORE_KEY, value?.asValue())
+    set(value) = setProperty(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean

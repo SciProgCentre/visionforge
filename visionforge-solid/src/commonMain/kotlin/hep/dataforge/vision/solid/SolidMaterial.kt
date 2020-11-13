@@ -9,6 +9,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.Colors
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
@@ -48,7 +49,7 @@ public class SolidMaterial : Scheme() {
         internal val WIREFRAME_KEY = "wireframe".asName()
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
-        public val descriptor: NodeDescriptor by lazy {
+        public override val descriptor: NodeDescriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
                 value(COLOR_KEY) {
@@ -79,17 +80,17 @@ public class SolidMaterial : Scheme() {
  * Set color as web-color
  */
 public fun Solid.color(webColor: String) {
-    setItem(MATERIAL_COLOR_KEY, webColor.asValue())
+    setProperty(MATERIAL_COLOR_KEY, webColor.asValue())
 }
 
 /**
  * Set color as integer
  */
 public fun Solid.color(rgb: Int) {
-    setItem(MATERIAL_COLOR_KEY, rgb.asValue())
+    setProperty(MATERIAL_COLOR_KEY, rgb.asValue())
 }
 
-public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setItem(
+public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setProperty(
     MATERIAL_COLOR_KEY,
     Colors.rgbToString(r, g, b).asValue()
 )
@@ -98,13 +99,13 @@ public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setItem(
  * Web colors representation of the color in `#rrggbb` format or HTML name
  */
 public var Solid.color: String?
-    get() = getItem(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
+    get() = getProperty(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
     set(value) {
-        setItem(MATERIAL_COLOR_KEY, value?.asValue())
+        setProperty(MATERIAL_COLOR_KEY, value?.asValue())
     }
 
 public val Solid.material: SolidMaterial?
-    get() = getItem(MATERIAL_KEY).node?.let { SolidMaterial.wrap(it) }
+    get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.wrap(it) }
 
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     val node = config[MATERIAL_KEY].node
@@ -116,7 +117,7 @@ public fun Solid.material(builder: SolidMaterial.() -> Unit) {
 }
 
 public var Solid.opacity: Double?
-    get() = getItem(MATERIAL_OPACITY_KEY).double
+    get() = getProperty(MATERIAL_OPACITY_KEY).double
     set(value) {
-        setItem(MATERIAL_OPACITY_KEY, value?.asValue())
+        setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
     }

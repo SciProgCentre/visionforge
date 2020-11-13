@@ -1,9 +1,7 @@
 package hep.dataforge.vision.solid.three
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.getItem
-import hep.dataforge.meta.string
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
@@ -275,4 +273,4 @@ public fun ThreePlugin.render(
     obj: Solid,
     onSelect: ((Name?) -> Unit)? = null,
     options: Canvas3DOptions.() -> Unit = {},
-): Unit = output(element, Canvas3DOptions(options), onSelect).render(obj)
+): Unit = output(element, Canvas3DOptions.invoke(options), onSelect).render(obj)

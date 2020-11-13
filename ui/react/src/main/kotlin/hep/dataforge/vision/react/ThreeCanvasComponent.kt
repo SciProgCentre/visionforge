@@ -1,6 +1,7 @@
 package hep.dataforge.vision.react
 
 import hep.dataforge.context.Context
+import hep.dataforge.meta.empty
 import hep.dataforge.names.Name
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
