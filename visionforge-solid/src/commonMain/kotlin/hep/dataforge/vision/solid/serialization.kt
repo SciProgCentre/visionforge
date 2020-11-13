@@ -91,7 +91,7 @@ internal object PrototypesSerializer : KSerializer<MutableVisionGroup> {
 
     override fun deserialize(decoder: Decoder): MutableVisionGroup {
         val map = mapSerializer.deserialize(decoder)
-        return Prototypes(map as? MutableMap<NameToken, Vision> ?: LinkedHashMap(map))
+        return Prototypes(map)
     }
 
     override fun serialize(encoder: Encoder, value: MutableVisionGroup) {

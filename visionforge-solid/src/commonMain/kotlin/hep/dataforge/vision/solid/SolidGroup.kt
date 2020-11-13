@@ -93,11 +93,15 @@ public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit 
  */
 @Serializable(PrototypesSerializer::class)
 internal class Prototypes(
-    override var children: MutableMap<NameToken, Vision> = LinkedHashMap(),
+    children: Map<NameToken, Vision> = emptyMap(),
 ) : VisionGroupBase(), PrototypeHolder {
 
     override fun styleSheet(block: StyleSheet.() -> Unit) {
         error("Can't define stylesheet for prototypes block")
+    }
+
+    init {
+        this.childrenInternal.putAll(children)
     }
 
     override var properties: Config?

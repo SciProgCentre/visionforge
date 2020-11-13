@@ -13,10 +13,12 @@ import kotlinx.serialization.Transient
 @SerialName("vision.group")
 public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
 
-    //protected abstract val _children: MutableMap<NameToken, T>
-
+    /**
+     * Internal mutable container for group children
+     * TODO made protected due to https://github.com/Kotlin/kotlinx.serialization/issues/1200
+     */
     @SerialName("children")
-    protected val childrenInternal = LinkedHashMap<NameToken, Vision>()
+    protected open val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap()
 
     /**
      * A map of top level named children

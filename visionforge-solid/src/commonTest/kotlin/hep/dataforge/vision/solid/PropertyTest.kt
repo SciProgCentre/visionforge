@@ -60,7 +60,7 @@ class PropertyTest {
     @Test
     fun testProxyStyleProperty() {
         var box: Proxy? = null
-        val group = SolidGroup().apply {
+        val group = SolidGroup{
             styleSheet {
                 set("testStyle") {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"
