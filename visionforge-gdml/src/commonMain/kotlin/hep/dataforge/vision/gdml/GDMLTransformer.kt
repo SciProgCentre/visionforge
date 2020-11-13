@@ -19,59 +19,66 @@ import kotlin.random.Random
 private val solidsName = "solids".asName()
 private val volumesName = "volumes".asName()
 
-public class GDMLTransformer internal constructor(public val root: GDML) {
-    //private val materialCache = HashMap<GDMLMaterial, Meta>()
-    private val random = Random(222)
+@Suppress("NOTHING_TO_INLINE")
+private inline operator fun Number.times(d: Double) = toDouble() * d
 
+@Suppress("NOTHING_TO_INLINE")
+private inline operator fun Number.times(f: Float) = toFloat() * f
+
+public class GDMLTransformerSettings {
     public enum class Action {
         ADD,
         REJECT,
         PROTOTYPE
     }
 
-    public var lUnit: LUnit = LUnit.MM
+    public var lUnit: LUnit = LUnit.CM
     public var aUnit: AUnit = AUnit.RADIAN
 
     public var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
     public var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
 
+}
+
+private class GDMLTransformer(val settings: GDMLTransformerSettings) {
+    //private val materialCache = HashMap<GDMLMaterial, Meta>()
+    private val random = Random(222)
+
     /**
      * A special group for local templates
      */
-    private val proto by lazy { SolidGroup() }
+    private val proto = SolidGroup()
 
-    private val solids by lazy {
-        proto.group(solidsName) {
-            config["edges.enabled"] = false
-        }
+    private val solids = proto.group(solidsName) {
+        config["edges.enabled"] = false
     }
+
 
     private val referenceStore = HashMap<Name, MutableList<Proxy>>()
 
-    private fun proxySolid(group: SolidGroup, solid: GDMLSolid, name: String): Proxy {
+    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): Proxy {
         val templateName = solidsName + name
         if (proto[templateName] == null) {
-            solids.addSolid(solid, name)
+            solids.addSolid(root, solid, name)
         }
         val ref = group.ref(templateName, name)
         referenceStore.getOrPut(templateName) { ArrayList() }.add(ref)
         return ref
     }
 
-    private fun proxyVolume(group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): Proxy {
+    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): Proxy {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
-            proto[templateName] = volume(volume)
+            proto[templateName] = volume(root, volume)
         }
-        val ref = group.ref(templateName, physVolume.name ?: "").withPosition(physVolume)
+        val ref = group.ref(templateName, physVolume.name ?: "").withPosition(root, physVolume)
         referenceStore.getOrPut(templateName) { ArrayList() }.add(ref)
         return ref
     }
 
     private val styleCache = HashMap<Name, Meta>()
 
-    public var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
-        lUnit = LUnit.CM
+    var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
                 SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
@@ -80,14 +87,14 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
         }
     }
 
-    private fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+    fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
             Meta(builder)
         }
         useStyle(name)
     }
 
-    private fun configureSolid(obj: Solid, parent: GDMLVolume, solid: GDMLSolid) {
+    fun configureSolid(root: GDML, obj: Solid, parent: GDMLVolume, solid: GDMLSolid) {
         val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
 
         val styleName = "material[${material.name}]"
@@ -100,22 +107,19 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
         obj.solidConfiguration(parent, solid)
     }
 
-    public var onFinish: GDMLTransformer.() -> Unit = {}
-
-
-    private fun <T : Solid> T.withPosition(
+    fun <T : Solid> T.withPosition(
         newPos: GDMLPosition? = null,
         newRotation: GDMLRotation? = null,
-        newScale: GDMLScale? = null
+        newScale: GDMLScale? = null,
     ): T = apply {
         newPos?.let {
-            val point = Point3D(it.x(lUnit), it.y(lUnit), it.z(lUnit))
+            val point = Point3D(it.x(settings.lUnit), it.y(settings.lUnit), it.z(settings.lUnit))
             if (position != null || point != World.ZERO) {
                 position = point
             }
         }
         newRotation?.let {
-            val point = Point3D(it.x(aUnit), it.y(aUnit), it.z(aUnit))
+            val point = Point3D(it.x(settings.aUnit), it.y(settings.aUnit), it.z(settings.aUnit))
             if (rotation != null || point != World.ZERO) {
                 rotation = point
             }
@@ -130,24 +134,19 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
         //TODO convert units if needed
     }
 
-    private fun <T : Solid> T.withPosition(physVolume: GDMLPhysVolume): T = withPosition(
+    fun <T : Solid> T.withPosition(root: GDML, physVolume: GDMLPhysVolume): T = withPosition(
         physVolume.resolvePosition(root),
         physVolume.resolveRotation(root),
         physVolume.resolveScale(root)
     )
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline operator fun Number.times(d: Double) = toDouble() * d
-
-    @Suppress("NOTHING_TO_INLINE")
-    private inline operator fun Number.times(f: Float) = toFloat() * f
-
-    private fun SolidGroup.addSolid(
+    fun SolidGroup.addSolid(
+        root: GDML,
         solid: GDMLSolid,
-        name: String = ""
+        name: String = "",
     ): Solid {
         //context.solidAdded(solid)
-        val lScale = solid.lscale(lUnit)
+        val lScale = solid.lscale(settings.lUnit)
         val aScale = solid.ascale()
         return when (solid) {
             is GDMLBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
@@ -185,7 +184,7 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
                 val innerSolid: GDMLSolid = solid.solidref.resolve(root)
                     ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
 
-                addSolid(innerSolid, name).apply {
+                addSolid(root, innerSolid, name).apply {
                     scaleX *= solid.scale.x.toFloat()
                     scaleY *= solid.scale.y.toFloat()
                     scaleZ = solid.scale.z.toFloat()
@@ -221,13 +220,13 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
                 }
 
                 return composite(type, name) {
-                    addSolid(first).withPosition(
+                    addSolid(root, first).withPosition(
                         solid.resolveFirstPosition(root),
                         solid.resolveFirstRotation(root),
                         null
                     )
 
-                    addSolid(second).withPosition(
+                    addSolid(root, second).withPosition(
                         solid.resolvePosition(root),
                         solid.resolveRotation(root),
                         null
@@ -239,26 +238,28 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
         }
     }
 
-    private fun SolidGroup.addSolidWithCaching(
+    fun SolidGroup.addSolidWithCaching(
+        root: GDML,
         solid: GDMLSolid,
-        name: String = solid.name
+        name: String = solid.name,
     ): Solid? {
-        return when (solidAction(solid)) {
-            Action.ADD -> {
-                addSolid(solid, name)
+        return when (settings.solidAction(solid)) {
+            GDMLTransformerSettings.Action.ADD -> {
+                addSolid(root, solid, name)
             }
-            Action.PROTOTYPE -> {
-                proxySolid(this, solid, name)
+            GDMLTransformerSettings.Action.PROTOTYPE -> {
+                proxySolid(root, this, solid, name)
             }
-            Action.REJECT -> {
+            GDMLTransformerSettings.Action.REJECT -> {
                 //ignore
                 null
             }
         }
     }
 
-    private fun SolidGroup.addPhysicalVolume(
-        physVolume: GDMLPhysVolume
+    fun SolidGroup.addPhysicalVolume(
+        root: GDML,
+        physVolume: GDMLPhysVolume,
     ) {
         val volume: GDMLGroup = physVolume.volumeref.resolve(root)
             ?: error("Volume with ref ${physVolume.volumeref.ref} could not be resolved")
@@ -267,60 +268,62 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
         if (volume is GDMLVolume && volume.physVolumes.isEmpty() && volume.placement == null) {
             val solid = volume.solidref.resolve(root)
                 ?: error("Solid with tag ${volume.solidref.ref} for volume ${volume.name} not defined")
-            addSolidWithCaching(solid, physVolume.name ?: "")?.apply {
-                configureSolid(this, volume, solid)
-                withPosition(physVolume)
+            addSolidWithCaching(root, solid, physVolume.name ?: "")?.apply {
+                configureSolid(root, this, volume, solid)
+                withPosition(root, physVolume)
             }
             return
         }
 
-        when (volumeAction(volume)) {
-            Action.ADD -> {
-                val group: SolidGroup = volume(volume)
-                this[physVolume.name ?: ""] = group.withPosition(physVolume)
+        when (settings.volumeAction(volume)) {
+            GDMLTransformerSettings.Action.ADD -> {
+                val group: SolidGroup = volume(root, volume)
+                this[physVolume.name ?: ""] = group.withPosition(root, physVolume)
             }
-            Action.PROTOTYPE -> {
-                proxyVolume(this, physVolume, volume)
+            GDMLTransformerSettings.Action.PROTOTYPE -> {
+                proxyVolume(root, this, physVolume, volume)
             }
-            Action.REJECT -> {
+            GDMLTransformerSettings.Action.REJECT -> {
                 //ignore
             }
         }
     }
 
-    private fun SolidGroup.addDivisionVolume(
-        divisionVolume: GDMLDivisionVolume
+    fun SolidGroup.addDivisionVolume(
+        root: GDML,
+        divisionVolume: GDMLDivisionVolume,
     ) {
         val volume: GDMLGroup = divisionVolume.volumeref.resolve(root)
             ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
         //TODO add divisions
-        set(Name.EMPTY, volume(volume))
+        set(Name.EMPTY, volume(root, volume))
     }
 
     private fun volume(
-        group: GDMLGroup
+        root: GDML,
+        group: GDMLGroup,
     ): SolidGroup = SolidGroup().apply {
         if (group is GDMLVolume) {
             val solid: GDMLSolid = group.solidref.resolve(root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
 
-            addSolidWithCaching(solid)?.apply {
-                configureSolid(this, group, solid)
+            addSolidWithCaching(root, solid)?.apply {
+                configureSolid(root, this, group, solid)
             }
 
             when (val vol: GDMLPlacement? = group.placement) {
-                is GDMLPhysVolume -> addPhysicalVolume(vol)
-                is GDMLDivisionVolume -> addDivisionVolume(vol)
+                is GDMLPhysVolume -> addPhysicalVolume(root, vol)
+                is GDMLDivisionVolume -> addDivisionVolume(root, vol)
             }
         }
 
         group.physVolumes.forEach { physVolume ->
-            addPhysicalVolume(physVolume)
+            addPhysicalVolume(root, physVolume)
         }
     }
 
-    private fun finalize(final: SolidGroup): SolidGroup {
+    fun finalize(final: SolidGroup): SolidGroup {
         //final.prototypes = proto
         final.useStyle("GDML") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY
@@ -351,25 +354,22 @@ public class GDMLTransformer internal constructor(public val root: GDML) {
                 define(it.key.toString(), it.value)
             }
         }
-        onFinish(this@GDMLTransformer)
         return final
     }
 
-    public val result: SolidGroup by lazy {
-        finalize(volume(root.world))
-    }
+    fun transform(root: GDML): SolidGroup = finalize(volume(root, root.world))
 }
 
 
-public fun GDML.toVision(block: GDMLTransformer.() -> Unit = {}): SolidGroup {
-    val context = GDMLTransformer(this).apply(block)
-    return context.result
+public fun GDML.toVision(block: GDMLTransformerSettings.() -> Unit = {}): SolidGroup {
+    val context = GDMLTransformer(GDMLTransformerSettings().apply(block))
+    return context.transform(this)
 }
 
 /**
  * Append gdml node to the group
  */
-public fun SolidGroup.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformer.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformerSettings.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

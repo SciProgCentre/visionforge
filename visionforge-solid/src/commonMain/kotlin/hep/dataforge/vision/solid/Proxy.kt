@@ -50,13 +50,9 @@ public abstract class AbstractProxy : BasicSolid(), VisionGroup {
  */
 @Serializable
 @SerialName("solid.proxy")
-public class Proxy private constructor(
+public class Proxy(
     public val templateName: Name,
 ) : AbstractProxy(), Solid {
-
-    public constructor(parent: SolidGroup, templateName: Name) : this(templateName) {
-        this.parent = parent
-    }
 
     /**
      * Recursively search for defined template in the parent
@@ -145,7 +141,7 @@ public val Vision.prototype: Vision
 public fun SolidGroup.ref(
     templateName: Name,
     name: String = "",
-): Proxy = Proxy(this, templateName).also { set(name, it) }
+): Proxy = Proxy(templateName).also { set(name, it) }
 
 /**
  * Add new proxy wrapping given object and automatically adding it to the prototypes
