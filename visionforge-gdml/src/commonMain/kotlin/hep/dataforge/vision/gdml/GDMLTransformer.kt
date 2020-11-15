@@ -54,9 +54,9 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     }
 
 
-    private val referenceStore = HashMap<Name, MutableList<Proxy>>()
+    private val referenceStore = HashMap<Name, MutableList<SolidReference>>()
 
-    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): Proxy {
+    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): SolidReference {
         val templateName = solidsName + name
         if (proto[templateName] == null) {
             solids.addSolid(root, solid, name)
@@ -66,7 +66,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         return ref
     }
 
-    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): Proxy {
+    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): SolidReference {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)

@@ -1,12 +1,12 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.context.Context
-import hep.dataforge.meta.*
+import hep.dataforge.meta.getItem
+import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
-import hep.dataforge.output.Renderer
 import hep.dataforge.vision.Colors
+import hep.dataforge.vision.Renderer
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.*
 import hep.dataforge.vision.solid.three.ThreeMaterials.HIGHLIGHT_MATERIAL
@@ -41,28 +41,24 @@ import kotlin.math.sin
 public class ThreeCanvas(
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
-    public val onClick: ((Name?) -> Unit)? = null,
 ) : Renderer<Solid> {
-
-    override val context: Context get() = three.context
-
-    public var content: Solid? = null
-        private set
-
     private var root: Object3D? = null
 
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
 
-    public val axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply {
-        visible = options.axes.visible
-    }
+    public var content: Solid? = null
+        private set
 
-    public val scene: Scene = Scene().apply {
+    public var axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply { visible = options.axes.visible }
+        private set
+
+    private val scene: Scene = Scene().apply {
         add(axes)
     }
 
-    public val camera: PerspectiveCamera = buildCamera(options.camera)
+    public var camera: PerspectiveCamera = buildCamera(options.camera)
+        private set
 
     private var picked: Object3D? = null
 
@@ -97,7 +93,7 @@ public class ThreeCanvas(
 
         element.addEventListener("mousedown", {
             val picked = pick()
-            onClick?.invoke(picked?.fullName())
+            options.onSelect?.invoke(picked?.fullName())
         }, false)
 
         val renderer = WebGLRenderer { antialias = true }.apply {
@@ -193,15 +189,14 @@ public class ThreeCanvas(
         }
     }
 
-    override fun render(obj: Solid, meta: Meta) {
+    public override fun render(vision: Solid) {
         //clear old root
         clear()
 
-
-        val object3D = three.buildObject3D(obj)
+        val object3D = three.buildObject3D(vision)
         object3D.name = "@root"
         scene.add(object3D)
-        content = obj
+        content = vision
         root = object3D
     }
 
@@ -261,16 +256,3 @@ public class ThreeCanvas(
         private const val SELECT_NAME = "@select"
     }
 }
-
-public fun ThreePlugin.output(
-    element: HTMLElement,
-    spec: Canvas3DOptions = Canvas3DOptions.empty(),
-    onClick: ((Name?) -> Unit)? = null,
-): ThreeCanvas = ThreeCanvas(this, spec, onClick).apply { attach(element) }
-
-public fun ThreePlugin.render(
-    element: HTMLElement,
-    obj: Solid,
-    onSelect: ((Name?) -> Unit)? = null,
-    options: Canvas3DOptions.() -> Unit = {},
-): Unit = output(element, Canvas3DOptions.invoke(options), onSelect).render(obj)

@@ -3,7 +3,6 @@ package hep.dataforge.vision.bootstrap
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.flexRow
 import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.css.*
 import kotlinx.css.properties.border
@@ -45,7 +44,7 @@ public external interface CanvasControlsProps : RProps {
 
 public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
     val visionManager = useMemo(
-        { props.canvas.context.plugins.fetch(SolidManager).visionManager },
+        { props.canvas.three.solidManager.visionManager },
         arrayOf(props.canvas)
     )
     flexColumn {

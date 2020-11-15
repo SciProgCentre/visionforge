@@ -1,14 +1,12 @@
 package hep.dataforge.vision.gdml
 
-import hep.dataforge.vision.solid.AbstractProxy
 import hep.dataforge.vision.solid.prototype
 import hep.dataforge.vision.visitor.countDistinct
-import hep.dataforge.vision.visitor.countDistinctBy
 import hep.dataforge.vision.visitor.flowStatistics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import nl.adaptivity.xmlutil.StAXReader
 import kscience.gdml.GDML
+import nl.adaptivity.xmlutil.StAXReader
 import java.io.File
 import kotlin.reflect.KClass
 

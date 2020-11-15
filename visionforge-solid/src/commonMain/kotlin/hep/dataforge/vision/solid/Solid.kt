@@ -5,9 +5,9 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.output.Renderer
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
+import hep.dataforge.vision.Renderer
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import hep.dataforge.vision.enum
@@ -73,11 +73,11 @@ public interface Solid : Vision {
 
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
-                enum(ROTATION_ORDER_KEY,default = RotationOrder.XYZ)
+                enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ)
             }
         }
 
-        internal fun solidEquals(first: Solid, second: Solid): Boolean{
+        internal fun solidEquals(first: Solid, second: Solid): Boolean {
             if (first.position != second.position) return false
             if (first.rotation != second.rotation) return false
             if (first.scale != second.scale) return false
@@ -85,8 +85,8 @@ public interface Solid : Vision {
             return true
         }
 
-        internal fun solidHashCode(solid: Solid): Int{
-            var result = + (solid.position?.hashCode() ?: 0)
+        internal fun solidHashCode(solid: Solid): Int {
+            var result = +(solid.position?.hashCode() ?: 0)
             result = 31 * result + (solid.rotation?.hashCode() ?: 0)
             result = 31 * result + (solid.scale?.hashCode() ?: 0)
             result = 31 * result + (solid.properties?.hashCode() ?: 0)
@@ -104,8 +104,7 @@ public var Solid.layer: Int
         config[LAYER_KEY] = value.asValue()
     }
 
-public fun Renderer<Solid>.render(meta: Meta = Meta.EMPTY, action: SolidGroup.() -> Unit): Unit =
-    render(SolidGroup().apply(action), meta)
+public fun Renderer<Solid>.render(action: SolidGroup.() -> Unit): Unit = render(SolidGroup().apply(action))
 
 // Common properties
 

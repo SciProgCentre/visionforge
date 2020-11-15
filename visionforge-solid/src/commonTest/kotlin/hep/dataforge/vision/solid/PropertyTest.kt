@@ -58,8 +58,8 @@ class PropertyTest {
     }
 
     @Test
-    fun testProxyStyleProperty() {
-        var box: Proxy? = null
+    fun testReferenceStyleProperty() {
+        var box: SolidReference? = null
         val group = SolidGroup{
             styleSheet {
                 set("testStyle") {

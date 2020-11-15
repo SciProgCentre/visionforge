@@ -48,31 +48,6 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
         encodeToJsonElement(vision).toMetaItem(descriptor).node
             ?: error("Expected node, but value found. Check your serializer!")
 
-//    public fun updateVision(vision: Vision, meta: Meta) {
-//        vision.update(meta)
-//        if (vision is MutableVisionGroup) {
-//            val children by meta.node()
-//            children?.items?.forEach { (token, item) ->
-//                when {
-//                    item.value == Null -> vision[token] = null //Null means removal
-//                    item.node != null -> {
-//                        val node = item.node!!
-//                        val type by node.string()
-//                        if (type != null) {
-//                            //If the type is present considering it as new node, not an update
-//                            vision[token.asName()] = decodeFromMeta(node)
-//                        } else {
-//                            val existing = vision.children[token]
-//                            if (existing != null) {
-//                                updateVision(existing, node)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out VisionManager> = VisionManager::class

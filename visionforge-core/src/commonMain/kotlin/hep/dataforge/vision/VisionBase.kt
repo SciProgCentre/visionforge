@@ -69,7 +69,7 @@ public open class VisionBase : Vision {
     }
 
     override fun removeChangeListener(owner: Any?) {
-        listeners.removeAll { it.owner == owner }
+        listeners.removeAll { owner == null || it.owner == owner }
     }
 
     /**

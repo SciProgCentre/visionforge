@@ -2,21 +2,28 @@ package hep.dataforge.vision.solid.three
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.empty
+import hep.dataforge.meta.invoke
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.rendering.HTMLVisionDisplay
 import hep.dataforge.vision.solid.*
+import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
+import org.w3c.dom.HTMLElement
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
 
-public class ThreePlugin : AbstractPlugin() {
+public class ThreePlugin : AbstractPlugin(), HTMLVisionDisplay<Solid, ThreeCanvas> {
     override val tag: PluginTag get() = Companion.tag
+
+    public val solidManager: SolidManager by require(SolidManager)
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
-    private val proxyFactory = ThreeProxyFactory(this)
+    private val refFactory = ThreeReferenceFactory(this)
 
     init {
         //Add specialized factories here
@@ -38,7 +45,7 @@ public class ThreePlugin : AbstractPlugin() {
     public fun buildObject3D(obj: Solid): Object3D {
         return when (obj) {
             is ThreeVision -> obj.render()
-            is Proxy -> proxyFactory(obj)
+            is SolidReference -> refFactory(obj)
             is SolidGroup -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (token, child) ->
@@ -56,7 +63,7 @@ public class ThreePlugin : AbstractPlugin() {
                     updatePosition(obj)
                     //obj.onChildrenChange()
 
-                    obj.onPropertyChange(this) { name->
+                    obj.onPropertyChange(this) { name ->
                         if (
                             name.startsWith(Solid.POSITION_KEY) ||
                             name.startsWith(Solid.ROTATION) ||
@@ -69,7 +76,7 @@ public class ThreePlugin : AbstractPlugin() {
                         }
                     }
 
-                    obj.onChildrenChange(this) { nameToken, child ->
+                    obj.onStructureChange(this) { nameToken, _, child ->
 //                        if (name.isEmpty()) {
 //                            logger.error { "Children change with empty name on $group" }
 //                            return@onChildrenChange
@@ -108,12 +115,29 @@ public class ThreePlugin : AbstractPlugin() {
         }
     }
 
+    override fun attachRenderer(element: HTMLElement): ThreeCanvas {
+        return ThreeCanvas(this, Canvas3DOptions.empty()).apply {
+            attach(element)
+        }
+    }
+
     public companion object : PluginFactory<ThreePlugin> {
         override val tag: PluginTag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreePlugin> = ThreePlugin::class
         override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }
 }
+
+public fun ThreePlugin.attachRenderer(
+    element: HTMLElement,
+    options: Canvas3DOptions = Canvas3DOptions.empty(),
+): ThreeCanvas = ThreeCanvas(this, options).apply { attach(element) }
+
+public fun ThreePlugin.render(
+    element: HTMLElement,
+    obj: Solid,
+    options: Canvas3DOptions.() -> Unit = {},
+): ThreeCanvas = attachRenderer(element, Canvas3DOptions(options)).apply { render(obj) }
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
     object3D.name = token.toString()

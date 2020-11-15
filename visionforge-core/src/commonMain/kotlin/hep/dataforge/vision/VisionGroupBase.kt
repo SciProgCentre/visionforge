@@ -45,7 +45,10 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
         }
     }
 
-    private data class StructureChangeListener(val owner: Any?, val callback: (NameToken, Vision?) -> Unit)
+    private data class StructureChangeListener(
+        val owner: Any?,
+        val callback: (token: NameToken, before: Vision?, after: Vision?) -> Unit,
+    )
 
     @Transient
     private val structureChangeListeners = HashSet<StructureChangeListener>()
@@ -53,7 +56,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     /**
      * Add listener for children change
      */
-    override fun onChildrenChange(owner: Any?, action: (NameToken, Vision?) -> Unit) {
+    override fun onStructureChange(owner: Any?, action: (token: NameToken, before: Vision?, after: Vision?) -> Unit) {
         structureChangeListeners.add(
             StructureChangeListener(
                 owner,
@@ -65,29 +68,31 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     /**
      * Remove children change listener
      */
-    override fun removeChildrenChangeListener(owner: Any?) {
-        structureChangeListeners.removeAll { it.owner === owner }
+    override fun removeStructureChangeListener(owner: Any?) {
+        structureChangeListeners.removeAll { owner == null || it.owner === owner }
     }
 
     /**
      * Propagate children change event upwards
      */
-    protected fun childrenChanged(name: NameToken, child: Vision?) {
-        structureChangeListeners.forEach { it.callback(name, child) }
+    protected fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
+        structureChangeListeners.forEach { it.callback(name, before, after) }
     }
 
     /**
      * Remove a child with given name token
      */
-    public fun removeChild(token: NameToken) {
-        childrenInternal.remove(token)
+    public fun removeChild(token: NameToken): Vision? {
+        val removed = childrenInternal.remove(token)
+        removed?.parent = null
+        return removed
     }
 
     /**
      * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
      */
     protected open fun addStatic(child: Vision): Unit {
-        attach(NameToken("@static", index = child.hashCode().toString()), child)
+        attachChild(NameToken("@static", index = child.hashCode().toString()), child)
     }
 
     protected open fun createGroup(): VisionGroupBase = VisionGroupBase()
@@ -95,7 +100,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     /**
      * Set parent for given child and attach it
      */
-    private fun attach(token: NameToken, child: Vision) {
+    private fun attachChild(token: NameToken, child: Vision) {
         if (child.parent == null) {
             child.parent = this
             childrenInternal[token] = child
@@ -114,7 +119,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
                 val token = name.tokens.first()
                 when (val current = children[token]) {
                     null -> createGroup().also { child ->
-                        attach(token, child)
+                        attachChild(token, child)
                     }
                     is VisionGroupBase -> current
                     else -> error("Can't create group with name $name because it exists and not a group")
@@ -137,12 +142,13 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
             }
             name.length == 1 -> {
                 val token = name.tokens.first()
+                val before = children[token]
                 if (child == null) {
                     removeChild(token)
                 } else {
-                    attach(token, child)
+                    attachChild(token, child)
                 }
-                childrenChanged(token, child)
+                childrenChanged(token, before, child)
             }
             else -> {
                 //TODO add safety check
@@ -165,7 +171,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
                 when {
                     child is NullVision -> removeChild(token)
                     children.containsKey(token) -> children[token]!!.update(child)
-                    else -> attach(token, child)
+                    else -> attachChild(token, child)
                 }
             }
         }

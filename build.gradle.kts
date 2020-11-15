@@ -6,7 +6,10 @@ plugins {
 
 val dataforgeVersion by extra("0.2.0-dev-7")
 val ktorVersion by extra("1.4.2")
+val htmlVersion by extra("0.7.2")
 val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.10")
+val fxVersion by extra("14")
+
 
 allprojects {
     repositories {
@@ -21,7 +24,6 @@ allprojects {
 
 val githubProject by extra("visionforge")
 val bintrayRepo by extra("dataforge")
-val fxVersion by extra("14")
 
 subprojects {
     if(name.startsWith("visionforge")) {

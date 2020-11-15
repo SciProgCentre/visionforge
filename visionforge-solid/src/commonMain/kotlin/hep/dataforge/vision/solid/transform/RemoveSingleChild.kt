@@ -40,7 +40,7 @@ internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
     override fun SolidGroup.transformInPlace() {
         fun MutableVisionGroup.replaceChildren() {
             children.forEach { (childName, parent) ->
-                if (parent is Proxy) return@forEach //ignore refs
+                if (parent is SolidReference) return@forEach //ignore refs
                 if (parent is MutableVisionGroup) {
                     parent.replaceChildren()
                 }

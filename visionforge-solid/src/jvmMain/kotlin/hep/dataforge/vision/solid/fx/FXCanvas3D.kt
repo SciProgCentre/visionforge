@@ -2,9 +2,8 @@ package hep.dataforge.vision.solid.fx
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.empty
-import hep.dataforge.output.Renderer
+import hep.dataforge.vision.Renderer
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import javafx.application.Platform
@@ -81,7 +80,7 @@ class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOpt
         }
     }
 
-    override fun render(obj: Solid, meta: Meta) {
-        rootObject = obj
+    override fun render(vision: Solid) {
+        rootObject = vision
     }
 }

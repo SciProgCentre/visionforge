@@ -2,25 +2,25 @@ package hep.dataforge.vision.solid.fx
 
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.solid.Proxy
+import hep.dataforge.vision.solid.SolidReference
 import javafx.scene.Group
 import javafx.scene.Node
 import kotlin.reflect.KClass
 
-class FXProxyFactory(val plugin: FX3DPlugin) : FX3DFactory<Proxy> {
-    override val type: KClass<in Proxy> get() = Proxy::class
+class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReference> {
+    override val type: KClass<in SolidReference> get() = SolidReference::class
 
-    override fun invoke(obj: Proxy, binding: VisualObjectFXBinding): Node {
+    override fun invoke(obj: SolidReference, binding: VisualObjectFXBinding): Node {
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
         obj.onPropertyChange(this) { name->
-            if (name.firstOrNull()?.body == Proxy.PROXY_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
+            if (name.firstOrNull()?.body == SolidReference.REFERENCE_CHILD_PROPERTY_PREFIX) {
+                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
+                val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
-                child.updateProperty(proxyChild, propertyName)
+                child.updateProperty(referenceChild, propertyName)
             }
         }
         return node

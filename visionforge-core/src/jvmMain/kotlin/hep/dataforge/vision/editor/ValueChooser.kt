@@ -27,7 +27,7 @@ import tornadofx.*
  *
  * @author [Alexander Nozik](mailto:altavir@gmail.com)
  */
-interface ValueChooser {
+public interface ValueChooser {
 
     /**
      * Get or create a Node that could be later inserted into some parent

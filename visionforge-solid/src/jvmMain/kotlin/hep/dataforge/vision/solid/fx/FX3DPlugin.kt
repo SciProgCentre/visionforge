@@ -28,7 +28,7 @@ class FX3DPlugin : AbstractPlugin() {
 
     private val objectFactories = HashMap<KClass<out Solid>, FX3DFactory<*>>()
     private val compositeFactory = FXCompositeFactory(this)
-    private val proxyFactory = FXProxyFactory(this)
+    private val referenceFactory = FXReferenceFactory(this)
 
     init {
         //Add specialized factories here
@@ -45,7 +45,7 @@ class FX3DPlugin : AbstractPlugin() {
     fun buildNode(obj: Solid): Node {
         val binding = VisualObjectFXBinding(obj)
         return when (obj) {
-            is Proxy -> proxyFactory(obj, binding)
+            is SolidReference -> referenceFactory(obj, binding)
             is SolidGroup -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {

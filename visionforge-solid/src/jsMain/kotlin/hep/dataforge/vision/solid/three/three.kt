@@ -14,15 +14,15 @@ import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
 import kotlin.math.PI
 
-val Solid.euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
+public val Solid.euler: Euler get() = Euler(rotationX, rotationY, rotationZ, rotationOrder.name)
 
-val MetaItem<*>.vector get() = Vector3(node["x"].float ?: 0f, node["y"].float ?: 0f, node["z"].float ?: 0f)
+public val MetaItem<*>.vector: Vector3 get() = Vector3(node["x"].float ?: 0f, node["y"].float ?: 0f, node["z"].float ?: 0f)
 
-fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply { fromGeometry(this@toBufferGeometry) }
+public fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply { fromGeometry(this@toBufferGeometry) }
 
 internal fun Double.toRadians() = this * PI / 180
 
-fun CSG.toGeometry(): Geometry {
+public fun CSG.toGeometry(): Geometry {
     val geom = Geometry()
 
     val vertices = ArrayList<Vector3>()

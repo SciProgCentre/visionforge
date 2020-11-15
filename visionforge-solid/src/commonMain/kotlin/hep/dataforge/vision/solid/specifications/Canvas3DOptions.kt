@@ -1,6 +1,7 @@
 package hep.dataforge.vision.solid.specifications
 
 import hep.dataforge.meta.*
+import hep.dataforge.names.Name
 
 public class Canvas3DOptions : Scheme() {
     public var axes: Axes by spec(Axes, Axes.empty())
@@ -14,6 +15,8 @@ public class Canvas3DOptions : Scheme() {
     public var maxSize: Int by int(Int.MAX_VALUE)
     public var maxWith: Number by number { maxSize }
     public var maxHeight: Number by number { maxSize }
+
+    public var onSelect: ((Name?)->Unit)? = null
 
 
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions)

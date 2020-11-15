@@ -29,7 +29,7 @@ kotlin {
         }
         jsMain {
             dependencies {
-                implementation(npm("three", "0.114.0"))
+                implementation(npm("three", "0.122.0"))
                 implementation(npm("three-csg-ts", "1.0.1"))
             }
         }

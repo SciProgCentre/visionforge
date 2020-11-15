@@ -3,18 +3,18 @@ package hep.dataforge.vision.solid.three
 import hep.dataforge.names.cutFirst
 import hep.dataforge.names.firstOrNull
 import hep.dataforge.names.toName
-import hep.dataforge.vision.solid.Proxy
-import hep.dataforge.vision.solid.Proxy.Companion.PROXY_CHILD_PROPERTY_PREFIX
 import hep.dataforge.vision.solid.Solid
+import hep.dataforge.vision.solid.SolidReference
+import hep.dataforge.vision.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
 
-public class ThreeProxyFactory(public val three: ThreePlugin) : ThreeFactory<Proxy> {
+public class ThreeReferenceFactory(public val three: ThreePlugin) : ThreeFactory<SolidReference> {
     private val cache = HashMap<Solid, Object3D>()
 
-    override val type: KClass<Proxy> = Proxy::class
+    override val type: KClass<SolidReference> = SolidReference::class
 
     private fun Object3D.replicate(): Object3D {
         return when (this) {
@@ -30,7 +30,7 @@ public class ThreeProxyFactory(public val three: ThreePlugin) : ThreeFactory<Pro
         }
     }
 
-    override fun invoke(obj: Proxy): Object3D {
+    override fun invoke(obj: SolidReference): Object3D {
         val template = obj.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)
@@ -44,12 +44,12 @@ public class ThreeProxyFactory(public val three: ThreePlugin) : ThreeFactory<Pro
         }
 
         obj.onPropertyChange(this) { name ->
-            if (name.firstOrNull()?.body == PROXY_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for proxy child property: '$name'")
+            if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
+                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val proxyChild = obj[childName] ?: error("Proxy child with name '$childName' not found")
+                val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
-                child.updateProperty(proxyChild, propertyName)
+                child.updateProperty(referenceChild, propertyName)
             } else {
                 object3D.updateProperty(obj, name)
             }

@@ -3,7 +3,6 @@ package hep.dataforge.vision.solid
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.MutableVisionGroup
-import hep.dataforge.vision.Vision
 import hep.dataforge.vision.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,13 +11,13 @@ import kotlin.test.assertEquals
 /**
  * Create and attach new proxied group
  */
-fun SolidGroup.proxyGroup(
+fun SolidGroup.refGroup(
     name: String,
     templateName: Name = name.toName(),
     block: MutableVisionGroup.() -> Unit
-): Proxy {
+): SolidReference {
     val group = SolidGroup().apply(block)
-    return proxy(name, group, templateName)
+    return ref(name, group, templateName)
 }
 
 
@@ -44,8 +43,8 @@ class SerializationTest {
             z = -100
         }
         val group = SolidGroup{
-            proxy("cube", cube)
-            proxyGroup("pg", "pg.content".toName()){
+            ref("cube", cube)
+            refGroup("pg", "pg.content".toName()){
                 sphere(50){
                     x = -100
                 }

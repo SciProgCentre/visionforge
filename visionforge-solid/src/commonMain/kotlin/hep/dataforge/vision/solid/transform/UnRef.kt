@@ -5,8 +5,8 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.VisionGroup
-import hep.dataforge.vision.solid.Proxy
 import hep.dataforge.vision.solid.SolidGroup
+import hep.dataforge.vision.solid.SolidReference
 
 @DFExperimental
 internal object UnRef : VisualTreeTransform<SolidGroup>() {
@@ -17,7 +17,7 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
                 counter.forEach { (key, value) ->
                     reducer[key] = (reducer[key] ?: 0) + value
                 }
-            } else if (obj is Proxy) {
+            } else if (obj is SolidReference) {
                 reducer[obj.templateName] = (reducer[obj.templateName] ?: 0) + 1
             }
 
@@ -27,9 +27,9 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
 
     private fun MutableVisionGroup.unref(name: Name) {
         (this as? SolidGroup)?.prototypes?.set(name, null)
-        children.filter { (it.value as? Proxy)?.templateName == name }.forEach { (key, value) ->
-            val proxy = value as Proxy
-            val newChild = mergeChild(proxy, proxy.prototype)
+        children.filter { (it.value as? SolidReference)?.templateName == name }.forEach { (key, value) ->
+            val reference = value as SolidReference
+            val newChild = mergeChild(reference, reference.prototype)
             newChild.parent = null
             set(key.asName(), newChild) // replace proxy with merged object
         }

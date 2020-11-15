@@ -85,7 +85,7 @@ also referred to as templates). The idea is that prototype geometry can be rende
 for multiple objects. This helps to significantly decrease memory usage.
 
 The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and 
-`Proxy` class helps to reuse a template object. 
+`SolidReference` class helps to reuse a template object.
 
 ##### Styles
 

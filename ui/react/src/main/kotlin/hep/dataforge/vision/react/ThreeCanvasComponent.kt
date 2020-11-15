@@ -7,7 +7,6 @@ import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreePlugin
-import hep.dataforge.vision.solid.three.output
 import kotlinx.css.*
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -40,7 +39,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
             val newCanvas: ThreeCanvas =
-                three.output(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
+                three.attachRenderer(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas
         }

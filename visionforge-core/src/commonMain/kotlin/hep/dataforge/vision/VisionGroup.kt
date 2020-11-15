@@ -87,12 +87,12 @@ public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision
      * @param owner the handler to properly remove listeners
      * @param action First argument of the action is the name of changed child. Second argument is the new value of the object.
      */
-    public fun onChildrenChange(owner: Any?, action: (NameToken, Vision?) -> Unit)
+    public fun onStructureChange(owner: Any?, action: (token: NameToken, before: Vision?, after: Vision?) -> Unit)
 
     /**
      * Remove children change listener
      */
-    public fun removeChildrenChangeListener(owner: Any?)
+    public fun removeStructureChangeListener(owner: Any?)
 
 //    public operator fun set(name: Name, child: Vision?)
 }
