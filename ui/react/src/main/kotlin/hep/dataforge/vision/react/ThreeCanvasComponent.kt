@@ -58,8 +58,6 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
 
     styledDiv {
         css {
-            minWidth = 500.px
-            minHeight = 500.px
             display = Display.inherit
             width = 100.pct
             height = 100.pct

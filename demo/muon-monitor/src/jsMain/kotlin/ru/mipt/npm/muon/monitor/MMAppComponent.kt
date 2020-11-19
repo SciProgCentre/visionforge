@@ -19,8 +19,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.css.height
-import kotlinx.css.pct
+import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.RProps
 import react.child
@@ -58,29 +57,35 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
     val root = props.model.root
 
     div("row") {
-        h1("mx-auto") {
-            +"Muon monitor demo"
-        }
-    }
-    div("row") {
         styledDiv {
             css {
                 +"col-lg-3"
-                +"px-0"
-                +"overflow-auto"
-                +"h-100"
+                padding(0.px)
+                overflowY = Overflow.auto
+                display = Display.flex
+                flexDirection = FlexDirection.column
+                height = 100.vh
             }
             //tree
             card("Object tree") {
+                css {
+                    flex(1.0, 1.0, FlexBasis.auto)
+                }
                 objectTree(root, selected, onSelect)
             }
         }
         styledDiv {
             css {
                 +"col-lg-6"
-                height = 100.pct
+                display = Display.flex
+                flexDirection = FlexDirection.column
+                height = 100.vh
+            }
+            h1("mx-auto") {
+                +"Muon monitor demo"
             }
             //canvas
+
             child(ThreeCanvasComponent) {
                 attrs {
                     this.context = props.context
@@ -95,8 +100,18 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 }
             }
         }
-        div("col-lg-3") {
-            div("row") {
+        styledDiv {
+            css {
+                +"col-lg-3"
+                padding(0.px)
+                display = Display.flex
+                flexDirection = FlexDirection.column
+                height = 100.vh
+            }
+            styledDiv {
+                css{
+                    flex(0.0,1.0, FlexBasis.zero)
+                }
                 //settings
                 canvas?.let {
                     card("Canvas configuration") {
@@ -125,36 +140,37 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     }
                 }
             }
-            div("row") {
-                div("container-fluid p-0") {
-                    nav {
-                        attrs {
-                            attributes["aria-label"] = "breadcrumb"
-                        }
-                        ol("breadcrumb") {
-                            li("breadcrumb-item") {
-                                button(classes = "btn btn-link p-0") {
-                                    +"World"
-                                    attrs {
-                                        onClickFunction = {
-                                            selected = hep.dataforge.names.Name.EMPTY
-                                        }
+            styledDiv{
+                css{
+                    padding(0.px)
+                }
+                nav {
+                    attrs {
+                        attributes["aria-label"] = "breadcrumb"
+                    }
+                    ol("breadcrumb") {
+                        li("breadcrumb-item") {
+                            button(classes = "btn btn-link p-0") {
+                                +"World"
+                                attrs {
+                                    onClickFunction = {
+                                        selected = hep.dataforge.names.Name.EMPTY
                                     }
                                 }
                             }
-                            if (selected != null) {
-                                val tokens = ArrayList<NameToken>(selected?.length ?: 1)
-                                selected?.tokens?.forEach { token ->
-                                    tokens.add(token)
-                                    val fullName = Name(tokens.toList())
-                                    li("breadcrumb-item") {
-                                        button(classes = "btn btn-link p-0") {
-                                            +token.toString()
-                                            attrs {
-                                                onClickFunction = {
-                                                    console.log("Selected = $fullName")
-                                                    selected = fullName
-                                                }
+                        }
+                        if (selected != null) {
+                            val tokens = ArrayList<NameToken>(selected?.length ?: 1)
+                            selected?.tokens?.forEach { token ->
+                                tokens.add(token)
+                                val fullName = Name(tokens.toList())
+                                li("breadcrumb-item") {
+                                    button(classes = "btn btn-link p-0") {
+                                        +token.toString()
+                                        attrs {
+                                            onClickFunction = {
+                                                console.log("Selected = $fullName")
+                                                selected = fullName
                                             }
                                         }
                                     }
@@ -164,7 +180,10 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     }
                 }
             }
-            div("row") {
+           styledDiv{
+               css{
+                   overflowY = Overflow.auto
+               }
                 //properties
                 card("Properties") {
                     selected.let { selected ->
