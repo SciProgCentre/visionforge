@@ -1,9 +1,7 @@
 package hep.dataforge.vision.bootstrap
 
 import hep.dataforge.vision.react.flexColumn
-import kotlinx.css.Overflow
-import kotlinx.css.flexGrow
-import kotlinx.css.overflowY
+import kotlinx.css.*
 import kotlinx.html.DIV
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
@@ -77,6 +75,7 @@ public class TabBuilder(internal val parentBuilder: RBuilder) {
             }
             styledDiv {
                 css {
+                    height = 100.pct
                     overflowY = Overflow.auto
                 }
                 builder()

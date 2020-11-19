@@ -4,7 +4,6 @@ import hep.dataforge.context.Context
 import hep.dataforge.meta.invoke
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.bootstrap.nameCrumbs
 import hep.dataforge.vision.bootstrap.threeControls
 import hep.dataforge.vision.gdml.toVision
@@ -71,77 +70,62 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         vision = parsedVision
     }
 
-    flexColumn {
+    flexRow {
         css {
-            height = 100.pct
-            width = 100.pct
+            height = 100.vh - 35.px
+            width = 100.vw - 35.px
+            //flexWrap = FlexWrap.wrap
         }
-        styledDiv {
+        flexColumn {
             css {
-                +"page-header"
-                +"justify-content-center"
+                flex(10.0, 10.0, FlexBasis.zero)
             }
-            h1 { +"GDML/JSON loader demo" }
+            styledDiv {
+                css {
+                    +"page-header"
+                    +"justify-content-center"
+                }
+                h1 { +"GDML/JSON loader demo" }
+            }
+            nameCrumbs(selected, "World", onSelect)
+            //canvas
+            child(ThreeCanvasComponent) {
+                attrs {
+                    this.context = props.context
+                    this.obj = vision as? Solid
+                    this.selected = selected
+                    this.options = Canvas3DOptions.invoke {
+                        this.onSelect = onSelect
+                    }
+                    this.canvasCallback = {
+                        canvas = it
+                    }
+                }
+            }
+
         }
-        flexRow {
+        flexColumn {
             css {
-                flex(1.0, 1.0, FlexBasis.auto)
-                flexWrap = FlexWrap.wrap
+                minWidth = 500.px
+                height = 100.pct
+                margin(left = 4.px, right = 4.px, top = 4.px)
+                border(1.px, BorderStyle.solid, Color.lightGray)
             }
+            fileDrop("(drag file here)") { files ->
+                val file = files?.get(0)
+                if (file != null) {
 
-            flexColumn {
-                css {
-                    flex(1.0, 1.0, FlexBasis.auto)
-                    margin(10.px)
-                }
-                nameCrumbs(selected, "World", onSelect)
-
-                //canvas
-                styledDiv {
-                    css {
-                        flex(1.0, 1.0, FlexBasis.auto)
-                    }
-                    child(ThreeCanvasComponent) {
-                        attrs {
-                            this.context = props.context
-                            this.obj = vision as? Solid
-                            this.selected = selected
-                            this.options = Canvas3DOptions.invoke{
-                                this.onSelect = onSelect
-                            }
-                            this.canvasCallback = {
-                                canvas = it
-                            }
+                    FileReader().apply {
+                        onload = {
+                            val string = result as String
+                            loadData(file.name, string)
                         }
+                        readAsText(file)
                     }
                 }
             }
-            flexColumn {
-                css {
-                    minWidth = 500.px
-                    maxHeight = 100.pct
-                    flex(1.0, 1.0, FlexBasis.zero)
-                    margin(left = 4.px, right = 4.px)
-                    border(1.px, BorderStyle.solid, Color.lightGray)
-                }
-                card("Load data") {
-                    fileDrop("(drag file here)") { files ->
-                        val file = files?.get(0)
-                        if (file != null) {
-
-                            FileReader().apply {
-                                onload = {
-                                    val string = result as String
-                                    loadData(file.name, string)
-                                }
-                                readAsText(file)
-                            }
-                        }
-                    }
-                }
-                canvas?.let {
-                    threeControls(it, selected, onSelect)
-                }
+            canvas?.let {
+                threeControls(it, selected, onSelect)
             }
         }
     }

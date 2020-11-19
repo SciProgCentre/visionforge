@@ -62,11 +62,11 @@ class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
             }
         }
         contentElement.append {
-            div("tab-pane fade col h-100") {
+            div("tab-pane fade col") {
                 id = name.toString()
                 role = "tabpanel"
                 attributes["aria-labelledby"] = "tab[$name]"
-                div("w-100 h-100") { id = "output-$name" }.also {element->
+                div { id = "output-$name" }.also { element ->
                     output = three.createCanvas(element, canvasOptions)
                 }
                 hr()

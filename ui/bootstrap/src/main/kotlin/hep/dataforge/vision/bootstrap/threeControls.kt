@@ -36,7 +36,6 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
             h2 { +"Object tree" }
             styledDiv {
                 css {
-                    overflowY = Overflow.auto
                     flex(1.0, 0.0, FlexBasis.auto)
                 }
                 props.canvas.content?.let {
