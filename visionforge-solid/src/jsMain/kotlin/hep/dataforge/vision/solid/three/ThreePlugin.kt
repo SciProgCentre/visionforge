@@ -117,14 +117,14 @@ public class ThreePlugin : AbstractPlugin(), HtmlVisionBinding<Solid> {
     }
 
     public fun createCanvas(
-        element: HTMLElement,
+        element: Element,
         options: Canvas3DOptions = Canvas3DOptions.empty(),
     ): ThreeCanvas = ThreeCanvas(this, options).apply {
         attach(element)
     }
 
     override fun bind(element: Element, vision: Solid) {
-        TODO("Not yet implemented")
+        createCanvas(element).render(vision)
     }
 
     public companion object : PluginFactory<ThreePlugin> {

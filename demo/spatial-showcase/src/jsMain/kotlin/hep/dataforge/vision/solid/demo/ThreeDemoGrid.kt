@@ -66,7 +66,7 @@ class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
                 id = name.toString()
                 role = "tabpanel"
                 attributes["aria-labelledby"] = "tab[$name]"
-                div("container w-100 h-100") { id = "output-$name" }.also {element->
+                div("w-100 h-100") { id = "output-$name" }.also {element->
                     output = three.createCanvas(element, canvasOptions)
                 }
                 hr()

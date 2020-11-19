@@ -61,6 +61,8 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
             minWidth = 500.px
             minHeight = 500.px
             display = Display.inherit
+            width = 100.pct
+            height = 100.pct
             flex(1.0, 1.0, FlexBasis.auto)
         }
         ref = elementRef

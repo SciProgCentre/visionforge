@@ -37,9 +37,10 @@ public external interface ConfigEditorItemProps : RProps {
     public var descriptor: NodeDescriptor?
 }
 
-private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> = functionalComponent("ConfigEditorItem") { props ->
-    configEditorItem(props)
-}
+private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> =
+    functionalComponent("ConfigEditorItem") { props ->
+        configEditorItem(props)
+    }
 
 private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
     var expanded: Boolean by useState { true }
@@ -82,26 +83,77 @@ private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
         update()
     }
 
-    when (actualItem) {
-        is MetaItem.NodeItem -> {
+
+
+    if (actualItem is MetaItem.NodeItem) {
+        styledDiv {
+            css {
+                +TreeStyles.treeLeaf
+            }
+            styledSpan {
+                css {
+                    +TreeStyles.treeCaret
+                    if (expanded) {
+                        +TreeStyles.treeCaredDown
+                    }
+                }
+                attrs {
+                    onClickFunction = expanderClick
+                }
+            }
+            styledSpan {
+                css {
+                    +TreeStyles.treeLabel
+                    if (item == null) {
+                        +TreeStyles.treeLabelInactive
+                    }
+                }
+                +token
+            }
+        }
+        if (expanded) {
+            styledUl {
+                css {
+                    +TreeStyles.tree
+                }
+                val keys = buildSet {
+                    (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
+                        add(NameToken(it))
+                    }
+                    item?.node?.items?.keys?.let { addAll(it) }
+                    defaultItem?.node?.items?.keys?.let { addAll(it) }
+                }
+
+                keys.filter { !it.body.startsWith("@") }.forEach { token ->
+                    styledLi {
+                        css {
+                            +TreeStyles.treeItem
+                        }
+                        child(ConfigEditorItem) {
+                            attrs {
+                                this.key = props.name.toString()
+                                this.root = props.root
+                                this.name = props.name + token
+                                this.default = props.default
+                                this.descriptor = props.descriptor
+                            }
+                        }
+                        //configEditor(props.root, props.name + token, props.descriptor, props.default)
+                    }
+                }
+            }
+        }
+    } else {
+        styledDiv {
+            css {
+                +TreeStyles.treeLeaf
+            }
             styledDiv {
                 css {
-                    +TreeStyles.treeLeaf
+                    +TreeStyles.treeLabel
                 }
                 styledSpan {
                     css {
-                        +TreeStyles.treeCaret
-                        if (expanded) {
-                            +TreeStyles.treeCaredDown
-                        }
-                    }
-                    attrs {
-                        onClickFunction = expanderClick
-                    }
-                }
-                styledSpan {
-                    css {
-                        +TreeStyles.treeLabel
                         if (item == null) {
                             +TreeStyles.treeLabelInactive
                         }
@@ -109,83 +161,31 @@ private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
                     +token
                 }
             }
-            if (expanded) {
-                styledUl {
-                    css {
-                        +TreeStyles.tree
-                    }
-                    val keys = buildSet {
-                        (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
-                            add(NameToken(it))
-                        }
-                        item?.node?.items?.keys?.let { addAll(it) }
-                        defaultItem?.node?.items?.keys?.let { addAll(it) }
-                    }
-
-                    keys.filter { !it.body.startsWith("@") }.forEach { token ->
-                        styledLi {
-                            css {
-                                +TreeStyles.treeItem
-                            }
-                            child(ConfigEditorItem) {
-                                attrs {
-                                    this.key = props.name.toString()
-                                    this.root = props.root
-                                    this.name = props.name + token
-                                    this.default = props.default
-                                    this.descriptor = props.descriptor
-                                }
-                            }
-                            //configEditor(props.root, props.name + token, props.descriptor, props.default)
-                        }
-                    }
-                }
-            }
-        }
-        is MetaItem.ValueItem -> {
             styledDiv {
                 css {
-                    +TreeStyles.treeLeaf
+                    +TreeStyles.resizeableInput
                 }
-                styledDiv {
-                    css {
-                        +TreeStyles.treeLabel
-                    }
-                    styledSpan {
-                        css {
-                            if (item == null) {
-                                +TreeStyles.treeLabelInactive
-                            }
-                        }
-                        +token
-                    }
-                }
-                styledDiv {
-                    css {
-                        +TreeStyles.resizeableInput
-                    }
-                    valueChooser(
-                        props.name,
-                        actualItem,
-                        descriptorItem as? ValueDescriptor,
-                        valueChanged
-                    )
-                }
-                styledButton {
-                    css {
-                        +TreeStyles.removeButton
-                    }
-                    +"\u00D7"
-                    attrs {
-                        if (item == null) {
-                            disabled = true
-                        } else {
-                            onClickFunction = removeClick
-                        }
-                    }
-                }
-
+                valueChooser(
+                    props.name,
+                    actualItem,
+                    descriptorItem as? ValueDescriptor,
+                    valueChanged
+                )
             }
+            styledButton {
+                css {
+                    +TreeStyles.removeButton
+                }
+                +"\u00D7"
+                attrs {
+                    if (item == null) {
+                        disabled = true
+                    } else {
+                        onClickFunction = removeClick
+                    }
+                }
+            }
+
         }
     }
 }
@@ -210,7 +210,12 @@ public val ConfigEditor: FunctionalComponent<ConfigEditorProps> = functionalComp
     }
 }
 
-public fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
+public fun Element.configEditor(
+    config: Config,
+    descriptor: NodeDescriptor? = null,
+    default: Meta? = null,
+    key: Any? = null,
+) {
     render(this) {
         child(ConfigEditor) {
             attrs {
@@ -223,7 +228,12 @@ public fun Element.configEditor(config: Config, descriptor: NodeDescriptor? = nu
     }
 }
 
-public fun RBuilder.configEditor(config: Config, descriptor: NodeDescriptor? = null, default: Meta? = null, key: Any? = null) {
+public fun RBuilder.configEditor(
+    config: Config,
+    descriptor: NodeDescriptor? = null,
+    default: Meta? = null,
+    key: Any? = null,
+) {
     child(ConfigEditor) {
         attrs {
             this.key = key?.toString() ?: ""
