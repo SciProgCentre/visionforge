@@ -3,6 +3,7 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
+import hep.dataforge.meta.descriptors.defaultMeta
 import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
@@ -75,24 +76,22 @@ public open class VisionBase : Vision {
     /**
      * All available properties in a layered form
      */
-    override fun getAllProperties(): Laminate = Laminate(properties, allStyles, parent?.getAllProperties())
+    override val allProperties: Laminate
+        get() = Laminate(
+            properties,
+            allStyles,
+            parent?.allProperties,
+            descriptor?.defaultMeta(),
+        )
 
-    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
-        return if (inherit) {
-            sequence {
-                yield(properties?.get(name))
-                yieldAll(getStyleItems(name))
-                yield(descriptor?.get(name)?.defaultItem())
-                yield(parent?.getProperty(name, inherit))
-            }.merge()
-        } else {
-            sequence {
-                yield(properties?.get(name))
-                yieldAll(getStyleItems(name))
-                yield(descriptor?.get(name)?.defaultItem())
-            }.merge()
+    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = sequence {
+        yield(properties?.get(name))
+        yieldAll(getStyleItems(name))
+        if (inherit) {
+            yield(parent?.getProperty(name, inherit))
         }
-    }
+        yield(descriptor?.get(name)?.defaultItem())
+    }.merge()
 
     /**
      * Reset all properties to their default values

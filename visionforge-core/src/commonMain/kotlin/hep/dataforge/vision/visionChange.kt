@@ -28,7 +28,8 @@ public abstract class EmptyVision : Vision {
 
     override val properties: Config? = null
 
-    override fun getAllProperties(): Laminate = Laminate(Meta.EMPTY)
+    override val allProperties: Laminate
+        get() = Laminate(Meta.EMPTY)
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = null
 

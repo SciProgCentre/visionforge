@@ -5,57 +5,75 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
-import hep.dataforge.output.Renderer
-import hep.dataforge.vision.Vision
+import hep.dataforge.vision.layout.Output
+import hep.dataforge.vision.layout.Page
+import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreePlugin
-import hep.dataforge.vision.solid.three.attachRenderer
-import kotlinx.browser.document
 import kotlinx.dom.clear
 import kotlinx.html.dom.append
-import kotlinx.html.dom.create
-import kotlinx.html.h2
-import kotlinx.html.hr
 import kotlinx.html.id
-import kotlinx.html.js.div
-import kotlinx.html.span
+import kotlinx.html.js.*
+import kotlinx.html.role
 import org.w3c.dom.Element
-import kotlin.reflect.KClass
+import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
 
-class ThreeDemoGrid(element: Element, meta: Meta = Meta.EMPTY) {
+class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
 
-    private val gridRoot = document.create.div("row")
+
+    private lateinit var navigationElement: HTMLElement
+    private lateinit var contentElement: HTMLDivElement
+
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 
     private val three = Global.plugins.fetch(ThreePlugin)
 
     init {
         element.clear()
-        element.append(gridRoot)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(type: KClass<out T>, name: Name, stage: Name, meta: Meta): Renderer<T> {
-
-        return outputs.getOrPut(name) {
-            if (type != Vision::class) error("Supports only DisplayObject")
-            lateinit var output: ThreeCanvas
-            //TODO calculate cell width here using jquery
-            gridRoot.append {
-                span("border") {
-                    div("col-6") {
-                        div { id = "output-$name" }.also {
-                            output = three.attachRenderer(it, canvasOptions)
-                            //output.attach(it)
-                        }
-                        hr()
-                        h2 { +(meta["title"].string ?: name.toString()) }
-                    }
+        element.append {
+            div("container") {
+                navigationElement = ul("nav nav-tabs") {
+                    id = "${idPrefix}Tab"
+                    role = "tablist"
+                }
+                contentElement = div("tab-content") {
+                    id = "${idPrefix}TabContent"
                 }
             }
+        }
+    }
 
-            output
-        } as Renderer<T>
+
+    @Suppress("UNCHECKED_CAST")
+    override fun output(name: Name, meta: Meta): Output<Solid> = outputs.getOrPut(name) {
+        lateinit var output: ThreeCanvas
+        navigationElement.append {
+            li("nav-item") {
+                a(classes = "nav-link") {
+                    id = "tab[$name]"
+                    attributes["data-toggle"] = "tab"
+                    href = "#$name"
+                    role = "tab"
+                    attributes["aria-controls"] = "$name"
+                    attributes["aria-selected"] = "false"
+                    +name.toString()
+                }
+            }
+        }
+        contentElement.append {
+            div("tab-pane fade col h-100") {
+                id = name.toString()
+                role = "tabpanel"
+                attributes["aria-labelledby"] = "tab[$name]"
+                div("container w-100 h-100") { id = "output-$name" }.also {element->
+                    output = three.createCanvas(element, canvasOptions)
+                }
+                hr()
+                h2 { +(meta["title"].string ?: name.toString()) }
+            }
+        }
+        output
     }
 }
 

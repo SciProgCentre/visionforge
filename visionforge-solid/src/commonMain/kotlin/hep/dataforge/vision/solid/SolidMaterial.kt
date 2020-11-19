@@ -54,7 +54,6 @@ public class SolidMaterial : Scheme() {
             NodeDescriptor {
                 value(COLOR_KEY) {
                     type(ValueType.STRING, ValueType.NUMBER)
-                    default("#ffffff")
                     widgetType = "color"
                 }
                 value(OPACITY_KEY) {

@@ -11,7 +11,7 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
 import hep.dataforge.vision.VisionGroupBase
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.VisionManager.Companion.VISION_SERIAL_MODULE_TARGET
+import hep.dataforge.vision.VisionManager.Companion.VISION_SERIALIZER_MODULE_TARGET
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.*
 import kotlin.reflect.KClass
@@ -24,7 +24,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
     override val tag: PluginTag get() = Companion.tag
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        VISION_SERIAL_MODULE_TARGET -> mapOf(tag.name.toName() to serializersModuleForSolids)
+        VISION_SERIALIZER_MODULE_TARGET -> mapOf(tag.name.toName() to serializersModuleForSolids)
         else -> super.content(target)
     }
 
@@ -60,11 +60,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
-        internal val jsonForSolids: Json = Json{
-            prettyPrint = true
-            useArrayPolymorphism = false
-            encodeDefaults = false
-            ignoreUnknownKeys = true
+        internal val jsonForSolids: Json = Json(VisionManager.defaultJson){
             serializersModule = serializersModuleForSolids
         }
 

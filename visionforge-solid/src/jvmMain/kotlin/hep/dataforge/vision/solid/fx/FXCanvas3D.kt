@@ -3,7 +3,7 @@ package hep.dataforge.vision.solid.fx
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
 import hep.dataforge.meta.empty
-import hep.dataforge.vision.Renderer
+import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import javafx.application.Platform
@@ -15,7 +15,7 @@ import org.fxyz3d.scene.Axes
 import tornadofx.*
 
 class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOptions.empty()) :
-    Fragment(), Renderer<Solid>, ContextAware {
+    Fragment(), Output<Solid>, ContextAware {
 
     override val context: Context get() = plugin.context
 

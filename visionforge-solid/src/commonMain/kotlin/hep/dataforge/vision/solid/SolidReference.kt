@@ -12,22 +12,14 @@ import kotlin.collections.set
 public abstract class AbstractReference : BasicSolid(), VisionGroup {
     public abstract val prototype: Solid
 
-    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? {
-        return if (inherit) {
-            sequence {
-                yield(properties?.get(name))
-                yieldAll(getStyleItems(name))
-                yield(prototype.getProperty(name))
-                yield(parent?.getProperty(name, inherit))
-            }.merge()
-        } else {
-            sequence {
-                yield(properties?.get(name))
-                yieldAll(getStyleItems(name))
-                yield(prototype.getProperty(name, false))
-            }.merge()
+    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = sequence {
+        yield(properties?.get(name))
+        yieldAll(getStyleItems(name))
+        yield(prototype.getProperty(name))
+        if (inherit) {
+            yield(parent?.getProperty(name, inherit))
         }
-    }
+    }.merge()
 
     override var styles: List<String>
         get() = (properties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + prototype.styles
@@ -35,8 +27,13 @@ public abstract class AbstractReference : BasicSolid(), VisionGroup {
             config[Vision.STYLE_KEY] = value
         }
 
-    override fun getAllProperties(): Laminate =
-        Laminate(properties, allStyles, prototype.getAllProperties(), parent?.getAllProperties())
+    override val allProperties: Laminate
+        get() = Laminate(
+            properties,
+            allStyles,
+            prototype.allProperties,
+            parent?.allProperties,
+        )
 
     override fun attachChildren() {
         //do nothing

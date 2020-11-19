@@ -51,7 +51,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
     var selected by useState { props.selected }
     var canvas: ThreeCanvas? by useState { null }
 
-    val select: (Name?) -> Unit = {
+    val onSelect: (Name?) -> Unit = {
         selected = it
     }
 
@@ -72,7 +72,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
             }
             //tree
             card("Object tree") {
-                objectTree(root, selected, select)
+                objectTree(root, selected, onSelect)
             }
         }
         styledDiv {
@@ -85,9 +85,10 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 attrs {
                     this.context = props.context
                     this.obj = root
-                    this.options = canvasConfig
+                    this.options = canvasConfig.apply {
+                        this.onSelect = onSelect
+                    }
                     this.selected = selected
-                    this.clickCallback = select
                     this.canvasCallback = {
                         canvas = it
                     }
@@ -176,7 +177,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                             configEditor(
                                 selectedObject.config,
                                 selectedObject.descriptor,
-                                default = selectedObject.getAllProperties(),
+                                default = selectedObject.allProperties,
                                 key = selected
                             )
                         }

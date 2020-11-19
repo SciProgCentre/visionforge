@@ -6,7 +6,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.Renderer
+import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.*
 import hep.dataforge.vision.solid.three.ThreeMaterials.HIGHLIGHT_MATERIAL
@@ -24,12 +24,9 @@ import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
-import info.laht.threekt.renderers.WebGLRenderer
 import info.laht.threekt.scenes.Scene
-import kotlinx.browser.window
-import kotlinx.dom.clear
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import kotlin.math.cos
@@ -41,7 +38,7 @@ import kotlin.math.sin
 public class ThreeCanvas(
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
-) : Renderer<Solid> {
+) : Output<Solid> {
     private var root: Object3D? = null
 
     private val raycaster = Raycaster()
@@ -62,55 +59,60 @@ public class ThreeCanvas(
 
     private var picked: Object3D? = null
 
+    private val renderer = WebGLRenderer { antialias = true }.apply {
+        setClearColor(Colors.skyblue, 1)
+    }
+
+    public val canvas: HTMLCanvasElement = renderer.domElement as HTMLCanvasElement
+
+    /**
+     * Force camera aspect ration and renderer size recalculation
+     */
+    public fun updateSize() {
+        val width = canvas.clientWidth
+        val height = canvas.clientHeight
+        renderer.setSize(width, height, false)
+        camera.aspect = width.toDouble() / height.toDouble()
+        camera.updateProjectionMatrix()
+    }
+
     /**
      * Attach canvas to given [HTMLElement]
      */
-    public fun attach(element: HTMLElement) {
-        fun WebGLRenderer.resize() {
-            val canvas = domElement as HTMLCanvasElement
-
-            val width = options.computeWidth(canvas.clientWidth)
-            val height = options.computeHeight(canvas.clientHeight)
-
-            canvas.width = width
-            canvas.height = height
-
-            setSize(width, height, false)
-            camera.aspect = width.toDouble() / height
-            camera.updateProjectionMatrix()
-        }
-
-        element.clear()
-
-        //Attach listener to track mouse changes
-        element.addEventListener("mousemove", { event ->
-            (event as? MouseEvent)?.run {
-                val rect = element.getBoundingClientRect()
-                mousePosition.x = ((event.clientX - rect.left) / element.clientWidth) * 2 - 1
-                mousePosition.y = -((event.clientY - rect.top) / element.clientHeight) * 2 + 1
-            }
-        }, false)
-
-        element.addEventListener("mousedown", {
+    init {
+        canvas.addEventListener("pointerdown", {
             val picked = pick()
             options.onSelect?.invoke(picked?.fullName())
         }, false)
 
-        val renderer = WebGLRenderer { antialias = true }.apply {
-            setClearColor(Colors.skyblue, 1)
-        }
+        //Attach listener to track mouse changes
+        canvas.addEventListener("mousemove", { event ->
+            (event as? MouseEvent)?.run {
+                val rect = canvas.getBoundingClientRect()
+                mousePosition.x = ((event.clientX - rect.left) / canvas.clientWidth) * 2 - 1
+                mousePosition.y = -((event.clientY - rect.top) / canvas.clientHeight) * 2 + 1
+            }
+        }, false)
 
-        val canvas = renderer.domElement as HTMLCanvasElement
 
         canvas.style.apply {
             width = "100%"
+            minWidth = "${options.minWith.toInt()}px"
+            maxWidth = "${options.maxWith.toInt()}px"
             height = "100%"
+            minHeight = "${options.minHeight.toInt()}px"
+            maxHeight = "${options.maxHeight.toInt()}px"
             display = "block"
         }
 
-        addControls(renderer.domElement, options.controls)
 
-        fun animate() {
+        canvas.onresize = {
+            updateSize()
+        }
+
+        addControls(canvas, options.controls)
+
+        renderer.setAnimationLoop {
             val picked = pick()
 
             if (picked != null && this.picked != picked) {
@@ -119,21 +121,13 @@ public class ThreeCanvas(
                 this.picked = picked
             }
 
-            window.requestAnimationFrame {
-                animate()
-            }
-
             renderer.render(scene, camera)
         }
+    }
 
-        element.appendChild(renderer.domElement)
-        renderer.resize()
-
-        element.onresize = {
-            renderer.resize()
-        }
-
-        animate()
+    public fun attach(element: Element) {
+        element.appendChild(canvas)
+        updateSize()
     }
 
     /**

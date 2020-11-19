@@ -1,4 +1,6 @@
-import ru.mipt.npm.gradle.*
+import ru.mipt.npm.gradle.DependencyConfiguration
+import ru.mipt.npm.gradle.FXModule
+import ru.mipt.npm.gradle.useFx
 
 plugins {
     id("ru.mipt.npm.mpp")
@@ -23,8 +25,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-solid"))
-                api(project(":visionforge-gdml"))
+                implementation(project(":visionforge-solid"))
+                implementation(project(":visionforge-gdml"))
+            }
+        }
+        jsMain{
+            dependencies {
+                implementation("org.jetbrains:kotlin-css:1.0.0-pre.129-kotlin-1.4.10")
             }
         }
     }

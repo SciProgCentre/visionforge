@@ -6,17 +6,18 @@ import hep.dataforge.meta.empty
 import hep.dataforge.meta.invoke
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.rendering.HTMLVisionDisplay
+import hep.dataforge.vision.html.HtmlVisionBinding
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
 
-public class ThreePlugin : AbstractPlugin(), HTMLVisionDisplay<Solid, ThreeCanvas> {
+public class ThreePlugin : AbstractPlugin(), HtmlVisionBinding<Solid> {
     override val tag: PluginTag get() = Companion.tag
 
     public val solidManager: SolidManager by require(SolidManager)
@@ -115,10 +116,15 @@ public class ThreePlugin : AbstractPlugin(), HTMLVisionDisplay<Solid, ThreeCanva
         }
     }
 
-    override fun attachRenderer(element: HTMLElement): ThreeCanvas {
-        return ThreeCanvas(this, Canvas3DOptions.empty()).apply {
-            attach(element)
-        }
+    public fun createCanvas(
+        element: HTMLElement,
+        options: Canvas3DOptions = Canvas3DOptions.empty(),
+    ): ThreeCanvas = ThreeCanvas(this, options).apply {
+        attach(element)
+    }
+
+    override fun bind(element: Element, vision: Solid) {
+        TODO("Not yet implemented")
     }
 
     public companion object : PluginFactory<ThreePlugin> {
@@ -128,16 +134,11 @@ public class ThreePlugin : AbstractPlugin(), HTMLVisionDisplay<Solid, ThreeCanva
     }
 }
 
-public fun ThreePlugin.attachRenderer(
-    element: HTMLElement,
-    options: Canvas3DOptions = Canvas3DOptions.empty(),
-): ThreeCanvas = ThreeCanvas(this, options).apply { attach(element) }
-
 public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
     options: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = attachRenderer(element, Canvas3DOptions(options)).apply { render(obj) }
+): ThreeCanvas = createCanvas(element, Canvas3DOptions(options)).apply { render(obj) }
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
     object3D.name = token.toString()

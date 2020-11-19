@@ -19,17 +19,13 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     public val serializersModule: SerializersModule
         get() = SerializersModule {
             include(defaultSerialModule)
-            context.gather<SerializersModule>(VISION_SERIAL_MODULE_TARGET).values.forEach {
+            context.gather<SerializersModule>(VISION_SERIALIZER_MODULE_TARGET).values.forEach {
                 include(it)
             }
         }
 
     public val jsonFormat: Json
-        get() = Json {
-            prettyPrint = true
-            useArrayPolymorphism = false
-            encodeDefaults = false
-            ignoreUnknownKeys = true
+        get() = Json(defaultJson) {
             serializersModule = this@VisionManager.serializersModule
         }
 
@@ -52,14 +48,23 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out VisionManager> = VisionManager::class
 
-        public const val VISION_SERIAL_MODULE_TARGET: String = "visionSerialModule"
+        public const val VISION_SERIALIZER_MODULE_TARGET: String = "visionSerializerModule"
 
         override fun invoke(meta: Meta, context: Context): VisionManager = VisionManager(meta)
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
+                subclass(VisionBase.serializer())
                 subclass(VisionGroupBase.serializer())
             }
+        }
+
+        public val defaultJson: Json = Json {
+            serializersModule = defaultSerialModule
+            prettyPrint = true
+            useArrayPolymorphism = false
+            encodeDefaults = false
+            ignoreUnknownKeys = true
         }
     }
 }

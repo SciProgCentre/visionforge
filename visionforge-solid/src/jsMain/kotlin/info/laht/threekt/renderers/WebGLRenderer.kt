@@ -64,7 +64,7 @@ external class WebGLRenderer(params: WebGLRendererParams = definedExternally) {
     fun clear(
         color: Boolean = definedExternally,
         depth: Boolean = definedExternally,
-        stencil: Boolean = definedExternally
+        stencil: Boolean = definedExternally,
     )
 
     fun clearColor()
@@ -85,6 +85,11 @@ external class WebGLRenderer(params: WebGLRendererParams = definedExternally) {
     fun setClearColor(color: Int, alpha: Number)
 
     /**
+     * @param callback The function will be called every available frame. If `null` is passed it will stop any already ongoing animation.
+     */
+    fun setAnimationLoop(callback: () -> Unit)
+
+    /**
      * Render a scene using a camera.
      * The render is done to the renderTarget (if specified) or to the canvas as usual.
      * If forceClear is true, the depth, stencil and color buffers will be cleared before rendering even if the renderer's autoClear property is false.
@@ -94,7 +99,7 @@ external class WebGLRenderer(params: WebGLRendererParams = definedExternally) {
         scene: Scene,
         camera: Camera,
         renderTarget: dynamic = definedExternally,
-        forceClear: Boolean = definedExternally
+        forceClear: Boolean = definedExternally,
     )
 
     fun setPixelRatio(value: Number)

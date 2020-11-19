@@ -13,6 +13,7 @@ import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.Solid.Companion.GEOMETRY_KEY
+import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.three.*
 import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
@@ -75,6 +76,9 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
                 }
                 name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(this@VariableBox)
                 name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
+                name.startsWith(MATERIAL_COLOR_KEY)->{
+                    mesh.material = getMaterial(this, true)
+                }
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
         }

@@ -19,7 +19,6 @@ public external interface ThreeCanvasProps : RProps {
     public var obj: Solid?
     public var options: Canvas3DOptions?
     public var selected: Name?
-    public var clickCallback: (Name?) -> Unit
     public var canvasCallback: ((ThreeCanvas?) -> Unit)?
 }
 
@@ -39,7 +38,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
             val newCanvas: ThreeCanvas =
-                three.attachRenderer(element, props.options ?: Canvas3DOptions.empty(), props.clickCallback)
+                three.createCanvas(element, props.options ?: Canvas3DOptions.empty())
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas
         }

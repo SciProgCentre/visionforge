@@ -12,8 +12,6 @@ import hep.dataforge.vision.Vision.Companion.TYPE
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * A root type for display hierarchy
@@ -35,7 +33,7 @@ public interface Vision : Configurable, Described {
     /**
      * All properties including styles and prototypes if present, including inherited ones
      */
-    public fun getAllProperties(): Laminate
+    public val allProperties: Laminate
 
     /**
      * Get property (including styles). [inherit] toggles parent node property lookup
@@ -116,27 +114,27 @@ public var Vision.visible: Boolean?
     get() = getProperty(VISIBLE_KEY).boolean
     set(value) = config.setValue(VISIBLE_KEY, value?.asValue())
 
-/**
- * Convinience delegate for properties
- */
-public fun Vision.property(
-    default: MetaItem<*>? = null,
-    key: Name? = null,
-    inherit: Boolean = true,
-): MutableItemDelegate =
-    object : ReadWriteProperty<Any?, MetaItem<*>?> {
-        override fun getValue(thisRef: Any?, property: KProperty<*>): MetaItem<*>? {
-            val name = key ?: property.name.toName()
-            return getProperty(name, inherit) ?: default
-        }
+///**
+// * Convenience delegate for properties
+// */
+//public fun Vision.property(
+//    default: MetaItem<*>? = null,
+//    key: Name? = null,
+//    inherit: Boolean = true,
+//): MutableItemDelegate =
+//    object : ReadWriteProperty<Any?, MetaItem<*>?> {
+//        override fun getValue(thisRef: Any?, property: KProperty<*>): MetaItem<*>? {
+//            val name = key ?: property.name.toName()
+//            return getProperty(name, inherit) ?: default
+//        }
+//
+//        override fun setValue(thisRef: Any?, property: KProperty<*>, value: MetaItem<*>?) {
+//            val name = key ?: property.name.toName()
+//            setProperty(name, value)
+//        }
+//    }
 
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: MetaItem<*>?) {
-            val name = key ?: property.name.toName()
-            setProperty(name, value)
-        }
-    }
-
-public fun Vision.properties(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
+public fun Vision.props(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
     override fun getItem(name: Name): MetaItem<*>? {
         return getProperty(name, inherit)
     }

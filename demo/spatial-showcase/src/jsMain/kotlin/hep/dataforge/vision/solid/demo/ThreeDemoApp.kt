@@ -15,7 +15,7 @@ private class ThreeDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
 
-        val element = document.getElementById("canvas") ?: error("Element with id 'canvas' not found on page")
+        val element = document.getElementById("demo") ?: error("Element with id 'demo' not found on page")
 
         ThreeDemoGrid(element).run {
             showcase()

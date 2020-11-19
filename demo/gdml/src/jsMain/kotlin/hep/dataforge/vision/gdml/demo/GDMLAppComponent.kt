@@ -1,6 +1,7 @@
 package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Context
+import hep.dataforge.meta.invoke
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.card
@@ -12,6 +13,7 @@ import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.flexRow
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.browser.window
 import kotlinx.css.*
@@ -104,7 +106,9 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                             this.context = props.context
                             this.obj = vision as? Solid
                             this.selected = selected
-                            this.clickCallback = onSelect
+                            this.options = Canvas3DOptions.invoke{
+                                this.onSelect = onSelect
+                            }
                             this.canvasCallback = {
                                 canvas = it
                             }

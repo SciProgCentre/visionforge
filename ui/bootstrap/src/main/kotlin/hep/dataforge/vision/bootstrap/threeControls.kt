@@ -54,7 +54,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                 if (selectedObject != null) {
                     visionPropertyEditor(
                         selectedObject,
-                        default = selectedObject.getAllProperties(),
+                        default = selectedObject.allProperties,
                         key = selected
                     )
                 }

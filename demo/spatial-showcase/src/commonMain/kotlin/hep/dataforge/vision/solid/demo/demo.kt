@@ -3,9 +3,8 @@ package hep.dataforge.vision.solid.demo
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.invoke
 import hep.dataforge.names.toName
-import hep.dataforge.output.OutputManager
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.Vision
+import hep.dataforge.vision.layout.Page
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
@@ -16,12 +15,12 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-fun OutputManager.demo(name: String, title: String = name, block: SolidGroup.() -> Unit) {
+fun Page<Solid>.demo(name: String, title: String = name, block: SolidGroup.() -> Unit) {
     val meta = Meta {
         "title" put title
     }
-    val output = get(Vision::class, name.toName(), meta = meta)
-    output.render (action = block)
+    val output = output(name.toName(), meta)?: error("Output with name $name not found")
+    output.solidGroup (builder = block)
 }
 
 val canvasOptions = Canvas3DOptions {
@@ -36,7 +35,7 @@ val canvasOptions = Canvas3DOptions {
     }
 }
 
-fun OutputManager.showcase() {
+fun Page<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {
             z = -110.0
@@ -133,7 +132,7 @@ fun OutputManager.showcase() {
     }
 }
 
-fun OutputManager.showcaseCSG() {
+fun Page<Solid>.showcaseCSG() {
     demo("CSG.simple", "CSG operations") {
         composite(CompositeType.UNION) {
             box(100, 100, 100) {

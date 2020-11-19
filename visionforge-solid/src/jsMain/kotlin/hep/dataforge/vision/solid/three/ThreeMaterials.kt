@@ -41,7 +41,7 @@ public object ThreeMaterials {
         linewidth = meta["thickness"].double ?: 1.0
     }
 
-    fun getLineMaterial(meta: Meta?, cache: Boolean): LineBasicMaterial {
+    public fun getLineMaterial(meta: Meta?, cache: Boolean): LineBasicMaterial {
         if (meta == null) return DEFAULT_LINE
         return if (cache) {
             lineMaterialCache.getOrPut(meta) { buildLineMaterial(meta) }
@@ -73,7 +73,7 @@ public object ThreeMaterials {
         }
     }
 
-    fun getMaterial(vision3D: Vision, cache: Boolean): Material {
+    public fun getMaterial(vision3D: Vision, cache: Boolean): Material {
         val meta = vision3D.getProperty(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
         return if (cache) {
             materialCache.getOrPut(meta) { buildMaterial(meta) }
@@ -87,7 +87,7 @@ public object ThreeMaterials {
 /**
  * Infer color based on meta item
  */
-fun MetaItem<*>.getColor(): Color {
+public fun MetaItem<*>.getColor(): Color {
     return when (this) {
         is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
             val int = value.number.toInt()
