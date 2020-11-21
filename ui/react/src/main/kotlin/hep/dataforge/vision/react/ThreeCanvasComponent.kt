@@ -6,7 +6,8 @@ import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreePlugin
-import kotlinx.css.*
+import kotlinx.css.Display
+import kotlinx.css.display
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
@@ -57,10 +58,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
 
     styledDiv {
         css {
-            display = Display.inherit
-            width = 100.pct
-            height = 100.pct
-            flex(1.0, 1.0, FlexBasis.auto)
+            display = Display.contents
         }
         ref = elementRef
     }

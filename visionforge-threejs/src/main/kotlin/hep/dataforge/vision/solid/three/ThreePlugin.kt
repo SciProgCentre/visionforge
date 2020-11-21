@@ -54,6 +54,7 @@ public class ThreePlugin : AbstractPlugin(), HtmlVisionBinding<Solid> {
                             group[token] = object3D
                         } catch (ex: Throwable) {
                             logger.error(ex) { "Failed to render $child" }
+                            ex.printStackTrace()
                         }
                     }
                 }

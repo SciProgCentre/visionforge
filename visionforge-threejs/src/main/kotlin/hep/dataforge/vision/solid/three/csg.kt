@@ -1,26 +1,17 @@
-@file:JsModule("three-csg-ts")
-@file:JsNonModule
-@file:Suppress(
-    "INTERFACE_WITH_SUPERCLASS",
+@file:Suppress("INTERFACE_WITH_SUPERCLASS",
     "OVERRIDING_FINAL_MEMBER",
     "RETURN_TYPE_MISMATCH_ON_OVERRIDE",
     "CONFLICTING_OVERLOADS",
-    "EXTERNAL_DELEGATION",
-    "NESTED_CLASS_IN_EXTERNAL_INTERFACE"
-)
+    "EXTERNAL_DELEGATION")
 
-package hep.dataforge.vision.solid.three
-
+@file:JsModule("three-csg-ts")
+@file:JsNonModule
 
 import info.laht.threekt.math.Matrix4
 import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 
-/**
- * Constructive Solid Geometry
- */
-open external class CSG {
-    open var polygons: Array<Polygon>
+external open class CSG {
     open fun clone(): CSG
     open fun toPolygons(): Array<Polygon>
     open fun union(csg: CSG): CSG
@@ -33,7 +24,7 @@ open external class CSG {
         fun fromGeometry(geom: Any): CSG
         fun fromMesh(mesh: Mesh): CSG
         fun toMesh(csg: CSG, toMatrix: Matrix4): Mesh
-        fun iEval(tokens: Mesh, index: Number? = definedExternally /* null */): Unit
+        fun iEval(tokens: Mesh, index: Number? = definedExternally)
         fun eval(tokens: Mesh, doRemove: Boolean): Mesh
         var _tmpm3: Any
         var doRemove: Any
@@ -44,7 +35,7 @@ open external class CSG {
     }
 }
 
-open external class Vector(x: Number, y: Number, z: Number): Vector3 {
+external open class Vector(x: Number, y: Number, z: Number) : Vector3 {
     open fun negated(): Vector
     open fun plus(a: Vector): Vector
     open fun minus(a: Vector): Vector
@@ -61,27 +52,27 @@ external interface IVector {
     var z: Number
 }
 
-open external class Vertex(pos: IVector, normal: IVector, uv: IVector) {
+external open class Vertex(pos: IVector, normal: IVector, uv: IVector? = definedExternally) {
     open var pos: Vector
     open var normal: Vector
     open var uv: Vector
     open fun clone(): Vertex
-    open fun flip(): Unit
+    open fun flip()
     open fun interpolate(other: Vertex, t: Number): Vertex
 }
 
-open external class Plane(normal: Vector, w: Number) {
+external open class Plane(normal: Vector, w: Number) {
     open var normal: Vector
     open var w: Number
     open fun clone(): Plane
-    open fun flip(): Unit
+    open fun flip()
     open fun splitPolygon(
         polygon: Polygon,
         coplanarFront: Array<Polygon>,
         coplanarBack: Array<Polygon>,
         front: Array<Polygon>,
-        back: Array<Polygon>
-    ): Unit
+        back: Array<Polygon>,
+    )
 
     companion object {
         fun fromPoints(a: Vector, b: Vector, c: Vector): Plane
@@ -89,10 +80,10 @@ open external class Plane(normal: Vector, w: Number) {
     }
 }
 
-open external class Polygon(vertices: Array<Vertex>, shared: Any? = definedExternally /* null */) {
+external open class Polygon(vertices: Array<Vertex>, shared: Any? = definedExternally) {
     open var plane: Plane
     open var vertices: Array<Vertex>
     open var shared: Any
     open fun clone(): Polygon
-    open fun flip(): Unit
+    open fun flip()
 }

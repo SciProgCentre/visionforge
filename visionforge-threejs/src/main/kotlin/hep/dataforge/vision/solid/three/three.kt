@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid.three
 
+import CSG
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.float
 import hep.dataforge.meta.get
@@ -22,15 +23,13 @@ public fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply 
 
 internal fun Double.toRadians() = this * PI / 180
 
-internal val ZERO = Vector3(0,0,0)
-
 public fun CSG.toGeometry(): Geometry {
     val geom = Geometry()
 
     val vertices = ArrayList<Vector3>()
     val faces = ArrayList<Face3>()
 
-    for (polygon in polygons) {
+    for (polygon in toPolygons()) {
         val v0 = vertices.size
         val pvs = polygon.vertices
 
@@ -39,7 +38,7 @@ public fun CSG.toGeometry(): Geometry {
         }
 
         for (j in 3..polygon.vertices.size) {
-            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, ZERO)
+            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, Vector3())
             fc.vertexNormals = arrayOf(
                 Vector3().copy(pvs[0].normal),
                 Vector3().copy(pvs[j - 2].normal),

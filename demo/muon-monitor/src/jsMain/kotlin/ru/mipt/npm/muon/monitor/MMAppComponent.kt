@@ -8,8 +8,10 @@ import hep.dataforge.names.length
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
+import hep.dataforge.vision.bootstrap.gridRow
 import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.configEditor
+import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.specifications.Camera
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
@@ -55,14 +57,14 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
 
     val root = props.model.root
 
-    div("row") {
-        styledDiv {
+    gridRow{
+        flexColumn {
             css {
                 +"col-lg-3"
+                +"order-lg-1"
+                +"order-2"
                 padding(0.px)
                 overflowY = Overflow.auto
-                display = Display.flex
-                flexDirection = FlexDirection.column
                 height = 100.vh
             }
             //tree
@@ -73,14 +75,14 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 objectTree(root, selected, onSelect)
             }
         }
-        styledDiv {
+        flexColumn {
             css {
                 +"col-lg-6"
-                display = Display.flex
-                flexDirection = FlexDirection.column
+                +"order-lg-2"
+                +"order-1"
                 height = 100.vh
             }
-            h1("mx-auto") {
+            h1("mx-auto page-header") {
                 +"Muon monitor demo"
             }
             //canvas
@@ -89,22 +91,21 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 attrs {
                     this.context = props.context
                     this.obj = root
+                    this.selected = selected
                     this.options = canvasConfig.apply {
                         this.onSelect = onSelect
                     }
-                    this.selected = selected
                     this.canvasCallback = {
                         canvas = it
                     }
                 }
             }
         }
-        styledDiv {
+        flexColumn {
             css {
                 +"col-lg-3"
+                +"order-3"
                 padding(0.px)
-                display = Display.flex
-                flexDirection = FlexDirection.column
                 height = 100.vh
             }
             styledDiv {

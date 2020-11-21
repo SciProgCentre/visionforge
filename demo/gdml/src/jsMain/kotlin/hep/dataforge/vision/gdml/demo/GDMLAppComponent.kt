@@ -3,19 +3,18 @@ package hep.dataforge.vision.gdml.demo
 import hep.dataforge.context.Context
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.bootstrap.gridRow
 import hep.dataforge.vision.bootstrap.nameCrumbs
 import hep.dataforge.vision.bootstrap.threeControls
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.flexColumn
-import hep.dataforge.vision.react.flexRow
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.browser.window
 import kotlinx.css.*
-import kotlinx.css.properties.border
 import kscience.gdml.GDML
 import kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
@@ -69,25 +68,22 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         vision = parsedVision
     }
 
-    flexRow {
-        css {
-            height = 100.vh - 35.px
-            width = 100.vw - 35.px
-            //flexWrap = FlexWrap.wrap
-        }
+    gridRow {
         flexColumn {
-            css {
-                flex(1.0, 1.0, FlexBasis.auto)
+            css{
+                +"col-lg-9"
+                height = 100.vh
             }
             styledDiv {
                 css {
+                    +"mx-auto"
                     +"page-header"
-                    +"justify-content-center"
                 }
                 h1 { +"GDML/JSON loader demo" }
             }
             nameCrumbs(selected, "World", onSelect)
             //canvas
+
             child(ThreeCanvasComponent) {
                 attrs {
                     this.context = props.context
@@ -105,11 +101,11 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         }
         flexColumn {
             css {
-                minWidth = 400.px
-                height = 100.pct
-                margin(left = 4.px, right = 4.px, top = 4.px)
-                border(1.px, BorderStyle.solid, Color.lightGray)
-                flex(0.0,1.0, FlexBasis.zero)
+                +"col-lg-3"
+                padding(top = 4.px)
+                //border(1.px, BorderStyle.solid, Color.lightGray)
+                height = 100.vh
+                overflowY = Overflow.auto
             }
             fileDrop("(drag file here)") { files ->
                 val file = files?.get(0)

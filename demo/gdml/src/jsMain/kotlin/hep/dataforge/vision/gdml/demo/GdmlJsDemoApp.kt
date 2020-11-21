@@ -12,10 +12,9 @@ import react.dom.render
 private class GDMLDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
-
-        val context = Global.context("demo") {}
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
+        val context = Global.context("demo") {}
         render(element) {
             child(GDMLApp) {
                 attrs {
