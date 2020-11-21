@@ -10,6 +10,7 @@ group = "ru.mipt.npm"
 val ktorVersion: String by rootProject.extra
 
 kscience {
+    useSerialization()
     application()
 }
 
