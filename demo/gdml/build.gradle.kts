@@ -32,6 +32,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation(project(":ui:bootstrap"))
+                implementation(project(":visionforge-threejs"))
                 implementation(npm("react-file-drop", "3.0.6"))
             }
         }

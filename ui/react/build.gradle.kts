@@ -9,4 +9,5 @@ dependencies{
     api(project(":visionforge-solid"))
     api("org.jetbrains:kotlin-styled:5.2.0-$kotlinWrappersVersion")
     api("org.jetbrains:kotlin-react-dom:$reactVersion-$kotlinWrappersVersion")
+    implementation(project(":visionforge-threejs"))
 }

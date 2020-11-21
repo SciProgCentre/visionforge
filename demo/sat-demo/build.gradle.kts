@@ -17,7 +17,7 @@ kotlin {
         }
         jsMain {
             dependencies {
-
+                implementation(project(":visionforge-threejs"))
             }
         }
     }

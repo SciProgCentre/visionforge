@@ -1,7 +1,6 @@
 package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.invoke
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.nameCrumbs

@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.project")
 }
 
-val dataforgeVersion by extra("0.2.0-dev-7")
+val dataforgeVersion by extra("0.2.0-dev-8")
 val ktorVersion by extra("1.4.2")
 val htmlVersion by extra("0.7.2")
 val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.10")
@@ -26,11 +26,6 @@ val bintrayRepo by extra("dataforge")
 subprojects {
     if(name.startsWith("visionforge")) {
         apply<ru.mipt.npm.gradle.KSciencePublishPlugin>()
-    }
-    afterEvaluate {
-        extensions.findByType<ru.mipt.npm.gradle.KScienceExtension>()?.run {
-            useSerialization()
-        }
     }
 }
 

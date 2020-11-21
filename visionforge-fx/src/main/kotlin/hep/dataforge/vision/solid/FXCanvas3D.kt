@@ -2,7 +2,6 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
-import hep.dataforge.meta.empty
 import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import javafx.application.Platform

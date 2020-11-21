@@ -36,6 +36,7 @@ kotlin {
         }
         jsMain{
             dependencies {
+                implementation(project(":visionforge-threejs"))
                 implementation("org.jetbrains:kotlin-css:1.0.0-pre.129-kotlin-1.4.10")
             }
         }

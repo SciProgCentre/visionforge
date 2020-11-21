@@ -1,8 +1,6 @@
 package hep.dataforge.vision.solid.demo
 
-import hep.dataforge.meta.int
-import hep.dataforge.meta.number
-import hep.dataforge.meta.set
+import hep.dataforge.meta.*
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue

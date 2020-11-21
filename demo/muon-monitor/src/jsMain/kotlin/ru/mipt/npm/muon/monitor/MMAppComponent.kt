@@ -1,7 +1,6 @@
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.invoke
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.isEmpty

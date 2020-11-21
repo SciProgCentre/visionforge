@@ -3,10 +3,10 @@ package ru.mipt.npm.sat
 import hep.dataforge.context.Global
 import hep.dataforge.js.Application
 import hep.dataforge.js.startApplication
+import hep.dataforge.meta.invoke
 import hep.dataforge.vision.solid.three.ThreePlugin
 import hep.dataforge.vision.solid.three.render
 import kotlinx.browser.document
-import hep.dataforge.meta.invoke
 import org.w3c.dom.HTMLElement
 
 private class SatDemoApp : Application {
@@ -20,7 +20,7 @@ private class SatDemoApp : Application {
         )
         three.render(element, sat){
             minSize = 500
-            axes {
+            axes{
                 size = 500.0
                 visible = true
             }

@@ -2,8 +2,6 @@ package hep.dataforge.vision.solid.three
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.empty
-import hep.dataforge.meta.invoke
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.html.HtmlVisionBinding

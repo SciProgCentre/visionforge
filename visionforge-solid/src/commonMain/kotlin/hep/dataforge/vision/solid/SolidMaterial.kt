@@ -104,7 +104,7 @@ public var Solid.color: String?
     }
 
 public val Solid.material: SolidMaterial?
-    get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.wrap(it) }
+    get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.read(it) }
 
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     val node = config[MATERIAL_KEY].node

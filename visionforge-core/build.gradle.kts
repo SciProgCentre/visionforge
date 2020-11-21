@@ -6,6 +6,9 @@ val dataforgeVersion: String by rootProject.extra
 val kotlinWrappersVersion: String by rootProject.extra
 val htmlVersion: String by rootProject.extra
 
+kscience{
+    useSerialization()
+}
 
 kotlin {
     sourceSets {
