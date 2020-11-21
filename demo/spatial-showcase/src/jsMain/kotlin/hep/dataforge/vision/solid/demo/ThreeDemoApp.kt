@@ -40,10 +40,7 @@ private class ThreeDemoApp : Application {
                 }
             }
         }
-
-
     }
-
 }
 
 fun main() {

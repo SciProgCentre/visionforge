@@ -59,11 +59,22 @@ public class ThreeCanvas(
 
     private var picked: Object3D? = null
 
-    private val renderer = WebGLRenderer { antialias = true }.apply {
+    private val renderer = WebGLRenderer {
+        antialias = true
+    }.apply {
         setClearColor(Colors.skyblue, 1)
     }
 
-    public val canvas: HTMLCanvasElement = renderer.domElement as HTMLCanvasElement
+    private val canvas = (renderer.domElement as HTMLCanvasElement).apply {
+        width = 600
+        height = 600
+        style.apply {
+            width = "100%"
+            height = "100%"
+            display = "block"
+        }
+    }
+
 
     /**
      * Force camera aspect ration and renderer size recalculation
@@ -71,6 +82,12 @@ public class ThreeCanvas(
     public fun updateSize() {
         val width = canvas.clientWidth
         val height = canvas.clientHeight
+        canvas.style.apply {
+            minWidth = "${options.minWith.toInt()}px"
+            maxWidth = "${options.maxWith.toInt()}px"
+            minHeight = "${options.minHeight.toInt()}px"
+            maxHeight = "${options.maxHeight.toInt()}px"
+        }
         renderer.setSize(width, height, false)
         camera.aspect = width.toDouble() / height.toDouble()
         camera.updateProjectionMatrix()
@@ -93,18 +110,6 @@ public class ThreeCanvas(
                 mousePosition.y = -((event.clientY - rect.top) / canvas.clientHeight) * 2 + 1
             }
         }, false)
-
-
-        canvas.style.apply {
-            width = "100%"
-            minWidth = "${options.minWith.toInt()}px"
-            maxWidth = "${options.maxWith.toInt()}px"
-            height = "100%"
-            minHeight = "${options.minHeight.toInt()}px"
-            maxHeight = "${options.maxHeight.toInt()}px"
-            display = "block"
-        }
-
 
         canvas.onresize = {
             updateSize()

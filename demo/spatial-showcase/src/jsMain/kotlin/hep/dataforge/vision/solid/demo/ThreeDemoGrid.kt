@@ -10,18 +10,17 @@ import hep.dataforge.vision.layout.Page
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import hep.dataforge.vision.solid.three.ThreePlugin
+import kotlinx.browser.document
 import kotlinx.dom.clear
 import kotlinx.html.dom.append
 import kotlinx.html.id
 import kotlinx.html.js.*
-import kotlinx.html.role
+import kotlinx.html.style
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 
 class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
-
-
     private lateinit var navigationElement: HTMLElement
     private lateinit var contentElement: HTMLDivElement
 
@@ -32,14 +31,18 @@ class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
     init {
         element.clear()
         element.append {
-            div("container") {
-                navigationElement = ul("nav nav-tabs") {
-                    id = "${idPrefix}Tab"
-                    role = "tablist"
+            nav("navbar navbar-expand-md navbar-dark fixed-top bg-dark") {
+                a(classes = "navbar-brand") {
+                    href = "#"
+                    +"Demo grid"
                 }
-                contentElement = div("tab-content") {
-                    id = "${idPrefix}TabContent"
+                div("navbar-collapse collapse") {
+                    id = "navbar"
+                    navigationElement = ul("nav navbar-nav")
                 }
+            }
+            contentElement = div {
+                id = "content"
             }
         }
     }
@@ -47,33 +50,28 @@ class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
 
     @Suppress("UNCHECKED_CAST")
     override fun output(name: Name, meta: Meta): Output<Solid> = outputs.getOrPut(name) {
-        lateinit var output: ThreeCanvas
         navigationElement.append {
             li("nav-item") {
                 a(classes = "nav-link") {
-                    id = "tab[$name]"
-                    attributes["data-toggle"] = "tab"
                     href = "#$name"
-                    role = "tab"
-                    attributes["aria-controls"] = "$name"
-                    attributes["aria-selected"] = "false"
                     +name.toString()
                 }
             }
         }
         contentElement.append {
-            div("tab-pane fade col") {
+            div("container") {
                 id = name.toString()
-                role = "tabpanel"
-                attributes["aria-labelledby"] = "tab[$name]"
-                div { id = "output-$name" }.also { element ->
-                    output = three.createCanvas(element, canvasOptions)
-                }
                 hr()
                 h2 { +(meta["title"].string ?: name.toString()) }
+                hr()
+                div {
+                    style = "height: 600px;"
+                    id = "output-$name"
+                }
             }
         }
-        output
+        val element = document.getElementById("output-$name") ?: error("Element not found")
+        three.createCanvas(element, canvasOptions)
     }
 }
 

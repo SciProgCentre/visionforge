@@ -24,7 +24,7 @@ fun Page<Solid>.demo(name: String, title: String = name, block: SolidGroup.() ->
 }
 
 val canvasOptions = Canvas3DOptions {
-    minSize = 600
+    minSize = 400
     axes {
         size = 500.0
         visible = true
