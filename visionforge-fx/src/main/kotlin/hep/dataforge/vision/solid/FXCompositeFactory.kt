@@ -1,10 +1,8 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import eu.mihosoft.jcsg.CSG
 import eu.mihosoft.jcsg.Polygon
 import eu.mihosoft.vvecmath.Vector3d
-import hep.dataforge.vision.solid.Composite
-import hep.dataforge.vision.solid.CompositeType
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.shape.MeshView

@@ -1,9 +1,6 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.vision.solid.GeometryBuilder
-import hep.dataforge.vision.solid.GeometrySolid
-import hep.dataforge.vision.solid.Point3D
 import javafx.scene.shape.Mesh
 import javafx.scene.shape.MeshView
 import javafx.scene.shape.TriangleMesh

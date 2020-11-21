@@ -29,6 +29,11 @@ kotlin {
                 implementation(project(":visionforge-gdml"))
             }
         }
+        jvmMain{
+            dependencies{
+                implementation(project(":visionforge-fx"))
+            }
+        }
         jsMain{
             dependencies {
                 implementation("org.jetbrains:kotlin-css:1.0.0-pre.129-kotlin-1.4.10")

@@ -1,8 +1,7 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.solid.SolidReference
 import javafx.scene.Group
 import javafx.scene.Node
 import kotlin.reflect.KClass

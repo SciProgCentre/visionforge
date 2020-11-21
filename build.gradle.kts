@@ -1,5 +1,3 @@
-import ru.mipt.npm.gradle.useFx
-
 plugins {
     id("ru.mipt.npm.project")
 }
@@ -32,7 +30,6 @@ subprojects {
     afterEvaluate {
         extensions.findByType<ru.mipt.npm.gradle.KScienceExtension>()?.run {
             useSerialization()
-            useFx(ru.mipt.npm.gradle.FXModule.CONTROLS, version = fxVersion)
         }
     }
 }

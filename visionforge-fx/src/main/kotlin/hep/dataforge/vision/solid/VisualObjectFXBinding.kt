@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name

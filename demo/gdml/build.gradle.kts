@@ -24,6 +24,11 @@ kotlin {
                 implementation(project(":visionforge-gdml"))
             }
         }
+        jvmMain{
+            dependencies{
+                implementation(project(":visionforge-fx"))
+            }
+        }
         jsMain {
             dependencies {
                 implementation(project(":ui:bootstrap"))

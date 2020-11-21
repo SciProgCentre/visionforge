@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.double
@@ -6,7 +6,6 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.solid.SolidMaterial
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
 import javafx.scene.paint.PhongMaterial

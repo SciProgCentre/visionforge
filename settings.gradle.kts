@@ -38,6 +38,7 @@ include(
     ":ui:bootstrap",
     ":visionforge-core",
     ":visionforge-solid",
+    ":visionforge-fx",
     ":visionforge-gdml",
     ":visionforge-server",
     ":demo:spatial-showcase",

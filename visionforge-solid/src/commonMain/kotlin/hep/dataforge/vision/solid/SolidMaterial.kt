@@ -40,13 +40,13 @@ public class SolidMaterial : Scheme() {
     public companion object : SchemeSpec<SolidMaterial>(::SolidMaterial) {
 
         public val MATERIAL_KEY: Name = "material".asName()
-        internal val COLOR_KEY = "color".asName()
+        public val COLOR_KEY: Name = "color".asName()
         public val MATERIAL_COLOR_KEY: Name = MATERIAL_KEY + COLOR_KEY
-        internal val SPECULAR_COLOR_KEY = "specularColor".asName()
+        public val SPECULAR_COLOR_KEY: Name = "specularColor".asName()
         public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
-        internal val OPACITY_KEY = "opacity".asName()
+        public val OPACITY_KEY: Name = "opacity".asName()
         public val MATERIAL_OPACITY_KEY: Name = MATERIAL_KEY + OPACITY_KEY
-        internal val WIREFRAME_KEY = "wireframe".asName()
+        public val WIREFRAME_KEY: Name = "wireframe".asName()
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
         public override val descriptor: NodeDescriptor by lazy {

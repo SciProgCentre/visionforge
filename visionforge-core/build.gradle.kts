@@ -15,18 +15,6 @@ kotlin {
                 api("org.jetbrains.kotlinx:kotlinx-html:$htmlVersion")
             }
         }
-        jvmMain {
-            dependencies {
-                api("no.tornado:tornadofx:1.7.20")
-                //api("no.tornado:tornadofx-controlsfx:0.1.1")
-                api("de.jensd:fontawesomefx-fontawesome:4.7.0-11") {
-                    exclude(group = "org.openjfx")
-                }
-                api("de.jensd:fontawesomefx-commons:11.0") {
-                    exclude(group = "org.openjfx")
-                }
-            }
-        }
         jsMain {
             dependencies {
                 api("org.jetbrains:kotlin-extensions:1.0.1-$kotlinWrappersVersion")

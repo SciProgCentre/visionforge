@@ -1,9 +1,8 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import eu.mihosoft.jcsg.PropertyStorage
 import eu.mihosoft.jcsg.ext.quickhull3d.HullUtil
 import eu.mihosoft.vvecmath.Vector3d
-import hep.dataforge.vision.solid.Convex
 import javafx.scene.Node
 import kotlin.reflect.KClass
 

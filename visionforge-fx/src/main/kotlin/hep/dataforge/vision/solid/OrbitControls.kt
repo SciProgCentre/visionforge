@@ -1,4 +1,4 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleDoubleProperty

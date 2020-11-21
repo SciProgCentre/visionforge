@@ -1,13 +1,12 @@
-package hep.dataforge.vision.solid.fx
+package hep.dataforge.vision.solid
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.boolean
 import hep.dataforge.provider.Type
-import hep.dataforge.vision.solid.*
+import hep.dataforge.vision.solid.FX3DFactory.Companion.TYPE
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_WIREFRAME_KEY
-import hep.dataforge.vision.solid.fx.FX3DFactory.Companion.TYPE
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.shape.CullFace

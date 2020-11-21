@@ -5,10 +5,10 @@ import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
 import hep.dataforge.vision.gdml.toVision
+import hep.dataforge.vision.solid.FX3DPlugin
+import hep.dataforge.vision.solid.FXCanvas3D
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidMaterial
-import hep.dataforge.vision.solid.fx.FX3DPlugin
-import hep.dataforge.vision.solid.fx.FXCanvas3D
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser
