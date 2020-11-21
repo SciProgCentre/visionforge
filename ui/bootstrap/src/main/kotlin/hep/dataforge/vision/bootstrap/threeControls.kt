@@ -36,7 +36,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
             h2 { +"Object tree" }
             styledDiv {
                 css {
-                    flex(1.0, 0.0, FlexBasis.auto)
+                    flex(1.0, 1.0, FlexBasis.inherit)
                 }
                 props.canvas.content?.let {
                     objectTree(it, props.selected, props.onSelect)

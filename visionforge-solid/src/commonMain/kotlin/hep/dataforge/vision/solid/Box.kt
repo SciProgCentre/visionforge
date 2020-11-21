@@ -1,5 +1,3 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid
 
 import hep.dataforge.vision.VisionContainerBuilder
@@ -7,7 +5,6 @@ import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.Solid.Companion.solidEquals
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 
 @Serializable
 @SerialName("solid.box")

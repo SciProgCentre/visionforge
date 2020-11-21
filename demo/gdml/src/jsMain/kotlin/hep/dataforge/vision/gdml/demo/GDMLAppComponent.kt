@@ -78,7 +78,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         }
         flexColumn {
             css {
-                flex(10.0, 10.0, FlexBasis.zero)
+                flex(1.0, 1.0, FlexBasis.auto)
             }
             styledDiv {
                 css {
@@ -106,10 +106,11 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         }
         flexColumn {
             css {
-                minWidth = 500.px
+                minWidth = 400.px
                 height = 100.pct
                 margin(left = 4.px, right = 4.px, top = 4.px)
                 border(1.px, BorderStyle.solid, Color.lightGray)
+                flex(0.0,1.0, FlexBasis.zero)
             }
             fileDrop("(drag file here)") { files ->
                 val file = files?.get(0)

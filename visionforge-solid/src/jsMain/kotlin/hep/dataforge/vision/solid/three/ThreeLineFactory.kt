@@ -15,7 +15,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
 
     override fun invoke(obj: PolyLine): Object3D {
         val geometry = Geometry().apply {
-            vertices = obj.points.toTypedArray()
+            vertices = Array(obj.points.size) { obj.points[it].toVector() }
         }
 
         val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
@@ -27,7 +27,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.onPropertyChange(this) { propertyName->
+            obj.onPropertyChange(this) { propertyName ->
                 updateProperty(obj, propertyName)
             }
         }

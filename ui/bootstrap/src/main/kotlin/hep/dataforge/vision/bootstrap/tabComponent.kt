@@ -1,7 +1,6 @@
 package hep.dataforge.vision.bootstrap
 
 import hep.dataforge.vision.react.flexColumn
-import kotlinx.css.*
 import kotlinx.html.DIV
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
@@ -10,7 +9,6 @@ import react.dom.button
 import react.dom.li
 import react.dom.ul
 import styled.StyledDOMBuilder
-import styled.css
 import styled.styledDiv
 
 public external class TabProps : RProps {
@@ -40,9 +38,6 @@ public val TabPane: FunctionalComponent<TabPaneProps> = functionalComponent("Tab
     }
 
     flexColumn {
-        css {
-            flexGrow = 1.0
-        }
         ul("nav nav-tabs") {
             childrenProps.forEach { cp ->
                 li("nav-item") {
@@ -74,10 +69,6 @@ public class TabBuilder(internal val parentBuilder: RBuilder) {
                 this.title = title
             }
             styledDiv {
-                css {
-                    height = 100.pct
-                    overflowY = Overflow.auto
-                }
                 builder()
             }
         }

@@ -5,8 +5,13 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 public interface PrototypeHolder {
     public val parent: VisionGroup?
@@ -25,7 +30,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
     /**
      * A container for templates visible inside this group
      */
-    @Serializable(PrototypesSerializer::class)
+    @Serializable(Prototypes.Companion::class)
     override var prototypes: MutableVisionGroup? = null
         private set
 
@@ -39,13 +44,10 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
         }).run(builder)
     }
 
-    @Serializable(Point3DSerializer::class)
     override var position: Point3D? = null
 
-    @Serializable(Point3DSerializer::class)
     override var rotation: Point3D? = null
 
-    @Serializable(Point3DSerializer::class)
     override var scale: Point3D? = null
 
     override fun attachChildren() {
@@ -91,7 +93,7 @@ public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit 
 /**
  * A special class which works as a holder for prototypes
  */
-@Serializable(PrototypesSerializer::class)
+@Serializable(Prototypes.Companion::class)
 internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
 ) : VisionGroupBase(), PrototypeHolder {
@@ -116,6 +118,26 @@ internal class Prototypes(
         children.values.forEach {
             it.parent = parent
             (it as? VisionGroup)?.attachChildren()
+        }
+    }
+
+    companion object : KSerializer<MutableVisionGroup> {
+
+        private val mapSerializer: KSerializer<Map<NameToken, Vision>> =
+            MapSerializer(
+                NameToken.serializer(),
+                Vision.serializer()
+            )
+
+        override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
+
+        override fun deserialize(decoder: Decoder): MutableVisionGroup {
+            val map = mapSerializer.deserialize(decoder)
+            return Prototypes(map)
+        }
+
+        override fun serialize(encoder: Encoder, value: MutableVisionGroup) {
+            mapSerializer.serialize(encoder, value.children)
         }
     }
 }

@@ -17,7 +17,7 @@ import javafx.scene.control.ComboBox
 import javafx.util.StringConverter
 import java.util.*
 
-class ComboBoxValueChooser(val values: Collection<Value>? = null) : ValueChooserBase<ComboBox<Value>>() {
+public class ComboBoxValueChooser(public val values: Collection<Value>? = null) : ValueChooserBase<ComboBox<Value>>() {
 
     //    @Override
     //    protected void displayError(String error) {

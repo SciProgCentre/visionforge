@@ -15,13 +15,10 @@ import kotlinx.serialization.Serializable
 public open class BasicSolid : VisionBase(), Solid {
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
-    @Serializable(Point3DSerializer::class)
     override var position: Point3D? = null
 
-    @Serializable(Point3DSerializer::class)
     override var rotation: Point3D? = null
 
-    @Serializable(Point3DSerializer::class)
     override var scale: Point3D? = null
 
     override fun update(change: Vision) {

@@ -13,7 +13,10 @@ import hep.dataforge.vision.VisionGroupBase
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIALIZER_MODULE_TARGET
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.*
+import kotlinx.serialization.modules.PolymorphicModuleBuilder
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import kotlin.reflect.KClass
 
 
@@ -47,9 +50,6 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
-            contextual(Point3DSerializer)
-            contextual(Point2DSerializer)
-
             polymorphic(Vision::class) {
                 subclass(VisionGroupBase.serializer())
                 solids()

@@ -16,6 +16,7 @@ import javafx.scene.shape.Shape3D
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.transform.Rotate
+import org.fxyz3d.geometry.Point3D
 import org.fxyz3d.shapes.composites.PolyLine3D
 import org.fxyz3d.shapes.primitives.CuboidMesh
 import org.fxyz3d.shapes.primitives.SpheroidMesh
@@ -69,7 +70,7 @@ class FX3DPlugin : AbstractPlugin() {
                 y = layoutBounds.height / 2
             }
             is PolyLine -> PolyLine3D(
-                obj.points.map { it.point },
+                obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
                 obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
             ).apply {

@@ -1,11 +1,9 @@
-@file:UseSerializers(Point2DSerializer::class, Point3DSerializer::class)
 package hep.dataforge.vision.solid
 
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

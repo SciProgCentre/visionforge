@@ -1,10 +1,7 @@
-@file:UseSerializers(Point3DSerializer::class)
 package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.vision.solid.Point3D
-import hep.dataforge.vision.solid.Point3DSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 
 typealias Track = List<Point3D>
 

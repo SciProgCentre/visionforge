@@ -114,20 +114,20 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     ): T = apply {
         newPos?.let {
             val point = Point3D(it.x(settings.lUnit), it.y(settings.lUnit), it.z(settings.lUnit))
-            if (position != null || point != World.ZERO) {
+            if (position != null || point != Point3D.ZERO) {
                 position = point
             }
         }
         newRotation?.let {
             val point = Point3D(it.x(settings.aUnit), it.y(settings.aUnit), it.z(settings.aUnit))
-            if (rotation != null || point != World.ZERO) {
+            if (rotation != null || point != Point3D.ZERO) {
                 rotation = point
             }
             //this@withPosition.rotationOrder = RotationOrder.ZXY
         }
         newScale?.let {
             val point = Point3D(it.x, it.y, it.z)
-            if (scale != null || point != World.ONE) {
+            if (scale != null || point != Point3D.ONE) {
                 scale = point
             }
         }

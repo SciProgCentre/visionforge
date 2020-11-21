@@ -1,5 +1,3 @@
-@file:UseSerializers(Point3DSerializer::class)
-
 package hep.dataforge.vision.solid.demo
 
 import hep.dataforge.meta.int
@@ -20,7 +18,6 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
 import info.laht.threekt.objects.Mesh
-import kotlinx.serialization.UseSerializers
 import kotlin.math.max
 
 internal fun SolidGroup.varBox(

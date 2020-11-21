@@ -22,6 +22,8 @@ public fun Geometry.toBufferGeometry(): BufferGeometry = BufferGeometry().apply 
 
 internal fun Double.toRadians() = this * PI / 180
 
+internal val ZERO = Vector3(0,0,0)
+
 public fun CSG.toGeometry(): Geometry {
     val geom = Geometry()
 
@@ -37,7 +39,7 @@ public fun CSG.toGeometry(): Geometry {
         }
 
         for (j in 3..polygon.vertices.size) {
-            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, World.ZERO)
+            val fc = Face3(v0, v0 + j - 2, v0 + j - 1, ZERO)
             fc.vertexNormals = arrayOf(
                 Vector3().copy(pvs[0].normal),
                 Vector3().copy(pvs[j - 2].normal),

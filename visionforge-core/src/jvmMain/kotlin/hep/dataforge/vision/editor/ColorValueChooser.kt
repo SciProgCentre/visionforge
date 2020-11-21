@@ -14,7 +14,7 @@ import tornadofx.*
 /**
  * Created by darksnake on 01-May-17.
  */
-class ColorValueChooser : ValueChooserBase<ColorPicker>() {
+public class ColorValueChooser : ValueChooserBase<ColorPicker>() {
     private fun ColorPicker.setColor(value: Value?) {
         if (value != null && value != Null) {
             try {

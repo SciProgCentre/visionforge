@@ -1,4 +1,3 @@
-@file:UseSerializers(Point3DSerializer::class)
 
 package hep.dataforge.vision.solid
 
@@ -7,7 +6,6 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 
 public enum class CompositeType {
     UNION,
