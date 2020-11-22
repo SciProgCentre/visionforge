@@ -4,7 +4,7 @@ import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.html.HtmlVisionBinding
+import hep.dataforge.vision.html.ElementVisionRenderer
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
@@ -15,7 +15,7 @@ import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
 
-public class ThreePlugin : AbstractPlugin(), HtmlVisionBinding<Solid> {
+public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer<Solid> {
     override val tag: PluginTag get() = Companion.tag
 
     public val solidManager: SolidManager by require(SolidManager)
@@ -122,7 +122,7 @@ public class ThreePlugin : AbstractPlugin(), HtmlVisionBinding<Solid> {
         attach(element)
     }
 
-    override fun bind(element: Element, vision: Solid) {
+    override fun render(element: Element, vision: Solid) {
         createCanvas(element).render(vision)
     }
 

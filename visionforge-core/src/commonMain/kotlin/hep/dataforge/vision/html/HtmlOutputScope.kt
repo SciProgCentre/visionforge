@@ -3,10 +3,7 @@ package hep.dataforge.vision.html
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
-import kotlinx.html.DIV
-import kotlinx.html.TagConsumer
-import kotlinx.html.div
-import kotlinx.html.id
+import kotlinx.html.*
 
 public class HtmlOutput<V : Vision>(
     public val outputScope: HtmlOutputScope<*, V>,
@@ -28,7 +25,9 @@ public abstract class HtmlOutputScope<R, V : Vision>(
         name: Name,
         crossinline block: HtmlOutput<V>.() -> Unit = {},
     ): T = div {
-        this.id = resolveId(name)
+        id = resolveId(name)
+        classes = setOf(OUTPUT_CLASS)
+        attributes[NAME_ATTRIBUTE] = name.toString()
         @Suppress("UNCHECKED_CAST")
         HtmlOutput(this@HtmlOutputScope, name, this).block()
     }
@@ -48,5 +47,21 @@ public abstract class HtmlOutputScope<R, V : Vision>(
         visionOutput(name) {
             renderVision(this, vision)
         }
+    }
+
+    /**
+     * Process the resulting object produced by [TagConsumer]
+     */
+    protected open fun processResult(result: R) {
+        //do nothing by default
+    }
+
+    override fun finalize(): R {
+        return root.finalize().also { processResult(it) }
+    }
+
+    public companion object {
+        public const val OUTPUT_CLASS: String = "visionforge-output"
+        public const val NAME_ATTRIBUTE: String = "data-output-name"
     }
 }

@@ -22,7 +22,7 @@ public fun <T : Any> HtmlVisionFragment<Vision>.renderToObject(
     root: TagConsumer<T>,
     prefix: String? = null,
     renderer: HtmlVisionRenderer<Vision>,
-): T = StaticHtmlOutputScope(root, prefix, renderer).apply(layout).finalize()
+): T = StaticHtmlOutputScope(root, prefix, renderer).apply(content).finalize()
 
 public fun HtmlVisionFragment<Vision>.renderToString(renderer: HtmlVisionRenderer<Vision>): String =
     renderToObject(createHTML(), null, renderer)
