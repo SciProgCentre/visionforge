@@ -1,9 +1,9 @@
 pluginManagement {
-    val kotlinVersion = "1.4.20-M2"
-    val toolsVersion = "0.6.4-dev-1.4.20-M2"
+    val kotlinVersion = "1.4.20"
+    val toolsVersion = "0.7.0"
 
     repositories {
-//        mavenLocal()
+        mavenLocal()
         jcenter()
         gradlePluginPortal()
         maven("https://dl.bintray.com/kotlin/kotlin-eap")

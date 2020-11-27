@@ -1,6 +1,5 @@
 import ru.mipt.npm.gradle.DependencyConfiguration
 import ru.mipt.npm.gradle.FXModule
-import ru.mipt.npm.gradle.useFx
 
 plugins {
     id("ru.mipt.npm.mpp")
@@ -24,8 +23,8 @@ kotlin {
                 implementation(project(":visionforge-gdml"))
             }
         }
-        jvmMain{
-            dependencies{
+        jvmMain {
+            dependencies {
                 implementation(project(":visionforge-fx"))
             }
         }

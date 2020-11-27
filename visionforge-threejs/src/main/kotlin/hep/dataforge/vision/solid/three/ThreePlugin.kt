@@ -4,7 +4,7 @@ import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.html.ElementVisionRenderer
+import hep.dataforge.vision.client.ElementVisionRenderer
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible

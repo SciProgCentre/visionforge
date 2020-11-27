@@ -13,10 +13,10 @@ public class HtmlOutput<V : Vision>(
 
 public abstract class HtmlOutputScope<R, V : Vision>(
     private val root: TagConsumer<R>,
-    public val prefix: String? = null,
+    public val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
-    public open fun resolveId(name: Name): String = (prefix ?: "output:") + name.toString()
+    public open fun resolveId(name: Name): String = (idPrefix ?: "output:") + name.toString()
 
     /**
      * Create a placeholder but do not attach any [Vision] to it
@@ -27,7 +27,7 @@ public abstract class HtmlOutputScope<R, V : Vision>(
     ): T = div {
         id = resolveId(name)
         classes = setOf(OUTPUT_CLASS)
-        attributes[NAME_ATTRIBUTE] = name.toString()
+        attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
         @Suppress("UNCHECKED_CAST")
         HtmlOutput(this@HtmlOutputScope, name, this).block()
     }
@@ -62,6 +62,6 @@ public abstract class HtmlOutputScope<R, V : Vision>(
 
     public companion object {
         public const val OUTPUT_CLASS: String = "visionforge-output"
-        public const val NAME_ATTRIBUTE: String = "data-output-name"
+        public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
     }
 }

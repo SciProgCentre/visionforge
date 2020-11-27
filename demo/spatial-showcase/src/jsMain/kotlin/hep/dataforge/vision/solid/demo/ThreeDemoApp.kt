@@ -1,7 +1,7 @@
 package hep.dataforge.vision.solid.demo
 
-import hep.dataforge.js.Application
-import hep.dataforge.js.startApplication
+import hep.dataforge.Application
+import hep.dataforge.startApplication
 import hep.dataforge.vision.solid.x
 import hep.dataforge.vision.solid.y
 import kotlinx.browser.document

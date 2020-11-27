@@ -1,7 +1,10 @@
 package hep.dataforge.vision.server
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.Configurable
+import hep.dataforge.meta.boolean
+import hep.dataforge.meta.long
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
@@ -12,16 +15,19 @@ import hep.dataforge.vision.server.VisionServer.Companion.DEFAULT_PAGE
 import io.ktor.application.*
 import io.ktor.features.CORS
 import io.ktor.html.respondHtml
-import io.ktor.http.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
+import io.ktor.http.withCharset
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.*
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import kotlinx.coroutines.flow.collect
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import java.awt.Desktop
@@ -106,7 +112,7 @@ public class VisionServer internal constructor(
                     application.log.debug("Opened server socket for $name")
                     val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
                     try {
-                        vision.flowChanges(this, updateInterval.milliseconds).collect { update ->
+                        vision.flowChanges(this, updateInterval.milliseconds).collect {  update ->
                             val json = visionManager.encodeToString(update)
                             outgoing.send(Frame.Text(json))
                         }

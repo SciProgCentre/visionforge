@@ -1,6 +1,6 @@
+import hep.dataforge.Application
 import hep.dataforge.context.Global
-import hep.dataforge.js.Application
-import hep.dataforge.js.startApplication
+import hep.dataforge.startApplication
 import hep.dataforge.vision.bootstrap.visionPropertyEditor
 import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.objectTree

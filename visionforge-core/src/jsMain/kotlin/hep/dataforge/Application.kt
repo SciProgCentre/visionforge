@@ -1,4 +1,4 @@
-package hep.dataforge.js
+package hep.dataforge
 
 import kotlinx.browser.document
 import kotlinx.dom.hasClass

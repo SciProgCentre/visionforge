@@ -1,8 +1,11 @@
-package hep.dataforge.vision.html
+package hep.dataforge.vision.client
 
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.html.BindingHtmlOutputScope
+import hep.dataforge.vision.html.HtmlOutputScope
+import hep.dataforge.vision.html.HtmlVisionFragment
 import kotlinx.browser.document
 import kotlinx.html.TagConsumer
 import org.w3c.dom.*
@@ -21,9 +24,9 @@ public fun <V : Vision> Map<String, V>.bind(renderer: ElementVisionRenderer<V>) 
 public fun <V : Vision> Element.renderVisions(renderer: ElementVisionRenderer<V>, visionProvider: (Name) -> V?) {
     val elements = getElementsByClassName(HtmlOutputScope.OUTPUT_CLASS)
     elements.asList().forEach { element ->
-        val name = element.attributes[HtmlOutputScope.NAME_ATTRIBUTE]?.value
+        val name = element.attributes[HtmlOutputScope.OUTPUT_NAME_ATTRIBUTE]?.value
         if (name == null) {
-            console.error("Attribute ${HtmlOutputScope.NAME_ATTRIBUTE} not defined in the output element")
+            console.error("Attribute ${HtmlOutputScope.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
             return@forEach
         }
         val vision = visionProvider(name.toName())

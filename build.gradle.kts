@@ -2,10 +2,10 @@ plugins {
     id("ru.mipt.npm.project")
 }
 
-val dataforgeVersion by extra("0.2.0-dev-8")
+val dataforgeVersion by extra("0.2.0")
 val ktorVersion by extra("1.4.2")
 val htmlVersion by extra("0.7.2")
-val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.10")
+val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.20")
 val fxVersion by extra("14")
 
 
@@ -17,7 +17,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.2.0-dev-2"
+    version = "0.2.0-dev-3"
 }
 
 val githubProject by extra("visionforge")

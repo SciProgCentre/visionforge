@@ -1,5 +1,3 @@
-import ru.mipt.npm.gradle.useFx
-
 plugins {
     id("ru.mipt.npm.jvm")
 }

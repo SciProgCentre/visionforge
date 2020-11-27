@@ -1,9 +1,9 @@
 package ru.mipt.npm.sat
 
+import hep.dataforge.Application
 import hep.dataforge.context.Global
-import hep.dataforge.js.Application
-import hep.dataforge.js.startApplication
 import hep.dataforge.meta.invoke
+import hep.dataforge.startApplication
 import hep.dataforge.vision.solid.three.ThreePlugin
 import hep.dataforge.vision.solid.three.render
 import kotlinx.browser.document
@@ -16,7 +16,7 @@ private class SatDemoApp : Application {
             ?: error("Element with id 'canvas' not found on page")
         val three = Global.plugins.fetch(ThreePlugin)
         val sat = visionOfSatellite(
-            ySegments = 5,
+            ySegments = 3,
         )
         three.render(element, sat){
             minSize = 500
