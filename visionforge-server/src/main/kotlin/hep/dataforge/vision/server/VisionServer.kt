@@ -29,6 +29,7 @@ import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
+import io.ktor.util.error
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.flow.collect
@@ -129,8 +130,9 @@ public class VisionServer internal constructor(
                                 val json = visionManager.encodeToString(update)
                                 outgoing.send(Frame.Text(json))
                             }
-                        } catch (ex: Exception) {
-                            application.log.debug("Closed server socket for $name with exception $ex")
+                        } catch (ex: Throwable) {
+                            application.log.error("Closed server socket for $name with exception $ex")
+                            application.log.error(ex)
                         }
                     }
                     //Plots in their json representation

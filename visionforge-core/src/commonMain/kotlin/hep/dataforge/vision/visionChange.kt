@@ -88,15 +88,25 @@ private fun CoroutineScope.collectChange(
     mutex: Mutex,
     target: () -> MutableVisionGroup,
 ) {
-    val targetVision: () -> Vision = { target().getOrCreate(name) }
     //Collect properties change
-    source.onPropertyChange(mutex) { propertyName ->
-        launch {
-            mutex.withLock {
-                targetVision().setProperty(propertyName, source.getProperty(propertyName))
+    source.config.onChange(mutex){propertyName, oldItem, newItem->
+        if(oldItem!= newItem){
+            launch {
+                mutex.withLock {
+                    target().getOrCreate(name).setProperty(propertyName, newItem)
+                }
             }
         }
     }
+//    source.onPropertyChange(mutex) { propertyName ->
+//        launch {
+//            mutex.withLock {
+//                target().getOrCreate(name).setProperty(propertyName, source.getProperty(propertyName,false))
+//            }
+//        }
+//    }
+
+    val targetVision: Vision =  target().getOrCreate(name)
 
     if (source is VisionGroup) {
         check(targetVision is MutableVisionGroup) { "Collector for a group should be a group" }
@@ -124,9 +134,6 @@ private fun CoroutineScope.collectChange(
 
 @DFExperimental
 public fun Vision.flowChanges(scope: CoroutineScope, collectionDuration: Duration): Flow<Vision> = flow {
-    //emit initial visual tree
-    emit(this@flowChanges)
-
     val mutex = Mutex()
 
     var collector = VisionGroupBase()

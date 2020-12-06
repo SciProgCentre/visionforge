@@ -15,10 +15,10 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
 
     /**
      * Internal mutable container for group children
-     * TODO made protected due to https://github.com/Kotlin/kotlinx.serialization/issues/1200
+     * TODO made protected due to [https://github.com/Kotlin/kotlinx.serialization/issues/1200]
      */
     @SerialName("children")
-    protected open val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap()
+    protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap()
 
     /**
      * A map of top level named children

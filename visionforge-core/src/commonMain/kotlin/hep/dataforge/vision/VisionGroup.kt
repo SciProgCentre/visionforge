@@ -97,7 +97,7 @@ public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision
 //    public operator fun set(name: Name, child: Vision?)
 }
 
-public operator fun <V: Vision> VisionContainer<V>.get(str: String?): V? = get(str?.toName() ?: Name.EMPTY)
+public operator fun <V: Vision> VisionContainer<V>.get(str: String): V? = get(str.toName())
 
 public operator fun <V: Vision>  VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit = set(token.asName(), child)
 public operator fun <V: Vision>  VisionContainerBuilder<V>.set(key: String, child: V?): Unit = set(key.toName(), child)
