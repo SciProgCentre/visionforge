@@ -15,7 +15,7 @@ import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
 
-public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer<Solid> {
+public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
     public val solidManager: SolidManager by require(SolidManager)
@@ -122,8 +122,19 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer<Solid> {
         attach(element)
     }
 
-    override fun render(element: Element, vision: Solid) {
-        createCanvas(element).render(vision)
+    override fun content(target: String): Map<Name, Any> {
+        return when (target) {
+            ElementVisionRenderer.TYPE -> mapOf("three".asName() to this)
+            else -> super.content(target)
+        }
+    }
+
+    override fun rateVision(vision: Vision): Int {
+        return if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
+    }
+
+    override fun render(element: Element, vision: Vision) {
+        createCanvas(element).render(vision as? Solid ?: error("Only solids are rendered"))
     }
 
     public companion object : PluginFactory<ThreePlugin> {

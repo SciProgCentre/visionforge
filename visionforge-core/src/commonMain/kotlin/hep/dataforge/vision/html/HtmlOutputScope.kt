@@ -63,5 +63,7 @@ public abstract class HtmlOutputScope<R, V : Vision>(
     public companion object {
         public const val OUTPUT_CLASS: String = "visionforge-output"
         public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
+        public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"
+        public const val DEFAULT_ENDPOINT: String = "."
     }
 }

@@ -19,7 +19,7 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid
-) : BasicSolid(), Solid, VisionGroup {
+) : SolidBase(), Solid, VisionGroup {
 
     init {
         first.parent = this

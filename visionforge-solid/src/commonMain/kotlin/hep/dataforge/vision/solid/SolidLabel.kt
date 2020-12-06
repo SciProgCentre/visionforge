@@ -11,7 +11,7 @@ public class SolidLabel(
     public var text: String,
     public var fontSize: Double,
     public var fontFamily: String,
-) : BasicSolid(), Solid
+) : SolidBase(), Solid
 
 public fun VisionContainerBuilder<Solid>.label(
     text: String,

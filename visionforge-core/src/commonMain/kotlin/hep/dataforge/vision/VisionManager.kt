@@ -54,6 +54,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
+                default { VisionBase.serializer() }
                 subclass(VisionBase.serializer())
                 subclass(VisionGroupBase.serializer())
             }

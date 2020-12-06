@@ -12,16 +12,30 @@ repositories{
 }
 
 kotlin {
+    jvm()
     js(IR) {
-        browser {}
+        browser {
+        }
+        binaries.executable()
     }
 
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-solid"))
-                api(project(":visionforge-gdml"))
-                api(project(":ui:bootstrap"))
+                implementation(project(":visionforge-solid"))
+                implementation(project(":visionforge-gdml"))
+
+            }
+        }
+        val jsMain by getting{
+            dependencies {
+                implementation(project(":ui:bootstrap"))
+            }
+        }
+
+        val jvmMain by getting{
+            dependencies {
+                implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }
         }
     }

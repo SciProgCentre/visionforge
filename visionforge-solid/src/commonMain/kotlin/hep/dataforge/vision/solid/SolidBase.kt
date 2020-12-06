@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("solid")
-public open class BasicSolid : VisionBase(), Solid {
+public open class SolidBase : VisionBase(), Solid {
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
     override var position: Point3D? = null

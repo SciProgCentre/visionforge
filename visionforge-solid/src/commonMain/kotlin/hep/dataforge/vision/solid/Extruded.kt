@@ -39,7 +39,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 public class Extruded(
     public var shape: List<Point2D> = ArrayList(),
     public var layers: MutableList<Layer> = ArrayList()
-) : BasicSolid(), GeometrySolid {
+) : SolidBase(), GeometrySolid {
 
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()

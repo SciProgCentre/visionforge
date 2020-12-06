@@ -12,7 +12,7 @@ public class Box(
     public val xSize: Float,
     public val ySize: Float,
     public val zSize: Float
-) : BasicSolid(), GeometrySolid {
+) : SolidBase(), GeometrySolid {
 
     //TODO add helper for color configuration
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.collections.set
 
-public abstract class AbstractReference : BasicSolid(), VisionGroup {
+public abstract class AbstractReference : SolidBase(), VisionGroup {
     public abstract val prototype: Solid
 
     override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = sequence {

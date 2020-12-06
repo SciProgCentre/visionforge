@@ -14,6 +14,7 @@ import hep.dataforge.vision.html.*
 import hep.dataforge.vision.server.VisionServer.Companion.DEFAULT_PAGE
 import io.ktor.application.*
 import io.ktor.features.CORS
+import io.ktor.features.CallLogging
 import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -23,7 +24,10 @@ import io.ktor.http.content.static
 import io.ktor.http.withCharset
 import io.ktor.response.respond
 import io.ktor.response.respondText
-import io.ktor.routing.*
+import io.ktor.routing.application
+import io.ktor.routing.get
+import io.ktor.routing.route
+import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
@@ -34,9 +38,12 @@ import java.awt.Desktop
 import java.net.URI
 import kotlin.time.milliseconds
 
+/**
+ * A ktor plugin container with given [routing]
+ */
 public class VisionServer internal constructor(
     private val visionManager: VisionManager,
-    private val routing: Routing,
+    private val application: Application,
     private val rootRoute: String,
 ) : Configurable {
     override val config: Config = Config()
@@ -57,7 +64,7 @@ public class VisionServer internal constructor(
         title: String,
         headers: List<HtmlFragment>,
     ): Map<Name, Vision> {
-        lateinit var result: Map<Name, Vision>
+        lateinit var visionMap: Map<Name, Vision>
 
         head {
             meta {
@@ -69,21 +76,26 @@ public class VisionServer internal constructor(
             title(title)
         }
         body {
-            result = visionFragment(visionFragment)
-            script {
-                type = "text/javascript"
-
-                val normalizedRoute = if (rootRoute.endsWith("/")) {
-                    rootRoute
-                } else {
-                    "$rootRoute/"
-                }
-
-                src = TODO()//"${normalizedRoute}js/plotlyConnect.js"
-            }
+//            attributes[OUTPUT_ENDPOINT_ATTRIBUTE] = if (rootRoute.endsWith("/")) {
+//                rootRoute
+//            } else {
+//                "$rootRoute/"
+//            }
+            //Load the fragment and remember all loaded visions
+            visionMap = visionFragment(visionFragment)
+//            //The script runs when all headers already with required libraries are already loaded
+//            script {
+//                type = "text/javascript"
+//
+//                val normalizedRoute =
+//                unsafe {
+//                    //language=JavaScript
+//                    +"fetchAndRenderAllVisions()"
+//                }
+//            }
         }
 
-        return result
+        return visionMap
     }
 
     public fun page(
@@ -102,56 +114,50 @@ public class VisionServer internal constructor(
             null
         }
 
-        routing.createRouteFromPath(rootRoute).apply {
-            route(route) {
-                //Update websocket
-                webSocket("ws") {
-                    val name: String = call.request.queryParameters["name"]
-                        ?: error("Vision name is not defined in parameters")
+        application.routing {
+            route(rootRoute) {
+                route(route) {
+                    //Update websocket
+                    webSocket("ws") {
+                        val name: String = call.request.queryParameters["name"]
+                            ?: error("Vision name is not defined in parameters")
 
-                    application.log.debug("Opened server socket for $name")
-                    val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
-                    try {
-                        vision.flowChanges(this, updateInterval.milliseconds).collect {  update ->
-                            val json = visionManager.encodeToString(update)
-                            outgoing.send(Frame.Text(json))
+                        application.log.debug("Opened server socket for $name")
+                        val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
+                        try {
+                            vision.flowChanges(this, updateInterval.milliseconds).collect { update ->
+                                val json = visionManager.encodeToString(update)
+                                outgoing.send(Frame.Text(json))
+                            }
+                        } catch (ex: Exception) {
+                            application.log.debug("Closed server socket for $name")
                         }
-                    } catch (ex: Exception) {
-                        application.log.debug("Closed server socket for $name")
                     }
-                }
-                //Plots in their json representation
-                get("vision") {
-                    val name: String = call.request.queryParameters["name"]
-                        ?: error("Vision name is not defined in parameters")
+                    //Plots in their json representation
+                    get("vision") {
+                        val name: String = call.request.queryParameters["name"]
+                            ?: error("Vision name is not defined in parameters")
 
-                    val vision: Vision? = visions[name.toName()]
-                    if (vision == null) {
-                        call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
-                    } else {
-                        call.respondText(
-                            visionManager.encodeToString(vision),
-                            contentType = ContentType.Application.Json,
-                            status = HttpStatusCode.OK
-                        )
-                    }
-                }
-                //filled pages
-                get {
-//                    val origin = call.request.origin
-//                    val url = URLBuilder().apply {
-//                        protocol = URLProtocol.createOrDefault(origin.scheme)
-//                        //workaround for https://github.com/ktorio/ktor/issues/1663
-//                        host = if (origin.host.startsWith("0:")) "[${origin.host}]" else origin.host
-//                        port = origin.port
-//                        encodedPath = origin.uri
-//                    }.build()
-                    if (cachedHtml == null) {
-                        call.respondHtml {
-                            visions.putAll(buildPage(visionFragment, title, headers))
+                        val vision: Vision? = visions[name.toName()]
+                        if (vision == null) {
+                            call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
+                        } else {
+                            call.respondText(
+                                visionManager.encodeToString(vision),
+                                contentType = ContentType.Application.Json,
+                                status = HttpStatusCode.OK
+                            )
                         }
-                    } else {
-                        call.respondText(cachedHtml, ContentType.Text.Html.withCharset(Charsets.UTF_8))
+                    }
+                    //filled pages
+                    get {
+                        if (cachedHtml == null) {
+                            call.respondHtml {
+                                visions.putAll(buildPage(visionFragment, title, headers))
+                            }
+                        } else {
+                            call.respondText(cachedHtml, ContentType.Text.Html.withCharset(Charsets.UTF_8))
+                        }
                     }
                 }
             }
@@ -160,7 +166,7 @@ public class VisionServer internal constructor(
 
     public fun page(
         route: String = DEFAULT_PAGE,
-        title: String = "Plotly server page '$route'",
+        title: String = "VisionForge server page '$route'",
         headers: List<HtmlFragment> = emptyList(),
         content: HtmlOutputScope<*, Vision>.() -> Unit,
     ) {
@@ -170,7 +176,6 @@ public class VisionServer internal constructor(
 
     public companion object {
         public const val DEFAULT_PAGE: String = "/"
-        public val UPDATE_MODE_KEY: Name = "update.mode".toName()
         public val UPDATE_INTERVAL_KEY: Name = "update.interval".toName()
     }
 }
@@ -190,8 +195,12 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
         }
     }
 
+    if(featureOrNull(CallLogging) == null){
+        install(CallLogging)
+    }
 
-    val routing = routing {
+
+    routing {
         route(route) {
             static {
                 resources()
@@ -201,7 +210,7 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
 
     val visionManager = context.plugins.fetch(VisionManager)
 
-    return VisionServer(visionManager, routing, route)
+    return VisionServer(visionManager, this, route)
 }
 
 public fun ApplicationEngine.show() {

@@ -16,7 +16,7 @@ public class Sphere(
     public var phi: Float = PI2,
     public var thetaStart: Float = 0f,
     public var theta: Float = PI.toFloat(),
-) : BasicSolid(), GeometrySolid {
+) : SolidBase(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {

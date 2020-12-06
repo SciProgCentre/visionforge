@@ -1,7 +1,9 @@
 package hep.dataforge.vision.client
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
+import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.html.BindingHtmlOutputScope
 import hep.dataforge.vision.html.HtmlOutputScope
@@ -10,18 +12,38 @@ import kotlinx.browser.document
 import kotlinx.html.TagConsumer
 import org.w3c.dom.*
 
-public interface ElementVisionRenderer<in V : Vision> {
-    public fun render(element: Element, vision: V): Unit
-}
+@Type(ElementVisionRenderer.TYPE)
+public interface ElementVisionRenderer {
 
-public fun <V : Vision> Map<String, V>.bind(renderer: ElementVisionRenderer<V>) {
-    forEach { (id, vision) ->
-        val element = document.getElementById(id) ?: error("Could not find element with id $id")
-        renderer.render(element, vision)
+    /**
+     * Give a [vision] integer rating based on this renderer capabilities. [ZERO_RATING] or negative values means that this renderer
+     * can't process a vision. The value of [DEFAULT_RATING] used for default renderer. Specialized renderers could specify
+     * higher value in order to "steal" rendering job
+     */
+    public fun rateVision(vision: Vision): Int
+
+    /**
+     * Display the [vision] inside a given [element] replacing its current content
+     */
+    public fun render(element: Element, vision: Vision): Unit
+
+    public companion object {
+        public const val TYPE: String = "elementVisionRenderer"
+        public const val ZERO_RATING: Int = 0
+        public const val DEFAULT_RATING: Int = 10
     }
 }
 
-public fun <V : Vision> Element.renderVisions(renderer: ElementVisionRenderer<V>, visionProvider: (Name) -> V?) {
+@DFExperimental
+public fun Map<String, Vision>.bind(rendererFactory: (Vision) -> ElementVisionRenderer) {
+    forEach { (id, vision) ->
+        val element = document.getElementById(id) ?: error("Could not find element with id $id")
+        rendererFactory(vision).render(element, vision)
+    }
+}
+
+@DFExperimental
+public fun Element.renderAllVisions(visionProvider: (Name) -> Vision, rendererFactory: (Vision) -> ElementVisionRenderer) {
     val elements = getElementsByClassName(HtmlOutputScope.OUTPUT_CLASS)
     elements.asList().forEach { element ->
         val name = element.attributes[HtmlOutputScope.OUTPUT_NAME_ATTRIBUTE]?.value
@@ -30,21 +52,19 @@ public fun <V : Vision> Element.renderVisions(renderer: ElementVisionRenderer<V>
             return@forEach
         }
         val vision = visionProvider(name.toName())
-        if (vision == null) {
-            console.error("Vision with name $name is not resolved")
-            return@forEach
-        }
-        renderer.render(element, vision)
+        rendererFactory(vision).render(element, vision)
     }
 }
 
-public fun <V : Vision> Document.renderVisions(renderer: ElementVisionRenderer<V>, visionProvider: (Name) -> V?): Unit {
-    documentElement?.renderVisions(renderer, visionProvider)
+@DFExperimental
+public fun Document.renderAllVisions(visionProvider: (Name) -> Vision, rendererFactory: (Vision) -> ElementVisionRenderer): Unit {
+    documentElement?.renderAllVisions(visionProvider,rendererFactory)
 }
 
+@DFExperimental
 public fun HtmlVisionFragment<Vision>.renderInDocument(
     root: TagConsumer<HTMLElement>,
-    renderer: ElementVisionRenderer<Vision>,
+    renderer: ElementVisionRenderer,
 ): HTMLElement = BindingHtmlOutputScope<HTMLElement, Vision>(root).apply(content).let { scope ->
     scope.finalize().apply {
         scope.bindings.forEach { (name, vision) ->

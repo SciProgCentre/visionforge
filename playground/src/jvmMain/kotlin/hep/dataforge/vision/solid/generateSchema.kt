@@ -1,4 +1,22 @@
-//package hep.dataforge.vision.solid
+package hep.dataforge.vision.solid
+
+import com.github.ricky12awesome.jss.encodeToSchema
+import kotlinx.serialization.json.Json
+
+fun main() {
+    val schema = Json {
+        serializersModule = SolidManager.serializersModuleForSolids
+        prettyPrintIndent = "  "
+        prettyPrint = true
+        ignoreUnknownKeys = true
+        isLenient = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }.encodeToSchema(SolidGroup.serializer(), generateDefinitions = false)
+    println(schema)
+}
+
+
 //
 //import hep.dataforge.meta.JSON_PRETTY
 //import kotlinx.serialization.*
