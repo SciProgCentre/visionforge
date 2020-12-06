@@ -9,6 +9,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.*
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIALIZER_MODULE_TARGET
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
@@ -64,9 +65,9 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             serializersModule = serializersModuleForSolids
         }
 
-        public fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(Vision.serializer(), solid)
+        internal fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(PolymorphicSerializer(Vision::class), solid)
 
-        public fun decodeFromString(str: String): Vision = jsonForSolids.decodeFromString(Vision.serializer(), str).also {
+        internal fun decodeFromString(str: String): Vision = jsonForSolids.decodeFromString(PolymorphicSerializer(Vision::class), str).also {
             if(it is VisionGroup){
                 it.attachChildren()
             }

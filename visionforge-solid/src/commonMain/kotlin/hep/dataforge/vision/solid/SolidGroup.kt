@@ -6,6 +6,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
@@ -126,7 +127,7 @@ internal class Prototypes(
         private val mapSerializer: KSerializer<Map<NameToken, Vision>> =
             MapSerializer(
                 NameToken.serializer(),
-                Vision.serializer()
+                PolymorphicSerializer(Vision::class)
             )
 
         override val descriptor: SerialDescriptor get() = mapSerializer.descriptor

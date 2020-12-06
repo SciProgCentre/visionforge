@@ -5,6 +5,7 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.names.plus
+import hep.dataforge.vision.VisionManager.Companion.visionSerializer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -54,10 +55,13 @@ public abstract class EmptyVision : Vision {
 @SerialName("vision.null")
 public object NullVision : EmptyVision()
 
+/**
+ * Serialization proxy is used to create immutable reference for a given vision
+ */
 @Serializable(VisionSerializationProxy.Companion::class)
 private class VisionSerializationProxy(val ref: Vision) : EmptyVision() {
     companion object : KSerializer<VisionSerializationProxy> {
-        override val descriptor: SerialDescriptor = Vision.serializer().descriptor
+        override val descriptor: SerialDescriptor = visionSerializer.descriptor
 
         @OptIn(ExperimentalSerializationApi::class)
         override fun serialize(encoder: Encoder, value: VisionSerializationProxy) {
@@ -67,7 +71,7 @@ private class VisionSerializationProxy(val ref: Vision) : EmptyVision() {
         }
 
         override fun deserialize(decoder: Decoder): VisionSerializationProxy =
-            VisionSerializationProxy(Vision.serializer().deserialize(decoder))
+            VisionSerializationProxy(visionSerializer.deserialize(decoder))
     }
 }
 

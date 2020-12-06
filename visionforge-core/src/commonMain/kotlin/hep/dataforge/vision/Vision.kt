@@ -10,7 +10,6 @@ import hep.dataforge.provider.Type
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
-import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.Transient
 
 /**
@@ -74,8 +73,6 @@ public interface Vision : Configurable, Described {
     public companion object {
         public const val TYPE: String = "vision"
         public val STYLE_KEY: Name = "@style".asName()
-
-        public fun serializer(): PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)
 
         public val VISIBLE_KEY: Name = "visible".asName()
     }

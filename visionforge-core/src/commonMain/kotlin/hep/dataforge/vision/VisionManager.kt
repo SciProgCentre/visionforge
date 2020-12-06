@@ -3,6 +3,7 @@ package hep.dataforge.vision
 import hep.dataforge.context.*
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.modules.SerializersModule
@@ -24,17 +25,24 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
-    public val jsonFormat: Json
+    private val jsonFormat: Json
         get() = Json(defaultJson) {
             serializersModule = this@VisionManager.serializersModule
         }
 
-    public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(Vision.serializer(), string)
-    public fun encodeToString(vision: Vision): String = jsonFormat.encodeToString(Vision.serializer(), vision)
+    public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(visionSerializer, string).also {
+        (it as? VisionGroup)?.attachChildren()
+    }
 
-    public fun decodeFromJson(json: JsonElement): Vision = jsonFormat.decodeFromJsonElement(Vision.serializer(), json)
+    public fun encodeToString(vision: Vision): String = jsonFormat.encodeToString(visionSerializer, vision)
+
+    public fun decodeFromJson(json: JsonElement): Vision =
+        jsonFormat.decodeFromJsonElement(visionSerializer, json).also {
+            (it as? VisionGroup)?.attachChildren()
+        }
+
     public fun encodeToJsonElement(vision: Vision): JsonElement =
-        jsonFormat.encodeToJsonElement(Vision.serializer(), vision)
+        jsonFormat.encodeToJsonElement(visionSerializer, vision)
 
     //TODO remove double transformation with dedicated Meta serial format
     public fun decodeFromMeta(meta: Meta, descriptor: NodeDescriptor? = null): Vision =
@@ -67,5 +75,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             encodeDefaults = false
             ignoreUnknownKeys = true
         }
+
+        internal val visionSerializer: PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)
     }
 }

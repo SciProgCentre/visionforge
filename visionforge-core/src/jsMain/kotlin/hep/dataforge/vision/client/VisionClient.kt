@@ -47,14 +47,17 @@ public class VisionClient : AbstractPlugin() {
         if (!element.classList.contains(HtmlOutputScope.OUTPUT_CLASS)) error("The element $element is not an output element")
         val endpoint = resolveEndpoint(element)
         console.info("Vision server is resolved to $endpoint")
+
         val fetchUrl = URL(endpoint).apply {
             searchParams.append("name", name)
             pathname += "/vision"
         }
+
+        console.info("Fetching vision data from $fetchUrl")
         window.fetch(fetchUrl).then { response ->
             if (response.ok) {
                 response.text().then { text ->
-                    val vision = visionManager.jsonFormat.decodeFromString(Vision.serializer(), text)
+                    val vision = visionManager.decodeFromString(text)
 
                     val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
                     renderer.render(element, vision)
@@ -68,7 +71,7 @@ public class VisionClient : AbstractPlugin() {
                             onmessage = { messageEvent ->
                                 val stringData: String? = messageEvent.data as? String
                                 if (stringData != null) {
-                                    val update = visionManager.jsonFormat.decodeFromString(Vision.serializer(), text)
+                                    val update = visionManager.decodeFromString(text)
                                     vision.update(update)
                                 } else {
                                     console.error("WebSocket message data is not a string")

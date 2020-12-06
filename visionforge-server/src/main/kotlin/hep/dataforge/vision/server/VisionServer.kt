@@ -130,7 +130,7 @@ public class VisionServer internal constructor(
                                 outgoing.send(Frame.Text(json))
                             }
                         } catch (ex: Exception) {
-                            application.log.debug("Closed server socket for $name")
+                            application.log.debug("Closed server socket for $name with exception $ex")
                         }
                     }
                     //Plots in their json representation
