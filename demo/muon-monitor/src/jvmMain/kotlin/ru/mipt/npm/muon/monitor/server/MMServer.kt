@@ -27,9 +27,11 @@ import org.apache.commons.math3.random.JDKRandomGenerator
 import ru.mipt.npm.muon.monitor.Model
 import ru.mipt.npm.muon.monitor.sim.Cos2TrackGenerator
 import ru.mipt.npm.muon.monitor.sim.simulateOne
+import io.ktor.response.respondText
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
+import io.ktor.http.HttpStatusCode
 
 private val generator = Cos2TrackGenerator(JDKRandomGenerator(223))
 
@@ -42,7 +44,7 @@ fun Application.module(context: Context = Global) {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(solidManager.visionManager.jsonFormat, ContentType.Application.Json)
+        json()
     }
     install(Routing) {
         get("/event") {
@@ -50,7 +52,11 @@ fun Application.module(context: Context = Global) {
             call.respond(event)
         }
         get("/geometry") {
-            call.respond(Model.buildGeometry())
+            call.respondText(
+                solidManager.visionManager.encodeToString(Model.buildGeometry()),
+                contentType = ContentType.Application.Json,
+                status = HttpStatusCode.OK
+            )
         }
         static("/") {
             resources()

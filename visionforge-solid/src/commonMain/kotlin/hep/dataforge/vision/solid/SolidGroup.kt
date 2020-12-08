@@ -38,7 +38,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
     /**
      * Create or edit prototype node as a group
      */
-    public fun prototypes(builder: MutableVisionGroup.() -> Unit): Unit {
+    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
             it.parent = this
@@ -65,6 +65,10 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override fun createGroup(): SolidGroup = SolidGroup()
 
+    override fun update(change: VisionChange) {
+        updatePosition(change.properties)
+        super.update(change)
+    }
 
     public companion object {
 //        val PROTOTYPES_KEY = NameToken("@prototypes")
@@ -82,13 +86,13 @@ public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
 public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
     prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
-public fun MutableVisionGroup.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun VisionContainerBuilder<Vision>.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
-public fun MutableVisionGroup.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**

@@ -33,7 +33,7 @@ public class Composite(
         get() = null
 }
 
-public inline fun MutableVisionGroup.composite(
+public inline fun VisionContainerBuilder<Solid>.composite(
     type: CompositeType,
     name: String = "",
     builder: SolidGroup.() -> Unit
@@ -58,11 +58,11 @@ public inline fun MutableVisionGroup.composite(
     }
 }
 
-public inline fun MutableVisionGroup.union(name: String = "", builder: SolidGroup.() -> Unit): Composite =
+public inline fun VisionContainerBuilder<Solid>.union(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.UNION, name, builder = builder)
 
-public inline fun MutableVisionGroup.subtract(name: String = "", builder: SolidGroup.() -> Unit): Composite =
+public inline fun VisionContainerBuilder<Solid>.subtract(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
-public inline fun MutableVisionGroup.intersect(name: String = "", builder: SolidGroup.() -> Unit): Composite =
+public inline fun VisionContainerBuilder<Solid>.intersect(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.INTERSECT, name, builder = builder)

@@ -66,7 +66,7 @@ public interface Vision : Configurable, Described {
     /**
      * Update this vision using external meta. Children are not updated.
      */
-    public fun update(change: Vision)
+    public fun update(change: VisionChange)
 
     override val descriptor: NodeDescriptor?
 

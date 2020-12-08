@@ -3,6 +3,7 @@ package hep.dataforge.vision.client
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.HtmlOutputScope
 import hep.dataforge.vision.html.HtmlOutputScope.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
@@ -36,7 +37,8 @@ public class VisionClient : AbstractPlugin() {
 
     private fun getRenderers() = context.gather<ElementVisionRenderer>(ElementVisionRenderer.TYPE).values
 
-    public fun findRendererFor(vision: Vision): ElementVisionRenderer? = getRenderers().maxByOrNull { it.rateVision(vision) }
+    public fun findRendererFor(vision: Vision): ElementVisionRenderer? =
+        getRenderers().maxByOrNull { it.rateVision(vision) }
 
     /**
      * Fetch from server and render a vision, described in a given with [HtmlOutputScope.OUTPUT_CLASS] class.
@@ -71,8 +73,10 @@ public class VisionClient : AbstractPlugin() {
                             onmessage = { messageEvent ->
                                 val stringData: String? = messageEvent.data as? String
                                 if (stringData != null) {
-                                    val update = visionManager.decodeFromString(text)
-                                    vision.update(update)
+//                                    console.info("Received WS update: $stringData")
+                                    val dif = visionManager.jsonFormat
+                                        .decodeFromString(VisionChange.serializer(), stringData)
+                                    vision.update(dif)
                                 } else {
                                     console.error("WebSocket message data is not a string")
                                 }
@@ -121,7 +125,7 @@ public fun VisionClient.fetchVisionsInChildren(element: Element, requestUpdates:
 /**
  * Fetch visions from the server for all elements with [HtmlOutputScope.OUTPUT_CLASS] class in the document body
  */
-public fun VisionClient.fetchAndRenderAllVisions(requestUpdates: Boolean = true){
+public fun VisionClient.fetchAndRenderAllVisions(requestUpdates: Boolean = true) {
     val element = document.body ?: error("Document does not have a body")
     fetchVisionsInChildren(element, requestUpdates)
 }

@@ -1,5 +1,6 @@
 package hep.dataforge.vision
 
+import hep.dataforge.meta.configure
 import hep.dataforge.names.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -95,6 +96,9 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
         attachChild(NameToken("@static", index = child.hashCode().toString()), child)
     }
 
+    /**
+     * Create a vision group of the same type as this vision group. Do not attach it.
+     */
     protected open fun createGroup(): VisionGroupBase = VisionGroupBase()
 
     /**
@@ -158,22 +162,19 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
         }
     }
 
-    override fun update(change: Vision) {
-        if (change is VisionGroup) {
-            //update stylesheet
-            val changeStyleSheet = change.styleSheet
-            if (changeStyleSheet != null) {
-                styleSheet {
-                    update(changeStyleSheet)
-                }
-            }
-            change.children.forEach { (token, child) ->
-                when {
-                    child is NullVision -> removeChild(token)
-                    children.containsKey(token) -> children[token]!!.update(child)
-                    else -> attachChild(token, child)
-                }
-            }
+    override fun update(change: VisionChange) {
+        //update stylesheet
+//            val changeStyleSheet = change.styleSheet
+//            if (changeStyleSheet != null) {
+//                styleSheet {
+//                    update(changeStyleSheet)
+//                }
+//            }
+        change.propertyChange.forEach {(childName,configChange)->
+            get(childName)?.configure(configChange)
+        }
+        change.childrenChange.forEach { (name, child) ->
+            set(name, child)
         }
         super.update(change)
     }

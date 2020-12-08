@@ -3,6 +3,8 @@
 
 ![Gradle build](https://github.com/mipt-npm/visionforge/workflows/Gradle%20build/badge.svg)
 
+[![Slack](https://img.shields.io/badge/slack-channel-green?logo=slack)](https://kotlinlang.slack.com/archives/CEXV2QWNM)
+
 # DataForge Visualization Platform
 
 ## Table of Contents

@@ -8,6 +8,7 @@ import hep.dataforge.meta.long
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.flowChanges
 import hep.dataforge.vision.html.*
@@ -126,8 +127,8 @@ public class VisionServer internal constructor(
                         application.log.debug("Opened server socket for $name")
                         val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
                         try {
-                            vision.flowChanges(this, updateInterval.milliseconds).collect { update ->
-                                val json = visionManager.encodeToString(update)
+                            vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
+                                val json = VisionManager.defaultJson.encodeToString(VisionChange.serializer(), update)
                                 outgoing.send(Frame.Text(json))
                             }
                         } catch (ex: Throwable) {
@@ -197,10 +198,11 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
         }
     }
 
-    if(featureOrNull(CallLogging) == null){
+    if (featureOrNull(CallLogging) == null) {
         install(CallLogging)
     }
 
+    val visionManager = context.plugins.fetch(VisionManager)
 
     routing {
         route(route) {
@@ -209,8 +211,6 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
             }
         }
     }
-
-    val visionManager = context.plugins.fetch(VisionManager)
 
     return VisionServer(visionManager, this, route)
 }

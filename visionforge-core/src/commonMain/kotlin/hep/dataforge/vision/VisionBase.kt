@@ -46,12 +46,13 @@ public open class VisionBase : Vision {
      * The config is initialized and assigned on-demand.
      * To avoid unnecessary allocations, one should access [getAllProperties] via [getProperty] instead.
      */
-    override val config: Config
-        get() = properties ?: Config().also { config ->
+    override val config: Config by lazy {
+        properties ?: Config().also { config ->
             properties = config.also {
                 it.onChange(this) { name, _, _ -> propertyChanged(name) }
             }
         }
+    }
 
     @Transient
     private val listeners = HashSet<PropertyListener>()
@@ -101,9 +102,9 @@ public open class VisionBase : Vision {
         properties = null
     }
 
-    override fun update(change: Vision) {
-        if (change.properties != null) {
-            config.update(change.config)
+    override fun update(change: VisionChange) {
+        change.propertyChange[Name.EMPTY]?.let {
+            config.update(it)
         }
     }
 
