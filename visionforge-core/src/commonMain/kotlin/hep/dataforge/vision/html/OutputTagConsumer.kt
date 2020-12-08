@@ -5,47 +5,52 @@ import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
 import kotlinx.html.*
 
-public class HtmlOutput<V : Vision>(
-    public val outputScope: HtmlOutputScope<*, V>,
+/**
+ * An HTML div wrapper that includes the output [name] and inherited [render] function
+ */
+public class OutputDiv<in V : Vision>(
+    private val div: DIV,
     public val name: Name,
-    public val div: DIV,
-)
+    public val render: (V) -> Unit,
+) : HtmlBlockTag by div
 
-public abstract class HtmlOutputScope<R, V : Vision>(
+/**
+ * Modified  [TagConsumer] that allows rendering output fragments and visions in them
+ */
+public abstract class OutputTagConsumer<R, V : Vision>(
     private val root: TagConsumer<R>,
-    public val idPrefix: String? = null,
+    private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
     public open fun resolveId(name: Name): String = (idPrefix ?: "output:") + name.toString()
 
     /**
-     * Create a placeholder but do not attach any [Vision] to it
+     * Render a vision inside the output fragment
      */
-    public inline fun <T> TagConsumer<T>.visionOutput(
+    protected abstract fun FlowContent.renderVision(name: Name, vision: V)
+
+    /**
+     * Create a placeholder for an output window
+     */
+    public fun <T> TagConsumer<T>.visionOutput(
         name: Name,
-        crossinline block: HtmlOutput<V>.() -> Unit = {},
+        block: OutputDiv<V>.() -> Unit = {},
     ): T = div {
         id = resolveId(name)
         classes = setOf(OUTPUT_CLASS)
         attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
-        @Suppress("UNCHECKED_CAST")
-        HtmlOutput(this@HtmlOutputScope, name, this).block()
+        OutputDiv<V>(this, name) { renderVision(name, it) }.block()
     }
 
-
-    public inline fun <T> TagConsumer<T>.visionOutput(
+    public fun <T> TagConsumer<T>.visionOutput(
         name: String,
-        crossinline block: HtmlOutput<V>.() -> Unit = {},
+        block: OutputDiv<V>.() -> Unit = {},
     ): T = visionOutput(name.toName(), block)
 
-    /**
-     * Create a placeholder and put a [Vision] in it
-     */
-    public abstract fun renderVision(htmlOutput: HtmlOutput<V>, vision: V)
 
     public fun <T> TagConsumer<T>.vision(name: Name, vision: V): Unit {
         visionOutput(name) {
-            renderVision(this, vision)
+            render(vision)
         }
     }
 

@@ -29,10 +29,14 @@ import io.ktor.routing.application
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.embeddedServer
+import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.error
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
@@ -47,7 +51,7 @@ public class VisionServer internal constructor(
     private val visionManager: VisionManager,
     private val application: Application,
     private val rootRoute: String,
-) : Configurable {
+) : Configurable, CoroutineScope by application {
     override val config: Config = Config()
     public var updateInterval: Long by config.long(300, key = UPDATE_INTERVAL_KEY)
     public var cacheFragments: Boolean by config.boolean(true)
@@ -78,23 +82,8 @@ public class VisionServer internal constructor(
             title(title)
         }
         body {
-//            attributes[OUTPUT_ENDPOINT_ATTRIBUTE] = if (rootRoute.endsWith("/")) {
-//                rootRoute
-//            } else {
-//                "$rootRoute/"
-//            }
             //Load the fragment and remember all loaded visions
             visionMap = visionFragment(visionFragment)
-//            //The script runs when all headers already with required libraries are already loaded
-//            script {
-//                type = "text/javascript"
-//
-//                val normalizedRoute =
-//                unsafe {
-//                    //language=JavaScript
-//                    +"fetchAndRenderAllVisions()"
-//                }
-//            }
         }
 
         return visionMap
@@ -171,7 +160,7 @@ public class VisionServer internal constructor(
         route: String = DEFAULT_PAGE,
         title: String = "VisionForge server page '$route'",
         headers: List<HtmlFragment> = emptyList(),
-        content: HtmlOutputScope<*, Vision>.() -> Unit,
+        content: OutputTagConsumer<*, Vision>.() -> Unit,
     ) {
         page(buildVisionFragment(content), route, title, headers)
     }
@@ -214,6 +203,15 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
 
     return VisionServer(visionManager, this, route)
 }
+
+@OptIn(KtorExperimentalAPI::class)
+public fun VisionManager.serve(
+    host: String = "localhost",
+    port: Int = 7777,
+    block: VisionServer.()->Unit
+): ApplicationEngine = context.embeddedServer(CIO, port, host) {
+    visionModule(context).apply(block)
+}.start()
 
 public fun ApplicationEngine.show() {
     val connector = environment.connectors.first()

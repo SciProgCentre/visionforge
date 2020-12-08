@@ -346,7 +346,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         final.prototypes {
             proto.children.forEach { (token, item) ->
                 item.parent = null
-                set(token.asName(), item)
+                set(token.asName(), item as? Solid)
             }
         }
         styleCache.forEach {

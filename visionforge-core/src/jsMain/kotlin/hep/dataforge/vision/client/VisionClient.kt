@@ -2,12 +2,14 @@ package hep.dataforge.vision.client
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
+import hep.dataforge.meta.get
+import hep.dataforge.meta.node
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.html.HtmlOutputScope
-import hep.dataforge.vision.html.HtmlOutputScope.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
-import hep.dataforge.vision.html.HtmlOutputScope.Companion.OUTPUT_NAME_ATTRIBUTE
+import hep.dataforge.vision.html.OutputTagConsumer
+import hep.dataforge.vision.html.OutputTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
+import hep.dataforge.vision.html.OutputTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.Element
@@ -41,12 +43,12 @@ public class VisionClient : AbstractPlugin() {
         getRenderers().maxByOrNull { it.rateVision(vision) }
 
     /**
-     * Fetch from server and render a vision, described in a given with [HtmlOutputScope.OUTPUT_CLASS] class.
+     * Fetch from server and render a vision, described in a given with [OutputTagConsumer.OUTPUT_CLASS] class.
      */
     public fun fetchAndRenderVision(element: Element, requestUpdates: Boolean = true) {
         val name = resolveName(element) ?: error("The element is not a vision output")
         console.info("Found DF output with name $name")
-        if (!element.classList.contains(HtmlOutputScope.OUTPUT_CLASS)) error("The element $element is not an output element")
+        if (!element.classList.contains(OutputTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
         val endpoint = resolveEndpoint(element)
         console.info("Vision server is resolved to $endpoint")
 
@@ -60,9 +62,9 @@ public class VisionClient : AbstractPlugin() {
             if (response.ok) {
                 response.text().then { text ->
                     val vision = visionManager.decodeFromString(text)
-
                     val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
-                    renderer.render(element, vision)
+                    val rendererConfiguration = vision.properties[RENDERER_CONFIGURATION_META_KEY].node ?: Meta.EMPTY
+                    renderer.render(element, vision, rendererConfiguration)
                     if (requestUpdates) {
                         val wsUrl = URL(endpoint).apply {
                             pathname += "/ws"
@@ -73,9 +75,10 @@ public class VisionClient : AbstractPlugin() {
                             onmessage = { messageEvent ->
                                 val stringData: String? = messageEvent.data as? String
                                 if (stringData != null) {
-//                                    console.info("Received WS update: $stringData")
-                                    val dif = visionManager.jsonFormat
-                                        .decodeFromString(VisionChange.serializer(), stringData)
+                                    val dif = visionManager.jsonFormat.decodeFromString(
+                                        VisionChange.serializer(),
+                                        stringData
+                                    )
                                     vision.update(dif)
                                 } else {
                                     console.error("WebSocket message data is not a string")
@@ -103,6 +106,8 @@ public class VisionClient : AbstractPlugin() {
 
     public companion object : PluginFactory<VisionClient> {
 
+        public const val RENDERER_CONFIGURATION_META_KEY: String = "@renderer"
+
         override fun invoke(meta: Meta, context: Context): VisionClient = VisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
@@ -112,10 +117,10 @@ public class VisionClient : AbstractPlugin() {
 }
 
 /**
- * Fetch and render visions for all elements with [HtmlOutputScope.OUTPUT_CLASS] class inside given [element].
+ * Fetch and render visions for all elements with [OutputTagConsumer.OUTPUT_CLASS] class inside given [element].
  */
 public fun VisionClient.fetchVisionsInChildren(element: Element, requestUpdates: Boolean = true) {
-    val elements = element.getElementsByClassName(HtmlOutputScope.OUTPUT_CLASS)
+    val elements = element.getElementsByClassName(OutputTagConsumer.OUTPUT_CLASS)
     console.info("Finished search for outputs. Found ${elements.length} items")
     elements.asList().forEach { child ->
         fetchAndRenderVision(child, requestUpdates)
@@ -123,7 +128,7 @@ public fun VisionClient.fetchVisionsInChildren(element: Element, requestUpdates:
 }
 
 /**
- * Fetch visions from the server for all elements with [HtmlOutputScope.OUTPUT_CLASS] class in the document body
+ * Fetch visions from the server for all elements with [OutputTagConsumer.OUTPUT_CLASS] class in the document body
  */
 public fun VisionClient.fetchAndRenderAllVisions(requestUpdates: Boolean = true) {
     val element = document.body ?: error("Document does not have a body")

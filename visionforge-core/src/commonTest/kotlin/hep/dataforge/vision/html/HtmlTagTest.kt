@@ -10,16 +10,17 @@ import kotlin.test.Test
 
 class HtmlTagTest {
 
-    fun HtmlOutput<Vision>.vision(block: Vision.() -> Unit) =
-        outputScope.renderVision(this, VisionBase().apply(block))
+    fun OutputDiv<Vision>.visionBase(block: VisionBase.() -> Unit) =
+        render(VisionBase().apply(block))
 
     val fragment = buildVisionFragment {
         div {
             h1 { +"Head" }
             visionOutput("ddd") {
-                vision {
+                visionBase {
                     configure {
                         set("myProp", 82)
+                        set("otherProp", false)
                     }
                 }
             }

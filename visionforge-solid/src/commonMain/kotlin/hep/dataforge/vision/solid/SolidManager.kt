@@ -65,9 +65,9 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             serializersModule = serializersModuleForSolids
         }
 
-        internal fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(PolymorphicSerializer(Vision::class), solid)
+        public fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(PolymorphicSerializer(Vision::class), solid)
 
-        internal fun decodeFromString(str: String): Vision = jsonForSolids.decodeFromString(PolymorphicSerializer(Vision::class), str).also {
+        fun decodeFromString(str: String): Solid = jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str).also {
             if(it is VisionGroup){
                 it.attachChildren()
             }

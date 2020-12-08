@@ -14,7 +14,7 @@ public fun FlowContent.fragment(fragment: HtmlFragment) {
     fragment.content(consumer)
 }
 
-public class HtmlVisionFragment<V : Vision>(public val content: HtmlOutputScope<*, V>.() -> Unit)
+public class HtmlVisionFragment<V : Vision>(public val content: OutputTagConsumer<*, V>.() -> Unit)
 
-public fun buildVisionFragment(block: HtmlOutputScope<*, Vision>.() -> Unit): HtmlVisionFragment<Vision> =
+public fun buildVisionFragment(block: OutputTagConsumer<*, Vision>.() -> Unit): HtmlVisionFragment<Vision> =
     HtmlVisionFragment(block)

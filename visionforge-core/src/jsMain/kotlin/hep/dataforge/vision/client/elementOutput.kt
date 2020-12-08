@@ -1,13 +1,14 @@
 package hep.dataforge.vision.client
 
 import hep.dataforge.meta.DFExperimental
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.html.BindingHtmlOutputScope
-import hep.dataforge.vision.html.HtmlOutputScope
+import hep.dataforge.vision.html.BindingOutputTagConsumer
 import hep.dataforge.vision.html.HtmlVisionFragment
+import hep.dataforge.vision.html.OutputTagConsumer
 import kotlinx.browser.document
 import kotlinx.html.TagConsumer
 import org.w3c.dom.*
@@ -25,7 +26,7 @@ public interface ElementVisionRenderer {
     /**
      * Display the [vision] inside a given [element] replacing its current content
      */
-    public fun render(element: Element, vision: Vision): Unit
+    public fun render(element: Element, vision: Vision, meta: Meta = Meta.EMPTY): Unit
 
     public companion object {
         public const val TYPE: String = "elementVisionRenderer"
@@ -44,11 +45,11 @@ public fun Map<String, Vision>.bind(rendererFactory: (Vision) -> ElementVisionRe
 
 @DFExperimental
 public fun Element.renderAllVisions(visionProvider: (Name) -> Vision, rendererFactory: (Vision) -> ElementVisionRenderer) {
-    val elements = getElementsByClassName(HtmlOutputScope.OUTPUT_CLASS)
+    val elements = getElementsByClassName(OutputTagConsumer.OUTPUT_CLASS)
     elements.asList().forEach { element ->
-        val name = element.attributes[HtmlOutputScope.OUTPUT_NAME_ATTRIBUTE]?.value
+        val name = element.attributes[OutputTagConsumer.OUTPUT_NAME_ATTRIBUTE]?.value
         if (name == null) {
-            console.error("Attribute ${HtmlOutputScope.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
+            console.error("Attribute ${OutputTagConsumer.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
             return@forEach
         }
         val vision = visionProvider(name.toName())
@@ -65,7 +66,7 @@ public fun Document.renderAllVisions(visionProvider: (Name) -> Vision, rendererF
 public fun HtmlVisionFragment<Vision>.renderInDocument(
     root: TagConsumer<HTMLElement>,
     renderer: ElementVisionRenderer,
-): HTMLElement = BindingHtmlOutputScope<HTMLElement, Vision>(root).apply(content).let { scope ->
+): HTMLElement = BindingOutputTagConsumer<HTMLElement, Vision>(root).apply(content).let { scope ->
     scope.finalize().apply {
         scope.bindings.forEach { (name, vision) ->
             val id = scope.resolveId(name)

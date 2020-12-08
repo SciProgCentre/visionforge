@@ -133,8 +133,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         return if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision) {
-        createCanvas(element).render(vision as? Solid ?: error("Only solids are rendered"))
+    override fun render(element: Element, vision: Vision, meta: Meta) {
+        createCanvas(element, Canvas3DOptions.read(meta)).render(vision as? Solid ?: error("Only solids are rendered"))
     }
 
     public companion object : PluginFactory<ThreePlugin> {

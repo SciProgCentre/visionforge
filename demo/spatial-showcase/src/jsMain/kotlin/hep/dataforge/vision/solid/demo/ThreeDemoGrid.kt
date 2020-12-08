@@ -20,7 +20,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 
-class ThreeDemoGrid(element: Element, idPrefix: String = "") : Page<Solid> {
+class ThreeDemoGrid(element: Element) : Page<Solid> {
     private lateinit var navigationElement: HTMLElement
     private lateinit var contentElement: HTMLDivElement
 
