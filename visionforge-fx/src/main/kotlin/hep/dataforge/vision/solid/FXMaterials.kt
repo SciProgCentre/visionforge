@@ -5,38 +5,40 @@ import hep.dataforge.meta.double
 import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
+import hep.dataforge.values.int
+import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
 import javafx.scene.paint.PhongMaterial
 
-object FXMaterials {
-    val RED = PhongMaterial().apply {
+public object FXMaterials {
+    public val RED: PhongMaterial = PhongMaterial().apply {
         diffuseColor = Color.DARKRED
         specularColor = Color.WHITE
     }
 
-    val WHITE = PhongMaterial().apply {
+    public val WHITE: PhongMaterial = PhongMaterial().apply {
         diffuseColor = Color.WHITE
         specularColor = Color.LIGHTBLUE
     }
 
-    val GREY = PhongMaterial().apply {
+    public val GREY: PhongMaterial = PhongMaterial().apply {
         diffuseColor = Color.DARKGREY
         specularColor = Color.WHITE
     }
 
-    val BLUE = PhongMaterial(Color.BLUE)
+    public val BLUE: PhongMaterial = PhongMaterial(Color.BLUE)
 }
 
 /**
  * Infer color based on meta item
  * @param opacity default opacity
  */
-fun MetaItem<*>.color(opacity: Double = 1.0): Color {
+public fun MetaItem<*>.color(opacity: Double = 1.0): Color {
     return when (this) {
         is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
-            val int = value.number.toInt()
+            val int = value.int
             val red = int and 0x00ff0000 shr 16
             val green = int and 0x0000ff00 shr 8
             val blue = int and 0x000000ff

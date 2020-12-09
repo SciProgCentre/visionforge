@@ -17,6 +17,7 @@
 package hep.dataforge.vision.editor
 
 import hep.dataforge.meta.Meta
+import hep.dataforge.values.string
 import hep.dataforge.vision.dfIconView
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TreeItem

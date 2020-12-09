@@ -37,7 +37,9 @@ import io.ktor.util.error
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import java.awt.Desktop
@@ -115,15 +117,12 @@ public class VisionServer internal constructor(
 
                         application.log.debug("Opened server socket for $name")
                         val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
-                        try {
-                            vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
-                                val json = VisionManager.defaultJson.encodeToString(VisionChange.serializer(), update)
-                                outgoing.send(Frame.Text(json))
-                            }
-                        } catch (ex: Throwable) {
-                            application.log.error("Closed server socket for $name with exception $ex")
+                        vision.flowChanges(visionManager, updateInterval.milliseconds).onEach { update ->
+                            val json = VisionManager.defaultJson.encodeToString(VisionChange.serializer(), update)
+                            outgoing.send(Frame.Text(json))
+                        }.catch { ex ->
                             application.log.error(ex)
-                        }
+                        }.launchIn(visionManager.context).join()
                     }
                     //Plots in their json representation
                     get("vision") {
@@ -208,7 +207,7 @@ public fun Application.visionModule(context: Context, route: String = DEFAULT_PA
 public fun VisionManager.serve(
     host: String = "localhost",
     port: Int = 7777,
-    block: VisionServer.()->Unit
+    block: VisionServer.() -> Unit,
 ): ApplicationEngine = context.embeddedServer(CIO, port, host) {
     visionModule(context).apply(block)
 }.start()

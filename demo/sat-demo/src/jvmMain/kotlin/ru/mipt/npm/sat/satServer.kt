@@ -3,8 +3,8 @@ package ru.mipt.npm.sat
 
 import hep.dataforge.context.Global
 import hep.dataforge.names.asName
+import hep.dataforge.names.toName
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.get
 import hep.dataforge.vision.server.close
 import hep.dataforge.vision.server.serve
 import hep.dataforge.vision.server.show
@@ -40,11 +40,12 @@ fun main() {
             vision("main".asName(), sat)
         }
         launch {
+            delay(1000)
             while (isActive) {
-                val currentLayer = Random.nextInt(10)
-                (sat["layer[$currentLayer]"] as? Solid)?.color(123)
+                val target = "layer[${Random.nextInt(1,10)}].segment[${Random.nextInt(3)},${Random.nextInt(3)}]".toName()
+                (sat[target] as? Solid)?.color("red")
                 delay(300)
-                (sat["layer[$currentLayer]"] as? Solid)?.color = null
+                (sat[target] as? Solid)?.color = "green"
             }
         }
     }

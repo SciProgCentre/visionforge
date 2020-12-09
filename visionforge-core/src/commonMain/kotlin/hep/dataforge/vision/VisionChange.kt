@@ -3,10 +3,9 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.*
@@ -15,7 +14,7 @@ import kotlin.time.Duration
 /**
  * An update for a [Vision] or a [VisionGroup]
  */
-public class VisionChangeBuilder: VisionContainerBuilder<Vision> {
+public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     private val propertyChange = HashMap<Name, Config>()
     private val childrenChange = HashMap<Name, Vision?>()
 
@@ -47,7 +46,8 @@ private fun Vision.isolate(manager: VisionManager): Vision {
 @Serializable
 public data class VisionChange(
     val propertyChange: Map<Name, @Serializable(MetaSerializer::class) Meta>,
-    val childrenChange: Map<Name, Vision?>) {
+    val childrenChange: Map<Name, Vision?>,
+) {
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && childrenChange.isEmpty()
 
     /**
@@ -64,7 +64,7 @@ private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
     mutex: Mutex,
-    collector: ()->VisionChangeBuilder,
+    collector: () -> VisionChangeBuilder,
 ) {
     //Collect properties change
     source.config.onChange(mutex) { propertyName, oldItem, newItem ->
@@ -107,17 +107,19 @@ public fun Vision.flowChanges(
     val mutex = Mutex()
 
     var collector = VisionChangeBuilder()
-    scope.collectChange(Name.EMPTY, this@flowChanges, mutex){collector}
+    scope.collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
 
-    while (true) {
+    while (currentCoroutineContext().isActive) {
         //Wait for changes to accumulate
-        kotlinx.coroutines.delay(collectionDuration)
+        delay(collectionDuration)
         //Propagate updates only if something is changed
         if (!collector.isEmpty()) {
             //emit changes
-            emit(collector.isolate(manager))
-            //Reset the collector
-            collector = VisionChangeBuilder()
+            mutex.withLock {
+                emit(collector.isolate(manager))
+                //Reset the collector
+                collector = VisionChangeBuilder()
+            }
         }
     }
 }

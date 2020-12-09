@@ -1,11 +1,11 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.get
 import hep.dataforge.meta.number
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
+import hep.dataforge.values.string
 import kotlin.math.max
 
 /**

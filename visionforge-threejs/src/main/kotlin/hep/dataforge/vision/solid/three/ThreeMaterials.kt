@@ -2,6 +2,8 @@ package hep.dataforge.vision.solid.three
 
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
+import hep.dataforge.values.int
+import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.SolidMaterial
@@ -90,7 +92,7 @@ public object ThreeMaterials {
 public fun MetaItem<*>.getColor(): Color {
     return when (this) {
         is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
-            val int = value.number.toInt()
+            val int = value.int
             Color(int)
         } else {
             Color(this.value.string)

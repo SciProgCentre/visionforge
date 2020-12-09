@@ -12,6 +12,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.Value
 import hep.dataforge.values.parseValue
+import hep.dataforge.values.string
 import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
 import javafx.util.StringConverter
