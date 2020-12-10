@@ -10,6 +10,7 @@
 - Point3D and Point2D are made separate classes instead of expect/actual (to split up different engines.
 - JavaFX support moved to a separate module
 - Threejs support moved to a separate module
+- \[Breaking change!\] Stylesheets are moved into properties under `@stylesheet` key
 
 ### Deprecated
 

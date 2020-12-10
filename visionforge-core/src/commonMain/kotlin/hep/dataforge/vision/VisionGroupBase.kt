@@ -26,19 +26,6 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
      */
     override val children: Map<NameToken, Vision> get() = childrenInternal
 
-    final override var styleSheet: StyleSheet? = null
-        private set
-
-    /**
-     * Update or create stylesheet
-     */
-    public open fun styleSheet(block: StyleSheet.() -> Unit) {
-        if (styleSheet == null) {
-            styleSheet = StyleSheet(this@VisionGroupBase)
-        }
-        styleSheet!!.block()
-    }
-
     override fun propertyChanged(name: Name) {
         super.propertyChanged(name)
         for (obj in this) {

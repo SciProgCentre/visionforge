@@ -10,6 +10,7 @@ import hep.dataforge.names.toName
 import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
+import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
 import kscience.gdml.*
 import kotlin.math.cos

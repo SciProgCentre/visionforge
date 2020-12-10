@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.int
 import hep.dataforge.meta.set
 import hep.dataforge.names.asName
+import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals

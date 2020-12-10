@@ -3,9 +3,9 @@ package hep.dataforge.vision.bootstrap
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.getStyle
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.metaViewer
-import hep.dataforge.vision.resolveStyle
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.render
@@ -24,7 +24,7 @@ public fun RBuilder.visionPropertyEditor(
         card("Styles") {
             accordion("styles") {
                 styles.forEach { styleName ->
-                    val style = item.resolveStyle(styleName)
+                    val style = item.getStyle(styleName)
                     if (style != null) {
                         entry(styleName) {
                             metaViewer(style)

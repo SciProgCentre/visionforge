@@ -5,7 +5,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.update
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.resolveStyle
+import hep.dataforge.vision.getStyle
 import hep.dataforge.vision.setProperty
 import javafx.beans.binding.Binding
 import javafx.beans.property.SimpleObjectProperty
@@ -55,7 +55,7 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
     private val styleBoxProperty: Binding<Node?> = configProperty.objectBinding() {
         VBox().apply {
             item?.styles?.forEach { styleName ->
-                val styleMeta = item?.resolveStyle(styleName)
+                val styleMeta = item?.getStyle(styleName)
                 if (styleMeta != null) {
                     titledpane(styleName, node = MetaViewer(styleMeta).root)
                 }

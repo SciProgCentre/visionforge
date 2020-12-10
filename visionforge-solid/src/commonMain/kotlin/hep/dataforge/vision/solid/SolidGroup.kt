@@ -103,10 +103,6 @@ internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
 ) : VisionGroupBase(), PrototypeHolder {
 
-    override fun styleSheet(block: StyleSheet.() -> Unit) {
-        error("Can't define stylesheet for prototypes block")
-    }
-
     init {
         this.childrenInternal.putAll(children)
     }

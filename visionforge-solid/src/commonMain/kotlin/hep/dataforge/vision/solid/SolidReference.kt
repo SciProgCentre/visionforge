@@ -58,8 +58,6 @@ public class SolidReference(
         get() = (parent as? SolidGroup)?.getPrototype(templateName)
             ?: error("Prototype with name $templateName not found in $parent")
 
-    override val styleSheet: StyleSheet get() = parent?.styleSheet ?: StyleSheet(this)
-
     @Transient
     private val propertyCache: HashMap<Name, Config> = HashMap()
 
@@ -89,8 +87,6 @@ public class SolidReference(
     public inner class ReferenceChild(public val name: Name) : AbstractReference() {
 
         override val prototype: Solid get() = prototypeFor(name)
-
-        override val styleSheet: StyleSheet get() = this@SolidReference.styleSheet
 
         override val children: Map<NameToken, Vision>
             get() = (prototype as? VisionGroup)?.children

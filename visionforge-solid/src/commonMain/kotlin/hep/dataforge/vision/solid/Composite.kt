@@ -3,7 +3,10 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.update
 import hep.dataforge.names.NameToken
-import hep.dataforge.vision.*
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionContainerBuilder
+import hep.dataforge.vision.VisionGroup
+import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,9 +31,6 @@ public class Composite(
 
     override val children: Map<NameToken, Vision>
         get() = mapOf(NameToken("first") to first, NameToken("second") to second)
-
-    override val styleSheet: StyleSheet?
-        get() = null
 }
 
 public inline fun VisionContainerBuilder<Solid>.composite(

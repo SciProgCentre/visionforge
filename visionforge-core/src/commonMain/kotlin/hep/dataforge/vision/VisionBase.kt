@@ -34,7 +34,7 @@ public open class VisionBase : Vision {
     override val descriptor: NodeDescriptor? get() = null
 
     protected fun updateStyles(names: List<String>) {
-        names.mapNotNull { resolveStyle(it) }.asSequence()
+        names.mapNotNull { getStyle(it) }.asSequence()
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
             .forEach {

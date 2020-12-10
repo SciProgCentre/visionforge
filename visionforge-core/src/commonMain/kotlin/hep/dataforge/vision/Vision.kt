@@ -99,12 +99,6 @@ public fun Vision.setProperty(key: String, value: Any?) {
 }
 
 /**
- * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
- */
-public tailrec fun Vision.resolveStyle(name: String): Meta? =
-    (this as? VisionGroup)?.styleSheet?.get(name) ?: parent?.resolveStyle(name)
-
-/**
  * Control visibility of the element
  */
 public var Vision.visible: Boolean?
