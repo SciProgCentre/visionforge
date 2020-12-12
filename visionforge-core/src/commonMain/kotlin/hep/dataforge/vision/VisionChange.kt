@@ -35,6 +35,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
         propertyChange,
         childrenChange.mapValues { it.value?.isolate(manager) }
     )
+    //TODO optimize isolation for visions without parents?
 }
 
 private fun Vision.isolate(manager: VisionManager): Vision {
@@ -77,12 +78,15 @@ private fun CoroutineScope.collectChange(
         }
     }
 
+    coroutineContext[Job]?.invokeOnCompletion {
+        source.config.removeListener(mutex)
+    }
+
     if (source is VisionGroup) {
         //Subscribe for children changes
         source.children.forEach { (token, child) ->
             collectChange(name + token, child, mutex, collector)
         }
-        //TODO update styles?
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
@@ -94,6 +98,9 @@ private fun CoroutineScope.collectChange(
                 }
                 collector()[name + token] = after
             }
+            coroutineContext[Job]?.invokeOnCompletion {
+                source.removeStructureChangeListener(mutex)
+            }
         }
     }
 }
@@ -102,23 +109,24 @@ private fun CoroutineScope.collectChange(
 public fun Vision.flowChanges(
     manager: VisionManager,
     collectionDuration: Duration,
-    scope: CoroutineScope = manager.context,
 ): Flow<VisionChange> = flow {
-    val mutex = Mutex()
+    supervisorScope {
+        val mutex = Mutex()
 
-    var collector = VisionChangeBuilder()
-    scope.collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
+        var collector = VisionChangeBuilder()
+        collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
 
-    while (currentCoroutineContext().isActive) {
-        //Wait for changes to accumulate
-        delay(collectionDuration)
-        //Propagate updates only if something is changed
-        if (!collector.isEmpty()) {
-            //emit changes
-            mutex.withLock {
-                emit(collector.isolate(manager))
-                //Reset the collector
-                collector = VisionChangeBuilder()
+        while (currentCoroutineContext().isActive) {
+            //Wait for changes to accumulate
+            delay(collectionDuration)
+            //Propagate updates only if something is changed
+            if (!collector.isEmpty()) {
+                //emit changes
+                mutex.withLock {
+                    emit(collector.isolate(manager))
+                    //Reset the collector
+                    collector = VisionChangeBuilder()
+                }
             }
         }
     }

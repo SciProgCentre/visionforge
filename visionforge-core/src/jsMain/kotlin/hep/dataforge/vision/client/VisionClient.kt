@@ -2,8 +2,7 @@ package hep.dataforge.vision.client
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.get
-import hep.dataforge.meta.node
+import hep.dataforge.meta.MetaSerializer
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
@@ -42,15 +41,30 @@ public class VisionClient : AbstractPlugin() {
     public fun findRendererFor(vision: Vision): ElementVisionRenderer? =
         getRenderers().maxByOrNull { it.rateVision(vision) }
 
+    private fun Element.getEmbeddedData(className: String): String? = getElementsByClassName(className)[0]?.innerHTML
+
     /**
      * Fetch from server and render a vision, described in a given with [OutputTagConsumer.OUTPUT_CLASS] class.
      */
-    public fun fetchAndRenderVision(element: Element, requestUpdates: Boolean = true) {
+    public fun renderVisionAt(element: Element, requestUpdates: Boolean = true) {
         val name = resolveName(element) ?: error("The element is not a vision output")
         console.info("Found DF output with name $name")
         if (!element.classList.contains(OutputTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
         val endpoint = resolveEndpoint(element)
         console.info("Vision server is resolved to $endpoint")
+
+        val outputMeta = element.getEmbeddedData(OutputTagConsumer.OUTPUT_META_CLASS)?.let {
+            VisionManager.defaultJson.decodeFromString(MetaSerializer, it)
+        } ?: Meta.EMPTY
+
+        //Trying to render embedded vision
+        val embeddedVision = element.getEmbeddedData(OutputTagConsumer.OUTPUT_DATA_CLASS)?.let {
+            visionManager.decodeFromString(it)
+        }
+        if (embeddedVision != null) {
+            val renderer = findRendererFor(embeddedVision) ?: error("Could nof find renderer for $embeddedVision")
+            renderer.render(element, embeddedVision, outputMeta)
+        }
 
         val fetchUrl = URL(endpoint).apply {
             searchParams.append("name", name)
@@ -63,15 +77,14 @@ public class VisionClient : AbstractPlugin() {
                 response.text().then { text ->
                     val vision = visionManager.decodeFromString(text)
                     val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
-                    val rendererConfiguration = vision.properties[RENDERER_CONFIGURATION_META_KEY].node ?: Meta.EMPTY
-                    renderer.render(element, vision, rendererConfiguration)
+                    renderer.render(element, vision, outputMeta)
                     if (requestUpdates) {
                         val wsUrl = URL(endpoint).apply {
                             pathname += "/ws"
                             protocol = "ws"
                             searchParams.append("name", name)
                         }
-                        val ws = WebSocket(wsUrl.toString()).apply {
+                        WebSocket(wsUrl.toString()).apply {
                             onmessage = { messageEvent ->
                                 val stringData: String? = messageEvent.data as? String
                                 if (stringData != null) {
@@ -106,8 +119,6 @@ public class VisionClient : AbstractPlugin() {
 
     public companion object : PluginFactory<VisionClient> {
 
-        public const val RENDERER_CONFIGURATION_META_KEY: String = "@renderer"
-
         override fun invoke(meta: Meta, context: Context): VisionClient = VisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
@@ -123,7 +134,7 @@ public fun VisionClient.fetchVisionsInChildren(element: Element, requestUpdates:
     val elements = element.getElementsByClassName(OutputTagConsumer.OUTPUT_CLASS)
     console.info("Finished search for outputs. Found ${elements.length} items")
     elements.asList().forEach { child ->
-        fetchAndRenderVision(child, requestUpdates)
+        renderVisionAt(child, requestUpdates)
     }
 }
 

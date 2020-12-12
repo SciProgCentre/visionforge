@@ -18,6 +18,13 @@ kscience{
 val ktorVersion: String by rootProject.extra
 
 kotlin {
+    js{
+        browser {
+            webpackTask {
+                this.outputFileName = "visionforge-solid.js"
+            }
+        }
+    }
     afterEvaluate {
         val jsBrowserDistribution by tasks.getting
 

@@ -1,5 +1,6 @@
 package hep.dataforge.vision.html
 
+import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
 import kotlinx.html.FlowContent
@@ -13,7 +14,7 @@ public class BindingOutputTagConsumer<T, V : Vision>(
     private val _bindings = HashMap<Name, V>()
     public val bindings: Map<Name, V> get() = _bindings
 
-    override fun FlowContent.renderVision(name: Name, vision: V) {
+    override fun FlowContent.renderVision(name: Name, vision: V, outputMeta: Meta) {
         _bindings[name] = vision
     }
 }

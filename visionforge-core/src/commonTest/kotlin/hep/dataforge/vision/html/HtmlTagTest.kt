@@ -1,5 +1,6 @@
 package hep.dataforge.vision.html
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.configure
 import hep.dataforge.meta.set
 import hep.dataforge.vision.Vision
@@ -10,14 +11,18 @@ import kotlin.test.Test
 
 class HtmlTagTest {
 
-    fun OutputDiv<Vision>.visionBase(block: VisionBase.() -> Unit) =
-        render(VisionBase().apply(block))
+    @OptIn(DFExperimental::class)
+    fun VisionOutput.base(block: VisionBase.() -> Unit) =
+        VisionBase().apply(block)
 
     val fragment = buildVisionFragment {
         div {
             h1 { +"Head" }
-            visionOutput("ddd") {
-                visionBase {
+            vision("ddd") {
+                meta{
+                    "metaProperty" put 87
+                }
+                base {
                     configure {
                         set("myProp", 82)
                         set("otherProp", false)
@@ -27,7 +32,7 @@ class HtmlTagTest {
         }
     }
 
-    val simpleVisionRenderer: HtmlVisionRenderer<Vision> = { vision ->
+    val simpleVisionRenderer: HtmlVisionRenderer<Vision> = { vision, _ ->
         div {
             h2 { +"Properties" }
             ul {
@@ -41,7 +46,7 @@ class HtmlTagTest {
         }
     }
 
-    val groupRenderer: HtmlVisionRenderer<VisionGroup> = { group ->
+    val groupRenderer: HtmlVisionRenderer<VisionGroup> = { group, _ ->
         p { +"This is group" }
     }
 

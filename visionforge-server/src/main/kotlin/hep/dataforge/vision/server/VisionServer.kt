@@ -1,10 +1,7 @@
 package hep.dataforge.vision.server
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.Configurable
-import hep.dataforge.meta.boolean
-import hep.dataforge.meta.long
+import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
@@ -25,21 +22,16 @@ import io.ktor.http.content.static
 import io.ktor.http.withCharset
 import io.ktor.response.respond
 import io.ktor.response.respondText
-import io.ktor.routing.application
-import io.ktor.routing.get
-import io.ktor.routing.route
-import io.ktor.routing.routing
+import io.ktor.routing.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.error
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import java.awt.Desktop
@@ -91,7 +83,70 @@ public class VisionServer internal constructor(
         return visionMap
     }
 
-    public fun page(
+    /**
+     * Server a map of visions without providing explicit html page for them
+     */
+    @OptIn(DFExperimental::class)
+    public fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
+        application.log.info("Serving visions $visions at $route")
+
+        //Update websocket
+        webSocket("ws") {
+            val name: String = call.request.queryParameters["name"]
+                ?: error("Vision name is not defined in parameters")
+
+            application.log.debug("Opened server socket for $name")
+            val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
+            try {
+                withContext(visionManager.context.coroutineContext) {
+                    vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
+                        val json = VisionManager.defaultJson.encodeToString(
+                            VisionChange.serializer(),
+                            update
+                        )
+                        outgoing.send(Frame.Text(json))
+                    }
+                }
+            } catch (t: Throwable) {
+                application.log.info("WebSocket update channel for $name is closed with exception: $t")
+            }
+        }
+        //Plots in their json representation
+        get("vision") {
+            val name: String = call.request.queryParameters["name"]
+                ?: error("Vision name is not defined in parameters")
+
+            val vision: Vision? = visions[name.toName()]
+            if (vision == null) {
+                call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
+            } else {
+                call.respondText(
+                    visionManager.encodeToString(vision),
+                    contentType = ContentType.Application.Json,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+
+    /**
+     * Serv visions in a given [route] without providing a page template
+     */
+    public fun serveVisions(route: String, visions: Map<Name, Vision>): Unit {
+        application.routing {
+            route(rootRoute) {
+                route(route) {
+                    serveVisions(this, visions)
+                }
+            }
+        }
+    }
+
+    /**
+     * Serve a page, potentially containing any number of visions at a given [route] with given [headers].
+     *
+     */
+    public fun servePage(
         visionFragment: HtmlVisionFragment<Vision>,
         route: String = DEFAULT_PAGE,
         title: String = "VisionForge server page '$route'",
@@ -100,6 +155,7 @@ public class VisionServer internal constructor(
         val visions = HashMap<Name, Vision>()
 
         val cachedHtml: String? = if (cacheFragments) {
+            //Create and cache page html and map of visions
             createHTML(true).html {
                 visions.putAll(buildPage(visionFragment, title, headers))
             }
@@ -110,43 +166,17 @@ public class VisionServer internal constructor(
         application.routing {
             route(rootRoute) {
                 route(route) {
-                    //Update websocket
-                    webSocket("ws") {
-                        val name: String = call.request.queryParameters["name"]
-                            ?: error("Vision name is not defined in parameters")
-
-                        application.log.debug("Opened server socket for $name")
-                        val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
-                        vision.flowChanges(visionManager, updateInterval.milliseconds).onEach { update ->
-                            val json = VisionManager.defaultJson.encodeToString(VisionChange.serializer(), update)
-                            outgoing.send(Frame.Text(json))
-                        }.catch { ex ->
-                            application.log.error(ex)
-                        }.launchIn(visionManager.context).join()
-                    }
-                    //Plots in their json representation
-                    get("vision") {
-                        val name: String = call.request.queryParameters["name"]
-                            ?: error("Vision name is not defined in parameters")
-
-                        val vision: Vision? = visions[name.toName()]
-                        if (vision == null) {
-                            call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
-                        } else {
-                            call.respondText(
-                                visionManager.encodeToString(vision),
-                                contentType = ContentType.Application.Json,
-                                status = HttpStatusCode.OK
-                            )
-                        }
-                    }
+                    serveVisions(this, visions)
                     //filled pages
                     get {
                         if (cachedHtml == null) {
+                            //re-create html and vision list on each call
                             call.respondHtml {
+                                visions.clear()
                                 visions.putAll(buildPage(visionFragment, title, headers))
                             }
                         } else {
+                            //Use cached html
                             call.respondText(cachedHtml, ContentType.Text.Html.withCharset(Charsets.UTF_8))
                         }
                     }
@@ -155,13 +185,16 @@ public class VisionServer internal constructor(
         }
     }
 
+    /**
+     * A shortcut method to easily create Complete pages filled with visions
+     */
     public fun page(
         route: String = DEFAULT_PAGE,
         title: String = "VisionForge server page '$route'",
         headers: List<HtmlFragment> = emptyList(),
         content: OutputTagConsumer<*, Vision>.() -> Unit,
     ) {
-        page(buildVisionFragment(content), route, title, headers)
+        servePage(buildVisionFragment(content), route, title, headers)
     }
 
 
@@ -171,11 +204,33 @@ public class VisionServer internal constructor(
     }
 }
 
+/**
+ * Use a script with given [src] as a global header for all pages.
+ */
+public inline fun VisionServer.useScript(src: String, crossinline block: SCRIPT.() -> Unit = {}) {
+    header {
+        script {
+            type = "text/javascript"
+            this.src = src
+            block()
+        }
+    }
+}
+
+public inline fun VisionServer.useCss(href: String, crossinline block: LINK.() -> Unit = {}) {
+    header {
+        link {
+            rel = "stylesheet"
+            this.href = href
+            block()
+        }
+    }
+}
 
 /**
  * Attach plotly application to given server
  */
-public fun Application.visionModule(context: Context, route: String = DEFAULT_PAGE): VisionServer {
+public fun Application.visionServer(context: Context, route: String = DEFAULT_PAGE): VisionServer {
     if (featureOrNull(WebSockets) == null) {
         install(WebSockets)
     }
@@ -209,7 +264,7 @@ public fun VisionManager.serve(
     port: Int = 7777,
     block: VisionServer.() -> Unit,
 ): ApplicationEngine = context.embeddedServer(CIO, port, host) {
-    visionModule(context).apply(block)
+    visionServer(context).apply(block)
 }.start()
 
 public fun ApplicationEngine.show() {
