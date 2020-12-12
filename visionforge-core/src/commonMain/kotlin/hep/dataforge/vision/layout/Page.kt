@@ -4,7 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
 
-public interface Output<in V : Vision> {
+public fun interface Output<in V : Vision> {
     public fun render(vision: V)
 }
 

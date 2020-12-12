@@ -1,0 +1,37 @@
+package hep.dataforge.vision
+
+import hep.dataforge.vision.html.*
+import kotlinx.html.*
+import kotlinx.html.stream.createHTML
+import java.awt.Desktop
+import java.nio.file.Files
+import java.nio.file.Path
+
+
+
+/**
+ * Make a file with the embedded vision data
+ */
+public fun HtmlVisionFragment.makeFile(manager: VisionManager, vararg headers: HtmlFragment, path: Path? = null, show: Boolean = true) {
+    val actualFile = path ?: Files.createTempFile("tempPlot", ".html")
+    Files.createDirectories(actualFile.parent)
+    val htmlString = createHTML().apply {
+        head {
+            meta {
+                charset = "utf-8"
+                headers.forEach {
+                    fragment(it)
+                }
+            }
+            title(title)
+        }
+        body {
+            embedVisionFragment(manager, fragment = this@makeFile)
+        }
+    }.finalize()
+
+    Files.writeString(actualFile, htmlString)
+    if (show) {
+        Desktop.getDesktop().browse(actualFile.toFile().toURI())
+    }
+}

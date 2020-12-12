@@ -12,7 +12,7 @@ import kotlinx.html.*
  * A placeholder object to attach inline vision builders.
  */
 @DFExperimental
-public class VisionOutput {
+public class VisionOutput @PublishedApi internal constructor(){
     public var meta: Meta = Meta.EMPTY
 
     public inline fun meta(block: MetaBuilder.() -> Unit) {
@@ -23,7 +23,7 @@ public class VisionOutput {
 /**
  * Modified  [TagConsumer] that allows rendering output fragments and visions in them
  */
-public abstract class OutputTagConsumer<R, V : Vision>(
+public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
     private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
@@ -36,14 +36,14 @@ public abstract class OutputTagConsumer<R, V : Vision>(
      * @param vision an object to be rendered
      * @param outputMeta optional configuration for the output container
      */
-    protected abstract fun FlowContent.renderVision(name: Name, vision: V, outputMeta: Meta)
+    protected abstract fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta)
 
     /**
      * Create a placeholder for a vision output with optional [Vision] in it
      */
     public fun <T> TagConsumer<T>.vision(
         name: Name,
-        vision: V? = null,
+        vision: Vision? = null,
         outputMeta: Meta = Meta.EMPTY,
     ): T = div {
         id = resolveId(name)
@@ -64,7 +64,7 @@ public abstract class OutputTagConsumer<R, V : Vision>(
     @OptIn(DFExperimental::class)
     public inline fun <T> TagConsumer<T>.vision(
         name: Name,
-        visionProvider: VisionOutput.() -> V,
+        visionProvider: VisionOutput.() -> Vision,
     ): T {
         val output = VisionOutput()
         val vision = output.visionProvider()
@@ -74,11 +74,11 @@ public abstract class OutputTagConsumer<R, V : Vision>(
     @OptIn(DFExperimental::class)
     public inline fun <T> TagConsumer<T>.vision(
         name: String,
-        visionProvider: VisionOutput.() -> V,
+        visionProvider: VisionOutput.() -> Vision,
     ): T = vision(name.toName(), visionProvider)
 
     public inline fun <T> TagConsumer<T>.vision(
-        vision: V,
+        vision: Vision,
     ): T = vision("vision[${vision.hashCode()}]".toName(), vision)
 
     /**
@@ -96,6 +96,9 @@ public abstract class OutputTagConsumer<R, V : Vision>(
         public const val OUTPUT_CLASS: String = "visionforge-output"
         public const val OUTPUT_META_CLASS: String = "visionforge-output-meta"
         public const val OUTPUT_DATA_CLASS: String = "visionforge-output-data"
+
+        public const val OUTPUT_FETCH_VISION_ATTRIBUTE: String = "data-output-fetch-vision"
+        public const val OUTPUT_FETCH_UPDATE_ATTRIBUTE: String = "data-output-fetch-update"
 
         public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"

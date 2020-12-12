@@ -1,17 +1,9 @@
 package hep.dataforge.vision.client
 
-import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
-import hep.dataforge.names.Name
-import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.html.BindingOutputTagConsumer
-import hep.dataforge.vision.html.HtmlVisionFragment
-import hep.dataforge.vision.html.OutputTagConsumer
-import kotlinx.browser.document
-import kotlinx.html.TagConsumer
-import org.w3c.dom.*
+import org.w3c.dom.Element
 
 @Type(ElementVisionRenderer.TYPE)
 public interface ElementVisionRenderer {
@@ -34,44 +26,36 @@ public interface ElementVisionRenderer {
         public const val DEFAULT_RATING: Int = 10
     }
 }
-
-@DFExperimental
-public fun Map<String, Vision>.bind(rendererFactory: (Vision) -> ElementVisionRenderer) {
-    forEach { (id, vision) ->
-        val element = document.getElementById(id) ?: error("Could not find element with id $id")
-        rendererFactory(vision).render(element, vision)
-    }
-}
-
-@DFExperimental
-public fun Element.renderAllVisions(visionProvider: (Name) -> Vision, rendererFactory: (Vision) -> ElementVisionRenderer) {
-    val elements = getElementsByClassName(OutputTagConsumer.OUTPUT_CLASS)
-    elements.asList().forEach { element ->
-        val name = element.attributes[OutputTagConsumer.OUTPUT_NAME_ATTRIBUTE]?.value
-        if (name == null) {
-            console.error("Attribute ${OutputTagConsumer.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
-            return@forEach
-        }
-        val vision = visionProvider(name.toName())
-        rendererFactory(vision).render(element, vision)
-    }
-}
-
-@DFExperimental
-public fun Document.renderAllVisions(visionProvider: (Name) -> Vision, rendererFactory: (Vision) -> ElementVisionRenderer): Unit {
-    documentElement?.renderAllVisions(visionProvider,rendererFactory)
-}
-
-@DFExperimental
-public fun HtmlVisionFragment<Vision>.renderInDocument(
-    root: TagConsumer<HTMLElement>,
-    renderer: ElementVisionRenderer,
-): HTMLElement = BindingOutputTagConsumer<HTMLElement, Vision>(root).apply(content).let { scope ->
-    scope.finalize().apply {
-        scope.bindings.forEach { (name, vision) ->
-            val id = scope.resolveId(name)
-            val element = document.getElementById(id) ?: error("Could not find element with name $name and id $id")
-            renderer.render(element, vision)
-        }
-    }
-}
+//
+//@DFExperimental
+//public fun Map<String, Vision>.bind(rendererFactory: (Vision) -> ElementVisionRenderer) {
+//    forEach { (id, vision) ->
+//        val element = document.getElementById(id) ?: error("Could not find element with id $id")
+//        rendererFactory(vision).render(element, vision)
+//    }
+//}
+//
+//@DFExperimental
+//public fun Element.renderAllVisions(
+//    visionProvider: (Name) -> Vision,
+//    rendererFactory: (Vision) -> ElementVisionRenderer,
+//) {
+//    val elements = getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
+//    elements.asList().forEach { element ->
+//        val name = element.attributes[VisionTagConsumer.OUTPUT_NAME_ATTRIBUTE]?.value
+//        if (name == null) {
+//            console.error("Attribute ${VisionTagConsumer.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
+//            return@forEach
+//        }
+//        val vision = visionProvider(name.toName())
+//        rendererFactory(vision).render(element, vision)
+//    }
+//}
+//
+//@DFExperimental
+//public fun Document.renderAllVisions(
+//    visionProvider: (Name) -> Vision,
+//    rendererFactory: (Vision) -> ElementVisionRenderer,
+//): Unit {
+//    documentElement?.renderAllVisions(visionProvider, rendererFactory)
+//}

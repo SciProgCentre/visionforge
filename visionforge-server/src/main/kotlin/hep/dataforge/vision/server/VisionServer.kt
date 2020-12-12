@@ -8,7 +8,10 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.flowChanges
-import hep.dataforge.vision.html.*
+import hep.dataforge.vision.html.HtmlFragment
+import hep.dataforge.vision.html.HtmlVisionFragment
+import hep.dataforge.vision.html.VisionTagConsumer
+import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.server.VisionServer.Companion.DEFAULT_PAGE
 import io.ktor.application.*
 import io.ktor.features.CORS
@@ -56,15 +59,25 @@ public class VisionServer internal constructor(
     private val globalHeaders: ArrayList<HtmlFragment> = ArrayList()
 
     public fun header(block: TagConsumer<*>.() -> Unit) {
-        globalHeaders.add(HtmlFragment(block))
+        globalHeaders.add(block)
     }
 
     private fun HTML.buildPage(
-        visionFragment: HtmlVisionFragment<Vision>,
+        visionFragment: HtmlVisionFragment,
         title: String,
         headers: List<HtmlFragment>,
     ): Map<Name, Vision> {
-        lateinit var visionMap: Map<Name, Vision>
+        val visionMap = HashMap<Name, Vision>()
+
+        val consumer = object : VisionTagConsumer<Any?>(consumer) {
+            override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
+                visionMap[name] = vision
+
+                // Toggle updates
+                attributes[OUTPUT_FETCH_VISION_ATTRIBUTE] = "true"
+                attributes[OUTPUT_FETCH_UPDATE_ATTRIBUTE] = "true"
+            }
+        }
 
         head {
             meta {
@@ -77,7 +90,7 @@ public class VisionServer internal constructor(
         }
         body {
             //Load the fragment and remember all loaded visions
-            visionMap = visionFragment(visionFragment)
+            visionFragment(consumer)
         }
 
         return visionMap
@@ -146,11 +159,11 @@ public class VisionServer internal constructor(
      * Serve a page, potentially containing any number of visions at a given [route] with given [headers].
      *
      */
-    public fun servePage(
-        visionFragment: HtmlVisionFragment<Vision>,
+    public fun page(
         route: String = DEFAULT_PAGE,
         title: String = "VisionForge server page '$route'",
         headers: List<HtmlFragment> = emptyList(),
+        visionFragment: HtmlVisionFragment,
     ) {
         val visions = HashMap<Name, Vision>()
 
@@ -184,19 +197,6 @@ public class VisionServer internal constructor(
             }
         }
     }
-
-    /**
-     * A shortcut method to easily create Complete pages filled with visions
-     */
-    public fun page(
-        route: String = DEFAULT_PAGE,
-        title: String = "VisionForge server page '$route'",
-        headers: List<HtmlFragment> = emptyList(),
-        content: OutputTagConsumer<*, Vision>.() -> Unit,
-    ) {
-        servePage(buildVisionFragment(content), route, title, headers)
-    }
-
 
     public companion object {
         public const val DEFAULT_PAGE: String = "/"

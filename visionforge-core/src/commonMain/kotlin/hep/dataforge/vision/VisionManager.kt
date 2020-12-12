@@ -79,3 +79,8 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
         internal val visionSerializer: PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)
     }
 }
+
+/**
+ * Fetch a [VisionManager] from this plugin
+ */
+public val Context.visionManager: VisionManager get() = plugins.fetch(VisionManager)

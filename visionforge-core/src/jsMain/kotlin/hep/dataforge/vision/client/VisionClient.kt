@@ -6,9 +6,10 @@ import hep.dataforge.meta.MetaSerializer
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionChange
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.html.OutputTagConsumer
-import hep.dataforge.vision.html.OutputTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
-import hep.dataforge.vision.html.OutputTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
+import hep.dataforge.vision.html.VisionTagConsumer
+import hep.dataforge.vision.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
+import hep.dataforge.vision.html.VisionTagConsumer.Companion.OUTPUT_FETCH_UPDATE_ATTRIBUTE
+import hep.dataforge.vision.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.Element
@@ -43,22 +44,23 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getEmbeddedData(className: String): String? = getElementsByClassName(className)[0]?.innerHTML
 
+    private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value == "true"
+
     /**
-     * Fetch from server and render a vision, described in a given with [OutputTagConsumer.OUTPUT_CLASS] class.
+     * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
      */
-    public fun renderVisionAt(element: Element, requestUpdates: Boolean = true) {
+    public fun renderVisionAt(element: Element) {
         val name = resolveName(element) ?: error("The element is not a vision output")
         console.info("Found DF output with name $name")
-        if (!element.classList.contains(OutputTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
-        val endpoint = resolveEndpoint(element)
-        console.info("Vision server is resolved to $endpoint")
+        if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
 
-        val outputMeta = element.getEmbeddedData(OutputTagConsumer.OUTPUT_META_CLASS)?.let {
+
+        val outputMeta = element.getEmbeddedData(VisionTagConsumer.OUTPUT_META_CLASS)?.let {
             VisionManager.defaultJson.decodeFromString(MetaSerializer, it)
         } ?: Meta.EMPTY
 
         //Trying to render embedded vision
-        val embeddedVision = element.getEmbeddedData(OutputTagConsumer.OUTPUT_DATA_CLASS)?.let {
+        val embeddedVision = element.getEmbeddedData(VisionTagConsumer.OUTPUT_DATA_CLASS)?.let {
             visionManager.decodeFromString(it)
         }
         if (embeddedVision != null) {
@@ -66,54 +68,60 @@ public class VisionClient : AbstractPlugin() {
             renderer.render(element, embeddedVision, outputMeta)
         }
 
-        val fetchUrl = URL(endpoint).apply {
-            searchParams.append("name", name)
-            pathname += "/vision"
-        }
+        if(element.getFlag(VisionTagConsumer.OUTPUT_FETCH_VISION_ATTRIBUTE)) {
 
-        console.info("Fetching vision data from $fetchUrl")
-        window.fetch(fetchUrl).then { response ->
-            if (response.ok) {
-                response.text().then { text ->
-                    val vision = visionManager.decodeFromString(text)
-                    val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
-                    renderer.render(element, vision, outputMeta)
-                    if (requestUpdates) {
-                        val wsUrl = URL(endpoint).apply {
-                            pathname += "/ws"
-                            protocol = "ws"
-                            searchParams.append("name", name)
-                        }
-                        WebSocket(wsUrl.toString()).apply {
-                            onmessage = { messageEvent ->
-                                val stringData: String? = messageEvent.data as? String
-                                if (stringData != null) {
-                                    val dif = visionManager.jsonFormat.decodeFromString(
-                                        VisionChange.serializer(),
-                                        stringData
-                                    )
-                                    vision.update(dif)
-                                } else {
-                                    console.error("WebSocket message data is not a string")
-                                }
-                            }
-                            onopen = {
-                                console.info("WebSocket update channel established for output '$name'")
-                            }
-                            onclose = {
-                                console.info("WebSocket update channel closed for output '$name'")
-                            }
-                            onerror = {
-                                console.error("WebSocket update channel error for output '$name'")
-                            }
-                        }
+            val endpoint = resolveEndpoint(element)
+            console.info("Vision server is resolved to $endpoint")
 
-                    }
-                }
-            } else {
-                console.error("Failed to fetch initial vision state from $endpoint")
+            val fetchUrl = URL(endpoint).apply {
+                searchParams.append("name", name)
+                pathname += "/vision"
             }
 
+            console.info("Fetching vision data from $fetchUrl")
+            window.fetch(fetchUrl).then { response ->
+                if (response.ok) {
+                    response.text().then { text ->
+                        val vision = visionManager.decodeFromString(text)
+                        val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
+                        renderer.render(element, vision, outputMeta)
+                        if (element.getFlag(OUTPUT_FETCH_UPDATE_ATTRIBUTE)) {
+                            val wsUrl = URL(endpoint).apply {
+                                pathname += "/ws"
+                                protocol = "ws"
+                                searchParams.append("name", name)
+                            }
+                            WebSocket(wsUrl.toString()).apply {
+                                onmessage = { messageEvent ->
+                                    val stringData: String? = messageEvent.data as? String
+                                    if (stringData != null) {
+                                        val dif = visionManager.jsonFormat.decodeFromString(
+                                            VisionChange.serializer(),
+                                            stringData
+                                        )
+                                        vision.update(dif)
+                                    } else {
+                                        console.error("WebSocket message data is not a string")
+                                    }
+                                }
+                                onopen = {
+                                    console.info("WebSocket update channel established for output '$name'")
+                                }
+                                onclose = {
+                                    console.info("WebSocket update channel closed for output '$name'")
+                                }
+                                onerror = {
+                                    console.error("WebSocket update channel error for output '$name'")
+                                }
+                            }
+
+                        }
+                    }
+                } else {
+                    console.error("Failed to fetch initial vision state from $endpoint")
+                }
+
+            }
         }
     }
 
@@ -128,20 +136,20 @@ public class VisionClient : AbstractPlugin() {
 }
 
 /**
- * Fetch and render visions for all elements with [OutputTagConsumer.OUTPUT_CLASS] class inside given [element].
+ * Fetch and render visions for all elements with [VisionTagConsumer.OUTPUT_CLASS] class inside given [element].
  */
-public fun VisionClient.fetchVisionsInChildren(element: Element, requestUpdates: Boolean = true) {
-    val elements = element.getElementsByClassName(OutputTagConsumer.OUTPUT_CLASS)
+public fun VisionClient.renderAllVisionsAt(element: Element) {
+    val elements = element.getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
     console.info("Finished search for outputs. Found ${elements.length} items")
     elements.asList().forEach { child ->
-        renderVisionAt(child, requestUpdates)
+        renderVisionAt(child)
     }
 }
 
 /**
- * Fetch visions from the server for all elements with [OutputTagConsumer.OUTPUT_CLASS] class in the document body
+ * Fetch visions from the server for all elements with [VisionTagConsumer.OUTPUT_CLASS] class in the document body
  */
-public fun VisionClient.fetchAndRenderAllVisions(requestUpdates: Boolean = true) {
+public fun VisionClient.renderAllVisions() {
     val element = document.body ?: error("Document does not have a body")
-    fetchVisionsInChildren(element, requestUpdates)
+    renderAllVisionsAt(element)
 }
