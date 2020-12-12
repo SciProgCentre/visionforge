@@ -110,23 +110,21 @@ public fun Vision.flowChanges(
     manager: VisionManager,
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
-    supervisorScope {
-        val mutex = Mutex()
+    val mutex = Mutex()
 
-        var collector = VisionChangeBuilder()
-        collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
+    var collector = VisionChangeBuilder()
+    manager.context.collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
 
-        while (currentCoroutineContext().isActive) {
-            //Wait for changes to accumulate
-            delay(collectionDuration)
-            //Propagate updates only if something is changed
-            if (!collector.isEmpty()) {
-                //emit changes
-                mutex.withLock {
-                    emit(collector.isolate(manager))
-                    //Reset the collector
-                    collector = VisionChangeBuilder()
-                }
+    while (currentCoroutineContext().isActive) {
+        //Wait for changes to accumulate
+        delay(collectionDuration)
+        //Propagate updates only if something is changed
+        if (!collector.isEmpty()) {
+            //emit changes
+            mutex.withLock {
+                emit(collector.isolate(manager))
+                //Reset the collector
+                collector = VisionChangeBuilder()
             }
         }
     }

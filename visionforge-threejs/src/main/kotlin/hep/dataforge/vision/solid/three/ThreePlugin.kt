@@ -134,7 +134,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     }
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
-        createCanvas(element, Canvas3DOptions.read(meta)).render(vision as? Solid ?: error("Only solids are rendered"))
+        createCanvas(element, Canvas3DOptions.read(meta)).render(
+            vision as? Solid ?: error("Solid expected but ${vision::class} is found")
+        )
     }
 
     public companion object : PluginFactory<ThreePlugin> {

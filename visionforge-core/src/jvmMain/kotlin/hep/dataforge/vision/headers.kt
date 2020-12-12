@@ -1,5 +1,7 @@
 package hep.dataforge.vision
 
+import hep.dataforge.context.Context
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.html.HtmlFragment
 import kotlinx.html.link
 import kotlinx.html.script
@@ -33,6 +35,8 @@ public enum class ResourceLocation {
     EMBED
 }
 
+internal const val DATAFORGE_ASSETS_PATH = ".dataforge/assets"
+
 
 /**
  * Check if the asset exists in given local location and put it there if it does not
@@ -62,14 +66,11 @@ internal fun checkOrStoreFile(basePath: Path, filePath: Path, resource: String):
  * A header that automatically copies relevant scripts to given path
  */
 internal fun fileScriptHeader(
-    basePath: Path,
-    scriptPath: Path,
-    resource: String
+    path: Path,
 ): HtmlFragment = {
-    val relativePath = checkOrStoreFile(basePath, scriptPath, resource)
     script {
         type = "text/javascript"
-        src = relativePath.toString()
+        src = path.toString()
     }
 }
 
@@ -86,12 +87,43 @@ internal fun embedScriptHeader(resource: String): HtmlFragment = {
 internal fun fileCssHeader(
     basePath: Path,
     cssPath: Path,
-    resource: String
+    resource: String,
 ): HtmlFragment = {
     val relativePath = checkOrStoreFile(basePath, cssPath, resource)
     link {
         rel = "stylesheet"
         href = relativePath.toString()
+    }
+}
+
+/**
+ * Make a script header, automatically copying file to appropriate location
+ */
+@DFExperimental
+public fun Context.Companion.scriptHeader(
+    scriptResource: String,
+    basePath: Path?,
+    resourceLocation: ResourceLocation,
+): HtmlFragment {
+    val targetPath = if (basePath == null) null else {
+        when (resourceLocation) {
+            ResourceLocation.LOCAL -> checkOrStoreFile(
+                basePath,
+                Path.of(DATAFORGE_ASSETS_PATH),
+                scriptResource
+            )
+            ResourceLocation.SYSTEM -> checkOrStoreFile(
+                Path.of("."),
+                Path.of(System.getProperty("user.home")).resolve(DATAFORGE_ASSETS_PATH),
+                scriptResource
+            )
+            ResourceLocation.EMBED -> null
+        }
+    }
+    return if (targetPath == null) {
+        embedScriptHeader(scriptResource)
+    } else {
+        fileScriptHeader(targetPath)
     }
 }
 

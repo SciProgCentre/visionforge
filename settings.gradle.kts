@@ -40,6 +40,7 @@ include(
     ":visionforge-solid",
     ":visionforge-fx",
     ":visionforge-threejs",
+    ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
     ":visionforge-server",
     ":demo:spatial-showcase",

@@ -1,64 +1,20 @@
 plugins {
-    id("ru.mipt.npm.mpp")
+    id("ru.mipt.npm.jvm")
     application
 }
 
 
-group = "ru.mipt.npm"
-
-//val kvisionVersion: String = "3.16.2"
-
-kscience{
-    useSerialization{
+kscience {
+    useSerialization {
         json()
     }
     application()
 }
 
-val ktorVersion: String by rootProject.extra
+group = "ru.mipt.npm"
 
-kotlin {
-    js{
-        browser {
-            webpackTask {
-                this.outputFileName = "visionforge-solid.js"
-            }
-        }
-    }
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        jvm {
-            withJava()
-            compilations[org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME]?.apply {
-                tasks.getByName<ProcessResources>(processResourcesTaskName) {
-                    dependsOn(jsBrowserDistribution)
-                    afterEvaluate {
-                        from(jsBrowserDistribution)
-                    }
-                }
-            }
-
-        }
-    }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":visionforge-solid"))
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation(project(":visionforge-server"))
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation(project(":visionforge-threejs"))
-            }
-        }
-    }
+dependencies{
+    implementation(project(":visionforge-threejs:visionforge-threejs-server"))
 }
 
 application {

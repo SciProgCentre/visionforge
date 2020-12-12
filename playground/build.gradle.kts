@@ -12,7 +12,14 @@ repositories{
 }
 
 kotlin {
-    jvm()
+    jvm{
+        compilations.all {
+            kotlinOptions.jvmTarget = "11"
+        }
+        testRuns["test"].executionTask.configure {
+            useJUnitPlatform()
+        }
+    }
     js(IR) {
         browser {
         }
@@ -36,6 +43,7 @@ kotlin {
         val jvmMain by getting{
             dependencies {
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
+                implementation(project(":visionforge-threejs:visionforge-threejs-server"))
             }
         }
     }
