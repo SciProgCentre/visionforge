@@ -10,6 +10,7 @@ import hep.dataforge.vision.makeFile
 import hep.dataforge.vision.scriptHeader
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
+import java.nio.file.Files
 import java.nio.file.Path
 
 public actual val visionContext: Context = Global.context("vision-server") {
@@ -38,6 +39,7 @@ public fun HtmlVisionFragment.makeFile(
     resourceLocation: ResourceLocation = ResourceLocation.SYSTEM,
     show: Boolean = true,
 ) {
-    val scriptHeader = Context.scriptHeader("/js/visionforge-three.js", path, resourceLocation)
+    val actualPath = path ?: Files.createTempFile("tempPlot", ".html")
+    val scriptHeader = Context.scriptHeader("/js/visionforge-three.js", actualPath, resourceLocation)
     makeFile(visionManager, path = path, show = show, title = title, headers = arrayOf(scriptHeader))
 }

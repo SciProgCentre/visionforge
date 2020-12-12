@@ -1,5 +1,6 @@
 package ru.mipt.npm.sat
 
+import hep.dataforge.vision.ResourceLocation
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.solid.box
@@ -15,5 +16,5 @@ fun main() {
         }
     }
 
-    fragment.makeFile()
+    fragment.makeFile(resourceLocation = ResourceLocation.LOCAL)
 }
