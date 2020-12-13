@@ -97,8 +97,8 @@ public abstract class VisionTagConsumer<R>(
         public const val OUTPUT_META_CLASS: String = "visionforge-output-meta"
         public const val OUTPUT_DATA_CLASS: String = "visionforge-output-data"
 
-        public const val OUTPUT_FETCH_VISION_ATTRIBUTE: String = "data-output-fetch-vision"
-        public const val OUTPUT_FETCH_UPDATE_ATTRIBUTE: String = "data-output-fetch-update"
+        public const val OUTPUT_FETCH_ATTRIBUTE: String = "data-output-fetch"
+        public const val OUTPUT_CONNECT_ATTRIBUTE: String = "data-output-connect"
 
         public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"

@@ -74,8 +74,8 @@ public class VisionServer internal constructor(
                 visionMap[name] = vision
 
                 // Toggle updates
-                attributes[OUTPUT_FETCH_VISION_ATTRIBUTE] = "true"
-                attributes[OUTPUT_FETCH_UPDATE_ATTRIBUTE] = "true"
+                attributes[OUTPUT_FETCH_ATTRIBUTE] = "true"
+                attributes[OUTPUT_CONNECT_ATTRIBUTE] = "true"
             }
         }
 

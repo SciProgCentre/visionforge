@@ -6,7 +6,6 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
-import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material

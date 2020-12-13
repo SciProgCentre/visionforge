@@ -26,36 +26,3 @@ public interface ElementVisionRenderer {
         public const val DEFAULT_RATING: Int = 10
     }
 }
-//
-//@DFExperimental
-//public fun Map<String, Vision>.bind(rendererFactory: (Vision) -> ElementVisionRenderer) {
-//    forEach { (id, vision) ->
-//        val element = document.getElementById(id) ?: error("Could not find element with id $id")
-//        rendererFactory(vision).render(element, vision)
-//    }
-//}
-//
-//@DFExperimental
-//public fun Element.renderAllVisions(
-//    visionProvider: (Name) -> Vision,
-//    rendererFactory: (Vision) -> ElementVisionRenderer,
-//) {
-//    val elements = getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
-//    elements.asList().forEach { element ->
-//        val name = element.attributes[VisionTagConsumer.OUTPUT_NAME_ATTRIBUTE]?.value
-//        if (name == null) {
-//            console.error("Attribute ${VisionTagConsumer.OUTPUT_NAME_ATTRIBUTE} not defined in the output element")
-//            return@forEach
-//        }
-//        val vision = visionProvider(name.toName())
-//        rendererFactory(vision).render(element, vision)
-//    }
-//}
-//
-//@DFExperimental
-//public fun Document.renderAllVisions(
-//    visionProvider: (Name) -> Vision,
-//    rendererFactory: (Vision) -> ElementVisionRenderer,
-//): Unit {
-//    documentElement?.renderAllVisions(visionProvider, rendererFactory)
-//}
