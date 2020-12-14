@@ -6,6 +6,7 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.int
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
+import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
@@ -59,7 +60,7 @@ public fun MetaItem<*>.color(opacity: Double = 1.0): Color {
 /**
  * Infer FX material based on meta item
  */
-fun MetaItem<*>?.material(): Material {
+public fun MetaItem<*>?.material(): Material {
     return when (this) {
         null -> FXMaterials.GREY
         is MetaItem.ValueItem -> PhongMaterial(color())

@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid.three
 import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
+import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.SolidMaterial

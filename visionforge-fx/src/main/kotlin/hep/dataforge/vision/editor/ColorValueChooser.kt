@@ -6,6 +6,7 @@ import hep.dataforge.names.asName
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
 import hep.dataforge.values.asValue
+import hep.dataforge.values.string
 import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 import org.slf4j.LoggerFactory
