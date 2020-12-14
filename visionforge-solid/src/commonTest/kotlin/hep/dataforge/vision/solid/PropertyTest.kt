@@ -55,7 +55,7 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals("#555555", box?.color)
+        assertEquals("#555555", box?.color.string)
     }
 
     @Test
@@ -76,6 +76,6 @@ class PropertyTest {
                 box = ref("box".asName())
             }
         }
-        assertEquals("#555555", box?.color)
+        assertEquals("#555555", box?.color.string)
     }
 }

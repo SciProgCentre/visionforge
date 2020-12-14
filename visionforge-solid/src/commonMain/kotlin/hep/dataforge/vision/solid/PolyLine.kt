@@ -4,6 +4,7 @@ import hep.dataforge.meta.number
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.props
 import hep.dataforge.vision.set
@@ -23,6 +24,7 @@ public class PolyLine(public var points: List<Point3D>) : SolidBase(), Solid {
 
 }
 
+@VisionBuilder
 public fun VisionContainerBuilder<Solid>.polyline(
     vararg points: Point3D,
     name: String = "",

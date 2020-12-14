@@ -9,6 +9,7 @@ import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.enum
 import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.setProperty
@@ -104,6 +105,7 @@ public var Solid.layer: Int
         config[LAYER_KEY] = value.asValue()
     }
 
+@VisionBuilder
 public fun Output<Solid>.solidGroup(builder: SolidGroup.() -> Unit): Unit = render(SolidGroup().apply(builder))
 
 // Common properties

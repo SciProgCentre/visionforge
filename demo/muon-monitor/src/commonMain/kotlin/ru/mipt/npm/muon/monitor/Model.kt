@@ -58,7 +58,7 @@ class Model {
     }
 
     private fun highlight(pixel: String) {
-        map[pixel]?.color("blue")
+        map[pixel]?.color?.invoke("blue")
     }
 
     fun reset() {

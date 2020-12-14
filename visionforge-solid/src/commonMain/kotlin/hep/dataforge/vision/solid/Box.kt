@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import hep.dataforge.vision.solid.Solid.Companion.solidEquals
@@ -61,6 +62,7 @@ public class Box(
     }
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.box(
     xSize: Number,
     ySize: Number,

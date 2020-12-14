@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -50,6 +51,7 @@ public class Sphere(
     }
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.sphere(
     radius: Number,
     phi: Number = 2 * PI,

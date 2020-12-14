@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -13,6 +14,7 @@ public class SolidLabel(
     public var fontFamily: String,
 ) : SolidBase(), Solid
 
+@VisionBuilder
 public fun VisionContainerBuilder<Solid>.label(
     text: String,
     fontSize: Number = 20,

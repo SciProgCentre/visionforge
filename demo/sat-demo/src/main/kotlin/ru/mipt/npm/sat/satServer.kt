@@ -4,6 +4,7 @@ package ru.mipt.npm.sat
 import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.color
+import hep.dataforge.vision.solid.invoke
 import hep.dataforge.vision.three.server.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -40,7 +41,7 @@ fun main() {
             val target = "layer[$randomLayer].segment[$randomI,$randomJ]".toName()
             (sat[target] as? Solid)?.color("red")
             delay(300)
-            (sat[target] as? Solid)?.color = "green"
+            (sat[target] as? Solid)?.color("green")
             delay(10)
         }
     }

@@ -3,10 +3,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.update
 import hep.dataforge.names.NameToken
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionContainerBuilder
-import hep.dataforge.vision.VisionGroup
-import hep.dataforge.vision.set
+import hep.dataforge.vision.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -33,6 +30,7 @@ public class Composite(
         get() = mapOf(NameToken("first") to first, NameToken("second") to second)
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.composite(
     type: CompositeType,
     name: String = "",
@@ -58,11 +56,14 @@ public inline fun VisionContainerBuilder<Solid>.composite(
     }
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.union(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.UNION, name, builder = builder)
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.subtract(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.intersect(name: String = "", builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.INTERSECT, name, builder = builder)

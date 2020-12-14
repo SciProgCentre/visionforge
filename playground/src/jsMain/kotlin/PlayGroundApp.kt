@@ -1,12 +1,10 @@
 import hep.dataforge.Application
-import hep.dataforge.context.Global
 import hep.dataforge.startApplication
 import hep.dataforge.vision.bootstrap.visionPropertyEditor
 import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.solid.three.ThreePlugin
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
 import react.RBuilder
@@ -14,7 +12,7 @@ import react.child
 import react.dom.div
 import react.dom.render
 
-public fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
+fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> Unit = {}) {
     child(ThreeCanvasComponent) {
         attrs {
             this.obj = object3D
@@ -24,8 +22,6 @@ public fun RBuilder.threeCanvas(object3D: Solid, options: Canvas3DOptions.() -> 
 }
 
 private class PlayGroundApp : Application {
-
-    private val three = Global.plugins.fetch(ThreePlugin)
 
     override fun start(state: Map<String, Any>) {
 

@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid.three
 import hep.dataforge.meta.node
 import hep.dataforge.vision.solid.PolyLine
 import hep.dataforge.vision.solid.color
+import hep.dataforge.vision.solid.string
 import hep.dataforge.vision.solid.three.ThreeMaterials.DEFAULT_LINE_COLOR
 import info.laht.threekt.core.Geometry
 import info.laht.threekt.core.Object3D
@@ -21,7 +22,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
         val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
 
         material.linewidth = obj.thickness.toDouble()
-        material.color = obj.color?.let { Color(it) } ?: DEFAULT_LINE_COLOR
+        material.color = obj.color.string?.let { Color(it) } ?: DEFAULT_LINE_COLOR
 
         return LineSegments(geometry, material).apply {
             updatePosition(obj)

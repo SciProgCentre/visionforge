@@ -134,31 +134,39 @@ fun Page<Solid>.showcase() {
 
 fun Page<Solid>.showcaseCSG() {
     demo("CSG.simple", "CSG operations") {
-        composite(CompositeType.UNION) {
-            box(100, 100, 100) {
-                z = 50
-            }
-            sphere(50)
-            material {
-                color(Colors.lightgreen)
-                opacity = 0.3f
-            }
-        }
         composite(CompositeType.INTERSECT) {
             y = 300
             box(100, 100, 100) {
                 z = 50
             }
-            sphere(50)
-            color(Colors.red)
+            sphere(50){
+                detail = 32
+            }
+            material {
+                color(Colors.red)
+                wireframe = false
+            }
+        }
+        composite(CompositeType.UNION) {
+            box(100, 100, 100) {
+                z = 50
+            }
+            sphere(50){
+                detail = 32
+            }
+            color(Colors.lightgreen)
+            opacity = 0.3
         }
         composite(CompositeType.SUBTRACT) {
             y = -300
             box(100, 100, 100) {
                 z = 50
             }
-            sphere(50)
-            color(Colors.blue)
+            sphere(50){
+                detail = 32
+            }
+            color(Colors.teal)
+            opacity = 0.7
         }
     }
 

@@ -8,6 +8,10 @@ import hep.dataforge.names.Name
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 
+@DslMarker
+public annotation class VisionBuilder
+
+
 public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
     return when (val first = firstOrNull { it != null }) {
         null -> null

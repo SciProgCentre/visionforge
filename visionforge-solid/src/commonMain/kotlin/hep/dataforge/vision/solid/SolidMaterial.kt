@@ -6,26 +6,66 @@ import hep.dataforge.meta.descriptors.attributes
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
+import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
 import hep.dataforge.vision.widgetType
 
+@VisionBuilder
+public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
+    public var value: Value?
+        get() = parent.getItem(colorKey).value
+        set(value) {
+            parent[colorKey] = value
+        }
+}
+
+public var ColorAccessor?.string: String?
+    get() = this?.value?.string
+    set(value) {
+        this?.value = value?.asValue()
+    }
+
+/**
+ * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
+ */
+public operator fun ColorAccessor?.invoke(webColor: String) {
+    this?.value = webColor.asValue()
+}
+
+/**
+ * Set color as RGB integer
+ */
+public operator fun ColorAccessor?.invoke(rgb: Int) {
+    this?.value = rgb.asValue()
+}
+
+/**
+ * Set color as RGB
+ */
+public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
+    this?.value =  Colors.rgbToString(r, g, b).asValue()
+}
+
+@VisionBuilder
 public class SolidMaterial : Scheme() {
 
     /**
      * Primary web-color for the material
      */
-    public var color: String? by string(key = COLOR_KEY)
+    public var color: ColorAccessor = ColorAccessor(config, COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    public var specularColor: String? by string(key = SPECULAR_COLOR_KEY)
+    public var specularColor: ColorAccessor = ColorAccessor(config, SPECULAR_COLOR_KEY)
 
     /**
      * Opacity
@@ -75,37 +115,13 @@ public class SolidMaterial : Scheme() {
     }
 }
 
-/**
- * Set color as web-color
- */
-public fun Solid.color(webColor: String) {
-    setProperty(MATERIAL_COLOR_KEY, webColor.asValue())
-}
+public val Solid.color: ColorAccessor get() = ColorAccessor(config, MATERIAL_COLOR_KEY)
 
-/**
- * Set color as integer
- */
-public fun Solid.color(rgb: Int) {
-    setProperty(MATERIAL_COLOR_KEY, rgb.asValue())
-}
-
-public fun Solid.color(r: UByte, g: UByte, b: UByte): Unit = setProperty(
-    MATERIAL_COLOR_KEY,
-    Colors.rgbToString(r, g, b).asValue()
-)
-
-/**
- * Web colors representation of the color in `#rrggbb` format or HTML name
- */
-public var Solid.color: String?
-    get() = getProperty(MATERIAL_COLOR_KEY)?.let { Colors.fromMeta(it) }
-    set(value) {
-        setProperty(MATERIAL_COLOR_KEY, value?.asValue())
-    }
-
-public val Solid.material: SolidMaterial?
+public var Solid.material: SolidMaterial?
     get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.read(it) }
+    set(value) = setProperty(MATERIAL_KEY, value?.config)
 
+@VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     val node = config[MATERIAL_KEY].node
     if (node != null) {
@@ -115,8 +131,8 @@ public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     }
 }
 
-public var Solid.opacity: Double?
-    get() = getProperty(MATERIAL_OPACITY_KEY).double
+public var Solid.opacity: Number?
+    get() = getProperty(MATERIAL_OPACITY_KEY).number
     set(value) {
         setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
     }

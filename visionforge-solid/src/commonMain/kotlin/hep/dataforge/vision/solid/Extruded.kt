@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -102,5 +103,6 @@ public class Extruded(
     }
 }
 
+@VisionBuilder
 public fun VisionContainerBuilder<Solid>.extrude(name: String = "", action: Extruded.() -> Unit = {}): Extruded =
     Extruded().apply(action).also { set(name, it) }

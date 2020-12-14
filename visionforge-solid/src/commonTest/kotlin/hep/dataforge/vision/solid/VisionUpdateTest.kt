@@ -28,8 +28,8 @@ class VisionUpdateTest {
         }
         targetVision.update(dif)
         assertTrue { targetVision["top"] is SolidGroup }
-        assertEquals("red", (targetVision["origin"] as Solid).color) // Should work
-        assertEquals("#00007b", (targetVision["top"] as SolidGroup).color) // new item always takes precedence
+        assertEquals("red", (targetVision["origin"] as Solid).color.string) // Should work
+        assertEquals("#00007b", (targetVision["top"] as SolidGroup).color.string) // new item always takes precedence
     }
 
     @Test

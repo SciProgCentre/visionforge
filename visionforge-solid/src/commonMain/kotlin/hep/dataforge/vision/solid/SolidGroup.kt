@@ -86,6 +86,7 @@ public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
 public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
     prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
+@VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 

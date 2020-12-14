@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.vision.VisionBuilder
 import hep.dataforge.vision.VisionContainerBuilder
 import hep.dataforge.vision.set
 import kotlinx.serialization.SerialName
@@ -118,6 +119,7 @@ public class Tube(
 
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.tube(
     r: Number,
     height: Number,
