@@ -6,8 +6,6 @@ import hep.dataforge.names.plus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.*
 import kotlin.time.Duration
 
@@ -15,13 +13,16 @@ import kotlin.time.Duration
  * An update for a [Vision] or a [VisionGroup]
  */
 public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
+
     private val propertyChange = HashMap<Name, Config>()
     private val childrenChange = HashMap<Name, Vision?>()
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && childrenChange.isEmpty()
 
     public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem<*>?) {
-        propertyChange.getOrPut(visionName) { Config() }.setItem(propertyName, item)
+        propertyChange
+            .getOrPut(visionName) { Config() }
+            .setItem(propertyName, item)
     }
 
     override fun set(name: Name, child: Vision?) {
@@ -32,7 +33,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
      * Isolate collected changes by creating detached copies of given visions
      */
     public fun isolate(manager: VisionManager): VisionChange = VisionChange(
-        propertyChange,
+        propertyChange.mapValues { it.value.seal() },
         childrenChange.mapValues { it.value?.isolate(manager) }
     )
     //TODO optimize isolation for visions without parents?
@@ -64,42 +65,40 @@ public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilde
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
-    mutex: Mutex,
     collector: () -> VisionChangeBuilder,
 ) {
+
     //Collect properties change
-    source.config.onChange(mutex) { propertyName, oldItem, newItem ->
+    source.config.onChange(this) { propertyName, oldItem, newItem ->
         if (oldItem != newItem) {
             launch {
-                mutex.withLock {
-                    collector().propertyChanged(name, propertyName, newItem)
-                }
+                collector().propertyChanged(name, propertyName, newItem)
             }
         }
     }
 
     coroutineContext[Job]?.invokeOnCompletion {
-        source.config.removeListener(mutex)
+        source.config.removeListener(this)
     }
 
     if (source is VisionGroup) {
         //Subscribe for children changes
         source.children.forEach { (token, child) ->
-            collectChange(name + token, child, mutex, collector)
+            collectChange(name + token, child, collector)
         }
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
-            source.onStructureChange(mutex) { token, before, after ->
-                before?.removeChangeListener(mutex)
-                (before as? MutableVisionGroup)?.removeStructureChangeListener(mutex)
+            source.onStructureChange(this) { token, before, after ->
+                before?.removeChangeListener(this)
+                (before as? MutableVisionGroup)?.removeStructureChangeListener(this)
                 if (after != null) {
-                    collectChange(name + token, after, mutex, collector)
+                    collectChange(name + token, after, collector)
                 }
                 collector()[name + token] = after
             }
             coroutineContext[Job]?.invokeOnCompletion {
-                source.removeStructureChangeListener(mutex)
+                source.removeStructureChangeListener(this)
             }
         }
     }
@@ -110,10 +109,9 @@ public fun Vision.flowChanges(
     manager: VisionManager,
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
-    val mutex = Mutex()
 
     var collector = VisionChangeBuilder()
-    manager.context.collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
+    manager.context.collectChange(Name.EMPTY, this@flowChanges) { collector }
 
     while (currentCoroutineContext().isActive) {
         //Wait for changes to accumulate
@@ -121,11 +119,9 @@ public fun Vision.flowChanges(
         //Propagate updates only if something is changed
         if (!collector.isEmpty()) {
             //emit changes
-            mutex.withLock {
-                emit(collector.isolate(manager))
-                //Reset the collector
-                collector = VisionChangeBuilder()
-            }
+            emit(collector.isolate(manager))
+            //Reset the collector
+            collector = VisionChangeBuilder()
         }
     }
 }

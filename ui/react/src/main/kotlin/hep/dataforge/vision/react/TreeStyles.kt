@@ -117,5 +117,4 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
             width = 100.pct
         }
     }
-
 }
