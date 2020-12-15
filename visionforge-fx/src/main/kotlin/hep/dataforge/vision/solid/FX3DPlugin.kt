@@ -43,7 +43,7 @@ class FX3DPlugin : AbstractPlugin() {
     }
 
     fun buildNode(obj: Solid): Node {
-        val binding = VisualObjectFXBinding(obj)
+        val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
             is SolidReferenceGroup -> referenceFactory(obj, binding)
             is SolidGroup -> {

@@ -2,6 +2,7 @@ package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.describedProperties
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
 import hep.dataforge.vision.gdml.toVision
@@ -26,7 +27,7 @@ class GDMLView : View() {
     }
 
     private val propertyEditor = VisualObjectEditorFragment {
-        it.allProperties
+        it.describedProperties
     }.apply {
         descriptorProperty.set(SolidMaterial.descriptor)
         itemProperty.bind(treeFragment.selectedProperty)
