@@ -45,7 +45,7 @@ class VisionUpdateTest {
         val serialized = visionManager.jsonFormat.encodeToString(VisionChange.serializer(), change)
         println(serialized)
         val reconstructed = visionManager.jsonFormat.decodeFromString(VisionChange.serializer(), serialized)
-        assertEquals(change.propertyChange,reconstructed.propertyChange)
+        assertEquals(change.properties,reconstructed.properties)
     }
 
     @Test

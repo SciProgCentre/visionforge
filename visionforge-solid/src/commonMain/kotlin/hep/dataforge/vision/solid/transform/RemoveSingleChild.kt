@@ -1,18 +1,15 @@
 package hep.dataforge.vision.solid.transform
 
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.meta.update
 import hep.dataforge.names.asName
-import hep.dataforge.vision.MutableVisionGroup
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionGroup
+import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.*
 
 @DFExperimental
 internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
     return child.apply {
 
-        config.update(parent.config)
+        configure(parent.ownProperties)
 
         //parent.properties?.let { config.update(it) }
 
@@ -40,7 +37,7 @@ internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
     override fun SolidGroup.transformInPlace() {
         fun MutableVisionGroup.replaceChildren() {
             children.forEach { (childName, parent) ->
-                if (parent is SolidReference) return@forEach //ignore refs
+                if (parent is SolidReferenceGroup) return@forEach //ignore refs
                 if (parent is MutableVisionGroup) {
                     parent.replaceChildren()
                 }

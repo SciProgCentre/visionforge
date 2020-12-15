@@ -1,9 +1,7 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.Laminate
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.node
 import hep.dataforge.names.Name
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
@@ -31,3 +29,19 @@ public inline fun <reified E : Enum<E>> NodeDescriptor.enum(key: Name, default: 
     }
     allowedValues = enumValues<E>().map { it.asValue() }
 }
+
+@DFExperimental
+public val Vision.ownProperties: Meta?
+    get() = (this as? VisionBase)?.ownProperties
+
+@DFExperimental
+public val Vision.describedProperties: Meta
+    get() = Meta {
+        descriptor?.items?.forEach { (key, _) ->
+            key put getProperty(key)
+        }
+    }
+
+public fun Vision.configure(meta: Meta?): Unit = update(VisionChange(properties = meta))
+
+public fun Vision.configure(block: MutableMeta<*>.() -> Unit): Unit = configure(Meta(block))

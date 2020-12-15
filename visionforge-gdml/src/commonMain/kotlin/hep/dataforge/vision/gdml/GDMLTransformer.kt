@@ -2,12 +2,12 @@ package hep.dataforge.vision.gdml
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
-import hep.dataforge.meta.set
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.vision.set
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.styleSheet
@@ -51,13 +51,13 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     private val proto = SolidGroup()
 
     private val solids = proto.group(solidsName) {
-        config["edges.enabled"] = false
+        setProperty("edges.enabled", false)
     }
 
 
-    private val referenceStore = HashMap<Name, MutableList<SolidReference>>()
+    private val referenceStore = HashMap<Name, MutableList<SolidReferenceGroup>>()
 
-    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): SolidReference {
+    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): SolidReferenceGroup {
         val templateName = solidsName + name
         if (proto[templateName] == null) {
             solids.addSolid(root, solid, name)
@@ -67,7 +67,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         return ref
     }
 
-    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): SolidReference {
+    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): SolidReferenceGroup {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)

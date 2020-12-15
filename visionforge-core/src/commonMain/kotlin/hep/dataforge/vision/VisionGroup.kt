@@ -2,6 +2,7 @@ package hep.dataforge.vision
 
 import hep.dataforge.names.*
 import hep.dataforge.provider.Provider
+import kotlinx.coroutines.flow.Flow
 
 public interface VisionContainer<out V : Vision> {
     public operator fun get(name: Name): V?
@@ -75,19 +76,12 @@ public interface VisionContainerBuilder<in V : Vision> {
  */
 public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision> {
 
-    /**
-     * Add listener for children structure change.
-     * @param owner the handler to properly remove listeners
-     * @param action First argument of the action is the name of changed child. Second argument is the new value of the object.
-     */
-    public fun onStructureChange(owner: Any?, action: (token: NameToken, before: Vision?, after: Vision?) -> Unit)
+    public data class StructureChange(val token: NameToken, val before: Vision?, val after: Vision?)
 
     /**
-     * Remove children change listener
+     * Flow structure changes of this group. Unconsumed changes are discarded
      */
-    public fun removeStructureChangeListener(owner: Any?)
-
-//    public operator fun set(name: Name, child: Vision?)
+    public val structureChanges: Flow<StructureChange>
 }
 
 public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(str.toName())

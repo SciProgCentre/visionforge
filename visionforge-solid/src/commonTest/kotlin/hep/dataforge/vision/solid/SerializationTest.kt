@@ -4,6 +4,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.get
+import hep.dataforge.vision.ownProperties
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,7 +16,7 @@ fun SolidGroup.refGroup(
     name: String,
     templateName: Name = name.toName(),
     block: MutableVisionGroup.() -> Unit
-): SolidReference {
+): SolidReferenceGroup {
     val group = SolidGroup().apply(block)
     return ref(name, group, templateName)
 }
@@ -32,7 +33,7 @@ class SerializationTest {
         val string =  SolidManager.encodeToString(cube)
         println(string)
         val newCube = SolidManager.decodeFromString(string)
-        assertEquals(cube.config, newCube.config)
+        assertEquals(cube.ownProperties, newCube.ownProperties)
     }
 
     @Test
@@ -53,7 +54,7 @@ class SerializationTest {
         val string = SolidManager.encodeToString(group)
         println(string)
         val reconstructed = SolidManager.decodeFromString(string) as SolidGroup
-        assertEquals(group["cube"]?.config, reconstructed["cube"]?.config)
+        assertEquals(group["cube"]?.ownProperties, reconstructed["cube"]?.ownProperties)
     }
 
 }

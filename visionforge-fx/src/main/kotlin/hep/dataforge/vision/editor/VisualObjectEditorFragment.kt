@@ -1,12 +1,8 @@
 package hep.dataforge.vision.editor
 
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.Meta
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.update
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.getStyle
-import hep.dataforge.vision.setProperty
+import hep.dataforge.vision.*
 import javafx.beans.binding.Binding
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
@@ -23,8 +19,8 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
     constructor(
         item: Vision?,
         descriptor: NodeDescriptor?,
-        selector: (Vision) -> Config = { it.config }
-    ) : this(selector) {
+        selector: (Vision) -> MutableItemProvider = { it.properties }
+    ) : this({it.describedProperties}) {
         this.item = item
         this.descriptorProperty.set(descriptor)
     }

@@ -1,18 +1,17 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.boolean
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.enum
+import hep.dataforge.meta.int
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.vision.Vision
+import hep.dataforge.vision.*
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
-import hep.dataforge.vision.VisionBuilder
-import hep.dataforge.vision.enum
 import hep.dataforge.vision.layout.Output
-import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.Solid.Companion.DETAIL_KEY
 import hep.dataforge.vision.solid.Solid.Companion.IGNORE_KEY
 import hep.dataforge.vision.solid.Solid.Companion.LAYER_KEY
@@ -90,7 +89,7 @@ public interface Solid : Vision {
             var result = +(solid.position?.hashCode() ?: 0)
             result = 31 * result + (solid.rotation?.hashCode() ?: 0)
             result = 31 * result + (solid.scale?.hashCode() ?: 0)
-            result = 31 * result + (solid.properties?.hashCode() ?: 0)
+            result = 31 * result + solid.properties.hashCode()
             return result
         }
     }
@@ -100,9 +99,9 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = properties?.getItem(LAYER_KEY).int ?: 0
+    get() = properties.getItem(LAYER_KEY).int ?: 0
     set(value) {
-        config[LAYER_KEY] = value.asValue()
+        setProperty(LAYER_KEY, value)
     }
 
 @VisionBuilder
@@ -153,21 +152,21 @@ public var Solid.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyChanged(Solid.X_POSITION_KEY)
+        notifyPropertyChanged(Solid.X_POSITION_KEY)
     }
 
 public var Solid.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyChanged(Solid.Y_POSITION_KEY)
+        notifyPropertyChanged(Solid.Y_POSITION_KEY)
     }
 
 public var Solid.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyChanged(Solid.Z_POSITION_KEY)
+        notifyPropertyChanged(Solid.Z_POSITION_KEY)
     }
 
 private fun Solid.rotation(): Point3D =
@@ -177,21 +176,21 @@ public var Solid.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyChanged(Solid.X_ROTATION_KEY)
+        notifyPropertyChanged(Solid.X_ROTATION_KEY)
     }
 
 public var Solid.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyChanged(Solid.Y_ROTATION_KEY)
+        notifyPropertyChanged(Solid.Y_ROTATION_KEY)
     }
 
 public var Solid.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyChanged(Solid.Z_ROTATION_KEY)
+        notifyPropertyChanged(Solid.Z_ROTATION_KEY)
     }
 
 private fun Solid.scale(): Point3D =
@@ -201,19 +200,19 @@ public var Solid.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyChanged(Solid.X_SCALE_KEY)
+        notifyPropertyChanged(Solid.X_SCALE_KEY)
     }
 
 public var Solid.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyChanged(Solid.Y_SCALE_KEY)
+        notifyPropertyChanged(Solid.Y_SCALE_KEY)
     }
 
 public var Solid.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyChanged(Solid.Z_SCALE_KEY)
+        notifyPropertyChanged(Solid.Z_SCALE_KEY)
     }

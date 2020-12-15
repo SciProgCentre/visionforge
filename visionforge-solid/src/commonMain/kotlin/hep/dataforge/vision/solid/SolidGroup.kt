@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
+import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
@@ -87,7 +87,10 @@ public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
     prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
 @VisionBuilder
-public fun VisionContainerBuilder<Vision>.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun VisionContainerBuilder<Vision>.group(
+    name: Name = Name.EMPTY,
+    action: SolidGroup.() -> Unit = {},
+): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**
@@ -104,15 +107,10 @@ internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
 ) : VisionGroupBase(), PrototypeHolder {
 
-    init {
-        this.childrenInternal.putAll(children)
-    }
+    override var parent: VisionGroup? = null
 
-    override var properties: Config?
-        get() = null
-        set(_) {
-            error("Can't define properties for prototypes block")
-        }
+    private val _children = HashMap(children)
+    override val children: Map<NameToken, Vision> get() = _children
 
     override val prototypes: MutableVisionGroup get() = this
 
@@ -122,6 +120,21 @@ internal class Prototypes(
             (it as? VisionGroup)?.attachChildren()
         }
     }
+
+    override fun getOwnProperty(name: Name): MetaItem<*>? = null
+
+    override fun getProperty(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean,
+    ): MetaItem<*>? = null
+
+    override fun setProperty(name: Name, item: MetaItem<*>?) {
+        TODO("Not yet implemented")
+    }
+
+    override val descriptor: NodeDescriptor? = null
 
     companion object : KSerializer<MutableVisionGroup> {
 

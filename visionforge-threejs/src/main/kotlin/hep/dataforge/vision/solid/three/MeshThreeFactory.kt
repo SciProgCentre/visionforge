@@ -15,20 +15,22 @@ import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 /**
  * Basic geometry-based factory
  */
 public abstract class MeshThreeFactory<in T : Solid>(
-    override val type: KClass<in T>
+    override val type: KClass<in T>,
 ) : ThreeFactory<T> {
     /**
      * Build a geometry for an object
      */
     public abstract fun buildGeometry(obj: T): BufferGeometry
 
-    override fun invoke(obj: T): Mesh {
+    override fun invoke(three: ThreePlugin, obj: T): Mesh {
         val geometry = buildGeometry(obj)
 
         //JS sometimes tries to pass Geometry as BufferGeometry
@@ -36,14 +38,14 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
-        val mesh = Mesh(geometry, null).apply{
+        val mesh = Mesh(geometry, null).apply {
             matrixAutoUpdate = false
             //set position for mesh
             updatePosition(obj)
         }.applyProperties(obj)
 
         //add listener to object properties
-        obj.onPropertyChange(this) { name ->
+        obj.propertyInvalidated.onEach { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry
@@ -57,7 +59,8 @@ public abstract class MeshThreeFactory<in T : Solid>(
                 name.startsWith(EDGES_KEY) -> mesh.applyEdges(obj)
                 else -> mesh.updateProperty(obj, name)
             }
-        }
+        }.launchIn(three.updateScope)
+
         return mesh
     }
 
@@ -72,7 +75,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
     }
 }
 
-fun Mesh.applyProperties(obj: Solid): Mesh = apply{
+internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
     material = getMaterial(obj, true)
     applyEdges(obj)
     applyWireFrame(obj)
@@ -82,7 +85,7 @@ fun Mesh.applyProperties(obj: Solid): Mesh = apply{
     }
 }
 
-fun Mesh.applyEdges(obj: Solid) {
+internal fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
     if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
@@ -108,7 +111,7 @@ fun Mesh.applyEdges(obj: Solid) {
     }
 }
 
-fun Mesh.applyWireFrame(obj: Solid) {
+internal fun Mesh.applyWireFrame(obj: Solid) {
     children.find { it.name == "@wireframe" }?.let {
         remove(it)
         (it as LineSegments).dispose()
@@ -116,7 +119,8 @@ fun Mesh.applyWireFrame(obj: Solid) {
     //inherited wireframe definition, disabled by default
     if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
+        val material =
+            ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
         add(
             LineSegments(
                 WireframeGeometry(bufferGeometry),

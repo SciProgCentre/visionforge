@@ -9,6 +9,9 @@ import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.set
@@ -23,6 +26,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
     private val refFactory = ThreeReferenceFactory(this)
+
+    //TODO generate a separate supervisor update scope
+    internal val updateScope: CoroutineScope get() = context
 
     init {
         //Add specialized factories here
@@ -44,7 +50,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     public fun buildObject3D(obj: Solid): Object3D {
         return when (obj) {
             is ThreeVision -> obj.render()
-            is SolidReference -> refFactory(obj)
+            is SolidReferenceGroup -> refFactory(obj)
             is SolidGroup -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (token, child) ->
@@ -63,7 +69,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     updatePosition(obj)
                     //obj.onChildrenChange()
 
-                    obj.onPropertyChange(this) { name ->
+                    obj.propertyInvalidated.onEach { name ->
                         if (
                             name.startsWith(Solid.POSITION_KEY) ||
                             name.startsWith(Solid.ROTATION) ||
@@ -74,9 +80,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                         } else if (name == Vision.VISIBLE_KEY) {
                             visible = obj.visible ?: true
                         }
-                    }
+                    }.launchIn(updateScope)
 
-                    obj.onStructureChange(this) { nameToken, _, child ->
+                    obj.structureChanges.onEach { (nameToken, _, child) ->
 //                        if (name.isEmpty()) {
 //                            logger.error { "Children change with empty name on $group" }
 //                            return@onChildrenChange
@@ -99,7 +105,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                                 logger.error(ex) { "Failed to render $child" }
                             }
                         }
-                    }
+                    }.launchIn(updateScope)
                 }
             }
             is Composite -> compositeFactory(obj)

@@ -1,8 +1,8 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.int
-import hep.dataforge.meta.set
 import hep.dataforge.names.asName
+import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
 import kotlin.test.Test
@@ -14,7 +14,7 @@ class PropertyTest {
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            config["test"] = 22
+            setProperty("test", 22)
             group {
                 box = box(100, 100, 100)
             }
@@ -60,7 +60,7 @@ class PropertyTest {
 
     @Test
     fun testReferenceStyleProperty() {
-        var box: SolidReference? = null
+        var box: SolidReferenceGroup? = null
         val group = SolidGroup{
             styleSheet {
                 set("testStyle") {

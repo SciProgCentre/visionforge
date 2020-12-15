@@ -10,13 +10,10 @@ import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.values.string
-import hep.dataforge.vision.Colors
-import hep.dataforge.vision.VisionBuilder
-import hep.dataforge.vision.setProperty
+import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
-import hep.dataforge.vision.widgetType
 
 @VisionBuilder
 public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
@@ -115,7 +112,7 @@ public class SolidMaterial : Scheme() {
     }
 }
 
-public val Solid.color: ColorAccessor get() = ColorAccessor(config, MATERIAL_COLOR_KEY)
+public val Solid.color: ColorAccessor get() = ColorAccessor(properties, MATERIAL_COLOR_KEY)
 
 public var Solid.material: SolidMaterial?
     get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.read(it) }
@@ -123,11 +120,11 @@ public var Solid.material: SolidMaterial?
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    val node = config[MATERIAL_KEY].node
+    val node = properties.getItem(MATERIAL_KEY).node
     if (node != null) {
         SolidMaterial.update(node, builder)
     } else {
-        config[MATERIAL_KEY] = SolidMaterial(builder)
+        setProperty(MATERIAL_KEY, SolidMaterial(builder))
     }
 }
 

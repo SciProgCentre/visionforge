@@ -36,7 +36,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
 
         private fun PolymorphicModuleBuilder<Solid>.solids() {
             subclass(SolidGroup.serializer())
-            subclass(SolidReference.serializer())
+            subclass(SolidReferenceGroup.serializer())
             subclass(Composite.serializer())
             subclass(Tube.serializer())
             subclass(Box.serializer())

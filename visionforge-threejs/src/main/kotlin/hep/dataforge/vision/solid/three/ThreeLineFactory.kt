@@ -9,12 +9,14 @@ import info.laht.threekt.core.Geometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
-    override fun invoke(obj: PolyLine): Object3D {
+    override fun invoke(three: ThreePlugin, obj: PolyLine): Object3D {
         val geometry = Geometry().apply {
             vertices = Array(obj.points.size) { obj.points[it].toVector() }
         }
@@ -28,9 +30,9 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.onPropertyChange(this) { propertyName ->
+            obj.propertyInvalidated.onEach { propertyName ->
                 updateProperty(obj, propertyName)
-            }
+            }.launchIn(three.updateScope)
         }
     }
 

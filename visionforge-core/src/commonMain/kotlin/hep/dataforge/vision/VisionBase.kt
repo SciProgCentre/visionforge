@@ -3,15 +3,18 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
-import hep.dataforge.meta.descriptors.defaultMeta
 import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlin.jvm.Synchronized
 
 internal data class PropertyListener(
     val owner: Any? = null,
@@ -28,83 +31,89 @@ public open class VisionBase : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    override var properties: Config? = null
-        protected set
+    @SerialName("properties")
+    private var _properties: Config? = null
 
-    override val descriptor: NodeDescriptor? get() = null
+    /**
+     * All own properties as a read-only Meta
+     */
+    public val ownProperties: Meta get() = _properties?: Meta.EMPTY
 
-    protected fun updateStyles(names: List<String>) {
-        names.mapNotNull { getStyle(it) }.asSequence()
-            .flatMap { it.items.asSequence() }
-            .distinctBy { it.key }
-            .forEach {
-                propertyChanged(it.key.asName())
+    @Synchronized
+    private fun getOrCreateConfig(): Config {
+        if (_properties == null) {
+            val newProperties = Config()
+            _properties = newProperties
+            newProperties.onChange(this) { name, oldItem, newItem ->
+                if (oldItem != newItem) {
+                    notifyPropertyChanged(name)
+                }
             }
+        }
+        return _properties!!
     }
 
     /**
-     * The config is initialized and assigned on-demand.
-     * To avoid unnecessary allocations, one should access [getAllProperties] via [getProperty] instead.
+     * A fast accessor method to get own property (no inheritance or styles
      */
-    override val config: Config by lazy {
-        properties ?: Config().also { config ->
-            properties = config.also {
-                it.onChange(this) { name, _, _ -> propertyChanged(name) }
-            }
+    override fun getOwnProperty(name: Name): MetaItem<*>? {
+        return _properties?.getItem(name)
+    }
+
+    override fun getProperty(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean,
+    ): MetaItem<*>? = sequence {
+        yield(getOwnProperty(name))
+        if (includeStyles) {
+            yieldAll(getStyleItems(name))
         }
-    }
-
-    @Transient
-    private val listeners = HashSet<PropertyListener>()
-
-    override fun propertyChanged(name: Name) {
-        if (name == STYLE_KEY) {
-            updateStyles(properties?.get(STYLE_KEY)?.stringList ?: emptyList())
-        }
-        for (listener in listeners) {
-            listener.action(name)
-        }
-    }
-
-    override fun onPropertyChange(owner: Any?, action: (Name) -> Unit) {
-        listeners.add(PropertyListener(owner, action))
-    }
-
-    override fun removeChangeListener(owner: Any?) {
-        listeners.removeAll { owner == null || it.owner == owner }
-    }
-
-    /**
-     * All available properties in a layered form
-     */
-    override val allProperties: Laminate
-        get() = Laminate(
-            properties,
-            allStyles,
-            parent?.allProperties,
-            descriptor?.defaultMeta(),
-        )
-
-    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = sequence {
-        yield(properties?.get(name))
-        yieldAll(getStyleItems(name))
         if (inherit) {
             yield(parent?.getProperty(name, inherit))
         }
         yield(descriptor?.get(name)?.defaultItem())
     }.merge()
 
-    /**
-     * Reset all properties to their default values
-     */
-    public fun resetProperties() {
-        properties?.removeListener(this)
-        properties = null
+    @Synchronized
+    override fun setProperty(name: Name, item: MetaItem<*>?) {
+        getOrCreateConfig().setItem(name, item)
+        notifyPropertyChanged(name)
+    }
+
+    override val descriptor: NodeDescriptor? get() = null
+
+    private fun updateStyles(names: List<String>) {
+        names.mapNotNull { getStyle(it) }.asSequence()
+            .flatMap { it.items.asSequence() }
+            .distinctBy { it.key }
+            .forEach {
+                notifyPropertyChanged(it.key.asName())
+            }
+    }
+
+    private val _propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow(
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override val propertyInvalidated: SharedFlow<Name> get() = _propertyInvalidationFlow
+
+    override fun notifyPropertyChanged(propertyName: Name) {
+        if (propertyName == STYLE_KEY) {
+            updateStyles(properties.getItem(STYLE_KEY)?.stringList ?: emptyList())
+        }
+
+        _propertyInvalidationFlow.tryEmit(propertyName)
+    }
+
+    public fun configure(block: MutableMeta<*>.() -> Unit) {
+        getOrCreateConfig().block()
     }
 
     override fun update(change: VisionChange) {
-        change.propertyChange[Name.EMPTY]?.let {
-            config.update(it)
+        change.properties?.let {
+            getOrCreateConfig().update(it)
         }
     }
 

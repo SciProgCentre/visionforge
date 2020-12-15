@@ -1,7 +1,9 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.configure
 import hep.dataforge.names.*
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -26,54 +28,25 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
      */
     override val children: Map<NameToken, Vision> get() = childrenInternal
 
-    override fun propertyChanged(name: Name) {
-        super.propertyChanged(name)
+    override fun notifyPropertyChanged(propertyName: Name) {
+        super.notifyPropertyChanged(propertyName)
         for (obj in this) {
-            obj.propertyChanged(name)
+            obj.notifyPropertyChanged(propertyName)
         }
     }
 
-    private data class StructureChangeListener(
-        val owner: Any?,
-        val callback: (token: NameToken, before: Vision?, after: Vision?) -> Unit,
+    @Transient
+    private val _structureChanges: MutableSharedFlow<MutableVisionGroup.StructureChange> = MutableSharedFlow(
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    @Transient
-    private val structureChangeListeners = HashSet<StructureChangeListener>()
-
-    /**
-     * Add listener for children change
-     */
-    override fun onStructureChange(owner: Any?, action: (token: NameToken, before: Vision?, after: Vision?) -> Unit) {
-        structureChangeListeners.add(
-            StructureChangeListener(
-                owner,
-                action
-            )
-        )
-    }
-
-    /**
-     * Remove children change listener
-     */
-    override fun removeStructureChangeListener(owner: Any?) {
-        structureChangeListeners.removeAll { owner == null || it.owner === owner }
-    }
+    override val structureChanges: SharedFlow<MutableVisionGroup.StructureChange> get() = _structureChanges
 
     /**
      * Propagate children change event upwards
      */
-    protected fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        structureChangeListeners.forEach { it.callback(name, before, after) }
-    }
-
-    /**
-     * Remove a child with given name token
-     */
-    public fun removeChild(token: NameToken): Vision? {
-        val removed = childrenInternal.remove(token)
-        removed?.parent = null
-        return removed
+    private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
+        _structureChanges.tryEmit(MutableVisionGroup.StructureChange(name, before, after))
     }
 
     /**
@@ -91,12 +64,22 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     /**
      * Set parent for given child and attach it
      */
-    private fun attachChild(token: NameToken, child: Vision) {
-        if (child.parent == null) {
-            child.parent = this
-            childrenInternal[token] = child
-        } else if (child.parent !== this) {
-            error("Can't reassign existing parent for $child")
+    private fun attachChild(token: NameToken, child: Vision?) {
+        val before = children[token]
+        when {
+            child == null -> {
+                childrenInternal.remove(token)
+            }
+            child.parent == null -> {
+                child.parent = this
+                childrenInternal[token] = child
+            }
+            child.parent !== this -> {
+                error("Can't reassign existing parent for $child")
+            }
+        }
+        if (before != child) {
+            childrenChanged(token, before, child)
         }
     }
 
@@ -133,13 +116,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
             }
             name.length == 1 -> {
                 val token = name.tokens.first()
-                val before = children[token]
-                if (child == null) {
-                    removeChild(token)
-                } else {
-                    attachChild(token, child)
-                }
-                childrenChanged(token, before, child)
+                attachChild(token, child)
             }
             else -> {
                 //TODO add safety check
@@ -150,18 +127,12 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     }
 
     override fun update(change: VisionChange) {
-        //update stylesheet
-//            val changeStyleSheet = change.styleSheet
-//            if (changeStyleSheet != null) {
-//                styleSheet {
-//                    update(changeStyleSheet)
-//                }
-//            }
-        change.propertyChange.forEach {(childName,configChange)->
-            get(childName)?.configure(configChange)
-        }
-        change.childrenChange.forEach { (name, child) ->
-            set(name, child)
+        change.children?.forEach { (name, change) ->
+            when {
+                change.reset -> set(name, null)
+                change.vision != null -> set(name, change.vision)
+                else -> get(name)?.update(change)
+            }
         }
         super.update(change)
     }
