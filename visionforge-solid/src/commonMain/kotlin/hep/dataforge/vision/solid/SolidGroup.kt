@@ -38,6 +38,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
     /**
      * Create or edit prototype node as a group
      */
+    @VisionBuilder
     public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
@@ -107,10 +108,9 @@ internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
 ) : VisionGroupBase(), PrototypeHolder {
 
-    override var parent: VisionGroup? = null
-
-    private val _children = HashMap(children)
-    override val children: Map<NameToken, Vision> get() = _children
+    init {
+        childrenInternal.putAll(children)
+    }
 
     override val prototypes: MutableVisionGroup get() = this
 

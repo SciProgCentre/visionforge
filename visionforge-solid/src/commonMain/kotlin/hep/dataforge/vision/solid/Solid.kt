@@ -81,7 +81,7 @@ public interface Solid : Vision {
             if (first.position != second.position) return false
             if (first.rotation != second.rotation) return false
             if (first.scale != second.scale) return false
-            if (first.properties != second.properties) return false
+            if (first.ownProperties != second.ownProperties) return false
             return true
         }
 

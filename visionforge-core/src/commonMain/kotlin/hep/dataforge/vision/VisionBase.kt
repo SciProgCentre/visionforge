@@ -8,7 +8,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.SerialName
@@ -32,32 +31,33 @@ public open class VisionBase : Vision {
      * Object own properties excluding styles and inheritance
      */
     @SerialName("properties")
-    private var _properties: Config? = null
+    protected var innerProperties: Config? = null
+        private set
 
     /**
      * All own properties as a read-only Meta
      */
-    public val ownProperties: Meta get() = _properties?: Meta.EMPTY
+    public val ownProperties: Meta get() = innerProperties ?: Meta.EMPTY
 
     @Synchronized
     private fun getOrCreateConfig(): Config {
-        if (_properties == null) {
+        if (innerProperties == null) {
             val newProperties = Config()
-            _properties = newProperties
+            innerProperties = newProperties
             newProperties.onChange(this) { name, oldItem, newItem ->
                 if (oldItem != newItem) {
                     notifyPropertyChanged(name)
                 }
             }
         }
-        return _properties!!
+        return innerProperties!!
     }
 
     /**
      * A fast accessor method to get own property (no inheritance or styles
      */
     override fun getOwnProperty(name: Name): MetaItem<*>? {
-        return _properties?.getItem(name)
+        return innerProperties?.getItem(name)
     }
 
     override fun getProperty(
@@ -93,9 +93,8 @@ public open class VisionBase : Vision {
             }
     }
 
-    private val _propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow(
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    @Transient
+    private val _propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
     override val propertyInvalidated: SharedFlow<Name> get() = _propertyInvalidationFlow
 

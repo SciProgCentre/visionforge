@@ -4,6 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.getStyle
+import hep.dataforge.vision.properties
 import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.metaViewer
 import org.w3c.dom.Element
@@ -17,7 +18,7 @@ public fun RBuilder.visionPropertyEditor(
     key: Any? = null
 ) {
     card("Properties") {
-        configEditor(item.config, descriptor, default, key)
+        configEditor(item.properties, descriptor, default, key)
     }
     val styles = item.styles
     if(styles.isNotEmpty()) {

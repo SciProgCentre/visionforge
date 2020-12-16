@@ -85,7 +85,7 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
     }
 }
 
-internal fun Mesh.applyEdges(obj: Solid) {
+public fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
     if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
@@ -111,7 +111,7 @@ internal fun Mesh.applyEdges(obj: Solid) {
     }
 }
 
-internal fun Mesh.applyWireFrame(obj: Solid) {
+public fun Mesh.applyWireFrame(obj: Solid) {
     children.find { it.name == "@wireframe" }?.let {
         remove(it)
         (it as LineSegments).dispose()

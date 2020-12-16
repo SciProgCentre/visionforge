@@ -5,6 +5,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.getProperty
+import hep.dataforge.vision.properties
 import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
@@ -16,6 +17,8 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
 import info.laht.threekt.objects.Mesh
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.math.max
 
 internal fun SolidGroup.varBox(
@@ -31,11 +34,11 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         scaleX = xSize
         scaleY = ySize
         scaleZ = zSize
-        config[MeshThreeFactory.EDGES_ENABLED_KEY] = false
-        config[MeshThreeFactory.WIREFRAME_ENABLED_KEY] = false
+        properties[MeshThreeFactory.EDGES_ENABLED_KEY] = false
+        properties[MeshThreeFactory.WIREFRAME_ENABLED_KEY] = false
     }
 
-    override fun render(): Object3D {
+    override fun render(three: ThreePlugin): Object3D {
         val xSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val ySize = getProperty(Y_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val zSize = getProperty(Z_SIZE_KEY, false).number?.toDouble() ?: 1.0
@@ -60,7 +63,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         mesh.scale.set(xSize, ySize, zSize)
 
         //add listener to object properties
-        onPropertyChange(mesh) { name ->
+        propertyInvalidated.onEach { name ->
             when {
                 name.startsWith(GEOMETRY_KEY) -> {
                     val newXSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
@@ -71,12 +74,12 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
                 }
                 name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(this@VariableBox)
                 name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
-                name.startsWith(MATERIAL_COLOR_KEY)->{
+                name.startsWith(MATERIAL_COLOR_KEY) -> {
                     mesh.material = getMaterial(this, true)
                 }
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
-        }
+        }.launchIn(three.context)
         return mesh
     }
 
@@ -100,7 +103,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
             color(r.toUByte(), g.toUByte(), b.toUByte())
         }
 
-    companion object{
+    companion object {
         private val X_SIZE_KEY = GEOMETRY_KEY + "xSize"
         private val Y_SIZE_KEY = GEOMETRY_KEY + "ySize"
         private val Z_SIZE_KEY = GEOMETRY_KEY + "zSize"

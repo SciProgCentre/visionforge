@@ -4,6 +4,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
+import hep.dataforge.vision.describedProperties
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.css.*
@@ -53,7 +54,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                 if (selectedObject != null) {
                     visionPropertyEditor(
                         selectedObject,
-                        default = selectedObject.allProperties,
+                        default = selectedObject.describedProperties,
                         key = selected
                     )
                 }

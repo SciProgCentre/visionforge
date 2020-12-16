@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
-public class ThreeReferenceFactory(public val three: ThreePlugin) : ThreeFactory<SolidReferenceGroup> {
+public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
     private val cache = HashMap<Solid, Object3D>()
 
     override val type: KClass<SolidReferenceGroup> = SolidReferenceGroup::class
@@ -32,7 +32,7 @@ public class ThreeReferenceFactory(public val three: ThreePlugin) : ThreeFactory
         }
     }
 
-    override fun invoke(obj: SolidReferenceGroup): Object3D {
+    override fun invoke(three: ThreePlugin, obj: SolidReferenceGroup): Object3D {
         val template = obj.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)

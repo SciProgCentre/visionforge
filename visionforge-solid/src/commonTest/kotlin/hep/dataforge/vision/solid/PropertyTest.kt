@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.int
 import hep.dataforge.names.asName
+import hep.dataforge.vision.getProperty
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
@@ -19,7 +20,7 @@ class PropertyTest {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getProperty("test").int)
     }
 
     @Test
@@ -37,7 +38,7 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getProperty("test").int)
     }
 
     @Test

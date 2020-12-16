@@ -25,7 +25,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
-    private val refFactory = ThreeReferenceFactory(this)
 
     //TODO generate a separate supervisor update scope
     internal val updateScope: CoroutineScope get() = context
@@ -49,8 +48,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public fun buildObject3D(obj: Solid): Object3D {
         return when (obj) {
-            is ThreeVision -> obj.render()
-            is SolidReferenceGroup -> refFactory(obj)
+            is ThreeVision -> obj.render(this)
+            is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
             is SolidGroup -> {
                 val group = ThreeGroup()
                 obj.children.forEach { (token, child) ->
@@ -108,13 +107,13 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     }.launchIn(updateScope)
                 }
             }
-            is Composite -> compositeFactory(obj)
+            is Composite -> compositeFactory(this, obj)
             else -> {
                 //find specialized factory for this type if it is present
                 val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
                 when {
-                    factory != null -> factory(obj)
-                    obj is GeometrySolid -> ThreeShapeFactory(obj)
+                    factory != null -> factory(this, obj)
+                    obj is GeometrySolid -> ThreeShapeFactory(this, obj)
                     else -> error("Renderer for ${obj::class} not found")
                 }
             }

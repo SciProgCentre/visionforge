@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
 public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
-    override fun invoke(obj: SolidLabel): Object3D {
+    override fun invoke(three: ThreePlugin, obj: SolidLabel): Object3D {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
         context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"

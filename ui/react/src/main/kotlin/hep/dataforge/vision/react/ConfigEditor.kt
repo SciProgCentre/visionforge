@@ -19,7 +19,7 @@ public external interface ConfigEditorItemProps : RProps {
     /**
      * Root config object - always non null
      */
-    public var root: Config
+    public var root: MutableItemProvider
 
     /**
      * Full path to the displayed node in [root]. Could be empty
@@ -44,7 +44,7 @@ private val ConfigEditorItem: FunctionalComponent<ConfigEditorItemProps> =
 
 private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
     var expanded: Boolean by useState { true }
-    var item: MetaItem<Config>? by useState { props.root[props.name] }
+    var item: MetaItem<*>? by useState { props.root.getItem(props.name) }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     val defaultItem = props.default?.get(props.name)
     var actualItem: MetaItem<Meta>? by useState { item ?: defaultItem ?: descriptorItem?.defaultItem() }
@@ -52,7 +52,7 @@ private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
     val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        item = props.root[props.name]
+        item = props.root.getItem(props.name)
         actualItem = item ?: defaultItem ?: descriptorItem?.defaultItem()
     }
 
@@ -192,7 +192,7 @@ private fun RBuilder.configEditorItem(props: ConfigEditorItemProps) {
 
 public external interface ConfigEditorProps : RProps {
     public var id: Name
-    public var root: Config
+    public var root: MutableItemProvider
     public var default: Meta?
     public var descriptor: NodeDescriptor?
 }
@@ -229,7 +229,7 @@ public fun Element.configEditor(
 }
 
 public fun RBuilder.configEditor(
-    config: Config,
+    config: MutableItemProvider,
     descriptor: NodeDescriptor? = null,
     default: Meta? = null,
     key: Any? = null,

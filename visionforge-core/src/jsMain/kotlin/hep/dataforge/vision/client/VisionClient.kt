@@ -18,6 +18,10 @@ import org.w3c.dom.WebSocket
 import org.w3c.dom.asList
 import org.w3c.dom.get
 import org.w3c.dom.url.URL
+import kotlin.collections.HashMap
+import kotlin.collections.forEach
+import kotlin.collections.maxByOrNull
+import kotlin.collections.set
 import kotlin.reflect.KClass
 
 public class VisionClient : AbstractPlugin() {
@@ -124,9 +128,9 @@ public class VisionClient : AbstractPlugin() {
                         )
                         logger.debug { "Got update $dif for output with name $name" }
                         visionMap[element]?.update(dif)
-                            ?: logger.info { "Target vision for element $element with name $name not found" }
+                            ?: console.info("Target vision for element $element with name $name not found")
                     } else {
-                        console.error("WebSocket message data is not a string")
+                        console.error ("WebSocket message data is not a string")
                     }
                 }
                 onopen = {

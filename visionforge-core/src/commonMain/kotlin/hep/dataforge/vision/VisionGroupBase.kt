@@ -1,7 +1,6 @@
 package hep.dataforge.vision
 
 import hep.dataforge.names.*
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.serialization.SerialName
@@ -36,9 +35,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
     }
 
     @Transient
-    private val _structureChanges: MutableSharedFlow<MutableVisionGroup.StructureChange> = MutableSharedFlow(
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val _structureChanges: MutableSharedFlow<MutableVisionGroup.StructureChange> = MutableSharedFlow()
 
     override val structureChanges: SharedFlow<MutableVisionGroup.StructureChange> get() = _structureChanges
 
