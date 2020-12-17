@@ -81,7 +81,7 @@ public interface Solid : Vision {
             if (first.position != second.position) return false
             if (first.rotation != second.rotation) return false
             if (first.scale != second.scale) return false
-            if (first.ownProperties != second.ownProperties) return false
+            if (first.properties != second.properties) return false
             return true
         }
 
@@ -89,7 +89,7 @@ public interface Solid : Vision {
             var result = +(solid.position?.hashCode() ?: 0)
             result = 31 * result + (solid.rotation?.hashCode() ?: 0)
             result = 31 * result + (solid.scale?.hashCode() ?: 0)
-            result = 31 * result + solid.properties.hashCode()
+            result = 31 * result + solid.allProperties().hashCode()
             return result
         }
     }
@@ -99,7 +99,7 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = properties.getItem(LAYER_KEY).int ?: 0
+    get() = allProperties().getItem(LAYER_KEY).int ?: 0
     set(value) {
         setProperty(LAYER_KEY, value)
     }

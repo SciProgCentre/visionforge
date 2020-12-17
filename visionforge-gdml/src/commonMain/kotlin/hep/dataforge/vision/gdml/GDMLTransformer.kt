@@ -38,7 +38,6 @@ public class GDMLTransformerSettings {
 
     public var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
     public var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
-
 }
 
 private class GDMLTransformer(val settings: GDMLTransformerSettings) {
@@ -324,7 +323,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         }
     }
 
-    fun finalize(final: SolidGroup): SolidGroup {
+    private fun finalize(final: SolidGroup): SolidGroup {
         //final.prototypes = proto
         final.useStyle("GDML") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY

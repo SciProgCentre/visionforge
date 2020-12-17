@@ -18,7 +18,7 @@ class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
 
     init {
-        obj.propertyInvalidated.onEach { name ->
+        obj.propertyNameFlow.onEach { name ->
             bindings.filter { it.key.startsWith(name) }.forEach { entry ->
                 Platform.runLater {
                     entry.value.invalidate()

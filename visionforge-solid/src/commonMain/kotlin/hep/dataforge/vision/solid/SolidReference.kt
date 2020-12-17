@@ -47,12 +47,12 @@ public class SolidReferenceGroup(
         return getOwnProperty(childPropertyName(childName, propertyName))
     }
 
-    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem<*>?) {
-        setProperty(childPropertyName(childName, propertyName), item)
+    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem<*>?, notify: Boolean) {
+        setProperty(childPropertyName(childName, propertyName), item, notify)
     }
 
     private fun prototypeFor(name: Name): Solid {
-        return if(name.isEmpty()) prototype else {
+        return if (name.isEmpty()) prototype else {
             (prototype as? SolidGroup)?.get(name) as? Solid
                 ?: error("Prototype with name $name not found in $this")
         }
@@ -98,8 +98,8 @@ public class SolidReferenceGroup(
 
         override fun getOwnProperty(name: Name): MetaItem<*>? = getChildProperty(childName, name)
 
-        override fun setProperty(name: Name, item: MetaItem<*>?) {
-            setChildProperty(childName, name, item)
+        override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
+            setChildProperty(childName, name, item, notify)
         }
 
         override fun getProperty(
@@ -119,16 +119,16 @@ public class SolidReferenceGroup(
         }.merge()
 
         override var parent: VisionGroup?
-            get(){
+            get() {
                 val parentName = childName.cutLast()
-                return if( parentName.isEmpty()) this@SolidReferenceGroup else ReferenceChild(parentName)
+                return if (parentName.isEmpty()) this@SolidReferenceGroup else ReferenceChild(parentName)
             }
             set(value) {
                 error("Setting a parent for a reference child is not possible")
             }
 
-        override val propertyInvalidated: Flow<Name>
-            get() = this@SolidReferenceGroup.propertyInvalidated.filter { name ->
+        override val propertyNameFlow: Flow<Name>
+            get() = this@SolidReferenceGroup.propertyNameFlow.filter { name ->
                 name.startsWith(childToken(childName))
             }.map { name ->
                 name.cutFirst()

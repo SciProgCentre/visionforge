@@ -1,15 +1,15 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
-import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Transient
 
@@ -26,7 +26,8 @@ public interface Vision : Described {
     public var parent: VisionGroup?
 
     /**
-     * A fast accessor method to get own property (no inheritance or styles
+     * A fast accessor method to get own property (no inheritance or styles).
+     * Should be equivalent to `getProperty(name,false,false,false)`.
      */
     public fun getOwnProperty(name: Name): MetaItem<*>?
 
@@ -46,33 +47,19 @@ public interface Vision : Described {
     /**
      * Set the property value
      */
-    public fun setProperty(name: Name, item: MetaItem<*>?)
+    public fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean = true)
 
     /**
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
      * if it should include inherited properties etc.
      */
-    public val propertyInvalidated: Flow<Name>
+    public val propertyNameFlow: Flow<Name>
 
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated
      */
     public fun notifyPropertyChanged(propertyName: Name): Unit
-
-    /**
-     * List of names of styles applied to this object. Order matters. Not inherited.
-     */
-    public var styles: List<String>
-        get() = getProperty(
-            STYLE_KEY,
-            inherit = false,
-            includeStyles = false,
-            includeDefaults = true
-        )?.stringList ?: emptyList()
-        set(value) {
-            setProperty(STYLE_KEY, value)
-        }
 
     /**
      * Update this vision using external meta. Children are not updated.
@@ -90,18 +77,26 @@ public interface Vision : Described {
 }
 
 /**
- * Convenient accessor for all properties of a vision. Provided properties include styles and defaults, but do not inherit.
+ * Convenient accessor for all properties of a vision.
+ * @param inherit - inherit property value from the parent by default. If null, inheritance is inferred from descriptor
  */
-public val Vision.properties: MutableItemProvider
-    get() = object : MutableItemProvider {
-        override fun getItem(name: Name): MetaItem<*>? = getProperty(name,
-            inherit = false,
-            includeStyles = true,
-            includeDefaults = true
+public fun Vision.allProperties(
+    inherit: Boolean? = null,
+    includeStyles: Boolean = true,
+    includeDefaults: Boolean = true,
+): MutableItemProvider = object : MutableItemProvider {
+    override fun getItem(name: Name): MetaItem<*>? {
+        val actualInherit = inherit ?: descriptor?.get(name)?.inherited ?: false
+        return getProperty(
+            name,
+            inherit = actualInherit,
+            includeStyles = includeStyles,
+            includeDefaults = includeDefaults
         )
-
-        override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
     }
+
+    override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
+}
 
 /**
  * Get [Vision] property using key as a String
@@ -116,31 +111,13 @@ public fun Vision.getProperty(
 /**
  * A convenience method to pair [getProperty]
  */
-public fun Vision.setProperty(key: Name, value: Any?) {
-    properties[key] = value
+public fun Vision.setProperty(key: Name, item: Any?) {
+    setProperty(key, MetaItem.of(item))
 }
 
 /**
  * A convenience method to pair [getProperty]
  */
-public fun Vision.setProperty(key: String, value: Any?) {
-    properties[key] = value
-}
-
-/**
- * Control visibility of the element
- */
-public var Vision.visible: Boolean?
-    get() = getProperty(VISIBLE_KEY).boolean
-    set(value) = setProperty(VISIBLE_KEY, value?.asValue())
-
-public fun Vision.props(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem<*>? {
-        return getProperty(name, inherit)
-    }
-
-    override fun setItem(name: Name, item: MetaItem<*>?) {
-        setProperty(name, item)
-    }
-
+public fun Vision.setProperty(key: String, item: Any?) {
+    setProperty(key.toName(), MetaItem.of(item))
 }

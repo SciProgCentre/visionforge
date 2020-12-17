@@ -3,7 +3,6 @@ package hep.dataforge.vision.gdml
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.sequence
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.ownProperties
 import hep.dataforge.vision.properties
 import hep.dataforge.vision.solid.*
 
@@ -28,8 +27,8 @@ internal fun Vision.updateFrom(other: Vision): Vision {
             scaleY = scaleY.toDouble() * other.scaleY.toDouble()
             scaleZ = scaleZ.toDouble() * other.scaleZ.toDouble()
         }
-        other.ownProperties?.sequence()?.forEach { (name, item) ->
-            if (properties.getItem(name) == null) {
+        other.properties?.sequence()?.forEach { (name, item) ->
+            if (getProperty(name) == null) {
                 setProperty(name, item)
             }
         }

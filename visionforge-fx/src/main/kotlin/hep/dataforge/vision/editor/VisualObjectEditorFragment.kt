@@ -19,8 +19,8 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
     constructor(
         item: Vision?,
         descriptor: NodeDescriptor?,
-        selector: (Vision) -> MutableItemProvider = { it.properties }
-    ) : this({it.describedProperties}) {
+        selector: (Vision) -> MutableItemProvider = { it.allProperties() },
+    ) : this({ it.describedProperties }) {
         this.item = item
         this.descriptorProperty.set(descriptor)
     }

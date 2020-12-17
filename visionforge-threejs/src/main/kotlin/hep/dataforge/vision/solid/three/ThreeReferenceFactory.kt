@@ -47,7 +47,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
 
         //TODO apply child properties
 
-        obj.propertyInvalidated.onEach { name->
+        obj.propertyNameFlow.onEach { name->
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()

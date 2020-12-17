@@ -41,14 +41,14 @@ public operator fun ColorAccessor?.invoke(webColor: String) {
  * Set color as RGB integer
  */
 public operator fun ColorAccessor?.invoke(rgb: Int) {
-    this?.value = rgb.asValue()
+    this?.value = Colors.rgbToString(rgb).asValue()
 }
 
 /**
  * Set color as RGB
  */
 public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
-    this?.value =  Colors.rgbToString(r, g, b).asValue()
+    this?.value = Colors.rgbToString(r, g, b).asValue()
 }
 
 @VisionBuilder
@@ -112,7 +112,15 @@ public class SolidMaterial : Scheme() {
     }
 }
 
-public val Solid.color: ColorAccessor get() = ColorAccessor(properties, MATERIAL_COLOR_KEY)
+public val Solid.color: ColorAccessor
+    get() = ColorAccessor(
+        allProperties(
+            inherit = true,
+            includeStyles = true,
+            includeDefaults = true
+        ),
+        MATERIAL_COLOR_KEY
+    )
 
 public var Solid.material: SolidMaterial?
     get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.read(it) }
@@ -120,7 +128,11 @@ public var Solid.material: SolidMaterial?
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    val node = properties.getItem(MATERIAL_KEY).node
+    val node = allProperties(
+        inherit = true,
+        includeStyles = true,
+        includeDefaults = true
+    ).getItem(MATERIAL_KEY).node
     if (node != null) {
         SolidMaterial.update(node, builder)
     } else {

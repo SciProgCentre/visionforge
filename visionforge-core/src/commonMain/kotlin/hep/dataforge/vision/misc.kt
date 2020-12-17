@@ -31,16 +31,15 @@ public inline fun <reified E : Enum<E>> NodeDescriptor.enum(key: Name, default: 
 }
 
 @DFExperimental
-public val Vision.ownProperties: Meta?
-    get() = (this as? VisionBase)?.ownProperties
+public val Vision.properties: Config?
+    get() = (this as? VisionBase)?.properties
 
-@DFExperimental
-public val Vision.describedProperties: Meta
-    get() = Meta {
-        descriptor?.items?.forEach { (key, _) ->
-            key put getProperty(key)
-        }
-    }
+/**
+ * Control visibility of the element
+ */
+public var Vision.visible: Boolean?
+    get() = getProperty(Vision.VISIBLE_KEY).boolean
+    set(value) = setProperty(Vision.VISIBLE_KEY, value?.asValue())
 
 public fun Vision.configure(meta: Meta?): Unit = update(VisionChange(properties = meta))
 

@@ -1,5 +1,6 @@
 package hep.dataforge.vision.solid
 
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.update
 import hep.dataforge.names.NameToken
 import hep.dataforge.vision.*
@@ -39,7 +40,7 @@ public inline fun VisionContainerBuilder<Solid>.composite(
     val children = group.children.values.filterIsInstance<Solid>()
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also {
-        it.configure { update(group.ownProperties) }
+        it.configure { update(group.properties ?: Meta.EMPTY) }
         if (group.position != null) {
             it.position = group.position
         }

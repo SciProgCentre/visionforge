@@ -5,7 +5,6 @@ import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.getProperty
-import hep.dataforge.vision.properties
 import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
@@ -34,8 +33,8 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         scaleX = xSize
         scaleY = ySize
         scaleZ = zSize
-        properties[MeshThreeFactory.EDGES_ENABLED_KEY] = false
-        properties[MeshThreeFactory.WIREFRAME_ENABLED_KEY] = false
+        getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, false)
+        getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY, false)
     }
 
     override fun render(three: ThreePlugin): Object3D {
@@ -63,7 +62,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         mesh.scale.set(xSize, ySize, zSize)
 
         //add listener to object properties
-        propertyInvalidated.onEach { name ->
+        propertyNameFlow.onEach { name ->
             when {
                 name.startsWith(GEOMETRY_KEY) -> {
                     val newXSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0

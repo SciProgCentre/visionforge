@@ -30,7 +30,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.propertyInvalidated.onEach { propertyName ->
+            obj.propertyNameFlow.onEach { propertyName ->
                 updateProperty(obj, propertyName)
             }.launchIn(three.updateScope)
         }

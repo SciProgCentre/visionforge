@@ -2,10 +2,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.int
 import hep.dataforge.names.asName
-import hep.dataforge.vision.getProperty
-import hep.dataforge.vision.setProperty
-import hep.dataforge.vision.styleSheet
-import hep.dataforge.vision.useStyle
+import hep.dataforge.vision.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

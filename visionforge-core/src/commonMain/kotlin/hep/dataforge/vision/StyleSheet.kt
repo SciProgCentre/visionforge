@@ -65,6 +65,15 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
 
 
 /**
+ * List of names of styles applied to this object. Order matters. Not inherited.
+ */
+public var Vision.styles: List<String>
+    get() = getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    set(value) {
+        setProperty(Vision.STYLE_KEY, value)
+    }
+
+/**
  * A stylesheet for this group and its descendants. Stylesheet is not applied directly,
  * but instead is just a repository for named configurations.
  */

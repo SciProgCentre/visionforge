@@ -10,9 +10,9 @@ import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.bootstrap.gridRow
 import hep.dataforge.vision.react.ThreeCanvasComponent
-import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.objectTree
+import hep.dataforge.vision.react.propertyEditor
 import hep.dataforge.vision.solid.specifications.Camera
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
@@ -193,7 +193,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                             else -> root[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(
+                            propertyEditor(
                                 selectedObject.config,
                                 selectedObject.descriptor,
                                 default = selectedObject.allProperties,

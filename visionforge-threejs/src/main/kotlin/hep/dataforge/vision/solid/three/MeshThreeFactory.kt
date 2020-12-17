@@ -45,7 +45,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
         }.applyProperties(obj)
 
         //add listener to object properties
-        obj.propertyInvalidated.onEach { name ->
+        obj.propertyNameFlow.onEach { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry

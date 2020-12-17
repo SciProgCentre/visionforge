@@ -64,7 +64,7 @@ private fun Vision.isolate(manager: VisionManager): Vision {
 public class VisionChange(
     public val reset: Boolean = false,
     public val vision: Vision? = null,
-    public val properties: Meta? = null,
+    @Serializable(MetaSerializer::class) public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,
 ) {
 
@@ -81,7 +81,7 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.propertyInvalidated.onEach { propertyName ->
+    source.propertyNameFlow.onEach { propertyName ->
         val newItem = source.getProperty(propertyName, inherit = false, includeStyles = false, includeDefaults = false)
         collector().propertyChanged(name, propertyName, newItem)
     }.launchIn(this)

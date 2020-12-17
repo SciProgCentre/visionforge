@@ -130,7 +130,7 @@ internal class Prototypes(
         includeDefaults: Boolean,
     ): MetaItem<*>? = null
 
-    override fun setProperty(name: Name, item: MetaItem<*>?) {
+    override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
         TODO("Not yet implemented")
     }
 

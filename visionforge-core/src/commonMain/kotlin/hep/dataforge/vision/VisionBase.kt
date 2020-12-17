@@ -1,9 +1,12 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Config
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.MutableMeta
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
 import hep.dataforge.meta.descriptors.get
+import hep.dataforge.meta.update
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
@@ -30,34 +33,28 @@ public open class VisionBase : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    @SerialName("properties")
-    protected var innerProperties: Config? = null
+    public var properties: Config? = null
         private set
-
-    /**
-     * All own properties as a read-only Meta
-     */
-    public val ownProperties: Meta get() = innerProperties ?: Meta.EMPTY
 
     @Synchronized
     private fun getOrCreateConfig(): Config {
-        if (innerProperties == null) {
+        if (properties == null) {
             val newProperties = Config()
-            innerProperties = newProperties
+            properties = newProperties
             newProperties.onChange(this) { name, oldItem, newItem ->
                 if (oldItem != newItem) {
                     notifyPropertyChanged(name)
                 }
             }
         }
-        return innerProperties!!
+        return properties!!
     }
 
     /**
      * A fast accessor method to get own property (no inheritance or styles
      */
     override fun getOwnProperty(name: Name): MetaItem<*>? {
-        return innerProperties?.getItem(name)
+        return properties?.getItem(name)
     }
 
     override fun getProperty(
@@ -77,9 +74,11 @@ public open class VisionBase : Vision {
     }.merge()
 
     @Synchronized
-    override fun setProperty(name: Name, item: MetaItem<*>?) {
+    override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
         getOrCreateConfig().setItem(name, item)
-        notifyPropertyChanged(name)
+        if(notify) {
+            notifyPropertyChanged(name)
+        }
     }
 
     override val descriptor: NodeDescriptor? get() = null
@@ -96,11 +95,11 @@ public open class VisionBase : Vision {
     @Transient
     private val _propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
-    override val propertyInvalidated: SharedFlow<Name> get() = _propertyInvalidationFlow
+    override val propertyNameFlow: SharedFlow<Name> get() = _propertyInvalidationFlow
 
     override fun notifyPropertyChanged(propertyName: Name) {
         if (propertyName == STYLE_KEY) {
-            updateStyles(properties.getItem(STYLE_KEY)?.stringList ?: emptyList())
+            updateStyles(styles)
         }
 
         _propertyInvalidationFlow.tryEmit(propertyName)
