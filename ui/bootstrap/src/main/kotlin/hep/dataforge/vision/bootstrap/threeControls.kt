@@ -4,7 +4,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.isEmpty
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionGroup
-import hep.dataforge.vision.describedProperties
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.css.*
@@ -52,11 +51,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                     else -> (vision as? VisionGroup)?.get(selected)
                 }
                 if (selectedObject != null) {
-                    visionPropertyEditor(
-                        selectedObject,
-                        default = selectedObject.describedProperties,
-                        key = selected
-                    )
+                    visionPropertyEditor(selectedObject, key = selected)
                 }
             }
         }
@@ -70,7 +65,7 @@ public fun RBuilder.threeControls(
     canvas: ThreeCanvas,
     selected: Name?,
     onSelect: (Name) -> Unit = {},
-    builder: TabBuilder.() -> Unit = {}
+    builder: TabBuilder.() -> Unit = {},
 ): ReactElement = child(ThreeControls) {
     attrs {
         this.canvas = canvas

@@ -8,11 +8,18 @@ import hep.dataforge.meta.get
 import hep.dataforge.meta.set
 
 private const val INHERITED_DESCRIPTOR_ATTRIBUTE = "inherited"
+private const val STYLE_DESCRIPTOR_ATTRIBUTE = "useStyles"
 
 public var ItemDescriptor.inherited: Boolean
     get() = attributes[INHERITED_DESCRIPTOR_ATTRIBUTE].boolean ?: false
     set(value) = attributes {
         set(INHERITED_DESCRIPTOR_ATTRIBUTE, value)
+    }
+
+public var ItemDescriptor.usesStyles: Boolean
+    get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean ?: true
+    set(value) = attributes {
+        set(STYLE_DESCRIPTOR_ATTRIBUTE, value)
     }
 
 

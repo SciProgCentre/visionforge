@@ -82,15 +82,16 @@ public interface Vision : Described {
  */
 public fun Vision.allProperties(
     inherit: Boolean? = null,
-    includeStyles: Boolean = true,
+    includeStyles: Boolean? = null,
     includeDefaults: Boolean = true,
 ): MutableItemProvider = object : MutableItemProvider {
     override fun getItem(name: Name): MetaItem<*>? {
         val actualInherit = inherit ?: descriptor?.get(name)?.inherited ?: false
+        val actualUseStyles = includeStyles ?: descriptor?.get(name)?.usesStyles ?: true
         return getProperty(
             name,
             inherit = actualInherit,
-            includeStyles = includeStyles,
+            includeStyles = actualUseStyles,
             includeDefaults = includeDefaults
         )
     }
