@@ -4,7 +4,6 @@ import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -33,13 +32,13 @@ public interface Vision : Described {
 
     /**
      * Get property.
-     * @param inherit toggles parent node property lookup
-     * @param includeStyles toggles inclusion of
+     * @param inherit toggles parent node property lookup. Null means default inheritance.
+     * @param includeStyles toggles inclusion of. Null means default style inclusion.
      */
     public fun getProperty(
         name: Name,
-        inherit: Boolean = true,
-        includeStyles: Boolean = true,
+        inherit: Boolean? = null,
+        includeStyles: Boolean? = null,
         includeDefaults: Boolean = true,
     ): MetaItem<*>?
 
@@ -77,6 +76,16 @@ public interface Vision : Described {
 }
 
 /**
+ * Own properties, excluding inheritance, styles and descriptor
+ */
+public val Vision.ownProperties: MutableItemProvider
+    get() = object : MutableItemProvider {
+        override fun getItem(name: Name): MetaItem<*>? = getOwnProperty(name)
+        override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
+    }
+
+
+/**
  * Convenient accessor for all properties of a vision.
  * @param inherit - inherit property value from the parent by default. If null, inheritance is inferred from descriptor
  */
@@ -85,16 +94,12 @@ public fun Vision.allProperties(
     includeStyles: Boolean? = null,
     includeDefaults: Boolean = true,
 ): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem<*>? {
-        val actualInherit = inherit ?: descriptor?.get(name)?.inherited ?: false
-        val actualUseStyles = includeStyles ?: descriptor?.get(name)?.usesStyles ?: true
-        return getProperty(
-            name,
-            inherit = actualInherit,
-            includeStyles = actualUseStyles,
-            includeDefaults = includeDefaults
-        )
-    }
+    override fun getItem(name: Name): MetaItem<*>? = getProperty(
+        name,
+        inherit = inherit,
+        includeStyles = includeStyles,
+        includeDefaults = includeDefaults
+    )
 
     override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
 }
@@ -104,8 +109,8 @@ public fun Vision.allProperties(
  */
 public fun Vision.getProperty(
     key: String,
-    inherit: Boolean = true,
-    includeStyles: Boolean = true,
+    inherit: Boolean? = null,
+    includeStyles: Boolean? = null,
     includeDefaults: Boolean = true,
 ): MetaItem<*>? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
 

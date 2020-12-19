@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.*
 import hep.dataforge.vision.*
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,24 @@ import kotlinx.serialization.Serializable
 
 public interface SolidReference : Vision {
     public val prototype: Solid
+}
+
+private fun SolidReference.getRefProperty(
+    name: Name,
+    inherit: Boolean?,
+    includeStyles: Boolean?,
+    includeDefaults: Boolean,
+): MetaItem<*>? {
+    return sequence {
+        yield(getOwnProperty(name))
+        if (includeStyles ?: descriptor?.get(name)?.usesStyles != false) {
+            yieldAll(getStyleItems(name))
+        }
+        yield(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
+        if (inherit ?: descriptor?.get(name)?.inherited == true) {
+            yield(parent?.getProperty(name, inherit))
+        }
+    }.merge()
 }
 
 /**
@@ -60,19 +79,10 @@ public class SolidReferenceGroup(
 
     override fun getProperty(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean?,
+        includeStyles: Boolean?,
         includeDefaults: Boolean,
-    ): MetaItem<*>? = sequence {
-        yield(getOwnProperty(name))
-        if (includeStyles) {
-            yieldAll(getStyleItems(name))
-        }
-        yield(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
-        if (inherit) {
-            yield(parent?.getProperty(name, inherit))
-        }
-    }.merge()
+    ): MetaItem<*>? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
     override fun attachChildren() {
         //do nothing
@@ -104,19 +114,10 @@ public class SolidReferenceGroup(
 
         override fun getProperty(
             name: Name,
-            inherit: Boolean,
-            includeStyles: Boolean,
+            inherit: Boolean?,
+            includeStyles: Boolean?,
             includeDefaults: Boolean,
-        ): MetaItem<*>? = sequence {
-            yield(getOwnProperty(name))
-            if (includeStyles) {
-                yieldAll(getStyleItems(name))
-            }
-            yield(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
-            if (inherit) {
-                yield(parent?.getProperty(name, inherit))
-            }
-        }.merge()
+        ): MetaItem<*>? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
         override var parent: VisionGroup?
             get() {

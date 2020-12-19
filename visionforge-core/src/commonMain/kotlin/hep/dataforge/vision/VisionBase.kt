@@ -59,15 +59,15 @@ public open class VisionBase : Vision {
 
     override fun getProperty(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean?,
+        includeStyles: Boolean?,
         includeDefaults: Boolean,
     ): MetaItem<*>? = sequence {
         yield(getOwnProperty(name))
-        if (includeStyles) {
+        if (includeStyles ?: descriptor?.get(name)?.usesStyles != false) {
             yieldAll(getStyleItems(name))
         }
-        if (inherit) {
+        if (inherit ?: descriptor?.get(name)?.inherited == true) {
             yield(parent?.getProperty(name, inherit))
         }
         yield(descriptor?.get(name)?.defaultItem())

@@ -22,7 +22,7 @@ import react.*
 import react.dom.render
 import styled.*
 
-public external interface PropertyEditorItemProps : RProps {
+public external interface PropertyEditorProps : RProps {
 
     /**
      * Root config object - always non null
@@ -30,9 +30,14 @@ public external interface PropertyEditorItemProps : RProps {
     public var provider: MutableItemProvider
 
     /**
+     * Provide default item (greyed out if used
+     */
+    public var defaultProvider: ItemProvider?
+
+    /**
      * Full path to the displayed node in [provider]. Could be empty
      */
-    public var name: Name
+    public var name: Name?
 
     /**
      * Root descriptor
@@ -40,29 +45,35 @@ public external interface PropertyEditorItemProps : RProps {
     public var descriptor: NodeDescriptor?
 
 
+    /**
+     * A coroutine scope for updates
+     */
     public var scope: CoroutineScope?
 
     /**
-     *
+     * Flow names of updated properties
      */
     public var updateFlow: Flow<Name>?
 }
 
-private val PropertyEditorItem: FunctionalComponent<PropertyEditorItemProps> =
+private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
     functionalComponent("ConfigEditorItem") { props ->
         propertyEditorItem(props)
     }
 
-private fun RBuilder.propertyEditorItem(props: PropertyEditorItemProps) {
+private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
-    var item: MetaItem<*>? by useState { props.provider.getItem(props.name) }
-    val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    var actualItem: MetaItem<Meta>? by useState { item ?: descriptorItem?.defaultItem() }
+    val itemName by useState { props.name ?: Name.EMPTY }
+    var item: MetaItem<*>? by useState { props.provider.getItem(itemName) }
+    val descriptorItem: ItemDescriptor? = props.descriptor?.get(itemName)
+    var actualItem: MetaItem<Meta>? by useState {
+        item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
+    }
 
-    val token = props.name.lastOrNull()?.toString() ?: "Properties"
+    val token = itemName.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        item = props.provider.getItem(props.name)
+        item = props.provider.getItem(itemName)
         actualItem = item ?: descriptorItem?.defaultItem()
     }
 
@@ -83,15 +94,15 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorItemProps) {
 
     val valueChanged: (Value?) -> Unit = {
         if (it == null) {
-            props.provider.remove(props.name)
+            props.provider.remove(itemName)
         } else {
-            props.provider[props.name] = it
+            props.provider[itemName] = it
         }
         update()
     }
 
     val removeClick: (Event) -> Unit = {
-        props.provider.remove(props.name)
+        props.provider.remove(itemName)
         update()
     }
 
@@ -144,7 +155,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorItemProps) {
                             attrs {
                                 this.key = props.name.toString()
                                 this.provider = props.provider
-                                this.name = props.name + token
+                                this.name = itemName + token
                                 this.descriptor = props.descriptor
                             }
                         }
@@ -176,7 +187,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorItemProps) {
                     +TreeStyles.resizeableInput
                 }
                 valueChooser(
-                    props.name,
+                    itemName,
                     actualItem,
                     descriptorItem as? ValueDescriptor,
                     valueChanged
@@ -200,19 +211,14 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorItemProps) {
     }
 }
 
-public external interface PropertyEditorProps : RProps {
-    public var provider: MutableItemProvider
-    public var updateFlow: Flow<Name>?
-    public var descriptor: NodeDescriptor?
-    public var scope: CoroutineScope?
-}
 
 @JsExport
-public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functionalComponent("ConfigEditor") { props ->
+public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functionalComponent("PropertyEditor") { props ->
     child(PropertyEditorItem) {
         attrs {
             this.key = ""
             this.provider = props.provider
+            this.defaultProvider = props.defaultProvider
             this.name = Name.EMPTY
             this.descriptor = props.descriptor
             this.scope = props.scope
@@ -222,17 +228,19 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
 
 public fun RBuilder.propertyEditor(
     provider: MutableItemProvider,
+    defaultProvider: ItemProvider?,
     updateFlow: Flow<Name>? = null,
     descriptor: NodeDescriptor? = null,
-    key: Any? = null,
     scope: CoroutineScope? = null,
+    key: Any? = null,
 ) {
     child(PropertyEditor) {
         attrs {
-            this.key = key?.toString() ?: ""
             this.provider = provider
+            this.defaultProvider = defaultProvider
             this.updateFlow = updateFlow
             this.descriptor = descriptor
+            this.key = key?.toString() ?: ""
             this.scope = scope
         }
     }
@@ -249,21 +257,14 @@ private fun Config.flowUpdates(): Flow<Name> = callbackFlow {
     }
 }
 
-public fun MutableItemProvider.withDefault(default: ItemProvider): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem<*>? = getItem(name) ?: default.getItem(name)
-
-    override fun setItem(name: Name, item: MetaItem<*>?) = this@withDefault.setItem(name, item)
-}
-
-
 
 public fun RBuilder.configEditor(
     config: Config,
+    default: ItemProvider? = null,
     descriptor: NodeDescriptor? = null,
-    default: Meta? = null,
     key: Any? = null,
     scope: CoroutineScope? = null,
-) = propertyEditor(config.withDefault(default ?: ItemProvider.EMPTY), config.flowUpdates(), descriptor, key, scope)
+): Unit = propertyEditor(config, default, config.flowUpdates(), descriptor, scope, key = key)
 
 public fun Element.configEditor(
     config: Config,
@@ -271,8 +272,6 @@ public fun Element.configEditor(
     default: Meta? = null,
     key: Any? = null,
     scope: CoroutineScope? = null,
-) {
-    render(this) {
-        configEditor(config,descriptor,default, key, scope)
-    }
+): Unit = render(this) {
+    configEditor(config, default, descriptor, key, scope)
 }

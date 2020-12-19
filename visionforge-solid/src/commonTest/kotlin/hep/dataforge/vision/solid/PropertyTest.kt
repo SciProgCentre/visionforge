@@ -17,7 +17,7 @@ class PropertyTest {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getProperty("test").int)
+        assertEquals(22, box?.getProperty("test", inherit = true).int)
     }
 
     @Test

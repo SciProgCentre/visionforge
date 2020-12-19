@@ -1,13 +1,9 @@
 package hep.dataforge.vision.bootstrap
 
-import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.allProperties
-import hep.dataforge.vision.getStyle
+import hep.dataforge.vision.*
 import hep.dataforge.vision.react.metaViewer
 import hep.dataforge.vision.react.propertyEditor
-import hep.dataforge.vision.styles
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.render
@@ -19,7 +15,8 @@ public fun RBuilder.visionPropertyEditor(
 ) {
     card("Properties") {
         propertyEditor(
-            vision.allProperties(),
+            provider = vision.ownProperties,
+            defaultProvider = vision.allProperties(),
             updateFlow = vision.propertyNameFlow,
             descriptor = descriptor,
             key = key)
@@ -44,7 +41,6 @@ public fun RBuilder.visionPropertyEditor(
 public fun Element.visionPropertyEditor(
     item: Vision,
     descriptor: NodeDescriptor? = item.descriptor,
-    default: Meta? = null,
 ): Unit = render(this) {
-    visionPropertyEditor(item, descriptor, default)
+    visionPropertyEditor(item, descriptor = descriptor)
 }
