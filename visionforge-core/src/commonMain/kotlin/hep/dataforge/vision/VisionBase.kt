@@ -11,7 +11,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -103,7 +102,7 @@ public open class VisionBase : Vision {
         if (propertyName == STYLE_KEY) {
             updateStyles(styles)
         }
-        GlobalScope.launch {
+        scope.launch {
             _propertyInvalidationFlow.emit(propertyName)
         }
     }

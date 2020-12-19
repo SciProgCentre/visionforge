@@ -9,6 +9,8 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision.Companion.TYPE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Transient
 
@@ -25,6 +27,11 @@ public interface Vision : Described {
     public var parent: VisionGroup?
 
     /**
+     * A coroutine scope for asynchronous calls and locks
+     */
+    public val scope: CoroutineScope get() = parent?.scope?: GlobalScope
+
+    /**
      * A fast accessor method to get own property (no inheritance or styles).
      * Should be equivalent to `getProperty(name,false,false,false)`.
      */
@@ -32,8 +39,8 @@ public interface Vision : Described {
 
     /**
      * Get property.
-     * @param inherit toggles parent node property lookup. Null means default inheritance.
-     * @param includeStyles toggles inclusion of. Null means default style inclusion.
+     * @param inherit toggles parent node property lookup. Null means inference from descriptor. Default is false.
+     * @param includeStyles toggles inclusion of. Null means inference from descriptor. Default is true.
      */
     public fun getProperty(
         name: Name,

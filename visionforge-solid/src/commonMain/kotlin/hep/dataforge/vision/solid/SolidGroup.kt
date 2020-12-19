@@ -15,8 +15,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 public interface PrototypeHolder {
-    public val parent: VisionGroup?
-
     @VisionBuilder
     public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit)
 

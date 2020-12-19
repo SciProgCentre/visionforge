@@ -76,7 +76,7 @@ public object ThreeMaterials {
     }
 
     public fun getMaterial(vision3D: Vision, cache: Boolean): Material {
-        val meta = vision3D.getProperty(SolidMaterial.MATERIAL_KEY).node ?: return DEFAULT
+        val meta = vision3D.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node ?: return DEFAULT
         return if (cache) {
             materialCache.getOrPut(meta) { buildMaterial(meta) }
         } else {
