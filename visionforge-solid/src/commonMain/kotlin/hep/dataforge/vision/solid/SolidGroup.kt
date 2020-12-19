@@ -16,7 +16,11 @@ import kotlinx.serialization.encoding.Encoder
 
 public interface PrototypeHolder {
     public val parent: VisionGroup?
-    public val prototypes: MutableVisionGroup?
+
+    @VisionBuilder
+    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit)
+
+    public fun getPrototype(name: Name): Solid?
 }
 
 /**
@@ -28,18 +32,24 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
+
     /**
      * A container for templates visible inside this group
      */
     @Serializable(Prototypes.Companion::class)
-    override var prototypes: MutableVisionGroup? = null
-        private set
+    @SerialName("prototypes")
+    internal var prototypes: MutableVisionGroup? = null
+
+    /**
+     * Ger a prototype redirecting the request to the parent if prototype is not found
+     */
+    override fun getPrototype(name: Name): Solid? =
+        prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
     /**
      * Create or edit prototype node as a group
      */
-    @VisionBuilder
-    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
+    override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
             it.parent = this
@@ -81,12 +91,6 @@ public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
     return SolidGroup().apply(block)
 }
 
-/**
- * Ger a prototype redirecting the request to the parent if prototype is not found
- */
-public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
-    prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
-
 @VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(
     name: Name = Name.EMPTY,
@@ -106,13 +110,11 @@ public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup
 @Serializable(Prototypes.Companion::class)
 internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
-) : VisionGroupBase(), PrototypeHolder {
+) : VisionGroupBase() {
 
     init {
         childrenInternal.putAll(children)
     }
-
-    override val prototypes: MutableVisionGroup get() = this
 
     override fun attachChildren() {
         children.values.forEach {
@@ -131,7 +133,7 @@ internal class Prototypes(
     ): MetaItem<*>? = null
 
     override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
-        TODO("Not yet implemented")
+        error("Can't ser property of prototypes container")
     }
 
     override val descriptor: NodeDescriptor? = null

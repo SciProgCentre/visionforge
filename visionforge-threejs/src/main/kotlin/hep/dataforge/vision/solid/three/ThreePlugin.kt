@@ -46,42 +46,41 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
-    public fun buildObject3D(obj: Solid): Object3D {
-        return when (obj) {
-            is ThreeVision -> obj.render(this)
-            is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
-            is SolidGroup -> {
-                val group = ThreeGroup()
-                obj.children.forEach { (token, child) ->
-                    if (child is Solid && child.ignore != true) {
-                        try {
-                            val object3D = buildObject3D(child)
-                            group[token] = object3D
-                        } catch (ex: Throwable) {
-                            logger.error(ex) { "Failed to render $child" }
-                            ex.printStackTrace()
-                        }
+    public fun buildObject3D(obj: Solid): Object3D = when (obj) {
+        is ThreeVision -> obj.render(this)
+        is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
+        is SolidGroup -> {
+            val group = ThreeGroup()
+            obj.children.forEach { (token, child) ->
+                if (child is Solid && child.ignore != true) {
+                    try {
+                        val object3D = buildObject3D(child)
+                        group[token] = object3D
+                    } catch (ex: Throwable) {
+                        logger.error(ex) { "Failed to render $child" }
+                        ex.printStackTrace()
                     }
                 }
+            }
 
-                group.apply {
-                    updatePosition(obj)
-                    //obj.onChildrenChange()
+            group.apply {
+                updatePosition(obj)
+                //obj.onChildrenChange()
 
-                    obj.propertyNameFlow.onEach { name ->
-                        if (
-                            name.startsWith(Solid.POSITION_KEY) ||
-                            name.startsWith(Solid.ROTATION) ||
-                            name.startsWith(Solid.SCALE_KEY)
-                        ) {
-                            //update position of mesh using this object
-                            updatePosition(obj)
-                        } else if (name == Vision.VISIBLE_KEY) {
-                            visible = obj.visible ?: true
-                        }
-                    }.launchIn(updateScope)
+                obj.propertyNameFlow.onEach { name ->
+                    if (
+                        name.startsWith(Solid.POSITION_KEY) ||
+                        name.startsWith(Solid.ROTATION) ||
+                        name.startsWith(Solid.SCALE_KEY)
+                    ) {
+                        //update position of mesh using this object
+                        updatePosition(obj)
+                    } else if (name == Vision.VISIBLE_KEY) {
+                        visible = obj.visible ?: true
+                    }
+                }.launchIn(updateScope)
 
-                    obj.structureChanges.onEach { (nameToken, _, child) ->
+                obj.structureChanges.onEach { (nameToken, _, child) ->
 //                        if (name.isEmpty()) {
 //                            logger.error { "Children change with empty name on $group" }
 //                            return@onChildrenChange
@@ -90,32 +89,31 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 //                        val parentName = name.cutLast()
 //                        val childName = name.last()!!
 
-                        //removing old object
-                        findChild(nameToken.asName())?.let { oldChild ->
-                            oldChild.parent?.remove(oldChild)
-                        }
+                    //removing old object
+                    findChild(nameToken.asName())?.let { oldChild ->
+                        oldChild.parent?.remove(oldChild)
+                    }
 
-                        //adding new object
-                        if (child != null && child is Solid) {
-                            try {
-                                val object3D = buildObject3D(child)
-                                set(nameToken, object3D)
-                            } catch (ex: Throwable) {
-                                logger.error(ex) { "Failed to render $child" }
-                            }
+                    //adding new object
+                    if (child != null && child is Solid) {
+                        try {
+                            val object3D = buildObject3D(child)
+                            set(nameToken, object3D)
+                        } catch (ex: Throwable) {
+                            logger.error(ex) { "Failed to render $child" }
                         }
-                    }.launchIn(updateScope)
-                }
+                    }
+                }.launchIn(updateScope)
             }
-            is Composite -> compositeFactory(this, obj)
-            else -> {
-                //find specialized factory for this type if it is present
-                val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
-                when {
-                    factory != null -> factory(this, obj)
-                    obj is GeometrySolid -> ThreeShapeFactory(this, obj)
-                    else -> error("Renderer for ${obj::class} not found")
-                }
+        }
+        is Composite -> compositeFactory(this, obj)
+        else -> {
+            //find specialized factory for this type if it is present
+            val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
+            when {
+                factory != null -> factory(this, obj)
+                obj is GeometrySolid -> ThreeShapeFactory(this, obj)
+                else -> error("Renderer for ${obj::class} not found")
             }
         }
     }

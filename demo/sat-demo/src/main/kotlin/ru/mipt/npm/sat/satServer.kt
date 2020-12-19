@@ -39,9 +39,10 @@ fun main() {
             val randomI = Random.nextInt(1, 4)
             val randomJ = Random.nextInt(1, 4)
             val target = "layer[$randomLayer].segment[$randomI,$randomJ]".toName()
-            (sat[target] as? Solid)?.color("red")
+            val targetVision = sat[target] as Solid
+            targetVision.color("red")
             delay(300)
-            (sat[target] as? Solid)?.color("green")
+            targetVision.color("green")
             delay(10)
         }
     }

@@ -1,8 +1,10 @@
 package hep.dataforge.vision
 
 import hep.dataforge.names.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -43,7 +45,9 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
      * Propagate children change event upwards
      */
     private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        _structureChanges.tryEmit(MutableVisionGroup.StructureChange(name, before, after))
+        GlobalScope.launch {
+            _structureChanges.emit(MutableVisionGroup.StructureChange(name, before, after))
+        }
     }
 
     /**

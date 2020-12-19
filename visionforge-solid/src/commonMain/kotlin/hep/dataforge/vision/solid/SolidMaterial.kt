@@ -90,10 +90,20 @@ public class SolidMaterial : Scheme() {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
                 value(COLOR_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.STRING, ValueType.NUMBER)
                     widgetType = "color"
                 }
+//                value(SPECULAR_COLOR_KEY) {
+//                    inherited = true
+//                    usesStyles = true
+//                    type(ValueType.STRING, ValueType.NUMBER)
+//                    widgetType = "color"
+//                }
                 value(OPACITY_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.NUMBER)
                     default(1.0)
                     attributes {
@@ -104,6 +114,8 @@ public class SolidMaterial : Scheme() {
                     widgetType = "slider"
                 }
                 value(WIREFRAME_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.BOOLEAN)
                     default(false)
                 }
@@ -124,11 +136,7 @@ public var Solid.material: SolidMaterial?
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    val node = allProperties(
-        inherit = true,
-        includeStyles = true,
-        includeDefaults = true
-    ).getItem(MATERIAL_KEY).node
+    val node = allProperties(inherit = true).getItem(MATERIAL_KEY).node
     if (node != null) {
         SolidMaterial.update(node, builder)
     } else {

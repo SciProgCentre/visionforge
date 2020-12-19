@@ -11,8 +11,10 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -68,7 +70,7 @@ public open class VisionBase : Vision {
             yieldAll(getStyleItems(name))
         }
         if (inherit ?: descriptor?.get(name)?.inherited == true) {
-            yield(parent?.getProperty(name, inherit))
+            yield(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
         }
         yield(descriptor?.get(name)?.defaultItem())
     }.merge()
@@ -101,8 +103,9 @@ public open class VisionBase : Vision {
         if (propertyName == STYLE_KEY) {
             updateStyles(styles)
         }
-
-        _propertyInvalidationFlow.tryEmit(propertyName)
+        GlobalScope.launch {
+            _propertyInvalidationFlow.emit(propertyName)
+        }
     }
 
     public fun configure(block: MutableMeta<*>.() -> Unit) {
