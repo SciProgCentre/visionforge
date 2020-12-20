@@ -9,9 +9,10 @@ import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision.Companion.TYPE
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.Transient
 
 /**
@@ -29,7 +30,7 @@ public interface Vision : Described {
     /**
      * A coroutine scope for asynchronous calls and locks
      */
-    public val scope: CoroutineScope get() = parent?.scope?: GlobalScope
+    public val scope: CoroutineScope get() = parent?.scope ?: GlobalScope
 
     /**
      * A fast accessor method to get own property (no inheritance or styles).
@@ -55,17 +56,26 @@ public interface Vision : Described {
      */
     public fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean = true)
 
+    public fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit)
+
     /**
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
      * if it should include inherited properties etc.
      */
-    public val propertyNameFlow: Flow<Name>
+    public val propertyChanges: Flow<Name> get() = callbackFlow<Name> {
+        coroutineScope {
+            onPropertyChange(this) {
+                send(it)
+            }
+            awaitClose { cancel() }
+        }
+    }
 
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated
      */
-    public fun notifyPropertyChanged(propertyName: Name): Unit
+    public suspend fun notifyPropertyChanged(propertyName: Name): Unit
 
     /**
      * Update this vision using external meta. Children are not updated.
@@ -79,6 +89,12 @@ public interface Vision : Described {
         public val STYLE_KEY: Name = "@style".asName()
 
         public val VISIBLE_KEY: Name = "visible".asName()
+    }
+}
+
+public fun Vision.asyncNotifyPropertyChange(propertyName: Name){
+    scope.launch {
+        notifyPropertyChanged(propertyName)
     }
 }
 

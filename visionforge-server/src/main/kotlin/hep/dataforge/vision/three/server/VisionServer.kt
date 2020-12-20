@@ -41,6 +41,13 @@ import java.awt.Desktop
 import java.net.URI
 import kotlin.time.milliseconds
 
+public enum class VisionServerDataMode {
+    EMBED,
+    FETCH,
+    CONNECT
+}
+
+
 /**
  * A ktor plugin container with given [routing]
  */
@@ -52,6 +59,7 @@ public class VisionServer internal constructor(
     override val config: Config = Config()
     public var updateInterval: Long by config.long(300, key = UPDATE_INTERVAL_KEY)
     public var cacheFragments: Boolean by config.boolean(true)
+    public var dataMode: VisionServerDataMode = VisionServerDataMode.CONNECT
 
     /**
      * a list of headers that should be applied to all pages
@@ -72,10 +80,23 @@ public class VisionServer internal constructor(
         val consumer = object : VisionTagConsumer<Any?>(consumer) {
             override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
                 visionMap[name] = vision
-
-                // Toggle updates
-                attributes[OUTPUT_FETCH_ATTRIBUTE] = "true"
-                attributes[OUTPUT_CONNECT_ATTRIBUTE] = "true"
+                // Toggle update mode
+                when (dataMode) {
+                    VisionServerDataMode.EMBED -> {
+                        script {
+                            attributes["class"] = OUTPUT_DATA_CLASS
+                            unsafe {
+                                +visionManager.encodeToString(vision)
+                            }
+                        }
+                    }
+                    VisionServerDataMode.FETCH -> {
+                        attributes[OUTPUT_FETCH_ATTRIBUTE] = "auto"
+                    }
+                    VisionServerDataMode.CONNECT -> {
+                        attributes[OUTPUT_CONNECT_ATTRIBUTE] = "auto"
+                    }
+                }
             }
         }
 
@@ -110,10 +131,19 @@ public class VisionServer internal constructor(
 
             application.log.debug("Opened server socket for $name")
             val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
+
             try {
                 withContext(visionManager.context.coroutineContext) {
+
+                    val initialVision = VisionChange(vision = vision)
+                    val initialJson =  visionManager.jsonFormat.encodeToString(
+                        VisionChange.serializer(),
+                        initialVision
+                    )
+                    outgoing.send(Frame.Text(initialJson))
+
                     vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
-                        val json = VisionManager.defaultJson.encodeToString(
+                        val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update
                         )

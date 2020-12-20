@@ -61,6 +61,7 @@ public interface Solid : Vision {
         public val descriptor: NodeDescriptor by lazy {
             NodeDescriptor {
                 value(VISIBLE_KEY) {
+                    inherited = false
                     type(ValueType.BOOLEAN)
                     default(true)
                 }
@@ -69,11 +70,14 @@ public interface Solid : Vision {
                 value(Vision.STYLE_KEY) {
                     type(ValueType.STRING)
                     multiple = true
+                    hide()
                 }
 
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
-                enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ)
+                enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
+                    hide()
+                }
             }
         }
 
@@ -152,21 +156,21 @@ public var Solid.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        notifyPropertyChanged(Solid.X_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.X_POSITION_KEY)
     }
 
 public var Solid.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        notifyPropertyChanged(Solid.Y_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.Y_POSITION_KEY)
     }
 
 public var Solid.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        notifyPropertyChanged(Solid.Z_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.Z_POSITION_KEY)
     }
 
 private fun Solid.rotation(): Point3D =
@@ -176,21 +180,21 @@ public var Solid.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        notifyPropertyChanged(Solid.X_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.X_ROTATION_KEY)
     }
 
 public var Solid.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        notifyPropertyChanged(Solid.Y_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.Y_ROTATION_KEY)
     }
 
 public var Solid.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        notifyPropertyChanged(Solid.Z_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.Z_ROTATION_KEY)
     }
 
 private fun Solid.scale(): Point3D =
@@ -200,19 +204,19 @@ public var Solid.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        notifyPropertyChanged(Solid.X_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.X_SCALE_KEY)
     }
 
 public var Solid.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        notifyPropertyChanged(Solid.Y_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.Y_SCALE_KEY)
     }
 
 public var Solid.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        notifyPropertyChanged(Solid.Z_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.Z_SCALE_KEY)
     }

@@ -28,7 +28,7 @@ public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
      */
     override val children: Map<NameToken, Vision> get() = childrenInternal
 
-    override fun notifyPropertyChanged(propertyName: Name) {
+    override suspend fun notifyPropertyChanged(propertyName: Name) {
         super.notifyPropertyChanged(propertyName)
         for (obj in this) {
             obj.notifyPropertyChanged(propertyName)

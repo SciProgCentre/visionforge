@@ -7,6 +7,7 @@ import hep.dataforge.names.NameToken
 import hep.dataforge.names.lastOrNull
 import hep.dataforge.names.plus
 import hep.dataforge.values.Value
+import hep.dataforge.vision.hidden
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
@@ -66,6 +67,9 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     val itemName by useState { props.name ?: Name.EMPTY }
     var item: MetaItem<*>? by useState { props.provider.getItem(itemName) }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(itemName)
+
+    if(descriptorItem?.hidden == true) return //fail fast for hidden property
+
     var actualItem: MetaItem<Meta>? by useState {
         item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
     }
@@ -105,8 +109,6 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         props.provider.remove(itemName)
         update()
     }
-
-
 
     if (actualItem is MetaItem.NodeItem) {
         styledDiv {

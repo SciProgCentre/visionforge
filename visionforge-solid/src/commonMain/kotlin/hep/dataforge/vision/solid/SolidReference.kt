@@ -5,9 +5,7 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.*
 import hep.dataforge.vision.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -128,14 +126,15 @@ public class SolidReferenceGroup(
                 error("Setting a parent for a reference child is not possible")
             }
 
-        override val propertyNameFlow: Flow<Name>
-            get() = this@SolidReferenceGroup.propertyNameFlow.filter { name ->
-                name.startsWith(childToken(childName))
-            }.map { name ->
-                name.cutFirst()
+        override fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
+            this@SolidReferenceGroup.onPropertyChange(scope) { name ->
+                if (name.startsWith(childToken(childName))) {
+                    callback(name.cutFirst())
+                }
             }
+        }
 
-        override fun notifyPropertyChanged(propertyName: Name) {
+        override suspend fun notifyPropertyChanged(propertyName: Name) {
             this@SolidReferenceGroup.notifyPropertyChanged(childPropertyName(childName, propertyName))
         }
 

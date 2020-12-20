@@ -7,8 +7,6 @@ import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
 import javafx.application.Platform
 import javafx.beans.binding.ObjectBinding
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import tornadofx.*
 
 /**
@@ -18,7 +16,7 @@ class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
 
     init {
-        obj.propertyNameFlow.onEach { name ->
+        obj.onPropertyChange(fx.context) { name ->
             bindings.filter { it.key.startsWith(name) }.forEach { entry ->
                 Platform.runLater {
                     entry.value.invalidate()
@@ -30,7 +28,7 @@ class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
 //                bindings[currentName]?.invalidate()
 //                currentName = currentName.cutLast()
 //            }
-        }.launchIn(fx.context)
+        }
     }
 
     operator fun get(key: Name): ObjectBinding<MetaItem<*>?> {

@@ -15,8 +15,6 @@ import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 /**
@@ -45,7 +43,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
         }.applyProperties(obj)
 
         //add listener to object properties
-        obj.propertyNameFlow.onEach { name ->
+        obj.onPropertyChange(three.updateScope) { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry
@@ -59,7 +57,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
                 name.startsWith(EDGES_KEY) -> mesh.applyEdges(obj)
                 else -> mesh.updateProperty(obj, name)
             }
-        }.launchIn(three.updateScope)
+        }
 
         return mesh
     }

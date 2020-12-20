@@ -9,8 +9,6 @@ import hep.dataforge.vision.solid.SolidReferenceGroup.Companion.REFERENCE_CHILD_
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
@@ -47,7 +45,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
 
         //TODO apply child properties
 
-        obj.propertyNameFlow.onEach { name->
+        obj.onPropertyChange(three.updateScope) { name->
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
@@ -57,7 +55,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
             } else {
                 object3D.updateProperty(obj, name)
             }
-        }.launchIn(three.updateScope)
+        }
 
 
         return object3D

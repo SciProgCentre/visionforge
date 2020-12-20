@@ -67,7 +67,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 updatePosition(obj)
                 //obj.onChildrenChange()
 
-                obj.propertyNameFlow.onEach { name ->
+                obj.onPropertyChange(updateScope) { name ->
                     if (
                         name.startsWith(Solid.POSITION_KEY) ||
                         name.startsWith(Solid.ROTATION) ||
@@ -78,7 +78,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     } else if (name == Vision.VISIBLE_KEY) {
                         visible = obj.visible ?: true
                     }
-                }.launchIn(updateScope)
+                }
 
                 obj.structureChanges.onEach { (nameToken, _, child) ->
 //                        if (name.isEmpty()) {

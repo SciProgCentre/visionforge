@@ -16,8 +16,6 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
 import info.laht.threekt.objects.Mesh
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.math.max
 
 internal fun SolidGroup.varBox(
@@ -62,7 +60,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         mesh.scale.set(xSize, ySize, zSize)
 
         //add listener to object properties
-        propertyNameFlow.onEach { name ->
+        onPropertyChange(three.context) { name ->
             when {
                 name.startsWith(GEOMETRY_KEY) -> {
                     val newXSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
@@ -78,7 +76,8 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
                 }
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
-        }.launchIn(three.context)
+        }
+
         return mesh
     }
 

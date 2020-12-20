@@ -67,6 +67,9 @@ public class VisionChange(
     @Serializable(MetaSerializer::class) public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,
 ) {
+    init {
+        (vision as? VisionGroup)?.attachChildren()
+    }
 
 }
 
@@ -81,10 +84,10 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.propertyNameFlow.onEach { propertyName ->
+    source.onPropertyChange(this) { propertyName ->
         val newItem = source.getProperty(propertyName, inherit = false, includeStyles = false, includeDefaults = false)
         collector().propertyChanged(name, propertyName, newItem)
-    }.launchIn(this)
+    }
 
     if (source is VisionGroup) {
         //Subscribe for children changes

@@ -42,7 +42,7 @@ fun main() {
             val targetVision = sat[target] as Solid
             targetVision.color("red")
             delay(300)
-            targetVision.color("green")
+            targetVision.color("darkgreen")
             delay(10)
         }
     }

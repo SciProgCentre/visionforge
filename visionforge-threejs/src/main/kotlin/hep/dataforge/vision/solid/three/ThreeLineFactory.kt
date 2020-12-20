@@ -9,8 +9,6 @@ import info.laht.threekt.core.Geometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
@@ -30,9 +28,9 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.propertyNameFlow.onEach { propertyName ->
+            obj.onPropertyChange(three.updateScope) { propertyName ->
                 updateProperty(obj, propertyName)
-            }.launchIn(three.updateScope)
+            }
         }
     }
 

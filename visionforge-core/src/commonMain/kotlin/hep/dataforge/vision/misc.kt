@@ -1,14 +1,10 @@
 package hep.dataforge.vision
 
 import hep.dataforge.meta.*
-import hep.dataforge.meta.descriptors.NodeDescriptor
-import hep.dataforge.names.Name
-import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 
 @DslMarker
 public annotation class VisionBuilder
-
 
 public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
     return when (val first = firstOrNull { it != null }) {
@@ -20,14 +16,6 @@ public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
             MetaItem.NodeItem(laminate)
         }
     }
-}
-
-public inline fun <reified E : Enum<E>> NodeDescriptor.enum(key: Name, default: E?): Unit = value(key) {
-    type(ValueType.STRING)
-    default?.let {
-        default(default)
-    }
-    allowedValues = enumValues<E>().map { it.asValue() }
 }
 
 @DFExperimental

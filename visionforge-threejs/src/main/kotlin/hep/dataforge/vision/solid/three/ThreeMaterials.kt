@@ -59,6 +59,10 @@ public object ThreeMaterials {
             MeshPhongMaterial().apply {
                 color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
                 specular = meta[SolidMaterial.SPECULAR_COLOR_KEY]!!.getColor()
+                emissive = specular
+                reflectivity = 1.0
+                refractionRatio = 1.0
+                shininess = 100.0
                 opacity = meta[SolidMaterial.OPACITY_KEY]?.double ?: 1.0
                 transparent = opacity < 1.0
                 wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false

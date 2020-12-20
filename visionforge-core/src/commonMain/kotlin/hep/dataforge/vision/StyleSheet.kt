@@ -5,6 +5,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import kotlinx.coroutines.launch
 
 /**
  * A container for styles
@@ -54,7 +55,9 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
         val tokens: Collection<Name> =
             ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
                 .map { it.asName() }
-        tokens.forEach { parent?.notifyPropertyChanged(it) }
+        parent?.scope?.launch {
+            tokens.forEach { parent?.notifyPropertyChanged(it) }
+        }
     }
     if (this is VisionGroup) {
         for (obj in this) {

@@ -4,8 +4,6 @@ import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
 import javafx.scene.Group
 import javafx.scene.Node
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGroup> {
@@ -15,7 +13,7 @@ class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGro
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
-        obj.propertyNameFlow.onEach { name->
+        obj.onPropertyChange(plugin.context) { name->
             if (name.firstOrNull()?.body == SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
@@ -23,7 +21,7 @@ class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGro
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             }
-        }.launchIn(plugin.context)
+        }
         return node
     }
 }

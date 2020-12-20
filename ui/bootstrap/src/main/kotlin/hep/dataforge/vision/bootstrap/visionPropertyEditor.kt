@@ -13,11 +13,12 @@ public fun RBuilder.visionPropertyEditor(
     descriptor: NodeDescriptor? = vision.descriptor,
     key: Any? = null,
 ) {
+
     card("Properties") {
         propertyEditor(
             provider = vision.ownProperties,
             defaultProvider = vision.allProperties(),
-            updateFlow = vision.propertyNameFlow,
+            updateFlow = vision.propertyChanges,
             descriptor = descriptor,
             key = key)
     }

@@ -89,18 +89,24 @@ public class SolidMaterial : Scheme() {
         public override val descriptor: NodeDescriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
+                inherited = true
+                usesStyles = true
+
                 value(COLOR_KEY) {
                     inherited = true
                     usesStyles = true
                     type(ValueType.STRING, ValueType.NUMBER)
                     widgetType = "color"
                 }
-//                value(SPECULAR_COLOR_KEY) {
-//                    inherited = true
-//                    usesStyles = true
-//                    type(ValueType.STRING, ValueType.NUMBER)
-//                    widgetType = "color"
-//                }
+
+                value(SPECULAR_COLOR_KEY) {
+                    inherited = true
+                    usesStyles = true
+                    type(ValueType.STRING, ValueType.NUMBER)
+                    widgetType = "color"
+                    hide()
+                }
+
                 value(OPACITY_KEY) {
                     inherited = true
                     usesStyles = true

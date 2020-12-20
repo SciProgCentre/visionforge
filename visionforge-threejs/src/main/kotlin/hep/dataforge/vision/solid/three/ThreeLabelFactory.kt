@@ -8,8 +8,6 @@ import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.TextBufferGeometry
 import info.laht.threekt.objects.Mesh
 import kotlinext.js.jsObject
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KClass
 
 /**
@@ -27,10 +25,10 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
         })
         return Mesh(textGeo, getMaterial(obj, true)).apply {
             updatePosition(obj)
-            obj.propertyNameFlow.onEach { _ ->
+            obj.onPropertyChange(three.updateScope){ _ ->
                 //TODO
                 three.logger.warn{"Label parameter change not implemented"}
-            }.launchIn(three.updateScope)
+            }
         }
     }
 }

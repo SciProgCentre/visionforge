@@ -42,7 +42,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
      * Ger a prototype redirecting the request to the parent if prototype is not found
      */
     override fun getPrototype(name: Name): Solid? =
-        prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
+        (prototypes?.get(name) as? Solid) ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
     /**
      * Create or edit prototype node as a group
@@ -108,7 +108,7 @@ public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup
 @Serializable(Prototypes.Companion::class)
 internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
-) : VisionGroupBase() {
+) : VisionGroupBase(), PrototypeHolder {
 
     init {
         childrenInternal.putAll(children)
@@ -155,4 +155,10 @@ internal class Prototypes(
             mapSerializer.serialize(encoder, value.children)
         }
     }
+
+    override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit) {
+        apply(builder)
+    }
+
+    override fun getPrototype(name: Name): Solid? = get(name) as? Solid
 }

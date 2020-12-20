@@ -11,8 +11,11 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -44,7 +47,9 @@ public open class VisionBase : Vision {
             properties = newProperties
             newProperties.onChange(this) { name, oldItem, newItem ->
                 if (oldItem != newItem) {
-                    notifyPropertyChanged(name)
+                    scope.launch {
+                        notifyPropertyChanged(name)
+                    }
                 }
             }
         }
@@ -77,14 +82,16 @@ public open class VisionBase : Vision {
     @Synchronized
     override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
         getOrCreateConfig().setItem(name, item)
-        if(notify) {
-            notifyPropertyChanged(name)
+        if (notify) {
+            scope.launch {
+                notifyPropertyChanged(name)
+            }
         }
     }
 
     override val descriptor: NodeDescriptor? get() = null
 
-    private fun updateStyles(names: List<String>) {
+    private suspend fun updateStyles(names: List<String>) {
         names.mapNotNull { getStyle(it) }.asSequence()
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
@@ -94,17 +101,19 @@ public open class VisionBase : Vision {
     }
 
     @Transient
-    private val _propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
+    private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
-    override val propertyNameFlow: SharedFlow<Name> get() = _propertyInvalidationFlow
+    override val propertyChanges: Flow<Name> get() = propertyInvalidationFlow
 
-    override fun notifyPropertyChanged(propertyName: Name) {
+    override fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
+        propertyInvalidationFlow.onEach(callback).launchIn(scope)
+    }
+
+    override suspend fun notifyPropertyChanged(propertyName: Name) {
         if (propertyName == STYLE_KEY) {
             updateStyles(styles)
         }
-        scope.launch {
-            _propertyInvalidationFlow.emit(propertyName)
-        }
+        propertyInvalidationFlow.emit(propertyName)
     }
 
     public fun configure(block: MutableMeta<*>.() -> Unit) {
