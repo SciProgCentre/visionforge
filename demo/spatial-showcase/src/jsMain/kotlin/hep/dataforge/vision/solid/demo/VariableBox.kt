@@ -11,7 +11,6 @@ import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.Solid.Companion.GEOMETRY_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.three.*
-import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
@@ -31,8 +30,8 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         scaleX = xSize
         scaleY = ySize
         scaleZ = zSize
-        getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, false)
-        getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY, false)
+//        getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, inherit = false, includeStyles = false)
+//        getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY, inherit = false, includeStyles = false)
     }
 
     override fun render(three: ThreePlugin): Object3D {
@@ -44,9 +43,10 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         //JS sometimes tries to pass Geometry as BufferGeometry
         @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
 
-        val mesh = Mesh(geometry, getMaterial(this@VariableBox, true)).apply {
+        val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {
+            updateMaterial(this@VariableBox)
             applyEdges(this@VariableBox)
-            applyWireFrame(this@VariableBox)
+            //applyWireFrame(this@VariableBox)
 
             //set position for mesh
             updatePosition(this@VariableBox)
@@ -69,10 +69,10 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
                     mesh.scale.set(newXSize, newYSize, newZSize)
                     mesh.updateMatrix()
                 }
-                name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(this@VariableBox)
+                //name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(this@VariableBox)
                 name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
                 name.startsWith(MATERIAL_COLOR_KEY) -> {
-                    mesh.material = getMaterial(this, true)
+                    mesh.updateMaterial(this)
                 }
                 else -> mesh.updateProperty(this@VariableBox, name)
             }

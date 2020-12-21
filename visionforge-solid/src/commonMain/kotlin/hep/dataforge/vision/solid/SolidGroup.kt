@@ -109,8 +109,8 @@ internal class Prototypes(
 
     override fun getProperty(
         name: Name,
-        inherit: Boolean?,
-        includeStyles: Boolean?,
+        inherit: Boolean,
+        includeStyles: Boolean,
         includeDefaults: Boolean,
     ): MetaItem<*>? = null
 

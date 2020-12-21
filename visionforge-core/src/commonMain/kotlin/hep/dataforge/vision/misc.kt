@@ -6,15 +6,13 @@ import hep.dataforge.values.asValue
 @DslMarker
 public annotation class VisionBuilder
 
-public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? {
-    return when (val first = firstOrNull { it != null }) {
-        null -> null
-        is MetaItem.ValueItem -> first //fast search for first entry if it is value
-        is MetaItem.NodeItem -> {
-            //merge nodes if first encountered node is meta
-            val laminate: Laminate = Laminate(mapNotNull { it.node }.toList())
-            MetaItem.NodeItem(laminate)
-        }
+public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? = when (val first = firstOrNull { it != null }) {
+    null -> null
+    is MetaItem.ValueItem -> first //fast search for first entry if it is value
+    is MetaItem.NodeItem -> {
+        //merge nodes if first encountered node is meta
+        val laminate: Laminate = Laminate(mapNotNull { it.node }.toList())
+        MetaItem.NodeItem(laminate)
     }
 }
 

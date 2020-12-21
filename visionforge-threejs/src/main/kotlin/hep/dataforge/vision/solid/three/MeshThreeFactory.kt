@@ -9,10 +9,8 @@ import hep.dataforge.names.startsWith
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.layer
-import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
-import info.laht.threekt.geometries.WireframeGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import kotlin.reflect.KClass
@@ -36,7 +34,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
-        val mesh = Mesh(geometry, null).apply {
+        val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {
             matrixAutoUpdate = false
             //set position for mesh
             updatePosition(obj)
@@ -49,11 +47,11 @@ public abstract class MeshThreeFactory<in T : Solid>(
                     val oldGeometry = mesh.geometry as BufferGeometry
                     val newGeometry = buildGeometry(obj)
                     oldGeometry.attributes = newGeometry.attributes
-                    mesh.applyWireFrame(obj)
+                    //mesh.applyWireFrame(obj)
                     mesh.applyEdges(obj)
                     newGeometry.dispose()
                 }
-                name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
+                //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
                 name.startsWith(EDGES_KEY) -> mesh.applyEdges(obj)
                 else -> mesh.updateProperty(obj, name)
             }
@@ -64,19 +62,19 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
     public companion object {
         public val EDGES_KEY: Name = "edges".asName()
-        public val WIREFRAME_KEY: Name = "wireframe".asName()
+        //public val WIREFRAME_KEY: Name = "wireframe".asName()
         public val ENABLED_KEY: Name = "enabled".asName()
         public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
         public val EDGES_MATERIAL_KEY: Name = EDGES_KEY + SolidMaterial.MATERIAL_KEY
-        public val WIREFRAME_ENABLED_KEY: Name = WIREFRAME_KEY + ENABLED_KEY
-        public val WIREFRAME_MATERIAL_KEY: Name = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
+        //public val WIREFRAME_ENABLED_KEY: Name = WIREFRAME_KEY + ENABLED_KEY
+        //public val WIREFRAME_MATERIAL_KEY: Name = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
     }
 }
 
 internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
-    material = getMaterial(obj, true)
+    updateMaterial(obj)
     applyEdges(obj)
-    applyWireFrame(obj)
+    //applyWireFrame(obj)
     layers.enable(obj.layer)
     children.forEach {
         it.layers.enable(obj.layer)
@@ -86,9 +84,16 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
 public fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY).boolean != false) {
+    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, inherit = true, includeStyles = true).boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
+        val material = ThreeMaterials.getLineMaterial(
+            obj.getProperty(
+                MeshThreeFactory.EDGES_MATERIAL_KEY,
+                inherit = true,
+                includeStyles = true
+            ).node,
+            true
+        )
         if (edges == null) {
             add(
                 LineSegments(
@@ -109,23 +114,23 @@ public fun Mesh.applyEdges(obj: Solid) {
     }
 }
 
-public fun Mesh.applyWireFrame(obj: Solid) {
-    children.find { it.name == "@wireframe" }?.let {
-        remove(it)
-        (it as LineSegments).dispose()
-    }
-    //inherited wireframe definition, disabled by default
-    if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
-        val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material =
-            ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
-        add(
-            LineSegments(
-                WireframeGeometry(bufferGeometry),
-                material
-            ).apply {
-                name = "@wireframe"
-            }
-        )
-    }
-}
+//public fun Mesh.applyWireFrame(obj: Solid) {
+//    children.find { it.name == "@wireframe" }?.let {
+//        remove(it)
+//        (it as LineSegments).dispose()
+//    }
+//    //inherited wireframe definition, disabled by default
+//    if (obj.getProperty(MeshThreeFactory.WIREFRAME_ENABLED_KEY).boolean == true) {
+//        val bufferGeometry = geometry as? BufferGeometry ?: return
+//        val material =
+//            ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.WIREFRAME_MATERIAL_KEY).node, true)
+//        add(
+//            LineSegments(
+//                WireframeGeometry(bufferGeometry),
+//                material
+//            ).apply {
+//                name = "@wireframe"
+//            }
+//        )
+//    }
+//}

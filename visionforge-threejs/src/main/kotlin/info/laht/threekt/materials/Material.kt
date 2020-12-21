@@ -111,7 +111,7 @@ open external class Material {
 
     var visible: Boolean
 
-    var userData: Map<String, Any>
+    var userData: dynamic
 
     /**
      * Specifies that the material needs to be updated at the WebGL level. Set it to true if you made changes that need to be reflected in WebGL.

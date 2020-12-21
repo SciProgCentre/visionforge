@@ -4,6 +4,7 @@ import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
@@ -45,8 +46,8 @@ public interface Vision : Described {
      */
     public fun getProperty(
         name: Name,
-        inherit: Boolean? = null,
-        includeStyles: Boolean? = null,
+        inherit: Boolean = false,
+        includeStyles: Boolean = true,
         includeDefaults: Boolean = true,
     ): MetaItem<*>?
 
@@ -63,14 +64,15 @@ public interface Vision : Described {
      * if it should include inherited properties etc.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    public val propertyChanges: Flow<Name> get() = callbackFlow<Name> {
-        coroutineScope {
-            onPropertyChange(this) {
-                send(it)
+    public val propertyChanges: Flow<Name>
+        get() = callbackFlow<Name> {
+            coroutineScope {
+                onPropertyChange(this) {
+                    send(it)
+                }
+                awaitClose { cancel() }
             }
-            awaitClose { cancel() }
         }
-    }
 
 
     /**
@@ -93,7 +95,7 @@ public interface Vision : Described {
     }
 }
 
-public fun Vision.asyncNotifyPropertyChange(propertyName: Name){
+public fun Vision.asyncNotifyPropertyChange(propertyName: Name) {
     scope.launch {
         notifyPropertyChanged(propertyName)
     }
@@ -120,8 +122,8 @@ public fun Vision.allProperties(
 ): MutableItemProvider = object : MutableItemProvider {
     override fun getItem(name: Name): MetaItem<*>? = getProperty(
         name,
-        inherit = inherit,
-        includeStyles = includeStyles,
+        inherit = inherit ?: (descriptor?.get(name)?.inherited != false),
+        includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles == true),
         includeDefaults = includeDefaults
     )
 
@@ -133,8 +135,8 @@ public fun Vision.allProperties(
  */
 public fun Vision.getProperty(
     key: String,
-    inherit: Boolean? = null,
-    includeStyles: Boolean? = null,
+    inherit: Boolean = false,
+    includeStyles: Boolean = true,
     includeDefaults: Boolean = true,
 ): MetaItem<*>? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
 
