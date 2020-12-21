@@ -62,6 +62,7 @@ public interface Vision : Described {
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
      * if it should include inherited properties etc.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     public val propertyChanges: Flow<Name> get() = callbackFlow<Name> {
         coroutineScope {
             onPropertyChange(this) {

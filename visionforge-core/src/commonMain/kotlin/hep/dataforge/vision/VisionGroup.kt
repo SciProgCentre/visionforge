@@ -45,16 +45,6 @@ public interface VisionGroup : Provider, Vision, VisionContainer<Vision> {
         }
     }
 
-    /**
-     * A fix for serialization bug that writes all proper parents inside the tree after deserialization
-     */
-    public fun attachChildren() {
-        children.values.forEach {
-            it.parent = this
-            (it as? VisionGroup)?.attachChildren()
-        }
-    }
-
     public companion object {
         public const val STYLE_TARGET: String = "style"
     }

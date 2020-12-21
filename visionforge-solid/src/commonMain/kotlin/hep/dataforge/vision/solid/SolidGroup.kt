@@ -23,20 +23,16 @@ public interface PrototypeHolder {
 
 /**
  * Represents 3-dimensional Visual Group
+ * @param prototypes A container for templates visible inside this group
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
+public class SolidGroup(
+    @Serializable(Prototypes.Companion::class) @SerialName("prototypes") private var prototypes: MutableVisionGroup? = null,
+) : VisionGroupBase(), Solid, PrototypeHolder {
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
-
-    /**
-     * A container for templates visible inside this group
-     */
-    @Serializable(Prototypes.Companion::class)
-    @SerialName("prototypes")
-    internal var prototypes: MutableVisionGroup? = null
 
     /**
      * Ger a prototype redirecting the request to the parent if prototype is not found
@@ -59,13 +55,6 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
     override var rotation: Point3D? = null
 
     override var scale: Point3D? = null
-
-    override fun attachChildren() {
-        prototypes?.parent = this
-        prototypes?.attachChildren()
-        super.attachChildren()
-    }
-
 
 //    /**
 //     * TODO add special static group to hold statics without propagation
@@ -108,16 +97,11 @@ public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup
 @Serializable(Prototypes.Companion::class)
 internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
-) : VisionGroupBase(), PrototypeHolder {
+) : VisionGroupBase(children as? MutableMap<NameToken, Vision> ?: children.toMutableMap()), PrototypeHolder {
 
     init {
-        childrenInternal.putAll(children)
-    }
-
-    override fun attachChildren() {
         children.values.forEach {
             it.parent = parent
-            (it as? VisionGroup)?.attachChildren()
         }
     }
 

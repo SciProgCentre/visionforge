@@ -82,10 +82,6 @@ public class SolidReferenceGroup(
         includeDefaults: Boolean,
     ): MetaItem<*>? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
-    override fun attachChildren() {
-        //do nothing
-    }
-
     override val descriptor: NodeDescriptor get() = prototype.descriptor
 
 
@@ -140,10 +136,6 @@ public class SolidReferenceGroup(
 
         override fun update(change: VisionChange) {
             TODO("Not yet implemented")
-        }
-
-        override fun attachChildren() {
-            //do nothing
         }
 
         override val descriptor: NodeDescriptor get() = prototype.descriptor

@@ -11,22 +11,25 @@ import kotlinx.serialization.Transient
 
 /**
  * Abstract implementation of mutable group of [Vision]
+ *
+ * @param childrenInternal Internal mutable container for group children
  */
 @Serializable
 @SerialName("vision.group")
-public open class VisionGroupBase : VisionBase(), MutableVisionGroup {
-
-    /**
-     * Internal mutable container for group children
-     * TODO made protected due to [https://github.com/Kotlin/kotlinx.serialization/issues/1200]
-     */
-    @SerialName("children")
-    protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap()
+public open class VisionGroupBase(
+    @SerialName("children") internal val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
+) : VisionBase(), MutableVisionGroup {
 
     /**
      * A map of top level named children
      */
     override val children: Map<NameToken, Vision> get() = childrenInternal
+
+    init {
+        childrenInternal.values.forEach {
+            it.parent = this
+        }
+    }
 
     override suspend fun notifyPropertyChanged(propertyName: Name) {
         super.notifyPropertyChanged(propertyName)

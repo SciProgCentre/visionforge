@@ -26,7 +26,9 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
     }
 
     private fun MutableVisionGroup.unref(name: Name) {
-        (this as? SolidGroup)?.prototypes?.set(name, null)
+        (this as? SolidGroup)?.prototypes{
+            set(name, null)
+        }
         children.filter { (it.value as? SolidReferenceGroup)?.templateName == name }.forEach { (key, value) ->
             val reference = value as SolidReferenceGroup
             val newChild = mergeChild(reference, reference.prototype)

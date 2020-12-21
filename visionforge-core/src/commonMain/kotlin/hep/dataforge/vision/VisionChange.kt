@@ -66,12 +66,7 @@ public class VisionChange(
     public val vision: Vision? = null,
     @Serializable(MetaSerializer::class) public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,
-) {
-    init {
-        (vision as? VisionGroup)?.attachChildren()
-    }
-
-}
+)
 
 public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilder.() -> Unit): VisionChange =
     VisionChangeBuilder().apply(block).isolate(manager)
