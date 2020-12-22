@@ -1,6 +1,9 @@
 package ru.mipt.npm.sat
 
+import hep.dataforge.meta.set
 import hep.dataforge.vision.solid.*
+import hep.dataforge.vision.style
+import hep.dataforge.vision.useStyle
 import kotlin.math.PI
 
 internal fun visionOfSatellite(
@@ -12,7 +15,18 @@ internal fun visionOfSatellite(
     ySegmentSize: Number = xSegmentSize,
     fiberDiameter: Number = 1.0,
 ): SolidGroup = SolidGroup {
-    opacity = 0.3
+    val transparent by style {
+        this[SolidMaterial.MATERIAL_OPACITY_KEY] = 0.3
+    }
+
+    val red by style {
+        this[SolidMaterial.MATERIAL_COLOR_KEY] = "red"
+    }
+
+    val blue by style {
+        this[SolidMaterial.MATERIAL_COLOR_KEY] = "blue"
+    }
+
     val totalXSize = xSegments * xSegmentSize.toDouble()
     val totalYSize = ySegments * ySegmentSize.toDouble()
     for (layer in 1..layers) {
@@ -20,6 +34,7 @@ internal fun visionOfSatellite(
             for (i in 1..xSegments) {
                 for (j in 1..ySegments) {
                     box(xSegmentSize, ySegmentSize, layerHeight, name = "segment[$i,$j]") {
+                        useStyle(transparent)
                         z = (layer - 0.5) * layerHeight.toDouble()
                         x = (i - 0.5) * xSegmentSize.toDouble()
                         y = (j - 0.5) * ySegmentSize.toDouble()
@@ -29,23 +44,21 @@ internal fun visionOfSatellite(
             group("fibers") {
                 for (i in 1..xSegments) {
                     cylinder(fiberDiameter, totalYSize) {
+                        useStyle(red)
                         rotationX = PI / 2
                         z = (layer - 1.0) * layerHeight.toDouble() + fiberDiameter.toDouble()
                         x = (i - 0.5) * xSegmentSize.toDouble()
-                        y = totalYSize/2
-
-                        color("red")
+                        y = totalYSize / 2
                     }
                 }
 
                 for (j in 1..ySegments) {
                     cylinder(fiberDiameter, totalXSize) {
+                        useStyle(blue)
                         rotationY = PI / 2
                         z = (layer) * layerHeight.toDouble() - fiberDiameter.toDouble()
                         y = (j - 0.5) * xSegmentSize.toDouble()
-                        x = totalXSize/2
-
-                        color("blue")
+                        x = totalXSize / 2
                     }
                 }
             }

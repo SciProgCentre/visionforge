@@ -136,9 +136,19 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         return if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
     }
 
+    public fun renderSolid(
+        element: Element,
+        vision: Solid,
+        options: Canvas3DOptions,
+    ): ThreeCanvas = createCanvas(element, options).apply {
+        render(vision)
+    }
+
     override fun render(element: Element, vision: Vision, meta: Meta) {
-        createCanvas(element, Canvas3DOptions.read(meta)).render(
-            vision as? Solid ?: error("Solid expected but ${vision::class} is found")
+        renderSolid(
+            element,
+            vision as? Solid ?: error("Solid expected but ${vision::class} is found"),
+            Canvas3DOptions.read(meta)
         )
     }
 
@@ -153,7 +163,7 @@ public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
     options: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = createCanvas(element, Canvas3DOptions(options)).apply { render(obj) }
+): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(options))
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
     object3D.name = token.toString()

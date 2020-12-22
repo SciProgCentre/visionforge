@@ -111,3 +111,5 @@ public fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
  * Collect all styles for this object in a single laminate
  */
 public val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::getStyle))
+
+

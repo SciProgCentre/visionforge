@@ -88,6 +88,7 @@ public fun VisionContainerBuilder<Vision>.group(
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
+@VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 

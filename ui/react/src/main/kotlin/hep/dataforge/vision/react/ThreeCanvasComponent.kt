@@ -37,8 +37,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
-            val newCanvas: ThreeCanvas =
-                three.createCanvas(element, props.options ?: Canvas3DOptions.empty())
+            val newCanvas: ThreeCanvas = three.createCanvas(element, props.options ?: Canvas3DOptions.empty())
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas
         }

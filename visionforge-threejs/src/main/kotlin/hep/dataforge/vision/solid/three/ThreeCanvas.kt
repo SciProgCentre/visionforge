@@ -130,7 +130,8 @@ public class ThreeCanvas(
         }
     }
 
-    public fun attach(element: Element) {
+    internal fun attach(element: Element) {
+        check(element.children.length == 0){"The element for Three canvas is not empty"}
         element.appendChild(canvas)
         updateSize()
     }
@@ -189,8 +190,10 @@ public class ThreeCanvas(
     }
 
     public override fun render(vision: Solid) {
-        //clear old root
-        clear()
+        scene.children.find { it.name == "@root" }?.let {
+            //Throw error is something is already rendered here
+            error("Root object already is present in the canvas")
+        }
 
         val object3D = three.buildObject3D(vision)
         object3D.name = "@root"

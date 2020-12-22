@@ -63,7 +63,7 @@ private fun Vision.isolate(manager: VisionManager): Vision {
 }
 
 @Serializable
-public class VisionChange(
+public data class VisionChange(
     public val reset: Boolean = false,
     public val vision: Vision? = null,
     @Serializable(MetaSerializer::class) public val properties: Meta? = null,
