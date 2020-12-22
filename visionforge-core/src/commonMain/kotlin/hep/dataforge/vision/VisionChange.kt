@@ -3,6 +3,7 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
+import hep.dataforge.values.Null
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -30,7 +31,8 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
     public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem<*>?) {
         if (visionName == Name.EMPTY) {
-            propertyChange[propertyName] = item
+            //Write property removal as [Null]
+            propertyChange[propertyName] = (item ?: Null.asMetaItem())
         } else {
             getOrPutChild(visionName).propertyChanged(Name.EMPTY, propertyName, item)
         }
@@ -111,6 +113,10 @@ public fun Vision.flowChanges(
     var collector = VisionChangeBuilder()
     coroutineScope {
         collectChange(Name.EMPTY, this@flowChanges) { collector }
+
+        //Send initial vision state
+        val initialChange = VisionChange(vision = isolate(manager))
+        emit(initialChange)
 
         while (currentCoroutineContext().isActive) {
             //Wait for changes to accumulate

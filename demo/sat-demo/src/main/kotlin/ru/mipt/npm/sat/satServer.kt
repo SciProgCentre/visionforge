@@ -3,6 +3,7 @@ package ru.mipt.npm.sat
 
 import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Solid
+import hep.dataforge.vision.solid.clear
 import hep.dataforge.vision.solid.color
 import hep.dataforge.vision.solid.invoke
 import hep.dataforge.vision.three.server.*
@@ -42,7 +43,7 @@ fun main() {
             val targetVision = sat[target] as Solid
             targetVision.color("red")
             delay(300)
-            targetVision.color("darkgreen")
+            targetVision.color.clear()
             delay(10)
         }
     }

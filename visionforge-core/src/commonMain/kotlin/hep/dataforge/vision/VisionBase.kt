@@ -3,12 +3,14 @@ package hep.dataforge.vision
 import hep.dataforge.meta.Config
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MutableMeta
+import hep.dataforge.meta.asMetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
 import hep.dataforge.meta.descriptors.get
-import hep.dataforge.meta.update
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
+import hep.dataforge.names.plus
+import hep.dataforge.values.Null
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +28,7 @@ internal data class PropertyListener(
     val owner: Any? = null,
     val action: (name: Name) -> Unit,
 )
+
 
 @Serializable
 @SerialName("vision")
@@ -100,6 +103,8 @@ public open class VisionBase : Vision {
             }
     }
 
+
+    //TODO check memory consumption for the flow
     @Transient
     private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
@@ -116,13 +121,30 @@ public open class VisionBase : Vision {
         propertyInvalidationFlow.emit(propertyName)
     }
 
-    public fun configure(block: MutableMeta<*>.() -> Unit) {
-        getOrCreateConfig().block()
+    public fun configure(block: suspend MutableMeta<*>.() -> Unit) {
+        scope.launch {
+            getOrCreateConfig().block()
+        }
     }
 
     override fun update(change: VisionChange) {
+
+        fun updateProperties(at: Name, item: MetaItem<*>) {
+            when (item) {
+                is MetaItem.ValueItem -> {
+                    if (item.value == Null) {
+                        setProperty(at, null)
+                    } else
+                        setProperty(at, item)
+                }
+                is MetaItem.NodeItem -> item.node.items.forEach { (token, childItem) ->
+                    updateProperties(at + token, childItem)
+                }
+            }
+        }
+
         change.properties?.let {
-            getOrCreateConfig().update(it)
+            updateProperties(Name.EMPTY, it.asMetaItem())
         }
     }
 

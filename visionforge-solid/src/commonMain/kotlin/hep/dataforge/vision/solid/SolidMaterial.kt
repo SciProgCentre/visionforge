@@ -6,50 +6,12 @@ import hep.dataforge.meta.descriptors.attributes
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.values.string
 import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
-
-@VisionBuilder
-public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
-    public var value: Value?
-        get() = parent.getItem(colorKey).value
-        set(value) {
-            parent[colorKey] = value
-        }
-}
-
-public var ColorAccessor?.string: String?
-    get() = this?.value?.string
-    set(value) {
-        this?.value = value?.asValue()
-    }
-
-/**
- * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
- */
-public operator fun ColorAccessor?.invoke(webColor: String) {
-    this?.value = webColor.asValue()
-}
-
-/**
- * Set color as RGB integer
- */
-public operator fun ColorAccessor?.invoke(rgb: Int) {
-    this?.value = Colors.rgbToString(rgb).asValue()
-}
-
-/**
- * Set color as RGB
- */
-public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
-    this?.value = Colors.rgbToString(r, g, b).asValue()
-}
 
 @VisionBuilder
 public class SolidMaterial : Scheme() {

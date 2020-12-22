@@ -57,6 +57,9 @@ public interface Vision : Described {
      */
     public fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean = true)
 
+    /**
+     * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
+     */
     public fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit)
 
     /**
@@ -81,7 +84,7 @@ public interface Vision : Described {
     public suspend fun notifyPropertyChanged(propertyName: Name): Unit
 
     /**
-     * Update this vision using external meta. Children are not updated.
+     * Update this vision using a dif represented by [VisionChange].
      */
     public fun update(change: VisionChange)
 

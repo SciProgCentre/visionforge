@@ -134,14 +134,6 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-
-                    val initialVision = VisionChange(vision = vision)
-                    val initialJson =  visionManager.jsonFormat.encodeToString(
-                        VisionChange.serializer(),
-                        initialVision
-                    )
-                    outgoing.send(Frame.Text(initialJson))
-
                     vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
