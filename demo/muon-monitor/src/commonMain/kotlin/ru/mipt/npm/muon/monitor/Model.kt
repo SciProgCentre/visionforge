@@ -52,7 +52,6 @@ class Model {
                 detector(it)
             }
         }
-
         tracks = group("tracks")
     }
 

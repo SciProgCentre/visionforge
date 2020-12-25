@@ -19,12 +19,12 @@ public class SolidMaterial : Scheme() {
     /**
      * Primary web-color for the material
      */
-    public var color: ColorAccessor = ColorAccessor(items, COLOR_KEY)
+    public var color: ColorAccessor = ColorAccessor(this, COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    public var specularColor: ColorAccessor = ColorAccessor(items, SPECULAR_COLOR_KEY)
+    public var specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
 
     /**
      * Opacity
@@ -104,13 +104,7 @@ public var Solid.material: SolidMaterial?
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    setProperty(MATERIAL_KEY, SolidMaterial(builder))
-//    val node = getOwnProperty(MATERIAL_KEY).node
-//    if (node != null) {
-//        configure(SolidMaterial(builder).config)
-//    } else {
-//        setProperty(MATERIAL_KEY, SolidMaterial(builder))
-//    }
+    ownProperties.getChild(MATERIAL_KEY).update(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?

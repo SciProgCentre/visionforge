@@ -101,6 +101,7 @@ internal class Prototypes(
 ) : VisionGroupBase(children as? MutableMap<NameToken, Vision> ?: children.toMutableMap()), PrototypeHolder {
 
     init {
+        //used during deserialization only
         children.values.forEach {
             it.parent = parent
         }

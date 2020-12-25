@@ -147,8 +147,7 @@ fun Page<Solid>.showcaseCSG() {
                 detail = 32
             }
             material {
-                color(Colors.red)
-                wireframe = false
+                color(Colors.pink)
             }
         }
         composite(CompositeType.UNION) {
@@ -158,8 +157,8 @@ fun Page<Solid>.showcaseCSG() {
             sphere(50){
                 detail = 32
             }
-            color(Colors.lightgreen)
-            opacity = 0.5
+            color("lightgreen")
+            opacity = 0.7
         }
         composite(CompositeType.SUBTRACT) {
             y = -300
@@ -169,7 +168,7 @@ fun Page<Solid>.showcaseCSG() {
             sphere(50){
                 detail = 32
             }
-            color(Colors.teal)
+            color("teal")
             opacity = 0.7
         }
     }

@@ -46,6 +46,6 @@ public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
     this?.value = Colors.rgbToString(r, g, b).asValue()
 }
 
-public fun ColorAccessor?.clear(){
+public fun ColorAccessor?.clear() {
     this?.value = null
 }

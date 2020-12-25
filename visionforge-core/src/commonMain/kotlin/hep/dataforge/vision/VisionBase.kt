@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.css.th
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -27,17 +28,27 @@ internal data class PropertyListener(
 )
 
 
+/**
+ * A full base implementation for a [Vision]
+ * @param properties Object own properties excluding styles and inheritance
+ */
 @Serializable
 @SerialName("vision")
-public open class VisionBase : Vision {
+public open class VisionBase(internal var properties: Config? = null) : Vision {
+
+    init {
+        //used during deserialization only
+        properties?.onChange(this) { name, oldItem, newItem ->
+            if (oldItem != newItem) {
+                scope.launch {
+                    notifyPropertyChanged(name)
+                }
+            }
+        }
+    }
 
     @Transient
     override var parent: VisionGroup? = null
-
-    /**
-     * Object own properties excluding styles and inheritance
-     */
-    internal var properties: Config? = null
 
     override val meta: Meta get() = properties ?: Meta.EMPTY
 
