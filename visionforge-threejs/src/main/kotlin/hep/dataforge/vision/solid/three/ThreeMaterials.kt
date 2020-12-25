@@ -109,15 +109,15 @@ public object ThreeMaterials {
 /**
  * Infer color based on meta item
  */
-public fun MetaItem<*>.getColor(): Color {
+public fun MetaItem.getColor(): Color {
     return when (this) {
-        is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
+        is ValueItem -> if (this.value.type == ValueType.NUMBER) {
             val int = value.int
             Color(int)
         } else {
             Color(this.value.string)
         }
-        is MetaItem.NodeItem -> {
+        is NodeItem -> {
             Color(
                 node[Colors.RED_KEY]?.int ?: 0,
                 node[Colors.GREEN_KEY]?.int ?: 0,
@@ -160,7 +160,7 @@ public fun Mesh.updateMaterial(vision: Vision) {
 }
 
 public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
-    if (material.cached) {
+    if (material.cached || propertyName == SolidMaterial.MATERIAL_KEY) {
         //generate a new material since cached material should not be changed
         updateMaterial(vision)
     } else {

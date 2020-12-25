@@ -1,9 +1,8 @@
 package hep.dataforge.vision.gdml
 
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.meta.sequence
+import hep.dataforge.meta.itemSequence
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.properties
 import hep.dataforge.vision.solid.*
 
 public expect class Counter() {
@@ -27,7 +26,7 @@ internal fun Vision.updateFrom(other: Vision): Vision {
             scaleY = scaleY.toDouble() * other.scaleY.toDouble()
             scaleZ = scaleZ.toDouble() * other.scaleZ.toDouble()
         }
-        other.properties?.sequence()?.forEach { (name, item) ->
+        other.meta.itemSequence().forEach { (name, item) ->
             if (getProperty(name) == null) {
                 setProperty(name, item)
             }

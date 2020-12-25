@@ -29,7 +29,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
         children.getOrPut(visionName) { VisionChangeBuilder() }
 
-    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem<*>?) {
+    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem?) {
         if (visionName == Name.EMPTY) {
             //Write property removal as [Null]
             propertyChange[propertyName] = (item ?: Null.asMetaItem())

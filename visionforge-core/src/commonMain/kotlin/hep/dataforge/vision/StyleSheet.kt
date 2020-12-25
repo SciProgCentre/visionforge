@@ -40,7 +40,7 @@ public inline class StyleSheet(private val owner: VisionGroup) {
      * Create and set a style
      */
     public operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
-        val newStyle = get(key)?.edit(builder) ?: Meta(builder)
+        val newStyle = get(key)?.builder()?.apply(builder) ?: Meta(builder)
         set(key, newStyle.seal())
     }
 
@@ -99,7 +99,7 @@ public tailrec fun Vision.getStyle(name: String): Meta? =
 /**
  * Resolve an item in all style layers
  */
-public fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
+public fun Vision.getStyleItems(name: Name): Sequence<MetaItem> {
     return styles.asSequence().map {
         getStyle(it)
     }.map {

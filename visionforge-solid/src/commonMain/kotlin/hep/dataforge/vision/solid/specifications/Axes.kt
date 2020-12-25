@@ -3,7 +3,7 @@ package hep.dataforge.vision.solid.specifications
 import hep.dataforge.meta.*
 
 public class Axes : Scheme() {
-    public var visible: Boolean by boolean(!config.isEmpty())
+    public var visible: Boolean by boolean(rootNode?.isEmpty() != false)
     public var size: Double by double(AXIS_SIZE)
     public var width: Double by double(AXIS_WIDTH)
 

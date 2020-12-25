@@ -1,8 +1,6 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.get
-import hep.dataforge.meta.number
+import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
 import hep.dataforge.values.string
@@ -192,9 +190,9 @@ public object Colors {
     /**
      * Convert color represented as Meta to string of format #rrggbb
      */
-    fun fromMeta(item: MetaItem<*>): String {
+    fun fromMeta(item: MetaItem): String {
         return when (item) {
-            is MetaItem.NodeItem<*> -> {
+            is NodeItem -> {
                 val node = item.node
                 rgbToString(
                     node[RED_KEY].number?.toByte()?.toUByte() ?: 0u,
@@ -202,7 +200,7 @@ public object Colors {
                     node[BLUE_KEY].number?.toByte()?.toUByte() ?: 0u
                 )
             }
-            is MetaItem.ValueItem -> {
+            is ValueItem -> {
                 if (item.value.type == ValueType.NUMBER) {
                     rgbToString(item.value.int)
                 } else {

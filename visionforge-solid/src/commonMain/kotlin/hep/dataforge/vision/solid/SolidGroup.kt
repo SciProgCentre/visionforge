@@ -106,16 +106,16 @@ internal class Prototypes(
         }
     }
 
-    override fun getOwnProperty(name: Name): MetaItem<*>? = null
+    override fun getOwnProperty(name: Name): MetaItem? = null
 
     override fun getProperty(
         name: Name,
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem<*>? = null
+    ): MetaItem? = null
 
-    override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
+    override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
         error("Can't ser property of prototypes container")
     }
 

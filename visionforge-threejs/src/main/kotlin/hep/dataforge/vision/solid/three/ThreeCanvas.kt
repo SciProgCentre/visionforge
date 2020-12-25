@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.meta.getItem
+import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
@@ -177,7 +177,7 @@ public class ThreeCanvas(
     }
 
     private fun addControls(element: Node, controls: Controls) {
-        when (controls.getItem("type").string) {
+        when (controls.get("type").string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }

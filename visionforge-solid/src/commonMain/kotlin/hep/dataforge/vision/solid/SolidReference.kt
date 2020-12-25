@@ -17,7 +17,7 @@ private fun SolidReference.getRefProperty(
     inherit: Boolean,
     includeStyles: Boolean,
     includeDefaults: Boolean,
-): MetaItem<*>? {
+): MetaItem? {
     return sequence {
         yield(getOwnProperty(name))
         if (includeStyles) {
@@ -59,11 +59,11 @@ public class SolidReferenceGroup(
     private fun childPropertyName(childName: Name, propertyName: Name): Name =
         childToken(childName) + propertyName
 
-    private fun getChildProperty(childName: Name, propertyName: Name): MetaItem<*>? {
+    private fun getChildProperty(childName: Name, propertyName: Name): MetaItem? {
         return getOwnProperty(childPropertyName(childName, propertyName))
     }
 
-    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem<*>?, notify: Boolean) {
+    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem?, notify: Boolean) {
         setProperty(childPropertyName(childName, propertyName), item, notify)
     }
 
@@ -79,7 +79,7 @@ public class SolidReferenceGroup(
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem<*>? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+    ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
     override val descriptor: NodeDescriptor get() = prototype.descriptor
 
@@ -99,9 +99,11 @@ public class SolidReferenceGroup(
                     ReferenceChild(childName + key.asName())
                 } ?: emptyMap()
 
-        override fun getOwnProperty(name: Name): MetaItem<*>? = getChildProperty(childName, name)
+        override val meta: Meta get() =TODO()// getChildProperty(childName, Name.EMPTY).node ?: Meta.EMPTY
 
-        override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
+        override fun getOwnProperty(name: Name): MetaItem? = getChildProperty(childName, name)
+
+        override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
             setChildProperty(childName, name, item, notify)
         }
 
@@ -110,7 +112,7 @@ public class SolidReferenceGroup(
             inherit: Boolean,
             includeStyles: Boolean,
             includeDefaults: Boolean,
-        ): MetaItem<*>? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+        ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
         override var parent: VisionGroup?
             get() {

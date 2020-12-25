@@ -1,5 +1,6 @@
 package hep.dataforge.vision
 
+import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
@@ -29,6 +30,12 @@ public interface Vision : Described {
     public var parent: VisionGroup?
 
     /**
+     * Properties belonging to this [Vision] potentially including artificial properties
+     */
+    @Transient
+    public val meta: Meta
+
+    /**
      * A coroutine scope for asynchronous calls and locks
      */
     public val scope: CoroutineScope get() = parent?.scope ?: GlobalScope
@@ -37,7 +44,7 @@ public interface Vision : Described {
      * A fast accessor method to get own property (no inheritance or styles).
      * Should be equivalent to `getProperty(name,false,false,false)`.
      */
-    public fun getOwnProperty(name: Name): MetaItem<*>?
+    public fun getOwnProperty(name: Name): MetaItem?
 
     /**
      * Get property.
@@ -49,13 +56,13 @@ public interface Vision : Described {
         inherit: Boolean = false,
         includeStyles: Boolean = true,
         includeDefaults: Boolean = true,
-    ): MetaItem<*>?
+    ): MetaItem?
 
 
     /**
      * Set the property value
      */
-    public fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean = true)
+    public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
 
     /**
      * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
@@ -109,8 +116,8 @@ public fun Vision.asyncNotifyPropertyChange(propertyName: Name) {
  */
 public val Vision.ownProperties: MutableItemProvider
     get() = object : MutableItemProvider {
-        override fun getItem(name: Name): MetaItem<*>? = getOwnProperty(name)
-        override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
+        override fun getItem(name: Name): MetaItem? = getOwnProperty(name)
+        override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
     }
 
 
@@ -123,14 +130,14 @@ public fun Vision.allProperties(
     includeStyles: Boolean? = null,
     includeDefaults: Boolean = true,
 ): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem<*>? = getProperty(
+    override fun getItem(name: Name): MetaItem? = getProperty(
         name,
         inherit = inherit ?: (descriptor?.get(name)?.inherited != false),
         includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles == true),
         includeDefaults = includeDefaults
     )
 
-    override fun setItem(name: Name, item: MetaItem<*>?): Unit = setProperty(name, item)
+    override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
 }
 
 /**
@@ -141,7 +148,7 @@ public fun Vision.getProperty(
     inherit: Boolean = false,
     includeStyles: Boolean = true,
     includeDefaults: Boolean = true,
-): MetaItem<*>? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
+): MetaItem? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
 
 /**
  * A convenience method to pair [getProperty]

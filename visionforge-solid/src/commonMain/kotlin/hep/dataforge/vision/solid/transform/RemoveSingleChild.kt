@@ -9,7 +9,7 @@ import hep.dataforge.vision.solid.*
 internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
     return child.apply {
 
-        configure(parent.properties)
+        configure(parent.meta)
 
         //parent.properties?.let { config.update(it) }
 

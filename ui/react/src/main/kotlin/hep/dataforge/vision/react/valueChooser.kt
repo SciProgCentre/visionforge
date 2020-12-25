@@ -20,7 +20,7 @@ import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
-    var item: MetaItem<*>?
+    var item: MetaItem?
     var descriptor: ValueDescriptor?
     var valueChanged: ((Value?) -> Unit)?
 }
@@ -140,7 +140,7 @@ class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserP
 
 internal fun RBuilder.valueChooser(
     name: Name,
-    item: MetaItem<*>?,
+    item: MetaItem?,
     descriptor: ValueDescriptor? = null,
     callback: (Value?) -> Unit
 ) {

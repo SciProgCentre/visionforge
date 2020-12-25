@@ -4,7 +4,6 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.get
-import hep.dataforge.vision.properties
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -33,7 +32,7 @@ class SerializationTest {
         val string =  SolidManager.encodeToString(cube)
         println(string)
         val newCube = SolidManager.decodeFromString(string)
-        assertEquals(cube.properties, newCube.properties)
+        assertEquals(cube.meta, newCube.meta)
     }
 
     @Test
@@ -54,7 +53,7 @@ class SerializationTest {
         val string = SolidManager.encodeToString(group)
         println(string)
         val reconstructed = SolidManager.decodeFromString(string) as SolidGroup
-        assertEquals(group["cube"]?.properties, reconstructed["cube"]?.properties)
+        assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
     }
 
 }

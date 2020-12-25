@@ -6,19 +6,15 @@ import hep.dataforge.values.asValue
 @DslMarker
 public annotation class VisionBuilder
 
-public fun Sequence<MetaItem<*>?>.merge(): MetaItem<*>? = when (val first = firstOrNull { it != null }) {
+public fun Sequence<MetaItem?>.merge(): MetaItem? = when (val first = firstOrNull { it != null }) {
     null -> null
-    is MetaItem.ValueItem -> first //fast search for first entry if it is value
-    is MetaItem.NodeItem -> {
+    is ValueItem -> first //fast search for first entry if it is value
+    is NodeItem -> {
         //merge nodes if first encountered node is meta
         val laminate: Laminate = Laminate(mapNotNull { it.node }.toList())
-        MetaItem.NodeItem(laminate)
+        NodeItem(laminate)
     }
 }
-
-@DFExperimental
-public val Vision.properties: Config?
-    get() = (this as? VisionBase)?.properties
 
 /**
  * Control visibility of the element
@@ -29,4 +25,4 @@ public var Vision.visible: Boolean?
 
 public fun Vision.configure(meta: Meta?): Unit = update(VisionChange(properties = meta))
 
-public fun Vision.configure(block: MutableMeta<*>.() -> Unit): Unit = configure(Meta(block))
+public fun Vision.configure(block: MetaBuilder.() -> Unit): Unit = configure(Meta(block))

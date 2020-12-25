@@ -12,7 +12,7 @@ public interface VisionPropertyContainer<out T> {
         inherit: Boolean = false,
         includeStyles: Boolean = true,
         includeDefaults: Boolean = true,
-    ): MetaItem<*>?
+    ): MetaItem?
 
-    public fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean = true)
+    public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
 }

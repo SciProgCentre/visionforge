@@ -1,9 +1,6 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.double
-import hep.dataforge.meta.get
-import hep.dataforge.meta.int
+import hep.dataforge.meta.*
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.int
 import hep.dataforge.values.string
@@ -35,9 +32,9 @@ public object FXMaterials {
  * Infer color based on meta item
  * @param opacity default opacity
  */
-public fun MetaItem<*>.color(opacity: Double = 1.0): Color {
+public fun MetaItem.color(opacity: Double = 1.0): Color {
     return when (this) {
-        is MetaItem.ValueItem -> if (this.value.type == ValueType.NUMBER) {
+        is ValueItem -> if (this.value.type == ValueType.NUMBER) {
             val int = value.int
             val red = int and 0x00ff0000 shr 16
             val green = int and 0x0000ff00 shr 8
@@ -46,7 +43,7 @@ public fun MetaItem<*>.color(opacity: Double = 1.0): Color {
         } else {
             Color.web(this.value.string)
         }
-        is MetaItem.NodeItem -> {
+        is NodeItem -> {
             Color.rgb(
                 node[Colors.RED_KEY]?.int ?: 0,
                 node[Colors.GREEN_KEY]?.int ?: 0,
@@ -60,11 +57,11 @@ public fun MetaItem<*>.color(opacity: Double = 1.0): Color {
 /**
  * Infer FX material based on meta item
  */
-public fun MetaItem<*>?.material(): Material {
+public fun MetaItem?.material(): Material {
     return when (this) {
         null -> FXMaterials.GREY
-        is MetaItem.ValueItem -> PhongMaterial(color())
-        is MetaItem.NodeItem -> PhongMaterial().apply {
+        is ValueItem -> PhongMaterial(color())
+        is NodeItem -> PhongMaterial().apply {
             val opacity = node[SolidMaterial.OPACITY_KEY].double ?: 1.0
             diffuseColor = node[SolidMaterial.COLOR_KEY]?.color(opacity) ?: Color.DARKGREY
             specularColor = node[SolidMaterial.SPECULAR_COLOR_KEY]?.color(opacity) ?: Color.WHITE

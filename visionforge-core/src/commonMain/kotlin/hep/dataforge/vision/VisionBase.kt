@@ -1,9 +1,6 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.Config
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.MutableMeta
-import hep.dataforge.meta.asMetaItem
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
 import hep.dataforge.meta.descriptors.get
@@ -40,14 +37,14 @@ public open class VisionBase : Vision {
     /**
      * Object own properties excluding styles and inheritance
      */
-    public var properties: Config? = null
-        private set
+    internal var properties: Config? = null
+
+    override val meta: Meta get() = properties ?: Meta.EMPTY
 
     @Synchronized
     private fun getOrCreateConfig(): Config {
         if (properties == null) {
             val newProperties = Config()
-            properties = newProperties
             newProperties.onChange(this) { name, oldItem, newItem ->
                 if (oldItem != newItem) {
                     scope.launch {
@@ -55,6 +52,7 @@ public open class VisionBase : Vision {
                     }
                 }
             }
+            properties = newProperties
         }
         return properties!!
     }
@@ -62,7 +60,7 @@ public open class VisionBase : Vision {
     /**
      * A fast accessor method to get own property (no inheritance or styles
      */
-    override fun getOwnProperty(name: Name): MetaItem<*>? {
+    override fun getOwnProperty(name: Name): MetaItem? {
         return properties?.getItem(name)
     }
 
@@ -71,7 +69,7 @@ public open class VisionBase : Vision {
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem<*>? = sequence {
+    ): MetaItem? = sequence {
         yield(getOwnProperty(name))
         if (includeStyles) {
             yieldAll(getStyleItems(name))
@@ -83,7 +81,7 @@ public open class VisionBase : Vision {
     }.merge()
 
     @Synchronized
-    override fun setProperty(name: Name, item: MetaItem<*>?, notify: Boolean) {
+    override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
         getOrCreateConfig().setItem(name, item)
         if (notify) {
             scope.launch {
@@ -121,23 +119,17 @@ public open class VisionBase : Vision {
         propertyInvalidationFlow.emit(propertyName)
     }
 
-    public fun configure(block: suspend MutableMeta<*>.() -> Unit) {
-        scope.launch {
-            getOrCreateConfig().block()
-        }
-    }
-
     override fun update(change: VisionChange) {
 
-        fun updateProperties(at: Name, item: MetaItem<*>) {
+        fun updateProperties(at: Name, item: MetaItem) {
             when (item) {
-                is MetaItem.ValueItem -> {
+                is ValueItem -> {
                     if (item.value == Null) {
                         setProperty(at, null)
                     } else
                         setProperty(at, item)
                 }
-                is MetaItem.NodeItem -> item.node.items.forEach { (token, childItem) ->
+                is NodeItem -> item.node.items.forEach { (token, childItem) ->
                     updateProperties(at + token, childItem)
                 }
             }

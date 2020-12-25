@@ -134,11 +134,11 @@ public class VisionClient : AbstractPlugin() {
                             stringData
                         )
 
-                        if(change.vision!= null){
+                        if (change.vision != null) {
                             renderVision(element, change.vision, outputMeta)
                         }
 
-                        logger.info { "Got update ${change.toString()} for output with name $name" }
+                        logger.debug { "Got update $change for output with name $name" }
                         visionMap[element]?.update(change)
                             ?: console.info("Target vision for element $element with name $name not found")
                     } else {

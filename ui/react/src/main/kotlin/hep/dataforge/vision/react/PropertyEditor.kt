@@ -9,6 +9,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.values.Value
 import hep.dataforge.vision.hidden
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -65,12 +66,12 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
     val itemName by useState { props.name ?: Name.EMPTY }
-    var item: MetaItem<*>? by useState { props.provider.getItem(itemName) }
+    var item: MetaItem? by useState { props.provider.getItem(itemName) }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(itemName)
 
     if(descriptorItem?.hidden == true) return //fail fast for hidden property
 
-    var actualItem: MetaItem<Meta>? by useState {
+    var actualItem: MetaItem? by useState {
         item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
     }
 
@@ -110,7 +111,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         update()
     }
 
-    if (actualItem is MetaItem.NodeItem) {
+    if (actualItem is NodeItem) {
         styledDiv {
             css {
                 +TreeStyles.treeLeaf
@@ -248,6 +249,7 @@ public fun RBuilder.propertyEditor(
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 private fun Config.flowUpdates(): Flow<Name> = callbackFlow {
     onChange(this) { name, _, _ ->
         launch {
