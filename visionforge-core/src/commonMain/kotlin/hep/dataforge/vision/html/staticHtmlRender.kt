@@ -18,9 +18,10 @@ public fun FlowContent.embedVisionFragment(
     val consumer = object : VisionTagConsumer<Any?>(consumer, idPrefix) {
         override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
             script {
+                type = "text/json"
                 attributes["class"] = OUTPUT_DATA_CLASS
                 unsafe {
-                    +manager.encodeToString(vision)
+                    +"\n${manager.encodeToString(vision)}\n"
                 }
             }
         }

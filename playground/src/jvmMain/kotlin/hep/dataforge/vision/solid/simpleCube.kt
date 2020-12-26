@@ -17,5 +17,5 @@ fun main() {
         }
     }
 
-    fragment.makeFile(resourceLocation = ResourceLocation.LOCAL)
+    fragment.makeFile(resourceLocation = ResourceLocation.SYSTEM)
 }

@@ -19,12 +19,12 @@ public class SolidMaterial : Scheme() {
     /**
      * Primary web-color for the material
      */
-    public var color: ColorAccessor = ColorAccessor(this, COLOR_KEY)
+    public val color: ColorAccessor = ColorAccessor(this, COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    public var specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
+    public val specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
 
     /**
      * Opacity

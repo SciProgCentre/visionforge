@@ -39,7 +39,9 @@ public fun HtmlVisionFragment.makeFile(
     resourceLocation: ResourceLocation = ResourceLocation.SYSTEM,
     show: Boolean = true,
 ) {
-    val actualPath = path ?: Files.createTempFile("tempPlot", ".html")
-    val scriptHeader = Context.scriptHeader("/js/visionforge-three.js", actualPath, resourceLocation)
+    val actualPath = path?.let {
+        Path.of(System.getProperty("user.home")).resolve(path)
+    } ?: Files.createTempFile("tempPlot", ".html")
+    val scriptHeader = Context.scriptHeader("js/visionforge-three.js", actualPath, resourceLocation)
     makeFile(visionManager, path = path, show = show, title = title, headers = arrayOf(scriptHeader))
 }

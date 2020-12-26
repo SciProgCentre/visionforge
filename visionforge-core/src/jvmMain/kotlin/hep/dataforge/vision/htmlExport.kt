@@ -20,8 +20,10 @@ public fun HtmlVisionFragment.makeFile(
     title: String = "VisionForge page",
     show: Boolean = true,
 ) {
-    val actualFile = path ?: Files.createTempFile("tempPlot", ".html")
-    Files.createDirectories(actualFile.parent)
+    val actualFile = path?.let {
+        Path.of(System.getProperty("user.home")).resolve(path)
+    } ?: Files.createTempFile("tempPlot", ".html")
+    //Files.createDirectories(actualFile.parent)
     val htmlString = createHTML().apply {
         head {
             meta {

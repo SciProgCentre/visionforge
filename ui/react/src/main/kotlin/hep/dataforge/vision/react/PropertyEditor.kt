@@ -32,7 +32,7 @@ public external interface PropertyEditorProps : RProps {
     public var provider: MutableItemProvider
 
     /**
-     * Provide default item (greyed out if used
+     * Provide default item (greyed out if used)
      */
     public var defaultProvider: ItemProvider?
 
@@ -65,10 +65,11 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
-    val itemName = useMemo( { props.name ?: Name.EMPTY }, arrayOf(props.name))
-    var item: MetaItem? by useState { props.provider.getItem(itemName) }
+    val itemName = props.name ?: Name.EMPTY
     val descriptorItem: ItemDescriptor? =
         useMemo({ props.descriptor?.get(itemName) }, arrayOf(props.descriptor, itemName))
+
+    var item: MetaItem? by useState { props.provider.getItem(itemName) }
 
     if (descriptorItem?.hidden == true) return //fail fast for hidden property
 

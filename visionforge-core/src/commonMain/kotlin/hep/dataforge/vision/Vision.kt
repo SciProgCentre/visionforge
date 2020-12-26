@@ -1,5 +1,6 @@
 package hep.dataforge.vision
 
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.MutableItemProvider
@@ -73,6 +74,7 @@ public interface Vision : Described {
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
      * if it should include inherited properties etc.
      */
+    @DFExperimental
     @OptIn(ExperimentalCoroutinesApi::class)
     public val propertyChanges: Flow<Name>
         get() = callbackFlow<Name> {

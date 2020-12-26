@@ -49,7 +49,7 @@ public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
         updateMaterialProperty(source, propertyName)
     } else if (
         propertyName.startsWith(Solid.POSITION_KEY)
-        || propertyName.startsWith(Solid.ROTATION)
+        || propertyName.startsWith(Solid.ROTATION_KEY)
         || propertyName.startsWith(Solid.SCALE_KEY)
     ) {
         //update position of mesh using this object

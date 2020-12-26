@@ -20,6 +20,7 @@ import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.external.controls.TrackballControls
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.helpers.AxesHelper
+import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
@@ -50,8 +51,11 @@ public class ThreeCanvas(
     public var axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply { visible = options.axes.visible }
         private set
 
+    private val light = AmbientLight(0x404040)
+
     private val scene: Scene = Scene().apply {
         add(axes)
+        add(light)
     }
 
     public var camera: PerspectiveCamera = buildCamera(options.camera)
@@ -66,6 +70,7 @@ public class ThreeCanvas(
     }
 
     private val canvas = (renderer.domElement as HTMLCanvasElement).apply {
+        className += "three-canvas"
         width = 600
         height = 600
         style.apply {
@@ -131,7 +136,7 @@ public class ThreeCanvas(
     }
 
     internal fun attach(element: Element) {
-        check(element.children.length == 0){"The element for Three canvas is not empty"}
+        check(element.getElementsByClassName("three-canvas").length == 0){"Three canvas already created in this element"}
         element.appendChild(canvas)
         updateSize()
     }

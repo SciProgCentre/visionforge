@@ -33,7 +33,7 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
     }
 
     public companion object : PluginFactory<SolidManager> {
-        override val tag: PluginTag = PluginTag(name = "visual.spatial", group = PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out SolidManager> = SolidManager::class
         override fun invoke(meta: Meta, context: Context): SolidManager = SolidManager(meta)
 

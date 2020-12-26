@@ -70,7 +70,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 obj.onPropertyChange(updateScope) { name ->
                     if (
                         name.startsWith(Solid.POSITION_KEY) ||
-                        name.startsWith(Solid.ROTATION) ||
+                        name.startsWith(Solid.ROTATION_KEY) ||
                         name.startsWith(Solid.SCALE_KEY)
                     ) {
                         //update position of mesh using this object
@@ -81,14 +81,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 }
 
                 obj.structureChanges.onEach { (nameToken, _, child) ->
-//                        if (name.isEmpty()) {
-//                            logger.error { "Children change with empty name on $group" }
-//                            return@onChildrenChange
-//                        }
-
-//                        val parentName = name.cutLast()
-//                        val childName = name.last()!!
-
                     //removing old object
                     findChild(nameToken.asName())?.let { oldChild ->
                         oldChild.parent?.remove(oldChild)
@@ -153,7 +145,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     }
 
     public companion object : PluginFactory<ThreePlugin> {
-        override val tag: PluginTag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag("vision.threejs", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreePlugin> = ThreePlugin::class
         override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }

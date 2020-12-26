@@ -35,7 +35,7 @@ public enum class ResourceLocation {
     EMBED
 }
 
-internal const val DATAFORGE_ASSETS_PATH = ".dataforge/assets"
+internal const val VISIONFORGE_ASSETS_PATH = ".dataforge/vision/assets"
 
 
 /**
@@ -43,14 +43,14 @@ internal const val DATAFORGE_ASSETS_PATH = ".dataforge/assets"
  * @param
  */
 internal fun checkOrStoreFile(basePath: Path, filePath: Path, resource: String): Path {
-    val fullPath = basePath.resolveSibling(filePath).toAbsolutePath()
+    val fullPath = basePath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
 
     if (Files.exists(fullPath)) {
         //TODO checksum
     } else {
         //TODO add logging
 
-        val bytes = VisionManager::class.java.getResourceAsStream(resource).readAllBytes()
+        val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
         Files.createDirectories(fullPath.parent)
         Files.write(fullPath, bytes, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
     }
@@ -58,7 +58,7 @@ internal fun checkOrStoreFile(basePath: Path, filePath: Path, resource: String):
     return if (basePath.isAbsolute && fullPath.startsWith(basePath)) {
         basePath.relativize(fullPath)
     } else {
-        filePath
+        fullPath
     }
 }
 
@@ -78,7 +78,7 @@ internal fun embedScriptHeader(resource: String): HtmlFragment = {
     script {
         type = "text/javascript"
         unsafe {
-            val bytes = VisionManager::class.java.getResourceAsStream(resource).readAllBytes()
+            val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
             +bytes.toString(Charsets.UTF_8)
         }
     }
@@ -108,12 +108,12 @@ public fun Context.Companion.scriptHeader(
     val targetPath = when (resourceLocation) {
         ResourceLocation.LOCAL -> checkOrStoreFile(
             basePath,
-            Path.of(DATAFORGE_ASSETS_PATH),
+            Path.of(VISIONFORGE_ASSETS_PATH),
             scriptResource
         )
         ResourceLocation.SYSTEM -> checkOrStoreFile(
             Path.of("."),
-            Path.of(System.getProperty("user.home")).resolve(DATAFORGE_ASSETS_PATH),
+            Path.of(System.getProperty("user.home")).resolve(VISIONFORGE_ASSETS_PATH),
             scriptResource
         )
         ResourceLocation.EMBED -> null

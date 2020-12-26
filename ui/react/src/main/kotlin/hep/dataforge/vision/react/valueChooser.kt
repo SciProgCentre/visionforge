@@ -9,132 +9,156 @@ import hep.dataforge.vision.widgetType
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
-import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.defaultValue
 import react.dom.option
 import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
-        public var item: MetaItem?
+    public var item: MetaItem?
     public var descriptor: ValueDescriptor?
     public var valueChanged: ((Value?) -> Unit)?
 }
 
-public external interface ValueChooserState : RState {
-    public var rawInput: Boolean?
-}
+@JsExport
+public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
+    functionalComponent("StringValueChooser") { props ->
+        var value by useState(props.item.string ?: "")
+        val keyDown: (Event) -> Unit = { event ->
+            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
+                value = (event.target as HTMLInputElement).value
+                if(value!= props.item.string) {
+                    props.valueChanged?.invoke(value.asValue())
+                }
+            }
+        }
+        val handleChange: (Event) -> Unit = {
+            value = (it.target as HTMLInputElement).value
+        }
+        styledInput(type = InputType.text) {
+            attrs {
+                this.value = value
+                onKeyDownFunction = keyDown
+                onChangeFunction = handleChange
+            }
+        }
+    }
 
 @JsExport
-public class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
-    private val element = createRef<HTMLElement>()
-
-    private fun getValue(): Value? {
-        val element = element.current ?: return null//state.element ?: return null
-        return when (element) {
-            is HTMLInputElement -> if (element.type == "checkbox") {
-                if (element.checked) True else False
-            } else {
-                element.value.asValue()
+public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
+    functionalComponent("BooleanValueChooser") { props ->
+        var checkedValue by useState(props.item.boolean ?: false)
+        val handleChange: (Event) -> Unit = {
+            val newValue = (it.target as HTMLInputElement).checked
+            checkedValue = newValue
+            props.valueChanged?.invoke(newValue.asValue())
+        }
+        styledInput(type = InputType.checkBox) {
+            attrs {
+                this.attributes["indeterminate"] = (checkedValue == null).toString()
+                checked = checkedValue
+                onChangeFunction = handleChange
             }
-            is HTMLSelectElement -> element.value.asValue()
-            else -> error("Unknown event target: $element")
         }
     }
 
-    private val commit: (Event) -> Unit = { _ ->
-        props.valueChanged?.invoke(getValue())
-    }
-
-    private val keyDown: (Event) -> Unit = { event ->
-        if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-            commit(event)
+@JsExport
+public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
+    functionalComponent("NumberValueChooser") { props ->
+        var value by useState(props.item.string ?: "")
+        val keyDown: (Event) -> Unit = { event ->
+            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
+                value = (event.target as HTMLInputElement).value
+                val number = value.toDoubleOrNull()
+                if (number == null) {
+                    console.error("The input value $value is not a number")
+                } else {
+                    props.valueChanged?.invoke(number.asValue())
+                }
+            }
+        }
+        val handleChange: (Event) -> Unit = {
+            value = (it.target as HTMLInputElement).value
+        }
+        styledInput(type = InputType.number) {
+            attrs {
+                this.value = value
+                onKeyDownFunction = keyDown
+                onChangeFunction = handleChange
+                props.descriptor?.attributes?.get("step").string?.let {
+                    step = it
+                }
+                props.descriptor?.attributes?.get("min").string?.let {
+                    min = it
+                }
+                props.descriptor?.attributes?.get("max").string?.let {
+                    max = it
+                }
+            }
         }
     }
 
-    override fun shouldComponentUpdate(
-        nextProps: ValueChooserProps,
-        nextState: ValueChooserState
-    ): Boolean = nextProps.item !== props.item
-
-    override fun componentDidUpdate(prevProps: ValueChooserProps, prevState: ValueChooserState, snapshot: Any) {
-        (element.current as? HTMLInputElement)?.let { element ->
-            if (element.type == "checkbox") {
-                element.defaultChecked = props.item?.boolean ?: false
-            } else {
-                element.defaultValue = props.item?.string ?: ""
+@JsExport
+public val ComboValueChooser: FunctionalComponent<ValueChooserProps> =
+    functionalComponent("ComboValueChooser") { props ->
+        var selected by useState(props.item.string ?: "")
+        val handleChange: (Event) -> Unit = {
+            selected = (it.target as HTMLSelectElement).value
+            props.valueChanged?.invoke(selected.asValue())
+        }
+        styledSelect {
+            props.descriptor?.allowedValues?.forEach {
+                option {
+                    +it.string
+                }
             }
-            element.indeterminate = props.item == null
+            attrs {
+                this.value = props.item?.string ?: ""
+                multiple = false
+                onChangeFunction = handleChange
+            }
         }
     }
 
-    private fun RBuilder.stringInput() = styledInput(type = InputType.text) {
-        attrs {
-            this.defaultValue = props.item?.string ?: ""
-            onKeyDownFunction = keyDown
+@JsExport
+public val ColorValueChooser: FunctionalComponent<ValueChooserProps> =
+    functionalComponent("ColorValueChooser") { props ->
+        var value by useState(
+            props.item.value?.let { value ->
+                if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
+                else value.string
+            } ?: "#000000"
+        )
+        val handleChange: (Event) -> Unit = {
+            value = (it.target as HTMLInputElement).value
+            props.valueChanged?.invoke(value.asValue())
         }
-        ref = element
+        styledInput(type = InputType.color) {
+            attrs {
+                this.value = value
+                onChangeFunction = handleChange
+            }
+        }
     }
 
-    override fun RBuilder.render() {
-        val descriptor = props.descriptor
-        val type = descriptor?.type?.firstOrNull()
-        when {
-            state.rawInput == true -> stringInput()
-            descriptor?.widgetType == "color" -> styledInput(type = InputType.color) {
-                ref = element
-                attrs {
-                    this.defaultValue = props.item?.value?.let { value ->
-                        if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                        else value.string
-                    } ?: "#000000"
-                    onChangeFunction = commit
-                }
-            }
-            type == ValueType.BOOLEAN -> {
-                styledInput(type = InputType.checkBox) {
-                    ref = element
-                    attrs {
-                        defaultChecked = props.item?.boolean ?: false
-                        onChangeFunction = commit
-                    }
-                }
-            }
-            type == ValueType.NUMBER -> styledInput(type = InputType.number) {
-                ref = element
-                attrs {
-                    descriptor.attributes["step"].string?.let {
-                        step = it
-                    }
-                    descriptor.attributes["min"].string?.let {
-                        min = it
-                    }
-                    descriptor.attributes["max"].string?.let {
-                        max = it
-                    }
-                    defaultValue = props.item?.string ?: ""
-                    onKeyDownFunction = keyDown
-                }
-            }
-            descriptor?.allowedValues?.isNotEmpty() ?: false -> styledSelect {
-                descriptor!!.allowedValues.forEach {
-                    option {
-                        +it.string
-                    }
-                }
-                ref = element
-                attrs {
-                    this.value = props.item?.string ?: ""
-                    multiple = false
-                    onChangeFunction = commit
-                }
-            }
-            else -> stringInput()
-        }
+@JsExport
+public val ValueChooser: FunctionalComponent<ValueChooserProps> = functionalComponent("ValueChooser") { props ->
+    val rawInput by useState(false)
+
+    val descriptor = props.descriptor
+    val type = descriptor?.type?.firstOrNull()
+
+    when {
+        rawInput -> child(StringValueChooser, props)
+        descriptor?.widgetType == "color" -> child(ColorValueChooser, props)
+        type == ValueType.BOOLEAN -> child(BooleanValueChooser, props)
+        type == ValueType.NUMBER -> child(NumberValueChooser, props)
+        descriptor?.allowedValues?.isNotEmpty() ?: false -> child(ComboValueChooser, props)
+        //TODO handle lists
+        else -> child(StringValueChooser, props)
     }
 }
 
@@ -142,9 +166,9 @@ internal fun RBuilder.valueChooser(
     name: Name,
     item: MetaItem?,
     descriptor: ValueDescriptor? = null,
-    callback: (Value?) -> Unit
+    callback: (Value?) -> Unit,
 ) {
-    child(ValueChooserComponent::class) {
+    child(ValueChooser) {
         attrs {
             key = name.toString()
             this.item = item
