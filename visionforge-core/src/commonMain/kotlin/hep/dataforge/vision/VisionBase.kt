@@ -131,8 +131,20 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     }
 
     override fun update(change: VisionChange) {
+        change.properties?.let {
+            updateProperties(Name.EMPTY, it.asMetaItem())
+        }
+    }
 
-        fun updateProperties(at: Name, item: MetaItem) {
+    public companion object {
+        public val descriptor: NodeDescriptor = NodeDescriptor {
+            value(STYLE_KEY) {
+                type(ValueType.STRING)
+                multiple = true
+            }
+        }
+
+        public fun Vision.updateProperties(at: Name, item: MetaItem) {
             when (item) {
                 is ValueItem -> {
                     if (item.value == Null) {
@@ -146,18 +158,6 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
             }
         }
 
-        change.properties?.let {
-            updateProperties(Name.EMPTY, it.asMetaItem())
-        }
-    }
-
-    public companion object {
-        public val descriptor: NodeDescriptor = NodeDescriptor {
-            value(STYLE_KEY) {
-                type(ValueType.STRING)
-                multiple = true
-            }
-        }
     }
 }
 

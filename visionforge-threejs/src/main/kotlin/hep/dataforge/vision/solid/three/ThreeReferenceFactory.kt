@@ -1,9 +1,11 @@
 package hep.dataforge.vision.solid.three
 
+import hep.dataforge.meta.node
 import hep.dataforge.names.cutFirst
 import hep.dataforge.names.firstOrNull
 import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Solid
+import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.SolidReferenceGroup
 import hep.dataforge.vision.solid.SolidReferenceGroup.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 import info.laht.threekt.core.BufferGeometry
@@ -40,6 +42,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         object3D.updatePosition(obj)
 
         if(object3D is Mesh){
+            //object3D.material = ThreeMaterials.buildMaterial(obj.getProperty(SolidMaterial.MATERIAL_KEY).node!!)
             object3D.applyProperties(obj)
         }
 

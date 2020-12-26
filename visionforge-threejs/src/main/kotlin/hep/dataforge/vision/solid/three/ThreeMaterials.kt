@@ -8,7 +8,6 @@ import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.allStyles
-import hep.dataforge.vision.merge
 import hep.dataforge.vision.solid.SolidMaterial
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
@@ -143,6 +142,7 @@ public fun Mesh.updateMaterial(vision: Vision) {
         includeStyles = false,
         includeDefaults = false
     )
+
     material = when {
         ownMaterialMeta == null && stylesMaterialMeta == null && parentMaterialMeta == null -> {
             //use default is not material properties are defined
@@ -153,8 +153,9 @@ public fun Mesh.updateMaterial(vision: Vision) {
             ThreeMaterials.cacheMeta(stylesMaterialMeta.node ?: Meta.EMPTY)
         }
         else -> {
-            val merge = sequenceOf(ownMaterialMeta, stylesMaterialMeta, parentMaterialMeta).merge().node ?: Meta.EMPTY
-            ThreeMaterials.buildMaterial(merge)
+            vision.getProperty(SolidMaterial.MATERIAL_KEY).node?.let {
+                ThreeMaterials.buildMaterial(it)
+            } ?: ThreeMaterials.DEFAULT
         }
     }
 }

@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.*
+import hep.dataforge.values.Null
 import hep.dataforge.vision.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.SerialName
@@ -99,7 +100,7 @@ public class SolidReferenceGroup(
                     ReferenceChild(childName + key.asName())
                 } ?: emptyMap()
 
-        override val meta: Meta get() =TODO()// getChildProperty(childName, Name.EMPTY).node ?: Meta.EMPTY
+        override val meta: Meta get() = TODO()// getChildProperty(childName, Name.EMPTY).node ?: Meta.EMPTY
 
         override fun getOwnProperty(name: Name): MetaItem? = getChildProperty(childName, name)
 
@@ -136,7 +137,9 @@ public class SolidReferenceGroup(
         }
 
         override fun update(change: VisionChange) {
-            TODO("Not yet implemented")
+            change.properties?.let {
+                updateProperties(Name.EMPTY, it.asMetaItem())
+            }
         }
 
         override val descriptor: NodeDescriptor get() = prototype.descriptor
