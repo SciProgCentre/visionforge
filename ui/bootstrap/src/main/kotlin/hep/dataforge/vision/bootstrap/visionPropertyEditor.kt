@@ -4,6 +4,7 @@ import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.vision.*
 import hep.dataforge.vision.react.metaViewer
 import hep.dataforge.vision.react.propertyEditor
+        import hep.dataforge.vision.solid.SolidReference
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.render
@@ -22,7 +23,11 @@ public fun RBuilder.visionPropertyEditor(
             descriptor = descriptor,
             key = key)
     }
-    val styles = vision.styles
+    val styles = if (vision is SolidReference) {
+        (vision.styles + vision.prototype.styles).distinct()
+    } else {
+        vision.styles
+    }
     if (styles.isNotEmpty()) {
         card("Styles") {
             accordion("styles") {

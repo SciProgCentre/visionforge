@@ -65,11 +65,12 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
-    val itemName by useState { props.name ?: Name.EMPTY }
+    val itemName = useMemo( { props.name ?: Name.EMPTY }, arrayOf(props.name))
     var item: MetaItem? by useState { props.provider.getItem(itemName) }
-    val descriptorItem: ItemDescriptor? = props.descriptor?.get(itemName)
+    val descriptorItem: ItemDescriptor? =
+        useMemo({ props.descriptor?.get(itemName) }, arrayOf(props.descriptor, itemName))
 
-    if(descriptorItem?.hidden == true) return //fail fast for hidden property
+    if (descriptorItem?.hidden == true) return //fail fast for hidden property
 
     var actualItem: MetaItem? by useState {
         item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
@@ -79,7 +80,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
 
     fun update() {
         item = props.provider.getItem(itemName)
-        actualItem = item ?: descriptorItem?.defaultItem()
+        actualItem = item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
     }
 
     if (props.updateFlow != null) {

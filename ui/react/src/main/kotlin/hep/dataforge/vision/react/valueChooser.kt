@@ -20,17 +20,17 @@ import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
-    var item: MetaItem?
-    var descriptor: ValueDescriptor?
-    var valueChanged: ((Value?) -> Unit)?
+        public var item: MetaItem?
+    public var descriptor: ValueDescriptor?
+    public var valueChanged: ((Value?) -> Unit)?
 }
 
 public external interface ValueChooserState : RState {
-    var rawInput: Boolean?
+    public var rawInput: Boolean?
 }
 
 @JsExport
-class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
+public class ValueChooserComponent(props: ValueChooserProps) : RComponent<ValueChooserProps, ValueChooserState>(props) {
     private val element = createRef<HTMLElement>()
 
     private fun getValue(): Value? {
