@@ -28,7 +28,7 @@
 package info.laht.threekt.helpers
 
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.lights.HemiSphereLight
+import info.laht.threekt.lights.HemisphereLight
 import info.laht.threekt.lights.Light
 
 /**
@@ -39,7 +39,7 @@ import info.laht.threekt.lights.Light
  * @param color (optional) if this is not the set the helper will take the color of the light.
  */
 external class HemisphereLightHelper(
-    light: HemiSphereLight,
+    light: HemisphereLight,
     size: Number,
     color: Int = definedExternally
 ) : Object3D {

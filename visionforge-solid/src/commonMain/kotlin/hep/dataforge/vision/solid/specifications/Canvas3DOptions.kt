@@ -5,6 +5,7 @@ import hep.dataforge.names.Name
 
 public class Canvas3DOptions : Scheme() {
     public var axes: Axes by spec(Axes)
+    public var light: Light by spec(Light)
     public var camera: Camera by spec(Camera)
     public var controls: Controls by spec(Controls)
 

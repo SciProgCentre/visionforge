@@ -4,6 +4,7 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
+import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
@@ -12,6 +13,7 @@ import hep.dataforge.vision.VisionBase
 import hep.dataforge.vision.VisionGroupBase
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.VisionManager.Companion.VISION_SERIALIZER_MODULE_TARGET
+import hep.dataforge.vision.html.VisionOutput
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
@@ -73,3 +75,6 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
         public fun decodeFromString(str: String): Solid = jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
     }
 }
+
+@DFExperimental
+public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)

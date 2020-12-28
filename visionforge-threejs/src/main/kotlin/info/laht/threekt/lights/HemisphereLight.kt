@@ -34,7 +34,7 @@ import info.laht.threekt.math.Color
  *
  * This light cannot be used to cast shadows.
  */
-external class HemiSphereLight(
+external class HemisphereLight(
     skyColor: Int = definedExternally,
     groundColor: Int = definedExternally,
     intensity: Number = definedExternally
@@ -42,6 +42,6 @@ external class HemiSphereLight(
 
     var groundColor: Color
 
-    fun copy(light: HemiSphereLight): HemiSphereLight
+    fun copy(light: HemisphereLight): HemisphereLight
 
 }

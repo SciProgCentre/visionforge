@@ -51,7 +51,7 @@ public class ThreeCanvas(
     public var axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply { visible = options.axes.visible }
         private set
 
-    private val light = AmbientLight(0x404040)
+    private var light = buildLight(options.light)
 
     private val scene: Scene = Scene().apply {
         add(axes)
@@ -169,6 +169,7 @@ public class ThreeCanvas(
         }
     }
 
+    private fun buildLight(spec: Light): info.laht.threekt.lights.Light = AmbientLight(0x404040)
 
     private fun buildCamera(spec: Camera) = PerspectiveCamera(
         spec.fov,

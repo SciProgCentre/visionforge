@@ -42,8 +42,8 @@ internal const val VISIONFORGE_ASSETS_PATH = ".dataforge/vision/assets"
  * Check if the asset exists in given local location and put it there if it does not
  * @param
  */
-internal fun checkOrStoreFile(basePath: Path, filePath: Path, resource: String): Path {
-    val fullPath = basePath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
+internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String): Path {
+    val fullPath = htmlPath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
 
     if (Files.exists(fullPath)) {
         //TODO checksum
@@ -55,8 +55,8 @@ internal fun checkOrStoreFile(basePath: Path, filePath: Path, resource: String):
         Files.write(fullPath, bytes, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
     }
 
-    return if (basePath.isAbsolute && fullPath.startsWith(basePath)) {
-        basePath.relativize(fullPath)
+    return if (htmlPath.isAbsolute && fullPath.startsWith(htmlPath.parent)) {
+        htmlPath.parent.relativize(fullPath)
     } else {
         fullPath
     }
@@ -100,14 +100,14 @@ internal fun fileCssHeader(
  * Make a script header, automatically copying file to appropriate location
  */
 @DFExperimental
-public fun Context.Companion.scriptHeader(
+public fun Context.scriptHeader(
     scriptResource: String,
-    basePath: Path,
+    htmlPath: Path,
     resourceLocation: ResourceLocation,
 ): HtmlFragment {
     val targetPath = when (resourceLocation) {
         ResourceLocation.LOCAL -> checkOrStoreFile(
-            basePath,
+            htmlPath,
             Path.of(VISIONFORGE_ASSETS_PATH),
             scriptResource
         )

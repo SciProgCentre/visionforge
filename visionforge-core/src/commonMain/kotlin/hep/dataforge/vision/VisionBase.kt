@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.css.th
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -26,7 +25,6 @@ internal data class PropertyListener(
     val owner: Any? = null,
     val action: (name: Name) -> Unit,
 )
-
 
 /**
  * A full base implementation for a [Vision]
@@ -53,7 +51,7 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     override val meta: Meta get() = properties ?: Meta.EMPTY
 
     @Synchronized
-    private fun getOrCreateConfig(): Config {
+    protected fun getOrCreateConfig(): Config {
         if (properties == null) {
             val newProperties = Config()
             newProperties.onChange(this) { name, oldItem, newItem ->
@@ -91,7 +89,6 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
         yield(descriptor?.get(name)?.defaultItem())
     }.merge()
 
-    @Synchronized
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
         getOrCreateConfig().setItem(name, item)
         if (notify) {
@@ -117,6 +114,7 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     @Transient
     private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
+    @DFExperimental
     override val propertyChanges: Flow<Name> get() = propertyInvalidationFlow
 
     override fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {

@@ -4,8 +4,6 @@ import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.ResourceLocation
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.fragment
-import hep.dataforge.vision.three.server.makeFile
-import hep.dataforge.vision.three.server.solid
 
 @OptIn(DFExperimental::class)
 fun main() {
@@ -17,5 +15,5 @@ fun main() {
         }
     }
 
-    fragment.makeFile(resourceLocation = ResourceLocation.SYSTEM)
+    visionContext.makeVisionFile(fragment = fragment, resourceLocation = ResourceLocation.SYSTEM)
 }
