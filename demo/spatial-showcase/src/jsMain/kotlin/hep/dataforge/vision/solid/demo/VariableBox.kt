@@ -9,9 +9,7 @@ import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.Solid.Companion.GEOMETRY_KEY
-import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.three.*
-import hep.dataforge.vision.solid.three.ThreeMaterials.getMaterial
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxBufferGeometry
@@ -31,11 +29,9 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         scaleX = xSize
         scaleY = ySize
         scaleZ = zSize
-        config[MeshThreeFactory.EDGES_ENABLED_KEY] = false
-        config[MeshThreeFactory.WIREFRAME_ENABLED_KEY] = false
     }
 
-    override fun render(): Object3D {
+    override fun render(three: ThreePlugin): Object3D {
         val xSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val ySize = getProperty(Y_SIZE_KEY, false).number?.toDouble() ?: 1.0
         val zSize = getProperty(Z_SIZE_KEY, false).number?.toDouble() ?: 1.0
@@ -44,9 +40,10 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         //JS sometimes tries to pass Geometry as BufferGeometry
         @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
 
-        val mesh = Mesh(geometry, getMaterial(this@VariableBox, true)).apply {
+        val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {
+            updateMaterial(this@VariableBox)
             applyEdges(this@VariableBox)
-            applyWireFrame(this@VariableBox)
+            //applyWireFrame(this@VariableBox)
 
             //set position for mesh
             updatePosition(this@VariableBox)
@@ -60,7 +57,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
         mesh.scale.set(xSize, ySize, zSize)
 
         //add listener to object properties
-        onPropertyChange(mesh) { name ->
+        onPropertyChange(three.context) { name ->
             when {
                 name.startsWith(GEOMETRY_KEY) -> {
                     val newXSize = getProperty(X_SIZE_KEY, false).number?.toDouble() ?: 1.0
@@ -69,14 +66,12 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
                     mesh.scale.set(newXSize, newYSize, newZSize)
                     mesh.updateMatrix()
                 }
-                name.startsWith(MeshThreeFactory.WIREFRAME_KEY) -> mesh.applyWireFrame(this@VariableBox)
                 name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
-                name.startsWith(MATERIAL_COLOR_KEY)->{
-                    mesh.material = getMaterial(this, true)
-                }
+                //name.startsWith(MATERIAL_COLOR_KEY) -> mesh.updateMaterialProperty(this, name)
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
         }
+
         return mesh
     }
 
@@ -100,7 +95,7 @@ internal class VariableBox(xSize: Number, ySize: Number, zSize: Number) : ThreeV
             color(r.toUByte(), g.toUByte(), b.toUByte())
         }
 
-    companion object{
+    companion object {
         private val X_SIZE_KEY = GEOMETRY_KEY + "xSize"
         private val Y_SIZE_KEY = GEOMETRY_KEY + "ySize"
         private val Z_SIZE_KEY = GEOMETRY_KEY + "zSize"

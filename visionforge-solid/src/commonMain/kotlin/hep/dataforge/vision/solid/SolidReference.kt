@@ -3,43 +3,32 @@ package hep.dataforge.vision.solid
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.*
+import hep.dataforge.values.Null
 import hep.dataforge.vision.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlin.collections.set
 
-public abstract class AbstractReference : SolidBase(), VisionGroup {
-    public abstract val prototype: Solid
+public interface SolidReference : Vision {
+    public val prototype: Solid
+}
 
-    override fun getProperty(name: Name, inherit: Boolean): MetaItem<*>? = sequence {
-        yield(properties?.get(name))
-        yieldAll(getStyleItems(name))
-        yield(prototype.getProperty(name))
+private fun SolidReference.getRefProperty(
+    name: Name,
+    inherit: Boolean,
+    includeStyles: Boolean,
+    includeDefaults: Boolean,
+): MetaItem? {
+    return sequence {
+        yield(getOwnProperty(name))
+        if (includeStyles) {
+            yieldAll(getStyleItems(name))
+        }
+        yield(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
         if (inherit) {
             yield(parent?.getProperty(name, inherit))
         }
     }.merge()
-
-    override var styles: List<String>
-        get() = (properties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + prototype.styles
-        set(value) {
-            config[Vision.STYLE_KEY] = value
-        }
-
-    override val allProperties: Laminate
-        get() = Laminate(
-            properties,
-            allStyles,
-            prototype.allProperties,
-            parent?.allProperties,
-        )
-
-    override fun attachChildren() {
-        //do nothing
-    }
-
-    override val descriptor: NodeDescriptor get() = prototype.descriptor
 }
 
 /**
@@ -47,9 +36,9 @@ public abstract class AbstractReference : SolidBase(), VisionGroup {
  */
 @Serializable
 @SerialName("solid.ref")
-public class SolidReference(
+public class SolidReferenceGroup(
     public val templateName: Name,
-) : AbstractReference(), Solid {
+) : SolidBase(), SolidReference, VisionGroup {
 
     /**
      * Recursively search for defined template in the parent
@@ -58,59 +47,102 @@ public class SolidReference(
         get() = (parent as? SolidGroup)?.getPrototype(templateName)
             ?: error("Prototype with name $templateName not found in $parent")
 
-    @Transient
-    private val propertyCache: HashMap<Name, Config> = HashMap()
-
-
-    override val children: Map<NameToken, SolidReference.ReferenceChild>
+    override val children: Map<NameToken, Vision>
         get() = (prototype as? VisionGroup)?.children
             ?.filter { !it.key.toString().startsWith("@") }
             ?.mapValues {
                 ReferenceChild(it.key.asName())
             } ?: emptyMap()
 
-    private fun childPropertyName(childName: Name, propertyName: Name): Name {
-        return NameToken(REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString()) + propertyName
+    private fun childToken(childName: Name): NameToken =
+        NameToken(REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString())
+
+    private fun childPropertyName(childName: Name, propertyName: Name): Name =
+        childToken(childName) + propertyName
+
+    private fun getChildProperty(childName: Name, propertyName: Name): MetaItem? {
+        return getOwnProperty(childPropertyName(childName, propertyName))
+    }
+
+    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem?, notify: Boolean) {
+        setProperty(childPropertyName(childName, propertyName), item, notify)
     }
 
     private fun prototypeFor(name: Name): Solid {
-        return (prototype as? SolidGroup)?.get(name) as? Solid
-            ?: error("Prototype with name $name not found in $this")
+        return if (name.isEmpty()) prototype else {
+            (prototype as? SolidGroup)?.get(name) as? Solid
+                ?: error("Prototype with name $name not found in $this")
+        }
     }
 
-    //override fun findAllStyles(): Laminate = Laminate((styles + prototype.styles).mapNotNull { findStyle(it) })
+    override fun getProperty(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean,
+    ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+
+    override val descriptor: NodeDescriptor get() = prototype.descriptor
+
 
     /**
      * A ProxyChild is created temporarily only to interact with properties, it does not store any values
      * (properties are stored in external cache) and created and destroyed on-demand).
      */
-    public inner class ReferenceChild(public val name: Name) : AbstractReference() {
+    private inner class ReferenceChild(private val childName: Name) : SolidReference, VisionGroup {
 
-        override val prototype: Solid get() = prototypeFor(name)
+        override val prototype: Solid get() = prototypeFor(childName)
 
         override val children: Map<NameToken, Vision>
             get() = (prototype as? VisionGroup)?.children
                 ?.filter { !it.key.toString().startsWith("@") }
                 ?.mapValues { (key, _) ->
-                    ReferenceChild(name + key.asName())
+                    ReferenceChild(childName + key.asName())
                 } ?: emptyMap()
 
-        override var properties: Config?
-            get() = propertyCache[name]
+        override val meta: Meta get() = TODO()// getChildProperty(childName, Name.EMPTY).node ?: Meta.EMPTY
+
+        override fun getOwnProperty(name: Name): MetaItem? = getChildProperty(childName, name)
+
+        override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
+            setChildProperty(childName, name, item, notify)
+        }
+
+        override fun getProperty(
+            name: Name,
+            inherit: Boolean,
+            includeStyles: Boolean,
+            includeDefaults: Boolean,
+        ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+
+        override var parent: VisionGroup?
+            get() {
+                val parentName = childName.cutLast()
+                return if (parentName.isEmpty()) this@SolidReferenceGroup else ReferenceChild(parentName)
+            }
             set(value) {
-                if (value == null) {
-                    propertyCache.remove(name)?.also {
-                        //Removing listener if it is present
-                        removeChangeListener(this@SolidReference)
-                    }
-                } else {
-                    propertyCache[name] = value.also {
-                        onPropertyChange(this@SolidReference) { propertyName ->
-                            this@SolidReference.propertyChanged(childPropertyName(name, propertyName))
-                        }
-                    }
+                error("Setting a parent for a reference child is not possible")
+            }
+
+        override fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
+            this@SolidReferenceGroup.onPropertyChange(scope) { name ->
+                if (name.startsWith(childToken(childName))) {
+                    callback(name.cutFirst())
                 }
             }
+        }
+
+        override suspend fun notifyPropertyChanged(propertyName: Name) {
+            this@SolidReferenceGroup.notifyPropertyChanged(childPropertyName(childName, propertyName))
+        }
+
+        override fun update(change: VisionChange) {
+            change.properties?.let {
+                updateProperties(Name.EMPTY, it.asMetaItem())
+            }
+        }
+
+        override val descriptor: NodeDescriptor get() = prototype.descriptor
 
     }
 
@@ -120,13 +152,10 @@ public class SolidReference(
 }
 
 /**
- * Get a vision prototype if it is a [SolidReference] or vision itself if it is not
+ * Get a vision prototype if it is a [SolidReferenceGroup] or vision itself if it is not
  */
 public val Vision.prototype: Vision
-    get() = when (this) {
-        is AbstractReference -> prototype
-        else -> this
-    }
+    get() = if (this is SolidReference) prototype else this
 
 /**
  * Create ref for existing prototype
@@ -134,16 +163,16 @@ public val Vision.prototype: Vision
 public fun SolidGroup.ref(
     templateName: Name,
     name: String = "",
-): SolidReference = SolidReference(templateName).also { set(name, it) }
+): SolidReferenceGroup = SolidReferenceGroup(templateName).also { set(name, it) }
 
 /**
- * Add new [SolidReference] wrapping given object and automatically adding it to the prototypes
+ * Add new [SolidReferenceGroup] wrapping given object and automatically adding it to the prototypes
  */
 public fun SolidGroup.ref(
     name: String,
     obj: Solid,
     templateName: Name = name.toName(),
-): SolidReference {
+): SolidReferenceGroup {
     val existing = getPrototype(templateName)
     if (existing == null) {
         prototypes {

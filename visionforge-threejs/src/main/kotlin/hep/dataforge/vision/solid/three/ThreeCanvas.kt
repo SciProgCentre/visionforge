@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.meta.getItem
+import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
@@ -20,6 +20,7 @@ import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.external.controls.TrackballControls
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.helpers.AxesHelper
+import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
@@ -50,8 +51,11 @@ public class ThreeCanvas(
     public var axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply { visible = options.axes.visible }
         private set
 
+    private var light = buildLight(options.light)
+
     private val scene: Scene = Scene().apply {
         add(axes)
+        add(light)
     }
 
     public var camera: PerspectiveCamera = buildCamera(options.camera)
@@ -66,6 +70,7 @@ public class ThreeCanvas(
     }
 
     private val canvas = (renderer.domElement as HTMLCanvasElement).apply {
+        className += "three-canvas"
         width = 600
         height = 600
         style.apply {
@@ -130,7 +135,8 @@ public class ThreeCanvas(
         }
     }
 
-    public fun attach(element: Element) {
+    internal fun attach(element: Element) {
+        check(element.getElementsByClassName("three-canvas").length == 0){"Three canvas already created in this element"}
         element.appendChild(canvas)
         updateSize()
     }
@@ -163,6 +169,7 @@ public class ThreeCanvas(
         }
     }
 
+    private fun buildLight(spec: Light): info.laht.threekt.lights.Light = AmbientLight(0x404040)
 
     private fun buildCamera(spec: Camera) = PerspectiveCamera(
         spec.fov,
@@ -176,7 +183,7 @@ public class ThreeCanvas(
     }
 
     private fun addControls(element: Node, controls: Controls) {
-        when (controls.getItem("type").string) {
+        when (controls.get("type").string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }
@@ -189,8 +196,10 @@ public class ThreeCanvas(
     }
 
     public override fun render(vision: Solid) {
-        //clear old root
-        clear()
+        scene.children.find { it.name == "@root" }?.let {
+            //Throw error is something is already rendered here
+            error("Root object already is present in the canvas")
+        }
 
         val object3D = three.buildObject3D(vision)
         object3D.name = "@root"

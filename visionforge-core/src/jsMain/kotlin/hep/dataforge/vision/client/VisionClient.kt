@@ -18,6 +18,7 @@ import org.w3c.dom.WebSocket
 import org.w3c.dom.asList
 import org.w3c.dom.get
 import org.w3c.dom.url.URL
+import kotlin.collections.set
 import kotlin.reflect.KClass
 
 public class VisionClient : AbstractPlugin() {
@@ -80,14 +81,18 @@ public class VisionClient : AbstractPlugin() {
             renderVision(element, embeddedVision, outputMeta)
         }
 
-        val endpoint = resolveEndpoint(element)
-        logger.info { "Vision server is resolved to $endpoint" }
+        element.attributes[OUTPUT_FETCH_ATTRIBUTE]?.let { attr ->
 
-        element.attributes[OUTPUT_FETCH_ATTRIBUTE]?.let {
-
-            val fetchUrl = URL(endpoint).apply {
+            val fetchUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val endpoint = resolveEndpoint(element)
+                logger.info { "Vision server is resolved to $endpoint" }
+                URL(endpoint).apply {
+                    pathname += "/vision"
+                }
+            } else {
+                URL(attr.value)
+            }.apply {
                 searchParams.append("name", name)
-                pathname += "/vision"
             }
 
             logger.info { "Fetching vision data from $fetchUrl" }
@@ -98,16 +103,22 @@ public class VisionClient : AbstractPlugin() {
                         renderVision(element, vision, outputMeta)
                     }
                 } else {
-                    logger.error { "Failed to fetch initial vision state from $endpoint" }
+                    logger.error { "Failed to fetch initial vision state from $fetchUrl" }
                 }
 
             }
         }
 
-        element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let {
-
-            val wsUrl = URL(endpoint).apply {
-                pathname += "/ws"
+        element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
+            val wsUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val endpoint = resolveEndpoint(element)
+                logger.info { "Vision server is resolved to $endpoint" }
+                URL(endpoint).apply {
+                    pathname += "/ws"
+                }
+            } else {
+                URL(attr.value)
+            }.apply {
                 protocol = "ws"
                 searchParams.append("name", name)
             }
@@ -118,13 +129,18 @@ public class VisionClient : AbstractPlugin() {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
                     if (stringData != null) {
-                        val dif = visionManager.jsonFormat.decodeFromString(
+                        val change = visionManager.jsonFormat.decodeFromString(
                             VisionChange.serializer(),
                             stringData
                         )
-                        logger.debug { "Got update $dif for output with name $name" }
-                        visionMap[element]?.update(dif)
-                            ?: logger.info { "Target vision for element $element with name $name not found" }
+
+                        if (change.vision != null) {
+                            renderVision(element, change.vision, outputMeta)
+                        }
+
+                        logger.debug { "Got update $change for output with name $name" }
+                        visionMap[element]?.update(change)
+                            ?: console.info("Target vision for element $element with name $name not found")
                     } else {
                         console.error("WebSocket message data is not a string")
                     }

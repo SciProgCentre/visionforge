@@ -51,11 +51,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                     else -> (vision as? VisionGroup)?.get(selected)
                 }
                 if (selectedObject != null) {
-                    visionPropertyEditor(
-                        selectedObject,
-                        default = selectedObject.allProperties,
-                        key = selected
-                    )
+                    visionPropertyEditor(selectedObject, key = selected)
                 }
             }
         }
@@ -69,7 +65,7 @@ public fun RBuilder.threeControls(
     canvas: ThreeCanvas,
     selected: Name?,
     onSelect: (Name) -> Unit = {},
-    builder: TabBuilder.() -> Unit = {}
+    builder: TabBuilder.() -> Unit = {},
 ): ReactElement = child(ThreeControls) {
     attrs {
         this.canvas = canvas

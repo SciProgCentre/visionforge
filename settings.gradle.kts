@@ -1,6 +1,6 @@
 pluginManagement {
-    val kotlinVersion = "1.4.20"
-    val toolsVersion = "0.7.0"
+    val kotlinVersion = "1.4.21"
+    val toolsVersion = "0.7.1"
 
     repositories {
         mavenLocal()
@@ -33,7 +33,7 @@ rootProject.name = "visionforge"
 include(
 //    ":ui",
     ":ui:react",
-    ":ui:ring",
+//    ":ui:ring",
 //    ":ui:material",
     ":ui:bootstrap",
     ":visionforge-core",
@@ -43,6 +43,7 @@ include(
     ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
     ":visionforge-server",
+    ":visionforge-plotly",
     ":demo:spatial-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",

@@ -6,15 +6,15 @@ import javafx.scene.Group
 import javafx.scene.Node
 import kotlin.reflect.KClass
 
-class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReference> {
-    override val type: KClass<in SolidReference> get() = SolidReference::class
+class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGroup> {
+    override val type: KClass<in SolidReferenceGroup> get() = SolidReferenceGroup::class
 
-    override fun invoke(obj: SolidReference, binding: VisualObjectFXBinding): Node {
+    override fun invoke(obj: SolidReferenceGroup, binding: VisualObjectFXBinding): Node {
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
-        obj.onPropertyChange(this) { name->
-            if (name.firstOrNull()?.body == SolidReference.REFERENCE_CHILD_PROPERTY_PREFIX) {
+        obj.onPropertyChange(plugin.context) { name->
+            if (name.firstOrNull()?.body == SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
                 val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")

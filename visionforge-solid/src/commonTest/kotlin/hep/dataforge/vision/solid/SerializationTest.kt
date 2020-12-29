@@ -15,7 +15,7 @@ fun SolidGroup.refGroup(
     name: String,
     templateName: Name = name.toName(),
     block: MutableVisionGroup.() -> Unit
-): SolidReference {
+): SolidReferenceGroup {
     val group = SolidGroup().apply(block)
     return ref(name, group, templateName)
 }
@@ -32,7 +32,7 @@ class SerializationTest {
         val string =  SolidManager.encodeToString(cube)
         println(string)
         val newCube = SolidManager.decodeFromString(string)
-        assertEquals(cube.config, newCube.config)
+        assertEquals(cube.meta, newCube.meta)
     }
 
     @Test
@@ -53,7 +53,7 @@ class SerializationTest {
         val string = SolidManager.encodeToString(group)
         println(string)
         val reconstructed = SolidManager.decodeFromString(string) as SolidGroup
-        assertEquals(group["cube"]?.config, reconstructed["cube"]?.config)
+        assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
     }
 
 }

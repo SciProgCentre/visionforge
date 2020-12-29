@@ -30,16 +30,11 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             serializersModule = this@VisionManager.serializersModule
         }
 
-    public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(visionSerializer, string).also {
-        (it as? VisionGroup)?.attachChildren()
-    }
+    public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(visionSerializer, string)
 
     public fun encodeToString(vision: Vision): String = jsonFormat.encodeToString(visionSerializer, vision)
 
-    public fun decodeFromJson(json: JsonElement): Vision =
-        jsonFormat.decodeFromJsonElement(visionSerializer, json).also {
-            (it as? VisionGroup)?.attachChildren()
-        }
+    public fun decodeFromJson(json: JsonElement): Vision = jsonFormat.decodeFromJsonElement(visionSerializer, json)
 
     public fun encodeToJsonElement(vision: Vision): JsonElement =
         jsonFormat.encodeToJsonElement(visionSerializer, vision)

@@ -12,11 +12,11 @@ import tornadofx.*
 /**
  * A caching binding collection for [Vision] properties
  */
-class VisualObjectFXBinding(val obj: Vision) {
-    private val bindings = HashMap<Name, ObjectBinding<MetaItem<*>?>>()
+class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
+    private val bindings = HashMap<Name, ObjectBinding<MetaItem?>>()
 
     init {
-        obj.onPropertyChange(this) { name ->
+        obj.onPropertyChange(fx.context) { name ->
             bindings.filter { it.key.startsWith(name) }.forEach { entry ->
                 Platform.runLater {
                     entry.value.invalidate()
@@ -31,10 +31,10 @@ class VisualObjectFXBinding(val obj: Vision) {
         }
     }
 
-    operator fun get(key: Name): ObjectBinding<MetaItem<*>?> {
+    operator fun get(key: Name): ObjectBinding<MetaItem?> {
         return bindings.getOrPut(key) {
-            object : ObjectBinding<MetaItem<*>?>() {
-                override fun computeValue(): MetaItem<*>? = obj.getProperty(key)
+            object : ObjectBinding<MetaItem?>() {
+                override fun computeValue(): MetaItem? = obj.getProperty(key)
             }
         }
     }
@@ -42,19 +42,19 @@ class VisualObjectFXBinding(val obj: Vision) {
     operator fun get(key: String) = get(key.toName())
 }
 
-fun ObjectBinding<MetaItem<*>?>.value() = objectBinding { it.value }
-fun ObjectBinding<MetaItem<*>?>.string() = stringBinding { it.string }
-fun ObjectBinding<MetaItem<*>?>.number() = objectBinding { it.number }
-fun ObjectBinding<MetaItem<*>?>.double() = objectBinding { it.double }
-fun ObjectBinding<MetaItem<*>?>.float() = objectBinding { it.float }
-fun ObjectBinding<MetaItem<*>?>.int() = objectBinding { it.int }
-fun ObjectBinding<MetaItem<*>?>.long() = objectBinding { it.long }
-fun ObjectBinding<MetaItem<*>?>.node() = objectBinding { it.node }
+fun ObjectBinding<MetaItem?>.value() = objectBinding { it.value }
+fun ObjectBinding<MetaItem?>.string() = stringBinding { it.string }
+fun ObjectBinding<MetaItem?>.number() = objectBinding { it.number }
+fun ObjectBinding<MetaItem?>.double() = objectBinding { it.double }
+fun ObjectBinding<MetaItem?>.float() = objectBinding { it.float }
+fun ObjectBinding<MetaItem?>.int() = objectBinding { it.int }
+fun ObjectBinding<MetaItem?>.long() = objectBinding { it.long }
+fun ObjectBinding<MetaItem?>.node() = objectBinding { it.node }
 
-fun ObjectBinding<MetaItem<*>?>.string(default: String) = stringBinding { it.string ?: default }
-fun ObjectBinding<MetaItem<*>?>.double(default: Double) = doubleBinding { it.double ?: default }
-fun ObjectBinding<MetaItem<*>?>.float(default: Float) = floatBinding { it.float ?: default }
-fun ObjectBinding<MetaItem<*>?>.int(default: Int) = integerBinding { it.int ?: default }
-fun ObjectBinding<MetaItem<*>?>.long(default: Long) = longBinding { it.long ?: default }
+fun ObjectBinding<MetaItem?>.string(default: String) = stringBinding { it.string ?: default }
+fun ObjectBinding<MetaItem?>.double(default: Double) = doubleBinding { it.double ?: default }
+fun ObjectBinding<MetaItem?>.float(default: Float) = floatBinding { it.float ?: default }
+fun ObjectBinding<MetaItem?>.int(default: Int) = integerBinding { it.int ?: default }
+fun ObjectBinding<MetaItem?>.long(default: Long) = longBinding { it.long ?: default }
 
-fun <T> ObjectBinding<MetaItem<*>?>.transform(transform: (MetaItem<*>) -> T) = objectBinding { it?.let(transform) }
+fun <T> ObjectBinding<MetaItem?>.transform(transform: (MetaItem) -> T) = objectBinding { it?.let(transform) }

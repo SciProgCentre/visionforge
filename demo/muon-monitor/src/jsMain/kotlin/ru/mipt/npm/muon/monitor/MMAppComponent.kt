@@ -9,8 +9,8 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.bootstrap.canvasControls
 import hep.dataforge.vision.bootstrap.card
 import hep.dataforge.vision.bootstrap.gridRow
+import hep.dataforge.vision.bootstrap.visionPropertyEditor
 import hep.dataforge.vision.react.ThreeCanvasComponent
-import hep.dataforge.vision.react.configEditor
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.react.objectTree
 import hep.dataforge.vision.solid.specifications.Camera
@@ -57,7 +57,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
 
     val root = props.model.root
 
-    gridRow{
+    gridRow {
         flexColumn {
             css {
                 +"col-lg-3"
@@ -109,8 +109,8 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 height = 100.vh
             }
             styledDiv {
-                css{
-                    flex(0.0,1.0, FlexBasis.zero)
+                css {
+                    flex(0.0, 1.0, FlexBasis.zero)
                 }
                 //settings
                 canvas?.let {
@@ -140,8 +140,8 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     }
                 }
             }
-            styledDiv{
-                css{
+            styledDiv {
+                css {
                     padding(0.px)
                 }
                 nav {
@@ -180,10 +180,10 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     }
                 }
             }
-           styledDiv{
-               css{
-                   overflowY = Overflow.auto
-               }
+            styledDiv {
+                css {
+                    overflowY = Overflow.auto
+                }
                 //properties
                 card("Properties") {
                     selected.let { selected ->
@@ -193,12 +193,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                             else -> root[selected]
                         }
                         if (selectedObject != null) {
-                            configEditor(
-                                selectedObject.config,
-                                selectedObject.descriptor,
-                                default = selectedObject.allProperties,
-                                key = selected
-                            )
+                            visionPropertyEditor(selectedObject, key = selected)
                         }
                     }
                 }

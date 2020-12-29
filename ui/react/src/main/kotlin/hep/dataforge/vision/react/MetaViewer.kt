@@ -1,7 +1,8 @@
 package hep.dataforge.vision.react
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.NodeItem
+import hep.dataforge.meta.ValueItem
 import hep.dataforge.meta.descriptors.ItemDescriptor
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.defaultItem
@@ -51,7 +52,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
     }
 
     when (actualItem) {
-        is MetaItem.NodeItem -> {
+        is NodeItem -> {
             styledDiv {
                 css {
                     +TreeStyles.treeLeaf
@@ -108,7 +109,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
                 }
             }
         }
-        is MetaItem.ValueItem -> {
+        is ValueItem -> {
             styledDiv {
                 css {
                     +TreeStyles.treeLeaf

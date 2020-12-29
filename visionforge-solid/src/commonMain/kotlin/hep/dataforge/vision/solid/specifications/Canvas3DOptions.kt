@@ -4,9 +4,10 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 
 public class Canvas3DOptions : Scheme() {
-    public var axes: Axes by spec(Axes, Axes.empty())
-    public var camera: Camera by spec(Camera, Camera.empty())
-    public var controls: Controls by spec(Controls, Controls.empty())
+    public var axes: Axes by spec(Axes)
+    public var light: Light by spec(Light)
+    public var camera: Camera by spec(Camera)
+    public var controls: Controls by spec(Controls)
 
     public var minSize: Int by int(400)
     public var minWith: Number by number { minSize }

@@ -1,22 +1,28 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.DFExperimental
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.descriptors.get
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.provider.Type
-import hep.dataforge.values.asValue
 import hep.dataforge.vision.Vision.Companion.TYPE
-import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.Transient
 
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-public interface Vision : Configurable, Described {
+public interface Vision : Described {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -25,46 +31,69 @@ public interface Vision : Configurable, Described {
     public var parent: VisionGroup?
 
     /**
-     * Nullable version of [config] used to check if this [Vision] has custom properties
+     * Properties belonging to this [Vision] potentially including artificial properties
      */
-    public val properties: Config?
+    @Transient
+    public val meta: Meta
 
     /**
-     * All properties including styles and prototypes if present, including inherited ones
+     * A coroutine scope for asynchronous calls and locks
      */
-    public val allProperties: Laminate
+    public val scope: CoroutineScope get() = parent?.scope ?: GlobalScope
 
     /**
-     * Get property (including styles). [inherit] toggles parent node property lookup
+     * A fast accessor method to get own property (no inheritance or styles).
+     * Should be equivalent to `getProperty(name,false,false,false)`.
      */
-    public fun getProperty(name: Name, inherit: Boolean = true): MetaItem<*>?
+    public fun getOwnProperty(name: Name): MetaItem?
 
     /**
-     * Trigger property invalidation event. If [name] is empty, notify that the whole object is changed
+     * Get property.
+     * @param inherit toggles parent node property lookup. Null means inference from descriptor. Default is false.
+     * @param includeStyles toggles inclusion of. Null means inference from descriptor. Default is true.
      */
-    public fun propertyChanged(name: Name): Unit
+    public fun getProperty(
+        name: Name,
+        inherit: Boolean = false,
+        includeStyles: Boolean = true,
+        includeDefaults: Boolean = true,
+    ): MetaItem?
+
 
     /**
-     * Add listener triggering on property change
+     * Set the property value
      */
-    public fun onPropertyChange(owner: Any?, action: (Name) -> Unit): Unit
+    public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
 
     /**
-     * Remove change listeners with given owner.
+     * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
      */
-    public fun removeChangeListener(owner: Any?)
+    public fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit)
 
     /**
-     * List of names of styles applied to this object. Order matters. Not inherited.
+     * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
+     * if it should include inherited properties etc.
      */
-    public var styles: List<String>
-        get() = properties[STYLE_KEY]?.stringList ?: emptyList()
-        set(value) {
-            config[STYLE_KEY] = value
+    @DFExperimental
+    @OptIn(ExperimentalCoroutinesApi::class)
+    public val propertyChanges: Flow<Name>
+        get() = callbackFlow<Name> {
+            coroutineScope {
+                onPropertyChange(this) {
+                    send(it)
+                }
+                awaitClose { cancel() }
+            }
         }
 
+
     /**
-     * Update this vision using external meta. Children are not updated.
+     * Notify all listeners that a property has been changed and should be invalidated
+     */
+    public suspend fun notifyPropertyChanged(propertyName: Name): Unit
+
+    /**
+     * Update this vision using a dif represented by [VisionChange].
      */
     public fun update(change: VisionChange)
 
@@ -78,60 +107,61 @@ public interface Vision : Configurable, Described {
     }
 }
 
+public fun Vision.asyncNotifyPropertyChange(propertyName: Name) {
+    scope.launch {
+        notifyPropertyChanged(propertyName)
+    }
+}
+
+/**
+ * Own properties, excluding inheritance, styles and descriptor
+ */
+public val Vision.ownProperties: MutableItemProvider
+    get() = object : MutableItemProvider {
+        override fun getItem(name: Name): MetaItem? = getOwnProperty(name)
+        override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
+    }
+
+
+/**
+ * Convenient accessor for all properties of a vision.
+ * @param inherit - inherit property value from the parent by default. If null, inheritance is inferred from descriptor
+ */
+public fun Vision.allProperties(
+    inherit: Boolean? = null,
+    includeStyles: Boolean? = null,
+    includeDefaults: Boolean = true,
+): MutableItemProvider = object : MutableItemProvider {
+    override fun getItem(name: Name): MetaItem? = getProperty(
+        name,
+        inherit = inherit ?: (descriptor?.get(name)?.inherited != false),
+        includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles == true),
+        includeDefaults = includeDefaults
+    )
+
+    override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
+}
+
 /**
  * Get [Vision] property using key as a String
  */
-public fun Vision.getProperty(key: String, inherit: Boolean = true): MetaItem<*>? =
-    getProperty(key.toName(), inherit)
+public fun Vision.getProperty(
+    key: String,
+    inherit: Boolean = false,
+    includeStyles: Boolean = true,
+    includeDefaults: Boolean = true,
+): MetaItem? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
 
 /**
  * A convenience method to pair [getProperty]
  */
-public fun Vision.setProperty(key: Name, value: Any?) {
-    config[key] = value
+public fun Vision.setProperty(key: Name, item: Any?) {
+    setProperty(key, MetaItem.of(item))
 }
 
 /**
  * A convenience method to pair [getProperty]
  */
-public fun Vision.setProperty(key: String, value: Any?) {
-    config[key] = value
-}
-
-/**
- * Control visibility of the element
- */
-public var Vision.visible: Boolean?
-    get() = getProperty(VISIBLE_KEY).boolean
-    set(value) = config.setValue(VISIBLE_KEY, value?.asValue())
-
-///**
-// * Convenience delegate for properties
-// */
-//public fun Vision.property(
-//    default: MetaItem<*>? = null,
-//    key: Name? = null,
-//    inherit: Boolean = true,
-//): MutableItemDelegate =
-//    object : ReadWriteProperty<Any?, MetaItem<*>?> {
-//        override fun getValue(thisRef: Any?, property: KProperty<*>): MetaItem<*>? {
-//            val name = key ?: property.name.toName()
-//            return getProperty(name, inherit) ?: default
-//        }
-//
-//        override fun setValue(thisRef: Any?, property: KProperty<*>, value: MetaItem<*>?) {
-//            val name = key ?: property.name.toName()
-//            setProperty(name, value)
-//        }
-//    }
-
-public fun Vision.props(inherit: Boolean = true): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem<*>? {
-        return getProperty(name, inherit)
-    }
-
-    override fun setItem(name: Name, item: MetaItem<*>?) {
-        setProperty(name, item)
-    }
-
+public fun Vision.setProperty(key: String, item: Any?) {
+    setProperty(key.toName(), MetaItem.of(item))
 }

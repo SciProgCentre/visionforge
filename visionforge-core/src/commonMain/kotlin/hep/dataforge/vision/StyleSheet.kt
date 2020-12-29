@@ -5,13 +5,14 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
+import kotlinx.coroutines.launch
 
 /**
  * A container for styles
  */
 public inline class StyleSheet(private val owner: VisionGroup) {
 
-    private val styleNode get() = owner.properties?.get(STYLESHEET_KEY).node
+    private val styleNode get() = owner.getOwnProperty(STYLESHEET_KEY).node
 
     public val items: Map<NameToken, Meta>? get() = styleNode?.items?.mapValues { it.value.node ?: Meta.EMPTY }
 
@@ -21,11 +22,7 @@ public inline class StyleSheet(private val owner: VisionGroup) {
      * Define a style without notifying owner
      */
     public fun define(key: String, style: Meta?) {
-        if (style == null) {
-            styleNode?.remove(key)
-        } else {
-            owner.config[STYLESHEET_KEY + key] = style
-        }
+        owner.setProperty(STYLESHEET_KEY + key, style)
     }
 
     /**
@@ -43,7 +40,7 @@ public inline class StyleSheet(private val owner: VisionGroup) {
      * Create and set a style
      */
     public operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
-        val newStyle = get(key)?.edit(builder) ?: Meta(builder)
+        val newStyle = get(key)?.builder()?.apply(builder) ?: Meta(builder)
         set(key, newStyle.seal())
     }
 
@@ -58,7 +55,9 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
         val tokens: Collection<Name> =
             ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
                 .map { it.asName() }
-        tokens.forEach { parent?.propertyChanged(it) }
+        parent?.scope?.launch {
+            tokens.forEach { parent?.notifyPropertyChanged(it) }
+        }
     }
     if (this is VisionGroup) {
         for (obj in this) {
@@ -67,6 +66,15 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
     }
 }
 
+
+/**
+ * List of names of styles applied to this object. Order matters. Not inherited.
+ */
+public var Vision.styles: List<String>
+    get() = getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    set(value) {
+        setProperty(Vision.STYLE_KEY, value)
+    }
 
 /**
  * A stylesheet for this group and its descendants. Stylesheet is not applied directly,
@@ -78,7 +86,7 @@ public val VisionGroup.styleSheet: StyleSheet get() = StyleSheet(this)
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
 public fun Vision.useStyle(name: String) {
-    styles = (properties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + name
+    styles = (getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()) + name
 }
 
 
@@ -86,12 +94,12 @@ public fun Vision.useStyle(name: String) {
  * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
  */
 public tailrec fun Vision.getStyle(name: String): Meta? =
-    properties?.get(StyleSheet.STYLESHEET_KEY + name).node ?: parent?.getStyle(name)
+    getOwnProperty(StyleSheet.STYLESHEET_KEY + name).node ?: parent?.getStyle(name)
 
 /**
  * Resolve an item in all style layers
  */
-public fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
+public fun Vision.getStyleItems(name: Name): Sequence<MetaItem> {
     return styles.asSequence().map {
         getStyle(it)
     }.map {
@@ -103,3 +111,5 @@ public fun Vision.getStyleItems(name: Name): Sequence<MetaItem<*>> {
  * Collect all styles for this object in a single laminate
  */
 public val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::getStyle))
+
+

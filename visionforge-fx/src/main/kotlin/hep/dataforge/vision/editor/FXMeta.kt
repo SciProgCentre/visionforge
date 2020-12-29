@@ -18,7 +18,7 @@ import tornadofx.*
 /**
  * A display for meta and descriptor
  */
-sealed class FXMeta<M : MetaNode<M>> : Comparable<FXMeta<*>> {
+sealed class FXMeta<M : TypedMeta<M>> : Comparable<FXMeta<*>> {
     abstract val name: NameToken
     abstract val parent: FXMetaNode<M>?
     abstract val descriptionProperty: ObservableStringValue
@@ -35,7 +35,7 @@ sealed class FXMeta<M : MetaNode<M>> : Comparable<FXMeta<*>> {
     }
 
     companion object {
-        fun <M : MetaNode<M>> root(
+        fun <M : TypedMeta<M>> root(
             node: M,
             descriptor: NodeDescriptor? = null,
             rootName: String = "root"
@@ -47,7 +47,7 @@ sealed class FXMeta<M : MetaNode<M>> : Comparable<FXMeta<*>> {
     }
 }
 
-class FXMetaNode<M : MetaNode<M>>(
+class FXMetaNode<M : TypedMeta<M>>(
     override val name: NameToken,
     override val parent: FXMetaNode<M>?,
     nodeValue: M? = null,
@@ -89,7 +89,7 @@ class FXMetaNode<M : MetaNode<M>>(
         init {
             bind(nodeProperty, descriptorProperty)
 
-            val listener: (Name, MetaItem<*>?, MetaItem<*>?) -> Unit = { name, _, _ ->
+            val listener: (Name, MetaItem?, MetaItem?) -> Unit = { name, _, _ ->
                 if (name.length == 1) invalidate()
             }
 
@@ -115,7 +115,7 @@ class FXMetaNode<M : MetaNode<M>>(
                 val actualItem = node?.items?.get(token)
                 val actualDescriptor = descriptor?.items?.get(token.body)
 
-                if (actualItem is MetaItem.NodeItem || actualDescriptor is NodeDescriptor) {
+                if (actualItem is NodeItem || actualDescriptor is NodeDescriptor) {
                     FXMetaNode(token, this@FXMetaNode)
                 } else {
                     FXMetaValue(token, this@FXMetaNode)
@@ -134,7 +134,7 @@ class FXMetaNode<M : MetaNode<M>>(
     }
 }
 
-public class FXMetaValue<M : MetaNode<M>>(
+public class FXMetaValue<M : TypedMeta<M>>(
     override val name: NameToken,
     override val parent: FXMetaNode<M>
 ) : FXMeta<M>() {
@@ -151,10 +151,10 @@ public class FXMetaValue<M : MetaNode<M>>(
     //private val innerValueProperty = SimpleObjectProperty(value)
 
     public val valueProperty = descriptorProperty.objectBinding { descriptor ->
-        parent.node[name].value ?: descriptor?.default
+        parent.node?.get(name).value ?: descriptor?.default
     }
 
-    override val hasValue: ObservableBooleanValue = parent.nodeProperty.booleanBinding { it[name] != null }
+    override val hasValue: ObservableBooleanValue = parent.nodeProperty.booleanBinding { it?.get(name) != null }
 
     public val value by valueProperty
 
@@ -169,12 +169,12 @@ public fun <M : MutableMeta<M>> FXMetaNode<M>.remove(name: NameToken) {
 private fun <M : MutableMeta<M>> M.createEmptyNode(token: NameToken, append: Boolean): M {
     return if (append && token.hasIndex()) {
         val name = token.asName()
-        val index = (getIndexed(name).keys.mapNotNull { it.toIntOrNull() }.max() ?: -1) + 1
+        val index = (getIndexed(name).keys.mapNotNull { it?.toIntOrNull() }.maxOrNull() ?: -1) + 1
         val newName = name.withIndex(index.toString())
         set(newName, Meta.EMPTY)
         get(newName).node!!
     } else {
-        this.setNode(token.asName(), Meta.EMPTY)
+        this.set(token.asName(), Meta.EMPTY)
         //FIXME possible concurrency bug
         get(token).node!!
     }

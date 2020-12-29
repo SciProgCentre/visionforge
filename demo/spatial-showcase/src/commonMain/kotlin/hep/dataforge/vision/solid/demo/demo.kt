@@ -39,15 +39,18 @@ fun Page<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {
             z = -110.0
+            color("teal")
         }
         sphere(50.0) {
             x = 110
             detail = 16
+            color("red")
         }
         tube(50, height = 10, innerRadius = 25, angle = PI) {
             y = 110
             detail = 16
             rotationX = PI / 4
+            color("blue")
         }
     }
 
@@ -55,6 +58,7 @@ fun Page<Solid>.showcase() {
         val group = group {
             box(100, 100, 100) {
                 z = 110.0
+                opacity = 0.5
             }
 
             box(100, 100, 100) {
@@ -143,8 +147,7 @@ fun Page<Solid>.showcaseCSG() {
                 detail = 32
             }
             material {
-                color(Colors.red)
-                wireframe = false
+                color(Colors.pink)
             }
         }
         composite(CompositeType.UNION) {
@@ -154,8 +157,8 @@ fun Page<Solid>.showcaseCSG() {
             sphere(50){
                 detail = 32
             }
-            color(Colors.lightgreen)
-            opacity = 0.3
+            color("lightgreen")
+            opacity = 0.7
         }
         composite(CompositeType.SUBTRACT) {
             y = -300
@@ -165,7 +168,7 @@ fun Page<Solid>.showcaseCSG() {
             sphere(50){
                 detail = 32
             }
-            color(Colors.teal)
+            color("teal")
             opacity = 0.7
         }
     }
@@ -173,9 +176,11 @@ fun Page<Solid>.showcaseCSG() {
     demo("CSG.custom", "CSG with manually created object") {
         intersect {
             tube(60, 10) {
-                detail = 64
+                detail = 32
             }
             box(100, 100, 100)
+            color("red")
+            opacity = 0.5
         }
     }
 }

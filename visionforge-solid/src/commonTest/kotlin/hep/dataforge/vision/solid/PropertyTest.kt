@@ -1,10 +1,8 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.meta.int
-import hep.dataforge.meta.set
 import hep.dataforge.names.asName
-import hep.dataforge.vision.styleSheet
-import hep.dataforge.vision.useStyle
+import hep.dataforge.vision.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,12 +12,12 @@ class PropertyTest {
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            config["test"] = 22
+            setProperty("test", 22)
             group {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getProperty("test", inherit = true).int)
     }
 
     @Test
@@ -37,7 +35,7 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals(22, box?.getProperty("test".asName()).int)
+        assertEquals(22, box?.getProperty("test").int)
     }
 
     @Test
@@ -60,7 +58,7 @@ class PropertyTest {
 
     @Test
     fun testReferenceStyleProperty() {
-        var box: SolidReference? = null
+        var box: SolidReferenceGroup? = null
         val group = SolidGroup{
             styleSheet {
                 set("testStyle") {

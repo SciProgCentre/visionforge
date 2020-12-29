@@ -1,9 +1,9 @@
 package hep.dataforge.vision.html
 
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.meta.configure
 import hep.dataforge.meta.set
 import hep.dataforge.vision.VisionBase
+import hep.dataforge.vision.configure
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import kotlin.test.Test
@@ -35,7 +35,7 @@ class HtmlTagTest {
         div {
             h2 { +"Properties" }
             ul {
-                vision.properties?.items?.forEach {
+                (vision as? VisionBase)?.meta?.items?.forEach {
                     li {
                         a { +it.key.toString() }
                         p { +it.value.toString() }

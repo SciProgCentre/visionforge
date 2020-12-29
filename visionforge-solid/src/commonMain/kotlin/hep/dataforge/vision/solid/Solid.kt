@@ -1,18 +1,17 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.boolean
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.meta.enum
+import hep.dataforge.meta.int
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.vision.Vision
+import hep.dataforge.vision.*
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
-import hep.dataforge.vision.VisionBuilder
-import hep.dataforge.vision.enum
 import hep.dataforge.vision.layout.Output
-import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.Solid.Companion.DETAIL_KEY
 import hep.dataforge.vision.solid.Solid.Companion.IGNORE_KEY
 import hep.dataforge.vision.solid.Solid.Companion.LAYER_KEY
@@ -45,13 +44,13 @@ public interface Solid : Vision {
         public val Y_POSITION_KEY: Name = POSITION_KEY + Y_KEY
         public val Z_POSITION_KEY: Name = POSITION_KEY + Z_KEY
 
-        public val ROTATION: Name = "rotation".asName()
+        public val ROTATION_KEY: Name = "rotation".asName()
 
-        public val X_ROTATION_KEY: Name = ROTATION + X_KEY
-        public val Y_ROTATION_KEY: Name = ROTATION + Y_KEY
-        public val Z_ROTATION_KEY: Name = ROTATION + Z_KEY
+        public val X_ROTATION_KEY: Name = ROTATION_KEY + X_KEY
+        public val Y_ROTATION_KEY: Name = ROTATION_KEY + Y_KEY
+        public val Z_ROTATION_KEY: Name = ROTATION_KEY + Z_KEY
 
-        public val ROTATION_ORDER_KEY: Name = ROTATION + "order"
+        public val ROTATION_ORDER_KEY: Name = ROTATION_KEY + "order"
 
         public val SCALE_KEY: Name = "scale".asName()
 
@@ -62,6 +61,7 @@ public interface Solid : Vision {
         public val descriptor: NodeDescriptor by lazy {
             NodeDescriptor {
                 value(VISIBLE_KEY) {
+                    inherited = false
                     type(ValueType.BOOLEAN)
                     default(true)
                 }
@@ -70,11 +70,14 @@ public interface Solid : Vision {
                 value(Vision.STYLE_KEY) {
                     type(ValueType.STRING)
                     multiple = true
+                    hide()
                 }
 
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
-                enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ)
+                enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
+                    hide()
+                }
             }
         }
 
@@ -82,7 +85,7 @@ public interface Solid : Vision {
             if (first.position != second.position) return false
             if (first.rotation != second.rotation) return false
             if (first.scale != second.scale) return false
-            if (first.properties != second.properties) return false
+            if (first.meta != second.meta) return false
             return true
         }
 
@@ -90,7 +93,7 @@ public interface Solid : Vision {
             var result = +(solid.position?.hashCode() ?: 0)
             result = 31 * result + (solid.rotation?.hashCode() ?: 0)
             result = 31 * result + (solid.scale?.hashCode() ?: 0)
-            result = 31 * result + (solid.properties?.hashCode() ?: 0)
+            result = 31 * result + solid.allProperties().hashCode()
             return result
         }
     }
@@ -100,9 +103,9 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = properties?.getItem(LAYER_KEY).int ?: 0
+    get() = allProperties().getItem(LAYER_KEY).int ?: 0
     set(value) {
-        config[LAYER_KEY] = value.asValue()
+        setProperty(LAYER_KEY, value)
     }
 
 @VisionBuilder
@@ -153,21 +156,21 @@ public var Solid.x: Number
     get() = position?.x ?: 0f
     set(value) {
         position().x = value.toDouble()
-        propertyChanged(Solid.X_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.X_POSITION_KEY)
     }
 
 public var Solid.y: Number
     get() = position?.y ?: 0f
     set(value) {
         position().y = value.toDouble()
-        propertyChanged(Solid.Y_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.Y_POSITION_KEY)
     }
 
 public var Solid.z: Number
     get() = position?.z ?: 0f
     set(value) {
         position().z = value.toDouble()
-        propertyChanged(Solid.Z_POSITION_KEY)
+        asyncNotifyPropertyChange(Solid.Z_POSITION_KEY)
     }
 
 private fun Solid.rotation(): Point3D =
@@ -177,21 +180,21 @@ public var Solid.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
         rotation().x = value.toDouble()
-        propertyChanged(Solid.X_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.X_ROTATION_KEY)
     }
 
 public var Solid.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
         rotation().y = value.toDouble()
-        propertyChanged(Solid.Y_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.Y_ROTATION_KEY)
     }
 
 public var Solid.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
         rotation().z = value.toDouble()
-        propertyChanged(Solid.Z_ROTATION_KEY)
+        asyncNotifyPropertyChange(Solid.Z_ROTATION_KEY)
     }
 
 private fun Solid.scale(): Point3D =
@@ -201,19 +204,19 @@ public var Solid.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
         scale().x = value.toDouble()
-        propertyChanged(Solid.X_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.X_SCALE_KEY)
     }
 
 public var Solid.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
         scale().y = value.toDouble()
-        propertyChanged(Solid.Y_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.Y_SCALE_KEY)
     }
 
 public var Solid.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
         scale().z = value.toDouble()
-        propertyChanged(Solid.Z_SCALE_KEY)
+        asyncNotifyPropertyChange(Solid.Z_SCALE_KEY)
     }

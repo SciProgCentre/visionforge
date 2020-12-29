@@ -43,9 +43,9 @@ class FX3DPlugin : AbstractPlugin() {
     }
 
     fun buildNode(obj: Solid): Node {
-        val binding = VisualObjectFXBinding(obj)
+        val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
-            is SolidReference -> referenceFactory(obj, binding)
+            is SolidReferenceGroup -> referenceFactory(obj, binding)
             is SolidGroup -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {
@@ -71,7 +71,7 @@ class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
-                obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
+                obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY, inherit = true)?.color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }
@@ -130,7 +130,7 @@ class FX3DPlugin : AbstractPlugin() {
     }
 
     companion object : PluginFactory<FX3DPlugin> {
-        override val tag = PluginTag("visual.fx3D", PluginTag.DATAFORGE_GROUP)
+        override val tag = PluginTag("vision.fx3D", PluginTag.DATAFORGE_GROUP)
         override val type = FX3DPlugin::class
         override fun invoke(meta: Meta, context: Context) = FX3DPlugin()
     }

@@ -3,10 +3,14 @@ package hep.dataforge.vision
 import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
+import hep.dataforge.values.Null
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.*
+import kotlin.jvm.Synchronized
 import kotlin.time.Duration
 
 /**
@@ -14,29 +18,42 @@ import kotlin.time.Duration
  */
 public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
-    private val propertyChange = HashMap<Name, Config>()
-    private val childrenChange = HashMap<Name, Vision?>()
+    private var reset: Boolean = false
+    private var vision: Vision? = null
+    private val propertyChange = Config()
+    private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
-    public fun isEmpty(): Boolean = propertyChange.isEmpty() && childrenChange.isEmpty()
+    public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
 
-    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem<*>?) {
-        propertyChange
-            .getOrPut(visionName) { Config() }
-            .setItem(propertyName, item)
+    @Synchronized
+    private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
+        children.getOrPut(visionName) { VisionChangeBuilder() }
+
+    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem?) {
+        if (visionName == Name.EMPTY) {
+            //Write property removal as [Null]
+            propertyChange[propertyName] = (item ?: Null.asMetaItem())
+        } else {
+            getOrPutChild(visionName).propertyChanged(Name.EMPTY, propertyName, item)
+        }
     }
 
     override fun set(name: Name, child: Vision?) {
-        childrenChange[name] = child
+        getOrPutChild(name).apply {
+            vision = child
+            reset = vision == null
+        }
     }
 
     /**
      * Isolate collected changes by creating detached copies of given visions
      */
     public fun isolate(manager: VisionManager): VisionChange = VisionChange(
-        propertyChange.mapValues { it.value.seal() },
-        childrenChange.mapValues { it.value?.isolate(manager) }
+        reset,
+        vision?.isolate(manager),
+        if (propertyChange.isEmpty()) null else propertyChange.seal(),
+        if (children.isEmpty()) null else children.mapValues { it.value.isolate(manager) }
     )
-    //TODO optimize isolation for visions without parents?
 }
 
 private fun Vision.isolate(manager: VisionManager): Vision {
@@ -47,16 +64,11 @@ private fun Vision.isolate(manager: VisionManager): Vision {
 
 @Serializable
 public data class VisionChange(
-    val propertyChange: Map<Name, @Serializable(MetaSerializer::class) Meta>,
-    val childrenChange: Map<Name, Vision?>,
-) {
-    public fun isEmpty(): Boolean = propertyChange.isEmpty() && childrenChange.isEmpty()
-
-    /**
-     * A shortcut to the top level property dif
-     */
-    public val properties: Meta? get() = propertyChange[Name.EMPTY]
-}
+    public val reset: Boolean = false,
+    public val vision: Vision? = null,
+    @Serializable(MetaSerializer::class) public val properties: Meta? = null,
+    public val children: Map<Name, VisionChange>? = null,
+)
 
 public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilder.() -> Unit): VisionChange =
     VisionChangeBuilder().apply(block).isolate(manager)
@@ -69,16 +81,9 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.config.onChange(this) { propertyName, oldItem, newItem ->
-        if (oldItem != newItem) {
-            launch {
-                collector().propertyChanged(name, propertyName, newItem)
-            }
-        }
-    }
-
-    coroutineContext[Job]?.invokeOnCompletion {
-        source.config.removeListener(this)
+    source.onPropertyChange(this) { propertyName ->
+        val newItem = source.getProperty(propertyName, inherit = false, includeStyles = false, includeDefaults = false)
+        collector().propertyChanged(name, propertyName, newItem)
     }
 
     if (source is VisionGroup) {
@@ -89,17 +94,12 @@ private fun CoroutineScope.collectChange(
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
-            source.onStructureChange(this) { token, before, after ->
-                before?.removeChangeListener(this)
-                (before as? MutableVisionGroup)?.removeStructureChangeListener(this)
+            source.structureChanges.onEach { (token, _, after) ->
                 if (after != null) {
                     collectChange(name + token, after, collector)
                 }
                 collector()[name + token] = after
-            }
-            coroutineContext[Job]?.invokeOnCompletion {
-                source.removeStructureChangeListener(this)
-            }
+            }.launchIn(this)
         }
     }
 }
@@ -111,17 +111,23 @@ public fun Vision.flowChanges(
 ): Flow<VisionChange> = flow {
 
     var collector = VisionChangeBuilder()
-    manager.context.collectChange(Name.EMPTY, this@flowChanges) { collector }
+    coroutineScope {
+        collectChange(Name.EMPTY, this@flowChanges) { collector }
 
-    while (currentCoroutineContext().isActive) {
-        //Wait for changes to accumulate
-        delay(collectionDuration)
-        //Propagate updates only if something is changed
-        if (!collector.isEmpty()) {
-            //emit changes
-            emit(collector.isolate(manager))
-            //Reset the collector
-            collector = VisionChangeBuilder()
+        //Send initial vision state
+        val initialChange = VisionChange(vision = isolate(manager))
+        emit(initialChange)
+
+        while (currentCoroutineContext().isActive) {
+            //Wait for changes to accumulate
+            delay(collectionDuration)
+            //Propagate updates only if something is changed
+            if (!collector.isEmpty()) {
+                //emit changes
+                emit(collector.isolate(manager))
+                //Reset the collector
+                collector = VisionChangeBuilder()
+            }
         }
     }
 }

@@ -6,53 +6,12 @@ import hep.dataforge.meta.descriptors.attributes
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import hep.dataforge.values.Value
 import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
-import hep.dataforge.values.string
-import hep.dataforge.vision.Colors
-import hep.dataforge.vision.VisionBuilder
-import hep.dataforge.vision.setProperty
+import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
-import hep.dataforge.vision.widgetType
-
-@VisionBuilder
-public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
-    public var value: Value?
-        get() = parent.getItem(colorKey).value
-        set(value) {
-            parent[colorKey] = value
-        }
-}
-
-public var ColorAccessor?.string: String?
-    get() = this?.value?.string
-    set(value) {
-        this?.value = value?.asValue()
-    }
-
-/**
- * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
- */
-public operator fun ColorAccessor?.invoke(webColor: String) {
-    this?.value = webColor.asValue()
-}
-
-/**
- * Set color as RGB integer
- */
-public operator fun ColorAccessor?.invoke(rgb: Int) {
-    this?.value = rgb.asValue()
-}
-
-/**
- * Set color as RGB
- */
-public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
-    this?.value =  Colors.rgbToString(r, g, b).asValue()
-}
 
 @VisionBuilder
 public class SolidMaterial : Scheme() {
@@ -60,12 +19,12 @@ public class SolidMaterial : Scheme() {
     /**
      * Primary web-color for the material
      */
-    public var color: ColorAccessor = ColorAccessor(config, COLOR_KEY)
+    public val color: ColorAccessor = ColorAccessor(this, COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    public var specularColor: ColorAccessor = ColorAccessor(config, SPECULAR_COLOR_KEY)
+    public val specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
 
     /**
      * Opacity
@@ -92,11 +51,27 @@ public class SolidMaterial : Scheme() {
         public override val descriptor: NodeDescriptor by lazy {
             //must be lazy to avoid initialization bug
             NodeDescriptor {
+                inherited = true
+                usesStyles = true
+
                 value(COLOR_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.STRING, ValueType.NUMBER)
                     widgetType = "color"
                 }
+
+                value(SPECULAR_COLOR_KEY) {
+                    inherited = true
+                    usesStyles = true
+                    type(ValueType.STRING, ValueType.NUMBER)
+                    widgetType = "color"
+                    hide()
+                }
+
                 value(OPACITY_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.NUMBER)
                     default(1.0)
                     attributes {
@@ -107,6 +82,8 @@ public class SolidMaterial : Scheme() {
                     widgetType = "slider"
                 }
                 value(WIREFRAME_KEY) {
+                    inherited = true
+                    usesStyles = true
                     type(ValueType.BOOLEAN)
                     default(false)
                 }
@@ -115,24 +92,23 @@ public class SolidMaterial : Scheme() {
     }
 }
 
-public val Solid.color: ColorAccessor get() = ColorAccessor(config, MATERIAL_COLOR_KEY)
+public val Solid.color: ColorAccessor
+    get() = ColorAccessor(
+        allProperties(inherit = true),
+        MATERIAL_COLOR_KEY
+    )
 
 public var Solid.material: SolidMaterial?
-    get() = getProperty(MATERIAL_KEY).node?.let { SolidMaterial.read(it) }
-    set(value) = setProperty(MATERIAL_KEY, value?.config)
+    get() = getProperty(MATERIAL_KEY, inherit = true).node?.let { SolidMaterial.read(it) }
+    set(value) = setProperty(MATERIAL_KEY, value?.rootNode)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    val node = config[MATERIAL_KEY].node
-    if (node != null) {
-        SolidMaterial.update(node, builder)
-    } else {
-        config[MATERIAL_KEY] = SolidMaterial(builder)
-    }
+    ownProperties.getChild(MATERIAL_KEY).update(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?
-    get() = getProperty(MATERIAL_OPACITY_KEY).number
+    get() = getProperty(MATERIAL_OPACITY_KEY, inherit = true).number
     set(value) {
         setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
     }

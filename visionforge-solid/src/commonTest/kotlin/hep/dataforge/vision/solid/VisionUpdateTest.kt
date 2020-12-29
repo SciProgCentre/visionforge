@@ -29,7 +29,7 @@ class VisionUpdateTest {
         targetVision.update(dif)
         assertTrue { targetVision["top"] is SolidGroup }
         assertEquals("red", (targetVision["origin"] as Solid).color.string) // Should work
-        assertEquals("#00007b", (targetVision["top"] as SolidGroup).color.string) // new item always takes precedence
+        assertEquals("#00007b", (targetVision["top"] as Solid).color.string) // new item always takes precedence
     }
 
     @Test
@@ -45,7 +45,7 @@ class VisionUpdateTest {
         val serialized = visionManager.jsonFormat.encodeToString(VisionChange.serializer(), change)
         println(serialized)
         val reconstructed = visionManager.jsonFormat.decodeFromString(VisionChange.serializer(), serialized)
-        assertEquals(change.propertyChange,reconstructed.propertyChange)
+        assertEquals(change.properties,reconstructed.properties)
     }
 
     @Test

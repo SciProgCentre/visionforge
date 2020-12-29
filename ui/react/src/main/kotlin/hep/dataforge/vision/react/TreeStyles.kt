@@ -17,7 +17,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
     /**
      * Style the caret/arrow
      */
-    public val treeCaret by css {
+    public val treeCaret: RuleSet by css {
         cursor = Cursor.pointer
         userSelect = UserSelect.none
         /* Create the caret/arrow with a unicode, and style it */
@@ -32,7 +32,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
     /**
      *  Rotate the caret/arrow icon when clicked on (using JavaScript)
      */
-    val treeCaredDown by css {
+    public val treeCaredDown:RuleSet by css {
         before {
             content = "\u25B6".quoted
             color = Color.black
@@ -42,7 +42,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
         }
     }
 
-    val treeItem by css {
+    public val treeItem:RuleSet by css {
         alignItems = Align.center
         paddingLeft = 10.px
         borderLeftStyle = BorderStyle.dashed
@@ -53,27 +53,27 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
         borderBottomColor = Color.lightGray
     }
 
-    val treeLeaf by css {
+    public val treeLeaf:RuleSet by css {
         display = Display.flex
         flexDirection = FlexDirection.row
         flexWrap = FlexWrap.nowrap
         //alignItems = Align.center
     }
 
-    val treeLabel by css {
+    public val treeLabel:RuleSet by css {
         overflow = Overflow.hidden
         flex(flexGrow = 1.0, flexShrink = 1.0)
     }
 
-    val treeLabelInactive by css {
+    public val treeLabelInactive: RuleSet by css {
         color = Color.lightGray
     }
 
-    val treeLabelSelected by css {
+    public val treeLabelSelected:RuleSet by css {
         backgroundColor = Color.lightBlue
     }
 
-    val linkButton by css {
+    public val linkButton:RuleSet by css {
         backgroundColor = Color.white
         border = "none"
         padding(left = 4.pt, right = 4.pt, top = 0.pt, bottom = 0.pt)
@@ -86,7 +86,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
         }
     }
 
-    val removeButton by css {
+    public val removeButton:RuleSet by css {
         backgroundColor = Color.white
         borderStyle = BorderStyle.solid
         borderRadius = 2.px
@@ -104,7 +104,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
         }
     }
 
-    val resizeableInput by css {
+    public val resizeableInput: RuleSet by css {
         overflow = Overflow.hidden
         maxWidth = 120.pt
         flex(flexGrow = 2.0, flexShrink = 2.0, flexBasis = 60.pt)

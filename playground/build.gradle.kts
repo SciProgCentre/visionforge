@@ -12,6 +12,16 @@ repositories{
 }
 
 kotlin {
+
+    js(IR) {
+        browser {
+            webpackTask {
+                this.outputFileName = "js/visionforge-playground.js"
+            }
+        }
+        binaries.executable()
+    }
+
     jvm{
         compilations.all {
             kotlinOptions.jvmTarget = "11"
@@ -20,30 +30,39 @@ kotlin {
             useJUnitPlatform()
         }
     }
-    js(IR) {
-        browser {
+
+    afterEvaluate {
+        val jsBrowserDistribution by tasks.getting
+
+        tasks.getByName<ProcessResources>("jvmProcessResources") {
+            dependsOn(jsBrowserDistribution)
+            afterEvaluate {
+                from(jsBrowserDistribution)
+            }
         }
-        binaries.executable()
     }
 
+
     sourceSets {
-        commonMain {
+        val commonMain by getting {
             dependencies {
                 implementation(project(":visionforge-solid"))
                 implementation(project(":visionforge-gdml"))
-
+                implementation(project(":visionforge-plotly"))
             }
         }
+
         val jsMain by getting{
             dependencies {
                 implementation(project(":ui:bootstrap"))
+                implementation(project(":visionforge-threejs"))
             }
         }
 
         val jvmMain by getting{
             dependencies {
+                implementation(project(":visionforge-server"))
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
-                implementation(project(":visionforge-threejs:visionforge-threejs-server"))
             }
         }
     }

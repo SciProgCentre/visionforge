@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
-    override fun invoke(obj: PolyLine): Object3D {
+    override fun invoke(three: ThreePlugin, obj: PolyLine): Object3D {
         val geometry = Geometry().apply {
             vertices = Array(obj.points.size) { obj.points[it].toVector() }
         }
@@ -28,7 +28,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.onPropertyChange(this) { propertyName ->
+            obj.onPropertyChange(three.updateScope) { propertyName ->
                 updateProperty(obj, propertyName)
             }
         }

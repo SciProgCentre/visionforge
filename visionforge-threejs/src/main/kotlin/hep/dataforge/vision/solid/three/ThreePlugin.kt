@@ -9,6 +9,9 @@ import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.set
@@ -22,7 +25,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
-    private val refFactory = ThreeReferenceFactory(this)
+
+    //TODO generate a separate supervisor update scope
+    internal val updateScope: CoroutineScope get() = context
 
     init {
         //Add specialized factories here
@@ -41,76 +46,66 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
-    public fun buildObject3D(obj: Solid): Object3D {
-        return when (obj) {
-            is ThreeVision -> obj.render()
-            is SolidReference -> refFactory(obj)
-            is SolidGroup -> {
-                val group = ThreeGroup()
-                obj.children.forEach { (token, child) ->
-                    if (child is Solid && child.ignore != true) {
-                        try {
-                            val object3D = buildObject3D(child)
-                            group[token] = object3D
-                        } catch (ex: Throwable) {
-                            logger.error(ex) { "Failed to render $child" }
-                            ex.printStackTrace()
-                        }
-                    }
-                }
-
-                group.apply {
-                    updatePosition(obj)
-                    //obj.onChildrenChange()
-
-                    obj.onPropertyChange(this) { name ->
-                        if (
-                            name.startsWith(Solid.POSITION_KEY) ||
-                            name.startsWith(Solid.ROTATION) ||
-                            name.startsWith(Solid.SCALE_KEY)
-                        ) {
-                            //update position of mesh using this object
-                            updatePosition(obj)
-                        } else if (name == Vision.VISIBLE_KEY) {
-                            visible = obj.visible ?: true
-                        }
-                    }
-
-                    obj.onStructureChange(this) { nameToken, _, child ->
-//                        if (name.isEmpty()) {
-//                            logger.error { "Children change with empty name on $group" }
-//                            return@onChildrenChange
-//                        }
-
-//                        val parentName = name.cutLast()
-//                        val childName = name.last()!!
-
-                        //removing old object
-                        findChild(nameToken.asName())?.let { oldChild ->
-                            oldChild.parent?.remove(oldChild)
-                        }
-
-                        //adding new object
-                        if (child != null && child is Solid) {
-                            try {
-                                val object3D = buildObject3D(child)
-                                set(nameToken, object3D)
-                            } catch (ex: Throwable) {
-                                logger.error(ex) { "Failed to render $child" }
-                            }
-                        }
+    public fun buildObject3D(obj: Solid): Object3D = when (obj) {
+        is ThreeVision -> obj.render(this)
+        is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
+        is SolidGroup -> {
+            val group = ThreeGroup()
+            obj.children.forEach { (token, child) ->
+                if (child is Solid && child.ignore != true) {
+                    try {
+                        val object3D = buildObject3D(child)
+                        group[token] = object3D
+                    } catch (ex: Throwable) {
+                        logger.error(ex) { "Failed to render $child" }
+                        ex.printStackTrace()
                     }
                 }
             }
-            is Composite -> compositeFactory(obj)
-            else -> {
-                //find specialized factory for this type if it is present
-                val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
-                when {
-                    factory != null -> factory(obj)
-                    obj is GeometrySolid -> ThreeShapeFactory(obj)
-                    else -> error("Renderer for ${obj::class} not found")
+
+            group.apply {
+                updatePosition(obj)
+                //obj.onChildrenChange()
+
+                obj.onPropertyChange(updateScope) { name ->
+                    if (
+                        name.startsWith(Solid.POSITION_KEY) ||
+                        name.startsWith(Solid.ROTATION_KEY) ||
+                        name.startsWith(Solid.SCALE_KEY)
+                    ) {
+                        //update position of mesh using this object
+                        updatePosition(obj)
+                    } else if (name == Vision.VISIBLE_KEY) {
+                        visible = obj.visible ?: true
+                    }
                 }
+
+                obj.structureChanges.onEach { (nameToken, _, child) ->
+                    //removing old object
+                    findChild(nameToken.asName())?.let { oldChild ->
+                        oldChild.parent?.remove(oldChild)
+                    }
+
+                    //adding new object
+                    if (child != null && child is Solid) {
+                        try {
+                            val object3D = buildObject3D(child)
+                            set(nameToken, object3D)
+                        } catch (ex: Throwable) {
+                            logger.error(ex) { "Failed to render $child" }
+                        }
+                    }
+                }.launchIn(updateScope)
+            }
+        }
+        is Composite -> compositeFactory(this, obj)
+        else -> {
+            //find specialized factory for this type if it is present
+            val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
+            when {
+                factory != null -> factory(this, obj)
+                obj is GeometrySolid -> ThreeShapeFactory(this, obj)
+                else -> error("Renderer for ${obj::class} not found")
             }
         }
     }
@@ -133,14 +128,24 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         return if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
     }
 
+    public fun renderSolid(
+        element: Element,
+        vision: Solid,
+        options: Canvas3DOptions,
+    ): ThreeCanvas = createCanvas(element, options).apply {
+        render(vision)
+    }
+
     override fun render(element: Element, vision: Vision, meta: Meta) {
-        createCanvas(element, Canvas3DOptions.read(meta)).render(
-            vision as? Solid ?: error("Solid expected but ${vision::class} is found")
+        renderSolid(
+            element,
+            vision as? Solid ?: error("Solid expected but ${vision::class} is found"),
+            Canvas3DOptions.read(meta)
         )
     }
 
     public companion object : PluginFactory<ThreePlugin> {
-        override val tag: PluginTag = PluginTag("visual.three", PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag("vision.threejs", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreePlugin> = ThreePlugin::class
         override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }
@@ -150,7 +155,7 @@ public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
     options: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = createCanvas(element, Canvas3DOptions(options)).apply { render(obj) }
+): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(options))
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
     object3D.name = token.toString()

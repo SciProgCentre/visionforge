@@ -1,11 +1,11 @@
 package ru.mipt.npm.sat
 
 
+import hep.dataforge.context.Global
 import hep.dataforge.names.toName
-import hep.dataforge.vision.solid.Solid
-import hep.dataforge.vision.solid.color
-import hep.dataforge.vision.solid.invoke
+import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.three.server.*
+import hep.dataforge.vision.visionManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -15,10 +15,14 @@ import kotlinx.html.h1
 import kotlin.random.Random
 
 fun main() {
+    val satContext = Global.context("sat") {
+        plugin(SolidManager)
+    }
+
     //Create a geometry
     val sat = visionOfSatellite(ySegments = 3)
 
-    val server = visionManager.serve {
+    val server = satContext.visionManager.serve {
         //use client library
         useThreeJs()
         //use css
@@ -39,10 +43,11 @@ fun main() {
             val randomI = Random.nextInt(1, 4)
             val randomJ = Random.nextInt(1, 4)
             val target = "layer[$randomLayer].segment[$randomI,$randomJ]".toName()
-            (sat[target] as? Solid)?.color("red")
-            delay(300)
-            (sat[target] as? Solid)?.color("green")
-            delay(10)
+            val targetVision = sat[target] as Solid
+            targetVision.color("red")
+            delay(1000)
+            targetVision.color.clear()
+            delay(500)
         }
     }
 

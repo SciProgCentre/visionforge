@@ -73,7 +73,7 @@ public abstract class VisionTagConsumer<R>(
 
     @OptIn(DFExperimental::class)
     public inline fun <T> TagConsumer<T>.vision(
-        name: String,
+        name: String = DEFAULT_VISION_NAME,
         visionProvider: VisionOutput.() -> Vision,
     ): T = vision(name.toName(), visionProvider)
 
@@ -103,5 +103,7 @@ public abstract class VisionTagConsumer<R>(
         public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"
         public const val DEFAULT_ENDPOINT: String = "."
+
+        public  const val DEFAULT_VISION_NAME = "vision"
     }
 }

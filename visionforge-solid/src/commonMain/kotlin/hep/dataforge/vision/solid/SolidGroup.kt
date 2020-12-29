@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.Config
+import hep.dataforge.meta.MetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
@@ -15,30 +15,35 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 public interface PrototypeHolder {
-    public val parent: VisionGroup?
-    public val prototypes: MutableVisionGroup?
+    @VisionBuilder
+    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit)
+
+    public fun getPrototype(name: Name): Solid?
 }
 
 /**
  * Represents 3-dimensional Visual Group
+ * @param prototypes A container for templates visible inside this group
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
+public class SolidGroup(
+    @Serializable(Prototypes.Companion::class) @SerialName("prototypes") private var prototypes: MutableVisionGroup? = null,
+) : VisionGroupBase(), Solid, PrototypeHolder {
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
+
     /**
-     * A container for templates visible inside this group
+     * Ger a prototype redirecting the request to the parent if prototype is not found
      */
-    @Serializable(Prototypes.Companion::class)
-    override var prototypes: MutableVisionGroup? = null
-        private set
+    override fun getPrototype(name: Name): Solid? =
+        (prototypes?.get(name) as? Solid) ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
     /**
      * Create or edit prototype node as a group
      */
-    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
+    override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
         (prototypes ?: Prototypes().also {
             prototypes = it
             it.parent = this
@@ -50,13 +55,6 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
     override var rotation: Point3D? = null
 
     override var scale: Point3D? = null
-
-    override fun attachChildren() {
-        prototypes?.parent = this
-        prototypes?.attachChildren()
-        super.attachChildren()
-    }
-
 
 //    /**
 //     * TODO add special static group to hold statics without propagation
@@ -80,19 +78,17 @@ public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
     return SolidGroup().apply(block)
 }
 
-/**
- * Ger a prototype redirecting the request to the parent if prototype is not found
- */
-public tailrec fun PrototypeHolder.getPrototype(name: Name): Solid? =
-    prototypes?.get(name) as? Solid ?: (parent as? PrototypeHolder)?.getPrototype(name)
-
 @VisionBuilder
-public fun VisionContainerBuilder<Vision>.group(name: Name = Name.EMPTY, action: SolidGroup.() -> Unit = {}): SolidGroup =
+public fun VisionContainerBuilder<Vision>.group(
+    name: Name = Name.EMPTY,
+    action: SolidGroup.() -> Unit = {},
+): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
+@VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
     SolidGroup().apply(action).also { set(name, it) }
 
@@ -102,26 +98,29 @@ public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup
 @Serializable(Prototypes.Companion::class)
 internal class Prototypes(
     children: Map<NameToken, Vision> = emptyMap(),
-) : VisionGroupBase(), PrototypeHolder {
+) : VisionGroupBase(children as? MutableMap<NameToken, Vision> ?: children.toMutableMap()), PrototypeHolder {
 
     init {
-        this.childrenInternal.putAll(children)
-    }
-
-    override var properties: Config?
-        get() = null
-        set(_) {
-            error("Can't define properties for prototypes block")
-        }
-
-    override val prototypes: MutableVisionGroup get() = this
-
-    override fun attachChildren() {
+        //used during deserialization only
         children.values.forEach {
             it.parent = parent
-            (it as? VisionGroup)?.attachChildren()
         }
     }
+
+    override fun getOwnProperty(name: Name): MetaItem? = null
+
+    override fun getProperty(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean,
+    ): MetaItem? = null
+
+    override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
+        error("Can't ser property of prototypes container")
+    }
+
+    override val descriptor: NodeDescriptor? = null
 
     companion object : KSerializer<MutableVisionGroup> {
 
@@ -142,4 +141,10 @@ internal class Prototypes(
             mapSerializer.serialize(encoder, value.children)
         }
     }
+
+    override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit) {
+        apply(builder)
+    }
+
+    override fun getPrototype(name: Name): Solid? = get(name) as? Solid
 }
