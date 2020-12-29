@@ -15,5 +15,5 @@ fun main() {
         }
     }
 
-    visionContext.makeVisionFile(fragment = fragment, resourceLocation = ResourceLocation.SYSTEM)
+    VisionForge.makeVisionFile(fragment = fragment, resourceLocation = ResourceLocation.SYSTEM)
 }

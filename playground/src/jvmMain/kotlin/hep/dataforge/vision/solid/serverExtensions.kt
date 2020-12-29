@@ -17,7 +17,7 @@ import java.nio.file.Path
  * A global vision context used to resolve different vision renderers
  */
 @DFExperimental
-public val visionContext: Context = Global.context("VISION") {
+public val VisionForge: Context = Global.context("VISION") {
     plugin(VisionManager)
     plugin(SolidManager)
 }

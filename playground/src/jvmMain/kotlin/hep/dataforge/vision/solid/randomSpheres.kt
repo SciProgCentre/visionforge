@@ -32,7 +32,7 @@ fun main() {
         }
     }
 
-    visionContext.makeVisionFile(
+    VisionForge.makeVisionFile(
         fragment,
         Paths.get("randomSpheres.html"),
         resourceLocation = ResourceLocation.EMBED
