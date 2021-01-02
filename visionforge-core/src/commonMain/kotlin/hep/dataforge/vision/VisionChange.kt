@@ -82,7 +82,7 @@ private fun CoroutineScope.collectChange(
 
     //Collect properties change
     source.onPropertyChange(this) { propertyName ->
-        val newItem = source.getProperty(propertyName, inherit = false, includeStyles = false, includeDefaults = false)
+        val newItem = source.getOwnProperty(propertyName)
         collector().propertyChanged(name, propertyName, newItem)
     }
 

@@ -10,6 +10,7 @@
 ## Table of Contents
 
 * [Introduction](#introduction)
+* [Requirements](#requirements)
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
@@ -34,6 +35,9 @@ Other applications including 2D plots are planned for the future.
 The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
 application, currently targeting browser JavaScript and JVM.
 
+## Requirements
+
+JVM backend requires JDK 11 or later
 
 ## Features
 

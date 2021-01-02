@@ -12,7 +12,7 @@ import kotlinx.html.*
  * A placeholder object to attach inline vision builders.
  */
 @DFExperimental
-public class VisionOutput @PublishedApi internal constructor(){
+public class VisionOutput @PublishedApi internal constructor() {
     public var meta: Meta = Meta.EMPTY
 
     public inline fun meta(block: MetaBuilder.() -> Unit) {
@@ -104,6 +104,6 @@ public abstract class VisionTagConsumer<R>(
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"
         public const val DEFAULT_ENDPOINT: String = "."
 
-        public  const val DEFAULT_VISION_NAME = "vision"
+        public const val DEFAULT_VISION_NAME: String = "vision"
     }
 }

@@ -86,7 +86,9 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
         if (inherit) {
             yield(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
         }
-        yield(descriptor?.get(name)?.defaultItem())
+        if (includeDefaults) {
+            yield(descriptor?.get(name)?.defaultItem())
+        }
     }.merge()
 
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
