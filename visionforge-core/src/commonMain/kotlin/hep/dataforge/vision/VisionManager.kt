@@ -29,6 +29,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
     public val jsonFormat: Json
         get() = Json(defaultJson) {
+            encodeDefaults = false
             serializersModule = this@VisionManager.serializersModule
         }
 

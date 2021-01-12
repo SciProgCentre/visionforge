@@ -29,7 +29,7 @@ import styled.styledDiv
 
 external interface GDMLAppProps : RProps {
     var context: Context
-    var rootObject: Vision?
+    var rootVision: Vision?
     var selected: Name?
 }
 
@@ -45,7 +45,7 @@ external interface GDMLAppProps : RProps {
 val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     var selected by useState { props.selected }
     var canvas: ThreeCanvas? by useState { null }
-    var vision: Vision? by useState { props.rootObject }
+    var vision: Vision? by useState { props.rootVision }
 
     val onSelect: (Name?) -> Unit = {
         selected = it

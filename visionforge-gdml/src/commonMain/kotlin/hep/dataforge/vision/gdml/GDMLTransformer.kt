@@ -97,7 +97,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     fun configureSolid(root: GDML, obj: Solid, parent: GDMLVolume, solid: GDMLSolid) {
         val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
 
-        val styleName = "material[${material.name}]"
+        val styleName = "materials.${material.name}"
 
         obj.useStyle(styleName) {
             MATERIAL_COLOR_KEY put random.nextInt(16777216)

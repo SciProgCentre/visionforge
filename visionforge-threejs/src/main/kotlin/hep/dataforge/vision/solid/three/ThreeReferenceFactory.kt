@@ -1,11 +1,9 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.meta.node
 import hep.dataforge.names.cutFirst
 import hep.dataforge.names.firstOrNull
 import hep.dataforge.names.toName
 import hep.dataforge.vision.solid.Solid
-import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.SolidReferenceGroup
 import hep.dataforge.vision.solid.SolidReferenceGroup.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 import info.laht.threekt.core.BufferGeometry
@@ -49,6 +47,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         //TODO apply child properties
 
         obj.onPropertyChange(three.updateScope) { name->
+            println("Property $name of reference ${object3D.name} updated")
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()

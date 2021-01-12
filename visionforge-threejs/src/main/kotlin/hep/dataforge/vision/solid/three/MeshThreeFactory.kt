@@ -42,6 +42,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
         //add listener to object properties
         obj.onPropertyChange(three.updateScope) { name ->
+            println("Property $name of mesh ${mesh.name} updated")
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry

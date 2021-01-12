@@ -99,17 +99,8 @@ public tailrec fun Vision.getStyle(name: String): Meta? =
 /**
  * Resolve an item in all style layers
  */
-public fun Vision.getStyleItems(name: Name): Sequence<MetaItem> {
-    return styles.asSequence().map {
-        getStyle(it)
-    }.map {
-        it[name]
-    }.filterNotNull()
-}
-
-/**
- * Collect all styles for this object in a single laminate
- */
-public val Vision.allStyles: Laminate get() = Laminate(styles.mapNotNull(::getStyle))
+public fun Vision.getStyleItems(name: Name): Sequence<MetaItem> = styles.asSequence().map {
+    getStyle(it)[name]
+}.filterNotNull()
 
 

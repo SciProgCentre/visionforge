@@ -7,7 +7,6 @@ import hep.dataforge.values.int
 import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.allStyles
 import hep.dataforge.vision.solid.SolidMaterial
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
@@ -83,25 +82,11 @@ public object ThreeMaterials {
         }
     }
 
-    internal fun cacheMeta(meta: Meta): Material = materialCache.getOrPut(meta) {
+    internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta) {
         buildMaterial(meta).apply {
             cached = true
         }
     }
-
-
-//    internal fun getMaterial(vision: Vision, cache: Boolean): Material {
-//        val meta = vision.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node ?: return DEFAULT
-//        return if (cache) {
-//            materialCache.getOrPut(meta) {
-//                buildMaterial(meta).apply {
-//                    cached = true
-//                }
-//            }
-//        } else {
-//            buildMaterial(meta)
-//        }
-//    }
 
 }
 
@@ -135,7 +120,6 @@ private var Material.cached: Boolean
 public fun Mesh.updateMaterial(vision: Vision) {
     //val meta = vision.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node
     val ownMaterialMeta = vision.getOwnProperty(SolidMaterial.MATERIAL_KEY)
-    val stylesMaterialMeta = vision.allStyles[SolidMaterial.MATERIAL_KEY]
     val parentMaterialMeta = vision.parent?.getProperty(
         SolidMaterial.MATERIAL_KEY,
         inherit = true,
@@ -144,16 +128,22 @@ public fun Mesh.updateMaterial(vision: Vision) {
     )
 
     material = when {
-        ownMaterialMeta == null && stylesMaterialMeta == null && parentMaterialMeta == null -> {
-            //use default is not material properties are defined
-            ThreeMaterials.DEFAULT
-        }
         ownMaterialMeta == null && parentMaterialMeta == null -> {
             //If material is style-based, use cached
-            ThreeMaterials.cacheMeta(stylesMaterialMeta.node ?: Meta.EMPTY)
+            vision.getProperty(
+                SolidMaterial.MATERIAL_KEY,
+                inherit = false,
+                includeStyles = true,
+                includeDefaults = false
+            ).node?.let {
+                ThreeMaterials.cacheMaterial(it)
+            } ?: ThreeMaterials.DEFAULT
         }
         else -> {
-            vision.getProperty(SolidMaterial.MATERIAL_KEY).node?.let {
+            vision.getProperty(
+                SolidMaterial.MATERIAL_KEY,
+                inherit = true
+            ).node?.let {
                 ThreeMaterials.buildMaterial(it)
             } ?: ThreeMaterials.DEFAULT
         }
@@ -182,7 +172,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                     includeStyles = true,
                     includeDefaults = false
                 ).double ?: 1.0
-                material.asDynamic().opacity = opacity
+                material.opacity = opacity
                 material.transparent = opacity < 1.0
                 material.needsUpdate = true
             }
