@@ -1,8 +1,10 @@
 package hep.dataforge.vision.solid.three
 
+import hep.dataforge.context.logger
 import hep.dataforge.meta.get
 import hep.dataforge.meta.string
 import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Colors
@@ -195,10 +197,8 @@ public class ThreeCanvas(
     }
 
     public fun render(vision: Solid) {
-        scene.children.find { it.name == "@root" }?.let {
-            //Throw error is something is already rendered here
-            error("Root object already is present in the canvas")
-        }
+        three.logger.info { "Replacing root node in $this" }
+        scene.findChild("@root".asName())?.let { scene.remove(it) }
 
         val object3D = three.buildObject3D(vision)
         object3D.name = "@root"
