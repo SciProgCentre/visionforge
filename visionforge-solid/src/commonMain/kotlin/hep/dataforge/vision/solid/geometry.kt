@@ -4,6 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
 import hep.dataforge.meta.double
 import hep.dataforge.meta.get
+import kotlinx.serialization.Serializable
 import kotlin.math.PI
 
 public const val PI2: Float = 2 * PI.toFloat()

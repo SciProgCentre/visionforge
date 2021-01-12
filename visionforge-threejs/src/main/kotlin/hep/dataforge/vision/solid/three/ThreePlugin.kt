@@ -11,6 +11,8 @@ import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.set
@@ -154,7 +156,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
  * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
  */
 @JsExport
-public fun loadThreeJs(){
+public fun loadThreeJs() {
     VisionForge.plugins.fetch(ThreePlugin)
 }
 

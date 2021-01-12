@@ -4,6 +4,7 @@ import hep.dataforge.meta.Config
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.vision.VisionBase
 import hep.dataforge.vision.html.VisionOutput
+import kotlinx.serialization.Serializable
 import kscience.plotly.Plot
 import kscience.plotly.Plotly
 

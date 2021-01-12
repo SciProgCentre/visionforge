@@ -1,6 +1,7 @@
 package hep.dataforge.vision.html
 
 import hep.dataforge.context.Context
+import hep.dataforge.vision.visionManager
 import kotlinx.html.*
 
 public data class Page(
