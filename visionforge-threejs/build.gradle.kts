@@ -6,6 +6,12 @@ kscience {
     useSerialization()
 }
 
+kotlin{
+    js{
+        binaries.library()
+    }
+}
+
 dependencies {
     api(project(":visionforge-solid"))
     implementation(npm("three", "0.122.0"))

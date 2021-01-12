@@ -1,9 +1,11 @@
-package hep.dataforge.vision.solid
+package hep.dataforge.vision.examples
 
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.vision.ResourceLocation
+import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
+import hep.dataforge.vision.solid.*
 import kotlinx.html.h1
 import java.nio.file.Paths
 import kotlin.random.Random

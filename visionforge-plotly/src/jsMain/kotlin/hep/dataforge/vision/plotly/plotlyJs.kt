@@ -1,23 +1,29 @@
 package hep.dataforge.vision.plotly
 
-import hep.dataforge.context.AbstractPlugin
-import hep.dataforge.context.Context
-import hep.dataforge.context.PluginFactory
-import hep.dataforge.context.PluginTag
+import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionForge
+import hep.dataforge.vision.VisionPlugin
 import hep.dataforge.vision.client.ElementVisionRenderer
+import hep.dataforge.vision.client.VisionClient
+import kotlinx.serialization.modules.SerializersModule
 import kscience.plotly.PlotlyConfig
 import kscience.plotly.plot
 import org.w3c.dom.Element
 import kotlin.reflect.KClass
 
-public class PlotlyPlugin : AbstractPlugin(), ElementVisionRenderer {
+public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
+    public val visionClient: VisionClient by require(VisionClient)
 
     override val tag: PluginTag get() = Companion.tag
 
-    override fun rateVision(vision: Vision): Int =
-        if (vision is VisionOfPlotly) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
+    override val visionSerializersModule: SerializersModule get() = plotlySerializersModule
+
+    override fun rateVision(vision: Vision): Int = when (vision) {
+        is VisionOfPlotly -> ElementVisionRenderer.DEFAULT_RATING
+        else -> ElementVisionRenderer.ZERO_RATING
+    }
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
         val plot = (vision as? VisionOfPlotly)?.plot ?: error("Only VisionOfPlotly visions are supported")
@@ -30,4 +36,12 @@ public class PlotlyPlugin : AbstractPlugin(), ElementVisionRenderer {
         override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
         override fun invoke(meta: Meta, context: Context): PlotlyPlugin = PlotlyPlugin()
     }
+}
+
+/**
+ * Ensure that [PlotlyPlugin] is loaded in the global [VisionForge] context
+ */
+@JsExport
+public fun withPlotly() {
+    VisionForge.plugins.fetch(PlotlyPlugin)
 }

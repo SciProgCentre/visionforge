@@ -1,8 +1,8 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.Application
 import hep.dataforge.context.Global
-import hep.dataforge.startApplication
+import hep.dataforge.vision.Application
+import hep.dataforge.vision.startApplication
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer

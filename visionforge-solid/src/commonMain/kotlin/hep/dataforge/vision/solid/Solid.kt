@@ -11,7 +11,6 @@ import hep.dataforge.values.ValueType
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.*
 import hep.dataforge.vision.Vision.Companion.VISIBLE_KEY
-import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.Solid.Companion.DETAIL_KEY
 import hep.dataforge.vision.solid.Solid.Companion.IGNORE_KEY
 import hep.dataforge.vision.solid.Solid.Companion.LAYER_KEY
@@ -107,9 +106,6 @@ public var Solid.layer: Int
     set(value) {
         setProperty(LAYER_KEY, value)
     }
-
-@VisionBuilder
-public fun Output<Solid>.solidGroup(builder: SolidGroup.() -> Unit): Unit = render(SolidGroup().apply(builder))
 
 // Common properties
 

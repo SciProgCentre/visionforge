@@ -4,14 +4,13 @@ import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.client.ElementVisionRenderer
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
 import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import kotlin.collections.set
@@ -149,6 +148,14 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         override val type: KClass<ThreePlugin> = ThreePlugin::class
         override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }
+}
+
+/**
+ * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
+ */
+@JsExport
+public fun loadThreeJs(){
+    VisionForge.plugins.fetch(ThreePlugin)
 }
 
 public fun ThreePlugin.render(

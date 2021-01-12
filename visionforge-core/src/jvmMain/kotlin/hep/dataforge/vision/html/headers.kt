@@ -1,8 +1,7 @@
-package hep.dataforge.vision
+package hep.dataforge.vision.html
 
-import hep.dataforge.context.Context
 import hep.dataforge.meta.DFExperimental
-import hep.dataforge.vision.html.HtmlFragment
+import hep.dataforge.vision.VisionManager
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
@@ -100,14 +99,14 @@ internal fun fileCssHeader(
  * Make a script header, automatically copying file to appropriate location
  */
 @DFExperimental
-public fun Context.scriptHeader(
+public fun scriptHeader(
     scriptResource: String,
-    htmlPath: Path,
+    htmlPath: Path?,
     resourceLocation: ResourceLocation,
 ): HtmlFragment {
     val targetPath = when (resourceLocation) {
         ResourceLocation.LOCAL -> checkOrStoreFile(
-            htmlPath,
+            htmlPath ?: Path.of("."),
             Path.of(VISIONFORGE_ASSETS_PATH),
             scriptResource
         )

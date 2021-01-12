@@ -1,6 +1,8 @@
-package hep.dataforge.vision.solid
+package hep.dataforge.vision.examples
 
 import com.github.ricky12awesome.jss.encodeToSchema
+import hep.dataforge.vision.solid.SolidGroup
+import hep.dataforge.vision.solid.SolidManager
 import kotlinx.serialization.json.Json
 
 fun main() {

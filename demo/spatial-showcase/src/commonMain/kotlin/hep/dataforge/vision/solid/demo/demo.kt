@@ -4,7 +4,7 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.meta.invoke
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.layout.Page
+import hep.dataforge.vision.VisionLayout
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible
@@ -15,12 +15,12 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 
-fun Page<Solid>.demo(name: String, title: String = name, block: SolidGroup.() -> Unit) {
+fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGroup.() -> Unit) {
     val meta = Meta {
         "title" put title
     }
-    val output = output(name.toName(), meta)?: error("Output with name $name not found")
-    output.solidGroup (builder = block)
+    val vision = SolidGroup(block)
+    render(name.toName(), vision)
 }
 
 val canvasOptions = Canvas3DOptions {
@@ -35,7 +35,7 @@ val canvasOptions = Canvas3DOptions {
     }
 }
 
-fun Page<Solid>.showcase() {
+fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {
             z = -110.0
@@ -136,14 +136,14 @@ fun Page<Solid>.showcase() {
     }
 }
 
-fun Page<Solid>.showcaseCSG() {
+fun VisionLayout<Solid>.showcaseCSG() {
     demo("CSG.simple", "CSG operations") {
         composite(CompositeType.INTERSECT) {
             y = 300
             box(100, 100, 100) {
                 z = 50
             }
-            sphere(50){
+            sphere(50) {
                 detail = 32
             }
             material {
@@ -154,7 +154,7 @@ fun Page<Solid>.showcaseCSG() {
             box(100, 100, 100) {
                 z = 50
             }
-            sphere(50){
+            sphere(50) {
                 detail = 32
             }
             color("lightgreen")
@@ -165,7 +165,7 @@ fun Page<Solid>.showcaseCSG() {
             box(100, 100, 100) {
                 z = 50
             }
-            sphere(50){
+            sphere(50) {
                 detail = 32
             }
             color("teal")

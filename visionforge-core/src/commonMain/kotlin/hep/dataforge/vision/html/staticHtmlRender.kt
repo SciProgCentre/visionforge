@@ -4,19 +4,18 @@ import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
-import kotlinx.html.DIV
-import kotlinx.html.FlowContent
-import kotlinx.html.script
-import kotlinx.html.unsafe
+import kotlinx.html.*
 
 
-public fun FlowContent.embedVisionFragment(
+public fun TagConsumer<*>.embedVisionFragment(
     manager: VisionManager,
     idPrefix: String? = null,
     fragment: HtmlVisionFragment,
-) {
-    val consumer = object : VisionTagConsumer<Any?>(consumer, idPrefix) {
+): Map<Name, Vision> {
+    val visionMap = HashMap<Name, Vision>()
+    val consumer = object : VisionTagConsumer<Any?>(this@embedVisionFragment, idPrefix) {
         override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
+            visionMap[name] = vision
             script {
                 type = "text/json"
                 attributes["class"] = OUTPUT_DATA_CLASS
@@ -27,17 +26,29 @@ public fun FlowContent.embedVisionFragment(
         }
     }
     fragment(consumer)
+    return visionMap
 }
+
+public fun FlowContent.embedVisionFragment(
+    manager: VisionManager,
+    idPrefix: String? = null,
+    fragment: HtmlVisionFragment,
+): Map<Name, Vision>  = consumer.embedVisionFragment(manager, idPrefix, fragment)
 
 public typealias HtmlVisionRenderer = FlowContent.(name: Name, vision: Vision, meta: Meta) -> Unit
 
-public fun <R> FlowContent.renderVisionFragment(
+public fun FlowContent.renderVisionFragment(
     renderer: DIV.(name: Name, vision: Vision, meta: Meta) -> Unit,
     idPrefix: String? = null,
     fragment: HtmlVisionFragment,
-) {
+): Map<Name, Vision> {
+    val visionMap = HashMap<Name, Vision>()
     val consumer = object : VisionTagConsumer<Any?>(consumer, idPrefix) {
-        override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) = renderer(name, vision, outputMeta)
+        override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
+            visionMap[name] = vision
+            renderer(name, vision, outputMeta)
+        }
     }
     fragment(consumer)
+    return visionMap
 }

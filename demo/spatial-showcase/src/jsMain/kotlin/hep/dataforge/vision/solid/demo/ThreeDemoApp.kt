@@ -1,9 +1,9 @@
 package hep.dataforge.vision.solid.demo
 
-import hep.dataforge.Application
-import hep.dataforge.startApplication
+import hep.dataforge.vision.Application
 import hep.dataforge.vision.solid.x
 import hep.dataforge.vision.solid.y
+import hep.dataforge.vision.startApplication
 import kotlinx.browser.document
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

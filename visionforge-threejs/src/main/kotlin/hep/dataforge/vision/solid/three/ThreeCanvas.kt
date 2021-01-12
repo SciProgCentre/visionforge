@@ -1,12 +1,9 @@
 package hep.dataforge.vision.solid.three
 
-import hep.dataforge.meta.get
-import hep.dataforge.meta.string
 import hep.dataforge.names.Name
 import hep.dataforge.names.plus
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Colors
-import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.specifications.*
 import hep.dataforge.vision.solid.three.ThreeMaterials.HIGHLIGHT_MATERIAL
@@ -39,7 +36,7 @@ import kotlin.math.sin
 public class ThreeCanvas(
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
-) : Output<Solid> {
+)  {
     private var root: Object3D? = null
 
     private val raycaster = Raycaster()
@@ -195,7 +192,7 @@ public class ThreeCanvas(
         }
     }
 
-    public override fun render(vision: Solid) {
+    public fun render(vision: Solid) {
         scene.children.find { it.name == "@root" }?.let {
             //Throw error is something is already rendered here
             error("Root object already is present in the canvas")

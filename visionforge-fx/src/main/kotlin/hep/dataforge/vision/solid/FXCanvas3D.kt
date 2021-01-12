@@ -2,7 +2,6 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.context.Context
 import hep.dataforge.context.ContextAware
-import hep.dataforge.vision.layout.Output
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
@@ -12,8 +11,10 @@ import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
 import tornadofx.*
 
-class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOptions.empty()) :
-    Fragment(), Output<Solid>, ContextAware {
+class FXCanvas3D(
+    val plugin: FX3DPlugin,
+    val spec: Canvas3DOptions = Canvas3DOptions.empty(),
+) : Fragment(), ContextAware {
 
     override val context: Context get() = plugin.context
 
@@ -78,7 +79,7 @@ class FXCanvas3D(val plugin: FX3DPlugin, val spec: Canvas3DOptions = Canvas3DOpt
         }
     }
 
-    override fun render(vision: Solid) {
+    fun render(vision: Solid) {
         rootObject = vision
     }
 }

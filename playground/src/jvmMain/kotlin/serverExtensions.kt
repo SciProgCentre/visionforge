@@ -1,4 +1,4 @@
-package hep.dataforge.vision.three.server
+package hep.dataforge.vision.examples
 
 import hep.dataforge.context.Context
 import hep.dataforge.meta.DFExperimental
@@ -7,16 +7,18 @@ import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.scriptHeader
 import hep.dataforge.vision.makeFile
 import hep.dataforge.vision.page
+import hep.dataforge.vision.three.server.VisionServer
+import hep.dataforge.vision.three.server.useScript
 import java.awt.Desktop
 import java.nio.file.Path
 
 
-public fun VisionServer.useThreeJs(): Unit {
-    useScript("js/visionforge-three.js")
+public fun VisionServer.usePlayground(): Unit {
+    useScript("js/visionforge-playground.js")
 }
 
 @DFExperimental
-public fun Context.makeThreeJsFile(
+public fun Context.makeVisionFile(
     content: HtmlVisionFragment,
     path: Path? = null,
     title: String = "VisionForge page",
@@ -24,7 +26,10 @@ public fun Context.makeThreeJsFile(
     show: Boolean = true,
 ): Unit {
     val actualPath = page(title, content).makeFile(path) { actualPath ->
-        mapOf("threeJs" to scriptHeader("js/visionforge-three.js", actualPath, resourceLocation))
+        mapOf("threeJs" to scriptHeader("js/visionforge-playground.js", actualPath, resourceLocation))
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }
+//    makeVisionFile(fragment, path = path, title = title, show = show) { actualPath ->
+//    scriptHeader("js/visionforge-playground.js", actualPath, resourceLocation)
+//}

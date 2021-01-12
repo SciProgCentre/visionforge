@@ -1,9 +1,9 @@
 package hep.dataforge.vision.gdml.demo
 
-import hep.dataforge.Application
 import hep.dataforge.context.Global
-import hep.dataforge.startApplication
+import hep.dataforge.vision.Application
 import hep.dataforge.vision.gdml.toVision
+import hep.dataforge.vision.startApplication
 import kotlinx.browser.document
 import react.child
 import react.dom.render

@@ -1,18 +1,11 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
-import hep.dataforge.names.Name
-import hep.dataforge.names.toName
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionBase
-import hep.dataforge.vision.VisionGroupBase
-import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.VisionManager.Companion.VISION_SERIALIZER_MODULE_TARGET
+import hep.dataforge.vision.*
 import hep.dataforge.vision.html.VisionOutput
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
@@ -23,16 +16,11 @@ import kotlinx.serialization.modules.subclass
 import kotlin.reflect.KClass
 
 
-public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
-
-    public val visionManager: VisionManager by require(VisionManager)
+public class SolidManager(meta: Meta) : VisionPlugin(meta) {
 
     override val tag: PluginTag get() = Companion.tag
 
-    override fun content(target: String): Map<Name, Any> = when (target) {
-        VISION_SERIALIZER_MODULE_TARGET -> mapOf(tag.name.toName() to serializersModuleForSolids)
-        else -> super.content(target)
-    }
+    override val visionSerializersModule: SerializersModule get() = serializersModuleForSolids
 
     public companion object : PluginFactory<SolidManager> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
@@ -66,15 +54,18 @@ public class SolidManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
-        internal val jsonForSolids: Json = Json(VisionManager.defaultJson){
+        internal val jsonForSolids: Json = Json(VisionManager.defaultJson) {
             serializersModule = serializersModuleForSolids
         }
 
-        public fun encodeToString(solid: Solid): String = jsonForSolids.encodeToString(PolymorphicSerializer(Vision::class), solid)
+        public fun encodeToString(solid: Solid): String =
+            jsonForSolids.encodeToString(PolymorphicSerializer(Vision::class), solid)
 
-        public fun decodeFromString(str: String): Solid = jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
+        public fun decodeFromString(str: String): Solid =
+            jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
     }
 }
 
+@VisionBuilder
 @DFExperimental
 public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)

@@ -3,6 +3,8 @@ package hep.dataforge.vision
 import hep.dataforge.context.*
 import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.names.Name
+import hep.dataforge.names.toName
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -73,6 +75,18 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         internal val visionSerializer: PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)
     }
+}
+
+public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
+    public val visionManager: VisionManager by require(VisionManager)
+
+    protected abstract val visionSerializersModule: SerializersModule
+
+    override fun content(target: String): Map<Name, Any> = when (target) {
+        VisionManager.VISION_SERIALIZER_MODULE_TARGET -> mapOf(tag.toString().toName() to visionSerializersModule)
+        else -> super.content(target)
+    }
+
 }
 
 /**

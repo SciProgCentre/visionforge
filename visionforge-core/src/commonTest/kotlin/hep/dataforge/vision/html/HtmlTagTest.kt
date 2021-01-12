@@ -3,7 +3,6 @@ package hep.dataforge.vision.html
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.set
 import hep.dataforge.vision.VisionBase
-import hep.dataforge.vision.configure
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import kotlin.test.Test
@@ -54,7 +53,7 @@ class HtmlTagTest {
     fun testStringRender() {
         println(
             createHTML().div {
-                renderVisionFragment<String>(simpleVisionRenderer, fragment = fragment)
+                renderVisionFragment(simpleVisionRenderer, fragment = fragment)
             }
         )
     }
