@@ -7,6 +7,7 @@ import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.solid.box
 import hep.dataforge.vision.solid.solid
+import hep.dataforge.vision.solid.withSolids
 
 @OptIn(DFExperimental::class)
 fun main() {
@@ -18,5 +19,5 @@ fun main() {
         }
     }
 
-    VisionForge.makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
+    VisionForge.withSolids().makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
 }

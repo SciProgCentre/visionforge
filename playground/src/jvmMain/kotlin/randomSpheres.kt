@@ -34,7 +34,7 @@ fun main() {
         }
     }
 
-    VisionForge.makeVisionFile(
+    VisionForge.withSolids().makeVisionFile(
         fragment,
         Paths.get("randomSpheres.html"),
         resourceLocation = ResourceLocation.EMBED

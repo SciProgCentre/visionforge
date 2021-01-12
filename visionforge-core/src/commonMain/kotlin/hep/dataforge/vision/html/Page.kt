@@ -18,7 +18,7 @@ public data class Page(
                     fragment(it)
                 }
             }
-            title(title)
+            title(this@Page.title)
         }
         body {
             embedVisionFragment(context.visionManager, fragment = content)

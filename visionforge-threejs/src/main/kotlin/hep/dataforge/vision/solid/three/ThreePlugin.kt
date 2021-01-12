@@ -200,3 +200,7 @@ internal fun Object3D.findChild(name: Name): Object3D? {
         else -> findChild(name.tokens.first().asName())?.findChild(name.cutFirst())
     }
 }
+
+public fun Context.withThreeJs(): Context = apply {
+    plugins.fetch(ThreePlugin)
+}

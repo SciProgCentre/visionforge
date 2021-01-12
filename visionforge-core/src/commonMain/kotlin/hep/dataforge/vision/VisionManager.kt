@@ -86,7 +86,6 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
         VisionManager.VISION_SERIALIZER_MODULE_TARGET -> mapOf(tag.toString().toName() to visionSerializersModule)
         else -> super.content(target)
     }
-
 }
 
 /**
