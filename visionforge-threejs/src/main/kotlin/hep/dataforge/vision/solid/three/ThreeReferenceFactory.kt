@@ -47,7 +47,6 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         //TODO apply child properties
 
         obj.onPropertyChange(three.updateScope) { name->
-            println("Property $name of reference ${object3D.name} updated")
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()

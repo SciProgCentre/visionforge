@@ -30,7 +30,7 @@ public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
                 value = (event.target as HTMLInputElement).value
-                if(value!= props.item.string) {
+                if (value != props.item.string) {
                     props.valueChanged?.invoke(value.asValue())
                 }
             }
@@ -50,16 +50,14 @@ public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
 @JsExport
 public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
     functionalComponent("BooleanValueChooser") { props ->
-        var checkedValue by useState(props.item.boolean ?: false)
         val handleChange: (Event) -> Unit = {
             val newValue = (it.target as HTMLInputElement).checked
-            checkedValue = newValue
             props.valueChanged?.invoke(newValue.asValue())
         }
         styledInput(type = InputType.checkBox) {
             attrs {
-                this.attributes["indeterminate"] = (checkedValue == null).toString()
-                checked = checkedValue
+                //this.attributes["indeterminate"] = (props.item == null).toString()
+                defaultChecked = props.item.boolean ?: false
                 onChangeFunction = handleChange
             }
         }
@@ -68,24 +66,24 @@ public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
 @JsExport
 public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
     functionalComponent("NumberValueChooser") { props ->
-        var value by useState(props.item.string ?: "")
+        var innerValue by useState(props.item.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-                value = (event.target as HTMLInputElement).value
-                val number = value.toDoubleOrNull()
+                innerValue = (event.target as HTMLInputElement).value
+                val number = innerValue.toDoubleOrNull()
                 if (number == null) {
-                    console.error("The input value $value is not a number")
+                    console.error("The input value $innerValue is not a number")
                 } else {
                     props.valueChanged?.invoke(number.asValue())
                 }
             }
         }
         val handleChange: (Event) -> Unit = {
-            value = (it.target as HTMLInputElement).value
+            innerValue = (it.target as HTMLInputElement).value
         }
         styledInput(type = InputType.number) {
             attrs {
-                this.value = value
+                value = innerValue
                 onKeyDownFunction = keyDown
                 onChangeFunction = handleChange
                 props.descriptor?.attributes?.get("step").string?.let {
