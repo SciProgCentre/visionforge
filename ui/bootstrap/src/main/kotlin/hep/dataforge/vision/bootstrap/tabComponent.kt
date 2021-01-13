@@ -45,7 +45,7 @@ public val TabPane: FunctionalComponent<TabPaneProps> = functionalComponent("Tab
                         +(cp.title ?: cp.id)
                         attrs {
                             if (cp.id == activeTab) {
-                                classes += "active"
+                                classes = classes + "active"
                             }
                             onClickFunction = {
                                 activeTab = cp.id

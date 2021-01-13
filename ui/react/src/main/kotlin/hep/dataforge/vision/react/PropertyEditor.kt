@@ -66,11 +66,8 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    if (descriptorItem?.hidden == true) return //fail fast for hidden property
     var ownProperty: MetaItem? by useState { props.ownProperties.getItem(props.name) }
     val actualItem: MetaItem? = props.allProperties?.getItem(props.name)
-
-    println("Actual item for ${props.name?.toString()} is ${actualItem.toString()}")
 
     val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
@@ -108,6 +105,17 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     }
 
     if (actualItem is NodeItem) {
+        val keys = buildSet {
+            (descriptorItem as? NodeDescriptor)?.items?.filterNot {
+                it.key.startsWith("@")  || it.value.hidden
+            }?.forEach {
+                add(NameToken(it.key))
+            }
+            ownProperty?.node?.items?.keys?.filterNot { it.body.startsWith("@") }?.let { addAll(it) }
+        }
+        // Do not show nodes without visible children
+        if (keys.isEmpty()) return
+
         styledDiv {
             css {
                 +TreeStyles.treeLeaf
@@ -138,14 +146,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 css {
                     +TreeStyles.tree
                 }
-                val keys = buildSet {
-                    (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
-                        add(NameToken(it))
-                    }
-                    ownProperty?.node?.items?.keys?.let { addAll(it) }
-                }
-
-                keys.filter { !it.body.startsWith("@") }.forEach { token ->
+                keys.forEach { token ->
                     styledLi {
                         css {
                             +TreeStyles.treeItem
