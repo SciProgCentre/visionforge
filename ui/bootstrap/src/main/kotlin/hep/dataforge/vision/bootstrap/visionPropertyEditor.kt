@@ -17,11 +17,12 @@ public fun RBuilder.visionPropertyEditor(
 
     card("Properties") {
         propertyEditor(
-            provider = vision.ownProperties,
-            defaultProvider = vision.allProperties(),
+            ownProperties = vision.ownProperties,
+            allProperties = vision.allProperties(),
             updateFlow = vision.propertyChanges,
             descriptor = descriptor,
-            key = key)
+            key = key
+        )
     }
     val styles = if (vision is SolidReference) {
         (vision.styles + vision.prototype.styles).distinct()

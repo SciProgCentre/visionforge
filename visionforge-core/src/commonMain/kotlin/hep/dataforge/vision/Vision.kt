@@ -134,8 +134,8 @@ public fun Vision.allProperties(
 ): MutableItemProvider = object : MutableItemProvider {
     override fun getItem(name: Name): MetaItem? = getProperty(
         name,
-        inherit = inherit ?: (descriptor?.get(name)?.inherited != false),
-        includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles == true),
+        inherit = inherit ?: (descriptor?.get(name)?.inherited == true),
+        includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles != false),
         includeDefaults = includeDefaults
     )
 

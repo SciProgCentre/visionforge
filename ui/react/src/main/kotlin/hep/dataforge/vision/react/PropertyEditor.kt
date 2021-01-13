@@ -29,17 +29,17 @@ public external interface PropertyEditorProps : RProps {
     /**
      * Root config object - always non null
      */
-    public var provider: MutableItemProvider
+    public var ownProperties: MutableItemProvider
 
     /**
      * Provide default item (greyed out if used)
      */
-    public var defaultProvider: ItemProvider?
+    public var allProperties: ItemProvider?
 
     /**
-     * Full path to the displayed node in [provider]. Could be empty
+     * Full path to the displayed node in [ownProperties]. Could be empty
      */
-    public var name: Name?
+    public var name: Name
 
     /**
      * Root descriptor
@@ -65,27 +65,21 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { true }
-    val itemName = props.name ?: Name.EMPTY
-    val descriptorItem: ItemDescriptor? =
-        useMemo({ props.descriptor?.get(itemName) }, arrayOf(props.descriptor, itemName))
-
-    var item: MetaItem? by useState { props.provider.getItem(itemName) }
-
+    val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     if (descriptorItem?.hidden == true) return //fail fast for hidden property
+    var ownProperty: MetaItem? by useState { props.ownProperties.getItem(props.name) }
+    val actualItem: MetaItem? = props.allProperties?.getItem(props.name)
 
-    var actualItem: MetaItem? by useState {
-        item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
-    }
+    println("Actual item for ${props.name?.toString()} is ${actualItem.toString()}")
 
-    val token = itemName.lastOrNull()?.toString() ?: "Properties"
+    val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        item = props.provider.getItem(itemName)
-        actualItem = item ?: props.defaultProvider?.getItem(itemName) ?: descriptorItem?.defaultItem()
+        ownProperty = props.ownProperties.getItem(props.name)
     }
 
     if (props.updateFlow != null) {
-        useEffectWithCleanup(listOf(props.provider, props.updateFlow)) {
+        useEffectWithCleanup(listOf(props.ownProperties, props.updateFlow)) {
             val updateJob = props.updateFlow!!.onEach { updatedName ->
                 if (updatedName == props.name) {
                     update()
@@ -101,15 +95,15 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
 
     val valueChanged: (Value?) -> Unit = {
         if (it == null) {
-            props.provider.remove(itemName)
+            props.ownProperties.remove(props.name)
         } else {
-            props.provider[itemName] = it
+            props.ownProperties[props.name] = it
         }
         update()
     }
 
     val removeClick: (Event) -> Unit = {
-        props.provider.remove(itemName)
+        props.ownProperties.remove(props.name)
         update()
     }
 
@@ -132,7 +126,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
             styledSpan {
                 css {
                     +TreeStyles.treeLabel
-                    if (item == null) {
+                    if (ownProperty == null) {
                         +TreeStyles.treeLabelInactive
                     }
                 }
@@ -148,7 +142,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     (descriptorItem as? NodeDescriptor)?.items?.keys?.forEach {
                         add(NameToken(it))
                     }
-                    item?.node?.items?.keys?.let { addAll(it) }
+                    ownProperty?.node?.items?.keys?.let { addAll(it) }
                 }
 
                 keys.filter { !it.body.startsWith("@") }.forEach { token ->
@@ -159,8 +153,9 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                         child(PropertyEditorItem) {
                             attrs {
                                 this.key = props.name.toString()
-                                this.provider = props.provider
-                                this.name = itemName + token
+                                this.ownProperties = props.ownProperties
+                                this.allProperties = props.allProperties
+                                this.name = props.name + token
                                 this.descriptor = props.descriptor
                             }
                         }
@@ -180,7 +175,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 styledSpan {
                     css {
-                        if (item == null) {
+                        if (ownProperty == null) {
                             +TreeStyles.treeLabelInactive
                         }
                     }
@@ -192,7 +187,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     +TreeStyles.resizeableInput
                 }
                 valueChooser(
-                    itemName,
+                    props.name,
                     actualItem,
                     descriptorItem as? ValueDescriptor,
                     valueChanged
@@ -204,7 +199,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 +"\u00D7"
                 attrs {
-                    if (item == null) {
+                    if (ownProperty == null) {
                         disabled = true
                     } else {
                         onClickFunction = removeClick
@@ -222,8 +217,8 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
     child(PropertyEditorItem) {
         attrs {
             this.key = ""
-            this.provider = props.provider
-            this.defaultProvider = props.defaultProvider
+            this.ownProperties = props.ownProperties
+            this.allProperties = props.allProperties
             this.name = Name.EMPTY
             this.descriptor = props.descriptor
             this.scope = props.scope
@@ -232,8 +227,8 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
 }
 
 public fun RBuilder.propertyEditor(
-    provider: MutableItemProvider,
-    defaultProvider: ItemProvider?,
+    ownProperties: MutableItemProvider,
+    allProperties: ItemProvider?,
     updateFlow: Flow<Name>? = null,
     descriptor: NodeDescriptor? = null,
     scope: CoroutineScope? = null,
@@ -241,8 +236,8 @@ public fun RBuilder.propertyEditor(
 ) {
     child(PropertyEditor) {
         attrs {
-            this.provider = provider
-            this.defaultProvider = defaultProvider
+            this.ownProperties = ownProperties
+            this.allProperties = allProperties
             this.updateFlow = updateFlow
             this.descriptor = descriptor
             this.key = key?.toString() ?: ""
