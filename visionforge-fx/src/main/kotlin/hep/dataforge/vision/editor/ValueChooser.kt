@@ -6,11 +6,11 @@
 package hep.dataforge.vision.editor
 
 import hep.dataforge.context.Context
-import hep.dataforge.context.Named
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.descriptors.ValueDescriptor
+import hep.dataforge.misc.Named
+import hep.dataforge.misc.Type
 import hep.dataforge.names.toName
-import hep.dataforge.provider.Type
 import hep.dataforge.provider.provideByType
 import hep.dataforge.values.Null
 import hep.dataforge.values.Value
@@ -105,7 +105,7 @@ public interface ValueChooser {
             context: Context,
             value: ObservableValue<Value?>,
             descriptor: ValueDescriptor? = null,
-            setter: (Value) -> Unit
+            setter: (Value) -> Unit,
         ): ValueChooser {
             val chooser = build(context, descriptor)
             chooser.setDisplayValue(value.value ?: Null)

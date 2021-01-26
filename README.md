@@ -73,7 +73,7 @@ The `visionforge-core` module also includes configuration editors for JS (in `js
 
 **Class diagram:**
 
-![](doc/resources/class-diag-core.png)
+![](docs/resources/class-diag-core.png)
 
 
 ### visionforge-solid
@@ -82,7 +82,7 @@ Includes common classes and serializers for 3D visualization, as well as Three.j
 
 **Class diagram:**
 
-![](doc/resources/class-diag-solid.png)
+![](docs/resources/class-diag-solid.png)
 
 ##### Prototypes
 
@@ -127,7 +127,7 @@ Some shapes will also periodically change their color and visibility.
 
 **Example view:**
 
-![](doc/resources/spatial-showcase.png)
+![](docs/resources/spatial-showcase.png)
 
 
 ### Full-Stack Application Example - Muon Monitor Visualization
@@ -139,7 +139,7 @@ A full-stack application example, showing the
 
 **Example view:**
 
-![](doc/resources/muon-monitor.png)
+![](docs/resources/muon-monitor.png)
 
 
 ### GDML Example
@@ -150,7 +150,7 @@ Visualization example for geometry defined as GDML file.
 
 ##### Example view:
 
-![](doc/resources/gdml-demo.png)
+![](docs/resources/gdml-demo.png)
 
 
 ## Thanks and references

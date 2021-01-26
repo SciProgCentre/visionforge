@@ -7,10 +7,10 @@ import hep.dataforge.meta.MutableItemProvider
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.get
+import hep.dataforge.misc.Type
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
-import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision.Companion.TYPE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose

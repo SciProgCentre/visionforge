@@ -10,7 +10,7 @@ import kotlin.math.max
  * Definitions of common colors. Taken from
  * https://github.com/markaren/three.kt/blob/master/threejs-wrapper/src/main/kotlin/info/laht/threekt/math/ColorConstants.kt
  */
-@Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
+@Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING", "unused")
 public object Colors {
     const val aliceblue = 0xF0F8FF
     const val antiquewhite = 0xFAEBD7
@@ -192,7 +192,7 @@ public object Colors {
      */
     fun fromMeta(item: MetaItem): String {
         return when (item) {
-            is NodeItem -> {
+            is MetaItemNode -> {
                 val node = item.node
                 rgbToString(
                     node[RED_KEY].number?.toByte()?.toUByte() ?: 0u,
@@ -200,7 +200,7 @@ public object Colors {
                     node[BLUE_KEY].number?.toByte()?.toUByte() ?: 0u
                 )
             }
-            is ValueItem -> {
+            is MetaItemValue -> {
                 if (item.value.type == ValueType.NUMBER) {
                     rgbToString(item.value.int)
                 } else {

@@ -1,8 +1,8 @@
 package hep.dataforge.vision.solid.three
 
+import hep.dataforge.misc.Type
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
-import hep.dataforge.provider.Type
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY

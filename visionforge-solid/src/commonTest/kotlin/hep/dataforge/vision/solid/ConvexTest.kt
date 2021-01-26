@@ -28,7 +28,7 @@ class ConvexTest {
         val json = SolidManager.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
         val meta = json.toMetaItem().node!!
 
-        val points = meta.getIndexed("points").values.map { (it as NodeItem<*>).node.point3D() }
+        val points = meta.getIndexed("points").values.map { (it as MetaItemNode<*>).node.point3D() }
         assertEquals(8, points.count())
 
         assertEquals(8, convex.points.size)

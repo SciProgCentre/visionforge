@@ -1,7 +1,7 @@
 package hep.dataforge.vision.client
 
 import hep.dataforge.meta.Meta
-import hep.dataforge.provider.Type
+import hep.dataforge.misc.Type
 import hep.dataforge.vision.Vision
 import org.w3c.dom.Element
 

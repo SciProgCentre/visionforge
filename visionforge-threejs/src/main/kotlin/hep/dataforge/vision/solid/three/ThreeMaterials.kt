@@ -95,13 +95,13 @@ public object ThreeMaterials {
  */
 public fun MetaItem.getColor(): Color {
     return when (this) {
-        is ValueItem -> if (this.value.type == ValueType.NUMBER) {
+        is MetaItemValue -> if (this.value.type == ValueType.NUMBER) {
             val int = value.int
             Color(int)
         } else {
             Color(this.value.string)
         }
-        is NodeItem -> {
+        is MetaItemNode -> {
             Color(
                 node[Colors.RED_KEY]?.int ?: 0,
                 node[Colors.GREEN_KEY]?.int ?: 0,

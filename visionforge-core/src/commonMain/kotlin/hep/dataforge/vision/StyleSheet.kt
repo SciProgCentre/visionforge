@@ -40,7 +40,7 @@ public inline class StyleSheet(private val owner: VisionGroup) {
      * Create and set a style
      */
     public operator fun set(key: String, builder: MetaBuilder.() -> Unit) {
-        val newStyle = get(key)?.builder()?.apply(builder) ?: Meta(builder)
+        val newStyle = get(key)?.toMutableMeta()?.apply(builder) ?: Meta(builder)
         set(key, newStyle.seal())
     }
 

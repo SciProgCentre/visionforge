@@ -34,17 +34,6 @@ internal data class PropertyListener(
 @SerialName("vision")
 public open class VisionBase(internal var properties: Config? = null) : Vision {
 
-//    init {
-//        //used during deserialization only
-//        properties?.onChange(this) { name, oldItem, newItem ->
-//            if (oldItem != newItem) {
-//                scope.launch {
-//                    notifyPropertyChanged(name)
-//                }
-//            }
-//        }
-//    }
-
     @Transient
     override var parent: VisionGroup? = null
 
@@ -54,13 +43,6 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     protected fun getOrCreateConfig(): Config {
         if (properties == null) {
             val newProperties = Config()
-//            newProperties.onChange(this) { name, oldItem, newItem ->
-//                if (oldItem != newItem) {
-//                    scope.launch {
-//                        notifyPropertyChanged(name)
-//                    }
-//                }
-//            }
             properties = newProperties
         }
         return properties!!
@@ -146,13 +128,13 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
 
         public fun Vision.updateProperties(at: Name, item: MetaItem) {
             when (item) {
-                is ValueItem -> {
+                is MetaItemValue -> {
                     if (item.value == Null) {
                         setProperty(at, null)
                     } else
                         setProperty(at, item)
                 }
-                is NodeItem -> item.node.items.forEach { (token, childItem) ->
+                is MetaItemNode -> item.node.items.forEach { (token, childItem) ->
                     updateProperties(at + token, childItem)
                 }
             }

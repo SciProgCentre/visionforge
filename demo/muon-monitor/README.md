@@ -30,5 +30,5 @@ run `demo/muon-monitor/application/run` task.
 
 ##### Example view:
 
-![](../../doc/resources/muon-monitor.png)
+![](../../docs/resources/muon-monitor.png)
 

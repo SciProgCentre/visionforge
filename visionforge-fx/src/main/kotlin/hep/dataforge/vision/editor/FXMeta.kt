@@ -115,7 +115,7 @@ class FXMetaNode<M : TypedMeta<M>>(
                 val actualItem = node?.items?.get(token)
                 val actualDescriptor = descriptor?.items?.get(token.body)
 
-                if (actualItem is NodeItem || actualDescriptor is NodeDescriptor) {
+                if (actualItem is MetaItemNode || actualDescriptor is NodeDescriptor) {
                     FXMetaNode(token, this@FXMetaNode)
                 } else {
                     FXMetaValue(token, this@FXMetaNode)

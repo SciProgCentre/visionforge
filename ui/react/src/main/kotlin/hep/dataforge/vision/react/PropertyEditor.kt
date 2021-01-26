@@ -104,7 +104,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         update()
     }
 
-    if (actualItem is NodeItem) {
+    if (actualItem is MetaItemNode) {
         val keys = buildSet {
             (descriptorItem as? NodeDescriptor)?.items?.filterNot {
                 it.key.startsWith("@")  || it.value.hidden
