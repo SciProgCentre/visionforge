@@ -31,10 +31,10 @@ public open class VisionGroupBase(
         }
     }
 
-    override suspend fun notifyPropertyChanged(propertyName: Name) {
-        super.notifyPropertyChanged(propertyName)
+    override fun invalidateProperty(propertyName: Name) {
+        super.invalidateProperty(propertyName)
         for (obj in this) {
-            obj.notifyPropertyChanged(propertyName)
+            obj.invalidateProperty(propertyName)
         }
     }
 
@@ -47,7 +47,7 @@ public open class VisionGroupBase(
      * Propagate children change event upwards
      */
     private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        scope.launch {
+        coroutineScope.launch {
             _structureChanges.emit(MutableVisionGroup.StructureChange(name, before, after))
         }
     }

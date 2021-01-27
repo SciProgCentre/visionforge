@@ -3,6 +3,7 @@ package hep.dataforge.vision.gdml
 import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.itemSequence
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.meta
 import hep.dataforge.vision.solid.*
 
 public expect class Counter() {

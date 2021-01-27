@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid
 
 import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.onPropertyChange
 import javafx.scene.Group
 import javafx.scene.Node
 import kotlin.reflect.KClass

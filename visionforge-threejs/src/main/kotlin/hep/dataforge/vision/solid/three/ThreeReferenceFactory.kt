@@ -3,6 +3,7 @@ package hep.dataforge.vision.solid.three
 import hep.dataforge.names.cutFirst
 import hep.dataforge.names.firstOrNull
 import hep.dataforge.names.toName
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidReferenceGroup
 import hep.dataforge.vision.solid.SolidReferenceGroup.Companion.REFERENCE_CHILD_PROPERTY_PREFIX

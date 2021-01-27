@@ -5,14 +5,13 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.NameToken
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
-import kotlinx.coroutines.launch
 
 /**
  * A container for styles
  */
 public inline class StyleSheet(private val owner: VisionGroup) {
 
-    private val styleNode get() = owner.getOwnProperty(STYLESHEET_KEY).node
+    private val styleNode get() = owner.ownProperties[STYLESHEET_KEY].node
 
     public val items: Map<NameToken, Meta>? get() = styleNode?.items?.mapValues { it.value.node ?: Meta.EMPTY }
 
@@ -55,9 +54,7 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
         val tokens: Collection<Name> =
             ((oldStyle?.items?.keys ?: emptySet()) + (newStyle?.items?.keys ?: emptySet()))
                 .map { it.asName() }
-        parent?.scope?.launch {
-            tokens.forEach { parent?.notifyPropertyChanged(it) }
-        }
+        tokens.forEach { parent?.invalidateProperty(it) }
     }
     if (this is VisionGroup) {
         for (obj in this) {
@@ -71,7 +68,7 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
  * List of names of styles applied to this object. Order matters. Not inherited.
  */
 public var Vision.styles: List<String>
-    get() = getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    get() = ownProperties[Vision.STYLE_KEY]?.stringList ?: emptyList()
     set(value) {
         setProperty(Vision.STYLE_KEY, value)
     }
@@ -86,7 +83,7 @@ public val VisionGroup.styleSheet: StyleSheet get() = StyleSheet(this)
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
 public fun Vision.useStyle(name: String) {
-    styles = (getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()) + name
+    styles = (ownProperties[Vision.STYLE_KEY]?.stringList ?: emptyList()) + name
 }
 
 
@@ -94,7 +91,7 @@ public fun Vision.useStyle(name: String) {
  * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
  */
 public tailrec fun Vision.getStyle(name: String): Meta? =
-    getOwnProperty(StyleSheet.STYLESHEET_KEY + name).node ?: parent?.getStyle(name)
+    ownProperties[StyleSheet.STYLESHEET_KEY + name].node ?: parent?.getStyle(name)
 
 /**
  * Resolve an item in all style layers

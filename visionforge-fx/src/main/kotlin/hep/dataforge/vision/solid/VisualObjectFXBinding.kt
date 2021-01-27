@@ -4,15 +4,18 @@ import hep.dataforge.meta.*
 import hep.dataforge.names.Name
 import hep.dataforge.names.startsWith
 import hep.dataforge.names.toName
+import hep.dataforge.values.Value
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.onPropertyChange
 import javafx.application.Platform
+import javafx.beans.binding.Binding
 import javafx.beans.binding.ObjectBinding
 import tornadofx.*
 
 /**
  * A caching binding collection for [Vision] properties
  */
-class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
+public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<MetaItem?>>()
 
     init {
@@ -31,7 +34,7 @@ class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
         }
     }
 
-    operator fun get(key: Name): ObjectBinding<MetaItem?> {
+    public operator fun get(key: Name): ObjectBinding<MetaItem?> {
         return bindings.getOrPut(key) {
             object : ObjectBinding<MetaItem?>() {
                 override fun computeValue(): MetaItem? = obj.getProperty(key)
@@ -39,10 +42,10 @@ class VisualObjectFXBinding(val fx: FX3DPlugin, val obj: Vision) {
         }
     }
 
-    operator fun get(key: String) = get(key.toName())
+    public operator fun get(key: String) = get(key.toName())
 }
 
-fun ObjectBinding<MetaItem?>.value() = objectBinding { it.value }
+public fun ObjectBinding<MetaItem?>.value(): Binding<Value?> = objectBinding { it.value }
 fun ObjectBinding<MetaItem?>.string() = stringBinding { it.string }
 fun ObjectBinding<MetaItem?>.number() = objectBinding { it.number }
 fun ObjectBinding<MetaItem?>.double() = objectBinding { it.double }

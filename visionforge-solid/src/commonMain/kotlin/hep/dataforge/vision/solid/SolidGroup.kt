@@ -107,8 +107,6 @@ internal class Prototypes(
         }
     }
 
-    override fun getOwnProperty(name: Name): MetaItem? = null
-
     override fun getProperty(
         name: Name,
         inherit: Boolean,

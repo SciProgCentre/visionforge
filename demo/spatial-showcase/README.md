@@ -12,8 +12,8 @@ To see Java FX demo, run `demo/spatial-showcase/Tasks/application/run` Gradle ta
 
 ##### Example view for JS:
 
-![](../../docs/resources/spatial-showcase.png)
+![](../../docs/images/spatial-showcase.png)
 
 ##### Example view for Java FX:
 
-![](../../docs/resources/spatial-showcase-FX.png)
+![](../../docs/images/spatial-showcase-FX.png)

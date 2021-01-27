@@ -4,6 +4,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.MutableVisionGroup
 import hep.dataforge.vision.get
+import hep.dataforge.vision.meta
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

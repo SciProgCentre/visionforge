@@ -1,6 +1,7 @@
 package hep.dataforge.vision.solid.three
 
 import hep.dataforge.meta.node
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.solid.PolyLine
 import hep.dataforge.vision.solid.color
 import hep.dataforge.vision.solid.string

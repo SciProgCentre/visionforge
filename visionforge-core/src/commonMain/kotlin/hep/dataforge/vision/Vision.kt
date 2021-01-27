@@ -1,9 +1,6 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.DFExperimental
-import hep.dataforge.meta.Meta
-import hep.dataforge.meta.MetaItem
-import hep.dataforge.meta.MutableItemProvider
+import hep.dataforge.meta.*
 import hep.dataforge.meta.descriptors.Described
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.get
@@ -12,11 +9,10 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision.Companion.TYPE
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.serialization.Transient
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * A root type for display hierarchy
@@ -27,25 +23,7 @@ public interface Vision : Described {
     /**
      * The parent object of this one. If null, this one is a root.
      */
-    @Transient
     public var parent: VisionGroup?
-
-    /**
-     * Properties belonging to this [Vision] potentially including artificial properties
-     */
-    @Transient
-    public val meta: Meta
-
-    /**
-     * A coroutine scope for asynchronous calls and locks
-     */
-    public val scope: CoroutineScope get() = parent?.scope ?: GlobalScope
-
-    /**
-     * A fast accessor method to get own property (no inheritance or styles).
-     * Should be equivalent to `getProperty(name,false,false,false)`.
-     */
-    public fun getOwnProperty(name: Name): MetaItem?
 
     /**
      * Get property.
@@ -59,6 +37,16 @@ public interface Vision : Described {
         includeDefaults: Boolean = true,
     ): MetaItem?
 
+    /**
+     * Get an intrinsic property of this Vision excluding any inheritance or defaults. In most cases should be the same as
+     * `getProperty(name, false, false, false`.
+     */
+    public fun getOwnProperty(name: Name): MetaItem? = getProperty(
+        name,
+        inherit = false,
+        includeStyles = false,
+        includeDefaults = false
+    )
 
     /**
      * Set the property value
@@ -66,31 +54,15 @@ public interface Vision : Described {
     public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
 
     /**
-     * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
-     */
-    public fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit)
-
-    /**
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
      * if it should include inherited properties etc.
      */
-    @DFExperimental
-    @OptIn(ExperimentalCoroutinesApi::class)
     public val propertyChanges: Flow<Name>
-        get() = callbackFlow<Name> {
-            coroutineScope {
-                onPropertyChange(this) {
-                    send(it)
-                }
-                awaitClose { cancel() }
-            }
-        }
-
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated
      */
-    public suspend fun notifyPropertyChanged(propertyName: Name): Unit
+    public fun invalidateProperty(propertyName: Name): Unit
 
     /**
      * Update this vision using a dif represented by [VisionChange].
@@ -107,11 +79,18 @@ public interface Vision : Described {
     }
 }
 
-public fun Vision.asyncNotifyPropertyChange(propertyName: Name) {
-    scope.launch {
-        notifyPropertyChanged(propertyName)
-    }
+/**
+ * Root property node
+ */
+public val Vision.meta: Meta get() = ownProperties[Name.EMPTY]?.node ?: Meta.EMPTY
+
+/**
+ * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
+ */
+public fun Vision.onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
+    propertyChanges.onEach(callback).launchIn(scope)
 }
+
 
 /**
  * Own properties, excluding inheritance, styles and descriptor
@@ -121,7 +100,6 @@ public val Vision.ownProperties: MutableItemProvider
         override fun getItem(name: Name): MetaItem? = getOwnProperty(name)
         override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
     }
-
 
 /**
  * Convenient accessor for all properties of a vision.

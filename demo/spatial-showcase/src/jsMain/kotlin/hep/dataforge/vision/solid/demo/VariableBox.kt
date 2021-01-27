@@ -5,6 +5,7 @@ import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.getProperty
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*

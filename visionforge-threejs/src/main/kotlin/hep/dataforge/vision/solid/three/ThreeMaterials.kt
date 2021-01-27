@@ -7,6 +7,7 @@ import hep.dataforge.values.int
 import hep.dataforge.values.string
 import hep.dataforge.vision.Colors
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.ownProperties
 import hep.dataforge.vision.solid.SolidMaterial
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.materials.Material
@@ -119,7 +120,7 @@ private var Material.cached: Boolean
 
 public fun Mesh.updateMaterial(vision: Vision) {
     //val meta = vision.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node
-    val ownMaterialMeta = vision.getOwnProperty(SolidMaterial.MATERIAL_KEY)
+    val ownMaterialMeta = vision.ownProperties[SolidMaterial.MATERIAL_KEY]
     val parentMaterialMeta = vision.parent?.getProperty(
         SolidMaterial.MATERIAL_KEY,
         inherit = true,

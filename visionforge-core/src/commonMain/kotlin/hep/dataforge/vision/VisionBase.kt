@@ -11,10 +11,9 @@ import hep.dataforge.values.Null
 import hep.dataforge.values.ValueType
 import hep.dataforge.vision.Vision.Companion.STYLE_KEY
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -32,12 +31,13 @@ internal data class PropertyListener(
  */
 @Serializable
 @SerialName("vision")
-public open class VisionBase(internal var properties: Config? = null) : Vision {
+public open class VisionBase(
+    internal var properties: Config? = null,
+    @Transient public val coroutineScope: CoroutineScope = GlobalScope,
+) : Vision {
 
     @Transient
     override var parent: VisionGroup? = null
-
-    override val meta: Meta get() = properties ?: Meta.EMPTY
 
     @Synchronized
     protected fun getOrCreateConfig(): Config {
@@ -51,8 +51,10 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     /**
      * A fast accessor method to get own property (no inheritance or styles
      */
-    override fun getOwnProperty(name: Name): MetaItem? {
-        return properties?.getItem(name)
+    override fun getOwnProperty(name: Name): MetaItem? = if (name == Name.EMPTY) {
+        properties?.asMetaItem()
+    } else {
+        properties?.getItem(name)
     }
 
     override fun getProperty(
@@ -60,25 +62,27 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem? = sequence {
-        yield(getOwnProperty(name))
-        if (includeStyles) {
-            yieldAll(getStyleItems(name))
-        }
-        if (inherit) {
-            yield(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
-        }
-        if (includeDefaults) {
-            yield(descriptor?.get(name)?.defaultItem())
-        }
-    }.merge()
+    ): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
+        getOwnProperty(name)
+    } else {
+        sequence {
+            yield(getOwnProperty(name))
+            if (includeStyles) {
+                yieldAll(getStyleItems(name))
+            }
+            if (inherit) {
+                yield(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
+            }
+            if (includeDefaults) {
+                yield(descriptor?.get(name)?.defaultItem())
+            }
+        }.merge()
+    }
 
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
         getOrCreateConfig().setItem(name, item)
         if (notify) {
-            scope.launch {
-                notifyPropertyChanged(name)
-            }
+            invalidateProperty(name)
         }
     }
 
@@ -89,7 +93,7 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
             .flatMap { it.items.asSequence() }
             .distinctBy { it.key }
             .forEach {
-                notifyPropertyChanged(it.key.asName())
+                invalidateProperty(it.key.asName())
             }
     }
 
@@ -99,17 +103,16 @@ public open class VisionBase(internal var properties: Config? = null) : Vision {
     private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
 
     @DFExperimental
-    override val propertyChanges: Flow<Name> get() = propertyInvalidationFlow
+    override val propertyChanges: Flow<Name>
+        get() = propertyInvalidationFlow
 
-    override fun onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
-        propertyInvalidationFlow.onEach(callback).launchIn(scope)
-    }
-
-    override suspend fun notifyPropertyChanged(propertyName: Name) {
-        if (propertyName == STYLE_KEY) {
-            updateStyles(styles)
+    override fun invalidateProperty(propertyName: Name) {
+        coroutineScope.launch {
+            if (propertyName == STYLE_KEY) {
+                updateStyles(styles)
+            }
+            propertyInvalidationFlow.emit(propertyName)
         }
-        propertyInvalidationFlow.emit(propertyName)
     }
 
     override fun update(change: VisionChange) {

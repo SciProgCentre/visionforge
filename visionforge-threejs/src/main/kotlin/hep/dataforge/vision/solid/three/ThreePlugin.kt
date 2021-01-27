@@ -6,6 +6,7 @@ import hep.dataforge.names.*
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.client.ElementVisionRenderer
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.visible

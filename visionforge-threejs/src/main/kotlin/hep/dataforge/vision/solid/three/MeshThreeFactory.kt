@@ -6,6 +6,7 @@ import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.names.plus
 import hep.dataforge.names.startsWith
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.solid.Solid
 import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.solid.layer

@@ -12,4 +12,4 @@ drag-and-drop GDML file to the window to see visualization. For an example file,
 
 ##### Example view:
 
-![](../../docs/resources/gdml-demo.png)
+![](../../docs/images/gdml-demo.png)

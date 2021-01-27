@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid.three
 
 
 import hep.dataforge.context.logger
+import hep.dataforge.vision.onPropertyChange
 import hep.dataforge.vision.solid.SolidLabel
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.TextBufferGeometry
