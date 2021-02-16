@@ -1,7 +1,7 @@
 package hep.dataforge.vision.solid
 
 import hep.dataforge.context.Global
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.get
 import kotlin.test.Test
 import kotlin.test.assertEquals

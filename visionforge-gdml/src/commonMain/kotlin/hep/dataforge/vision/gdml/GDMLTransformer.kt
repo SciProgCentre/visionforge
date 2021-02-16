@@ -234,7 +234,14 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
 
                 }
             }
-            else -> error("Renderer for $solid not supported yet")
+            is GDMLEllipsoid -> TODO("Renderer for $solid not supported yet")
+            is GDMLElTube -> TODO("Renderer for $solid not supported yet")
+            is GDMLElCone -> TODO("Renderer for $solid not supported yet")
+            is GDMLParaboloid -> TODO("Renderer for $solid not supported yet")
+            is GDMLParallelepiped -> TODO("Renderer for $solid not supported yet")
+            is GDMLTorus -> TODO("Renderer for $solid not supported yet")
+            is GDMLTrapezoid -> TODO("Renderer for $solid not supported yet")
+            is GDMLPolycone -> TODO("Renderer for $solid not supported yet")
         }
     }
 

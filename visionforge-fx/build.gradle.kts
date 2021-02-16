@@ -9,7 +9,6 @@ val fxVersion: String by rootProject.extra
 
 kscience{
     useFx(ru.mipt.npm.gradle.FXModule.CONTROLS, version = fxVersion)
-    useSerialization()
 }
 
 dependencies {

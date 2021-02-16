@@ -11,3 +11,7 @@ When the user or a part of inner program mechanics requests a property, it searc
 ### Styling
 
 The actual layering scheme is more complicated. All objects support styling. The styles are named `Meta` nodes that could be used to define groups of properties together and use in different `Vision`s. The styles are defined as named `Meta` nodes in a `VisionGroup` `@stylesheet` property (DataForge states that names starting with `@` are reserved for system properties, not visible by default to the user). The style or a list of styles could be applied to a `Vision` by setting the reserved `@style` property to the name of the style being used or by using `Vision::style` extension property. The style name is then resolved to the nearest ancestor that defines it. The key difference from the CSS styling in HTML is that the stylesheets could be added to any node, not only to the hierarchy root. It allows to decouple the whole subtrees together with styles from the main `Vision` graph, or create stand-alone branches. One must note, that the same style could be defined on different levels of the tree, only the nearest ancestor is resolved, meaning that one can override styles for a sub-tree.
+
+### Intermediate representation
+
+### Kotlin DSL for creating vision-graphs

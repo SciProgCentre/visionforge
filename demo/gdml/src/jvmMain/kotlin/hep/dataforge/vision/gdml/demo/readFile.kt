@@ -1,6 +1,6 @@
 package hep.dataforge.vision.gdml.demo
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.values.asValue
 import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision

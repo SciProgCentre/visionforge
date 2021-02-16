@@ -1,6 +1,6 @@
 package hep.dataforge.vision.examples
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.ResourceLocation

@@ -1,6 +1,6 @@
 pluginManagement {
-    val kotlinVersion = "1.4.30-RC"
-    val toolsVersion = "0.7.3-1.4.30-RC"
+    val kotlinVersion = "1.4.30"
+    val toolsVersion = "0.7.6"
 
     repositories {
         mavenLocal()
@@ -44,9 +44,9 @@ include(
     ":visionforge-gdml",
     ":visionforge-server",
     ":visionforge-plotly",
-    ":demo:spatial-showcase",
-    ":demo:gdml",
+    ":demo:solid-showcase",
+//    ":demo:gdml",
     ":demo:muon-monitor",
-    ":demo:sat-demo",
-    ":playground"
+    ":demo:sat-demo"
+//    ":playground"
 )

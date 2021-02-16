@@ -1,8 +1,8 @@
 package hep.dataforge.vision
 
-import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.misc.DFExperimental
 import kotlin.properties.ReadOnlyProperty
 
 /**

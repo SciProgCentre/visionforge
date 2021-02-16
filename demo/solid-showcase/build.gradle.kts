@@ -13,6 +13,8 @@ kscience {
     application()
 }
 
+val kotlinWrappersVersion: String by rootProject.extra
+
 kotlin {
 
     jvm {
@@ -25,7 +27,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":visionforge-solid"))
-                implementation(project(":visionforge-gdml"))
+//                implementation(project(":visionforge-gdml"))
             }
         }
         jvmMain{
@@ -36,7 +38,6 @@ kotlin {
         jsMain{
             dependencies {
                 implementation(project(":visionforge-threejs"))
-                implementation("org.jetbrains:kotlin-css:1.0.0-pre.129-kotlin-1.4.10")
             }
         }
     }

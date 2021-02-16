@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.transform
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.names.asName
 import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.*

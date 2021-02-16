@@ -1,7 +1,7 @@
 package hep.dataforge.vision.html
 
-import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.set
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionBase
 import hep.dataforge.vision.configure
 import hep.dataforge.vision.meta

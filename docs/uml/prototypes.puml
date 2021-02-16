@@ -1,0 +1,14 @@
+@startuml
+package "VisionGroup" {
+    package "Prototypes"{
+        [Prototype]
+        package "Prototype group"{
+            [Prototype Ref] --> [Prototype]
+        }
+    }
+
+    package "Child group"{
+      [Ref] --> [Prototype Ref]
+    }
+}
+@enduml

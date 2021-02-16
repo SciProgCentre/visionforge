@@ -1,7 +1,9 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.meta.asMetaItem
 import hep.dataforge.meta.descriptors.NodeDescriptor
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.names.*
 import hep.dataforge.vision.*
 import kotlinx.coroutines.flow.Flow
@@ -35,15 +37,15 @@ private fun SolidReference.getRefProperty(
 @Serializable
 @SerialName("solid.ref")
 public class SolidReferenceGroup(
-    public val templateName: Name,
+    public val refName: Name,
 ) : SolidBase(), SolidReference, VisionGroup {
 
     /**
      * Recursively search for defined template in the parent
      */
     override val prototype: Solid
-        get() = (parent as? SolidGroup)?.getPrototype(templateName)
-            ?: error("Prototype with name $templateName not found in $parent")
+        get() = (parent as? SolidGroup)?.getPrototype(refName)
+            ?: error("Prototype with name $refName not found in $parent")
 
     override val children: Map<NameToken, Vision>
         get() = (prototype as? VisionGroup)?.children

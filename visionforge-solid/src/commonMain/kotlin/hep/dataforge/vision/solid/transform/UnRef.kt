@@ -1,6 +1,6 @@
 package hep.dataforge.vision.solid.transform
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.vision.MutableVisionGroup
@@ -18,7 +18,7 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
                     reducer[key] = (reducer[key] ?: 0) + value
                 }
             } else if (obj is SolidReferenceGroup) {
-                reducer[obj.templateName] = (reducer[obj.templateName] ?: 0) + 1
+                reducer[obj.refName] = (reducer[obj.refName] ?: 0) + 1
             }
 
             return reducer
@@ -29,7 +29,7 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
         (this as? SolidGroup)?.prototypes{
             set(name, null)
         }
-        children.filter { (it.value as? SolidReferenceGroup)?.templateName == name }.forEach { (key, value) ->
+        children.filter { (it.value as? SolidReferenceGroup)?.refName == name }.forEach { (key, value) ->
             val reference = value as SolidReferenceGroup
             val newChild = mergeChild(reference, reference.prototype)
             newChild.parent = null

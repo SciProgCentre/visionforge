@@ -1,6 +1,6 @@
 package hep.dataforge.vision.html
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionManager
 import kotlinx.html.link
 import kotlinx.html.script

@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.mpp")
 }
 
-kscience {
+kscience{
     useSerialization()
 }
 

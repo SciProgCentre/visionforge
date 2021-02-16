@@ -2,11 +2,11 @@ plugins {
     id("ru.mipt.npm.mpp")
 }
 
-kscience {
+val plotlyVersion = "0.3.1"
+
+kscience{
     useSerialization()
 }
-
-val plotlyVersion = "0.3.1-dev"
 
 kotlin {
     js{

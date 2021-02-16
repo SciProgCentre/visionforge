@@ -33,7 +33,6 @@ public class SolidGroup(
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
-
     /**
      * Ger a prototype redirecting the request to the parent if prototype is not found
      */
@@ -69,7 +68,7 @@ public class SolidGroup(
     }
 
     public companion object {
-//        val PROTOTYPES_KEY = NameToken("@prototypes")
+        //public val PROTOTYPES_TOKEN = NameToken("@prototypes")
     }
 }
 

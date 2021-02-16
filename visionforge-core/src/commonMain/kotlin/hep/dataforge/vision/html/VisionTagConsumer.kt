@@ -1,11 +1,17 @@
 package hep.dataforge.vision.html
 
-import hep.dataforge.meta.*
+import hep.dataforge.meta.Meta
+import hep.dataforge.meta.MetaBuilder
+import hep.dataforge.meta.MetaSerializer
+import hep.dataforge.meta.isEmpty
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.names.Name
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
 import kotlinx.html.*
+import kotlin.collections.set
+import kotlin.collections.setOf
 
 
 /**

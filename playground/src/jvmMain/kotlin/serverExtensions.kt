@@ -1,7 +1,7 @@
 package hep.dataforge.vision.examples
 
 import hep.dataforge.context.Context
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.html.HtmlVisionFragment
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.scriptHeader

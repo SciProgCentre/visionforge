@@ -1,7 +1,10 @@
 package hep.dataforge.vision.solid
 
-import hep.dataforge.meta.*
-
+import hep.dataforge.meta.MetaItemNode
+import hep.dataforge.meta.getIndexed
+import hep.dataforge.meta.node
+import hep.dataforge.meta.toMetaItem
+import hep.dataforge.misc.DFExperimental
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

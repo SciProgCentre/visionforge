@@ -2,10 +2,6 @@ plugins {
     id("ru.mipt.npm.js")
 }
 
-kscience {
-    useSerialization()
-}
-
 kotlin{
     js{
         binaries.library()

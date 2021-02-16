@@ -5,9 +5,9 @@ plugins {
 
 
 kscience {
-    useSerialization {
-        json()
-    }
+//    useSerialization {
+//        json()
+//    }
     application()
 }
 

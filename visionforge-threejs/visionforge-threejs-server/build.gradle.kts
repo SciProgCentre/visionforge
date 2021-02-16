@@ -2,13 +2,6 @@ plugins {
     id("ru.mipt.npm.mpp")
  }
 
-
-kscience{
-    useSerialization{
-        json()
-    }
- }
-
 val ktorVersion: String by rootProject.extra
 
 kotlin {

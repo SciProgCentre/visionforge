@@ -2,16 +2,16 @@ plugins {
     id("ru.mipt.npm.project")
 }
 
-val dataforgeVersion by extra("0.3.0-dev-1")
-val ktorVersion by extra("1.5.0")
+val dataforgeVersion by extra("0.3.0")
+val ktorVersion by extra("1.5.1")
 val htmlVersion by extra("0.7.2")
 val kotlinWrappersVersion by extra("pre.129-kotlin-1.4.20")
 val fxVersion by extra("14")
 
-
 allprojects {
     repositories {
         mavenLocal()
+        jcenter()
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")
     }

@@ -1,6 +1,6 @@
 package hep.dataforge.vision.plotly
 
-import hep.dataforge.meta.DFExperimental
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.html.HtmlFragment
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.scriptHeader

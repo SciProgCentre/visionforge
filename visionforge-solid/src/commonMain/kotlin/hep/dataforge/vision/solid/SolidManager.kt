@@ -3,8 +3,8 @@ package hep.dataforge.vision.solid
 import hep.dataforge.context.Context
 import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
-import hep.dataforge.meta.DFExperimental
 import hep.dataforge.meta.Meta
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.*
 import hep.dataforge.vision.html.VisionOutput
 import kotlinx.serialization.PolymorphicSerializer
