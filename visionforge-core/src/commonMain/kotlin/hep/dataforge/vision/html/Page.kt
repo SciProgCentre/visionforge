@@ -1,8 +1,10 @@
 package hep.dataforge.vision.html
 
 import hep.dataforge.context.Context
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.visionManager
 import kotlinx.html.*
+import kotlinx.html.stream.createHTML
 
 public data class Page(
     public val context: Context,
@@ -25,3 +27,11 @@ public data class Page(
         }
     }.finalize()
 }
+
+
+@DFExperimental
+public fun Context.page(
+    title: String,
+    content: HtmlVisionFragment,
+    vararg headers: Pair<String, HtmlFragment>,
+): Page = Page(this, title, mapOf(*headers), content)

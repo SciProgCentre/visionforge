@@ -15,8 +15,8 @@ import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.browser.window
 import kotlinx.css.*
-import kscience.gdml.GDML
-import kscience.gdml.decodeFromString
+import space.kscience.gdml.Gdml
+import space.kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RProps
@@ -55,7 +55,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         val visionManager = props.context.plugins.fetch(SolidManager).visionManager
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
-                val gdml = GDML.decodeFromString(data)
+                val gdml = Gdml.decodeFromString(data)
                 gdml.toVision()
             }
             name.endsWith(".json") -> visionManager.decodeFromString(data)

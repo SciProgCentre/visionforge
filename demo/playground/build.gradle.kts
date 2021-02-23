@@ -46,22 +46,22 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":visionforge-solid"))
-                implementation(project(":visionforge-gdml"))
-                implementation(project(":visionforge-plotly"))
+                api(project(":visionforge-solid"))
+                api(project(":visionforge-gdml"))
+                api(project(":visionforge-plotly"))
             }
         }
 
         val jsMain by getting{
             dependencies {
-                implementation(project(":ui:bootstrap"))
-                implementation(project(":visionforge-threejs"))
+                api(project(":ui:bootstrap"))
+                api(project(":visionforge-threejs"))
             }
         }
 
         val jvmMain by getting{
             dependencies {
-                implementation(project(":visionforge-server"))
+                api(project(":visionforge-server"))
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }
         }

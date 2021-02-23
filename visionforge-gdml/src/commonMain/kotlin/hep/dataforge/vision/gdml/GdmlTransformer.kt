@@ -12,7 +12,7 @@ import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
-import kscience.gdml.*
+import space.kscience.gdml.*
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -26,7 +26,7 @@ private inline operator fun Number.times(d: Double) = toDouble() * d
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
-public class GDMLTransformerSettings {
+public class GdmlTransformerSettings {
     public enum class Action {
         ADD,
         REJECT,
@@ -36,12 +36,12 @@ public class GDMLTransformerSettings {
     public var lUnit: LUnit = LUnit.CM
     public var aUnit: AUnit = AUnit.RADIAN
 
-    public var solidAction: (GDMLSolid) -> Action = { Action.PROTOTYPE }
-    public var volumeAction: (GDMLGroup) -> Action = { Action.PROTOTYPE }
+    public var solidAction: (GdmlSolid) -> Action = { Action.PROTOTYPE }
+    public var volumeAction: (GdmlGroup) -> Action = { Action.PROTOTYPE }
 }
 
-private class GDMLTransformer(val settings: GDMLTransformerSettings) {
-    //private val materialCache = HashMap<GDMLMaterial, Meta>()
+private class GdmlTransformer(val settings: GdmlTransformerSettings) {
+    //private val materialCache = HashMap<GdmlMaterial, Meta>()
     private val random = Random(222)
 
     /**
@@ -56,7 +56,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
 
     private val referenceStore = HashMap<Name, MutableList<SolidReferenceGroup>>()
 
-    private fun proxySolid(root: GDML, group: SolidGroup, solid: GDMLSolid, name: String): SolidReferenceGroup {
+    private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReferenceGroup {
         val templateName = solidsName + name
         if (proto[templateName] == null) {
             solids.addSolid(root, solid, name)
@@ -66,7 +66,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         return ref
     }
 
-    private fun proxyVolume(root: GDML, group: SolidGroup, physVolume: GDMLPhysVolume, volume: GDMLGroup): SolidReferenceGroup {
+    private fun proxyVolume(root: Gdml, group: SolidGroup, physVolume: GdmlPhysVolume, volume: GdmlGroup): SolidReferenceGroup {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)
@@ -78,7 +78,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
 
     private val styleCache = HashMap<Name, Meta>()
 
-    var solidConfiguration: Solid.(parent: GDMLVolume, solid: GDMLSolid) -> Unit = { parent, _ ->
+    var solidConfiguration: Solid.(parent: GdmlVolume, solid: GdmlSolid) -> Unit = { parent, _ ->
         if (parent.physVolumes.isNotEmpty()) {
             useStyle("opaque") {
                 SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
@@ -94,23 +94,23 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         useStyle(name)
     }
 
-    fun configureSolid(root: GDML, obj: Solid, parent: GDMLVolume, solid: GDMLSolid) {
-        val material = parent.materialref.resolve(root) ?: GDMLElement(parent.materialref.ref)
+    fun configureSolid(root: Gdml, obj: Solid, parent: GdmlVolume, solid: GdmlSolid) {
+        val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
 
         val styleName = "materials.${material.name}"
 
         obj.useStyle(styleName) {
             MATERIAL_COLOR_KEY put random.nextInt(16777216)
-            "gdml.material" put material.name
+            "Gdml.material" put material.name
         }
 
         obj.solidConfiguration(parent, solid)
     }
 
     fun <T : Solid> T.withPosition(
-        newPos: GDMLPosition? = null,
-        newRotation: GDMLRotation? = null,
-        newScale: GDMLScale? = null,
+        newPos: GdmlPosition? = null,
+        newRotation: GdmlRotation? = null,
+        newScale: GdmlScale? = null,
     ): T = apply {
         newPos?.let {
             val point = Point3D(it.x(settings.lUnit), it.y(settings.lUnit), it.z(settings.lUnit))
@@ -134,23 +134,23 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         //TODO convert units if needed
     }
 
-    fun <T : Solid> T.withPosition(root: GDML, physVolume: GDMLPhysVolume): T = withPosition(
+    fun <T : Solid> T.withPosition(root: Gdml, physVolume: GdmlPhysVolume): T = withPosition(
         physVolume.resolvePosition(root),
         physVolume.resolveRotation(root),
         physVolume.resolveScale(root)
     )
 
     fun SolidGroup.addSolid(
-        root: GDML,
-        solid: GDMLSolid,
+        root: Gdml,
+        solid: GdmlSolid,
         name: String = "",
     ): Solid {
         //context.solidAdded(solid)
         val lScale = solid.lscale(settings.lUnit)
         val aScale = solid.ascale()
         return when (solid) {
-            is GDMLBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
-            is GDMLTube -> tube(
+            is GdmlBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
+            is GdmlTube -> tube(
                 solid.rmax * lScale,
                 solid.z * lScale,
                 solid.rmin * lScale,
@@ -158,13 +158,13 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
                 solid.deltaphi * aScale,
                 name
             )
-            is GDMLCone -> cone(solid.rmax1, solid.z, solid.rmax2, name = name) {
+            is GdmlCone -> cone(solid.rmax1, solid.z, solid.rmax2, name = name) {
                 require(solid.rmin1 == 0.0) { "Empty cones are not supported" }
                 require(solid.rmin2 == 0.0) { "Empty cones are not supported" }
                 startAngle = solid.startphi.toFloat()
                 angle = solid.deltaphi.toFloat()
             }
-            is GDMLXtru -> extrude(name) {
+            is GdmlXtru -> extrude(name) {
                 shape {
                     solid.vertices.forEach {
                         point(it.x * lScale, it.y * lScale)
@@ -179,9 +179,9 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
                     )
                 }
             }
-            is GDMLScaledSolid -> {
+            is GdmlScaledSolid -> {
                 //Add solid with modified scale
-                val innerSolid: GDMLSolid = solid.solidref.resolve(root)
+                val innerSolid: GdmlSolid = solid.solidref.resolve(root)
                     ?: error("Solid with tag ${solid.solidref.ref} for scaled solid ${solid.name} not defined")
 
                 addSolid(root, innerSolid, name).apply {
@@ -190,12 +190,12 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
                     scaleZ = solid.scale.z.toFloat()
                 }
             }
-            is GDMLSphere -> sphere(solid.rmax * lScale, solid.deltaphi * aScale, solid.deltatheta * aScale, name) {
+            is GdmlSphere -> sphere(solid.rmax * lScale, solid.deltaphi * aScale, solid.deltatheta * aScale, name) {
                 phiStart = solid.startphi * aScale
                 thetaStart = solid.starttheta * aScale
             }
-            is GDMLOrb -> sphere(solid.r * lScale, name = name)
-            is GDMLPolyhedra -> extrude(name) {
+            is GdmlOrb -> sphere(solid.r * lScale, name = name)
+            is GdmlPolyhedra -> extrude(name) {
                 //getting the radius of first
                 require(solid.planes.size > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = solid.planes.first().rmax * lScale
@@ -210,13 +210,13 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
                     layer(plane.z * lScale, scale = plane.rmax * lScale / baseRadius)
                 }
             }
-            is GDMLBoolSolid -> {
-                val first: GDMLSolid = solid.first.resolve(root) ?: error("")
-                val second: GDMLSolid = solid.second.resolve(root) ?: error("")
+            is GdmlBoolSolid -> {
+                val first: GdmlSolid = solid.first.resolve(root) ?: error("")
+                val second: GdmlSolid = solid.second.resolve(root) ?: error("")
                 val type: CompositeType = when (solid) {
-                    is GDMLUnion -> CompositeType.UNION
-                    is GDMLSubtraction -> CompositeType.SUBTRACT
-                    is GDMLIntersection -> CompositeType.INTERSECT
+                    is GdmlUnion -> CompositeType.UNION
+                    is GdmlSubtraction -> CompositeType.SUBTRACT
+                    is GdmlIntersection -> CompositeType.INTERSECT
                 }
 
                 return composite(type, name) {
@@ -234,30 +234,30 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
 
                 }
             }
-            is GDMLEllipsoid -> TODO("Renderer for $solid not supported yet")
-            is GDMLElTube -> TODO("Renderer for $solid not supported yet")
-            is GDMLElCone -> TODO("Renderer for $solid not supported yet")
-            is GDMLParaboloid -> TODO("Renderer for $solid not supported yet")
-            is GDMLParallelepiped -> TODO("Renderer for $solid not supported yet")
-            is GDMLTorus -> TODO("Renderer for $solid not supported yet")
-            is GDMLTrapezoid -> TODO("Renderer for $solid not supported yet")
-            is GDMLPolycone -> TODO("Renderer for $solid not supported yet")
+            is GdmlEllipsoid -> TODO("Renderer for $solid not supported yet")
+            is GdmlElTube -> TODO("Renderer for $solid not supported yet")
+            is GdmlElCone -> TODO("Renderer for $solid not supported yet")
+            is GdmlParaboloid -> TODO("Renderer for $solid not supported yet")
+            is GdmlParallelepiped -> TODO("Renderer for $solid not supported yet")
+            is GdmlTorus -> TODO("Renderer for $solid not supported yet")
+            is GdmlTrapezoid -> TODO("Renderer for $solid not supported yet")
+            is GdmlPolycone -> TODO("Renderer for $solid not supported yet")
         }
     }
 
     fun SolidGroup.addSolidWithCaching(
-        root: GDML,
-        solid: GDMLSolid,
+        root: Gdml,
+        solid: GdmlSolid,
         name: String = solid.name,
     ): Solid? {
         return when (settings.solidAction(solid)) {
-            GDMLTransformerSettings.Action.ADD -> {
+            GdmlTransformerSettings.Action.ADD -> {
                 addSolid(root, solid, name)
             }
-            GDMLTransformerSettings.Action.PROTOTYPE -> {
+            GdmlTransformerSettings.Action.PROTOTYPE -> {
                 proxySolid(root, this, solid, name)
             }
-            GDMLTransformerSettings.Action.REJECT -> {
+            GdmlTransformerSettings.Action.REJECT -> {
                 //ignore
                 null
             }
@@ -265,14 +265,14 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     }
 
     fun SolidGroup.addPhysicalVolume(
-        root: GDML,
-        physVolume: GDMLPhysVolume,
+        root: Gdml,
+        physVolume: GdmlPhysVolume,
     ) {
-        val volume: GDMLGroup = physVolume.volumeref.resolve(root)
+        val volume: GdmlGroup = physVolume.volumeref.resolve(root)
             ?: error("Volume with ref ${physVolume.volumeref.ref} could not be resolved")
 
         // a special case for single solid volume
-        if (volume is GDMLVolume && volume.physVolumes.isEmpty() && volume.placement == null) {
+        if (volume is GdmlVolume && volume.physVolumes.isEmpty() && volume.placement == null) {
             val solid = volume.solidref.resolve(root)
                 ?: error("Solid with tag ${volume.solidref.ref} for volume ${volume.name} not defined")
             addSolidWithCaching(root, solid, physVolume.name ?: "")?.apply {
@@ -283,24 +283,24 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         }
 
         when (settings.volumeAction(volume)) {
-            GDMLTransformerSettings.Action.ADD -> {
+            GdmlTransformerSettings.Action.ADD -> {
                 val group: SolidGroup = volume(root, volume)
                 this[physVolume.name ?: ""] = group.withPosition(root, physVolume)
             }
-            GDMLTransformerSettings.Action.PROTOTYPE -> {
+            GdmlTransformerSettings.Action.PROTOTYPE -> {
                 proxyVolume(root, this, physVolume, volume)
             }
-            GDMLTransformerSettings.Action.REJECT -> {
+            GdmlTransformerSettings.Action.REJECT -> {
                 //ignore
             }
         }
     }
 
     fun SolidGroup.addDivisionVolume(
-        root: GDML,
-        divisionVolume: GDMLDivisionVolume,
+        root: Gdml,
+        divisionVolume: GdmlDivisionVolume,
     ) {
-        val volume: GDMLGroup = divisionVolume.volumeref.resolve(root)
+        val volume: GdmlGroup = divisionVolume.volumeref.resolve(root)
             ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
         //TODO add divisions
@@ -308,20 +308,20 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
     }
 
     private fun volume(
-        root: GDML,
-        group: GDMLGroup,
+        root: Gdml,
+        group: GdmlGroup,
     ): SolidGroup = SolidGroup().apply {
-        if (group is GDMLVolume) {
-            val solid: GDMLSolid = group.solidref.resolve(root)
+        if (group is GdmlVolume) {
+            val solid: GdmlSolid = group.solidref.resolve(root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
 
             addSolidWithCaching(root, solid)?.apply {
                 configureSolid(root, this, group, solid)
             }
 
-            when (val vol: GDMLPlacement? = group.placement) {
-                is GDMLPhysVolume -> addPhysicalVolume(root, vol)
-                is GDMLDivisionVolume -> addDivisionVolume(root, vol)
+            when (val vol: GdmlPlacement? = group.placement) {
+                is GdmlPhysVolume -> addPhysicalVolume(root, vol)
+                is GdmlDivisionVolume -> addDivisionVolume(root, vol)
             }
         }
 
@@ -332,7 +332,7 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
 
     private fun finalize(final: SolidGroup): SolidGroup {
         //final.prototypes = proto
-        final.useStyle("GDML") {
+        final.useStyle("Gdml") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY
         }
 
@@ -364,19 +364,19 @@ private class GDMLTransformer(val settings: GDMLTransformerSettings) {
         return final
     }
 
-    fun transform(root: GDML): SolidGroup = finalize(volume(root, root.world))
+    fun transform(root: Gdml): SolidGroup = finalize(volume(root, root.world))
 }
 
 
-public fun GDML.toVision(block: GDMLTransformerSettings.() -> Unit = {}): SolidGroup {
-    val context = GDMLTransformer(GDMLTransformerSettings().apply(block))
+public fun Gdml.toVision(block: GdmlTransformerSettings.() -> Unit = {}): SolidGroup {
+    val context = GdmlTransformer(GdmlTransformerSettings().apply(block))
     return context.transform(this)
 }
 
 /**
- * Append gdml node to the group
+ * Append Gdml node to the group
  */
-public fun SolidGroup.gdml(gdml: GDML, key: String = "", transformer: GDMLTransformerSettings.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: Gdml, key: String = "", transformer: GdmlTransformerSettings.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

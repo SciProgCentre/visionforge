@@ -57,24 +57,16 @@ import java.nio.file.Path
 //}
 
 @DFExperimental
-public fun Context.page(
-    title: String,
-    content: HtmlVisionFragment,
-    vararg headers: Pair<String, HtmlFragment>,
-): Page = Page(this, title, mapOf(*headers), content)
-
-
-@DFExperimental
 public fun Page.makeFile(
     path: Path?,
-    defaultHeaders: ((Path) -> Map<String,HtmlFragment>)? = null,
+    defaultHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
 ): Path {
     val actualFile = path?.let {
         Path.of(System.getProperty("user.home")).resolve(path)
     } ?: Files.createTempFile("tempPlot", ".html")
 
     val actualDefaultHeaders = defaultHeaders?.invoke(actualFile)
-    val actualPage = if(actualDefaultHeaders == null) this else copy(headers = actualDefaultHeaders + headers)
+    val actualPage = if (actualDefaultHeaders == null) this else copy(headers = actualDefaultHeaders + headers)
 
     val htmlString = actualPage.render(createHTML())
 

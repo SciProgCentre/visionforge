@@ -1,14 +1,14 @@
 package hep.dataforge.vision.gdml.demo
 
-import kscience.gdml.*
+import space.kscience.gdml.*
 
 
-fun cubes(): GDML = GDML {
+fun cubes(): Gdml = Gdml {
     val center = define.position("center")
     structure {
-        val air = ref<GDMLMaterial>("G4_AIR")
-        val tubeMaterial = ref<GDMLMaterial>("tube")
-        val boxMaterial = ref<GDMLMaterial>("box")
+        val air = ref<GdmlMaterial>("G4_AIR")
+        val tubeMaterial = ref<GdmlMaterial>("tube")
+        val boxMaterial = ref<GdmlMaterial>("box")
         val segment = solids.tube("segment", 20, 5.0) {
             rmin = 17
             deltaphi = 60

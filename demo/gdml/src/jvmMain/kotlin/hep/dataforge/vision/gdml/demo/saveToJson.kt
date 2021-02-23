@@ -3,8 +3,8 @@ package hep.dataforge.vision.gdml.demo
 import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.SolidManager
-import kscience.gdml.GDML
-import kscience.gdml.LUnit
+import space.kscience.gdml.Gdml
+import space.kscience.gdml.LUnit
 import java.io.File
 import java.nio.file.Paths
 
@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     require(inputFileName.endsWith(".gdml")){"GDML required"}
     val outputFileName = args.getOrNull(1)?:inputFileName.replace(".gdml",".json")
 
-    val gdml = GDML.readFile(Paths.get(inputFileName))
+    val gdml = Gdml.readFile(Paths.get(inputFileName))
         //GDML.readFile(Paths.get("D:\\Work\\Projects\\visionforge\\visionforge-spatial-gdml\\src\\jvmTest\\resources\\gdml\\simple1.gdml"))
 
     val vision = gdml.toVision {

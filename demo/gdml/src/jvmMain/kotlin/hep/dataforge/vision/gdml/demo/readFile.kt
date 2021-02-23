@@ -9,7 +9,7 @@ import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
-import kscience.gdml.GDML
+import space.kscience.gdml.Gdml
 import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream
 @OptIn(DFExperimental::class)
 fun VisionManager.readFile(file: File): Vision = when {
     file.extension == "gdml" || file.extension == "xml" -> {
-        GDML.readFile(file.toPath()).toVision {
+        Gdml.readFile(file.toPath()).toVision {
 //            lUnit = LUnit.CM
 //
 //            solidConfiguration = { parent, solid ->

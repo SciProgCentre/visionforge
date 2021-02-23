@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.jvm")
+    id("ru.mipt.npm.gradle.jvm")
     application
 }
 
@@ -18,5 +18,5 @@ dependencies{
 }
 
 application {
-    mainClass.set("ru.mipt.npm.sat.SatServerKt")
+    mainClass.set("ru.mipt.npm.gradle.sat.SatServerKt")
 }

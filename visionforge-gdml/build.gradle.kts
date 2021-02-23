@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.mpp")
+    id("ru.mipt.npm.gradle.mpp")
 }
 
 kotlin {
@@ -7,7 +7,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":visionforge-solid"))
-                api("kscience.gdml:gdml:0.2.0")
+                api("space.kscience:gdml:0.2.0")
             }
         }
     }

@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.jvm")
+    id("ru.mipt.npm.gradle.jvm")
 }
 
 val dataforgeVersion: String by rootProject.extra

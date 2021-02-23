@@ -74,4 +74,4 @@ Not all GDML solids are currently supported by the converter, they could be adde
 
 VisionForge is not tied to any single renderer. Right now the primary target is the Browser rendering with [Three.js library](https://threejs.org/). The Three.js supports different renderers including WebGL with hardware support and virtual reality.
 
-The bindings for three-js was implemented in kotlin-js based on a [work by Lars Ivar Hatledal](https://github.com/markaren/three-kt-wrapper). The wrapper allows seamless integration with a lot of different library APIs incliding custom cameras and CSG.
+The bindings for three-js was implemented in kotlin-js based on a [work by Lars Ivar Hatledal](https://github.com/markaren/three-kt-wrapper). The wrapper allows seamless integration with a lot of different library APIs including custom cameras and CSG.
