@@ -61,8 +61,6 @@ internal val cubes = Gdml {
 
 @DFExperimental
 fun main() {
-    println(cubes.encodeToString())
-
     val content = VisionManager.fragment {
         vision("canvas") {
             cubes.toVision()

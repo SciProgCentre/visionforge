@@ -1,6 +1,8 @@
 package hep.dataforge.vision.plotly
 
-import hep.dataforge.context.*
+import hep.dataforge.context.Context
+import hep.dataforge.context.PluginFactory
+import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
@@ -51,6 +53,6 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
  * Ensure that [PlotlyPlugin] is loaded in the global [VisionForge] context
  */
 @JsExport
-public fun withPlotly() {
+public fun usePlotly() {
     VisionForge.plugins.fetch(PlotlyPlugin)
 }

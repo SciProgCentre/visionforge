@@ -24,6 +24,9 @@ public fun renderVisionsInWindow() {
     }
 }
 
+/**
+ * Render all visions in an element with a given [id]
+ */
 @JsExport
 public fun renderVisionsAt(id: String) {
     val element = document.getElementById(id)

@@ -156,7 +156,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
  * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
  */
 @JsExport
-public fun withThreeJs() {
+public fun useThreeJs() {
     VisionForge.plugins.fetch(ThreePlugin)
 }
 

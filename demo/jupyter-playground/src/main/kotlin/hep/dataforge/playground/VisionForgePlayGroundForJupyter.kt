@@ -29,9 +29,10 @@ import space.kscience.gdml.Gdml
 @DFExperimental
 internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
 
-    val jsBundle = ResourceFallbacksBundle(listOf(ResourceLocation("js/visionforge-playground.js",
-        ResourcePathType.CLASSPATH_PATH)))
-    val jsResource = LibraryResource(name = "VisionForge", type = ResourceType.JS, bundles = listOf(jsBundle))
+    private val jsBundle = ResourceFallbacksBundle(listOf(
+        ResourceLocation("js/visionforge-playground.js", ResourcePathType.CLASSPATH_PATH))
+    )
+    private val jsResource = LibraryResource(name = "VisionForge", type = ResourceType.JS, bundles = listOf(jsBundle))
 
     private var counter = 0
 
@@ -43,7 +44,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"window.renderVisionsAt(\"$id\");" }
+            unsafe { +"renderVisionsAt(\"$id\");" }
         }
     }
 
@@ -54,17 +55,20 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
             VisionForge.withPlotly().withSolids()
         }
 
-        import("space.kscience.gdml.*",
+        import(
+            "space.kscience.gdml.*",
             "kscience.plotly.*",
             "kscience.plotly.models.*",
             "kotlinx.html.*",
-            "hep.dataforge.vision.solid.*")
+            "hep.dataforge.vision.solid.*"
+        )
+
         import("hep.dataforge.vision.VisionForge")
+
         render<Gdml> { gdmlModel ->
             val fragment = VisionManager.fragment {
                 vision(gdmlModel.toVision())
             }
-
             HTML(produceHtmlVisionString(fragment))
         }
 
