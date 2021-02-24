@@ -1,13 +1,17 @@
 package hep.dataforge.playground
 
-import hep.dataforge.context.Context
+import hep.dataforge.misc.DFExperimental
+import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.gdml.gdml
-import hep.dataforge.vision.html.*
-import hep.dataforge.vision.plotly.PlotlyPlugin
-import hep.dataforge.vision.plotly.VisionOfPlotly
-import hep.dataforge.vision.solid.SolidManager
-import hep.dataforge.vision.solid.solid
+import hep.dataforge.vision.gdml.toVision
+import hep.dataforge.vision.html.HtmlVisionFragment
+import hep.dataforge.vision.html.Page
+import hep.dataforge.vision.html.embedVisionFragment
+import hep.dataforge.vision.html.fragment
+import hep.dataforge.vision.plotly.toVision
+import hep.dataforge.vision.plotly.withPlotly
+import hep.dataforge.vision.solid.withSolids
 import hep.dataforge.vision.visionManager
 import kotlinx.html.div
 import kotlinx.html.id
@@ -15,21 +19,15 @@ import kotlinx.html.script
 import kotlinx.html.stream.createHTML
 import kotlinx.html.unsafe
 import kscience.plotly.Plot
-import kscience.plotly.PlotlyFragment
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.Notebook
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.*
-import org.jetbrains.kotlinx.jupyter.api.libraries.ResourceLocation
 import space.kscience.gdml.Gdml
 
 @JupyterLibrary
+@DFExperimental
 internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
-
-    private val context = Context("Playground") {
-        plugin(SolidManager)
-        plugin(PlotlyPlugin)
-    }
 
     val jsBundle = ResourceFallbacksBundle(listOf(ResourceLocation("js/visionforge-playground.js",
         ResourcePathType.CLASSPATH_PATH)))
@@ -41,7 +39,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         val id = "visionforge.vision[${counter++}]"
         div {
             this.id = id
-            embedVisionFragment(context.visionManager, fragment = fragment)
+            embedVisionFragment(VisionForge.visionManager, fragment = fragment)
         }
         script {
             type = "text/javascript"
@@ -52,15 +50,27 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
     override fun Builder.onLoaded(notebook: Notebook?) {
         resource(jsResource)
 
-        import("space.kscience.gdml.*", "kscience.plotly.*", "kscience.plotly.models.*")
+        onLoaded {
+            VisionForge.withPlotly().withSolids()
+        }
 
+        import("space.kscience.gdml.*",
+            "kscience.plotly.*",
+            "kscience.plotly.models.*",
+            "kotlinx.html.*",
+            "hep.dataforge.vision.solid.*")
+        import("hep.dataforge.vision.VisionForge")
         render<Gdml> { gdmlModel ->
             val fragment = VisionManager.fragment {
-                vision {
-                    solid {
-                        gdml(gdmlModel)
-                    }
-                }
+                vision(gdmlModel.toVision())
+            }
+
+            HTML(produceHtmlVisionString(fragment))
+        }
+
+        render<Vision> { vision ->
+            val fragment = VisionManager.fragment {
+                vision(vision)
             }
 
             HTML(produceHtmlVisionString(fragment))
@@ -68,12 +78,10 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
 
         render<Plot> { plot ->
             val fragment = VisionManager.fragment {
-                vision {
-                    VisionOfPlotly(plot.config)
-                }
+                vision(plot.toVision())
             }
 
-            HTML( produceHtmlVisionString(fragment))
+            HTML(produceHtmlVisionString(fragment))
         }
 
         render<kscience.plotly.HtmlFragment> { fragment ->
@@ -83,8 +91,6 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         render<Page> { page ->
             HTML(page.render(createHTML()), true)
         }
-
-
     }
 
 }

@@ -332,7 +332,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
 
     private fun finalize(final: SolidGroup): SolidGroup {
         //final.prototypes = proto
-        final.useStyle("Gdml") {
+        final.useStyle("gdml") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY
         }
 

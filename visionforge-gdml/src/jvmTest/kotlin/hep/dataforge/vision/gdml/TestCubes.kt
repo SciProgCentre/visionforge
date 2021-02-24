@@ -1,13 +1,23 @@
 package hep.dataforge.vision.gdml
 
+import hep.dataforge.context.Context
 import hep.dataforge.names.toName
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.SolidGroup
 import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.SolidReference
+import hep.dataforge.vision.visionManager
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import space.kscience.gdml.*
 import kotlin.test.assertNotNull
 
+internal val testContext = Context("TEST"){
+    plugin(SolidManager)
+}
+
 class TestCubes {
+
     internal val cubes = Gdml {
         val center = define.position("center")
         structure {
@@ -68,7 +78,19 @@ class TestCubes {
     fun testCubesReSerialize(){
         val vision = cubes.toVision()
         val serialized = SolidManager.encodeToString(vision)
-        val deserialized = SolidManager.decodeFromString(serialized) as SolidGroup
+        val deserialized = testContext.visionManager.decodeFromString(serialized) as SolidGroup
         assertNotNull(deserialized.getPrototype("solids.smallBox".toName()))
+        //println(testContext.visionManager.encodeToString(deserialized))
+        fun Vision.checkPrototypes(){
+            if(this is SolidReference){
+                assertDoesNotThrow { this.prototype }
+            }
+            if(this is SolidGroup){
+                children.forEach {
+                    it.value.checkPrototypes()
+                }
+            }
+        }
+        deserialized.checkPrototypes()
     }
 }

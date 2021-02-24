@@ -2,6 +2,7 @@ package hep.dataforge.vision.examples
 
 import hep.dataforge.context.Context
 import hep.dataforge.misc.DFExperimental
+import hep.dataforge.vision.Vision
 import hep.dataforge.vision.html.HtmlVisionFragment
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.page
@@ -30,6 +31,12 @@ public fun Context.makeVisionFile(
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }
-//    makeVisionFile(fragment, path = path, title = title, show = show) { actualPath ->
-//    scriptHeader("js/visionforge-playground.js", actualPath, resourceLocation)
-//}
+
+@DFExperimental
+public fun Context.makeVisionFile(
+    vision: Vision,
+    path: Path? = null,
+    title: String = "VisionForge page",
+    resourceLocation: ResourceLocation = ResourceLocation.SYSTEM,
+    show: Boolean = true,
+): Unit = makeVisionFile({ vision(vision) }, path, title, resourceLocation, show)

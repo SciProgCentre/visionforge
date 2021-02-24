@@ -44,8 +44,12 @@ public class SolidReferenceGroup(
      * Recursively search for defined template in the parent
      */
     override val prototype: Solid
-        get() = (parent as? SolidGroup)?.getPrototype(refName)
-            ?: error("Prototype with name $refName not found in $parent")
+        get() {
+            if(parent == null) error("No parent is present for SolidReferenceGroup")
+            if(parent !is SolidGroup) error("Reference parent is not a group")
+            return (parent as? SolidGroup)?.getPrototype(refName)
+                ?: error("Prototype with name $refName not found")
+        }
 
     override val children: Map<NameToken, Vision>
         get() = (prototype as? VisionGroup)?.children
@@ -71,7 +75,7 @@ public class SolidReferenceGroup(
     private fun prototypeFor(name: Name): Solid {
         return if (name.isEmpty()) prototype else {
             (prototype as? SolidGroup)?.get(name) as? Solid
-                ?: error("Prototype with name $name not found in $this")
+                ?: error("Prototype with name $name not found in SolidReferenceGroup $refName")
         }
     }
 

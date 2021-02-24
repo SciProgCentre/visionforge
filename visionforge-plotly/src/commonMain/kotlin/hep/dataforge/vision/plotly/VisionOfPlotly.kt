@@ -13,5 +13,7 @@ public class VisionOfPlotly(private val plotConfig: Config) : VisionBase(plotCon
     public val plot: Plot get() = Plot(plotConfig)
 }
 
+public fun Plot.toVision(): VisionOfPlotly = VisionOfPlotly(config)
+
 @DFExperimental
 public inline fun VisionOutput.plotly(block: Plot.() -> Unit): VisionOfPlotly = VisionOfPlotly(Plotly.plot(block).config)

@@ -11,7 +11,6 @@ import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
 import kotlinx.html.*
 import kotlin.collections.set
-import kotlin.collections.setOf
 
 
 /**
@@ -46,6 +45,7 @@ public abstract class VisionTagConsumer<R>(
 
     /**
      * Create a placeholder for a vision output with optional [Vision] in it
+     * TODO with multi-receivers could be replaced by [VisionTagConsumer, TagConsumer] extension
      */
     public fun <T> TagConsumer<T>.vision(
         name: Name,
