@@ -43,8 +43,16 @@ public class VisionClient : AbstractPlugin() {
 
     private fun getRenderers() = context.gather<ElementVisionRenderer>(ElementVisionRenderer.TYPE).values
 
-    private fun findRendererFor(vision: Vision): ElementVisionRenderer? =
-        getRenderers().maxByOrNull { it.rateVision(vision) }
+    private fun findRendererFor(vision: Vision): ElementVisionRenderer? {
+        return getRenderers().mapNotNull {
+            val rating = it.rateVision(vision)
+            if (rating > 0) {
+                rating to it
+            } else {
+                null
+            }
+        }.maxByOrNull { it.first }?.second
+    }
 
     private fun Element.getEmbeddedData(className: String): String? = getElementsByClassName(className)[0]?.innerHTML
 

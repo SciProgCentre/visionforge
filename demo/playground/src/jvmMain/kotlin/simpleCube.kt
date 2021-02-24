@@ -9,7 +9,7 @@ import hep.dataforge.vision.solid.box
 import hep.dataforge.vision.solid.solid
 import hep.dataforge.vision.solid.withSolids
 
-@OptIn(DFExperimental::class)
+@DFExperimental
 fun main() {
     val content = VisionManager.fragment {
         vision("canvas") {

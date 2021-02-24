@@ -35,27 +35,6 @@ public class Box(
         geometryBuilder.face4(node8, node5, node6, node7)
     }
 
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (other == null || this::class != other::class) return false
-//
-//        other as Box
-//
-//        if (xSize != other.xSize) return false
-//        if (ySize != other.ySize) return false
-//        if (zSize != other.zSize) return false
-//
-//        return solidEquals(this, other)
-//    }
-//
-//    override fun hashCode(): Int {
-//        var result = xSize.hashCode()
-//        result = 31 * result + ySize.hashCode()
-//        result = 31 * result + zSize.hashCode()
-//        return 31 * result + Solid.solidHashCode(this)
-//    }
-
-
     public companion object {
 
     }

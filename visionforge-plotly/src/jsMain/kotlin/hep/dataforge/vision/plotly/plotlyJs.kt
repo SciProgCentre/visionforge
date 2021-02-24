@@ -2,6 +2,8 @@ package hep.dataforge.vision.plotly
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
+import hep.dataforge.names.Name
+import hep.dataforge.names.asName
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionPlugin
@@ -26,9 +28,16 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
     }
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
-        val plot = (vision as? VisionOfPlotly)?.plot ?: error("Only VisionOfPlotly visions are supported")
+        val plot = (vision as? VisionOfPlotly)?.plot ?: error("VisionOfPlotly expected but ${vision::class} found")
         val config = PlotlyConfig.read(meta)
         element.plot(plot, config)
+    }
+
+    override fun content(target: String): Map<Name, Any> {
+        return when (target) {
+            ElementVisionRenderer.TYPE -> mapOf("plotly".asName() to this)
+            else -> super.content(target)
+        }
     }
 
     public companion object : PluginFactory<PlotlyPlugin> {

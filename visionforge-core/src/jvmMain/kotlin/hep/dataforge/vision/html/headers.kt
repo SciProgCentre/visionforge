@@ -8,6 +8,10 @@ import kotlinx.html.unsafe
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.security.MessageDigest
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.readText
+
 
 /**
  * The location of resources for plot.
@@ -37,21 +41,29 @@ public enum class ResourceLocation {
 internal const val VISIONFORGE_ASSETS_PATH = ".dataforge/vision/assets"
 
 
+private fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+
 /**
  * Check if the asset exists in given local location and put it there if it does not
  * @param
  */
+@OptIn(ExperimentalPathApi::class)
 internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String): Path {
+    //TODO add logging
     val fullPath = htmlPath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
 
-    if (Files.exists(fullPath)) {
-        //TODO checksum
-    } else {
-        //TODO add logging
+    val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
+    val md = MessageDigest.getInstance("MD5")
 
-        val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
+    val checksum = md.digest(bytes).toHexString()
+
+    val md5File = fullPath.resolveSibling(fullPath.fileName.toString() + ".md5")
+    val skip: Boolean = Files.exists(fullPath) && Files.exists(md5File) && md5File.readText() == checksum
+
+    if (!skip) {
         Files.createDirectories(fullPath.parent)
-        Files.write(fullPath, bytes, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
+        Files.write(fullPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)
     }
 
     return if (htmlPath.isAbsolute && fullPath.startsWith(htmlPath.parent)) {

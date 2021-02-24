@@ -8,21 +8,21 @@ import kotlin.test.assertEquals
 
 class SolidPluginTest {
     val vision = SolidGroup {
-        box(100,100,100, name = "aBox")
+        box(100, 100, 100, name = "aBox")
 
-        sphere(100,name = "aSphere"){
+        sphere(100, name = "aSphere") {
             z = 200
         }
     }
 
     @DFExperimental
     @Test
-    fun testPluginConverter(){
+    fun testPluginConverter() {
         val visionManager = Global.plugins.fetch(SolidManager).visionManager
         val meta = visionManager.encodeToMeta(vision)
 
         val reconstructed = visionManager.decodeFromMeta(meta) as SolidGroup
 
-        assertEquals(vision["aBox"],reconstructed["aBox"])
+        assertEquals(visionManager.encodeToJsonElement(vision["aBox"]!!), visionManager.encodeToJsonElement(reconstructed["aBox"]!!))
     }
 }

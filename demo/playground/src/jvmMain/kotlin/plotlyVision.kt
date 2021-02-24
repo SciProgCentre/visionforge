@@ -3,6 +3,7 @@ package hep.dataforge.vision.examples
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.plotly.plotly
 import hep.dataforge.vision.plotly.withPlotly
@@ -21,5 +22,5 @@ fun main() {
         }
     }
 
-    VisionForge.withPlotly().makeVisionFile(fragment)
+    VisionForge.withPlotly().makeVisionFile(fragment, resourceLocation = ResourceLocation.SYSTEM)
 }

@@ -28,8 +28,12 @@ public interface PrototypeHolder {
 @Serializable
 @SerialName("group.solid")
 public class SolidGroup(
-    @Serializable(Prototypes.Companion::class) @SerialName("prototypes") private var prototypes: MutableVisionGroup? = null,
+    @Serializable(Prototypes.Companion::class) @SerialName("prototypes") internal var prototypes: MutableVisionGroup? = null,
 ) : VisionGroupBase(), Solid, PrototypeHolder {
+
+    init {
+        prototypes?.parent = this
+    }
 
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 

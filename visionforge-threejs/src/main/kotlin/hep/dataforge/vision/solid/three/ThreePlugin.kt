@@ -126,9 +126,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
-    override fun rateVision(vision: Vision): Int {
-        return if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
-    }
+    override fun rateVision(vision: Vision): Int =
+        if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
     public fun renderSolid(
         element: Element,
@@ -141,7 +140,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun render(element: Element, vision: Vision, meta: Meta) {
         renderSolid(
             element,
-            vision as? Solid ?: error("Solid expected but ${vision::class} is found"),
+            vision as? Solid ?: error("Solid expected but ${vision::class} found"),
             Canvas3DOptions.read(meta)
         )
     }
@@ -157,7 +156,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
  * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
  */
 @JsExport
-public fun loadThreeJs() {
+public fun withThreeJs() {
     VisionForge.plugins.fetch(ThreePlugin)
 }
 

@@ -83,7 +83,7 @@ public abstract class VisionTagConsumer<R>(
         visionProvider: VisionOutput.() -> Vision,
     ): T = vision(name.toName(), visionProvider)
 
-    public inline fun <T> TagConsumer<T>.vision(
+    public fun <T> TagConsumer<T>.vision(
         vision: Vision,
     ): T = vision("vision[${vision.hashCode()}]".toName(), vision)
 
