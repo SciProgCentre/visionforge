@@ -3,13 +3,10 @@ package hep.dataforge.vision.solid.three
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.*
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.client.ElementVisionRenderer
-import hep.dataforge.vision.onPropertyChange
+import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.visible
+import hep.dataforge.vision.solid.three.set
 import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -155,9 +152,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 /**
  * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
  */
-@JsExport
-public fun useThreeJs() {
-    VisionForge.plugins.fetch(ThreePlugin)
+public fun VisionForge.useThreeJs() {
+    plugins.fetch(ThreePlugin)
 }
 
 public fun ThreePlugin.render(

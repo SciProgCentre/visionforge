@@ -2,25 +2,25 @@ package hep.dataforge.vision.examples
 
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
+import hep.dataforge.vision.invoke
 import hep.dataforge.vision.plotly.plotly
-import hep.dataforge.vision.plotly.withPlotly
+import hep.dataforge.vision.plotly.usePlotly
 import kscience.plotly.scatter
 
 @DFExperimental
-fun main() {
-    val fragment = VisionManager.fragment {
+fun main() = VisionForge {
+    val fragment = fragment {
         vision {
             plotly {
                 scatter {
-                    x(1,2,3)
-                    y(5,8,7)
+                    x(1, 2, 3)
+                    y(5, 8, 7)
                 }
             }
         }
     }
-
-    VisionForge.withPlotly().makeVisionFile(fragment, resourceLocation = ResourceLocation.SYSTEM)
+    usePlotly()
+    makeVisionFile(fragment, resourceLocation = ResourceLocation.SYSTEM)
 }

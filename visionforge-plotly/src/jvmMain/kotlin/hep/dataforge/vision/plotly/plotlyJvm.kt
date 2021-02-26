@@ -15,13 +15,9 @@ public actual class PlotlyPlugin : VisionPlugin(), Plugin {
 
     override val visionSerializersModule: SerializersModule get() = plotlySerializersModule
 
-    public companion object : PluginFactory<PlotlyPlugin> {
+    public actual companion object : PluginFactory<PlotlyPlugin> {
         override val tag: PluginTag = PluginTag("vision.plotly", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
         override fun invoke(meta: Meta, context: Context): PlotlyPlugin = PlotlyPlugin()
     }
-}
-
-public fun Context.withPlotly(): Context = apply {
-    plugins.fetch(PlotlyPlugin)
 }

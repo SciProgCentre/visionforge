@@ -26,8 +26,9 @@ public open class VisionGroupBase(
     override val children: Map<NameToken, Vision> get() = childrenInternal
 
     init {
-        childrenInternal.values.forEach {
-            it.parent = this
+        childrenInternal.forEach { (token, child) ->
+            if (child.parent != null && child.parent != this) error("Can't reassign existing parent for child $token")
+            child.parent = this
         }
     }
 
@@ -78,7 +79,7 @@ public open class VisionGroupBase(
                 childrenInternal[token] = child
             }
             child.parent !== this -> {
-                error("Can't reassign existing parent for $child")
+                error("Can't reassign existing parent for child $token")
             }
         }
         if (before != child) {

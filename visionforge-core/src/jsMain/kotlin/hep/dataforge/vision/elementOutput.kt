@@ -1,8 +1,7 @@
-package hep.dataforge.vision.client
+package hep.dataforge.vision
 
 import hep.dataforge.meta.Meta
 import hep.dataforge.misc.Type
-import hep.dataforge.vision.Vision
 import org.w3c.dom.Element
 
 @Type(ElementVisionRenderer.TYPE)

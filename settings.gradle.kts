@@ -3,10 +3,8 @@ pluginManagement {
     val toolsVersion = "0.8.3"
 
     repositories {
-        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
     }
 

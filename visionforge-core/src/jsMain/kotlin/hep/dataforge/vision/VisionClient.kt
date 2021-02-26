@@ -1,11 +1,8 @@
-package hep.dataforge.vision.client
+package hep.dataforge.vision
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaSerializer
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionChange
-import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.html.VisionTagConsumer
 import hep.dataforge.vision.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import hep.dataforge.vision.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE

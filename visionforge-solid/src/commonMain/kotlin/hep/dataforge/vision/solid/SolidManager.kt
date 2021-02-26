@@ -70,6 +70,7 @@ public class SolidManager(meta: Meta) : VisionPlugin(meta) {
 @DFExperimental
 public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
 
-public fun Context.withSolids(): Context = apply {
+@DFExperimental
+public fun VisionForge.useSolids(): Unit{
     plugins.fetch(SolidManager)
 }

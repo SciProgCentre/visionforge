@@ -1,7 +1,7 @@
 package hep.dataforge.vision.html
 
 import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.VisionForge
 import kotlinx.html.FlowContent
 import kotlinx.html.TagConsumer
 
@@ -18,4 +18,4 @@ public fun FlowContent.fragment(fragment: HtmlFragment) {
 public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
 
 @DFExperimental
-public fun VisionManager.Companion.fragment(content: HtmlVisionFragment): VisionTagConsumer<*>.() -> Unit = content
+public fun VisionForge.fragment(content: HtmlVisionFragment): VisionTagConsumer<*>.() -> Unit = content

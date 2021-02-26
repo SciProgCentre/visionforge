@@ -12,7 +12,6 @@ val fxVersion by extra("14")
 
 allprojects {
     repositories {
-        mavenLocal()
         mavenCentral()
         jcenter()
         maven("https://kotlin.bintray.com/kotlin-js-wrappers")

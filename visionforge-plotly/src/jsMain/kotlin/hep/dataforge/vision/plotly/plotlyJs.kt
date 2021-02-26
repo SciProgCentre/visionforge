@@ -6,11 +6,10 @@ import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
+import hep.dataforge.vision.ElementVisionRenderer
 import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionForge
+import hep.dataforge.vision.VisionClient
 import hep.dataforge.vision.VisionPlugin
-import hep.dataforge.vision.client.ElementVisionRenderer
-import hep.dataforge.vision.client.VisionClient
 import kotlinx.serialization.modules.SerializersModule
 import kscience.plotly.PlotlyConfig
 import kscience.plotly.plot
@@ -42,17 +41,9 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
         }
     }
 
-    public companion object : PluginFactory<PlotlyPlugin> {
+    public actual companion object : PluginFactory<PlotlyPlugin> {
         override val tag: PluginTag = PluginTag("vision.plotly", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
         override fun invoke(meta: Meta, context: Context): PlotlyPlugin = PlotlyPlugin()
     }
-}
-
-/**
- * Ensure that [PlotlyPlugin] is loaded in the global [VisionForge] context
- */
-@JsExport
-public fun usePlotly() {
-    VisionForge.plugins.fetch(PlotlyPlugin)
 }

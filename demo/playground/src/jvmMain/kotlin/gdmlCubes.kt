@@ -2,11 +2,11 @@ package hep.dataforge.vision.examples
 
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
-import hep.dataforge.vision.solid.withSolids
+import hep.dataforge.vision.invoke
+import hep.dataforge.vision.solid.useSolids
 import space.kscience.gdml.*
 
 internal val cubes = Gdml {
@@ -60,12 +60,12 @@ internal val cubes = Gdml {
 }
 
 @DFExperimental
-fun main() {
-    val content = VisionManager.fragment {
+fun main() = VisionForge {
+    val content = VisionForge.fragment {
         vision("canvas") {
             cubes.toVision()
         }
     }
-
-    VisionForge.withSolids().makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
+    useSolids()
+    makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
 }

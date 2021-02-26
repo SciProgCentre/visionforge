@@ -1,7 +1,7 @@
 package hep.dataforge.vision.three.server
 
-import hep.dataforge.context.Context
 import hep.dataforge.misc.DFExperimental
+import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.html.HtmlVisionFragment
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.page
@@ -16,7 +16,7 @@ public fun VisionServer.useThreeJs(): Unit {
 }
 
 @DFExperimental
-public fun Context.makeThreeJsFile(
+public fun VisionForge.makeThreeJsFile(
     content: HtmlVisionFragment,
     path: Path? = null,
     title: String = "VisionForge page",

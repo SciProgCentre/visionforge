@@ -1,8 +1,8 @@
 package hep.dataforge.vision.examples
 
-import hep.dataforge.context.Context
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.Vision
+import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.html.HtmlVisionFragment
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.page
@@ -19,7 +19,7 @@ public fun VisionServer.usePlayground(): Unit {
 }
 
 @DFExperimental
-public fun Context.makeVisionFile(
+public fun VisionForge.makeVisionFile(
     content: HtmlVisionFragment,
     path: Path? = null,
     title: String = "VisionForge page",
@@ -33,7 +33,7 @@ public fun Context.makeVisionFile(
 }
 
 @DFExperimental
-public fun Context.makeVisionFile(
+public fun VisionForge.makeVisionFile(
     vision: Vision,
     path: Path? = null,
     title: String = "VisionForge page",

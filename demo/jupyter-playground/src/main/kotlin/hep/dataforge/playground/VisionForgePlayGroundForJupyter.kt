@@ -3,15 +3,14 @@ package hep.dataforge.playground
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.html.HtmlVisionFragment
 import hep.dataforge.vision.html.Page
 import hep.dataforge.vision.html.embedVisionFragment
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.plotly.toVision
-import hep.dataforge.vision.plotly.withPlotly
-import hep.dataforge.vision.solid.withSolids
+import hep.dataforge.vision.plotly.usePlotly
+import hep.dataforge.vision.solid.useSolids
 import hep.dataforge.vision.visionManager
 import kotlinx.html.div
 import kotlinx.html.id
@@ -44,7 +43,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"renderVisionsAt(\"$id\");" }
+            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
         }
     }
 
@@ -52,7 +51,8 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         resource(jsResource)
 
         onLoaded {
-            VisionForge.withPlotly().withSolids()
+            VisionForge.useSolids()
+            VisionForge.usePlotly()
         }
 
         import(
@@ -66,14 +66,14 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         import("hep.dataforge.vision.VisionForge")
 
         render<Gdml> { gdmlModel ->
-            val fragment = VisionManager.fragment {
+            val fragment = VisionForge.fragment {
                 vision(gdmlModel.toVision())
             }
             HTML(produceHtmlVisionString(fragment))
         }
 
         render<Vision> { vision ->
-            val fragment = VisionManager.fragment {
+            val fragment = VisionForge.fragment {
                 vision(vision)
             }
 
@@ -81,7 +81,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
 
         render<Plot> { plot ->
-            val fragment = VisionManager.fragment {
+            val fragment = VisionForge.fragment {
                 vision(plot.toVision())
             }
 
