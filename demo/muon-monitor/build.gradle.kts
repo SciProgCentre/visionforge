@@ -51,6 +51,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation(project(":visionforge-threejs"))
+                implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
             }
         }
     }

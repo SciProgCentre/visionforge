@@ -10,13 +10,11 @@ import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.react.ThreeCanvasComponent
 import hep.dataforge.vision.react.flexColumn
 import hep.dataforge.vision.solid.Solid
-import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.Solids
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
 import hep.dataforge.vision.solid.three.ThreeCanvas
 import kotlinx.browser.window
 import kotlinx.css.*
-import space.kscience.gdml.Gdml
-import space.kscience.gdml.decodeFromString
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.RProps
@@ -24,6 +22,8 @@ import react.child
 import react.dom.h1
 import react.functionalComponent
 import react.useState
+import space.kscience.gdml.Gdml
+import space.kscience.gdml.decodeFromString
 import styled.css
 import styled.styledDiv
 
@@ -52,7 +52,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     }
 
     fun loadData(name: String, data: String) {
-        val visionManager = props.context.plugins.fetch(SolidManager).visionManager
+        val visionManager = props.context.plugins.fetch(Solids).visionManager
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = Gdml.decodeFromString(data)

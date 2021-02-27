@@ -30,9 +30,9 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val string =  SolidManager.encodeToString(cube)
+        val string =  Solids.encodeToString(cube)
         println(string)
-        val newCube = SolidManager.decodeFromString(string)
+        val newCube = Solids.decodeFromString(string)
         assertEquals(cube.meta, newCube.meta)
     }
 
@@ -51,9 +51,9 @@ class SerializationTest {
                 }
             }
         }
-        val string = SolidManager.encodeToString(group)
+        val string = Solids.encodeToString(group)
         println(string)
-        val reconstructed = SolidManager.decodeFromString(string) as SolidGroup
+        val reconstructed = Solids.decodeFromString(string) as SolidGroup
         assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
     }
 

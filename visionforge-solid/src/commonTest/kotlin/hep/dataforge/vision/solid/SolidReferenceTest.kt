@@ -3,7 +3,6 @@ package hep.dataforge.vision.solid
 import hep.dataforge.vision.get
 import hep.dataforge.vision.style
 import hep.dataforge.vision.useStyle
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,8 +26,8 @@ class SolidReferenceTest {
 
     @Test
     fun testReferenceSerialization(){
-        val serialized = SolidManager.jsonForSolids.encodeToJsonElement(groupWithReference)
-        val deserialized = SolidManager.jsonForSolids.decodeFromJsonElement(SolidGroup.serializer(), serialized)
+        val serialized = Solids.jsonForSolids.encodeToJsonElement(groupWithReference)
+        val deserialized = Solids.jsonForSolids.decodeFromJsonElement(SolidGroup.serializer(), serialized)
         assertEquals("blue", (deserialized["test"] as Solid).color.string)
     }
 }

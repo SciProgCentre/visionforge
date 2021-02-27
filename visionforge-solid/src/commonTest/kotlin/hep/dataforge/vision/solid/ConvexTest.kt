@@ -28,7 +28,7 @@ class ConvexTest {
 
         val convex = group.children.values.first() as Convex
 
-        val json = SolidManager.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
+        val json = Solids.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
         val meta = json.toMetaItem().node!!
 
         val points = meta.getIndexed("points").values.map { (it as MetaItemNode<*>).node.point3D() }

@@ -5,12 +5,12 @@ import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.invoke
+import hep.dataforge.vision.plotly.PlotlyPlugin
 import hep.dataforge.vision.plotly.plotly
-import hep.dataforge.vision.plotly.usePlotly
 import kscience.plotly.scatter
 
 @DFExperimental
-fun main() = VisionForge {
+fun main() = VisionForge(PlotlyPlugin) {
     val fragment = fragment {
         vision {
             plotly {
@@ -21,6 +21,5 @@ fun main() = VisionForge {
             }
         }
     }
-    usePlotly()
     makeVisionFile(fragment, resourceLocation = ResourceLocation.SYSTEM)
 }

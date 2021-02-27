@@ -4,7 +4,7 @@ package ru.mipt.npm.muon.monitor.server
 import hep.dataforge.context.Context
 import hep.dataforge.context.Global
 import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.Solids
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -38,7 +38,7 @@ private val generator = Cos2TrackGenerator(JDKRandomGenerator(223))
 fun Application.module(context: Context = Global) {
     val currentDir = File(".").absoluteFile
     environment.log.info("Current directory: $currentDir")
-    val solidManager = context.plugins.load(SolidManager)
+    val solidManager = context.plugins.load(Solids)
 
     install(DefaultHeaders)
     install(CallLogging)

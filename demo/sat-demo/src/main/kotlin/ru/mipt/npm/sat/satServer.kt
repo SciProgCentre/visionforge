@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 fun main() {
     val satContext = Global.context("sat") {
-        plugin(SolidManager)
+        plugin(Solids)
     }
 
     //Create a geometry

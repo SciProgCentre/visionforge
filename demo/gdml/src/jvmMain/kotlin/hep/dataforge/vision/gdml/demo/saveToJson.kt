@@ -2,7 +2,7 @@ package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.Solids
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.LUnit
 import java.io.File
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
         lUnit = LUnit.CM
     }
 
-    val json = SolidManager.encodeToString(vision)
+    val json = Solids.encodeToString(vision)
     println(json)
     File(outputFileName).writeText(json)
     //File("D:\\Work\\Projects\\gdml.kt\\gdml-source\\cubes.json").writeText(json)

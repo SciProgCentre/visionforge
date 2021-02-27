@@ -1,10 +1,12 @@
 package hep.dataforge.vision
 
 import hep.dataforge.context.Context
+import hep.dataforge.misc.DFExperimental
 import kotlinx.browser.document
 import kotlinx.browser.window
 
 @JsExport
+@DFExperimental
 public actual object VisionForge{
     /**
      * Render all visions in this [window] using current global state of [VisionForge]
@@ -32,6 +34,8 @@ private val visionForgeContext = Context("VisionForge"){
     plugin(VisionClient)
 }
 
+@DFExperimental
 public actual val VisionForge.context: Context get() = visionForgeContext
 
+@DFExperimental
 public val VisionForge.visionClient: VisionClient get() = plugins.fetch(VisionClient)

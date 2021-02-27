@@ -1,14 +1,10 @@
 package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.misc.DFExperimental
-import hep.dataforge.values.asValue
-import hep.dataforge.vision.gdml.readFile
-import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.SolidManager
-import hep.dataforge.vision.solid.SolidMaterial
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
+import hep.dataforge.vision.gdml.readFile
+import hep.dataforge.vision.gdml.toVision
 import space.kscience.gdml.Gdml
 import java.io.File
 import java.util.zip.GZIPInputStream

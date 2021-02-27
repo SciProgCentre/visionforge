@@ -5,12 +5,12 @@ import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.invoke
+import hep.dataforge.vision.solid.Solids
 import hep.dataforge.vision.solid.box
 import hep.dataforge.vision.solid.solid
-import hep.dataforge.vision.solid.useSolids
 
 @DFExperimental
-fun main() = VisionForge.invoke {
+fun main() = VisionForge(Solids) {
     val content = fragment {
         vision("canvas") {
             solid {
@@ -18,6 +18,5 @@ fun main() = VisionForge.invoke {
             }
         }
     }
-    useSolids()
     makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
 }

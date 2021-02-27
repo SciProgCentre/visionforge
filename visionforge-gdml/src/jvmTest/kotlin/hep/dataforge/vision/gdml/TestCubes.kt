@@ -4,8 +4,8 @@ import hep.dataforge.context.Context
 import hep.dataforge.names.toName
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.vision.solid.SolidReference
+import hep.dataforge.vision.solid.Solids
 import hep.dataforge.vision.visionManager
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -13,7 +13,7 @@ import space.kscience.gdml.*
 import kotlin.test.assertNotNull
 
 internal val testContext = Context("TEST"){
-    plugin(SolidManager)
+    plugin(Solids)
 }
 
 class TestCubes {
@@ -77,7 +77,7 @@ class TestCubes {
     @Test
     fun testCubesReSerialize(){
         val vision = cubes.toVision()
-        val serialized = SolidManager.encodeToString(vision)
+        val serialized = Solids.encodeToString(vision)
         val deserialized = testContext.visionManager.decodeFromString(serialized) as SolidGroup
         assertNotNull(deserialized.getPrototype("solids.smallBox".toName()))
         //println(testContext.visionManager.encodeToString(deserialized))

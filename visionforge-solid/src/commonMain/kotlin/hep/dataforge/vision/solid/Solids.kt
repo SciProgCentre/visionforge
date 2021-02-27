@@ -16,16 +16,16 @@ import kotlinx.serialization.modules.subclass
 import kotlin.reflect.KClass
 
 
-public class SolidManager(meta: Meta) : VisionPlugin(meta) {
+public class Solids(meta: Meta) : VisionPlugin(meta) {
 
     override val tag: PluginTag get() = Companion.tag
 
     override val visionSerializersModule: SerializersModule get() = serializersModuleForSolids
 
-    public companion object : PluginFactory<SolidManager> {
+    public companion object : PluginFactory<Solids> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out SolidManager> = SolidManager::class
-        override fun invoke(meta: Meta, context: Context): SolidManager = SolidManager(meta)
+        override val type: KClass<out Solids> = Solids::class
+        override fun invoke(meta: Meta, context: Context): Solids = Solids(meta)
 
         private fun PolymorphicModuleBuilder<Solid>.solids() {
             subclass(SolidGroup.serializer())
@@ -69,8 +69,3 @@ public class SolidManager(meta: Meta) : VisionPlugin(meta) {
 @VisionBuilder
 @DFExperimental
 public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
-
-@DFExperimental
-public fun VisionForge.useSolids(): Unit{
-    plugins.fetch(SolidManager)
-}

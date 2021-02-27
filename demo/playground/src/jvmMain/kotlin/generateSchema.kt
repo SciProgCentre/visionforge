@@ -2,14 +2,14 @@ package hep.dataforge.vision.examples
 
 import com.github.ricky12awesome.jss.encodeToSchema
 import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.Solids
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 @ExperimentalSerializationApi
 fun main() {
     val schema = Json {
-        serializersModule = SolidManager.serializersModuleForSolids
+        serializersModule = Solids.serializersModuleForSolids
         prettyPrintIndent = "  "
         prettyPrint = true
         ignoreUnknownKeys = true

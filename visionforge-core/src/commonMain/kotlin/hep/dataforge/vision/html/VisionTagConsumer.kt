@@ -20,6 +20,8 @@ import kotlin.collections.set
 public class VisionOutput @PublishedApi internal constructor() {
     public var meta: Meta = Meta.EMPTY
 
+    //TODO expose a way to define required plugins.
+
     public inline fun meta(block: MetaBuilder.() -> Unit) {
         this.meta = Meta(block)
     }

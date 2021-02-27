@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class VisionUpdateTest {
-    val solidManager = Global.plugins.fetch(SolidManager)
+    val solidManager = Global.plugins.fetch(Solids)
     val visionManager = solidManager.visionManager
 
     @Test

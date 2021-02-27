@@ -11,7 +11,7 @@ import java.nio.file.Paths
 import kotlin.random.Random
 
 @OptIn(DFExperimental::class)
-fun main() = VisionForge.invoke {
+fun main() = VisionForge(Solids) {
 
     val random = Random(112233)
     val fragment = fragment {
@@ -33,7 +33,6 @@ fun main() = VisionForge.invoke {
             }
         }
     }
-    useSolids()
     makeVisionFile(
         fragment,
         Paths.get("randomSpheres.html"),

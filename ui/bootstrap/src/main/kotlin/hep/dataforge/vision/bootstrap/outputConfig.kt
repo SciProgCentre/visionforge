@@ -44,7 +44,7 @@ public external interface CanvasControlsProps : RProps {
 
 public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
     val visionManager = useMemo(
-        { props.canvas.three.solidManager.visionManager },
+        { props.canvas.three.solids.visionManager },
         arrayOf(props.canvas)
     )
     flexColumn {

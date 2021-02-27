@@ -28,7 +28,7 @@ public interface PrototypeHolder {
 @Serializable
 @SerialName("group.solid")
 public class SolidGroup(
-    @Serializable(Prototypes.Companion::class) @SerialName("prototypes") internal var prototypes: MutableVisionGroup? = null,
+    @Serializable(PrototypeSerializer::class) internal var prototypes: MutableVisionGroup? = null,
 ) : VisionGroupBase(), Solid, PrototypeHolder {
 
     init {
@@ -98,17 +98,9 @@ public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup
 /**
  * A special class which works as a holder for prototypes
  */
-@Serializable(Prototypes.Companion::class)
 internal class Prototypes(
-    children: Map<NameToken, Vision> = emptyMap(),
-) : VisionGroupBase(children as? MutableMap<NameToken, Vision> ?: children.toMutableMap()), PrototypeHolder {
-
-    init {
-        //used during deserialization only
-        children.values.forEach {
-            it.parent = parent
-        }
-    }
+    children: MutableMap<NameToken, Vision> = hashMapOf(),
+) : VisionGroupBase(children), PrototypeHolder {
 
     override fun getProperty(
         name: Name,
@@ -118,34 +110,34 @@ internal class Prototypes(
     ): MetaItem? = null
 
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-        error("Can't ser property of prototypes container")
+        error("Can't set property of a prototypes container")
     }
 
     override val descriptor: NodeDescriptor? = null
-
-    companion object : KSerializer<MutableVisionGroup> {
-
-        private val mapSerializer: KSerializer<Map<NameToken, Vision>> =
-            MapSerializer(
-                NameToken.serializer(),
-                PolymorphicSerializer(Vision::class)
-            )
-
-        override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
-
-        override fun deserialize(decoder: Decoder): MutableVisionGroup {
-            val map = mapSerializer.deserialize(decoder)
-            return Prototypes(map)
-        }
-
-        override fun serialize(encoder: Encoder, value: MutableVisionGroup) {
-            mapSerializer.serialize(encoder, value.children)
-        }
-    }
 
     override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit) {
         apply(builder)
     }
 
     override fun getPrototype(name: Name): Solid? = get(name) as? Solid
+}
+
+internal class PrototypeSerializer : KSerializer<MutableVisionGroup> {
+
+    private val mapSerializer: KSerializer<Map<NameToken, Vision>> =
+        MapSerializer(
+            NameToken.serializer(),
+            PolymorphicSerializer(Vision::class)
+        )
+
+    override val descriptor: SerialDescriptor get() = mapSerializer.descriptor
+
+    override fun deserialize(decoder: Decoder): MutableVisionGroup {
+        val map = mapSerializer.deserialize(decoder)
+        return Prototypes(map.toMutableMap())
+    }
+
+    override fun serialize(encoder: Encoder, value: MutableVisionGroup) {
+        mapSerializer.serialize(encoder, value.children)
+    }
 }

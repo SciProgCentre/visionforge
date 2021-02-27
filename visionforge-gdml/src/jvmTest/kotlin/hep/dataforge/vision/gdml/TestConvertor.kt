@@ -1,7 +1,7 @@
 package hep.dataforge.vision.gdml
 
 import hep.dataforge.names.toName
-import hep.dataforge.vision.solid.SolidManager
+import hep.dataforge.vision.solid.Solids
 import org.junit.jupiter.api.Test
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromStream
@@ -23,7 +23,7 @@ class TestConvertor {
         val gdml = Gdml.decodeFromStream(stream)
         val vision = gdml.toVision()
         assertNotNull(vision.getPrototype("solids.box".toName()))
-        println(SolidManager.encodeToString(vision))
+        println(Solids.encodeToString(vision))
     }
 
     @Test

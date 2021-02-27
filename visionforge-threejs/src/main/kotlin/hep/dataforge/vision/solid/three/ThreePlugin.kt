@@ -6,7 +6,6 @@ import hep.dataforge.names.*
 import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.solid.three.set
 import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +19,7 @@ import info.laht.threekt.objects.Group as ThreeGroup
 public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
-    public val solidManager: SolidManager by require(SolidManager)
+    public val solids: Solids by require(Solids)
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)

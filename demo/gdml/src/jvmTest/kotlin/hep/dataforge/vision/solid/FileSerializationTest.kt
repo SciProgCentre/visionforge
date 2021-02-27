@@ -9,7 +9,7 @@ class FileSerializationTest {
     @Ignore
     fun testFileRead(){
         val text = this::class.java.getResourceAsStream("/cubes.json").readBytes().decodeToString()
-        val visual = SolidManager.decodeFromString(text) as SolidGroup
+        val visual = Solids.decodeFromString(text) as SolidGroup
         visual["composite_001".asName()]
     }
 }

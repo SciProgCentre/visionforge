@@ -6,7 +6,7 @@ import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.html.ResourceLocation
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.invoke
-import hep.dataforge.vision.solid.useSolids
+import hep.dataforge.vision.solid.Solids
 import space.kscience.gdml.*
 
 internal val cubes = Gdml {
@@ -60,12 +60,11 @@ internal val cubes = Gdml {
 }
 
 @DFExperimental
-fun main() = VisionForge {
+fun main() = VisionForge(Solids) {
     val content = VisionForge.fragment {
         vision("canvas") {
             cubes.toVision()
         }
     }
-    useSolids()
     makeVisionFile(content, resourceLocation = ResourceLocation.SYSTEM)
 }

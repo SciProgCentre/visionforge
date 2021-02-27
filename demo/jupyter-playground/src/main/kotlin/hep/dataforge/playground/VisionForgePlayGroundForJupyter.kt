@@ -10,7 +10,8 @@ import hep.dataforge.vision.html.embedVisionFragment
 import hep.dataforge.vision.html.fragment
 import hep.dataforge.vision.plotly.toVision
 import hep.dataforge.vision.plotly.usePlotly
-import hep.dataforge.vision.solid.useSolids
+import hep.dataforge.vision.plugins
+import hep.dataforge.vision.solid.Solids
 import hep.dataforge.vision.visionManager
 import kotlinx.html.div
 import kotlinx.html.id
@@ -51,7 +52,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         resource(jsResource)
 
         onLoaded {
-            VisionForge.useSolids()
+            VisionForge.plugins.fetch(Solids)
             VisionForge.usePlotly()
         }
 

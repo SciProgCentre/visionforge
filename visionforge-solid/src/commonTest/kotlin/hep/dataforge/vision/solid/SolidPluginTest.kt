@@ -18,7 +18,7 @@ class SolidPluginTest {
     @DFExperimental
     @Test
     fun testPluginConverter() {
-        val visionManager = Global.plugins.fetch(SolidManager).visionManager
+        val visionManager = Global.plugins.fetch(Solids).visionManager
         val meta = visionManager.encodeToMeta(vision)
 
         val reconstructed = visionManager.decodeFromMeta(meta) as SolidGroup
