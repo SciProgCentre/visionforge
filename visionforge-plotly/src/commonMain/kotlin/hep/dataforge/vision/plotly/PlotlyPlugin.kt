@@ -1,6 +1,7 @@
 package hep.dataforge.vision.plotly
 
 import hep.dataforge.context.PluginFactory
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionForge
 import hep.dataforge.vision.VisionPlugin
@@ -22,6 +23,7 @@ internal val plotlySerializersModule = SerializersModule {
 /**
  * Ensure that [PlotlyPlugin] is loaded in the global [VisionForge] context
  */
+@DFExperimental
 public fun VisionForge.usePlotly() {
     plugins.fetch(PlotlyPlugin)
 }

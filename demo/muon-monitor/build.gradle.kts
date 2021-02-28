@@ -10,7 +10,7 @@ group = "ru.mipt.npm"
 val ktorVersion: String by rootProject.extra
 
 kscience {
-//    useSerialization()
+    useSerialization()
     application()
 }
 
@@ -58,7 +58,7 @@ kotlin {
 }
 
 application {
-    mainClass.set("ru.mipt.npm.gradle.muon.monitor.server.MMServerKt")
+    mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
 distributions {

@@ -72,7 +72,7 @@ public class SolidGroup(
     }
 
     public companion object {
-        //public val PROTOTYPES_TOKEN = NameToken("@prototypes")
+        public val PROTOTYPES_TOKEN: NameToken = NameToken("@prototypes")
     }
 }
 
