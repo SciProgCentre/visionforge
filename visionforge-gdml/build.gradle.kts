@@ -7,7 +7,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":visionforge-solid"))
-                api("space.kscience:gdml:0.2.0")
+                api("space.kscience:gdml:0.3.0-dev")
             }
         }
     }

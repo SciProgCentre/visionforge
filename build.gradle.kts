@@ -12,8 +12,10 @@ val fxVersion by extra("14")
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
+        maven("https://repo.kotlin.link")
         maven("https://kotlin.bintray.com/kotlin-js-wrappers")
         maven("https://dl.bintray.com/pdvrieze/maven")
         maven("http://maven.jzy3d.org/releases")

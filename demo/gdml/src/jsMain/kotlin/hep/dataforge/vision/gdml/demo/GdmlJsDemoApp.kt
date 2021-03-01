@@ -2,6 +2,7 @@ package hep.dataforge.vision.gdml.demo
 
 import hep.dataforge.context.Global
 import hep.dataforge.vision.Application
+import hep.dataforge.vision.gdml.GdmlShowcase
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.three.ThreePlugin
 import hep.dataforge.vision.startApplication
@@ -20,7 +21,7 @@ private class GDMLDemoApp : Application {
         }
         render(element) {
             child(GDMLApp) {
-                val vision = cubes().toVision()
+                val vision = GdmlShowcase.cubes.toVision()
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))
                 attrs {
                     this.context = context

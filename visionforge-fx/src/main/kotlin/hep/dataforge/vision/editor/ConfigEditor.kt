@@ -15,6 +15,7 @@ import hep.dataforge.vision.dfIconView
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTreeTableCell
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
@@ -26,17 +27,17 @@ import tornadofx.*
  *
  * @author Alexander Nozik
  */
-class ConfigEditor(
-    val rootNode: FXMetaNode<Config>,
-    val allowNew: Boolean = true,
+public class ConfigEditor(
+    public val rootNode: FXMetaNode<Config>,
+    public val allowNew: Boolean = true,
     title: String = "Configuration editor"
 ) : Fragment(title = title, icon = dfIconView) {
     //TODO replace parameters by properties
 
-    constructor(config: Config, descriptor: NodeDescriptor?, title: String = "Configuration editor") :
+    public constructor(config: Config, descriptor: NodeDescriptor?, title: String = "Configuration editor") :
             this(FXMeta.root(config, descriptor = descriptor), title = title)
 
-    override val root = borderpane {
+    override val root: BorderPane = borderpane {
         center = treetableview<FXMeta<Config>> {
             root = TreeItem(rootNode)
             root.isExpanded = true

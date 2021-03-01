@@ -2,6 +2,7 @@ package hep.dataforge.vision.solid.three
 
 import hep.dataforge.context.*
 import hep.dataforge.meta.Meta
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.names.*
 import hep.dataforge.vision.*
 import hep.dataforge.vision.solid.*
@@ -50,7 +51,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         is SolidGroup -> {
             val group = ThreeGroup()
             obj.children.forEach { (token, child) ->
-                if (child is Solid && child.ignore != true) {
+                if (child is Solid && token != SolidGroup.PROTOTYPES_TOKEN && child.ignore != true) {
                     try {
                         val object3D = buildObject3D(child)
                         group[token] = object3D
@@ -151,6 +152,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 /**
  * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
  */
+@DFExperimental
 public fun VisionForge.useThreeJs() {
     plugins.fetch(ThreePlugin)
 }

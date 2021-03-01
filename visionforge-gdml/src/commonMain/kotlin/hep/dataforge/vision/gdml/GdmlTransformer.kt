@@ -66,7 +66,12 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         return ref
     }
 
-    private fun proxyVolume(root: Gdml, group: SolidGroup, physVolume: GdmlPhysVolume, volume: GdmlGroup): SolidReferenceGroup {
+    private fun proxyVolume(
+        root: Gdml,
+        group: SolidGroup,
+        physVolume: GdmlPhysVolume,
+        volume: GdmlGroup,
+    ): SolidReferenceGroup {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)

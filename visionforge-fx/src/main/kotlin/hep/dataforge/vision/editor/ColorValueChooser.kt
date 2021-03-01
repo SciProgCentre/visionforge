@@ -42,7 +42,7 @@ public class ColorValueChooser : ValueChooserBase<ColorPicker>() {
         return node
     }
 
-    companion object : ValueChooser.Factory {
+    public companion object : ValueChooser.Factory {
         override val name: Name = "color".asName()
 
         override fun invoke(meta: Meta): ValueChooser =

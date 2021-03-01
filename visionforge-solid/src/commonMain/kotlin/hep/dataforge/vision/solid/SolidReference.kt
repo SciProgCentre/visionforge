@@ -163,7 +163,7 @@ public class SolidReferenceGroup(
  * Get a vision prototype if it is a [SolidReferenceGroup] or vision itself if it is not
  */
 public val Vision.prototype: Vision
-    get() = if (this is SolidReference) prototype else this
+    get() = if (this is SolidReference) prototype.prototype else this
 
 /**
  * Create ref for existing prototype

@@ -9,13 +9,13 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import kotlin.test.Test
 
+@DFExperimental
 class HtmlTagTest {
 
-    @OptIn(DFExperimental::class)
     fun VisionOutput.base(block: VisionBase.() -> Unit) =
         VisionBase().apply(block)
 
-    val fragment: HtmlVisionFragment = {
+     val fragment: HtmlVisionFragment = {
         div {
             h1 { +"Head" }
             vision("ddd") {

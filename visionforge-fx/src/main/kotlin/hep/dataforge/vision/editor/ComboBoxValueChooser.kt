@@ -52,7 +52,7 @@ public class ComboBoxValueChooser(public val values: Collection<Value>? = null) 
         node.selectionModel.select(value)
     }
 
-    companion object : ValueChooser.Factory {
+    public companion object : ValueChooser.Factory {
         override val name: Name = "combo".asName()
 
         override fun invoke(meta: Meta): ValueChooser =

@@ -1,11 +1,13 @@
 package ru.mipt.npm.sat
 
 import hep.dataforge.meta.set
+import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.solid.*
 import hep.dataforge.vision.style
 import hep.dataforge.vision.useStyle
 import kotlin.math.PI
 
+@DFExperimental
 internal fun visionOfSatellite(
     layers: Int = 10,
     layerHeight: Number = 10,

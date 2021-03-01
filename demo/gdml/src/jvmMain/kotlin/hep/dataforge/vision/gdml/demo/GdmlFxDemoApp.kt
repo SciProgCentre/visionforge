@@ -5,6 +5,7 @@ import hep.dataforge.vision.VisionManager
 import hep.dataforge.vision.describedProperties
 import hep.dataforge.vision.editor.VisualObjectEditorFragment
 import hep.dataforge.vision.editor.VisualObjectTreeFragment
+import hep.dataforge.vision.gdml.GdmlShowcase.cubes
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.FX3DPlugin
 import hep.dataforge.vision.solid.FXCanvas3D
@@ -60,7 +61,7 @@ class GDMLView : View() {
 
     init {
         runAsync {
-            cubes().toVision()
+            cubes.toVision()
         } ui {
             canvas.render(it)
         }

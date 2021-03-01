@@ -35,18 +35,18 @@ public interface ValueChooser {
      *
      * @return
      */
-    val node: Node
+    public val node: Node
 
     /**
      * The descriptor property for this value. Could be null
      *
      * @return
      */
-    val descriptorProperty: ObjectProperty<ValueDescriptor?>
-    var descriptor: ValueDescriptor?
+    public val descriptorProperty: ObjectProperty<ValueDescriptor?>
+    public var descriptor: ValueDescriptor?
 
-    val valueProperty: ObjectProperty<Value?>
-    var value: Value?
+    public val valueProperty: ObjectProperty<Value?>
+    public var value: Value?
 
 
     /**
@@ -54,21 +54,21 @@ public interface ValueChooser {
      *
      * @param value
      */
-    fun setDisplayValue(value: Value)
+    public fun setDisplayValue(value: Value)
 
 
-    fun setDisabled(disabled: Boolean) {
+    public fun setDisabled(disabled: Boolean) {
         //TODO replace by property
     }
 
-    fun setCallback(callback: ValueCallback)
+    public fun setCallback(callback: ValueCallback)
 
     @Type("hep.dataforge.vis.fx.valueChooserFactory")
-    interface Factory : Named {
-        operator fun invoke(meta: Meta = Meta.EMPTY): ValueChooser
+    public interface Factory : Named {
+        public operator fun invoke(meta: Meta = Meta.EMPTY): ValueChooser
     }
 
-    companion object {
+    public companion object {
 
         private fun findWidgetByType(context: Context, type: String): Factory? {
             return when (type.toName()) {
