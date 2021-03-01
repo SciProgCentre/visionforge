@@ -43,17 +43,20 @@ public val VisionForge.visionClient: VisionClient
     get() = plugins.fetch(VisionClient)
 
 
-
-/**
- * Render all visions in this [window] using current global state of [VisionForge]
- */
-@DFExperimental
-@JsExport
-public fun renderVisionsInWindow(): Unit = VisionForge.renderVisionsInWindow()
-
-/**
- * Render all visions in an element with a given [id]
- */
-@DFExperimental
-@JsExport
-public fun renderVisionsAt(id: String): Unit = VisionForge.renderVisionsAt(id)
+///**
+// * Render all visions in this [window] using current global state of [VisionForge]
+// */
+//@DFExperimental
+//@JsExport
+//public fun renderVisionsInWindow(): Unit {
+//    VisionForge.renderVisionsInWindow()
+//}
+//
+///**
+// * Render all visions in an element with a given [id]
+// */
+//@DFExperimental
+//@JsExport
+//public fun renderVisionsAt(id: String): Unit {
+//    VisionForge.renderVisionsAt(id)
+//}

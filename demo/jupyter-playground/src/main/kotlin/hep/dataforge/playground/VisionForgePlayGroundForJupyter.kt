@@ -43,7 +43,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"renderVisionsAt(\"$id\");" }
+            unsafe { +"window.renderVisionsAt(\"$id\");" }
         }
     }
 
@@ -63,7 +63,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
             "hep.dataforge.vision.solid.*"
         )
 
-        import("hep.dataforge.vision.VisionForge")
+        import<VisionForge>()
 
         render<Gdml> { gdmlModel ->
             val fragment = VisionForge.fragment {
