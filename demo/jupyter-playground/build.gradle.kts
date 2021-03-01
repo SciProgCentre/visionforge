@@ -34,3 +34,5 @@ tasks.withType<Test> {
 tasks.processJupyterApiResources {
     libraryProducers = listOf("hep.dataforge.playground.VisionForgePlayGroundForJupyter")
 }
+
+tasks.findByName("shadowJar")?.dependsOn("processJupyterApiResources")

@@ -12,6 +12,7 @@
 - JavaFX support moved to a separate module
 - Threejs support moved to a separate module
 - \[Format breaking change!\] Stylesheets are moved into properties under `@stylesheet` key
+- VisionGroup builder accepts `null` as name for statics instead of `""`
 
 ### Deprecated
 

@@ -126,7 +126,7 @@ public inline fun VisionContainerBuilder<Solid>.tube(
     innerRadius: Number = 0f,
     startAngle: Number = 0f,
     angle: Number = 2 * PI,
-    name: String = "",
+    name: String? = null,
     block: Tube.() -> Unit = {},
 ): Tube = Tube(
     r.toFloat(),

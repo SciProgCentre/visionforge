@@ -4,7 +4,6 @@ import hep.dataforge.context.Context
 import hep.dataforge.context.PluginManager
 import hep.dataforge.misc.DFExperimental
 
-@DFExperimental
 public expect object VisionForge
 
 @DFExperimental

@@ -20,7 +20,6 @@ import kotlinx.html.stream.createHTML
 import kotlinx.html.unsafe
 import kscience.plotly.Plot
 import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.Notebook
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.*
 import space.kscience.gdml.Gdml
@@ -44,11 +43,11 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
+            unsafe { +"renderVisionsAt(\"$id\");" }
         }
     }
 
-    override fun Builder.onLoaded(notebook: Notebook?) {
+    override fun Builder.onLoaded() {
         resource(jsResource)
 
         onLoaded {

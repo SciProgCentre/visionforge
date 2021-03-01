@@ -16,7 +16,8 @@ import kotlinx.serialization.Serializable
 public class PolyLine(public var points: List<Point3D>) : SolidBase(), Solid {
 
     //var lineType by string()
-    public var thickness: Number by allProperties(inherit = false).number(1.0, key = SolidMaterial.MATERIAL_KEY + THICKNESS_KEY)
+    public var thickness: Number by allProperties(inherit = false).number(1.0,
+        key = SolidMaterial.MATERIAL_KEY + THICKNESS_KEY)
 
     public companion object {
         public val THICKNESS_KEY: Name = "thickness".asName()
@@ -27,7 +28,6 @@ public class PolyLine(public var points: List<Point3D>) : SolidBase(), Solid {
 @VisionBuilder
 public fun VisionContainerBuilder<Solid>.polyline(
     vararg points: Point3D,
-    name: String = "",
+    name: String? = null,
     action: PolyLine.() -> Unit = {},
-): PolyLine =
-    PolyLine(points.toList()).apply(action).also { set(name, it) }
+): PolyLine = PolyLine(points.toList()).apply(action).also { set(name, it) }

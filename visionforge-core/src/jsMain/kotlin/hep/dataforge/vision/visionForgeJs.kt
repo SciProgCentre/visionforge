@@ -7,7 +7,7 @@ import kotlinx.browser.window
 
 @JsExport
 @DFExperimental
-public actual object VisionForge{
+public actual object VisionForge {
     /**
      * Render all visions in this [window] using current global state of [VisionForge]
      */
@@ -30,12 +30,30 @@ public actual object VisionForge{
     }
 }
 
-private val visionForgeContext = Context("VisionForge"){
+private val visionForgeContext = Context("VisionForge") {
     plugin(VisionClient)
 }
 
 @DFExperimental
-public actual val VisionForge.context: Context get() = visionForgeContext
+public actual val VisionForge.context: Context
+    get() = visionForgeContext
 
 @DFExperimental
-public val VisionForge.visionClient: VisionClient get() = plugins.fetch(VisionClient)
+public val VisionForge.visionClient: VisionClient
+    get() = plugins.fetch(VisionClient)
+
+
+
+/**
+ * Render all visions in this [window] using current global state of [VisionForge]
+ */
+@DFExperimental
+@JsExport
+public fun renderVisionsInWindow(): Unit = VisionForge.renderVisionsInWindow()
+
+/**
+ * Render all visions in an element with a given [id]
+ */
+@DFExperimental
+@JsExport
+public fun renderVisionsAt(id: String): Unit = VisionForge.renderVisionsAt(id)

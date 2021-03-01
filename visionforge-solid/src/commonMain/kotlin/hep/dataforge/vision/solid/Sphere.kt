@@ -56,7 +56,7 @@ public inline fun VisionContainerBuilder<Solid>.sphere(
     radius: Number,
     phi: Number = 2 * PI,
     theta: Number = PI,
-    name: String = "",
+    name: String? = null,
     action: Sphere.() -> Unit = {},
 ): Sphere = Sphere(
     radius.toFloat(),

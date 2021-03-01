@@ -67,7 +67,7 @@ public class ConeSegment(
 public inline fun VisionContainerBuilder<Solid>.cylinder(
     r: Number,
     height: Number,
-    name: String = "",
+    name: String? = null,
     block: ConeSegment.() -> Unit = {}
 ): ConeSegment = ConeSegment(
     r.toFloat(),
@@ -80,7 +80,7 @@ public inline fun VisionContainerBuilder<Solid>.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,
-    name: String = "",
+    name: String? = null,
     block: ConeSegment.() -> Unit = {}
 ): ConeSegment = ConeSegment(
     bottomRadius.toFloat(),

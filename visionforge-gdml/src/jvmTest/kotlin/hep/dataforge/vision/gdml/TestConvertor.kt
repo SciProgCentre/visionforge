@@ -7,6 +7,7 @@ import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromStream
 import kotlin.test.assertNotNull
 
+@Suppress("UNUSED_VARIABLE")
 class TestConvertor {
 
     @Test

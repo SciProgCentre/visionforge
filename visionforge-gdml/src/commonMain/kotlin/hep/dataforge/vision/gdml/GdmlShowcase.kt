@@ -3,7 +3,7 @@ package hep.dataforge.vision.gdml
 import space.kscience.gdml.*
 
 public object GdmlShowcase {
-    public val cubes = Gdml {
+    public val cubes: Gdml = Gdml {
         val center = define.position("center")
         structure {
             val air = materials.composite("G4_AIR") {}

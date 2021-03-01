@@ -11,7 +11,7 @@ public actual typealias Counter = AtomicInteger
 
 public fun Gdml.Companion.readFile(file: Path): Gdml {
     val xmlReader = StAXReader(Files.newInputStream(file), "UTF-8")
-    return format.parse(Gdml.serializer(), xmlReader)
+    return format.decodeFromReader(Gdml.serializer(), xmlReader)
 }
 
 public fun SolidGroup.gdml(file: Path, key: String = "", transformer: GdmlTransformerSettings.() -> Unit = {}) {

@@ -32,7 +32,7 @@ public class Composite(
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.composite(
     type: CompositeType,
-    name: String = "",
+    name: String? = null,
     builder: SolidGroup.() -> Unit,
 ): Composite {
     val group = SolidGroup().apply(builder)
@@ -56,16 +56,16 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.union(name: String = "", builder: SolidGroup.() -> Unit): Composite =
+public inline fun VisionContainerBuilder<Solid>.union(name: String? = null, builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.UNION, name, builder = builder)
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.subtract(name: String = "", builder: SolidGroup.() -> Unit): Composite =
+public inline fun VisionContainerBuilder<Solid>.subtract(name: String? = null, builder: SolidGroup.() -> Unit): Composite =
     composite(CompositeType.SUBTRACT, name, builder = builder)
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.intersect(
-    name: String = "",
+    name: String? = null,
     builder: SolidGroup.() -> Unit,
 ): Composite =
     composite(CompositeType.INTERSECT, name, builder = builder)

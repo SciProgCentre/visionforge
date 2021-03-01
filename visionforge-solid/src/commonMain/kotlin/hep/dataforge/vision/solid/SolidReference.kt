@@ -170,7 +170,7 @@ public val Vision.prototype: Vision
  */
 public fun SolidGroup.ref(
     templateName: Name,
-    name: String = "",
+    name: String? = null,
 ): SolidReferenceGroup = SolidReferenceGroup(templateName).also { set(name, it) }
 
 /**

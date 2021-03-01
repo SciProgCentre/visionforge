@@ -111,13 +111,14 @@ public open class VisionGroupBase(
      * Add named or unnamed child to the group. If key is null the child is considered unnamed. Both key and value are not
      * allowed to be null in the same time. If name is present and [child] is null, the appropriate element is removed.
      */
-    override fun set(name: Name, child: Vision?): Unit {
+    override fun set(name: Name?, child: Vision?): Unit {
         when {
-            name.isEmpty() -> {
+            name == null -> {
                 if (child != null) {
                     addStatic(child)
                 }
             }
+            name.isEmpty() -> error("Empty names are not allowed in VisionGroup::set")
             name.length == 1 -> {
                 val token = name.tokens.first()
                 attachChild(token, child)

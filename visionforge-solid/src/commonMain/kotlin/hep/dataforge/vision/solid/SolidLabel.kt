@@ -19,6 +19,6 @@ public fun VisionContainerBuilder<Solid>.label(
     text: String,
     fontSize: Number = 20,
     fontFamily: String = "Arial",
-    name: String = "",
+    name: String? = null,
     action: SolidLabel.() -> Unit = {},
 ): SolidLabel = SolidLabel(text, fontSize.toDouble(), fontFamily).apply(action).also { set(name, it) }

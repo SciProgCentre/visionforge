@@ -76,7 +76,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)
         }
-        val ref = group.ref(templateName, physVolume.name ?: "").withPosition(root, physVolume)
+        val ref = group.ref(templateName, physVolume.name).withPosition(root, physVolume)
         referenceStore.getOrPut(templateName) { ArrayList() }.add(ref)
         return ref
     }
@@ -148,7 +148,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     fun SolidGroup.addSolid(
         root: Gdml,
         solid: GdmlSolid,
-        name: String = "",
+        name: String? = null,
     ): Solid {
         //context.solidAdded(solid)
         val lScale = solid.lscale(settings.lUnit)
@@ -253,14 +253,15 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     fun SolidGroup.addSolidWithCaching(
         root: Gdml,
         solid: GdmlSolid,
-        name: String = solid.name,
+        name: String?,
     ): Solid? {
+        require(name != ""){"Can't use empty solid name. Use null instead."}
         return when (settings.solidAction(solid)) {
             GdmlTransformerSettings.Action.ADD -> {
                 addSolid(root, solid, name)
             }
             GdmlTransformerSettings.Action.PROTOTYPE -> {
-                proxySolid(root, this, solid, name)
+                proxySolid(root, this, solid, name ?: solid.name)
             }
             GdmlTransformerSettings.Action.REJECT -> {
                 //ignore
@@ -280,7 +281,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         if (volume is GdmlVolume && volume.physVolumes.isEmpty() && volume.placement == null) {
             val solid = volume.solidref.resolve(root)
                 ?: error("Solid with tag ${volume.solidref.ref} for volume ${volume.name} not defined")
-            addSolidWithCaching(root, solid, physVolume.name ?: "")?.apply {
+            addSolidWithCaching(root, solid, physVolume.name)?.apply {
                 configureSolid(root, this, volume, solid)
                 withPosition(root, physVolume)
             }
@@ -309,7 +310,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
             ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
         //TODO add divisions
-        set(Name.EMPTY, volume(root, volume))
+        set(null, volume(root, volume))
     }
 
     private fun volume(
@@ -320,7 +321,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
             val solid: GdmlSolid = group.solidref.resolve(root)
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
 
-            addSolidWithCaching(root, solid)?.apply {
+            addSolidWithCaching(root, solid, null)?.apply {
                 configureSolid(root, this, group, solid)
             }
 
@@ -381,7 +382,7 @@ public fun Gdml.toVision(block: GdmlTransformerSettings.() -> Unit = {}): SolidG
 /**
  * Append Gdml node to the group
  */
-public fun SolidGroup.gdml(gdml: Gdml, key: String = "", transformer: GdmlTransformerSettings.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlTransformerSettings.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

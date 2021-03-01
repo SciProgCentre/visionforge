@@ -45,6 +45,6 @@ public inline fun VisionContainerBuilder<Solid>.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,
-    name: String = "",
+    name: String? = null,
     action: Box.() -> Unit = {}
 ): Box = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }

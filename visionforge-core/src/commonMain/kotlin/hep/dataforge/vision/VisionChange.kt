@@ -39,7 +39,8 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
         }
     }
 
-    override fun set(name: Name, child: Vision?) {
+    override fun set(name: Name?, child: Vision?) {
+        if(name == null) error("Static children are not allowed in VisionChange")
         getOrPutChild(name).apply {
             vision = child
             reset = vision == null

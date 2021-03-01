@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @SerialName("solid.convex")
 public class Convex(public val points: List<Point3D>) : SolidBase(), Solid
 
-public inline fun VisionContainerBuilder<Solid>.convex(name: String = "", action: ConvexBuilder.() -> Unit = {}): Convex =
+public inline fun VisionContainerBuilder<Solid>.convex(name: String? = null, action: ConvexBuilder.() -> Unit = {}): Convex =
     ConvexBuilder().apply(action).build().also { set(name, it) }
 
 public class ConvexBuilder {

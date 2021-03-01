@@ -104,5 +104,5 @@ public class Extruded(
 }
 
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.extrude(name: String = "", action: Extruded.() -> Unit = {}): Extruded =
+public fun VisionContainerBuilder<Solid>.extrude(name: String? = null, action: Extruded.() -> Unit = {}): Extruded =
     Extruded().apply(action).also { set(name, it) }
