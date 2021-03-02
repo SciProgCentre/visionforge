@@ -60,7 +60,9 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
             "kscience.plotly.*",
             "kscience.plotly.models.*",
             "kotlinx.html.*",
-            "hep.dataforge.vision.solid.*"
+            "hep.dataforge.vision.solid.*",
+            "hep.dataforge.vision.html.Page",
+            "hep.dataforge.vision.html.page"
         )
 
         import<VisionForge>()

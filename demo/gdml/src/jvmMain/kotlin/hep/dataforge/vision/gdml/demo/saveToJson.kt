@@ -1,21 +1,21 @@
 package hep.dataforge.vision.gdml.demo
 
-import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
 import hep.dataforge.vision.solid.Solids
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.LUnit
+import space.kscience.gdml.decodeFromFile
 import java.io.File
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
-    require(args.isNotEmpty()){"At least one argument is required"}
+    require(args.isNotEmpty()) { "At least one argument is required" }
     val inputFileName = args[0]
-    require(inputFileName.endsWith(".gdml")){"GDML required"}
-    val outputFileName = args.getOrNull(1)?:inputFileName.replace(".gdml",".json")
+    require(inputFileName.endsWith(".gdml")) { "GDML required" }
+    val outputFileName = args.getOrNull(1) ?: inputFileName.replace(".gdml", ".json")
 
-    val gdml = Gdml.readFile(Paths.get(inputFileName))
-        //GDML.readFile(Paths.get("D:\\Work\\Projects\\visionforge\\visionforge-spatial-gdml\\src\\jvmTest\\resources\\gdml\\simple1.gdml"))
+    val gdml = Gdml.decodeFromFile(Paths.get(inputFileName), true)
+    //GDML.readFile(Paths.get("D:\\Work\\Projects\\visionforge\\visionforge-spatial-gdml\\src\\jvmTest\\resources\\gdml\\simple1.gdml"))
 
     val vision = gdml.toVision {
         lUnit = LUnit.CM

@@ -5,7 +5,7 @@ import hep.dataforge.vision.VisionForge
 import kotlinx.html.FlowContent
 import kotlinx.html.TagConsumer
 
-public typealias HtmlFragment = TagConsumer<*>.()->Unit
+public typealias HtmlFragment = TagConsumer<*>.() -> Unit
 
 public fun TagConsumer<*>.fragment(fragment: HtmlFragment) {
     fragment()

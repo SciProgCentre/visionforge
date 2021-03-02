@@ -22,7 +22,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.2.0-dev-5"
+    version = "0.2.0-dev-6"
 }
 
 val githubProject by extra("visionforge")

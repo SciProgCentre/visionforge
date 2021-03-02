@@ -3,9 +3,9 @@ package hep.dataforge.vision.gdml.demo
 import hep.dataforge.misc.DFExperimental
 import hep.dataforge.vision.Vision
 import hep.dataforge.vision.VisionManager
-import hep.dataforge.vision.gdml.readFile
 import hep.dataforge.vision.gdml.toVision
 import space.kscience.gdml.Gdml
+import space.kscience.gdml.decodeFromFile
 import java.io.File
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
@@ -13,20 +13,7 @@ import java.util.zip.ZipInputStream
 @OptIn(DFExperimental::class)
 fun VisionManager.readFile(file: File): Vision = when {
     file.extension == "gdml" || file.extension == "xml" -> {
-        Gdml.readFile(file.toPath()).toVision {
-//            lUnit = LUnit.CM
-//
-//            solidConfiguration = { parent, solid ->
-//                if (solid.name == "cave") {
-//                    setItem(SolidMaterial.MATERIAL_WIREFRAME_KEY, true.asValue())
-//                }
-//                if (parent.physVolumes.isNotEmpty()) {
-//                    useStyle("opaque") {
-//                        SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
-//                    }
-//                }
-//            }
-        }
+        Gdml.decodeFromFile(file.toPath(),true).toVision()
     }
     file.extension == "json" -> decodeFromString(file.readText())
     file.name.endsWith("json.zip") -> {

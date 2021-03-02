@@ -32,7 +32,7 @@ public data class Page(
 
 @DFExperimental
 public fun VisionForge.page(
-    title: String,
-    content: HtmlVisionFragment,
+    title: String = "VisionForge page",
     vararg headers: Pair<String, HtmlFragment>,
+    content: HtmlVisionFragment,
 ): Page = Page(context, title, mapOf(*headers), content)

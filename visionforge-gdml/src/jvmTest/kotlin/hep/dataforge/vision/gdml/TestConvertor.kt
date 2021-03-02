@@ -34,4 +34,12 @@ class TestConvertor {
         val vision = gdml.toVision()
         //println(SolidManager.encodeToString(vision))
     }
+
+    @Test
+    fun testIaxo() {
+        val stream = javaClass.getResourceAsStream("/gdml/babyIAXO.gdml")!!
+        val gdml = Gdml.decodeFromStream(stream, true)
+        val vision = gdml.toVision()
+        println(Solids.encodeToString(vision))
+     }
 }
