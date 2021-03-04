@@ -2,6 +2,7 @@ package ru.mipt.npm.muon.monitor
 
 import hep.dataforge.context.Global
 import hep.dataforge.vision.Application
+import hep.dataforge.vision.bootstrap.useBootstrap
 import hep.dataforge.vision.startApplication
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
@@ -21,6 +22,8 @@ private class MMDemoApp : Application {
     }
 
     override fun start(state: Map<String, Any>) {
+        useBootstrap()
+
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
         val context = Global.context("demo") {}

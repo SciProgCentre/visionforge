@@ -5,6 +5,7 @@
 - Server module
 - Change collector
 - Customizable accessors for colors
+- SphereLayer solid
 
 ### Changed
 - Vision does not implement ItemProvider anymore. Property changes are done via `getProperty`/`setProperty` and `property` delegate.
@@ -13,6 +14,7 @@
 - Threejs support moved to a separate module
 - \[Format breaking change!\] Stylesheets are moved into properties under `@stylesheet` key
 - VisionGroup builder accepts `null` as name for statics instead of `""`
+- gdml sphere is rendered as a SphereLayer instead of Sphere (#35)
 
 ### Deprecated
 

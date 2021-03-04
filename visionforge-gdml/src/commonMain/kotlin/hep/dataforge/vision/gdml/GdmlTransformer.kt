@@ -9,7 +9,7 @@ import hep.dataforge.names.toName
 import hep.dataforge.vision.set
 import hep.dataforge.vision.setProperty
 import hep.dataforge.vision.solid.*
-import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
+import hep.dataforge.vision.solid.SolidMaterial.Companion.MATERIAL_KEY
 import hep.dataforge.vision.styleSheet
 import hep.dataforge.vision.useStyle
 import space.kscience.gdml.*
@@ -27,6 +27,8 @@ private inline operator fun Number.times(d: Double) = toDouble() * d
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
 public class GdmlTransformerSettings {
+    public val random: Random = Random(222)
+
     public enum class Action {
         ADD,
         REJECT,
@@ -38,11 +40,14 @@ public class GdmlTransformerSettings {
 
     public var solidAction: (GdmlSolid) -> Action = { Action.PROTOTYPE }
     public var volumeAction: (GdmlGroup) -> Action = { Action.PROTOTYPE }
+
+    public var paint: SolidMaterial.(material: GdmlMaterial) -> Unit = { _->
+        color(random.nextInt(16777216))
+    }
 }
 
 private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     //private val materialCache = HashMap<GdmlMaterial, Meta>()
-    private val random = Random(222)
 
     /**
      * A special group for local templates
@@ -105,7 +110,8 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         val styleName = "materials.${material.name}"
 
         obj.useStyle(styleName) {
-            MATERIAL_COLOR_KEY put random.nextInt(16777216)
+            val vfMaterial = settings.run { SolidMaterial().apply { paint(material)}}
+            MATERIAL_KEY put vfMaterial.toMeta()
             "Gdml.material" put material.name
         }
 
@@ -195,7 +201,9 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                     scaleZ = solid.scale.z.toFloat()
                 }
             }
-            is GdmlSphere -> sphere(solid.rmax * lScale, solid.deltaphi * aScale, solid.deltatheta * aScale, name) {
+            is GdmlSphere -> sphereLayer(solid.rmax * lScale,  solid.rmin * lScale, name) {
+                phi = solid.deltaphi * aScale
+                theta = solid.deltatheta * aScale
                 phiStart = solid.startphi * aScale
                 thetaStart = solid.starttheta * aScale
             }
@@ -255,7 +263,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         solid: GdmlSolid,
         name: String?,
     ): Solid? {
-        require(name != ""){"Can't use empty solid name. Use null instead."}
+        require(name != "") { "Can't use empty solid name. Use null instead." }
         return when (settings.solidAction(solid)) {
             GdmlTransformerSettings.Action.ADD -> {
                 addSolid(root, solid, name)

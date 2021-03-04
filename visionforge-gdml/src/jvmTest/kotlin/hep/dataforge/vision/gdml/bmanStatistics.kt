@@ -5,8 +5,8 @@ import hep.dataforge.vision.visitor.countDistinct
 import hep.dataforge.vision.visitor.flowStatistics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import space.kscience.gdml.Gdml
 import nl.adaptivity.xmlutil.StAXReader
+import space.kscience.gdml.Gdml
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -17,7 +17,7 @@ suspend fun main() {
             File("D:\\Work\\Projects\\dataforge-vis\\visionforge-gdml\\src\\jvmTest\\resources\\gdml\\BM@N.gdml").inputStream()
 
         val xmlReader = StAXReader(stream, "UTF-8")
-        val xml = Gdml.format.parse(Gdml.serializer(), xmlReader)
+        val xml = Gdml.format.decodeFromReader(Gdml.serializer(), xmlReader)
         val vision = xml.toVision()
 
 

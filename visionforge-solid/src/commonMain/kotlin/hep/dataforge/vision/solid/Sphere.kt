@@ -54,12 +54,8 @@ public class Sphere(
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.sphere(
     radius: Number,
-    phi: Number = 2 * PI,
-    theta: Number = PI,
     name: String? = null,
     action: Sphere.() -> Unit = {},
 ): Sphere = Sphere(
     radius.toFloat(),
-    phi = phi.toFloat(),
-    theta = theta.toFloat()
 ).apply(action).also { set(name, it) }

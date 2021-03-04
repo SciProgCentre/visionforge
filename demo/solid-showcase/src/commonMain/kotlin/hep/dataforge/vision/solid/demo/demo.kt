@@ -52,6 +52,12 @@ fun VisionLayout<Solid>.showcase() {
             rotationX = PI / 4
             color("blue")
         }
+        sphereLayer(50,40){
+            theta = (PI/2).toFloat()
+            rotationX = - PI * 3 / 4
+            z = 110
+            color(Colors.pink)
+        }
     }
 
     demo("dynamic", "Dynamic properties") {

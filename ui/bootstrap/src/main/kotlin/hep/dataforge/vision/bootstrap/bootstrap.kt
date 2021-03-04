@@ -1,5 +1,10 @@
 package hep.dataforge.vision.bootstrap
 
+public fun useBootstrap(){
+    kotlinext.js.require("bootstrap/dist/css/bootstrap.min.css")
+    kotlinext.js.require("bootstrap")
+}
+
 //public inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {
 //    div("card w-100") {
 //        div("card-body") {
