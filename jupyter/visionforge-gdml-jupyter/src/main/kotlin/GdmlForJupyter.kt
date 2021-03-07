@@ -40,7 +40,7 @@ internal class GdmlForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"window.renderVisionsAt(\"$id\");" }
+            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
         }
     }
 

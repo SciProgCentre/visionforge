@@ -43,7 +43,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
         script {
             type = "text/javascript"
-            unsafe { +"window.renderVisionsAt(\"$id\");" }
+            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
         }
     }
 

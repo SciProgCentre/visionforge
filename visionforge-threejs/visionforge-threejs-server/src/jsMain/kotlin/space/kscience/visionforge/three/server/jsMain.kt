@@ -7,8 +7,8 @@ import space.kscience.visionforge.solid.three.useThreeJs
 
 @DFExperimental
 public fun main(): Unit = VisionForge.run {
+    console.info("Starting VisionForge context")
     useThreeJs()
+    window.asDynamic()["VisionForge"] = VisionForge
     renderVisionsInWindow()
-    window.asDynamic()["renderVisionsAt"] = ::renderVisionsAt
-    window.asDynamic()["renderVisionsInWindow"] = ::renderVisionsInWindow
 }
