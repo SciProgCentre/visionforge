@@ -13,7 +13,7 @@ public object GdmlShowcase {
             val segment = solids.tube("segment", 20, 5.0) {
                 rmin = 17
                 deltaphi = 60
-                aunit = AUnit.DEG.title
+                aunit = AUnit.DEG
             }
             val worldBox = solids.box("largeBox", 200, 200, 200)
             val smallBox = solids.box("smallBox", 30, 30, 30)
@@ -25,7 +25,7 @@ public object GdmlShowcase {
                         positionref = center
                         rotation {
                             z = 60 * i
-                            unit = AUnit.DEG.title
+                            unit = AUnit.DEG
                         }
                     }
                 }

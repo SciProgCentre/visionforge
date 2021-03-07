@@ -4,7 +4,6 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 val kotlinWrappersVersion: String by rootProject.extra
-val htmlVersion: String by rootProject.extra
 
 kscience{
     useSerialization()
@@ -15,7 +14,7 @@ kotlin {
         commonMain {
             dependencies {
                 api("space.kscience:dataforge-context:$dataforgeVersion")
-                api("org.jetbrains.kotlinx:kotlinx-html:$htmlVersion")
+                api("org.jetbrains.kotlinx:kotlinx-html:${ru.mipt.npm.gradle.KScienceVersions.htmlVersion}")
                 api("org.jetbrains:kotlin-css:1.0.0-$kotlinWrappersVersion")
             }
         }

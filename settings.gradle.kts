@@ -1,6 +1,6 @@
 pluginManagement {
     val kotlinVersion = "1.4.31"
-    val toolsVersion = "0.9.0"
+    val toolsVersion = "0.9.1"
 
     repositories {
         maven("https://repo.kotlin.link")
@@ -45,5 +45,6 @@ include(
     ":demo:muon-monitor",
     ":demo:sat-demo",
     ":demo:playground",
-    ":demo:jupyter-playground"
+    ":demo:jupyter-playground",
+    ":jupyter:visionforge-gdml-jupyter"
 )

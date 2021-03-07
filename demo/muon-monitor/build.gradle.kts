@@ -7,7 +7,7 @@ plugins {
 
 group = "ru.mipt.npm"
 
-val ktorVersion: String by rootProject.extra
+val ktorVersion: String  = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
 
 kscience {
     useSerialization()

@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.jvm")
 }
 
-val ktorVersion: String by rootProject.extra
+val ktorVersion = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
 
 dependencies {
     api(project(":visionforge-core"))
