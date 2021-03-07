@@ -1,15 +1,15 @@
-package hep.dataforge.vision.examples
+package space.kscience.visionforge.examples
 
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.html.HtmlVisionFragment
-import hep.dataforge.vision.html.ResourceLocation
-import hep.dataforge.vision.html.page
-import hep.dataforge.vision.html.scriptHeader
-import hep.dataforge.vision.makeFile
-import hep.dataforge.vision.three.server.VisionServer
-import hep.dataforge.vision.three.server.useScript
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionForge
+import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.page
+import space.kscience.visionforge.html.scriptHeader
+import space.kscience.visionforge.makeFile
+import space.kscience.visionforge.three.server.VisionServer
+import space.kscience.visionforge.three.server.useScript
 import java.awt.Desktop
 import java.nio.file.Path
 

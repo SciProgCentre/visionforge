@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.mpp")
 }
 
-val plotlyVersion = "0.3.1"
+val plotlyVersion = "0.4.0-dev-1"
 
 kscience{
     useSerialization()
@@ -34,7 +34,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":visionforge-core"))
-                api("kscience.plotlykt:plotlykt-core:${plotlyVersion}")
+                api("space.kscience:plotlykt-core:${plotlyVersion}")
             }
         }
     }

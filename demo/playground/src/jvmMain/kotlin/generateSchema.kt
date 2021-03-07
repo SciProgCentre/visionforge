@@ -1,10 +1,10 @@
-package hep.dataforge.vision.examples
+package space.kscience.visionforge.examples
 
 import com.github.ricky12awesome.jss.encodeToSchema
-import hep.dataforge.vision.solid.SolidGroup
-import hep.dataforge.vision.solid.Solids
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.Solids
 
 @ExperimentalSerializationApi
 fun main() {

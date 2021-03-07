@@ -1,13 +1,13 @@
-package hep.dataforge.vision.examples
+package space.kscience.visionforge.examples
 
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.html.ResourceLocation
-import hep.dataforge.vision.html.fragment
-import hep.dataforge.vision.invoke
-import hep.dataforge.vision.plotly.PlotlyPlugin
-import hep.dataforge.vision.plotly.plotly
-import kscience.plotly.scatter
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.plotly.scatter
+import space.kscience.visionforge.VisionForge
+import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.invoke
+import space.kscience.visionforge.plotly.PlotlyPlugin
+import space.kscience.visionforge.plotly.plotly
 
 @DFExperimental
 fun main() = VisionForge(PlotlyPlugin) {

@@ -1,13 +1,13 @@
-package hep.dataforge.vision.examples
+package space.kscience.visionforge.examples
 
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.gdml.GdmlShowcase.cubes
-import hep.dataforge.vision.gdml.toVision
-import hep.dataforge.vision.html.ResourceLocation
-import hep.dataforge.vision.html.fragment
-import hep.dataforge.vision.invoke
-import hep.dataforge.vision.solid.Solids
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.visionforge.VisionForge
+import space.kscience.visionforge.gdml.GdmlShowcase.cubes
+import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.invoke
+import space.kscience.visionforge.solid.Solids
 
 @DFExperimental
 fun main() = VisionForge(Solids) {

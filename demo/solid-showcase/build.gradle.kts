@@ -44,5 +44,5 @@ kotlin {
 }
 
 application {
-    mainClassName = "hep.dataforge.vision.solid.demo.FXDemoAppKt"
+    mainClassName = "space.kscience.visionforge.solid.demo.FXDemoAppKt"
 }

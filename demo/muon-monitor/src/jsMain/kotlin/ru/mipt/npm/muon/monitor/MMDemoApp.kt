@@ -1,15 +1,15 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.context.Global
-import hep.dataforge.vision.Application
-import hep.dataforge.vision.bootstrap.useBootstrap
-import hep.dataforge.vision.startApplication
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.browser.document
 import react.child
 import react.dom.render
+import space.kscience.dataforge.context.Global
+import space.kscience.visionforge.Application
+import space.kscience.visionforge.bootstrap.useBootstrap
+import space.kscience.visionforge.startApplication
 
 private class MMDemoApp : Application {
 

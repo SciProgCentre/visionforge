@@ -1,13 +1,13 @@
-package hep.dataforge.vision.material
+package space.kscience.visionforge.material
 
-import hep.dataforge.names.Name
-import hep.dataforge.names.plus
-import hep.dataforge.names.toName
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.VisionGroup
-import hep.dataforge.vision.isEmpty
-import hep.dataforge.vision.react.component
-import hep.dataforge.vision.react.state
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.toName
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.isEmpty
+import space.kscience.visionforge.react.component
+import space.kscience.visionforge.react.state
 import kotlinx.html.UL
 import materialui.lab.components.treeItem.treeItem
 import materialui.lab.components.treeView.SingleSelectTreeViewElementBuilder

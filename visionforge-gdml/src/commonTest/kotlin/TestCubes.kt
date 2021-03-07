@@ -1,16 +1,16 @@
-package hep.dataforge.vision.gdml
+package space.kscience.visionforge.gdml
 
-import hep.dataforge.context.Context
-import hep.dataforge.names.toName
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.gdml.GdmlShowcase.cubes
-import hep.dataforge.vision.get
-import hep.dataforge.vision.solid.*
-import hep.dataforge.vision.visionManager
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.names.toName
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.GdmlBox
 import space.kscience.gdml.decodeFromString
 import space.kscience.gdml.encodeToString
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.gdml.GdmlShowcase.cubes
+import space.kscience.visionforge.get
+import space.kscience.visionforge.solid.*
+import space.kscience.visionforge.visionManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

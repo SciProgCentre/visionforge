@@ -1,9 +1,9 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.solid.Point3D
-import hep.dataforge.vision.solid.plus
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
+import space.kscience.visionforge.solid.Point3D
+import space.kscience.visionforge.solid.plus
 
 /**
  * A single pixel

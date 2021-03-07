@@ -39,11 +39,11 @@ kotlin {
 }
 
 application {
-    mainClass.set("hep.dataforge.vision.gdml.demo.GdmlFxDemoAppKt")
+    mainClass.set("space.kscience.visionforge.gdml.demo.GdmlFxDemoAppKt")
 }
 
 val convertGdmlToJson by tasks.creating(JavaExec::class) {
     group = "application"
     classpath = sourceSets["main"].runtimeClasspath
-    main = "hep.dataforge.vis.spatial.gdml.demo.SaveToJsonKt"
+    main = "space.kscience.dataforge.vis.spatial.gdml.demo.SaveToJsonKt"
 }

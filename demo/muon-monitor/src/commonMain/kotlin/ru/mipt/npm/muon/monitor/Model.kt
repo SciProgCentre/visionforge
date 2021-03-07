@@ -1,10 +1,10 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.removeAll
-import hep.dataforge.vision.solid.*
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
+import space.kscience.visionforge.removeAll
+import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 
 class Model {

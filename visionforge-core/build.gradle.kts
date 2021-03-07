@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api("hep.dataforge:dataforge-context:$dataforgeVersion")
+                api("space.kscience:dataforge-context:$dataforgeVersion")
                 api("org.jetbrains.kotlinx:kotlinx-html:$htmlVersion")
                 api("org.jetbrains:kotlin-css:1.0.0-$kotlinWrappersVersion")
             }

@@ -1,21 +1,5 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.context.Context
-import hep.dataforge.names.Name
-import hep.dataforge.names.NameToken
-import hep.dataforge.names.isEmpty
-import hep.dataforge.names.length
-import hep.dataforge.vision.Vision
-import hep.dataforge.vision.bootstrap.canvasControls
-import hep.dataforge.vision.bootstrap.card
-import hep.dataforge.vision.bootstrap.gridRow
-import hep.dataforge.vision.bootstrap.visionPropertyEditor
-import hep.dataforge.vision.react.ThreeCanvasComponent
-import hep.dataforge.vision.react.flexColumn
-import hep.dataforge.vision.react.objectTree
-import hep.dataforge.vision.solid.specifications.Camera
-import hep.dataforge.vision.solid.specifications.Canvas3DOptions
-import hep.dataforge.vision.solid.three.ThreeCanvas
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
@@ -27,6 +11,22 @@ import react.child
 import react.dom.*
 import react.functionalComponent
 import react.useState
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.isEmpty
+import space.kscience.dataforge.names.length
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.bootstrap.canvasControls
+import space.kscience.visionforge.bootstrap.card
+import space.kscience.visionforge.bootstrap.gridRow
+import space.kscience.visionforge.bootstrap.visionPropertyEditor
+import space.kscience.visionforge.react.ThreeCanvasComponent
+import space.kscience.visionforge.react.flexColumn
+import space.kscience.visionforge.react.objectTree
+import space.kscience.visionforge.solid.specifications.Camera
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
 import styled.styledDiv
 import kotlin.math.PI
@@ -154,7 +154,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                                 +"World"
                                 attrs {
                                     onClickFunction = {
-                                        selected = hep.dataforge.names.Name.EMPTY
+                                        selected = space.kscience.dataforge.names.Name.EMPTY
                                     }
                                 }
                             }

@@ -4,7 +4,7 @@ plugins {
     kotlin("jupyter.api") apply false
 }
 
-val dataforgeVersion by extra("0.3.0")
+val dataforgeVersion by extra("0.4.0-dev-2")
 val ktorVersion by extra(ru.mipt.npm.gradle.KScienceVersions.ktorVersion)
 val htmlVersion by extra(ru.mipt.npm.gradle.KScienceVersions.htmlVersion)
 val kotlinWrappersVersion by extra("pre.148-kotlin-1.4.30")
@@ -22,7 +22,7 @@ allprojects {
     }
 
     group = "hep.dataforge"
-    version = "0.2.0-dev-6"
+    version = "0.2.0-dev-7"
 }
 
 val githubProject by extra("visionforge")
@@ -30,8 +30,14 @@ val bintrayRepo by extra("dataforge")
 
 subprojects {
     if (name.startsWith("visionforge")) {
-        plugins.apply("ru.mipt.npm.gradle.publish")
+        plugins.apply("maven-publish")
     }
+}
+
+ksciencePublish{
+    github("visionforge")
+    space()
+    sonatype()
 }
 
 apiValidation {

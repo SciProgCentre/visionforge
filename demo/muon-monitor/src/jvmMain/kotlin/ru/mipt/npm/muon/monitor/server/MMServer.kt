@@ -1,10 +1,10 @@
 package ru.mipt.npm.muon.monitor.server
 
 
-import hep.dataforge.context.Context
-import hep.dataforge.context.Global
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.solid.Solids
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.visionforge.solid.Solids
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install

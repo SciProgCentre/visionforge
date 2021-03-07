@@ -1,8 +1,8 @@
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.VisionForge
-import hep.dataforge.vision.plotly.usePlotly
-import hep.dataforge.vision.solid.three.useThreeJs
 import kotlinx.browser.window
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.visionforge.VisionForge
+import space.kscience.visionforge.plotly.usePlotly
+import space.kscience.visionforge.solid.three.useThreeJs
 
 @DFExperimental
 fun main(): Unit = VisionForge.run{

@@ -1,10 +1,10 @@
 package ru.mipt.npm.sat
 
-import hep.dataforge.meta.set
-import hep.dataforge.misc.DFExperimental
-import hep.dataforge.vision.solid.*
-import hep.dataforge.vision.style
-import hep.dataforge.vision.useStyle
+import space.kscience.dataforge.meta.set
+import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.visionforge.solid.*
+import space.kscience.visionforge.style
+import space.kscience.visionforge.useStyle
 import kotlin.math.PI
 
 @DFExperimental

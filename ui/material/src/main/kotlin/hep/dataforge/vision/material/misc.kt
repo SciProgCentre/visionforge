@@ -1,7 +1,7 @@
-package hep.dataforge.vision.material
+package space.kscience.visionforge.material
 
-import hep.dataforge.vision.react.component
-import hep.dataforge.vision.react.state
+import space.kscience.visionforge.react.component
+import space.kscience.visionforge.react.state
 import kotlinx.html.DIV
 import materialui.components.card.card
 import materialui.components.cardcontent.cardContent

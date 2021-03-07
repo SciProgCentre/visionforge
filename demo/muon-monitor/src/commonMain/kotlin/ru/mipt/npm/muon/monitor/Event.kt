@@ -1,7 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.solid.Point3D
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.solid.Point3D
 
 typealias Track = List<Point3D>
 

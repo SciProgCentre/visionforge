@@ -1,17 +1,17 @@
 package ru.mipt.npm.sat
 
 
-import hep.dataforge.context.Global
-import hep.dataforge.names.toName
-import hep.dataforge.vision.solid.*
-import hep.dataforge.vision.three.server.*
-import hep.dataforge.vision.visionManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.html.div
 import kotlinx.html.h1
+import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.names.toName
+import space.kscience.visionforge.solid.*
+import space.kscience.visionforge.three.server.*
+import space.kscience.visionforge.visionManager
 import kotlin.random.Random
 
 fun main() {
