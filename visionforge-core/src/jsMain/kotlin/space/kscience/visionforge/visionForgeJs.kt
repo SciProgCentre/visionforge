@@ -19,6 +19,7 @@ private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
 
 @JsExport
 @DFExperimental
+@JsName("VisionForge")
 public actual object VisionForge {
     /**
      * Render all visions in this [window] using current global state of [VisionForge]

@@ -7,7 +7,8 @@ import kotlinx.html.stream.createHTML
 import kotlinx.html.unsafe
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
-import org.jetbrains.kotlinx.jupyter.api.libraries.*
+import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
+import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.visionforge.Vision
@@ -25,11 +26,6 @@ import space.kscience.visionforge.visionManager
 @DFExperimental
 internal class GdmlForJupyter : JupyterIntegration() {
 
-    private val jsBundle = ResourceFallbacksBundle(listOf(
-        ResourceLocation("js/visionforge-three.js", ResourcePathType.CLASSPATH_PATH))
-    )
-    private val jsResource = LibraryResource(name = "visionforge-three", type = ResourceType.JS, bundles = listOf(jsBundle))
-
     private var counter = 0
 
     private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().div {
@@ -45,7 +41,15 @@ internal class GdmlForJupyter : JupyterIntegration() {
     }
 
     override fun Builder.onLoaded() {
-        resource(jsResource)
+
+        resources {
+            js("three"){
+                classPath("js/gdml-jupyter.js")
+            }
+//            css("override") {
+//                classPath("css/jupyter-override.css")
+//            }
+        }
 
         onLoaded {
             VisionForge.plugins.fetch(Solids)

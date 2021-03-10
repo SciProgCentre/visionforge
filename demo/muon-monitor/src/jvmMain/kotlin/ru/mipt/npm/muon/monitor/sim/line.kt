@@ -1,11 +1,11 @@
 package ru.mipt.npm.muon.monitor.sim
 
-import space.kscience.visionforge.solid.Point3D
 import org.apache.commons.math3.geometry.euclidean.threed.Line
 import org.apache.commons.math3.geometry.euclidean.threed.Plane
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.GEOMETRY_TOLERANCE
+import space.kscience.visionforge.solid.Point3D
 
 /**
  * Created by darksnake on 11-May-16.

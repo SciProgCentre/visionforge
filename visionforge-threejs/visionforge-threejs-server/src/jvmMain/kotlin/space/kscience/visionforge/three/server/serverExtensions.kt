@@ -24,7 +24,7 @@ public fun VisionForge.makeThreeJsFile(
     show: Boolean = true,
 ): Unit {
     val actualPath = page(title, content = content).makeFile(path) { actualPath ->
-        mapOf("threeJs" to scriptHeader("js/visionforge-three.js", actualPath, resourceLocation))
+        mapOf("threeJs" to scriptHeader("js/visionforge-three.js", resourceLocation, actualPath))
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

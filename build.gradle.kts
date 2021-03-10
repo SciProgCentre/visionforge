@@ -1,6 +1,7 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
     kotlin("jvm") apply false
+    kotlin("js") apply false
     kotlin("jupyter.api") apply false
 }
 
@@ -20,7 +21,7 @@ allprojects {
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-9"
+    version = "0.2.0-dev-13"
 }
 
 subprojects {

@@ -27,7 +27,7 @@ public fun VisionForge.makeVisionFile(
     show: Boolean = true,
 ): Unit {
     val actualPath = page(title, content = content).makeFile(path) { actualPath ->
-        mapOf("threeJs" to scriptHeader("js/visionforge-playground.js", actualPath, resourceLocation))
+        mapOf("threeJs" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath))
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

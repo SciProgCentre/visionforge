@@ -5,7 +5,9 @@ package drop
 
 import org.w3c.dom.DragEvent
 import org.w3c.files.FileList
-import react.*
+import react.Component
+import react.RProps
+import react.RState
 
 external enum class DropEffects {
     copy,

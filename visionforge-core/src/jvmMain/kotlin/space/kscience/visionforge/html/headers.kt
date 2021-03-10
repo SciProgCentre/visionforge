@@ -89,7 +89,7 @@ internal fun embedScriptHeader(resource: String): HtmlFragment = {
     script {
         type = "text/javascript"
         unsafe {
-            val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
+            val bytes = VisionManager::class.java.getResourceAsStream("/$resource")!!.readAllBytes()
             +bytes.toString(Charsets.UTF_8)
         }
     }
@@ -113,8 +113,8 @@ internal fun fileCssHeader(
 @DFExperimental
 public fun scriptHeader(
     scriptResource: String,
-    htmlPath: Path?,
     resourceLocation: ResourceLocation,
+    htmlPath: Path? = null,
 ): HtmlFragment {
     val targetPath = when (resourceLocation) {
         ResourceLocation.LOCAL -> checkOrStoreFile(

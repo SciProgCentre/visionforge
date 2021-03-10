@@ -7,7 +7,6 @@ import ru.mipt.npm.muon.monitor.Event
 import ru.mipt.npm.muon.monitor.Monitor
 import ru.mipt.npm.muon.monitor.SC1
 import ru.mipt.npm.muon.monitor.readResource
-import java.util.*
 
 
 // minimal track length in detector

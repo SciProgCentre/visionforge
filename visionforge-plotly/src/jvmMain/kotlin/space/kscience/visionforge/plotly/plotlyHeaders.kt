@@ -17,8 +17,8 @@ internal val plotlyScriptLocation = "js/visionforge-three.js"
 public fun plotlyHeader(location: ResourceLocation, filePath: Path? = null): HtmlFragment = {
     scriptHeader(
         plotlyScriptLocation,
-        filePath,
-        resourceLocation = location
+        resourceLocation = location,
+        htmlPath = filePath
     ).invoke(this)
     script {
         type = "text/javascript"

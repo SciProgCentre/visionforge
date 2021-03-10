@@ -22,6 +22,7 @@ private class GDMLDemoApp : Application {
         val context = Global.context("demo") .apply{
             plugins.fetch(ThreePlugin)
         }
+
         render(element) {
             child(GDMLApp) {
                 val vision = GdmlShowcase.cubes.toVision()
@@ -32,7 +33,6 @@ private class GDMLDemoApp : Application {
                 }
             }
         }
-
     }
 }
 
