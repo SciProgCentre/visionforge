@@ -5,11 +5,13 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import kotlin.jvm.JvmInline
 
 /**
  * A container for styles
  */
-public inline class StyleSheet(private val owner: VisionGroup) {
+@JvmInline
+public value class StyleSheet(private val owner: VisionGroup) {
 
     private val styleNode get() = owner.ownProperties[STYLESHEET_KEY].node
 

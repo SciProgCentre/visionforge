@@ -8,25 +8,28 @@ import kotlinx.html.unsafe
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.*
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.plotly.Plot
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionForge
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.embedVisionFragment
-import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.toVision
-import space.kscience.visionforge.plotly.usePlotly
-import space.kscience.visionforge.plugins
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
 @JupyterLibrary
 @DFExperimental
 internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
+
+    private val context = Context("VisionForge") {
+        plugin(Solids)
+        plugin(PlotlyPlugin)
+    }
 
     private val jsBundle = ResourceFallbacksBundle(listOf(
         ResourceLocation("js/visionforge-playground.js", ResourcePathType.CLASSPATH_PATH))
@@ -39,21 +42,16 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         val id = "visionforge.vision[${counter++}]"
         div {
             this.id = id
-            embedVisionFragment(VisionForge.visionManager, fragment = fragment)
+            embedVisionFragment(context.visionManager, fragment = fragment)
         }
         script {
             type = "text/javascript"
-            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
+            unsafe { +"window.renderAllVisionsById(\"$id\");" }
         }
     }
 
     override fun Builder.onLoaded() {
         resource(jsResource)
-
-        onLoaded {
-            VisionForge.plugins.fetch(Solids)
-            VisionForge.usePlotly()
-        }
 
         import(
             "space.kscience.gdml.*",
@@ -65,17 +63,15 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
             "space.kscience.visionforge.html.page"
         )
 
-        import<VisionForge>()
-
         render<Gdml> { gdmlModel ->
-            val fragment = VisionForge.fragment {
+            val fragment = HtmlVisionFragment {
                 vision(gdmlModel.toVision())
             }
             HTML(produceHtmlVisionString(fragment))
         }
 
         render<Vision> { vision ->
-            val fragment = VisionForge.fragment {
+            val fragment = HtmlVisionFragment {
                 vision(vision)
             }
 
@@ -83,7 +79,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         }
 
         render<Plot> { plot ->
-            val fragment = VisionForge.fragment {
+            val fragment = HtmlVisionFragment {
                 vision(plot.toVision())
             }
 

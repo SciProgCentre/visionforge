@@ -1,9 +1,8 @@
 pluginManagement {
-    val kotlinVersion = "1.4.31"
-    val toolsVersion = "0.9.2"
+    val kotlinVersion = "1.5.0"
+    val toolsVersion = "0.9.5"
 
     repositories {
-        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
         gradlePluginPortal()
@@ -14,11 +13,10 @@ pluginManagement {
         id("ru.mipt.npm.gradle.mpp") version toolsVersion
         id("ru.mipt.npm.gradle.jvm") version toolsVersion
         id("ru.mipt.npm.gradle.js") version toolsVersion
-        id("ru.mipt.npm.gradle.publish") version toolsVersion
-        kotlin("jvm") version kotlinVersion
-        kotlin("jupyter.api") version "0.8.3.279"
-        kotlin("js") version kotlinVersion
         kotlin("multiplatform") version kotlinVersion
+        kotlin("jvm") version kotlinVersion
+        kotlin("js") version kotlinVersion
+        kotlin("jupyter.api") version "0.9.1-20"
     }
 }
 
@@ -47,5 +45,6 @@ include(
     ":demo:sat-demo",
     ":demo:playground",
     ":demo:jupyter-playground",
+    ":demo:plotly-fx",
     ":jupyter:visionforge-gdml-jupyter"
 )

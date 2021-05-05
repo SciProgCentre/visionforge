@@ -26,7 +26,7 @@ private class MMDemoApp : Application {
 
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
-        val context = Global.context("demo") {}
+        val context = Global.buildContext("demo") {}
         render(element) {
             child(MMApp) {
                 attrs {

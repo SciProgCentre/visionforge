@@ -8,11 +8,13 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
-import space.kscience.visionforge.*
+import space.kscience.visionforge.ElementVisionRenderer
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.visible
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import info.laht.threekt.objects.Group as ThreeGroup
@@ -147,14 +149,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         override val type: KClass<ThreePlugin> = ThreePlugin::class
         override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
     }
-}
-
-/**
- * Ensure that [ThreePlugin] is loaded in the global [VisionForge] context
- */
-@DFExperimental
-public fun VisionForge.useThreeJs() {
-    plugins.fetch(ThreePlugin)
 }
 
 public fun ThreePlugin.render(

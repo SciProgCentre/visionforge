@@ -79,6 +79,9 @@ public abstract class VisionTagConsumer<R>(
         return vision(name, vision, output.meta)
     }
 
+    /**
+     * TODO to be replaced by multi-receiver
+     */
     @OptIn(DFExperimental::class)
     public inline fun <T> TagConsumer<T>.vision(
         name: String = DEFAULT_VISION_NAME,

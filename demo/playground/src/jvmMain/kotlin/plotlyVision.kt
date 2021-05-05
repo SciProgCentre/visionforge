@@ -1,17 +1,16 @@
 package space.kscience.visionforge.examples
 
-import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.dataforge.context.Context
 import space.kscience.plotly.scatter
-import space.kscience.visionforge.VisionForge
 import space.kscience.visionforge.html.ResourceLocation
-import space.kscience.visionforge.html.fragment
-import space.kscience.visionforge.invoke
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.plotly
 
-@DFExperimental
-fun main() = VisionForge(PlotlyPlugin) {
-    val fragment = fragment {
+fun main() {
+    val context = Context {
+        plugin(PlotlyPlugin)
+    }
+    context.makeVisionFile(resourceLocation = ResourceLocation.SYSTEM){
         vision {
             plotly {
                 scatter {
@@ -21,5 +20,4 @@ fun main() = VisionForge(PlotlyPlugin) {
             }
         }
     }
-    makeVisionFile(fragment, resourceLocation = ResourceLocation.SYSTEM)
 }

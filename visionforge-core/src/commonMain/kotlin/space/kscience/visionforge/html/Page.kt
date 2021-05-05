@@ -3,15 +3,13 @@ package space.kscience.visionforge.html
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.VisionForge
-import space.kscience.visionforge.context
 import space.kscience.visionforge.visionManager
 
 public data class Page(
     public val context: Context,
     public val title: String,
     public val headers: Map<String, HtmlFragment>,
-    public val content: HtmlVisionFragment
+    public val content: HtmlVisionFragment,
 ) {
     public fun <R> render(root: TagConsumer<R>): R = root.apply {
         head {
@@ -31,8 +29,8 @@ public data class Page(
 
 
 @DFExperimental
-public fun VisionForge.page(
+public fun Context.page(
     title: String = "VisionForge page",
     vararg headers: Pair<String, HtmlFragment>,
     content: HtmlVisionFragment,
-): Page = Page(context, title, mapOf(*headers), content)
+): Page = Page(this, title, mapOf(*headers), content)

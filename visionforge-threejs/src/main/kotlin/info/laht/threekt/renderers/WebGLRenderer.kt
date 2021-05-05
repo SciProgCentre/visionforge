@@ -28,6 +28,7 @@
 package info.laht.threekt.renderers
 
 import info.laht.threekt.cameras.Camera
+import info.laht.threekt.math.Plane
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Node
 
@@ -103,4 +104,17 @@ external class WebGLRenderer(params: WebGLRendererParams = definedExternally) {
     )
 
     fun setPixelRatio(value: Number)
+
+    //clipping
+
+    /**
+     * User-defined clipping planes specified as THREE.Plane objects in world space. These planes apply globally.
+     * Points in space whose dot product with the plane is negative are cut away. Default is [].
+     */
+    var clippingPlanes: Array<Plane>
+
+    /**
+     * Defines whether the renderer respects object-level clipping planes. Default is false.
+     */
+    var localClippingEnabled: Boolean
 }

@@ -23,6 +23,7 @@ import space.kscience.dataforge.context.info
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.meta.useProperty
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
@@ -41,7 +42,7 @@ import kotlin.math.sin
 public class ThreeCanvas(
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
-)  {
+) {
     private var root: Object3D? = null
 
     private val raycaster = Raycaster()
@@ -50,14 +51,23 @@ public class ThreeCanvas(
     public var content: Solid? = null
         private set
 
-    public var axes: AxesHelper = AxesHelper(options.axes.size.toInt()).apply { visible = options.axes.visible }
-        private set
-
-    private var light = buildLight(options.light)
-
     private val scene: Scene = Scene().apply {
-        add(axes)
-        add(light)
+        options.useProperty(Canvas3DOptions::axes){axesConfig->
+            getObjectByName(AXES_NAME)?.let { remove(it) }
+            val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
+            axesObject.name = AXES_NAME
+            add(axesObject)
+        }
+
+        //Set up light
+        options.useProperty(Canvas3DOptions::light){lightConfig->
+            //remove old light if present
+            getObjectByName(LIGHT_NAME)?.let { remove(it) }
+            //add new light
+            val lightObject = buildLight(lightConfig)
+            lightObject.name = LIGHT_NAME
+            add(lightObject)
+        }
     }
 
     public var camera: PerspectiveCamera = buildCamera(options.camera)
@@ -138,7 +148,7 @@ public class ThreeCanvas(
     }
 
     internal fun attach(element: Element) {
-        check(element.getElementsByClassName("three-canvas").length == 0){"Three canvas already created in this element"}
+        check(element.getElementsByClassName("three-canvas").length == 0) { "Three canvas already created in this element" }
         element.appendChild(canvas)
         updateSize()
     }
@@ -171,7 +181,7 @@ public class ThreeCanvas(
         }
     }
 
-    private fun buildLight(spec: Light): info.laht.threekt.lights.Light = AmbientLight(0x404040)
+    private fun buildLight(spec: Light?): info.laht.threekt.lights.Light = AmbientLight(0x404040)
 
     private fun buildCamera(spec: Camera) = PerspectiveCamera(
         spec.fov,
@@ -262,5 +272,7 @@ public class ThreeCanvas(
         public const val DO_NOT_HIGHLIGHT_TAG: String = "doNotHighlight"
         private const val HIGHLIGHT_NAME = "@highlight"
         private const val SELECT_NAME = "@select"
+        private const val LIGHT_NAME = "@light"
+        private const val AXES_NAME = "@axes"
     }
 }

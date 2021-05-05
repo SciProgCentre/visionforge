@@ -35,13 +35,13 @@ public class GdmlTransformerSettings {
         PROTOTYPE
     }
 
-    public var lUnit: LUnit = LUnit.CM
+    public var lUnit: LUnit = LUnit.MM
     public var aUnit: AUnit = AUnit.RADIAN
 
     public var solidAction: (GdmlSolid) -> Action = { Action.PROTOTYPE }
     public var volumeAction: (GdmlGroup) -> Action = { Action.PROTOTYPE }
 
-    public var paint: SolidMaterial.(material: GdmlMaterial) -> Unit = { _->
+    public var paint: SolidMaterial.(material: GdmlMaterial) -> Unit = { _ ->
         color(random.nextInt(16777216))
     }
 }
@@ -110,7 +110,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         val styleName = "materials.${material.name}"
 
         obj.useStyle(styleName) {
-            val vfMaterial = settings.run { SolidMaterial().apply { paint(material)}}
+            val vfMaterial = settings.run { SolidMaterial().apply { paint(material) } }
             MATERIAL_KEY put vfMaterial.toMeta()
             "Gdml.material" put material.name
         }
@@ -151,6 +151,24 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         physVolume.resolveScale(root)
     )
 
+    private fun GdmlSolid.lscale(targetUnit: LUnit): Float {
+        val solidUnit = lunit ?: return 1f
+        return if (solidUnit == targetUnit) {
+            1f
+        } else {
+            solidUnit.value / targetUnit.value
+        }
+    }
+
+    private fun GdmlSolid.ascale(targetUnit: AUnit = AUnit.RAD): Float {
+        val solidUnit = aunit ?: return 1f
+        return if (solidUnit == targetUnit) {
+            1f
+        } else {
+            solidUnit.value / targetUnit.value
+        }
+    }
+
     fun SolidGroup.addSolid(
         root: Gdml,
         solid: GdmlSolid,
@@ -158,7 +176,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     ): Solid {
         //context.solidAdded(solid)
         val lScale = solid.lscale(settings.lUnit)
-        val aScale = solid.ascale()
+        val aScale = solid.ascale(settings.aUnit)
         return when (solid) {
             is GdmlBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
             is GdmlTube -> tube(
@@ -201,7 +219,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                     scaleZ = solid.scale.z.toFloat()
                 }
             }
-            is GdmlSphere -> sphereLayer(solid.rmax * lScale,  solid.rmin * lScale, name) {
+            is GdmlSphere -> sphereLayer(solid.rmax * lScale, solid.rmin * lScale, name) {
                 phi = solid.deltaphi * aScale
                 theta = solid.deltatheta * aScale
                 phiStart = solid.startphi * aScale
@@ -299,7 +317,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         when (settings.volumeAction(volume)) {
             GdmlTransformerSettings.Action.ADD -> {
                 val group: SolidGroup = volume(root, volume)
-                this[physVolume.name ?: ""] = group.withPosition(root, physVolume)
+                this[physVolume.name] = group.withPosition(root, physVolume)
             }
             GdmlTransformerSettings.Action.PROTOTYPE -> {
                 proxyVolume(root, this, physVolume, volume)
@@ -378,7 +396,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         return final
     }
 
-    fun transform(root: Gdml): SolidGroup = finalize(volume(root, root.world))
+    fun transform(root: Gdml): SolidGroup = finalize(volume(root, root.world.resolve(root) ?: error("GDML root is not resolved")))
 }
 
 

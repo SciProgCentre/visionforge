@@ -9,6 +9,9 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * A spherical layer
+ */
 @Serializable
 @SerialName("solid.sphereLayer")
 public class SphereLayer(

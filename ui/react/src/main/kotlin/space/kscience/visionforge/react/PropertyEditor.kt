@@ -59,6 +59,11 @@ public external interface PropertyEditorProps : RProps {
      * Flow names of updated properties
      */
     public var updateFlow: Flow<Name>?
+
+    /**
+     * Initial expanded state
+     */
+    public var expanded: Boolean?
 }
 
 private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
@@ -67,7 +72,7 @@ private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
     }
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
-    var expanded: Boolean by useState { true }
+    var expanded: Boolean by useState { props.expanded ?: true }
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     var ownProperty: MetaItem? by useState { props.ownProperties.getItem(props.name) }
     val actualItem: MetaItem? = props.allProperties?.getItem(props.name)
@@ -110,7 +115,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     if (actualItem is MetaItemNode) {
         val keys = buildSet {
             (descriptorItem as? NodeDescriptor)?.items?.filterNot {
-                it.key.startsWith("@")  || it.value.hidden
+                it.key.startsWith("@") || it.value.hidden
             }?.forEach {
                 add(NameToken(it.key))
             }
@@ -232,11 +237,12 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
 
 public fun RBuilder.propertyEditor(
     ownProperties: MutableItemProvider,
-    allProperties: ItemProvider?,
+    allProperties: ItemProvider? = ownProperties,
     updateFlow: Flow<Name>? = null,
     descriptor: NodeDescriptor? = null,
     scope: CoroutineScope? = null,
     key: Any? = null,
+    expanded: Boolean? = null
 ) {
     child(PropertyEditor) {
         attrs {
@@ -246,6 +252,7 @@ public fun RBuilder.propertyEditor(
             this.descriptor = descriptor
             this.key = key?.toString() ?: ""
             this.scope = scope
+            this.expanded = expanded
         }
     }
 }

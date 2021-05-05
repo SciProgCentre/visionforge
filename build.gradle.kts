@@ -1,27 +1,29 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
+    kotlin("multiplatform") apply false
     kotlin("jvm") apply false
     kotlin("js") apply false
     kotlin("jupyter.api") apply false
+    id("ru.mipt.npm.gradle.js") apply false
 }
 
-val dataforgeVersion by extra("0.4.0-dev-2")
-val kotlinWrappersVersion by extra("pre.148-kotlin-1.4.30")
-val fxVersion by extra("14")
+val dataforgeVersion by extra("0.4.0")
+val kotlinWrappersVersion by extra("pre.152-kotlin-1.4.32")
+val fxVersion by extra("11")
 
 allprojects {
     repositories {
-        mavenLocal()
         mavenCentral()
         jcenter()
         maven("https://repo.kotlin.link")
-        maven("https://kotlin.bintray.com/kotlin-js-wrappers")
         maven("https://dl.bintray.com/pdvrieze/maven")
-        maven("http://maven.jzy3d.org/releases")
+        maven("https://maven.jzy3d.org/releases")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-13"
+    version = "0.2.0-dev-15"
 }
 
 subprojects {

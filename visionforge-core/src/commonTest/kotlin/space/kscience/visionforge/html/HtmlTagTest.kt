@@ -46,7 +46,7 @@ class HtmlTagTest {
         }
     }
 
-    val groupRenderer: HtmlVisionRenderer = { _, group, _ ->
+    val groupRenderer: HtmlVisionRenderer = { _, _, _ ->
         p { +"This is group" }
     }
 

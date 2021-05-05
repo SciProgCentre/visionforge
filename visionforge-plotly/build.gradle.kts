@@ -4,12 +4,12 @@ plugins {
 
 val plotlyVersion = "0.4.0-dev-1"
 
-kscience{
+kscience {
     useSerialization()
 }
 
 kotlin {
-    js{
+    js {
         //binaries.library()
         binaries.executable()
         browser {
@@ -19,15 +19,11 @@ kotlin {
         }
     }
 
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
+    val jsBrowserDistribution by tasks.getting
 
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
-        }
+    tasks.getByName<ProcessResources>("jvmProcessResources") {
+        dependsOn(jsBrowserDistribution)
+        from(jsBrowserDistribution)
     }
 
     sourceSets {

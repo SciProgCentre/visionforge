@@ -2,10 +2,7 @@ package space.kscience.visionforge
 
 import kotlinx.browser.document
 import kotlinx.browser.window
-import org.w3c.dom.Element
-import org.w3c.dom.WebSocket
-import org.w3c.dom.asList
-import org.w3c.dom.get
+import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
@@ -66,7 +63,7 @@ public class VisionClient : AbstractPlugin() {
     /**
      * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
      */
-    public fun renderVisionAt(element: Element) {
+    public fun renderVisionIn(element: Element) {
         val name = resolveName(element) ?: error("The element is not a vision output")
         logger.info { "Found DF output with name $name" }
         if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
@@ -173,21 +170,58 @@ public class VisionClient : AbstractPlugin() {
     }
 }
 
-/**
- * Fetch and render visions for all elements with [VisionTagConsumer.OUTPUT_CLASS] class inside given [element].
- */
-public fun VisionClient.renderAllVisionsAt(element: Element) {
-    val elements = element.getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
-    console.info("Finished search for outputs. Found ${elements.length} items")
-    elements.asList().forEach { child ->
-        renderVisionAt(child)
+
+private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
+    if (document.readyState == DocumentReadyState.COMPLETE) {
+        block(document)
+    } else {
+        document.addEventListener("DOMContentLoaded", { block(document) })
     }
 }
 
 /**
+ * Fetch and render visions for all elements with [VisionTagConsumer.OUTPUT_CLASS] class inside given [element].
+ */
+public fun VisionClient.renderAllVisionsIn(element: Element) {
+    val elements = element.getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
+    console.info("Finished search for outputs. Found ${elements.length} items")
+    elements.asList().forEach { child ->
+        renderVisionIn(child)
+    }
+}
+
+/**
+ * Render all visions in an element with a given [id]
+ */
+public fun VisionClient.renderAllVisionsById(id: String): Unit = whenDocumentLoaded {
+    val element = getElementById(id)
+    if (element != null) {
+        renderAllVisionsIn(element)
+    } else {
+        console.warn("Element with id $id not found")
+    }
+}
+
+
+/**
  * Fetch visions from the server for all elements with [VisionTagConsumer.OUTPUT_CLASS] class in the document body
  */
-public fun VisionClient.renderAllVisions() {
-    val element = document.body ?: error("Document does not have a body")
-    renderAllVisionsAt(element)
+public fun VisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
+    val element = body ?: error("Document does not have a body")
+    renderAllVisionsIn(element)
+}
+
+/**
+ * Create a vision client context and render all visions on the page.
+ */
+public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
+    console.info("Starting VisionForge context")
+    val context = Context("VisionForge"){
+        contextBuilder()
+        plugin(VisionClient)
+    }
+    val visionClient = context.fetch(VisionClient)
+    window.asDynamic()["renderAllVisionsById"] = visionClient::renderAllVisionsById
+
+    visionClient.renderAllVisions()
 }

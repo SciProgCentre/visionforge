@@ -1,16 +1,14 @@
 package space.kscience.visionforge.gdml.jupyter
 
-import kotlinx.browser.window
 import kotlinx.css.ListStyleType
 import kotlinx.css.listStyleType
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.VisionForge
 import space.kscience.visionforge.bootstrap.useBootstrap
-import space.kscience.visionforge.plugins
+import space.kscience.visionforge.runVisionClient
 import styled.injectGlobal
 
 @DFExperimental
-fun main(): Unit = VisionForge.run {
+fun main(): Unit = runVisionClient {
     useBootstrap()
     injectGlobal {
         rule("ul.nav") {
@@ -25,8 +23,5 @@ fun main(): Unit = VisionForge.run {
             listStyleType = ListStyleType.none
         }
     }
-    console.info("Starting VisionForge context")
-    plugins.fetch(ThreeWithControls)
-    window.asDynamic()["VisionForge"] = VisionForge
-    renderVisionsInWindow()
+    plugin(ThreeWithControls)
 }

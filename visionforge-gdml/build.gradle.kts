@@ -1,4 +1,5 @@
 plugins {
+    kotlin("multiplatform")
     id("ru.mipt.npm.gradle.mpp")
 }
 
@@ -7,7 +8,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":visionforge-solid"))
-                api("space.kscience:gdml:0.3.2")
+                api("space.kscience:gdml:0.4.0")
             }
         }
     }

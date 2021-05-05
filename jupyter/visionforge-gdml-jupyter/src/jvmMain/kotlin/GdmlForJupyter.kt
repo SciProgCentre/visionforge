@@ -9,16 +9,14 @@ import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionForge
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.embedVisionFragment
-import space.kscience.visionforge.html.fragment
-import space.kscience.visionforge.plugins
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
@@ -26,13 +24,17 @@ import space.kscience.visionforge.visionManager
 @DFExperimental
 internal class GdmlForJupyter : JupyterIntegration() {
 
+    private val context = Context("GDML") {
+        plugin(Solids)
+    }
+
     private var counter = 0
 
     private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().div {
         val id = "visionforge.vision[${counter++}]"
         div {
             this.id = id
-            embedVisionFragment(VisionForge.visionManager, fragment = fragment)
+            embedVisionFragment(context.visionManager, fragment = fragment)
         }
         script {
             type = "text/javascript"
@@ -43,16 +45,12 @@ internal class GdmlForJupyter : JupyterIntegration() {
     override fun Builder.onLoaded() {
 
         resources {
-            js("three"){
+            js("three") {
                 classPath("js/gdml-jupyter.js")
             }
 //            css("override") {
 //                classPath("css/jupyter-override.css")
 //            }
-        }
-
-        onLoaded {
-            VisionForge.plugins.fetch(Solids)
         }
 
         import(
@@ -64,17 +62,15 @@ internal class GdmlForJupyter : JupyterIntegration() {
             "space.kscience.visionforge.gdml.jupyter.*"
         )
 
-        import<VisionForge>()
-
         render<Gdml> { gdmlModel ->
-            val fragment = VisionForge.fragment {
+            val fragment = HtmlVisionFragment {
                 vision(gdmlModel.toVision())
             }
             HTML(produceHtmlVisionString(fragment))
         }
 
         render<Vision> { vision ->
-            val fragment = VisionForge.fragment {
+            val fragment = HtmlVisionFragment {
                 vision(vision)
             }
 

@@ -2,8 +2,7 @@ import ru.mipt.npm.gradle.DependencyConfiguration
 import ru.mipt.npm.gradle.FXModule
 
 plugins {
-    kotlin("multiplatform")
-    id("ru.mipt.npm.gradle.common")
+    id("ru.mipt.npm.gradle.mpp")
     application
 }
 

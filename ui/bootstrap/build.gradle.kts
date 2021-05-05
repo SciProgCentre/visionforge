@@ -1,4 +1,5 @@
 plugins {
+    kotlin("js")
     id("ru.mipt.npm.gradle.js")
 }
 

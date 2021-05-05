@@ -3,12 +3,13 @@ package space.kscience.visionforge.gdml.demo
 import javafx.geometry.Orientation
 import javafx.scene.Parent
 import javafx.stage.FileChooser
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
+import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.describedProperties
 import space.kscience.visionforge.editor.VisualObjectEditorFragment
 import space.kscience.visionforge.editor.VisualObjectTreeFragment
-import space.kscience.visionforge.gdml.GdmlShowcase.cubes
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.solid.FX3DPlugin
 import space.kscience.visionforge.solid.FXCanvas3D
@@ -19,8 +20,13 @@ import tornadofx.*
 class GDMLDemoApp : App(GDMLView::class)
 
 class GDMLView : View() {
-    private val fx3d = Global.plugins.fetch(FX3DPlugin)
-    private val visionManager = Global.plugins.fetch(VisionManager)
+    private val context = Context {
+        plugin(FX3DPlugin)
+        plugin(VisionManager)
+    }
+
+    private val fx3d = context.fetch(FX3DPlugin)
+    private val visionManager = context.fetch(VisionManager)
     private val canvas = FXCanvas3D(fx3d)
 
     private val treeFragment = VisualObjectTreeFragment().apply {
@@ -61,7 +67,7 @@ class GDMLView : View() {
 
     init {
         runAsync {
-            cubes.toVision()
+            GdmlShowCase.cubes().toVision()
         } ui {
             canvas.render(it)
         }

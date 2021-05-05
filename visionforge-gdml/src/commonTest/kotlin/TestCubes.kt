@@ -2,12 +2,8 @@ package space.kscience.visionforge.gdml
 
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.toName
-import space.kscience.gdml.Gdml
-import space.kscience.gdml.GdmlBox
-import space.kscience.gdml.decodeFromString
-import space.kscience.gdml.encodeToString
+import space.kscience.gdml.*
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.gdml.GdmlShowcase.cubes
 import space.kscience.visionforge.get
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.visionManager
@@ -21,13 +17,16 @@ internal val testContext = Context("TEST") {
 
 class TestCubes {
 
+    val cubes = GdmlShowCase.cubes()
+
     @Test
     fun testCubesDirect() {
         val vision = cubes.toVision()
+//        println(Solids.encodeToString(vision))
         val smallBoxPrototype = vision.getPrototype("solids.smallBox".toName()) as? Box
         assertNotNull(smallBoxPrototype)
         assertEquals(30.0, smallBoxPrototype.xSize.toDouble())
-        val smallBoxVision = vision["composite[1,1,1].smallBox"]?.prototype as? Box
+        val smallBoxVision = vision["composite-111.smallBox"]?.prototype as? Box
         assertNotNull(smallBoxVision)
         assertEquals(30.0, smallBoxVision.xSize.toDouble())
     }

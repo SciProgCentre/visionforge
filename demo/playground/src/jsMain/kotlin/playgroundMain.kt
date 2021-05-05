@@ -1,14 +1,10 @@
-import kotlinx.browser.window
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.VisionForge
-import space.kscience.visionforge.plotly.usePlotly
-import space.kscience.visionforge.solid.three.useThreeJs
+import space.kscience.visionforge.plotly.PlotlyPlugin
+import space.kscience.visionforge.runVisionClient
+import space.kscience.visionforge.solid.three.ThreePlugin
 
 @DFExperimental
-fun main(): Unit = VisionForge.run{
-    console.info("Starting VisionForge context")
-    usePlotly()
-    useThreeJs()
-    window.asDynamic()["VisionForge"] = VisionForge
-    renderVisionsInWindow()
+fun main() = runVisionClient {
+    plugin(PlotlyPlugin)
+    plugin(ThreePlugin)
 }

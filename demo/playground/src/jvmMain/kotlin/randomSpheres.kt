@@ -1,20 +1,23 @@
 package space.kscience.visionforge.examples
 
 import kotlinx.html.h1
-import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.VisionForge
+import space.kscience.dataforge.context.Context
 import space.kscience.visionforge.html.ResourceLocation
-import space.kscience.visionforge.html.fragment
-import space.kscience.visionforge.invoke
 import space.kscience.visionforge.solid.*
 import java.nio.file.Paths
 import kotlin.random.Random
 
-@OptIn(DFExperimental::class)
-fun main() = VisionForge(Solids) {
+fun main() {
+    val context = Context {
+        plugin(Solids)
+    }
 
     val random = Random(112233)
-    val fragment = fragment {
+
+    context.makeVisionFile(
+        Paths.get("randomSpheres.html"),
+        resourceLocation = ResourceLocation.EMBED
+    ) {
         h1 { +"Happy new year!" }
         vision {
             solid {
@@ -33,9 +36,4 @@ fun main() = VisionForge(Solids) {
             }
         }
     }
-    makeVisionFile(
-        fragment,
-        Paths.get("randomSpheres.html"),
-        resourceLocation = ResourceLocation.EMBED
-    )
 }

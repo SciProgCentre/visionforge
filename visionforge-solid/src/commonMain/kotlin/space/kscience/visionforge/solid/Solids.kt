@@ -17,9 +17,7 @@ import kotlin.reflect.KClass
 
 
 public class Solids(meta: Meta) : VisionPlugin(meta) {
-
     override val tag: PluginTag get() = Companion.tag
-
     override val visionSerializersModule: SerializersModule get() = serializersModuleForSolids
 
     public companion object : PluginFactory<Solids> {

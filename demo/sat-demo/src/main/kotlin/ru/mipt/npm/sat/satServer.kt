@@ -15,7 +15,7 @@ import space.kscience.visionforge.visionManager
 import kotlin.random.Random
 
 fun main() {
-    val satContext = Global.context("sat") {
+    val satContext = Global.buildContext ("sat") {
         plugin(Solids)
     }
 

@@ -93,6 +93,6 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
 }
 
 /**
- * Fetch a [VisionManager] from this plugin
+ * Fetch a [VisionManager] from this plugin or create a child plugin with a [VisionManager]
  */
-public val Context.visionManager: VisionManager get() = plugins.fetch(VisionManager)
+public val Context.visionManager: VisionManager get() = fetch(VisionManager)

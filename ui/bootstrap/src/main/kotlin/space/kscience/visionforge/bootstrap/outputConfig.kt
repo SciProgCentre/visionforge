@@ -1,25 +1,25 @@
 package space.kscience.visionforge.bootstrap
 
-import kotlinx.css.*
+import kotlinx.css.BorderStyle
+import kotlinx.css.Color
+import kotlinx.css.padding
 import kotlinx.css.properties.border
-import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
+import kotlinx.css.px
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.*
 import react.dom.button
-import react.dom.h3
-import react.dom.input
-import react.dom.label
+import space.kscience.dataforge.meta.descriptors.defaultMeta
+import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
+import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
-import styled.styledDiv
 
 private fun saveData(event: Event, fileName: String, mimeType: String = "text/plain", dataBuilder: () -> String) {
     event.stopPropagation();
@@ -48,7 +48,35 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
         arrayOf(props.canvas)
     )
     flexColumn {
-        h3 { +"Axes" }
+        flexRow {
+            css{
+                border(1.px, BorderStyle.solid, Color.blue)
+                padding(4.px)
+            }
+            button {
+                +"Export"
+                attrs {
+                    onClickFunction = {
+                        val json = (props.canvas.content as? SolidGroup)?.let { group ->
+                            visionManager.encodeToString(group)
+                        }
+                        if (json != null) {
+                            saveData(it, "object.json", "text/json") {
+                                json
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        propertyEditor(
+            ownProperties = props.canvas.options,
+            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta()),
+            descriptor = Canvas3DOptions.descriptor,
+            expanded = false
+        )
+
+/*        h3 { +"Axes" }
         flexRow {
             css{
                 border(1.px,BorderStyle.solid, Color.blue)
@@ -57,9 +85,9 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
             label("checkbox-inline") {
                 input(type = InputType.checkBox) {
                     attrs {
-                        defaultChecked = props.canvas.axes.visible
+                        defaultChecked = props.canvas.options.axes.visible
                         onChangeFunction = {
-                            props.canvas.axes.visible = (it.target as HTMLInputElement).checked
+                            props.canvas.options.axes.visible = (it.target as HTMLInputElement).checked
                         }
                     }
                 }
@@ -118,5 +146,6 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
                 }
             }
         }
+ */
     }
 }
