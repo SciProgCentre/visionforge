@@ -16,14 +16,13 @@ allprojects {
         mavenCentral()
         jcenter()
         maven("https://repo.kotlin.link")
-        maven("https://dl.bintray.com/pdvrieze/maven")
         maven("https://maven.jzy3d.org/releases")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-15"
+    version = "0.2.0-dev-16"
 }
 
 subprojects {

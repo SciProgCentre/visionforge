@@ -4,6 +4,7 @@ import javafx.collections.FXCollections
 import javafx.scene.Parent
 import javafx.scene.control.Tab
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.VisionLayout
@@ -23,7 +24,7 @@ class FXDemoGrid : View(title = "DataForge-vis FX demo"), VisionLayout<Solid> {
         }
     }
 
-    private val fx3d = Global.plugins.fetch(FX3DPlugin)
+    private val fx3d = Global.fetch(FX3DPlugin)
 
     override fun render(name: Name, vision: Solid, meta: Meta) {
         outputs.getOrPut(name) { FXCanvas3D(fx3d, canvasOptions) }.render(vision)
