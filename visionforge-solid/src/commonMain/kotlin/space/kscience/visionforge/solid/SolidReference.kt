@@ -126,7 +126,7 @@ public class SolidReferenceGroup(
                 val parentName = childName.cutLast()
                 return if (parentName.isEmpty()) this@SolidReferenceGroup else ReferenceChild(parentName)
             }
-            set(value) {
+            set(_) {
                 error("Setting a parent for a reference child is not possible")
             }
 

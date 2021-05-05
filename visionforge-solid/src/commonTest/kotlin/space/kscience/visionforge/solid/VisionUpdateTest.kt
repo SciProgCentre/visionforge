@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.MetaItem
 import space.kscience.dataforge.names.toName
 import space.kscience.visionforge.VisionChange
@@ -10,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class VisionUpdateTest {
-    val solidManager = Global.plugins.fetch(Solids)
+    val solidManager = Global.fetch(Solids)
     val visionManager = solidManager.visionManager
 
     @Test

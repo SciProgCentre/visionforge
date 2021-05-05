@@ -6,6 +6,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -33,10 +34,11 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     val elementRef = useRef<Element?>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    useEffect(listOf(props.context, props.obj, props.options, elementRef)) {
+    val three: ThreePlugin = useMemo({props.context.fetch(ThreePlugin)}, arrayOf(props.context))
+
+    useEffect(listOf(props.obj, props.options, elementRef)) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
-            val three: ThreePlugin = props.context.plugins.fetch(ThreePlugin)
             val newCanvas: ThreeCanvas = three.createCanvas(element, props.options ?: Canvas3DOptions.empty())
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas

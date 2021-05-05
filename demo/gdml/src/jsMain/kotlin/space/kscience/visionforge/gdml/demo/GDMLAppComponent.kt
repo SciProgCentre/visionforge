@@ -4,12 +4,10 @@ import kotlinx.browser.window
 import kotlinx.css.*
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import react.RProps
-import react.child
+import react.*
 import react.dom.h1
-import react.functionalComponent
-import react.useState
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
@@ -51,8 +49,9 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         selected = it
     }
 
+    val visionManager = useMemo({ props.context.fetch(Solids).visionManager }, arrayOf(props.context))
+
     fun loadData(name: String, data: String) {
-        val visionManager = props.context.plugins.fetch(Solids).visionManager
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = Gdml.decodeFromString(data)
@@ -70,7 +69,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
 
     gridRow {
         flexColumn {
-            css{
+            css {
                 +"col-lg-9"
                 height = 100.vh
             }

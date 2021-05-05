@@ -10,6 +10,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
@@ -25,7 +26,7 @@ class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
 
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 
-    private val three = Global.plugins.fetch(ThreePlugin)
+    private val three = Global.fetch(ThreePlugin)
 
     init {
         element.clear()

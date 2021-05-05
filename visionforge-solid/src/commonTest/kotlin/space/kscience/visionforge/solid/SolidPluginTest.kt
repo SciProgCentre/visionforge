@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.get
 import kotlin.test.Test
@@ -18,7 +19,7 @@ class SolidPluginTest {
     @DFExperimental
     @Test
     fun testPluginConverter() {
-        val visionManager = Global.plugins.fetch(Solids).visionManager
+        val visionManager = Global.fetch(Solids).visionManager
         val meta = visionManager.encodeToMeta(vision)
 
         val reconstructed = visionManager.decodeFromMeta(meta) as SolidGroup

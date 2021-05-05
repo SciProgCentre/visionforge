@@ -25,6 +25,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
@@ -40,16 +41,8 @@ import space.kscience.visionforge.html.fragment
 import space.kscience.visionforge.three.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.emptyList
-import kotlin.collections.first
-import kotlin.collections.forEach
-import kotlin.collections.plus
 import kotlin.collections.set
-import kotlin.time.milliseconds
+import kotlin.time.Duration
 
 public enum class VisionServerDataMode {
     EMBED,
@@ -144,7 +137,7 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-                    vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
+                    vision.flowChanges(visionManager, Duration.milliseconds(updateInterval)).collect { update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update
@@ -277,7 +270,7 @@ public fun Application.visionServer(context: Context, route: String = DEFAULT_PA
         install(CallLogging)
     }
 
-    val visionManager = context.plugins.fetch(VisionManager)
+    val visionManager = context.fetch(VisionManager)
 
     routing {
         route(route) {
