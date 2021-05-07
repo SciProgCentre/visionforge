@@ -10,6 +10,7 @@ fun main() {
     val context = Context {
         plugin(Solids)
     }
+
     context.makeVisionFile(resourceLocation = ResourceLocation.EMBED) {
         vision("canvas") {
             GdmlShowCase.babyIaxo().toVision()

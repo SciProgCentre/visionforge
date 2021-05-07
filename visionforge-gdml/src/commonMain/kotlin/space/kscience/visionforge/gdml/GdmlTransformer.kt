@@ -282,13 +282,28 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
 
                 }
             }
+            is GdmlTrapezoid -> {
+                val dxBottom = solid.x1.toDouble()
+                val dxTop = solid.x2.toDouble()
+                val dyBottom = solid.y1.toDouble()
+                val dyTop = solid.y2.toDouble()
+                val dz = solid.z.toDouble()
+                val node1 = Point3D(-dxBottom, -dyBottom, -dz)
+                val node2 = Point3D(dxBottom, -dyBottom, -dz)
+                val node3 = Point3D(dxBottom, dyBottom, -dz)
+                val node4 = Point3D(-dxBottom, dyBottom, -dz)
+                val node5 = Point3D(-dxTop, -dyTop, dz)
+                val node6 = Point3D(dxTop, -dyTop, dz)
+                val node7 = Point3D(dxTop, dyTop, dz)
+                val node8 = Point3D(-dxTop, dyTop, dz)
+                hexagon(node1, node2, node3, node4, node5, node6, node7, node8, name)
+            }
             is GdmlEllipsoid -> TODO("Renderer for $solid not supported yet")
             is GdmlElTube -> TODO("Renderer for $solid not supported yet")
             is GdmlElCone -> TODO("Renderer for $solid not supported yet")
             is GdmlParaboloid -> TODO("Renderer for $solid not supported yet")
             is GdmlParallelepiped -> TODO("Renderer for $solid not supported yet")
             is GdmlTorus -> TODO("Renderer for $solid not supported yet")
-            is GdmlTrapezoid -> TODO("Renderer for $solid not supported yet")
             is GdmlPolycone -> TODO("Renderer for $solid not supported yet")
         }
     }

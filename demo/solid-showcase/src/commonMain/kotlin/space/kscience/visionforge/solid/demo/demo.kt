@@ -181,7 +181,7 @@ fun VisionLayout<Solid>.showcaseCSG() {
 
     demo("CSG.custom", "CSG with manually created object") {
         intersect {
-            tube(60, 10) {
+            cylinder(60, 10) {
                 detail = 32
             }
             box(100, 100, 100)

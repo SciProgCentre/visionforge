@@ -30,6 +30,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
             subclass(SolidReferenceGroup.serializer())
             subclass(Composite.serializer())
             subclass(Box.serializer())
+            subclass(GenericHexagon.serializer())
             subclass(ConeSegment.serializer())
             subclass(ConeSurface.serializer())
             subclass(Convex.serializer())

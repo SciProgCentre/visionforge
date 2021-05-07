@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.VisionContainerBuilder
 import space.kscience.visionforge.set
 import kotlin.math.cos
@@ -64,6 +65,7 @@ public class ConeSegment(
 
 }
 
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.cylinder(
     r: Number,
     height: Number,
@@ -75,7 +77,7 @@ public inline fun VisionContainerBuilder<Solid>.cylinder(
     r.toFloat()
 ).apply(block).also { set(name, it) }
 
-
+@VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.cone(
     bottomRadius: Number,
     height: Number,

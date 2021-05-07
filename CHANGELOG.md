@@ -6,6 +6,7 @@
 - Change collector
 - Customizable accessors for colors
 - SphereLayer solid
+- Hexagon interface and GenericHexagon implementation (Box inherits Hexagon)
 
 ### Changed
 - Vision does not implement ItemProvider anymore. Property changes are done via `getProperty`/`setProperty` and `property` delegate.
@@ -15,6 +16,7 @@
 - \[Format breaking change!\] Stylesheets are moved into properties under `@stylesheet` key
 - VisionGroup builder accepts `null` as name for statics instead of `""`
 - gdml sphere is rendered as a SphereLayer instead of Sphere (#35)
+- Tube is replaced by more general ConeSurface
 
 ### Deprecated
 

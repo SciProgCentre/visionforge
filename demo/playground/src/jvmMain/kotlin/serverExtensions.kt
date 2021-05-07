@@ -25,7 +25,6 @@ public fun Context.makeVisionFile(
     show: Boolean = true,
     content: VisionTagConsumer<*>.() -> Unit
 ): Unit {
-
     val actualPath = page(title, content = content).makeFile(path) { actualPath ->
         mapOf("threeJs" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath))
     }
