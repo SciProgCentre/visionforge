@@ -11,6 +11,7 @@ import kotlin.math.sin
 
 /**
  * A conical or cylindrical surface
+ * The default segment number is 32
  */
 @Serializable
 @SerialName("solid.coneSurface")
@@ -33,7 +34,7 @@ public class ConeSurface(
     }
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        val segments = detail ?: 8
+        val segments = detail ?: 32
         require(segments >= 4) { "The number of segments in tube is too small" }
         val angleStep = angle / (segments - 1)
 

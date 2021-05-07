@@ -7,6 +7,7 @@
 - Customizable accessors for colors
 - SphereLayer solid
 - Hexagon interface and GenericHexagon implementation (Box inherits Hexagon)
+- Increased the default detail level for spheres and cones to 32
 
 ### Changed
 - Vision does not implement ItemProvider anymore. Property changes are done via `getProperty`/`setProperty` and `property` delegate.

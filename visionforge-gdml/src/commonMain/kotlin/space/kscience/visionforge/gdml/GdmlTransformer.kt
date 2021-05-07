@@ -2,17 +2,16 @@ package space.kscience.visionforge.gdml
 
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaBuilder
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.toName
 import space.kscience.gdml.*
-import space.kscience.visionforge.set
-import space.kscience.visionforge.setProperty
+import space.kscience.visionforge.*
+import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
-import space.kscience.visionforge.styleSheet
-import space.kscience.visionforge.useStyle
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
@@ -446,3 +445,7 @@ public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlTra
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)
 }
+
+@VisionBuilder
+@DFExperimental
+public inline fun VisionOutput.gdml(block: Gdml.() -> Unit): SolidGroup = Gdml(block).toVision()

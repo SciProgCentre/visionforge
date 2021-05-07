@@ -28,7 +28,7 @@ public class Sphere(
             return Point3D(x, y, z)
         }
 
-        val segments = this.detail ?: 8
+        val segments = this.detail ?: 32
         require(segments >= 4) { "The detail for sphere must be >= 4" }
         val phiStep = phi / segments
         val thetaStep = theta / segments

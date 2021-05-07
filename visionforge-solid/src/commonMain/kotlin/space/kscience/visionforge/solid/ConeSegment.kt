@@ -10,6 +10,7 @@ import kotlin.math.sin
 
 /**
  * A solid cylinder or cut cone segment
+ * The default segment number is 32
  */
 @Serializable
 @SerialName("solid.cone")
@@ -22,7 +23,7 @@ public class ConeSegment(
 ) : SolidBase(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        val segments = detail ?: 8
+        val segments = detail ?: 32
         require(segments >= 4) { "The number of segments in cone segment is too small" }
         val angleStep = angle / (segments - 1)
 
