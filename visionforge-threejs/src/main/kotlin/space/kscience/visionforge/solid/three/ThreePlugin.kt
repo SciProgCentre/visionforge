@@ -35,7 +35,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[Box::class] = ThreeBoxFactory
         objectFactories[Convex::class] = ThreeConvexFactory
         objectFactories[Sphere::class] = ThreeSphereFactory
-        objectFactories[ConeSegment::class] = ThreeCylinderFactory
+        objectFactories[ConeSurface::class] = ThreeCylinderFactory
         objectFactories[PolyLine::class] = ThreeLineFactory
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
     }

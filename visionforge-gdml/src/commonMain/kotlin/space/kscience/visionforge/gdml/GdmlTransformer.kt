@@ -187,11 +187,28 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                 solid.deltaphi * aScale,
                 name
             )
-            is GdmlCone -> cone(solid.rmax1, solid.z, solid.rmax2, name = name) {
-                require(solid.rmin1 == 0.0) { "Empty cones are not supported" }
-                require(solid.rmin2 == 0.0) { "Empty cones are not supported" }
-                startAngle = solid.startphi.toFloat()
-                angle = solid.deltaphi.toFloat()
+            is GdmlCone -> if (solid.rmin1.toDouble() == 0.0 && solid.rmin2.toDouble() == 0.0) {
+                cone(
+                    bottomRadius = solid.rmax1,
+                    height = solid.z,
+                    upperRadius = solid.rmax2,
+                    name = name
+                ) {
+                    startAngle = solid.startphi.toFloat()
+                    angle = solid.deltaphi.toFloat()
+                }
+            } else {
+                coneSurface(
+                    bottomOuterRadius = solid.rmax1,
+                    bottomInnerRadius = solid.rmin1,
+                    height = solid.z,
+                    topOuterRadius = solid.rmax2,
+                    topInnerRadius = solid.rmin2,
+                    name = name
+                ) {
+                    startAngle = solid.startphi.toFloat()
+                    angle = solid.deltaphi.toFloat()
+                }
             }
             is GdmlXtru -> extrude(name) {
                 shape {
@@ -396,7 +413,8 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         return final
     }
 
-    fun transform(root: Gdml): SolidGroup = finalize(volume(root, root.world.resolve(root) ?: error("GDML root is not resolved")))
+    fun transform(root: Gdml): SolidGroup =
+        finalize(volume(root, root.world.resolve(root) ?: error("GDML root is not resolved")))
 }
 
 

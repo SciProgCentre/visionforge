@@ -8,7 +8,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * A cylinder or cut cone segment
+ * A solid cylinder or cut cone segment
  */
 @Serializable
 @SerialName("solid.cone")

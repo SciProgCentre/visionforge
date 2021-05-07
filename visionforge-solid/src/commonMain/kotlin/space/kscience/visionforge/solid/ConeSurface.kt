@@ -10,22 +10,24 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Straight tube segment
+ * A conical or cylindrical surface
  */
 @Serializable
-@SerialName("solid.tube")
-public class Tube(
-    public var radius: Float,
+@SerialName("solid.coneSurface")
+public class ConeSurface(
+    public var bottomRadius: Float,
+    public var bottomInnerRadius: Float,
     public var height: Float,
-    public var innerRadius: Float = 0f,
+    public var topRadius: Float,
+    public var topInnerRadius: Float,
     public var startAngle: Float = 0f,
     public var angle: Float = PI2,
 ) : SolidBase(), GeometrySolid {
 
     init {
-        require(radius > 0)
-        require(height > 0)
-        require(innerRadius >= 0)
+        require(bottomRadius > 0) { "Cone surface bottom radius must be positive" }
+        require(height > 0) { "Cone surface height must be positive" }
+        require(bottomInnerRadius >= 0) { "Cone surface bottom inner radius must be non-negative" }
         //require(startAngle >= 0)
         require(angle in (0f..(PI2)))
     }
@@ -44,8 +46,8 @@ public class Tube(
         geometryBuilder.apply {
 
             //creating shape in x-y plane with z = 0
-            val bottomOuterPoints = shape(radius, -height / 2)
-            val upperOuterPoints = shape(radius, height / 2)
+            val bottomOuterPoints = shape(bottomRadius, -height / 2)
+            val upperOuterPoints = shape(topRadius, height / 2)
             //outer face
             (1 until segments).forEach {
                 face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], upperOuterPoints[it], upperOuterPoints[it - 1])
@@ -54,7 +56,7 @@ public class Tube(
             if (angle == PI2) {
                 face4(bottomOuterPoints.last(), bottomOuterPoints[0], upperOuterPoints[0], upperOuterPoints.last())
             }
-            if (innerRadius == 0f) {
+            if (bottomInnerRadius == 0f) {
                 val zeroBottom = Point3D(0f, 0f, 0f)
                 val zeroTop = Point3D(0f, 0f, height)
                 (1 until segments).forEach {
@@ -69,8 +71,8 @@ public class Tube(
                     face4(zeroTop, zeroBottom, bottomOuterPoints.last(), upperOuterPoints.last())
                 }
             } else {
-                val bottomInnerPoints = shape(innerRadius, -height / 2)
-                val upperInnerPoints = shape(innerRadius, height / 2)
+                val bottomInnerPoints = shape(bottomInnerRadius, -height / 2)
+                val upperInnerPoints = shape(topInnerRadius, height / 2)
                 //outer face
                 (1 until segments).forEach {
                     // inner surface
@@ -116,24 +118,41 @@ public class Tube(
             }
         }
     }
-
 }
+
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.tube(
     r: Number,
     height: Number,
-    innerRadius: Number = 0f,
+    innerRadius: Number,
     startAngle: Number = 0f,
     angle: Number = 2 * PI,
     name: String? = null,
-    block: Tube.() -> Unit = {},
-): Tube = Tube(
-    r.toFloat(),
-    height.toFloat(),
-    innerRadius.toFloat(),
-    startAngle.toFloat(),
-    angle.toFloat()
-).apply(
-    block
-).also { set(name, it) }
+    block: ConeSurface.() -> Unit = {},
+): ConeSurface = ConeSurface(
+    bottomRadius = r.toFloat(),
+    bottomInnerRadius = innerRadius.toFloat(),
+    height = height.toFloat(),
+    topRadius = r.toFloat(),
+    topInnerRadius = innerRadius.toFloat(),
+    startAngle = startAngle.toFloat(),
+    angle = angle.toFloat()
+).apply(block).also { set(name, it) }
+
+@VisionBuilder
+public inline fun VisionContainerBuilder<Solid>.coneSurface(
+    bottomOuterRadius: Number,
+    bottomInnerRadius: Number,
+    height: Number,
+    topOuterRadius: Number,
+    topInnerRadius: Number,
+    name: String? = null,
+    block: ConeSurface.() -> Unit = {},
+): ConeSurface = ConeSurface(
+    bottomRadius = bottomOuterRadius.toFloat(),
+    bottomInnerRadius = bottomInnerRadius.toFloat(),
+    height = height.toFloat(),
+    topRadius = topOuterRadius.toFloat(),
+    topInnerRadius = topInnerRadius.toFloat(),
+).apply(block).also { set(name, it) }

@@ -89,6 +89,7 @@ public class ThreeCanvas(
             width = "100%"
             height = "100%"
             display = "block"
+            zIndex = "1000"
         }
     }
 
@@ -126,6 +127,7 @@ public class ThreeCanvas(
                 mousePosition.x = ((event.clientX - rect.left) / canvas.clientWidth) * 2 - 1
                 mousePosition.y = -((event.clientY - rect.top) / canvas.clientHeight) * 2 + 1
             }
+            event.preventDefault()
         }, false)
 
         canvas.onresize = {
