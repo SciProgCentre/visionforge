@@ -218,7 +218,7 @@ public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
     console.info("Starting VisionForge context")
     val context = Context("VisionForge"){
         contextBuilder()
-        plugin(VisionClient)
+        //plugin(VisionClient)
     }
     val visionClient = context.fetch(VisionClient)
     window.asDynamic()["renderAllVisionsById"] = visionClient::renderAllVisionsById

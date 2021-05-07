@@ -47,40 +47,40 @@ public class ConeSurface(
 
             //creating shape in x-y plane with z = 0
             val bottomOuterPoints = shape(bottomRadius, -height / 2)
-            val upperOuterPoints = shape(topRadius, height / 2)
+            val topOuterPoints = shape(topRadius, height / 2)
             //outer face
             (1 until segments).forEach {
-                face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], upperOuterPoints[it], upperOuterPoints[it - 1])
+                face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], topOuterPoints[it], topOuterPoints[it - 1])
             }
 
             if (angle == PI2) {
-                face4(bottomOuterPoints.last(), bottomOuterPoints[0], upperOuterPoints[0], upperOuterPoints.last())
+                face4(bottomOuterPoints.last(), bottomOuterPoints[0], topOuterPoints[0], topOuterPoints.last())
             }
             if (bottomInnerRadius == 0f) {
                 val zeroBottom = Point3D(0f, 0f, 0f)
                 val zeroTop = Point3D(0f, 0f, height)
                 (1 until segments).forEach {
                     face(bottomOuterPoints[it - 1], zeroBottom, bottomOuterPoints[it])
-                    face(upperOuterPoints[it - 1], upperOuterPoints[it], zeroTop)
+                    face(topOuterPoints[it - 1], topOuterPoints[it], zeroTop)
                 }
                 if (angle == PI2) {
                     face(bottomOuterPoints.last(), zeroBottom, bottomOuterPoints[0])
-                    face(upperOuterPoints.last(), upperOuterPoints[0], zeroTop)
+                    face(topOuterPoints.last(), topOuterPoints[0], zeroTop)
                 } else {
-                    face4(zeroTop, zeroBottom, bottomOuterPoints[0], upperOuterPoints[0])
-                    face4(zeroTop, zeroBottom, bottomOuterPoints.last(), upperOuterPoints.last())
+                    face4(zeroTop, zeroBottom, bottomOuterPoints[0], topOuterPoints[0])
+                    face4(zeroTop, zeroBottom, bottomOuterPoints.last(), topOuterPoints.last())
                 }
             } else {
                 val bottomInnerPoints = shape(bottomInnerRadius, -height / 2)
-                val upperInnerPoints = shape(topInnerRadius, height / 2)
+                val topInnerPoints = shape(topInnerRadius, height / 2)
                 //outer face
                 (1 until segments).forEach {
                     // inner surface
                     face4(
                         bottomInnerPoints[it],
                         bottomInnerPoints[it - 1],
-                        upperInnerPoints[it - 1],
-                        upperInnerPoints[it]
+                        topInnerPoints[it - 1],
+                        topInnerPoints[it]
                     )
                     //bottom cup
                     face4(
@@ -91,28 +91,28 @@ public class ConeSurface(
                     )
                     //upper cup
                     face4(
-                        upperInnerPoints[it],
-                        upperInnerPoints[it - 1],
-                        upperOuterPoints[it - 1],
-                        upperOuterPoints[it]
+                        topInnerPoints[it],
+                        topInnerPoints[it - 1],
+                        topOuterPoints[it - 1],
+                        topOuterPoints[it]
                     )
                 }
                 if (angle == PI2) {
-                    face4(bottomInnerPoints[0], bottomInnerPoints.last(), upperInnerPoints.last(), upperInnerPoints[0])
+                    face4(bottomInnerPoints[0], bottomInnerPoints.last(), topInnerPoints.last(), topInnerPoints[0])
                     face4(
                         bottomInnerPoints.last(),
                         bottomInnerPoints[0],
                         bottomOuterPoints[0],
                         bottomOuterPoints.last()
                     )
-                    face4(upperInnerPoints[0], upperInnerPoints.last(), upperOuterPoints.last(), upperOuterPoints[0])
+                    face4(topInnerPoints[0], topInnerPoints.last(), topOuterPoints.last(), topOuterPoints[0])
                 } else {
-                    face4(bottomInnerPoints[0], bottomOuterPoints[0], upperOuterPoints[0], upperInnerPoints[0])
+                    face4(bottomInnerPoints[0], bottomOuterPoints[0], topOuterPoints[0], topInnerPoints[0])
                     face4(
                         bottomOuterPoints.last(),
                         bottomInnerPoints.last(),
-                        upperInnerPoints.last(),
-                        upperOuterPoints.last()
+                        topInnerPoints.last(),
+                        topOuterPoints.last()
                     )
                 }
             }
@@ -123,7 +123,7 @@ public class ConeSurface(
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.tube(
-    r: Number,
+    radius: Number,
     height: Number,
     innerRadius: Number,
     startAngle: Number = 0f,
@@ -131,10 +131,10 @@ public inline fun VisionContainerBuilder<Solid>.tube(
     name: String? = null,
     block: ConeSurface.() -> Unit = {},
 ): ConeSurface = ConeSurface(
-    bottomRadius = r.toFloat(),
+    bottomRadius = radius.toFloat(),
     bottomInnerRadius = innerRadius.toFloat(),
     height = height.toFloat(),
-    topRadius = r.toFloat(),
+    topRadius = radius.toFloat(),
     topInnerRadius = innerRadius.toFloat(),
     startAngle = startAngle.toFloat(),
     angle = angle.toFloat()

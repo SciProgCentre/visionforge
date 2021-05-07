@@ -180,34 +180,34 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         return when (solid) {
             is GdmlBox -> box(solid.x * lScale, solid.y * lScale, solid.z * lScale, name)
             is GdmlTube -> tube(
-                solid.rmax * lScale,
-                solid.z * lScale,
-                solid.rmin * lScale,
-                solid.startphi * aScale,
-                solid.deltaphi * aScale,
-                name
+                radius = solid.rmax * lScale,
+                height = solid.z * lScale,
+                innerRadius = solid.rmin * lScale,
+                startAngle = solid.startphi * aScale,
+                angle = solid.deltaphi * aScale,
+                name = name
             )
             is GdmlCone -> if (solid.rmin1.toDouble() == 0.0 && solid.rmin2.toDouble() == 0.0) {
                 cone(
-                    bottomRadius = solid.rmax1,
-                    height = solid.z,
-                    upperRadius = solid.rmax2,
+                    bottomRadius = solid.rmax1 * lScale,
+                    height = solid.z * lScale,
+                    upperRadius = solid.rmax2 * lScale,
                     name = name
                 ) {
-                    startAngle = solid.startphi.toFloat()
-                    angle = solid.deltaphi.toFloat()
+                    startAngle = solid.startphi * aScale
+                    angle = solid.deltaphi * aScale
                 }
             } else {
                 coneSurface(
-                    bottomOuterRadius = solid.rmax1,
-                    bottomInnerRadius = solid.rmin1,
-                    height = solid.z,
-                    topOuterRadius = solid.rmax2,
-                    topInnerRadius = solid.rmin2,
+                    bottomOuterRadius = solid.rmax1 * lScale,
+                    bottomInnerRadius = solid.rmin1 * lScale,
+                    height = solid.z * lScale,
+                    topOuterRadius = solid.rmax2 * lScale,
+                    topInnerRadius = solid.rmin2 * lScale,
                     name = name
                 ) {
-                    startAngle = solid.startphi.toFloat()
-                    angle = solid.deltaphi.toFloat()
+                    startAngle = solid.startphi * aScale
+                    angle = solid.deltaphi * aScale
                 }
             }
             is GdmlXtru -> extrude(name) {
@@ -283,11 +283,11 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                 }
             }
             is GdmlTrapezoid -> {
-                val dxBottom = solid.x1.toDouble()
-                val dxTop = solid.x2.toDouble()
-                val dyBottom = solid.y1.toDouble()
-                val dyTop = solid.y2.toDouble()
-                val dz = solid.z.toDouble()
+                val dxBottom = solid.x1.toDouble() / 2
+                val dxTop = solid.x2.toDouble() / 2
+                val dyBottom = solid.y1.toDouble() / 2
+                val dyTop = solid.y2.toDouble() / 2
+                val dz = solid.z.toDouble() / 2
                 val node1 = Point3D(-dxBottom, -dyBottom, -dz)
                 val node2 = Point3D(dxBottom, -dyBottom, -dz)
                 val node3 = Point3D(dxBottom, dyBottom, -dz)

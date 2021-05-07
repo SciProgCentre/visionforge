@@ -14,9 +14,9 @@ import kotlin.math.sin
 @Serializable
 @SerialName("solid.cone")
 public class ConeSegment(
-    public var radius: Float,
+    public var bottomRadius: Float,
     public var height: Float,
-    public var upperRadius: Float,
+    public var topRadius: Float,
     public var startAngle: Float = 0f,
     public var angle: Float = PI2
 ) : SolidBase(), GeometrySolid {
@@ -35,8 +35,8 @@ public class ConeSegment(
         geometryBuilder.apply {
 
             //creating shape in x-y plane with z = 0
-            val bottomOuterPoints = shape(upperRadius, -height / 2)
-            val upperOuterPoints = shape(radius, height / 2)
+            val bottomOuterPoints = shape(topRadius, -height / 2)
+            val upperOuterPoints = shape(bottomRadius, height / 2)
             //outer face
             (1 until segments).forEach {
                 face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], upperOuterPoints[it], upperOuterPoints[it - 1])
@@ -87,5 +87,5 @@ public inline fun VisionContainerBuilder<Solid>.cone(
 ): ConeSegment = ConeSegment(
     bottomRadius.toFloat(),
     height.toFloat(),
-    upperRadius = upperRadius.toFloat()
+    topRadius = upperRadius.toFloat()
 ).apply(block).also { set(name, it) }
