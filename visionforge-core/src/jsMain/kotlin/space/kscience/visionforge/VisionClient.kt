@@ -7,6 +7,7 @@ import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
+import space.kscience.visionforge.html.RENDER_FUNCTION_NAME
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
@@ -221,7 +222,7 @@ public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
         //plugin(VisionClient)
     }
     val visionClient = context.fetch(VisionClient)
-    window.asDynamic()["renderAllVisionsById"] = visionClient::renderAllVisionsById
+    window.asDynamic()[RENDER_FUNCTION_NAME] = visionClient::renderAllVisionsById
 
     visionClient.renderAllVisions()
 }

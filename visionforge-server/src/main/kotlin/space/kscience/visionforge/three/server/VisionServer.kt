@@ -89,7 +89,7 @@ public class VisionServer internal constructor(
                         script {
                             attributes["class"] = OUTPUT_DATA_CLASS
                             unsafe {
-                                +visionManager.encodeToString(vision)
+                                +"\n${visionManager.encodeToString(vision)}\n"
                             }
                         }
                     }

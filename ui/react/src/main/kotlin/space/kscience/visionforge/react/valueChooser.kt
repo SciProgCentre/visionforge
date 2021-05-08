@@ -152,6 +152,7 @@ public val ValueChooser: FunctionalComponent<ValueChooserProps> = functionalComp
     when {
         rawInput -> child(StringValueChooser, props)
         descriptor?.widgetType == "color" -> child(ColorValueChooser, props)
+        descriptor?.widgetType == "multiSelect" -> child(MultiSelectChooser, props)
         type == ValueType.BOOLEAN -> child(BooleanValueChooser, props)
         type == ValueType.NUMBER -> child(NumberValueChooser, props)
         descriptor?.allowedValues?.isNotEmpty() ?: false -> child(ComboValueChooser, props)

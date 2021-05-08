@@ -30,12 +30,24 @@ public class Camera : Scheme() {
 
         override val descriptor: NodeDescriptor  by lazy {
             NodeDescriptor {
-                value(Camera::fov)
-                value(Camera::nearClip)
-                value(Camera::farClip)
-                value(Camera::distance)
-                value(Camera::azimuth)
-                value(Camera::zenith)
+                value(Camera::fov){
+                    default(FIELD_OF_VIEW)
+                }
+                value(Camera::nearClip){
+                    default(NEAR_CLIP)
+                }
+                value(Camera::farClip){
+                    default(FAR_CLIP)
+                }
+                value(Camera::distance){
+                    default(INITIAL_DISTANCE)
+                }
+                value(Camera::azimuth){
+                    default(INITIAL_AZIMUTH)
+                }
+                value(Camera::latitude){
+                    default(INITIAL_LATITUDE)
+                }
             }
         }
     }

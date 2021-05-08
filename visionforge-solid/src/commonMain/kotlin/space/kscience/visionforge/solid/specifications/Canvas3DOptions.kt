@@ -3,8 +3,11 @@ package space.kscience.visionforge.solid.specifications
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.values.ValueType
+import space.kscience.visionforge.hide
 import space.kscience.visionforge.scheme
 import space.kscience.visionforge.value
+import space.kscience.visionforge.widgetType
 
 public class Canvas3DOptions : Scheme() {
     public var axes: Axes by spec(Axes)
@@ -20,6 +23,8 @@ public class Canvas3DOptions : Scheme() {
     public var maxWith: Number by number { maxSize }
     public var maxHeight: Number by number { maxSize }
 
+    public var layers: List<Number> by numberList(0)
+
     public var onSelect: ((Name?) -> Unit)? = null
 
 
@@ -28,14 +33,37 @@ public class Canvas3DOptions : Scheme() {
             NodeDescriptor {
                 scheme(Canvas3DOptions::axes, Axes)
                 scheme(Canvas3DOptions::light, Light)
-                scheme(Canvas3DOptions::camera, Camera)
-                scheme(Canvas3DOptions::controls, Controls)
-                value(Canvas3DOptions::minSize)
-                value(Canvas3DOptions::minWith)
-                value(Canvas3DOptions::minHeight)
-                value(Canvas3DOptions::maxSize)
-                value(Canvas3DOptions::maxWith)
-                value(Canvas3DOptions::maxHeight)
+                scheme(Canvas3DOptions::camera, Camera) {
+                    hide()
+                }
+                scheme(Canvas3DOptions::controls, Controls) {
+                    hide()
+                }
+                value(Canvas3DOptions::minSize) {
+                    hide()
+                }
+                value(Canvas3DOptions::minWith) {
+                    hide()
+                }
+                value(Canvas3DOptions::minHeight) {
+                    hide()
+                }
+                value(Canvas3DOptions::maxSize) {
+                    hide()
+                }
+                value(Canvas3DOptions::maxWith) {
+                    hide()
+                }
+                value(Canvas3DOptions::maxHeight) {
+                    hide()
+                }
+                value(Canvas3DOptions::layers) {
+                    type(ValueType.NUMBER)
+                    multiple = true
+                    default(listOf(0))
+                    widgetType = "multiSelect"
+                    allow(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                }
             }
         }
     }

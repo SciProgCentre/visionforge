@@ -2,7 +2,7 @@ package space.kscience.visionforge.examples
 
 import space.kscience.dataforge.context.Context
 import space.kscience.gdml.*
-import space.kscience.visionforge.gdml.gdml
+import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.solid.Solids
 
 fun main() {
@@ -12,7 +12,7 @@ fun main() {
 
     context.makeVisionFile {
         vision("canvas") {
-            gdml {
+            Gdml {
                 // geometry variables
                 val worldSize = 500
                 // chamber
@@ -220,6 +220,8 @@ fun main() {
                         }
                     }
                 }
+            }.toVision {
+                this.solidAction
             }
         }
     }

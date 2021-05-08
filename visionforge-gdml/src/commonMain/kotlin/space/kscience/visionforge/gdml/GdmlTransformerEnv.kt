@@ -25,8 +25,7 @@ private inline operator fun Number.times(d: Double) = toDouble() * d
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
-public class GdmlTransformerSettings {
-    public val random: Random = Random(222)
+public class GdmlTransformer {
 
     public enum class Action {
         ADD,
@@ -40,12 +39,70 @@ public class GdmlTransformerSettings {
     public var solidAction: (GdmlSolid) -> Action = { Action.PROTOTYPE }
     public var volumeAction: (GdmlGroup) -> Action = { Action.PROTOTYPE }
 
-    public var paint: SolidMaterial.(material: GdmlMaterial) -> Unit = { _ ->
-        color(random.nextInt(16777216))
+    internal val styleCache = HashMap<Name, Meta>()
+
+    public fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+        styleCache.getOrPut(name.toName()) {
+            Meta(builder)
+        }
+        useStyle(name)
+    }
+
+    public fun Solid.opaque() {
+        useStyle("opaque") {
+            SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
+            "edges.enabled" put true
+        }
+    }
+
+    /**
+     * Configure paint for given solid with given [GdmlMaterial]
+     */
+    public var configurePaint: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit =
+        { material, _ -> color(randomColor(material)) }
+        private set
+
+    public fun paint(block: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit) {
+        configurePaint = block
+    }
+
+    /**
+     * Configure given solid
+     */
+    public var configureSolid: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit =
+        { parent, solid, material ->
+            val styleName = "materials.${material.name}"
+
+            if (parent.physVolumes.isNotEmpty()) opaque()
+
+            useStyle(styleName) {
+                val vfMaterial = SolidMaterial().apply {
+                    configurePaint(material, solid)
+                }
+                MATERIAL_KEY put vfMaterial.toMeta()
+                "Gdml.material" put material.name
+            }
+        }
+        private set
+
+
+
+    public companion object {
+        private val random: Random = Random(222)
+
+        private val colorCache = HashMap<GdmlMaterial, Int>()
+
+        /**
+         * Use random color and cache it based on the material. Meaning that colors are random, but always the same for the
+         * same material.
+         */
+        public fun randomColor(material: GdmlMaterial): Int {
+            return colorCache.getOrPut(material) { random.nextInt(16777216) }
+        }
     }
 }
 
-private class GdmlTransformer(val settings: GdmlTransformerSettings) {
+private class GdmlTransformerEnv(val settings: GdmlTransformer) {
     //private val materialCache = HashMap<GdmlMaterial, Meta>()
 
     /**
@@ -57,8 +114,12 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         setProperty("edges.enabled", false)
     }
 
-
     private val referenceStore = HashMap<Name, MutableList<SolidReferenceGroup>>()
+
+    fun Solid.configureSolid(root: Gdml, parent: GdmlVolume, solid: GdmlSolid) {
+        val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
+        settings.run { configureSolid(parent, solid, material) }
+    }
 
     private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReferenceGroup {
         val templateName = solidsName + name
@@ -83,38 +144,6 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
         val ref = group.ref(templateName, physVolume.name).withPosition(root, physVolume)
         referenceStore.getOrPut(templateName) { ArrayList() }.add(ref)
         return ref
-    }
-
-    private val styleCache = HashMap<Name, Meta>()
-
-    var solidConfiguration: Solid.(parent: GdmlVolume, solid: GdmlSolid) -> Unit = { parent, _ ->
-        if (parent.physVolumes.isNotEmpty()) {
-            useStyle("opaque") {
-                SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
-                "edges.enabled" put true
-            }
-        }
-    }
-
-    fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
-        styleCache.getOrPut(name.toName()) {
-            Meta(builder)
-        }
-        useStyle(name)
-    }
-
-    fun configureSolid(root: Gdml, obj: Solid, parent: GdmlVolume, solid: GdmlSolid) {
-        val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
-
-        val styleName = "materials.${material.name}"
-
-        obj.useStyle(styleName) {
-            val vfMaterial = settings.run { SolidMaterial().apply { paint(material) } }
-            MATERIAL_KEY put vfMaterial.toMeta()
-            "Gdml.material" put material.name
-        }
-
-        obj.solidConfiguration(parent, solid)
     }
 
     fun <T : Solid> T.withPosition(
@@ -314,13 +343,13 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     ): Solid? {
         require(name != "") { "Can't use empty solid name. Use null instead." }
         return when (settings.solidAction(solid)) {
-            GdmlTransformerSettings.Action.ADD -> {
+            GdmlTransformer.Action.ADD -> {
                 addSolid(root, solid, name)
             }
-            GdmlTransformerSettings.Action.PROTOTYPE -> {
+            GdmlTransformer.Action.PROTOTYPE -> {
                 proxySolid(root, this, solid, name ?: solid.name)
             }
-            GdmlTransformerSettings.Action.REJECT -> {
+            GdmlTransformer.Action.REJECT -> {
                 //ignore
                 null
             }
@@ -339,21 +368,21 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
             val solid = volume.solidref.resolve(root)
                 ?: error("Solid with tag ${volume.solidref.ref} for volume ${volume.name} not defined")
             addSolidWithCaching(root, solid, physVolume.name)?.apply {
-                configureSolid(root, this, volume, solid)
+                configureSolid(root, volume, solid)
                 withPosition(root, physVolume)
             }
             return
         }
 
         when (settings.volumeAction(volume)) {
-            GdmlTransformerSettings.Action.ADD -> {
+            GdmlTransformer.Action.ADD -> {
                 val group: SolidGroup = volume(root, volume)
                 this[physVolume.name] = group.withPosition(root, physVolume)
             }
-            GdmlTransformerSettings.Action.PROTOTYPE -> {
+            GdmlTransformer.Action.PROTOTYPE -> {
                 proxyVolume(root, this, physVolume, volume)
             }
-            GdmlTransformerSettings.Action.REJECT -> {
+            GdmlTransformer.Action.REJECT -> {
                 //ignore
             }
         }
@@ -379,7 +408,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                 ?: error("Solid with tag ${group.solidref.ref} for volume ${group.name} not defined")
 
             addSolidWithCaching(root, solid, null)?.apply {
-                configureSolid(root, this, group, solid)
+                this.configureSolid(root, group, solid)
             }
 
             when (val vol: GdmlPlacement? = group.placement) {
@@ -394,10 +423,10 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
     }
 
     private fun finalize(final: SolidGroup): SolidGroup {
-        //final.prototypes = proto
-        final.useStyle("gdml") {
+        val rootStyle by final.style("gdml") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY
         }
+        final.useStyle(rootStyle)
 
         //inline prototypes
 //        referenceStore.forEach { (protoName, list) ->
@@ -419,7 +448,7 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
                 set(token.asName(), item as? Solid)
             }
         }
-        styleCache.forEach {
+        settings.styleCache.forEach {
             final.styleSheet {
                 define(it.key.toString(), it.value)
             }
@@ -432,15 +461,16 @@ private class GdmlTransformer(val settings: GdmlTransformerSettings) {
 }
 
 
-public fun Gdml.toVision(block: GdmlTransformerSettings.() -> Unit = {}): SolidGroup {
-    val context = GdmlTransformer(GdmlTransformerSettings().apply(block))
+public fun Gdml.toVision(block: GdmlTransformer.() -> Unit = {}): SolidGroup {
+    val settings = GdmlTransformer().apply(block)
+    val context = GdmlTransformerEnv(settings)
     return context.transform(this)
 }
 
 /**
  * Append Gdml node to the group
  */
-public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlTransformerSettings.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlTransformer.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

@@ -1,10 +1,6 @@
 package space.kscience.visionforge.gdml.jupyter
 
-import kotlinx.html.div
-import kotlinx.html.id
-import kotlinx.html.script
 import kotlinx.html.stream.createHTML
-import kotlinx.html.unsafe
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
@@ -16,7 +12,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.Page
-import space.kscience.visionforge.html.embedVisionFragment
+import space.kscience.visionforge.html.embedAndRenderVisionFragment
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
@@ -30,17 +26,9 @@ internal class GdmlForJupyter : JupyterIntegration() {
 
     private var counter = 0
 
-    private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().div {
-        val id = "visionforge.vision[${counter++}]"
-        div {
-            this.id = id
-            embedVisionFragment(context.visionManager, fragment = fragment)
-        }
-        script {
-            type = "text/javascript"
-            unsafe { +"VisionForge.renderVisionsAt(\"$id\");" }
-        }
-    }
+    private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().apply {
+        embedAndRenderVisionFragment(context.visionManager, counter++, fragment)
+    }.finalize()
 
     override fun Builder.onLoaded() {
 
@@ -62,19 +50,12 @@ internal class GdmlForJupyter : JupyterIntegration() {
             "space.kscience.visionforge.gdml.jupyter.*"
         )
 
-        render<Gdml> { gdmlModel ->
-            val fragment = HtmlVisionFragment {
-                vision(gdmlModel.toVision())
-            }
-            HTML(produceHtmlVisionString(fragment))
+        render<Vision> { vision ->
+            HTML(produceHtmlVisionString { vision(vision) })
         }
 
-        render<Vision> { vision ->
-            val fragment = HtmlVisionFragment {
-                vision(vision)
-            }
-
-            HTML(produceHtmlVisionString(fragment))
+        render<Gdml> { gdmlModel ->
+            HTML(produceHtmlVisionString { vision(gdmlModel.toVision()) })
         }
 
         render<Page> { page ->

@@ -52,7 +52,7 @@ public class ThreeCanvas(
         private set
 
     private val scene: Scene = Scene().apply {
-        options.useProperty(Canvas3DOptions::axes){axesConfig->
+        options.useProperty(Canvas3DOptions::axes) { axesConfig ->
             getObjectByName(AXES_NAME)?.let { remove(it) }
             val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
             axesObject.name = AXES_NAME
@@ -60,7 +60,7 @@ public class ThreeCanvas(
         }
 
         //Set up light
-        options.useProperty(Canvas3DOptions::light){lightConfig->
+        options.useProperty(Canvas3DOptions::light) { lightConfig ->
             //remove old light if present
             getObjectByName(LIGHT_NAME)?.let { remove(it) }
             //add new light
@@ -70,8 +70,29 @@ public class ThreeCanvas(
         }
     }
 
-    public var camera: PerspectiveCamera = buildCamera(options.camera)
-        private set
+
+    private fun buildCamera(spec: Camera) = PerspectiveCamera(
+        spec.fov,
+        1.0,
+        spec.nearClip,
+        spec.farClip
+    ).apply {
+        translateX(spec.distance * sin(spec.zenith) * sin(spec.azimuth))
+        translateY(spec.distance * cos(spec.zenith))
+        translateZ(spec.distance * sin(spec.zenith) * cos(spec.azimuth))
+        options.useProperty(Canvas3DOptions::layers) { selectedLayers ->
+            (0..31).forEach {
+                if (it in selectedLayers) {
+                    this@apply.layers.enable(it)
+                } else{
+                    this@apply.layers.disable(it)
+                }
+            }
+        }
+    }
+
+
+    public val camera: PerspectiveCamera = buildCamera(options.camera)
 
     private var picked: Object3D? = null
 
@@ -127,7 +148,6 @@ public class ThreeCanvas(
                 mousePosition.x = ((event.clientX - rect.left) / canvas.clientWidth) * 2 - 1
                 mousePosition.y = -((event.clientY - rect.top) / canvas.clientHeight) * 2 + 1
             }
-            event.preventDefault()
         }, false)
 
         canvas.onresize = {
@@ -184,17 +204,6 @@ public class ThreeCanvas(
     }
 
     private fun buildLight(spec: Light?): info.laht.threekt.lights.Light = AmbientLight(0x404040)
-
-    private fun buildCamera(spec: Camera) = PerspectiveCamera(
-        spec.fov,
-        1.0,
-        spec.nearClip,
-        spec.farClip
-    ).apply {
-        translateX(spec.distance * sin(spec.zenith) * sin(spec.azimuth))
-        translateY(spec.distance * cos(spec.zenith))
-        translateZ(spec.distance * sin(spec.zenith) * cos(spec.azimuth))
-    }
 
     private fun addControls(element: Node, controls: Controls) {
         when (controls["type"].string) {

@@ -10,9 +10,7 @@ fun main() {
         plugin(Solids)
     }
 
-    context.makeVisionFile{
-        vision("canvas") {
-            GdmlShowCase.babyIaxo().toVision()
-        }
+    context.makeVisionFile {
+        vision("canvas") { GdmlShowCase.babyIaxo().toVision() }
     }
 }

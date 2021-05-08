@@ -18,9 +18,15 @@ public class Axes : Scheme() {
 
         override val descriptor: NodeDescriptor by lazy {
             NodeDescriptor {
-                value(Axes::visible)
-                value(Axes::size)
-                value(Axes::width)
+                value(Axes::visible){
+                    default(false)
+                }
+                value(Axes::size){
+                    default(AXIS_SIZE)
+                }
+                value(Axes::width){
+                    default(AXIS_WIDTH)
+                }
             }
         }
     }

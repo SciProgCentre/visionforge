@@ -66,7 +66,9 @@ public abstract class VisionTagConsumer<R>(
                 }
             }
         }
-        vision?.let { renderVision(name, it, outputMeta) }
+        vision?.let {
+            renderVision(name, it, outputMeta)
+        }
     }
 
     @OptIn(DFExperimental::class)
