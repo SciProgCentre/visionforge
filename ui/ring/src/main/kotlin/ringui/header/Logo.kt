@@ -6,15 +6,15 @@ import react.RHandler
 import ringui.IconProps
 import styled.StyledDOMBuilder
 
-external interface HeaderLogoProps : IconProps
+public external interface HeaderLogoProps : IconProps
 
-fun StyledDOMBuilder<A>.ringLogo(handler: RHandler<HeaderLogoProps>) {
+public fun StyledDOMBuilder<A>.ringLogo(handler: RHandler<HeaderLogoProps>) {
     HeaderModule.Logo {
         handler()
     }
 }
 
-fun RElementBuilder<HeaderProps>.ringLogo(handler: RHandler<HeaderLogoProps>) {
+public fun RElementBuilder<HeaderProps>.ringLogo(handler: RHandler<HeaderLogoProps>) {
     HeaderModule.Logo {
         handler()
     }

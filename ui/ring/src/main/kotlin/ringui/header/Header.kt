@@ -19,12 +19,12 @@ internal external object HeaderModule {
 }
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/header/header.js
-external interface HeaderProps : WithClassName {
-    var spaced: Boolean
-    var theme: String
+public external interface HeaderProps : WithClassName {
+    public var spaced: Boolean
+    public var theme: String
 }
 
-fun RBuilder.ringHeader(handler: RHandler<HeaderProps>) {
+public fun RBuilder.ringHeader(handler: RHandler<HeaderProps>) {
     RingUI.Header {
         handler()
     }

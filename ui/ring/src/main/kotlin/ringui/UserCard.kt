@@ -11,12 +11,12 @@ private external object UserCardModule {
 }
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/user-card/card.js
-external interface UserCardProps : RProps {
-    var user: UserCardModel
-    var wording: UserCardWording
+public external interface UserCardProps : RProps {
+    public var user: UserCardModel
+    public var wording: UserCardWording
 }
 
-data class UserCardModel(
+public data class UserCardModel(
     val name: String,
     val login: String,
     val avatarUrl: String,
@@ -24,13 +24,13 @@ data class UserCardModel(
     val href: String? = null
 )
 
-data class UserCardWording(
+public data class UserCardWording(
     val banned: String,
     val online: String,
     val offline: String
 )
 
-fun RBuilder.ringUserCard(user: UserCardModel, handler: RHandler<UserCardProps> = {}) {
+public fun RBuilder.ringUserCard(user: UserCardModel, handler: RHandler<UserCardProps> = {}) {
     UserCardModule.UserCard {
         attrs.user = user
         handler()

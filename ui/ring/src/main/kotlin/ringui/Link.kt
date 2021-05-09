@@ -6,9 +6,9 @@ import react.RHandler
 import react.dom.WithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/link/link.js
-external interface LinkProps : WithClassName {
-    var innerClassName: String
-    var active: Boolean
+public external interface LinkProps : WithClassName {
+    public var innerClassName: String
+    public var active: Boolean
     var inherit: Boolean
     var pseudo: Boolean
     var hover: Boolean

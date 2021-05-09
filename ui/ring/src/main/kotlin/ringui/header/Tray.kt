@@ -6,20 +6,20 @@ import react.dom.WithClassName
 import ringui.ButtonProps
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/header/tray.js
-external interface HeaderTrayProps : WithClassName
+public external interface HeaderTrayProps : WithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/header/tray-icon.js
-external interface HeaderTrayIconProps : ButtonProps {
-    var rotatable: Boolean
+public external interface HeaderTrayIconProps : ButtonProps {
+    public var rotatable: Boolean
 }
 
-fun RElementBuilder<HeaderProps>.ringTray(handler: RHandler<HeaderTrayProps>) {
+public fun RElementBuilder<HeaderProps>.ringTray(handler: RHandler<HeaderTrayProps>) {
     HeaderModule.Tray {
         handler()
     }
 }
 
-fun RElementBuilder<HeaderTrayProps>.ringTrayIcon(handler: RHandler<WithClassName>) {
+public fun RElementBuilder<HeaderTrayProps>.ringTrayIcon(handler: RHandler<WithClassName>) {
     HeaderModule.TrayIcon {
         handler()
     }

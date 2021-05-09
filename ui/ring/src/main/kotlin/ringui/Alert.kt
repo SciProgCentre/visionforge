@@ -5,29 +5,29 @@ import react.RHandler
 import react.dom.WithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/alert/alert.js
-external interface AlertProps : WithClassName {
-    var timeout: Number
-    var onCloseRequest: () -> Unit
-    var onClose: () -> Unit
-    var isShaking: Boolean
-    var isClosing: Boolean
-    var inline: Boolean
-    var showWithAnimation: Boolean
-    var closeable: Boolean
-    var type: AlertType
+public external interface AlertProps : WithClassName {
+    public var timeout: Number
+    public var onCloseRequest: () -> Unit
+    public var onClose: () -> Unit
+    public var isShaking: Boolean
+    public var isClosing: Boolean
+    public var inline: Boolean
+    public var showWithAnimation: Boolean
+    public var closeable: Boolean
+    public var type: AlertType
 }
 
-typealias AlertType = String
+public typealias AlertType = String
 
-object AlertTypes {
-    var ERROR = "error"
-    var MESSAGE = "message"
-    var SUCCESS = "success"
-    var WARNING = "warning"
-    var LOADING = "loading"
+public object AlertTypes {
+    public var ERROR = "error"
+    public var MESSAGE = "message"
+    public var SUCCESS = "success"
+    public var WARNING = "warning"
+    public var LOADING = "loading"
 }
 
-fun RBuilder.ringAlert(handler: RHandler<AlertProps>) {
+public fun RBuilder.ringAlert(handler: RHandler<AlertProps>) {
     RingUI.Alert {
         handler()
     }

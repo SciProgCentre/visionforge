@@ -28,7 +28,7 @@ rootProject.name = "visionforge"
 include(
 //    ":ui",
     ":ui:react",
-//    ":ui:ring",
+    ":ui:ring",
 //    ":ui:material",
     ":ui:bootstrap",
     ":visionforge-core",

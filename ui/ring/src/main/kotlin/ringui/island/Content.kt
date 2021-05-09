@@ -5,15 +5,15 @@ import react.RHandler
 import react.dom.WithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/island/content.js
-external interface IslandContentProps : WithClassName {
-    var scrollableWrapperClassName: String
-    var fade: Boolean
-    var bottomBorder: Boolean
-    var onScroll: () -> Unit
-    var onScrollToBottom: () -> Unit
+public external interface IslandContentProps : WithClassName {
+    public var scrollableWrapperClassName: String
+    public var fade: Boolean
+    public var bottomBorder: Boolean
+    public var onScroll: () -> Unit
+    public var onScrollToBottom: () -> Unit
 }
 
-fun RElementBuilder<IslandProps>.ringIslandContent(handler: RHandler<IslandContentProps>) {
+public fun RElementBuilder<IslandProps>.ringIslandContent(handler: RHandler<IslandContentProps>) {
     IslandModule.Content {
         handler()
     }

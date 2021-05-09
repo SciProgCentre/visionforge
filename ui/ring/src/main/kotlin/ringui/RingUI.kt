@@ -4,11 +4,11 @@ import react.RClass
 import ringui.header.HeaderProps
 
 @JsModule("@jetbrains/ring-ui")
-external object RingUI {
-    val Alert: RClass<AlertProps>
-    val Button: RClass<ButtonProps>
-    val Dialog: RClass<DialogProps>
-    val Header: RClass<HeaderProps>
-    val Link: RClass<LinkProps>
-    val Icon: RClass<IconProps>
+public external object RingUI {
+    public val Alert: RClass<AlertProps>
+    public val Button: RClass<ButtonProps>
+    public val Dialog: RClass<DialogProps>
+    public val Header: RClass<HeaderProps>
+    public val Link: RClass<LinkProps>
+    public val Icon: RClass<IconProps>
 }

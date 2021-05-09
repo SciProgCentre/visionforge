@@ -6,29 +6,29 @@ import react.RHandler
 import react.dom.WithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/button/button.js
-external interface ButtonProps : WithClassName {
-    var theme: String
-    var active: Boolean
-    var danger: Boolean
-    var delayed: Boolean
-    var loader: Boolean
-    var primary: Boolean
+public external interface ButtonProps : WithClassName {
+    public var theme: String
+    public var active: Boolean
+    public var danger: Boolean
+    public var delayed: Boolean
+    public var loader: Boolean
+    public var primary: Boolean
 
-    var short: Boolean
-    var text: Boolean
-    var inline: Boolean
-    var dropdown: Boolean
+    public var short: Boolean
+    public var text: Boolean
+    public var inline: Boolean
+    public var dropdown: Boolean
 
-    var href: String
+    public var href: String
 
-    var icon: dynamic /* string | func */
-    var iconSize: Number
-    var iconClassName: String
+    public var icon: dynamic /* string | func */
+    public var iconSize: Number
+    public var iconClassName: String
 
-    var onMouseDown: (MouseEvent) -> Unit
+    public var onMouseDown: (MouseEvent) -> Unit
 }
 
-fun RBuilder.ringButton(handler: RHandler<ButtonProps>) {
+public fun RBuilder.ringButton(handler: RHandler<ButtonProps>) {
     RingUI.Button {
         handler()
     }
