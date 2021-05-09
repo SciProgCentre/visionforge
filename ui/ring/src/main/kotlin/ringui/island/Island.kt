@@ -28,6 +28,9 @@ public fun RBuilder.ringIsland(handler: RHandler<IslandProps>) {
 public fun RBuilder.ringIsland(header: String, handler: RHandler<IslandContentProps>) {
     ringIsland {
         ringIslandHeader {
+            attrs{
+                border = true
+            }
             +header
         }
         ringIslandContent(handler)

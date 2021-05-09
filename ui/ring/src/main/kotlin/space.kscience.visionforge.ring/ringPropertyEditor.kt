@@ -20,22 +20,14 @@ public fun RBuilder.ringPropertyEditor(
     key: Any? = null,
 ) {
 
-    ringIsland {
-        ringIslandHeader {
-            attrs {
-                border = true
-            }
-            +"Properties"
-        }
-        ringIslandContent {
-            propertyEditor(
-                ownProperties = vision.ownProperties,
-                allProperties = vision.allProperties(),
-                updateFlow = vision.propertyChanges,
-                descriptor = descriptor,
-                key = key
-            )
-        }
+    ringIsland("Properties") {
+        propertyEditor(
+            ownProperties = vision.ownProperties,
+            allProperties = vision.allProperties(),
+            updateFlow = vision.propertyChanges,
+            descriptor = descriptor,
+            key = key
+        )
     }
     val styles = if (vision is SolidReference) {
         (vision.styles + vision.prototype.styles).distinct()
@@ -52,13 +44,12 @@ public fun RBuilder.ringPropertyEditor(
             }
             ringIslandContent {
                 ringSmartTabs {
-
-                }
-                styles.forEach { styleName ->
-                    val style = vision.getStyle(styleName)
-                    if (style != null) {
-                        ringTab(styleName) {
-                            metaViewer(style)
+                    styles.forEach { styleName ->
+                        val style = vision.getStyle(styleName)
+                        if (style != null) {
+                            ringTab(styleName) {
+                                metaViewer(style)
+                            }
                         }
                     }
                 }
