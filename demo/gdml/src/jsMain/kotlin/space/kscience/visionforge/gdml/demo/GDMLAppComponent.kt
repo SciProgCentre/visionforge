@@ -14,10 +14,10 @@ import space.kscience.gdml.decodeFromString
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.bootstrap.gridRow
 import space.kscience.visionforge.bootstrap.nameCrumbs
-import space.kscience.visionforge.bootstrap.threeControls
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
+import space.kscience.visionforge.ring.ringThreeControls
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -30,14 +30,6 @@ external interface GDMLAppProps : RProps {
     var rootVision: Vision?
     var selected: Name?
 }
-
-//private val canvasConfig = Canvas3DOptions {
-//    camera = Camera {
-//        distance = 2100.0
-//        latitude = PI / 6
-//        azimuth = PI + PI / 6
-//    }
-//}
 
 @JsExport
 val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
@@ -120,7 +112,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                 }
             }
             canvas?.let {
-                threeControls(it, selected, onSelect)
+                ringThreeControls(it, selected, onSelect)
             }
         }
     }

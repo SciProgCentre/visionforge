@@ -20,11 +20,11 @@ public external interface AlertProps : WithClassName {
 public typealias AlertType = String
 
 public object AlertTypes {
-    public var ERROR = "error"
-    public var MESSAGE = "message"
-    public var SUCCESS = "success"
-    public var WARNING = "warning"
-    public var LOADING = "loading"
+    public var ERROR: String = "error"
+    public var MESSAGE: String = "message"
+    public var SUCCESS: String = "success"
+    public var WARNING: String = "warning"
+    public var LOADING: String = "loading"
 }
 
 public fun RBuilder.ringAlert(handler: RHandler<AlertProps>) {

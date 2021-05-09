@@ -49,7 +49,6 @@ public external interface PropertyEditorProps : RProps {
      */
     public var descriptor: NodeDescriptor?
 
-
     /**
      * A coroutine scope for updates
      */

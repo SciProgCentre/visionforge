@@ -9,15 +9,15 @@ import react.dom.WithClassName
 public external interface LinkProps : WithClassName {
     public var innerClassName: String
     public var active: Boolean
-    var inherit: Boolean
-    var pseudo: Boolean
-    var hover: Boolean
-    var href: String
-    var onPlainLeftClick: (MouseEvent) -> Unit
-    var onClick: (MouseEvent) -> Unit
+    public var inherit: Boolean
+    public var pseudo: Boolean
+    public var hover: Boolean
+    public var href: String
+    public var onPlainLeftClick: (MouseEvent) -> Unit
+    public var onClick: (MouseEvent) -> Unit
 }
 
-fun RBuilder.ringLink(handler: RHandler<LinkProps>) {
+public fun RBuilder.ringLink(handler: RHandler<LinkProps>) {
     RingUI.Link {
         handler()
     }

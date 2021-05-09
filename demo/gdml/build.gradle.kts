@@ -16,6 +16,15 @@ kotlin {
     jvm {
         withJava()
     }
+    js{
+        useCommonJs()
+        browser {
+            commonWebpackConfig {
+                sourceMaps = false
+                cssSupport.enabled = false
+            }
+        }
+    }
     sourceSets {
         commonMain {
             dependencies {
@@ -31,6 +40,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation(project(":ui:bootstrap"))
+                implementation(project(":ui:ring"))
                 implementation(project(":visionforge-threejs"))
                 implementation(npm("react-file-drop", "3.0.6"))
             }

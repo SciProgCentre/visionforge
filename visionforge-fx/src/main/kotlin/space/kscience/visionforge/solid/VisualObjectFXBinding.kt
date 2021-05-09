@@ -1,8 +1,7 @@
 package space.kscience.visionforge.solid
 
 import javafx.application.Platform
-import javafx.beans.binding.Binding
-import javafx.beans.binding.ObjectBinding
+import javafx.beans.binding.*
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
@@ -46,18 +45,18 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
 }
 
 public fun ObjectBinding<MetaItem?>.value(): Binding<Value?> = objectBinding { it.value }
-fun ObjectBinding<MetaItem?>.string() = stringBinding { it.string }
-fun ObjectBinding<MetaItem?>.number() = objectBinding { it.number }
-fun ObjectBinding<MetaItem?>.double() = objectBinding { it.double }
-fun ObjectBinding<MetaItem?>.float() = objectBinding { it.float }
-fun ObjectBinding<MetaItem?>.int() = objectBinding { it.int }
-fun ObjectBinding<MetaItem?>.long() = objectBinding { it.long }
-fun ObjectBinding<MetaItem?>.node() = objectBinding { it.node }
+public fun ObjectBinding<MetaItem?>.string(): StringBinding = stringBinding { it.string }
+public fun ObjectBinding<MetaItem?>.number(): Binding<Number?> = objectBinding { it.number }
+public fun ObjectBinding<MetaItem?>.double(): Binding<Double?> = objectBinding { it.double }
+public fun ObjectBinding<MetaItem?>.float(): Binding<Float?> = objectBinding { it.float }
+public fun ObjectBinding<MetaItem?>.int(): Binding<Int?> = objectBinding { it.int }
+public fun ObjectBinding<MetaItem?>.long(): Binding<Long?> = objectBinding { it.long }
+public fun ObjectBinding<MetaItem?>.node(): Binding<Meta?> = objectBinding { it.node }
 
-fun ObjectBinding<MetaItem?>.string(default: String) = stringBinding { it.string ?: default }
-fun ObjectBinding<MetaItem?>.double(default: Double) = doubleBinding { it.double ?: default }
-fun ObjectBinding<MetaItem?>.float(default: Float) = floatBinding { it.float ?: default }
-fun ObjectBinding<MetaItem?>.int(default: Int) = integerBinding { it.int ?: default }
-fun ObjectBinding<MetaItem?>.long(default: Long) = longBinding { it.long ?: default }
+public fun ObjectBinding<MetaItem?>.string(default: String): StringBinding = stringBinding { it.string ?: default }
+public fun ObjectBinding<MetaItem?>.double(default: Double): DoubleBinding = doubleBinding { it.double ?: default }
+public fun ObjectBinding<MetaItem?>.float(default: Float): FloatBinding = floatBinding { it.float ?: default }
+public fun ObjectBinding<MetaItem?>.int(default: Int): IntegerBinding = integerBinding { it.int ?: default }
+public fun ObjectBinding<MetaItem?>.long(default: Long): LongBinding = longBinding { it.long ?: default }
 
-fun <T> ObjectBinding<MetaItem?>.transform(transform: (MetaItem) -> T) = objectBinding { it?.let(transform) }
+public fun <T> ObjectBinding<MetaItem?>.transform(transform: (MetaItem) -> T): Binding<T?> = objectBinding { it?.let(transform) }

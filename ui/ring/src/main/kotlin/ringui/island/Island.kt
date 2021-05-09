@@ -25,6 +25,16 @@ public fun RBuilder.ringIsland(handler: RHandler<IslandProps>) {
     }
 }
 
+public fun RBuilder.ringIsland(header: String, handler: RHandler<IslandContentProps>) {
+    ringIsland {
+        ringIslandHeader {
+            +header
+        }
+        ringIslandContent(handler)
+    }
+}
+
+
 public fun RBuilder.ringAdaptiveIsland(handler: RHandler<IslandProps>) {
     IslandModule.AdaptiveIsland {
         handler()
