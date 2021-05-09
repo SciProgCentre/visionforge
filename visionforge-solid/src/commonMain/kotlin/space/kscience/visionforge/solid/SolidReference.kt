@@ -20,14 +20,14 @@ private fun SolidReference.getRefProperty(
     inherit: Boolean,
     includeStyles: Boolean,
     includeDefaults: Boolean,
-): MetaItem? = sequence {
-    yield(getOwnProperty(name))
+): MetaItem? = buildList {
+    add(getOwnProperty(name))
     if (includeStyles) {
-        yieldAll(getStyleItems(name))
+        addAll(getStyleItems(name))
     }
-    yield(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
+    add(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
     if (inherit) {
-        yield(parent?.getProperty(name, inherit))
+        add(parent?.getProperty(name, inherit))
     }
 }.merge()
 
@@ -45,8 +45,8 @@ public class SolidReferenceGroup(
      */
     override val prototype: Solid
         get() {
-            if(parent == null) error("No parent is present for SolidReferenceGroup")
-            if(parent !is SolidGroup) error("Reference parent is not a group")
+            if (parent == null) error("No parent is present for SolidReferenceGroup")
+            if (parent !is SolidGroup) error("Reference parent is not a group")
             return (parent as? SolidGroup)?.getPrototype(refName)
                 ?: error("Prototype with name $refName not found")
         }

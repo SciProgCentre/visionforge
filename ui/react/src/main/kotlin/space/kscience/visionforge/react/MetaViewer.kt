@@ -9,7 +9,6 @@ import space.kscience.dataforge.meta.MetaItemNode
 import space.kscience.dataforge.meta.MetaItemValue
 import space.kscience.dataforge.meta.descriptors.ItemDescriptor
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.defaultItem
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
@@ -43,7 +42,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
     var expanded: Boolean by useState { true }
     val item = props.root[props.name]
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    val actualItem = item ?: descriptorItem?.defaultItem()
+    val actualItem = item ?: descriptorItem?.defaultValue
 
     val token = props.name.lastOrNull()?.toString() ?: "Meta"
 

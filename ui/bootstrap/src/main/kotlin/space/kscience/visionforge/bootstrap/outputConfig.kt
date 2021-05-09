@@ -11,7 +11,6 @@ import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.*
 import react.dom.button
-import space.kscience.dataforge.meta.descriptors.defaultMeta
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
@@ -71,81 +70,9 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
         }
         propertyEditor(
             ownProperties = props.canvas.options,
-            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta()),
+            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )
-
-/*        h3 { +"Axes" }
-        flexRow {
-            css{
-                border(1.px,BorderStyle.solid, Color.blue)
-                padding(4.px)
-            }
-            label("checkbox-inline") {
-                input(type = InputType.checkBox) {
-                    attrs {
-                        defaultChecked = props.canvas.options.axes.visible
-                        onChangeFunction = {
-                            props.canvas.options.axes.visible = (it.target as HTMLInputElement).checked
-                        }
-                    }
-                }
-                +"Axes"
-            }
-        }
-        h3 { +"Export" }
-        flexRow {
-            css{
-                border(1.px,BorderStyle.solid, Color.blue)
-                padding(4.px)
-            }
-            button {
-                +"Export"
-                attrs {
-                    onClickFunction = {
-                        val json = (props.canvas.content as? SolidGroup)?.let { group ->
-                            visionManager.encodeToString(group)
-                        }
-                        if (json != null) {
-                            saveData(it, "object.json", "text/json") {
-                                json
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        h3 { +"Layers" }
-        flexRow {
-            css {
-                flexWrap = FlexWrap.wrap
-                border(1.px,BorderStyle.solid, Color.blue)
-                padding(4.px)
-            }
-            (0..31).forEach { layer ->
-                styledDiv {
-                    css{
-                        padding(4.px)
-                    }
-                    label { +layer.toString() }
-                    input(type = InputType.checkBox) {
-                        attrs {
-                            if (layer == 0) {
-                                defaultChecked = true
-                            }
-                            onChangeFunction = {
-                                if ((it.target as HTMLInputElement).checked) {
-                                    props.canvas.camera.layers.enable(layer)
-                                } else {
-                                    props.canvas.camera.layers.disable(layer)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
- */
     }
 }

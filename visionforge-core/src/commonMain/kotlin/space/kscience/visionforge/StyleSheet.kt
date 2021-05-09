@@ -98,8 +98,8 @@ public tailrec fun Vision.getStyle(name: String): Meta? =
 /**
  * Resolve an item in all style layers
  */
-public fun Vision.getStyleItems(name: Name): Sequence<MetaItem> = styles.asSequence().map {
+public fun Vision.getStyleItems(name: Name): List<MetaItem> = styles.mapNotNull {
     getStyle(it)[name]
-}.filterNotNull()
+}
 
 

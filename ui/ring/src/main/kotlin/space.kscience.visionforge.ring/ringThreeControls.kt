@@ -12,7 +12,6 @@ import react.dom.h2
 import ringui.island.ringIsland
 import ringui.tabs.ringSmartTabs
 import ringui.tabs.ringTab
-import space.kscience.dataforge.meta.descriptors.defaultMeta
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
@@ -78,7 +77,7 @@ internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = function
         }
         propertyEditor(
             ownProperties = props.canvas.options,
-            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta()),
+            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

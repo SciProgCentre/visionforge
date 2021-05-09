@@ -10,8 +10,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.defaultItem
-import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -66,16 +64,16 @@ public open class VisionBase(
     ): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
         getOwnProperty(name)
     } else {
-        sequence {
-            yield(getOwnProperty(name))
+        buildList {
+            add(getOwnProperty(name))
             if (includeStyles) {
-                yieldAll(getStyleItems(name))
+                addAll(getStyleItems(name))
             }
             if (inherit) {
-                yield(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
+                add(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
             }
             if (includeDefaults) {
-                yield(descriptor?.get(name)?.defaultItem())
+                add(descriptor?.defaultMeta?.get(name))
             }
         }.merge()
     }

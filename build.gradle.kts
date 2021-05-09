@@ -7,7 +7,7 @@ plugins {
     id("ru.mipt.npm.gradle.js") apply false
 }
 
-val dataforgeVersion by extra("0.4.0")
+val dataforgeVersion by extra("0.4.1")
 val kotlinWrappersVersion by extra("pre.152-kotlin-1.4.32")
 val fxVersion by extra("11")
 

@@ -23,7 +23,7 @@ private class ThreeDemoApp : Application {
             demo("dynamicBox", "Dancing boxes") {
                 val boxes = (-10..10).flatMap { i ->
                     (-10..10).map { j ->
-                        varBox(10, 10, 0, name = "cell_${i}_${j}") {
+                        varBox(10, 10, name = "cell_${i}_${j}") {
                             x = i * 10
                             y = j * 10
                             value = 128
