@@ -110,7 +110,6 @@ public class ThreeCanvas(
             width = "100%"
             height = "100%"
             display = "block"
-            zIndex = "1000"
         }
     }
 

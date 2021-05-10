@@ -3,6 +3,7 @@ plugins {
 }
 
 kotlin{
+    explicitApi = null
     js{
         binaries.library()
     }

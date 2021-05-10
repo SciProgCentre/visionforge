@@ -3,14 +3,17 @@ package space.kscience.visionforge.examples
 import space.kscience.dataforge.context.Context
 import space.kscience.gdml.*
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.visible
+import java.nio.file.Path
 
 fun main() {
     val context = Context {
         plugin(Solids)
     }
 
-    context.makeVisionFile {
+    context.makeVisionFile(Path.of("curves.html"), resourceLocation = ResourceLocation.EMBED) {
         vision("canvas") {
             Gdml {
                 // geometry variables
@@ -39,7 +42,7 @@ fun main() {
 
                 structure {
                     val worldMaterial = materials.composite("G4_AIR")
-                    val worldBox = solids.box(worldSize, worldSize, worldSize)
+                    val worldBox = solids.box(worldSize, worldSize, worldSize, name = "world")
 
                     val shieldingMaterial = materials.composite("G4_Pb")
                     val scintillatorMaterial = materials.composite("BC408")
@@ -221,7 +224,14 @@ fun main() {
                     }
                 }
             }.toVision {
-                this.solidAction
+                configure { parent, solid, material ->
+                    //disable visibility for the world box
+                    if(solid.name == "world"){
+                        visible = false
+                    }
+                    //make all solids semi-transparent
+                    transparent()
+                }
             }
         }
     }

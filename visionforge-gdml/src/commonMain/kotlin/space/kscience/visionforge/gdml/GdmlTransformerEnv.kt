@@ -48,8 +48,8 @@ public class GdmlTransformer {
         useStyle(name)
     }
 
-    public fun Solid.opaque() {
-        useStyle("opaque") {
+    public fun Solid.transparent() {
+        useStyle("transparent") {
             SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
             "edges.enabled" put true
         }
@@ -73,7 +73,7 @@ public class GdmlTransformer {
         { parent, solid, material ->
             val styleName = "materials.${material.name}"
 
-            if (parent.physVolumes.isNotEmpty()) opaque()
+            if (parent.physVolumes.isNotEmpty()) transparent()
 
             useStyle(styleName) {
                 val vfMaterial = SolidMaterial().apply {
@@ -85,6 +85,13 @@ public class GdmlTransformer {
         }
         private set
 
+    public fun configure(block: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit) {
+        val oldConfigure = configureSolid
+        configureSolid = { parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial ->
+            oldConfigure(parent, solid, material)
+            block(parent, solid, material)
+        }
+    }
 
 
     public companion object {

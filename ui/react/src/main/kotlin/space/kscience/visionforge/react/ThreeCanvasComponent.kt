@@ -2,6 +2,8 @@ package space.kscience.visionforge.react
 
 import kotlinx.css.Display
 import kotlinx.css.display
+import kotlinx.css.height
+import kotlinx.css.pct
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
@@ -60,6 +62,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     styledDiv {
         css {
             display = Display.contents
+            height = 100.pct
         }
         ref = elementRef
     }

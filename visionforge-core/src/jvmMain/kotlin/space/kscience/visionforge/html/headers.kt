@@ -3,6 +3,7 @@ package space.kscience.visionforge.html
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
+import org.slf4j.LoggerFactory
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.VisionManager
 import java.nio.file.Files
@@ -49,18 +50,22 @@ private fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toStr
  */
 @OptIn(ExperimentalPathApi::class)
 internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String): Path {
-    //TODO add logging
-    val fullPath = htmlPath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
+    val logger = LoggerFactory.getLogger("")
 
-    val bytes = VisionManager::class.java.getResourceAsStream("/$resource").readAllBytes()
+    logger.info("Resolving or storing resource file $resource")
+    val fullPath = htmlPath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
+    logger.debug("Full path to resource file $resource: $fullPath")
+
+    val bytes = VisionManager.Companion::class.java.getResourceAsStream("/$resource")?.readAllBytes()
+        ?: error("Resource $resource not found on classpath")
     val md = MessageDigest.getInstance("MD5")
 
     val checksum = md.digest(bytes).toHexString()
-
     val md5File = fullPath.resolveSibling(fullPath.fileName.toString() + ".md5")
     val skip: Boolean = Files.exists(fullPath) && Files.exists(md5File) && md5File.readText() == checksum
 
     if (!skip) {
+        logger.debug("File $fullPath does not exist or wrong checksum. Writing file")
         Files.createDirectories(fullPath.parent)
         Files.write(fullPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
         Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)

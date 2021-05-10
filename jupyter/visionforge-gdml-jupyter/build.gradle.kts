@@ -8,9 +8,14 @@ description = "Jupyter api artifact for GDML rendering"
 kotlin{
     explicitApi = null
     js{
+        useCommonJs()
         browser {
             webpackTask {
                 this.outputFileName = "js/gdml-jupyter.js"
+            }
+            commonWebpackConfig {
+                sourceMaps = false
+                cssSupport.enabled = false
             }
         }
         binaries.executable()
@@ -42,7 +47,7 @@ kotlin{
         jsMain {
             dependencies {
                 api(project(":visionforge-threejs"))
-                implementation(project(":ui:bootstrap"))
+                implementation(project(":ui:ring"))
             }
         }
 

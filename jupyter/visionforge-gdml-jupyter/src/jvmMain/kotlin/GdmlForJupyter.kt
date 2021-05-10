@@ -36,9 +36,6 @@ internal class GdmlForJupyter : JupyterIntegration() {
             js("three") {
                 classPath("js/gdml-jupyter.js")
             }
-//            css("override") {
-//                classPath("css/jupyter-override.css")
-//            }
         }
 
         import(

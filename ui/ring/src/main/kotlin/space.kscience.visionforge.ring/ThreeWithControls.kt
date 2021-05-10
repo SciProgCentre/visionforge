@@ -1,4 +1,4 @@
-package space.kscience.visionforge.gdml.jupyter
+package space.kscience.visionforge.ring
 
 import org.w3c.dom.Element
 import react.child
@@ -15,8 +15,8 @@ import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreePlugin
 import kotlin.reflect.KClass
 
-class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
-    val three by require(ThreePlugin)
+public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
+    public val three by require(ThreePlugin)
 
     override val tag: PluginTag get() = Companion.tag
 
@@ -25,7 +25,7 @@ class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
         react.dom.render(element) {
-            child(GdmlView) {
+            child(ThreeViewWithControls) {
                 attrs {
                     this.context = this@ThreeWithControls.context
                     this.rootVision = vision
@@ -41,7 +41,7 @@ class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
-    companion object : PluginFactory<ThreeWithControls> {
+    public companion object : PluginFactory<ThreeWithControls> {
         override val tag: PluginTag = PluginTag("vision.threejs.withControls", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreeWithControls> = ThreeWithControls::class
         override fun invoke(meta: Meta, context: Context): ThreeWithControls = ThreeWithControls()
