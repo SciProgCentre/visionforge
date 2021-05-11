@@ -29,6 +29,9 @@ public interface PrototypeHolder {
 @SerialName("group.solid")
 public class SolidGroup(
     @Serializable(PrototypeSerializer::class) internal var prototypes: MutableVisionGroup? = null,
+    override var position: Point3D? = null,
+    override var rotation: Point3D? = null,
+    override var scale: Point3D? = null,
 ) : VisionGroupBase(), Solid, PrototypeHolder {
 
     init {
@@ -52,12 +55,6 @@ public class SolidGroup(
             it.parent = this
         }).run(builder)
     }
-
-    override var position: Point3D? = null
-
-    override var rotation: Point3D? = null
-
-    override var scale: Point3D? = null
 
 //    /**
 //     * TODO add special static group to hold statics without propagation

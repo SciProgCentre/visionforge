@@ -9,6 +9,15 @@ import space.kscience.visionforge.scheme
 import space.kscience.visionforge.value
 import space.kscience.visionforge.widgetType
 
+public class ClippingPlane: Scheme(){
+    public var x: Double by double(0.0)
+    public var y: Double by double(0.0)
+    public var z: Double by double(0.0)
+
+    public companion object: SchemeSpec<ClippingPlane>(::ClippingPlane)
+}
+
+
 public class Canvas3DOptions : Scheme() {
     public var axes: Axes by spec(Axes)
     public var light: Light by spec(Light)
@@ -24,6 +33,8 @@ public class Canvas3DOptions : Scheme() {
     public var maxHeight: Number by number { maxSize }
 
     public var layers: List<Number> by numberList(0)
+
+    //public var clippingPlanes: List<ClippingPlane> by list
 
     public var onSelect: ((Name?) -> Unit)? = null
 

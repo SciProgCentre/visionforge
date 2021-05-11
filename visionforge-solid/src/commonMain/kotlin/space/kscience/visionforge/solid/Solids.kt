@@ -54,6 +54,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
         }
 
         internal val jsonForSolids: Json = Json(VisionManager.defaultJson) {
+            encodeDefaults = false
             serializersModule = serializersModuleForSolids
         }
 

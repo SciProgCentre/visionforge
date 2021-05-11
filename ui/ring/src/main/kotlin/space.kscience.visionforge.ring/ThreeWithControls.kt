@@ -16,7 +16,7 @@ import space.kscience.visionforge.solid.three.ThreePlugin
 import kotlin.reflect.KClass
 
 public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
-    public val three by require(ThreePlugin)
+    public val three: ThreePlugin by require(ThreePlugin)
 
     override val tag: PluginTag get() = Companion.tag
 

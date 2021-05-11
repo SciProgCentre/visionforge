@@ -3,7 +3,6 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.update
-import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
 
 public enum class CompositeType {
@@ -18,15 +17,15 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid,
-) : SolidBase(), Solid, VisionGroup {
-
-    init {
-        first.parent = this
-        second.parent = this
-    }
-
-    override val children: Map<NameToken, Vision>
-        get() = mapOf(NameToken("first") to first, NameToken("second") to second)
+) : SolidBase(), Solid {
+//
+//    init {
+//        first.parent = this
+//        second.parent = this
+//    }
+//
+//    override val children: Map<NameToken, Vision>
+//        get() = mapOf(NameToken("first") to first, NameToken("second") to second)
 }
 
 @VisionBuilder

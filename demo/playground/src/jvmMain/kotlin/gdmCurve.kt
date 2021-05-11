@@ -5,6 +5,8 @@ import space.kscience.gdml.*
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.solid.color
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.visible
 import java.nio.file.Path
 
@@ -229,8 +231,12 @@ fun main() {
                     if(solid.name == "world"){
                         visible = false
                     }
-                    //make all solids semi-transparent
-                    transparent()
+                    if(solid.name.startsWith("gas")){
+                        color("green")
+                    } else {
+                        //make all solids semi-transparent
+                        transparent()
+                    }
                 }
             }
         }

@@ -32,11 +32,9 @@ internal data class PropertyListener(
 @SerialName("vision")
 public open class VisionBase(
     internal var properties: Config? = null,
+    @Transient override var parent: VisionGroup? = null,
     @Transient public val coroutineScope: CoroutineScope = GlobalScope,
 ) : Vision {
-
-    @Transient
-    override var parent: VisionGroup? = null
 
     @Synchronized
     protected fun getOrCreateConfig(): Config {

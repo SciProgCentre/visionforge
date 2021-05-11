@@ -11,6 +11,7 @@ import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.helpers.AxesHelper
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.materials.LineBasicMaterial
+import info.laht.threekt.math.Box3
 import info.laht.threekt.math.Vector2
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
@@ -43,7 +44,13 @@ public class ThreeCanvas(
     public val three: ThreePlugin,
     public val options: Canvas3DOptions,
 ) {
+
+    private var boundingBox: Box3? = null
     private var root: Object3D? = null
+        set(value) {
+            field = value
+            if (value != null) boundingBox = Box3().setFromObject(value)
+        }
 
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
@@ -84,7 +91,7 @@ public class ThreeCanvas(
             (0..31).forEach {
                 if (it in selectedLayers) {
                     this@apply.layers.enable(it)
-                } else{
+                } else {
                     this@apply.layers.disable(it)
                 }
             }
