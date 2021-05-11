@@ -27,9 +27,7 @@
 
 package info.laht.threekt.math
 
-external class Plane {
-
-    constructor()
+external class Plane() {
     constructor(normal: Vector3, constant: Double)
 
     var normal: Vector3

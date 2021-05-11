@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.attributes
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.hide
@@ -9,14 +10,40 @@ import space.kscience.visionforge.scheme
 import space.kscience.visionforge.value
 import space.kscience.visionforge.widgetType
 
-public class ClippingPlane: Scheme(){
-    public var x: Double by double(0.0)
-    public var y: Double by double(0.0)
-    public var z: Double by double(0.0)
+public class Clipping : Scheme() {
+    public var x: Double? by double()
+    public var y: Double? by double()
+    public var z: Double? by double()
 
-    public companion object: SchemeSpec<ClippingPlane>(::ClippingPlane)
+    public companion object : SchemeSpec<Clipping>(::Clipping) {
+        override val descriptor: NodeDescriptor = NodeDescriptor {
+            value(Clipping::x) {
+                widgetType = "range"
+                attributes {
+                    set("min", 0.0)
+                    set("max", 1.0)
+                    set("step", 0.01)
+                }
+            }
+            value(Clipping::y) {
+                widgetType = "range"
+                attributes {
+                    set("min", 0.0)
+                    set("max", 1.0)
+                    set("step", 0.01)
+                }
+            }
+            value(Clipping::z) {
+                widgetType = "range"
+                attributes {
+                    set("min", 0.0)
+                    set("max", 1.0)
+                    set("step", 0.01)
+                }
+            }
+        }
+    }
 }
-
 
 public class Canvas3DOptions : Scheme() {
     public var axes: Axes by spec(Axes)
@@ -34,7 +61,7 @@ public class Canvas3DOptions : Scheme() {
 
     public var layers: List<Number> by numberList(0)
 
-    //public var clippingPlanes: List<ClippingPlane> by list
+    public var clipping: Clipping by spec(Clipping)
 
     public var onSelect: ((Name?) -> Unit)? = null
 
@@ -75,6 +102,7 @@ public class Canvas3DOptions : Scheme() {
                     widgetType = "multiSelect"
                     allow(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 }
+                scheme(Canvas3DOptions::clipping, Clipping)
             }
         }
     }

@@ -17,16 +17,7 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid,
-) : SolidBase(), Solid {
-//
-//    init {
-//        first.parent = this
-//        second.parent = this
-//    }
-//
-//    override val children: Map<NameToken, Vision>
-//        get() = mapOf(NameToken("first") to first, NameToken("second") to second)
-}
+) : SolidBase(), Solid
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.composite(

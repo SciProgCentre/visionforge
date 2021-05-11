@@ -12,7 +12,9 @@ import info.laht.threekt.helpers.AxesHelper
 import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.materials.LineBasicMaterial
 import info.laht.threekt.math.Box3
+import info.laht.threekt.math.Plane
 import info.laht.threekt.math.Vector2
+import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
@@ -25,10 +27,7 @@ import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.meta.useProperty
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.*
@@ -59,7 +58,7 @@ public class ThreeCanvas(
         private set
 
     private val scene: Scene = Scene().apply {
-        options.useProperty(Canvas3DOptions::axes) { axesConfig ->
+        options.useProperty(Canvas3DOptions::axes, this) { axesConfig ->
             getObjectByName(AXES_NAME)?.let { remove(it) }
             val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
             axesObject.name = AXES_NAME
@@ -67,7 +66,7 @@ public class ThreeCanvas(
         }
 
         //Set up light
-        options.useProperty(Canvas3DOptions::light) { lightConfig ->
+        options.useProperty(Canvas3DOptions::light, this) { lightConfig ->
             //remove old light if present
             getObjectByName(LIGHT_NAME)?.let { remove(it) }
             //add new light
@@ -87,7 +86,7 @@ public class ThreeCanvas(
         translateX(spec.distance * sin(spec.zenith) * sin(spec.azimuth))
         translateY(spec.distance * cos(spec.zenith))
         translateZ(spec.distance * sin(spec.zenith) * cos(spec.azimuth))
-        options.useProperty(Canvas3DOptions::layers) { selectedLayers ->
+        options.useProperty(Canvas3DOptions::layers, this) { selectedLayers ->
             (0..31).forEach {
                 if (it in selectedLayers) {
                     this@apply.layers.enable(it)
@@ -98,7 +97,6 @@ public class ThreeCanvas(
         }
     }
 
-
     public val camera: PerspectiveCamera = buildCamera(options.camera)
 
     private var picked: Object3D? = null
@@ -107,6 +105,30 @@ public class ThreeCanvas(
         antialias = true
     }.apply {
         setClearColor(Colors.skyblue, 1)
+        //Clipping planes
+        localClippingEnabled = true
+        options.onChange(this@ThreeCanvas) { name, _, _ ->
+            if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
+                val clipping = options.clipping
+                boundingBox?.let { boundingBox ->
+                    val xClippingPlane = clipping.x?.let {
+                        val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
+                        Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
+
+                    }
+                    val yClippingPlane = clipping.y?.let {
+                        val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
+                        Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
+                    }
+
+                    val zClippingPlane = clipping.z?.let {
+                        val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
+                        Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
+                    }
+                    clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
+                }
+            }
+        }
     }
 
     private val canvas = (renderer.domElement as HTMLCanvasElement).apply {
@@ -291,5 +313,6 @@ public class ThreeCanvas(
         private const val SELECT_NAME = "@select"
         private const val LIGHT_NAME = "@light"
         private const val AXES_NAME = "@axes"
+        private const val CLIP_HELPER_NAME = "@clipping"
     }
 }

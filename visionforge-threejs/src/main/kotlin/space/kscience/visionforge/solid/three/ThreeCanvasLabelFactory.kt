@@ -26,7 +26,7 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
         context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"
-        context.fillStyle = obj.color ?: "black"
+        context.fillStyle = obj.color.value ?: "black"
         context.textBaseline = CanvasTextBaseline.MIDDLE
         val metrics = context.measureText(obj.text)
         //canvas.width = metrics.width.toInt()

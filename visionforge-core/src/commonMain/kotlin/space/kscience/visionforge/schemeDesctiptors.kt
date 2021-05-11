@@ -23,6 +23,11 @@ public inline fun <S : Scheme, reified T> NodeDescriptorBuilder.value(
                 type(ValueType.NUMBER)
                 block()
             }
+        typeOf<Number?>(), typeOf<Int?>(), typeOf<Double?>(), typeOf<Short?>(), typeOf<Long?>(), typeOf<Float?>() ->
+            value(property.name) {
+                type(ValueType.NUMBER)
+                block()
+            }
         typeOf<Boolean>() -> value(property.name) {
             type(ValueType.BOOLEAN)
             block()
