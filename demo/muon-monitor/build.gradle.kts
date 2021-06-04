@@ -8,6 +8,7 @@ group = "ru.mipt.npm"
 val ktorVersion: String = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
 
 kscience {
+    useCoroutines()
     useSerialization()
     application()
 }
@@ -23,9 +24,7 @@ kotlin {
         tasks.getByName<ProcessResources>("jvmProcessResources") {
             dependsOn(jsBrowserDistribution)
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
+            from(jsBrowserDistribution)
         }
     }
 
@@ -58,8 +57,8 @@ application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>(){
-    kotlinOptions{
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>() {
+    kotlinOptions {
         freeCompilerArgs = freeCompilerArgs + "-Xir-property-lazy-initialization"
     }
 }

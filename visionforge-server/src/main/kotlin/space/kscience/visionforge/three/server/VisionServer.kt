@@ -16,7 +16,6 @@ import io.ktor.routing.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import io.ktor.util.KtorExperimentalAPI
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.CoroutineScope
@@ -283,7 +282,6 @@ public fun Application.visionServer(context: Context, route: String = DEFAULT_PA
     return VisionServer(visionManager, this, route)
 }
 
-@OptIn(KtorExperimentalAPI::class)
 public fun VisionManager.serve(
     host: String = "localhost",
     port: Int = 7777,

@@ -7,6 +7,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.attrs
 import react.dom.option
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.ValueDescriptor

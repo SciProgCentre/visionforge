@@ -15,12 +15,12 @@ kotlin {
             dependencies {
                 api("space.kscience:dataforge-context:$dataforgeVersion")
                 api("org.jetbrains.kotlinx:kotlinx-html:${ru.mipt.npm.gradle.KScienceVersions.htmlVersion}")
-                api("org.jetbrains:kotlin-css:1.0.0-$kotlinWrappersVersion")
+                api("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-$kotlinWrappersVersion")
             }
         }
         jsMain {
             dependencies {
-                api("org.jetbrains:kotlin-extensions:1.0.1-$kotlinWrappersVersion")
+                api("org.jetbrains.kotlin-wrappers:kotlin-extensions:1.0.1-$kotlinWrappersVersion")
             }
         }
     }

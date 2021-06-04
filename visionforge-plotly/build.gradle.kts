@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.mpp")
 }
 
-val plotlyVersion = "0.4.0-dev-1"
+val plotlyVersion = "0.4.2"
 
 kscience {
     useSerialization()

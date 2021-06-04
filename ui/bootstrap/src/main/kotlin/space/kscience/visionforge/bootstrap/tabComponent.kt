@@ -4,6 +4,7 @@ import kotlinx.html.DIV
 import kotlinx.html.classes
 import kotlinx.html.js.onClickFunction
 import react.*
+import react.dom.attrs
 import react.dom.button
 import react.dom.li
 import react.dom.ul

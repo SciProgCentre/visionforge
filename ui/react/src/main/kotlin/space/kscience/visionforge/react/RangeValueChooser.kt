@@ -5,6 +5,7 @@ import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.FunctionalComponent
+import react.dom.attrs
 import react.functionalComponent
 import react.useState
 import space.kscience.dataforge.meta.get

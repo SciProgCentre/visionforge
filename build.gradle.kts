@@ -7,8 +7,8 @@ plugins {
     id("ru.mipt.npm.gradle.js") apply false
 }
 
-val dataforgeVersion by extra("0.4.1")
-val kotlinWrappersVersion by extra("pre.152-kotlin-1.4.32")
+val dataforgeVersion by extra("0.4.2")
+val kotlinWrappersVersion by extra("pre.206-kotlin-1.5.10")
 val fxVersion by extra("11")
 
 allprojects {
@@ -17,12 +17,10 @@ allprojects {
         jcenter()
         maven("https://repo.kotlin.link")
         maven("https://maven.jzy3d.org/releases")
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
-        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-17"
+    version = "0.2.0-dev-18"
 }
 
 subprojects {

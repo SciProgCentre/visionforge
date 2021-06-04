@@ -13,6 +13,7 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.attrs
 import react.dom.render
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.ItemDescriptor

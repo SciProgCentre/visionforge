@@ -4,6 +4,7 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.a
+import react.dom.attrs
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaItemNode
 import space.kscience.dataforge.meta.MetaItemValue

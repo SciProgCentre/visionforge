@@ -33,7 +33,7 @@ public external interface ThreeCanvasState : RState {
 public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functionalComponent(
     "ThreeCanvasComponent"
 ) { props ->
-    val elementRef = useRef<Element?>(null)
+    val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
     val three: ThreePlugin = useMemo({props.context.fetch(ThreePlugin)}, arrayOf(props.context))

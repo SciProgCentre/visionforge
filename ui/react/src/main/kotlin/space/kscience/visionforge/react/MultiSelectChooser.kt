@@ -6,6 +6,7 @@ import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.asList
 import org.w3c.dom.events.Event
 import react.FunctionalComponent
+import react.dom.attrs
 import react.dom.option
 import react.dom.select
 import react.functionalComponent

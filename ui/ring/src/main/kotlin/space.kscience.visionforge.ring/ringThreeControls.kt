@@ -7,6 +7,7 @@ import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.*
+import react.dom.attrs
 import react.dom.button
 import react.dom.h2
 import ringui.island.ringIsland
