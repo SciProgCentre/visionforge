@@ -68,4 +68,5 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
 @VisionBuilder
 @DFExperimental
-public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
+public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup =
+    SolidGroup().apply(block).apply { root(this@solid.manager) }

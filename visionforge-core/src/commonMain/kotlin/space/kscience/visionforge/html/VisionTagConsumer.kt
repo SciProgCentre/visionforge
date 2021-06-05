@@ -17,7 +17,7 @@ import kotlin.collections.set
  * A placeholder object to attach inline vision builders.
  */
 @DFExperimental
-public class VisionOutput @PublishedApi internal constructor() {
+public class VisionOutput @PublishedApi internal constructor(public val manager: VisionManager) {
     public var meta: Meta = Meta.EMPTY
 
     //TODO expose a way to define required plugins.
@@ -32,6 +32,7 @@ public class VisionOutput @PublishedApi internal constructor() {
  */
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
+    public val manager:VisionManager,
     private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
@@ -62,7 +63,7 @@ public abstract class VisionTagConsumer<R>(
             script {
                 attributes["class"] = OUTPUT_META_CLASS
                 unsafe {
-                    +VisionManager.defaultJson.encodeToString(MetaSerializer, outputMeta)
+                    +manager.jsonFormat.encodeToString(MetaSerializer, outputMeta)
                 }
             }
         }
@@ -76,7 +77,7 @@ public abstract class VisionTagConsumer<R>(
         name: Name,
         visionProvider: VisionOutput.() -> Vision,
     ): T {
-        val output = VisionOutput()
+        val output = VisionOutput(manager)
         val vision = output.visionProvider()
         return vision(name, vision, output.meta)
     }

@@ -14,6 +14,7 @@ import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
+import space.kscience.visionforge.solid.three.configure
 import styled.css
 import styled.styledDiv
 
@@ -36,12 +37,15 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    val three: ThreePlugin = useMemo({props.context.fetch(ThreePlugin)}, arrayOf(props.context))
+    val three: ThreePlugin = useMemo({ props.context.fetch(ThreePlugin) }, arrayOf(props.context))
 
     useEffect(listOf(props.obj, props.options, elementRef)) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
-            val newCanvas: ThreeCanvas = three.createCanvas(element, props.options ?: Canvas3DOptions.empty())
+            val newCanvas: ThreeCanvas = three.getOrCreateCanvas(element)
+            props.options?.let {
+                newCanvas.configure(it)
+            }
             props.canvasCallback?.invoke(newCanvas)
             canvas = newCanvas
         }

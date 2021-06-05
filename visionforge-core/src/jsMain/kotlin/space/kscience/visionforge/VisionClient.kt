@@ -128,7 +128,7 @@ public class VisionClient : AbstractPlugin() {
 
             logger.info { "Updating vision data from $wsUrl" }
 
-            val ws = WebSocket(wsUrl.toString()).apply {
+            WebSocket(wsUrl.toString()).apply {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
                     if (stringData != null) {

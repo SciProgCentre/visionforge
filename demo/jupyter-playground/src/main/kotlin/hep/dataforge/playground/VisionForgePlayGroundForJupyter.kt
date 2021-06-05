@@ -18,7 +18,7 @@ import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.embedVisionFragment
 import space.kscience.visionforge.plotly.PlotlyPlugin
-import space.kscience.visionforge.plotly.toVision
+import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
@@ -80,7 +80,7 @@ internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
 
         render<Plot> { plot ->
             val fragment = HtmlVisionFragment {
-                vision(plot.toVision())
+                vision(plot.asVision())
             }
 
             HTML(produceHtmlVisionString(fragment))

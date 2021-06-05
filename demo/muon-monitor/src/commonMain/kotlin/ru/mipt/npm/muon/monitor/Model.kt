@@ -3,11 +3,13 @@ package ru.mipt.npm.muon.monitor
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
+import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.removeAll
+import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 
-class Model {
+class Model(val manager: VisionManager) {
     private val map = HashMap<String, SolidGroup>()
     private val events = HashSet<Event>()
 
@@ -34,6 +36,7 @@ class Model {
     var tracks: SolidGroup
 
     val root: SolidGroup = SolidGroup().apply {
+        root(this@Model.manager)
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {
@@ -78,7 +81,5 @@ class Model {
         }
     }
 
-    companion object {
-        fun buildGeometry() = Model().root
-    }
+    fun encodeToString(): String = manager.encodeToString(this.root)
 }

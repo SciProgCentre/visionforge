@@ -48,7 +48,7 @@ public open class VisionGroupBase(
      * Propagate children change event upwards
      */
     private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        coroutineScope.launch {
+        launch {
             _structureChanges.emit(MutableVisionGroup.StructureChange(name, before, after))
         }
     }
@@ -141,4 +141,16 @@ public open class VisionGroupBase(
         }
         super.update(change)
     }
+}
+
+/**
+ * Non-serializable root group used to propagate manager to its children
+ */
+internal class RootVisionGroup(override val manager: VisionManager) : VisionGroupBase()
+
+/**
+ * Designate this [VisionGroup] as a root group and assign a [VisionManager] as its parent
+ */
+public fun Vision.root(manager: VisionManager){
+    parent = RootVisionGroup(manager)
 }

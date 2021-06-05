@@ -8,6 +8,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
@@ -111,12 +112,13 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
-    public fun createCanvas(
+    private val canvasCache = HashMap<Element, ThreeCanvas>()
+
+    public fun getOrCreateCanvas(
         element: Element,
-        options: Canvas3DOptions = Canvas3DOptions.empty(),
-    ): ThreeCanvas = ThreeCanvas(this, options).apply {
+    ): ThreeCanvas = canvasCache.getOrPut(element){ThreeCanvas(this).apply {
         attach(element)
-    }
+    }}
 
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
@@ -128,11 +130,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
-    public fun renderSolid(
+    fun renderSolid(
         element: Element,
         vision: Solid,
-        options: Canvas3DOptions,
-    ): ThreeCanvas = createCanvas(element, options).apply {
+    ): ThreeCanvas = getOrCreateCanvas(element).apply {
         render(vision)
     }
 
@@ -140,8 +141,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         renderSolid(
             element,
             vision as? Solid ?: error("Solid expected but ${vision::class} found"),
-            Canvas3DOptions.read(meta)
-        )
+        ).apply {
+            options.update(meta)
+        }
     }
 
     public companion object : PluginFactory<ThreePlugin> {
@@ -154,8 +156,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
-    options: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(options))
+    optionsBuilder: Canvas3DOptions.() -> Unit = {},
+): ThreeCanvas = renderSolid(element, obj).apply {
+    options.apply(optionsBuilder)
+}
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
     object3D.name = token.toString()

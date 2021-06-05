@@ -79,6 +79,7 @@ public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(s
 public operator fun <V : Vision> VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit =
     set(token.asName(), child)
 
-public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit = set(key?.toName(), child)
+public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit =
+    set(key?.toName(), child)
 
 public fun MutableVisionGroup.removeAll(): Unit = children.keys.map { it.asName() }.forEach { this[it] = null }

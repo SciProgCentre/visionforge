@@ -52,7 +52,7 @@ fun Application.module(context: Context = Global) {
         }
         get("/geometry") {
             call.respondText(
-                solidManager.visionManager.encodeToString(Model.buildGeometry()),
+                Model(solidManager.visionManager).encodeToString(),
                 contentType = ContentType.Application.Json,
                 status = HttpStatusCode.OK
             )

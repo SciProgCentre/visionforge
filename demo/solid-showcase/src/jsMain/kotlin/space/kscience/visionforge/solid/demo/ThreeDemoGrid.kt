@@ -19,6 +19,7 @@ import space.kscience.visionforge.VisionLayout
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
+import space.kscience.visionforge.solid.three.configure
 
 class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
     private lateinit var navigationElement: HTMLElement
@@ -70,7 +71,7 @@ class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
                 }
             }
             val element = document.getElementById("output-$name") ?: error("Element not found")
-            three.createCanvas(element, canvasOptions)
+            three.getOrCreateCanvas(element).also { it.configure(canvasOptions) }
         }.render(vision)
     }
 }

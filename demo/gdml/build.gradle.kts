@@ -20,7 +20,6 @@ kotlin {
         useCommonJs()
         browser {
             commonWebpackConfig {
-                sourceMaps = false
                 cssSupport.enabled = false
             }
         }

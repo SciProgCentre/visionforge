@@ -1,7 +1,5 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -30,14 +28,14 @@ internal data class PropertyListener(
  */
 @Serializable
 @SerialName("vision")
-public open class VisionBase(
-    internal var properties: Config? = null,
-    @Transient override var parent: VisionGroup? = null,
-    @Transient public val coroutineScope: CoroutineScope = GlobalScope,
-) : Vision {
+public open class VisionBase : Vision {
+    protected var properties: Config? = null
+
+    @Transient
+    override var parent: VisionGroup? = null
 
     @Synchronized
-    protected fun getOrCreateConfig(): Config {
+    protected fun getOrCreateProperties(): Config {
         if (properties == null) {
             val newProperties = Config()
             properties = newProperties
@@ -77,7 +75,7 @@ public open class VisionBase(
     }
 
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-        getOrCreateConfig().setItem(name, item)
+        getOrCreateProperties().setItem(name, item)
         if (notify) {
             invalidateProperty(name)
         }
@@ -104,7 +102,7 @@ public open class VisionBase(
         get() = propertyInvalidationFlow
 
     override fun invalidateProperty(propertyName: Name) {
-        coroutineScope.launch {
+        launch {
             if (propertyName == STYLE_KEY) {
                 updateStyles(styles)
             }

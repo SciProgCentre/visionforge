@@ -17,7 +17,7 @@ public interface ElementVisionRenderer {
     /**
      * Display the [vision] inside a given [element] replacing its current content
      */
-    public fun render(element: Element, vision: Vision, meta: Meta = Meta.EMPTY): Unit
+    public fun render(element: Element, vision: Vision, meta: Meta = Meta.EMPTY)
 
     public companion object {
         public const val TYPE: String = "elementVisionRenderer"

@@ -43,12 +43,6 @@ import java.net.URI
 import kotlin.collections.set
 import kotlin.time.Duration
 
-public enum class VisionServerDataMode {
-    EMBED,
-    FETCH,
-    CONNECT
-}
-
 
 /**
  * A ktor plugin container with given [routing]
@@ -61,7 +55,9 @@ public class VisionServer internal constructor(
     override val config: Config = Config()
     public var updateInterval: Long by config.long(300, key = UPDATE_INTERVAL_KEY)
     public var cacheFragments: Boolean by config.boolean(true)
-    public var dataMode: VisionServerDataMode = VisionServerDataMode.CONNECT
+    public var dataEmbed: Boolean by config.boolean(true, "data.embed".toName())
+    public var dataFetch: Boolean by config.boolean(false, "data.fetch".toName())
+    public var dataConnect: Boolean by config.boolean(true, "data.connect".toName())
 
     /**
      * a list of headers that should be applied to all pages
@@ -79,24 +75,25 @@ public class VisionServer internal constructor(
     ): Map<Name, Vision> {
         val visionMap = HashMap<Name, Vision>()
 
-        val consumer = object : VisionTagConsumer<Any?>(consumer) {
+        val consumer = object : VisionTagConsumer<Any?>(consumer, visionManager) {
             override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
                 visionMap[name] = vision
                 // Toggle update mode
-                when (dataMode) {
-                    VisionServerDataMode.EMBED -> {
-                        script {
-                            attributes["class"] = OUTPUT_DATA_CLASS
-                            unsafe {
-                                +"\n${visionManager.encodeToString(vision)}\n"
-                            }
+                if (dataConnect) {
+                    attributes[OUTPUT_CONNECT_ATTRIBUTE] = "auto"
+                }
+
+                if (dataFetch) {
+                    attributes[OUTPUT_FETCH_ATTRIBUTE] = "auto"
+                }
+
+                if (dataEmbed) {
+                    script {
+                        type = "text/json"
+                        attributes["class"] = OUTPUT_DATA_CLASS
+                        unsafe {
+                            +"\n${visionManager.encodeToString(vision)}\n"
                         }
-                    }
-                    VisionServerDataMode.FETCH -> {
-                        attributes[OUTPUT_FETCH_ATTRIBUTE] = "auto"
-                    }
-                    VisionServerDataMode.CONNECT -> {
-                        attributes[OUTPUT_CONNECT_ATTRIBUTE] = "auto"
                     }
                 }
             }

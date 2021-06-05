@@ -13,17 +13,24 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.toName
 import space.kscience.visionforge.Vision.Companion.TYPE
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-public interface Vision : Described {
+public interface Vision : Described, CoroutineScope {
 
     /**
      * The parent object of this one. If null, this one is a root.
      */
     public var parent: VisionGroup?
+
+    public val manager: VisionManager? get() = parent?.manager
+
+    override val coroutineContext: CoroutineContext
+        get() = manager?.context?.coroutineContext ?: EmptyCoroutineContext
 
     /**
      * Get property.

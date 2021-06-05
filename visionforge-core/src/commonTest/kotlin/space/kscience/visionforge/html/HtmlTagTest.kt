@@ -2,14 +2,13 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
+import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionBase
-import space.kscience.visionforge.configure
-import space.kscience.visionforge.meta
+import space.kscience.visionforge.*
 import kotlin.test.Test
 
 typealias HtmlVisionRenderer = FlowContent.(name: Name, vision: Vision, meta: Meta) -> Unit
@@ -20,7 +19,7 @@ fun FlowContent.renderVisionFragment(
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(consumer, idPrefix) {
+    val consumer = object : VisionTagConsumer<Any?>(consumer, Global.fetch(VisionManager), idPrefix) {
         override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             renderer(name, vision, outputMeta)
@@ -37,7 +36,7 @@ class HtmlTagTest {
     fun VisionOutput.base(block: VisionBase.() -> Unit) =
         VisionBase().apply(block)
 
-     val fragment: HtmlVisionFragment = {
+    val fragment: HtmlVisionFragment = {
         div {
             h1 { +"Head" }
             vision("ddd") {
@@ -72,7 +71,7 @@ class HtmlTagTest {
     @Test
     fun testStringRender() {
         println(
-            createHTML().div{
+            createHTML().div {
                 renderVisionFragment(simpleVisionRenderer, fragment = fragment)
             }
         )

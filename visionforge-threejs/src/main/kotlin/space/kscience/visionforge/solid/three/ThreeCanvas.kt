@@ -24,9 +24,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import space.kscience.dataforge.context.info
 import space.kscience.dataforge.context.logger
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.meta.useProperty
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.Solid
@@ -41,8 +39,8 @@ import kotlin.math.sin
  */
 public class ThreeCanvas(
     public val three: ThreePlugin,
-    public val options: Canvas3DOptions,
 ) {
+    public val options = Canvas3DOptions()
 
     private var boundingBox: Box3? = null
     private var root: Object3D? = null
@@ -314,5 +312,12 @@ public class ThreeCanvas(
         private const val LIGHT_NAME = "@light"
         private const val AXES_NAME = "@axes"
         private const val CLIP_HELPER_NAME = "@clipping"
+    }
+}
+
+public fun ThreeCanvas.configure(options: Canvas3DOptions) {
+    this.options.update(options.toMeta())
+    options.onChange(this) { name, _, newItem ->
+        options[name] = newItem
     }
 }

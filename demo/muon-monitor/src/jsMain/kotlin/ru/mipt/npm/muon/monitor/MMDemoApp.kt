@@ -7,13 +7,16 @@ import kotlinx.browser.document
 import react.child
 import react.dom.render
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.Application
+import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.bootstrap.useBootstrap
 import space.kscience.visionforge.startApplication
 
 private class MMDemoApp : Application {
 
-    private val model = Model()
+    private val visionManager = Global.fetch(VisionManager)
+    private val model = Model(visionManager)
 
     private val connection = HttpClient {
         install(JsonFeature) {
