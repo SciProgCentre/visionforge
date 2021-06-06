@@ -109,7 +109,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                     }
                 }
             }
-            ringThreeControls(options, props.vision, selected, onSelect)
+            ringThreeControls(options, vision, selected, onSelect)
         }
     }
 }

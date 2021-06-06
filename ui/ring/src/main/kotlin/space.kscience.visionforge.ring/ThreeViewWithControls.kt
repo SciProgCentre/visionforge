@@ -14,14 +14,14 @@ import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeWithControlsProps : RProps {
+public external interface ThreeViewWithControlsProps : RProps {
     public var context: Context
     public var vision: Vision?
     public var selected: Name?
 }
 
 @JsExport
-public val ThreeViewWithControls: (props: ThreeWithControlsProps) -> dynamic =
+public val ThreeViewWithControls: (props: ThreeViewWithControlsProps) -> dynamic =
     functionalComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
         val onSelect: (Name?) -> Unit = {
@@ -36,6 +36,8 @@ public val ThreeViewWithControls: (props: ThreeWithControlsProps) -> dynamic =
         styledDiv {
             css {
                 height = 100.pct
+                maxHeight = 100.vh
+                maxWidth = 100.vw
             }
             ringGrid {
                 ringRow {

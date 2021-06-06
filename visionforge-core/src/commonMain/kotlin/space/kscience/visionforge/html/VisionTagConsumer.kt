@@ -12,11 +12,14 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 import kotlin.collections.set
 
+@DslMarker
+public annotation class VisionDSL
 
 /**
  * A placeholder object to attach inline vision builders.
  */
 @DFExperimental
+@VisionDSL
 public class VisionOutput @PublishedApi internal constructor(public val manager: VisionManager) {
     public var meta: Meta = Meta.EMPTY
 
@@ -30,6 +33,7 @@ public class VisionOutput @PublishedApi internal constructor(public val manager:
 /**
  * Modified  [TagConsumer] that allows rendering output fragments and visions in them
  */
+@VisionDSL
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
     public val manager:VisionManager,
@@ -86,6 +90,7 @@ public abstract class VisionTagConsumer<R>(
      * TODO to be replaced by multi-receiver
      */
     @OptIn(DFExperimental::class)
+    @VisionDSL
     public inline fun <T> TagConsumer<T>.vision(
         name: String = DEFAULT_VISION_NAME,
         visionProvider: VisionOutput.() -> Vision,

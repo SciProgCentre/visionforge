@@ -74,8 +74,13 @@ public class SolidReferenceGroup(
 
     private fun prototypeFor(name: Name): Solid {
         return if (name.isEmpty()) prototype else {
-            (prototype as? SolidGroup)?.get(name) as? Solid
+            val proto = (prototype as? SolidGroup)?.get(name)
                 ?: error("Prototype with name $name not found in SolidReferenceGroup $refName")
+            when (proto) {
+                is Solid -> proto
+                is SolidReference -> proto.prototype
+                else -> error("Prototype with name $name is ${proto::class} but expected Solid")
+            }
         }
     }
 

@@ -39,8 +39,11 @@ import kotlin.math.sin
  */
 public class ThreeCanvas(
     public val three: ThreePlugin,
+    public val element: Element,
     public val options: Canvas3DOptions = Canvas3DOptions()
 ) {
+
+
     private var boundingBox: Box3? = null
     private var root: Object3D? = null
         set(value) {
@@ -136,6 +139,13 @@ public class ThreeCanvas(
         }
     }
 
+    init {
+        check(element.getElementsByClassName("three-canvas").length == 0) {
+            "Three canvas already created in this element"
+        }
+        element.appendChild(canvas)
+        updateSize()
+    }
 
     /**
      * Force camera aspect ration and renderer size recalculation
@@ -189,12 +199,6 @@ public class ThreeCanvas(
 
             renderer.render(scene, camera)
         }
-    }
-
-    internal fun attach(element: Element) {
-        check(element.getElementsByClassName("three-canvas").length == 0) { "Three canvas already created in this element" }
-        element.appendChild(canvas)
-        updateSize()
     }
 
     /**
