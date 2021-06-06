@@ -18,13 +18,12 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.react.objectTree
 import space.kscience.visionforge.react.propertyEditor
-import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
 import styled.styledDiv
 
@@ -37,48 +36,45 @@ internal fun saveData(event: Event, fileName: String, mimeType: String = "text/p
     fileSaver.saveAs(blob, fileName)
 }
 
-internal fun RBuilder.canvasControls(canvas: ThreeCanvas): ReactElement {
+internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?): ReactElement {
     return child(CanvasControls) {
         attrs {
-            this.canvas = canvas
+            this.options = options
+            this.vision = vision
         }
     }
 }
 
 internal external interface CanvasControlsProps : RProps {
-    public var canvas: ThreeCanvas
+    public var options: Canvas3DOptions
+    public var vision: Vision?
 }
 
 internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
-    val visionManager = useMemo(
-        { props.canvas.three.solids.visionManager },
-        arrayOf(props.canvas)
-    )
     flexColumn {
         flexRow {
             css {
                 border(1.px, BorderStyle.solid, Color.blue)
                 padding(4.px)
             }
-            button {
-                +"Export"
-                attrs {
-                    onClickFunction = {
-                        val json = (props.canvas.content as? SolidGroup)?.let { group ->
-                            visionManager.encodeToString(group)
-                        }
-                        if (json != null) {
+            props.vision?.let { vision ->
+                button {
+                    +"Export"
+                    attrs {
+                        onClickFunction = {
+                            val json = vision.encodeToString()
                             saveData(it, "object.json", "text/json") {
                                 json
                             }
+
                         }
                     }
                 }
             }
         }
         propertyEditor(
-            ownProperties = props.canvas.options,
-            allProperties = props.canvas.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            ownProperties = props.options,
+            allProperties = props.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )
@@ -88,18 +84,18 @@ internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = function
 
 
 public external interface ThreeControlsProps : RProps {
-    public var canvas: ThreeCanvas
+    public var canvasOptions: Canvas3DOptions
+    public var vision: Vision?
     public var selected: Name?
     public var onSelect: (Name) -> Unit
 }
 
 @JsExport
 public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
-    val vision = props.canvas.content
     ringSmartTabs(if (props.selected != null) "Properties" else null) {
         ringTab("Canvas") {
             ringIsland("Canvas configuration") {
-                canvasControls(props.canvas)
+                canvasControls(props.canvasOptions, props.vision)
             }
         }
         ringTab("Tree") {
@@ -113,7 +109,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                     css {
                         flex(1.0, 1.0, FlexBasis.inherit)
                     }
-                    props.canvas.content?.let {
+                    props.vision?.let {
                         objectTree(it, props.selected, props.onSelect)
                     }
                 }
@@ -123,8 +119,8 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
             props.selected.let { selected ->
                 val selectedObject: Vision? = when {
                     selected == null -> null
-                    selected.isEmpty() -> vision
-                    else -> (vision as? VisionGroup)?.get(selected)
+                    selected.isEmpty() -> props.vision
+                    else -> (props.vision as? VisionGroup)?.get(selected)
                 }
                 if (selectedObject != null) {
                     ringPropertyEditor(selectedObject, key = selected)
@@ -136,13 +132,15 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
 }
 
 public fun RBuilder.ringThreeControls(
-    canvas: ThreeCanvas,
+    canvasOptions: Canvas3DOptions,
+    vision: Vision?,
     selected: Name?,
     onSelect: (Name) -> Unit = {},
     builder: RBuilder.() -> Unit = {},
 ): ReactElement = child(ThreeControls) {
     attrs {
-        this.canvas = canvas
+        this.canvasOptions = canvasOptions
+        this.vision = vision
         this.selected = selected
         this.onSelect = onSelect
     }

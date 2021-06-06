@@ -1,10 +1,7 @@
 package space.kscience.visionforge.ring
 
 import kotlinx.css.*
-import react.RProps
-import react.child
-import react.functionalComponent
-import react.useState
+import react.*
 import ringui.grid.ringCol
 import ringui.grid.ringGrid
 import ringui.grid.ringRow
@@ -14,24 +11,26 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
 import styled.styledDiv
 
-public external interface GdmlViewProps : RProps {
+public external interface ThreeWithControlsProps : RProps {
     public var context: Context
-    public var rootVision: Vision?
+    public var vision: Vision?
     public var selected: Name?
 }
 
 @JsExport
-public val ThreeViewWithControls: (props: GdmlViewProps) -> dynamic =
-    functionalComponent<GdmlViewProps>("ThreeViewWithControls") { props ->
+public val ThreeViewWithControls: (props: ThreeWithControlsProps) -> dynamic =
+    functionalComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
-        var canvas: ThreeCanvas? by useState { null }
-
         val onSelect: (Name?) -> Unit = {
             selected = it
+        }
+        val options = useMemo {
+            Canvas3DOptions.invoke {
+                this.onSelect = onSelect
+            }
         }
 
         styledDiv {
@@ -50,14 +49,9 @@ public val ThreeViewWithControls: (props: GdmlViewProps) -> dynamic =
                         child(ThreeCanvasComponent) {
                             attrs {
                                 this.context = props.context
-                                this.obj = props.rootVision as? Solid
+                                this.obj = props.vision as? Solid
                                 this.selected = selected
-                                this.options = Canvas3DOptions.invoke {
-                                    this.onSelect = onSelect
-                                }
-                                this.canvasCallback = {
-                                    canvas = it
-                                }
+                                this.options = options
                             }
                         }
 
@@ -76,9 +70,7 @@ public val ThreeViewWithControls: (props: GdmlViewProps) -> dynamic =
                                 height = 100.pct
                                 overflowY = Overflow.auto
                             }
-                            canvas?.let {
-                                ringThreeControls(it, selected, onSelect)
-                            }
+                            ringThreeControls(options, props.vision, selected, onSelect)
                         }
                     }
                 }

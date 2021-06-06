@@ -14,16 +14,14 @@ import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
-import space.kscience.visionforge.solid.three.configure
 import styled.css
 import styled.styledDiv
 
 public external interface ThreeCanvasProps : RProps {
     public var context: Context
+    public var options: Canvas3DOptions
     public var obj: Solid?
-    public var options: Canvas3DOptions?
     public var selected: Name?
-    public var canvasCallback: ((ThreeCanvas?) -> Unit)?
 }
 
 public external interface ThreeCanvasState : RState {
@@ -42,20 +40,13 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     useEffect(listOf(props.obj, props.options, elementRef)) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
-            val newCanvas: ThreeCanvas = three.getOrCreateCanvas(element)
-            props.options?.let {
-                newCanvas.configure(it)
-            }
-            props.canvasCallback?.invoke(newCanvas)
-            canvas = newCanvas
+            canvas = three.getOrCreateCanvas(element, props.options)
         }
     }
 
     useEffect(listOf(canvas, props.obj)) {
         props.obj?.let { obj ->
-            if (canvas?.content != obj) {
-                canvas?.render(obj)
-            }
+            canvas?.render(obj)
         }
     }
 

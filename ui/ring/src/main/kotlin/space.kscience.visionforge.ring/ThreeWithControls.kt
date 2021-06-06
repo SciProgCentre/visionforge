@@ -28,7 +28,7 @@ public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
             child(ThreeViewWithControls) {
                 attrs {
                     this.context = this@ThreeWithControls.context
-                    this.rootVision = vision
+                    this.vision = vision
                 }
             }
         }

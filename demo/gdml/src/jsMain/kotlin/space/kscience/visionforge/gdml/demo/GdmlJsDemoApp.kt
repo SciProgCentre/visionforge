@@ -29,7 +29,7 @@ private class GDMLDemoApp : Application {
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))
                 attrs {
                     this.context = context
-                    this.rootVision = vision
+                    this.vision = vision
                 }
             }
         }

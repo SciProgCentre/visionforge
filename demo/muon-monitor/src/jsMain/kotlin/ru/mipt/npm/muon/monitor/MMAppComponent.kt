@@ -6,11 +6,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
-import react.RProps
-import react.child
+import react.*
 import react.dom.*
-import react.functionalComponent
-import react.useState
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
@@ -26,7 +23,6 @@ import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.objectTree
 import space.kscience.visionforge.solid.specifications.Camera
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
 import styled.styledDiv
 import kotlin.math.PI
@@ -49,10 +45,15 @@ private val canvasConfig = Canvas3DOptions {
 @JsExport
 val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
     var selected by useState { props.selected }
-    var canvas: ThreeCanvas? by useState { null }
 
     val onSelect: (Name?) -> Unit = {
         selected = it
+    }
+
+    val options = useMemo {
+        Canvas3DOptions.invoke {
+            this.onSelect = onSelect
+        }
     }
 
     val root = props.model.root
@@ -95,9 +96,6 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     this.options = canvasConfig.apply {
                         this.onSelect = onSelect
                     }
-                    this.canvasCallback = {
-                        canvas = it
-                    }
                 }
             }
         }
@@ -113,11 +111,10 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                     flex(0.0, 1.0, FlexBasis.zero)
                 }
                 //settings
-                canvas?.let {
-                    card("Canvas configuration") {
-                        canvasControls(it)
-                    }
+                card("Canvas configuration") {
+                    canvasControls(options, root)
                 }
+
                 card("Events") {
                     button {
                         +"Next"

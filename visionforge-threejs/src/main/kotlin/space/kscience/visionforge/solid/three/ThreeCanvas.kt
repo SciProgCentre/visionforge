@@ -39,9 +39,8 @@ import kotlin.math.sin
  */
 public class ThreeCanvas(
     public val three: ThreePlugin,
+    public val options: Canvas3DOptions = Canvas3DOptions()
 ) {
-    public val options = Canvas3DOptions()
-
     private var boundingBox: Box3? = null
     private var root: Object3D? = null
         set(value) {
@@ -51,9 +50,6 @@ public class ThreeCanvas(
 
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
-
-    public var content: Solid? = null
-        private set
 
     private val scene: Scene = Scene().apply {
         options.useProperty(Canvas3DOptions::axes, this) { axesConfig ->
@@ -251,7 +247,6 @@ public class ThreeCanvas(
         val object3D = three.buildObject3D(vision)
         object3D.name = "@root"
         scene.add(object3D)
-        content = vision
         root = object3D
     }
 
@@ -315,9 +310,9 @@ public class ThreeCanvas(
     }
 }
 
-public fun ThreeCanvas.configure(options: Canvas3DOptions) {
-    this.options.update(options.toMeta())
-    options.onChange(this) { name, _, newItem ->
-        options[name] = newItem
-    }
-}
+//public fun ThreeCanvas.configure(newOptions: Canvas3DOptions) {
+//    this.options.update(newOptions.toMeta())
+//    options.onChange(this) { name, _, newItem ->
+//        this.options[name] = newItem
+//    }
+//}

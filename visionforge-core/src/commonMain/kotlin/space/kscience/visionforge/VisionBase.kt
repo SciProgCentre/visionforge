@@ -92,7 +92,6 @@ public open class VisionBase : Vision {
             }
     }
 
-
     //TODO check memory consumption for the flow
     @Transient
     private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()

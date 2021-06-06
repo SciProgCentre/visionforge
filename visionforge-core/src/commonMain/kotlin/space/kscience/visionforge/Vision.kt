@@ -27,6 +27,9 @@ public interface Vision : Described, CoroutineScope {
      */
     public var parent: VisionGroup?
 
+    /**
+     * Owner [VisionManager]. Used to define coroutine scope a serialization
+     */
     public val manager: VisionManager? get() = parent?.manager
 
     override val coroutineContext: CoroutineContext
@@ -69,7 +72,7 @@ public interface Vision : Described, CoroutineScope {
     /**
      * Notify all listeners that a property has been changed and should be invalidated
      */
-    public fun invalidateProperty(propertyName: Name): Unit
+    public fun invalidateProperty(propertyName: Name)
 
     /**
      * Update this vision using a dif represented by [VisionChange].

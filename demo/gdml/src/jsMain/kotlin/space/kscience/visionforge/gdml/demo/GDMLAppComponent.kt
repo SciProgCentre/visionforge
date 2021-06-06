@@ -11,7 +11,6 @@ import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
-import space.kscience.visionforge.Vision
 import space.kscience.visionforge.bootstrap.gridRow
 import space.kscience.visionforge.bootstrap.nameCrumbs
 import space.kscience.visionforge.gdml.toVision
@@ -21,27 +20,31 @@ import space.kscience.visionforge.ring.ringThreeControls
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.ThreeCanvas
 import styled.css
 import styled.styledDiv
 
 external interface GDMLAppProps : RProps {
     var context: Context
-    var rootVision: Vision?
+    var vision: Solid?
     var selected: Name?
 }
 
 @JsExport
 val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     var selected by useState { props.selected }
-    var canvas: ThreeCanvas? by useState { null }
-    var vision: Vision? by useState { props.rootVision }
+    var vision: Solid? by useState { props.vision }
 
     val onSelect: (Name?) -> Unit = {
         selected = it
     }
 
-    val visionManager = useMemo({ props.context.fetch(Solids).visionManager }, arrayOf(props.context))
+    val options = useMemo {
+        Canvas3DOptions.invoke {
+            this.onSelect = onSelect
+        }
+    }
+
+    val visionManager = useMemo(props.context) { props.context.fetch(Solids).visionManager }
 
     fun loadData(name: String, data: String) {
         val parsedVision = when {
@@ -56,7 +59,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
             }
         }
 
-        vision = parsedVision
+        vision = parsedVision as? Solid ?: error("Parsed vision is not a solid")
     }
 
     gridRow {
@@ -78,14 +81,9 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
             child(ThreeCanvasComponent) {
                 attrs {
                     this.context = props.context
-                    this.obj = vision as? Solid
+                    this.obj = vision
                     this.selected = selected
-                    this.options = Canvas3DOptions.invoke {
-                        this.onSelect = onSelect
-                    }
-                    this.canvasCallback = {
-                        canvas = it
-                    }
+                    this.options = options
                 }
             }
 
@@ -111,9 +109,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                     }
                 }
             }
-            canvas?.let {
-                ringThreeControls(it, selected, onSelect)
-            }
+            ringThreeControls(options, props.vision, selected, onSelect)
         }
     }
 }

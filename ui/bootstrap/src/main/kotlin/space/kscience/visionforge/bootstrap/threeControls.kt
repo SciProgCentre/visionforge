@@ -9,23 +9,23 @@ import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.react.objectTree
-import space.kscience.visionforge.solid.three.ThreeCanvas
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
 public external interface ThreeControlsProps : RProps {
-    public var canvas: ThreeCanvas
+    public var canvasOptions: Canvas3DOptions
+    public var vision: Vision?
     public var selected: Name?
     public var onSelect: (Name) -> Unit
 }
 
 @JsExport
 public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
-    val vision = props.canvas.content
     tabPane(if (props.selected != null) "Properties" else null) {
         tab("Canvas") {
             card("Canvas configuration") {
-                canvasControls(props.canvas)
+                canvasControls(props.canvasOptions, props.vision)
             }
         }
         tab("Tree") {
@@ -38,7 +38,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                 css {
                     flex(1.0, 1.0, FlexBasis.inherit)
                 }
-                props.canvas.content?.let {
+                props.vision?.let {
                     objectTree(it, props.selected, props.onSelect)
                 }
             }
@@ -47,8 +47,8 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
             props.selected.let { selected ->
                 val selectedObject: Vision? = when {
                     selected == null -> null
-                    selected.isEmpty() -> vision
-                    else -> (vision as? VisionGroup)?.get(selected)
+                    selected.isEmpty() -> props.vision
+                    else -> (props.vision as? VisionGroup)?.get(selected)
                 }
                 if (selectedObject != null) {
                     visionPropertyEditor(selectedObject, key = selected)
@@ -62,13 +62,15 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
 }
 
 public fun RBuilder.threeControls(
-    canvas: ThreeCanvas,
+    canvasOptions: Canvas3DOptions,
+    vision: Vision?,
     selected: Name?,
     onSelect: (Name) -> Unit = {},
     builder: TabBuilder.() -> Unit = {},
 ): ReactElement = child(ThreeControls) {
     attrs {
-        this.canvas = canvas
+        this.canvasOptions = canvasOptions
+        this.vision = vision
         this.selected = selected
         this.onSelect = onSelect
     }

@@ -116,9 +116,12 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public fun getOrCreateCanvas(
         element: Element,
-    ): ThreeCanvas = canvasCache.getOrPut(element){ThreeCanvas(this).apply {
-        attach(element)
-    }}
+        options: Canvas3DOptions = Canvas3DOptions(),
+    ): ThreeCanvas = canvasCache.getOrPut(element) {
+        ThreeCanvas(this, options).apply {
+            attach(element)
+        }
+    }
 
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
