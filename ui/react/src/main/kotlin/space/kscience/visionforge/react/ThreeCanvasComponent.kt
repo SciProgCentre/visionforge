@@ -1,9 +1,8 @@
 package space.kscience.visionforge.react
 
-import kotlinx.css.Display
-import kotlinx.css.display
-import kotlinx.css.height
-import kotlinx.css.pct
+import kotlinx.css.FlexBasis
+import kotlinx.css.flexBasis
+import kotlinx.css.flexGrow
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
@@ -19,8 +18,8 @@ import styled.styledDiv
 
 public external interface ThreeCanvasProps : RProps {
     public var context: Context
-    public var options: Canvas3DOptions
-    public var obj: Solid?
+    public var options: Canvas3DOptions?
+    public var solid: Solid?
     public var selected: Name?
 }
 
@@ -37,15 +36,15 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
 
     val three: ThreePlugin = useMemo({ props.context.fetch(ThreePlugin) }, arrayOf(props.context))
 
-    useEffect(listOf(props.obj, props.options, elementRef)) {
+    useEffect(listOf(props.solid, props.options, elementRef)) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
-            canvas = three.getOrCreateCanvas(element, props.options)
+            canvas = three.getOrCreateCanvas(element, props.options ?: Canvas3DOptions())
         }
     }
 
-    useEffect(listOf(canvas, props.obj)) {
-        props.obj?.let { obj ->
+    useEffect(listOf(canvas, props.solid)) {
+        props.solid?.let { obj ->
             canvas?.render(obj)
         }
     }
@@ -56,8 +55,8 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
 
     styledDiv {
         css {
-            display = Display.contents
-            height = 100.pct
+            flexGrow = 1.0
+            flexBasis = FlexBasis.fill
         }
         ref = elementRef
     }

@@ -21,6 +21,7 @@ import styled.styledSelect
 public external interface ValueChooserProps : RProps {
     public var item: MetaItem?
     public var descriptor: ValueDescriptor?
+    public var nullable: Boolean?
     public var valueChanged: ((Value?) -> Unit)?
 }
 

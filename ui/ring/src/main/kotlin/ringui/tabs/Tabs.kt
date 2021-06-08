@@ -40,10 +40,11 @@ public fun RBuilder.ringTabs(active: String? = null, handler: RHandler<TabsProps
     }
 }
 
-public fun RBuilder.ringTab(title: dynamic, handler: RHandler<TabProps>) {
+public fun RBuilder.ringTab(title: dynamic, id: String = title.toString(), handler: RHandler<TabProps>) {
     TabsModule.Tab {
         attrs {
             this.title = title
+            this.id = id
         }
         handler()
     }

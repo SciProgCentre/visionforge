@@ -34,14 +34,6 @@ external interface MMAppProps : RProps {
     var selected: Name?
 }
 
-private val canvasConfig = Canvas3DOptions {
-    camera = Camera {
-        distance = 2100.0
-        latitude = PI / 6
-        azimuth = PI + PI / 6
-    }
-}
-
 @JsExport
 val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
     var selected by useState { props.selected }
@@ -50,8 +42,13 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
         selected = it
     }
 
-    val options = useMemo {
-        Canvas3DOptions.invoke {
+    val mmOptions = useMemo {
+        Canvas3DOptions {
+            camera = Camera {
+                distance = 2100.0
+                latitude = PI / 6
+                azimuth = PI + PI / 6
+            }
             this.onSelect = onSelect
         }
     }
@@ -91,11 +88,9 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
             child(ThreeCanvasComponent) {
                 attrs {
                     this.context = props.context
-                    this.obj = root
+                    this.solid = root
                     this.selected = selected
-                    this.options = canvasConfig.apply {
-                        this.onSelect = onSelect
-                    }
+                    this.options = mmOptions
                 }
             }
         }
@@ -112,7 +107,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 }
                 //settings
                 card("Canvas configuration") {
-                    canvasControls(options, root)
+                    canvasControls(mmOptions, root)
                 }
 
                 card("Events") {
@@ -151,7 +146,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                                 +"World"
                                 attrs {
                                     onClickFunction = {
-                                        selected = space.kscience.dataforge.names.Name.EMPTY
+                                        selected = Name.EMPTY
                                     }
                                 }
                             }

@@ -11,7 +11,7 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
 
-public interface SolidReference : Vision {
+public interface SolidReference : Solid {
     public val prototype: Solid
 }
 
@@ -76,11 +76,7 @@ public class SolidReferenceGroup(
         return if (name.isEmpty()) prototype else {
             val proto = (prototype as? SolidGroup)?.get(name)
                 ?: error("Prototype with name $name not found in SolidReferenceGroup $refName")
-            when (proto) {
-                is Solid -> proto
-                is SolidReference -> proto.prototype
-                else -> error("Prototype with name $name is ${proto::class} but expected Solid")
-            }
+            proto as? Solid ?: error("Prototype with name $name is ${proto::class} but expected Solid")
         }
     }
 
@@ -100,6 +96,22 @@ public class SolidReferenceGroup(
      */
     private inner class ReferenceChild(private val childName: Name) : SolidReference, VisionGroup {
 
+        //TODO replace by properties
+        override var position: Point3D?
+            get() = prototype.position
+            set(value) {
+                error("Can't set position of reference")
+            }
+        override var rotation: Point3D?
+            get() = prototype.rotation
+            set(value) {
+                error("Can't set position of reference")
+            }
+        override var scale: Point3D?
+            get() = prototype.scale
+            set(value) {
+                error("Can't set position of reference")
+            }
         override val prototype: Solid get() = prototypeFor(childName)
 
         override val children: Map<NameToken, Vision>

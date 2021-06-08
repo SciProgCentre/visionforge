@@ -7,21 +7,20 @@ import ringui.grid.ringGrid
 import ringui.grid.ringRow
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeViewWithControlsProps : RProps {
+public external interface ThreeCanvasWithControlsProps : RProps {
     public var context: Context
-    public var vision: Vision?
+    public var solid: Solid?
     public var selected: Name?
 }
 
 @JsExport
-public val ThreeViewWithControls: (props: ThreeViewWithControlsProps) -> dynamic =
+public val ThreeCanvasWithControls: (props: ThreeCanvasWithControlsProps) -> dynamic =
     functionalComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
         val onSelect: (Name?) -> Unit = {
@@ -51,7 +50,7 @@ public val ThreeViewWithControls: (props: ThreeViewWithControlsProps) -> dynamic
                         child(ThreeCanvasComponent) {
                             attrs {
                                 this.context = props.context
-                                this.obj = props.vision as? Solid
+                                this.solid = props.solid as? Solid
                                 this.selected = selected
                                 this.options = options
                             }
@@ -72,7 +71,7 @@ public val ThreeViewWithControls: (props: ThreeViewWithControlsProps) -> dynamic
                                 height = 100.pct
                                 overflowY = Overflow.auto
                             }
-                            ringThreeControls(options, props.vision, selected, onSelect)
+                            ringThreeControls(options, props.solid, selected, onSelect)
                         }
                     }
                 }

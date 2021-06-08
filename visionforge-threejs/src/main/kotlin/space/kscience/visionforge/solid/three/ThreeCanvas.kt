@@ -103,27 +103,31 @@ public class ThreeCanvas(
     }.apply {
         setClearColor(Colors.skyblue, 1)
         //Clipping planes
-        localClippingEnabled = true
         options.onChange(this@ThreeCanvas) { name, _, _ ->
             if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
+                localClippingEnabled = true
                 val clipping = options.clipping
-                boundingBox?.let { boundingBox ->
-                    val xClippingPlane = clipping.x?.let {
-                        val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
-                        Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
+                if(!clipping.isEmpty()) {
+                    boundingBox?.let { boundingBox ->
+                        val xClippingPlane = clipping.x?.let {
+                            val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
+                            Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
 
-                    }
-                    val yClippingPlane = clipping.y?.let {
-                        val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
-                        Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
-                    }
+                        }
+                        val yClippingPlane = clipping.y?.let {
+                            val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
+                            Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
+                        }
 
-                    val zClippingPlane = clipping.z?.let {
-                        val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
-                        Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
+                        val zClippingPlane = clipping.z?.let {
+                            val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
+                            Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
+                        }
+                        clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
                     }
-                    clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
                 }
+            } else {
+                localClippingEnabled = false
             }
         }
     }

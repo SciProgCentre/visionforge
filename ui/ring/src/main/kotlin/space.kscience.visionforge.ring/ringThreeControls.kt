@@ -92,22 +92,25 @@ public external interface ThreeControlsProps : RProps {
 
 @JsExport
 public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
-    ringSmartTabs(if (props.selected != null) "Properties" else null) {
+    ringSmartTabs(if (props.selected != null) "Properties" else "Tree") {
         ringTab("Canvas") {
             ringIsland("Canvas configuration") {
                 canvasControls(props.canvasOptions, props.vision)
             }
         }
         ringTab("Tree") {
-            styledDiv {
+            flexColumn {
                 css {
                     border(1.px, BorderStyle.solid, Color.lightGray)
                     padding(10.px)
+                    flexGrow = 1.0
+                    flexWrap = FlexWrap.wrap
                 }
                 h2 { +"Object tree" }
                 styledDiv {
                     css {
-                        flex(1.0, 1.0, FlexBasis.inherit)
+                        overflowY = Overflow.auto
+                        flexGrow = 1.0
                     }
                     props.vision?.let {
                         objectTree(it, props.selected, props.onSelect)
@@ -115,15 +118,17 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                 }
             }
         }
-        ringTab("Properties") {
-            props.selected.let { selected ->
-                val selectedObject: Vision? = when {
-                    selected == null -> null
-                    selected.isEmpty() -> props.vision
-                    else -> (props.vision as? VisionGroup)?.get(selected)
-                }
-                if (selectedObject != null) {
-                    ringPropertyEditor(selectedObject, key = selected)
+        if (props.selected != null) {
+            ringTab("Properties") {
+                props.selected.let { selected ->
+                    val selectedObject: Vision? = when {
+                        selected == null -> null
+                        selected.isEmpty() -> props.vision
+                        else -> (props.vision as? VisionGroup)?.get(selected)
+                    }
+                    if (selectedObject != null) {
+                        ringPropertyEditor(selectedObject, key = selected)
+                    }
                 }
             }
         }

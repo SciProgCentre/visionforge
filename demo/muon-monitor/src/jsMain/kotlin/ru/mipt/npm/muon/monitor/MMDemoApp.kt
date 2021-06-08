@@ -6,6 +6,7 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.browser.document
 import react.child
 import react.dom.render
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.Application
@@ -29,7 +30,7 @@ private class MMDemoApp : Application {
 
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
-        val context = Global.buildContext("demo") {}
+        val context = Context("demo")
         render(element) {
             child(MMApp) {
                 attrs {

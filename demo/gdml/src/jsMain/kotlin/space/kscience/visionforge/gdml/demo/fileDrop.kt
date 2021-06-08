@@ -14,6 +14,7 @@ fun RBuilder.fileDrop(title: String, action: (files: FileList?) -> Unit) {
     styledDiv {
         css {
             border(style = BorderStyle.dashed, width = 1.px, color = Color.orange)
+            flexGrow = 0.0
             alignContent = Align.center
         }
 

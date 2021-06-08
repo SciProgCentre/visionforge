@@ -25,10 +25,10 @@ public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
         react.dom.render(element) {
-            child(ThreeViewWithControls) {
+            child(ThreeCanvasWithControls) {
                 attrs {
                     this.context = this@ThreeWithControls.context
-                    this.vision = vision
+                    this.solid = vision as? Solid
                 }
             }
         }

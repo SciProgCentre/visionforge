@@ -1,17 +1,20 @@
 package space.kscience.visionforge.gdml.demo
 
 import kotlinx.browser.window
-import kotlinx.css.*
+import kotlinx.css.height
+import kotlinx.css.vh
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.*
 import react.dom.h1
+import ringui.grid.ringCol
+import ringui.grid.ringGrid
+import ringui.grid.ringRow
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
-import space.kscience.visionforge.bootstrap.gridRow
 import space.kscience.visionforge.bootstrap.nameCrumbs
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.react.ThreeCanvasComponent
@@ -21,7 +24,6 @@ import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
-import styled.styledDiv
 
 external interface GDMLAppProps : RProps {
     var context: Context
@@ -62,54 +64,57 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         vision = parsedVision as? Solid ?: error("Parsed vision is not a solid")
     }
 
-    gridRow {
-        flexColumn {
-            css {
-                +"col-lg-9"
-                height = 100.vh
-            }
-            styledDiv {
-                css {
-                    +"mx-auto"
-                    +"page-header"
-                }
-                h1 { +"GDML/JSON loader demo" }
-            }
-            nameCrumbs(selected, "World", onSelect)
-            //canvas
 
-            child(ThreeCanvasComponent) {
+    ringGrid {
+        ringRow {
+            ringCol {
                 attrs {
-                    this.context = props.context
-                    this.obj = vision
-                    this.selected = selected
-                    this.options = options
+                    lg = 9
                 }
-            }
+                flexColumn {
+                    css {
+                        height = 100.vh
+                    }
+                    h1 { +"GDML/JSON loader demo" }
+                    //canvas
 
-        }
-        flexColumn {
-            css {
-                +"col-lg-3"
-                padding(top = 4.px)
-                //border(1.px, BorderStyle.solid, Color.lightGray)
-                height = 100.vh
-                overflowY = Overflow.auto
-            }
-            fileDrop("(drag file here)") { files ->
-                val file = files?.get(0)
-                if (file != null) {
-
-                    FileReader().apply {
-                        onload = {
-                            val string = result as String
-                            loadData(file.name, string)
+                    child(ThreeCanvasComponent) {
+                        attrs {
+                            this.context = props.context
+                            this.solid = vision
+                            this.selected = selected
+                            this.options = options
                         }
-                        readAsText(file)
                     }
                 }
+
             }
-            ringThreeControls(options, vision, selected, onSelect)
+            ringCol {
+                attrs {
+                    lg = 3
+                }
+                flexColumn {
+                    css {
+                        height = 100.vh
+                    }
+                    fileDrop("(drag file here)") { files ->
+                        val file = files?.get(0)
+                        if (file != null) {
+
+                            FileReader().apply {
+                                onload = {
+                                    val string = result as String
+                                    loadData(file.name, string)
+                                }
+                                readAsText(file)
+                            }
+                        }
+                    }
+                    nameCrumbs(selected, "World", onSelect)
+                    ringThreeControls(options, vision, selected, onSelect)
+                }
+            }
         }
     }
 }
+

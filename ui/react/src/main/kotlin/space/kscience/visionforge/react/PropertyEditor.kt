@@ -231,6 +231,7 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
             this.name = Name.EMPTY
             this.descriptor = props.descriptor
             this.scope = props.scope
+            this.expanded = props.expanded
         }
     }
 }

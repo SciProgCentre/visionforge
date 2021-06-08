@@ -25,6 +25,11 @@ public external interface MetaViewerProps : RProps {
     public var root: Meta
 
     /**
+     * The title of root node
+     */
+    public var rootName: String?
+
+    /**
      * Full path to the displayed node in [root]. Could be empty
      */
     public var name: Name
@@ -45,7 +50,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
     val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
     val actualItem = item ?: descriptorItem?.defaultValue
 
-    val token = props.name.lastOrNull()?.toString() ?: "Meta"
+    val token = props.name.lastOrNull()?.toString() ?: props.rootName ?: ""
 
     val expanderClick: (Event) -> Unit = {
         expanded = !expanded
