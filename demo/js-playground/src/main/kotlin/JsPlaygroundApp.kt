@@ -11,7 +11,7 @@ import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
-import space.kscience.visionforge.ring.ThreeWithControls
+import space.kscience.visionforge.ring.ThreeWithControlsPlugin
 import space.kscience.visionforge.startApplication
 import styled.css
 import styled.styledDiv
@@ -21,7 +21,7 @@ private class JsPlaygroundApp : Application {
     override fun start(state: Map<String, Any>) {
 
         val playgroundContext = Context {
-            plugin(ThreeWithControls)
+            plugin(ThreeWithControlsPlugin)
             plugin(VisionClient)
         }
 

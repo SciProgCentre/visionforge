@@ -1,8 +1,5 @@
 package space.kscience.visionforge.react
 
-import kotlinx.css.margin
-import kotlinx.css.padding
-import kotlinx.css.px
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
@@ -15,7 +12,6 @@ import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.values.asValue
-import styled.css
 import styled.styledInput
 
 @JsExport
@@ -42,10 +38,6 @@ public val RangeValueChooser: FunctionalComponent<ValueChooserProps> =
 
         flexRow {
             styledInput(type = InputType.checkBox) {
-                css{
-                    padding(0.px)
-                    margin(0.px)
-                }
                 attrs {
                     defaultChecked = rangeDisabled.not()
                     onChangeFunction = handleDisable

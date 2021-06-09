@@ -45,12 +45,7 @@ public class Clipping : Scheme() {
     }
 }
 
-public class Canvas3DOptions : Scheme() {
-    public var axes: Axes by spec(Axes)
-    public var light: Light by spec(Light)
-    public var camera: Camera by spec(Camera)
-    public var controls: Controls by spec(Controls)
-
+public class CanvasSize : Scheme() {
     public var minSize: Int by int(400)
     public var minWith: Number by number { minSize }
     public var minHeight: Number by number { minSize }
@@ -58,6 +53,26 @@ public class Canvas3DOptions : Scheme() {
     public var maxSize: Int by int(Int.MAX_VALUE)
     public var maxWith: Number by number { maxSize }
     public var maxHeight: Number by number { maxSize }
+
+    public companion object : SchemeSpec<CanvasSize>(::CanvasSize) {
+        override val descriptor: NodeDescriptor = NodeDescriptor {
+            value(CanvasSize::minSize)
+            value(CanvasSize::minWith)
+            value(CanvasSize::minHeight)
+            value(CanvasSize::maxSize)
+            value(CanvasSize::maxWith)
+            value(CanvasSize::maxHeight)
+        }
+    }
+}
+
+public class Canvas3DOptions : Scheme() {
+    public var axes: Axes by spec(Axes)
+    public var light: Light by spec(Light)
+    public var camera: Camera by spec(Camera)
+    public var controls: Controls by spec(Controls)
+
+    public var size: CanvasSize by spec(CanvasSize)
 
     public var layers: List<Number> by numberList(0)
 
@@ -71,30 +86,19 @@ public class Canvas3DOptions : Scheme() {
             NodeDescriptor {
                 scheme(Canvas3DOptions::axes, Axes)
                 scheme(Canvas3DOptions::light, Light)
+
                 scheme(Canvas3DOptions::camera, Camera) {
                     hide()
                 }
+
                 scheme(Canvas3DOptions::controls, Controls) {
                     hide()
                 }
-                value(Canvas3DOptions::minSize) {
+
+                scheme(Canvas3DOptions::size, CanvasSize) {
                     hide()
                 }
-                value(Canvas3DOptions::minWith) {
-                    hide()
-                }
-                value(Canvas3DOptions::minHeight) {
-                    hide()
-                }
-                value(Canvas3DOptions::maxSize) {
-                    hide()
-                }
-                value(Canvas3DOptions::maxWith) {
-                    hide()
-                }
-                value(Canvas3DOptions::maxHeight) {
-                    hide()
-                }
+
                 value(Canvas3DOptions::layers) {
                     type(ValueType.NUMBER)
                     multiple = true
@@ -108,8 +112,8 @@ public class Canvas3DOptions : Scheme() {
     }
 }
 
-public fun Canvas3DOptions.computeWidth(external: Number): Int =
+public fun CanvasSize.computeWidth(external: Number): Int =
     (external.toInt()).coerceIn(minWith.toInt()..maxWith.toInt())
 
-public fun Canvas3DOptions.computeHeight(external: Number): Int =
+public fun CanvasSize.computeHeight(external: Number): Int =
     (external.toInt()).coerceIn(minHeight.toInt()..maxHeight.toInt())

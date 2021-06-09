@@ -20,6 +20,7 @@ import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import space.kscience.dataforge.context.info
@@ -40,10 +41,8 @@ import kotlin.math.sin
 public class ThreeCanvas(
     public val three: ThreePlugin,
     public val element: Element,
-    public val options: Canvas3DOptions = Canvas3DOptions()
+    public val options: Canvas3DOptions = Canvas3DOptions(),
 ) {
-
-
     private var boundingBox: Box3? = null
     private var root: Object3D? = null
         set(value) {
@@ -102,40 +101,10 @@ public class ThreeCanvas(
         antialias = true
     }.apply {
         setClearColor(Colors.skyblue, 1)
-        //Clipping planes
-        options.onChange(this@ThreeCanvas) { name, _, _ ->
-            if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
-                localClippingEnabled = true
-                val clipping = options.clipping
-                if(!clipping.isEmpty()) {
-                    boundingBox?.let { boundingBox ->
-                        val xClippingPlane = clipping.x?.let {
-                            val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
-                            Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
-
-                        }
-                        val yClippingPlane = clipping.y?.let {
-                            val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
-                            Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
-                        }
-
-                        val zClippingPlane = clipping.z?.let {
-                            val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
-                            Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
-                        }
-                        clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
-                    }
-                }
-            } else {
-                localClippingEnabled = false
-            }
-        }
     }
 
     private val canvas = (renderer.domElement as HTMLCanvasElement).apply {
         className += "three-canvas"
-        width = 600
-        height = 600
         style.apply {
             width = "100%"
             height = "100%"
@@ -143,35 +112,29 @@ public class ThreeCanvas(
         }
     }
 
+    /**
+     * Force camera aspect ration and renderer size recalculation
+     */
+    private fun updateSize() {
+        val width = element.clientWidth
+        val height = element.clientHeight
+        canvas.width = width
+        canvas.height = height
+        renderer.setSize(width, height, false)
+        camera.aspect = width.toDouble() / height.toDouble()
+        camera.updateProjectionMatrix()
+    }
+
+
+    /**
+     * Attach canvas to given [HTMLElement]
+     */
     init {
         check(element.getElementsByClassName("three-canvas").length == 0) {
             "Three canvas already created in this element"
         }
         element.appendChild(canvas)
         updateSize()
-    }
-
-    /**
-     * Force camera aspect ration and renderer size recalculation
-     */
-    public fun updateSize() {
-        val width = canvas.clientWidth
-        val height = canvas.clientHeight
-        canvas.style.apply {
-            minWidth = "${options.minWith.toInt()}px"
-            maxWidth = "${options.maxWith.toInt()}px"
-            minHeight = "${options.minHeight.toInt()}px"
-            maxHeight = "${options.maxHeight.toInt()}px"
-        }
-        renderer.setSize(width, height, false)
-        camera.aspect = width.toDouble() / height.toDouble()
-        camera.updateProjectionMatrix()
-    }
-
-    /**
-     * Attach canvas to given [HTMLElement]
-     */
-    init {
         canvas.addEventListener("pointerdown", {
             val picked = pick()
             options.onSelect?.invoke(picked?.fullName())
@@ -186,7 +149,7 @@ public class ThreeCanvas(
             }
         }, false)
 
-        canvas.onresize = {
+        (element as? HTMLElement)?.onresize = {
             updateSize()
         }
 
@@ -202,6 +165,43 @@ public class ThreeCanvas(
             }
 
             renderer.render(scene, camera)
+        }
+
+        //Clipping planes
+        options.onChange(this@ThreeCanvas) { name, _, _ ->
+            if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
+                val clipping = options.clipping
+                if (!clipping.isEmpty()) {
+                    renderer.localClippingEnabled = true
+                    boundingBox?.let { boundingBox ->
+                        val xClippingPlane = clipping.x?.let {
+                            val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
+                            Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
+
+                        }
+                        val yClippingPlane = clipping.y?.let {
+                            val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
+                            Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
+                        }
+
+                        val zClippingPlane = clipping.z?.let {
+                            val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
+                            Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
+                        }
+                        renderer.clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
+                    }
+                } else {
+                    renderer.localClippingEnabled = false
+                }
+            } else if (name.startsWith(Canvas3DOptions::size.name.asName())) {
+                canvas.style.apply {
+                    minWidth = "${options.size.minWith.toInt()}px"
+                    maxWidth = "${options.size.maxWith.toInt()}px"
+                    minHeight = "${options.size.minHeight.toInt()}px"
+                    maxHeight = "${options.size.maxHeight.toInt()}px"
+                }
+            }
+
         }
     }
 

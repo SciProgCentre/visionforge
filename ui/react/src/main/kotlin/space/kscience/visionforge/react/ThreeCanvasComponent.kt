@@ -1,8 +1,6 @@
 package space.kscience.visionforge.react
 
-import kotlinx.css.FlexBasis
-import kotlinx.css.flexBasis
-import kotlinx.css.flexGrow
+import kotlinx.css.*
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
@@ -39,7 +37,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     useEffect(listOf(props.solid, props.options, elementRef)) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
-            canvas = three.getOrCreateCanvas(element, props.options ?: Canvas3DOptions())
+            canvas = ThreeCanvas(three, element, props.options ?: Canvas3DOptions())
         }
     }
 
@@ -55,8 +53,10 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
 
     styledDiv {
         css {
-            flexGrow = 1.0
-            flexBasis = FlexBasis.fill
+            maxWidth = 100.vw
+            maxHeight = 100.vh
+            display = Display.block
+            bottom = 0.px
         }
         ref = elementRef
     }

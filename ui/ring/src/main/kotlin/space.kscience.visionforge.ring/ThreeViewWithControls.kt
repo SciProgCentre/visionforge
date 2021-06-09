@@ -2,9 +2,11 @@ package space.kscience.visionforge.ring
 
 import kotlinx.css.*
 import react.*
+import ringui.grid.RowPosition
 import ringui.grid.ringCol
 import ringui.grid.ringGrid
 import ringui.grid.ringRow
+import ringui.tabs.ringTab
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.react.ThreeCanvasComponent
@@ -17,6 +19,11 @@ public external interface ThreeCanvasWithControlsProps : RProps {
     public var context: Context
     public var solid: Solid?
     public var selected: Name?
+    public var additionalTabs: Map<String, RBuilder.() -> Unit>?
+}
+
+public fun ThreeCanvasWithControlsProps.tab(title: String, block: RBuilder.()->Unit){
+    additionalTabs = (additionalTabs?: emptyMap()) + (title to block)
 }
 
 @JsExport
@@ -35,11 +42,15 @@ public val ThreeCanvasWithControls: (props: ThreeCanvasWithControlsProps) -> dyn
         styledDiv {
             css {
                 height = 100.pct
+                width = 100.pct
                 maxHeight = 100.vh
                 maxWidth = 100.vw
             }
             ringGrid {
                 ringRow {
+                    attrs {
+                        start = RowPosition.sm
+                    }
                     ringCol {
                         attrs {
                             xs = 12
@@ -50,12 +61,11 @@ public val ThreeCanvasWithControls: (props: ThreeCanvasWithControlsProps) -> dyn
                         child(ThreeCanvasComponent) {
                             attrs {
                                 this.context = props.context
-                                this.solid = props.solid as? Solid
+                                this.solid = props.solid
                                 this.selected = selected
                                 this.options = options
                             }
                         }
-
                     }
                     ringCol {
                         attrs {
@@ -67,11 +77,14 @@ public val ThreeCanvasWithControls: (props: ThreeCanvasWithControlsProps) -> dyn
                         styledDiv {
                             css {
                                 padding(top = 4.px)
+                                width = 100.pct
                                 //border(1.px, BorderStyle.solid, Color.lightGray)
-                                height = 100.pct
-                                overflowY = Overflow.auto
                             }
-                            ringThreeControls(options, props.solid, selected, onSelect)
+                            ringThreeControls(options, props.solid, selected, onSelect) {
+                                props.additionalTabs?.forEach { (title, builder) ->
+                                    ringTab(title, title, builder)
+                                }
+                            }
                         }
                     }
                 }

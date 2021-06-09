@@ -15,7 +15,7 @@ import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreePlugin
 import kotlin.reflect.KClass
 
-public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
+public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
     public val three: ThreePlugin by require(ThreePlugin)
 
     override val tag: PluginTag get() = Companion.tag
@@ -27,7 +27,7 @@ public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
         react.dom.render(element) {
             child(ThreeCanvasWithControls) {
                 attrs {
-                    this.context = this@ThreeWithControls.context
+                    this.context = this@ThreeWithControlsPlugin.context
                     this.solid = vision as? Solid
                 }
             }
@@ -41,9 +41,9 @@ public class ThreeWithControls : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
-    public companion object : PluginFactory<ThreeWithControls> {
+    public companion object : PluginFactory<ThreeWithControlsPlugin> {
         override val tag: PluginTag = PluginTag("vision.threejs.withControls", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<ThreeWithControls> = ThreeWithControls::class
-        override fun invoke(meta: Meta, context: Context): ThreeWithControls = ThreeWithControls()
+        override val type: KClass<ThreeWithControlsPlugin> = ThreeWithControlsPlugin::class
+        override fun invoke(meta: Meta, context: Context): ThreeWithControlsPlugin = ThreeWithControlsPlugin()
     }
 }
