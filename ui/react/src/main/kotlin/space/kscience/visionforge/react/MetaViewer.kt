@@ -16,7 +16,9 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.lastOrNull
 import space.kscience.dataforge.names.plus
-import styled.*
+import styled.css
+import styled.styledDiv
+import styled.styledSpan
 
 public external interface MetaViewerProps : RProps {
     /**
@@ -84,7 +86,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
                 }
             }
             if (expanded) {
-                styledUl {
+                flexColumn {
                     css {
                         +TreeStyles.tree
                     }
@@ -96,7 +98,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
                     }
 
                     keys.filter { !it.body.startsWith("@") }.forEach { token ->
-                        styledLi {
+                        styledDiv {
                             css {
                                 +TreeStyles.treeItem
                             }

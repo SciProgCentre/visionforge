@@ -8,7 +8,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.react.objectTree
+import space.kscience.visionforge.react.visionTree
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
@@ -39,7 +39,7 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
                     flex(1.0, 1.0, FlexBasis.inherit)
                 }
                 props.vision?.let {
-                    objectTree(it, props.selected, props.onSelect)
+                    visionTree(it, props.selected, props.onSelect)
                 }
             }
         }

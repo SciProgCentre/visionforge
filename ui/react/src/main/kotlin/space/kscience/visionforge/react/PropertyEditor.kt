@@ -26,7 +26,10 @@ import space.kscience.dataforge.names.lastOrNull
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.hidden
-import styled.*
+import styled.css
+import styled.styledButton
+import styled.styledDiv
+import styled.styledSpan
 
 public external interface PropertyEditorProps : RProps {
 
@@ -150,12 +153,12 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
             }
         }
         if (expanded) {
-            styledUl {
+            flexColumn {
                 css {
                     +TreeStyles.tree
                 }
                 keys.forEach { token ->
-                    styledLi {
+                    styledDiv {
                         css {
                             +TreeStyles.treeItem
                         }

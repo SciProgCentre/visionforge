@@ -20,7 +20,7 @@ import space.kscience.visionforge.bootstrap.gridRow
 import space.kscience.visionforge.bootstrap.visionPropertyEditor
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
-import space.kscience.visionforge.react.objectTree
+import space.kscience.visionforge.react.visionTree
 import space.kscience.visionforge.solid.specifications.Camera
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
@@ -70,7 +70,7 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 css {
                     flex(1.0, 1.0, FlexBasis.auto)
                 }
-                objectTree(root, selected, onSelect)
+                visionTree(root, selected, onSelect)
             }
         }
         flexColumn {

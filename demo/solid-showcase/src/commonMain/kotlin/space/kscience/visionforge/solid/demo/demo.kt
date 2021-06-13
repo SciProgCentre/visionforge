@@ -27,7 +27,9 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
 }
 
 val canvasOptions = Canvas3DOptions {
-    minSize = 400
+    size{
+        minSize = 400
+    }
     axes {
         size = 500.0
         visible = true

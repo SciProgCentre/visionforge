@@ -11,7 +11,10 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.isEmpty
-import styled.*
+import styled.css
+import styled.styledButton
+import styled.styledDiv
+import styled.styledSpan
 
 public external interface ObjectTreeProps : RProps {
     public var name: Name
@@ -20,7 +23,7 @@ public external interface ObjectTreeProps : RProps {
     public var clickCallback: (Name) -> Unit
 }
 
-private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
+private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
     var expanded: Boolean by useState { props.selected?.startsWith(props.name) ?: false }
 
     val onClick: (Event) -> Unit = {
@@ -69,7 +72,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
             treeLabel(token)
         }
         if (expanded) {
-            styledUl {
+            flexColumn {
                 css {
                     +TreeStyles.tree
                 }
@@ -77,7 +80,7 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
                     .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
-                        styledLi {
+                        styledDiv {
                             css {
                                 +TreeStyles.treeItem
                             }
@@ -105,10 +108,10 @@ private fun RBuilder.objectTree(props: ObjectTreeProps): Unit {
 
 @JsExport
 public val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
-    objectTree(props)
+    visionTree(props)
 }
 
-public fun RBuilder.objectTree(
+public fun RBuilder.visionTree(
     vision: Vision,
     selected: Name? = null,
     clickCallback: (Name) -> Unit = {}

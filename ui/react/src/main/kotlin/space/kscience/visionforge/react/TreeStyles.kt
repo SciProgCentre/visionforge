@@ -9,7 +9,7 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
      * Remove default bullets
      */
     public val tree: RuleSet by css {
-        paddingLeft = 8.px
+        paddingLeft = 5.px
         marginLeft = 0.px
         listStyleType = ListStyleType.none
     }
