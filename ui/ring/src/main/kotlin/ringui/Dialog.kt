@@ -1,6 +1,7 @@
 package ringui
 
 import react.RBuilder
+import react.RClass
 import react.RHandler
 import react.dom.WithClassName
 
@@ -20,8 +21,14 @@ public external interface DialogProps : WithClassName {
     public var autoFocusFirst: Boolean
 }
 
+@JsModule("@jetbrains/ring-ui/components/dialog/dialog")
+internal external object DialogModule {
+    @JsName("default")
+    val Dialog: RClass<DialogProps>
+}
+
 public fun RBuilder.ringDialog(show: Boolean, handler: RHandler<DialogProps>) {
-    RingUI.Dialog {
+    DialogModule.Dialog {
         attrs.show = show
         handler()
     }

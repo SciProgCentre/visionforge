@@ -1,27 +1,44 @@
 package space.kscience.visionforge.gdml.demo
 
 import kotlinx.browser.document
+import kotlinx.css.*
 import react.child
 import react.dom.render
 import space.kscience.dataforge.context.Global
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
-import space.kscience.visionforge.bootstrap.useBootstrap
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
+import styled.injectGlobal
 
 
 private class GDMLDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
-        useBootstrap()
-
-        val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
-
-        val context = Global.buildContext("demo"){
+        val context = Global.buildContext("gdml-demo"){
             plugin(ThreePlugin)
         }
+
+        injectGlobal {
+            html{
+                height = 100.pct
+            }
+
+            body{
+                height = 100.pct
+                display = Display.flex
+                alignItems = Align.stretch
+            }
+
+            "#application"{
+                width = 100.pct
+                display = Display.flex
+                alignItems = Align.stretch
+            }
+        }
+
+        val element = document.getElementById("application") ?: error("Element with id 'application' not found on page")
 
         render(element) {
             child(GDMLApp) {

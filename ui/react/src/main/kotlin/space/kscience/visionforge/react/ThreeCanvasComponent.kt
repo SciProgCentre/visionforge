@@ -21,11 +21,6 @@ public external interface ThreeCanvasProps : RProps {
     public var selected: Name?
 }
 
-public external interface ThreeCanvasState : RState {
-    public var element: Element?
-//    var canvas: ThreeCanvas?
-}
-
 public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functionalComponent(
     "ThreeCanvasComponent"
 ) { props ->
@@ -55,8 +50,7 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
         css {
             maxWidth = 100.vw
             maxHeight = 100.vh
-            display = Display.block
-            bottom = 0.px
+            flex(1.0, 1.0, FlexBasis.auto)
         }
         ref = elementRef
     }

@@ -4,7 +4,6 @@ import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.p
 import react.dom.render
-import react.useMemo
 import ringui.island.ringIsland
 import ringui.island.ringIslandContent
 import ringui.island.ringIslandHeader
@@ -22,14 +21,12 @@ public fun RBuilder.ringPropertyEditor(
     descriptor: NodeDescriptor? = vision.descriptor,
     key: Any? = null,
 ) {
-
-    val styles = useMemo(vision, key) {
-        if (vision is SolidReference) {
-            (vision.styles + vision.prototype.styles).distinct()
-        } else {
-            vision.styles
-        }
+    val styles = if (vision is SolidReference) {
+        (vision.styles + vision.prototype.styles).distinct()
+    } else {
+        vision.styles
     }
+
     flexColumn {
         ringIsland("Properties") {
             propertyEditor(
@@ -52,7 +49,7 @@ public fun RBuilder.ringPropertyEditor(
                 ringIslandContent {
                     if (styles.size == 1) {
                         val styleName = styles.first()
-                        p{
+                        p {
                             +styleName
                         }
                         val style = vision.getStyle(styleName)

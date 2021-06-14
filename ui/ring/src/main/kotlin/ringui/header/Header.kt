@@ -4,10 +4,11 @@ import react.RBuilder
 import react.RClass
 import react.RHandler
 import react.dom.WithClassName
-import ringui.RingUI
 
 @JsModule("@jetbrains/ring-ui/components/header/header")
 internal external object HeaderModule {
+    @JsName("default")
+    val Header: RClass<HeaderProps>
     val RerenderableHeader: RClass<HeaderProps>
     val Logo: RClass<HeaderLogoProps>
     val Tray: RClass<HeaderTrayProps>
@@ -24,8 +25,9 @@ public external interface HeaderProps : WithClassName {
     public var theme: String
 }
 
+
 public fun RBuilder.ringHeader(handler: RHandler<HeaderProps>) {
-    RingUI.Header {
+    HeaderModule.Header {
         handler()
     }
 }

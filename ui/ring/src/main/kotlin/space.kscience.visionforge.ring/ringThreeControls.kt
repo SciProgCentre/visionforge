@@ -1,10 +1,7 @@
 package space.kscience.visionforge.ring
 
-import kotlinx.css.BorderStyle
-import kotlinx.css.Color
-import kotlinx.css.padding
+import kotlinx.css.*
 import kotlinx.css.properties.border
-import kotlinx.css.px
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
@@ -17,9 +14,7 @@ import ringui.tabs.ringSmartTabs
 import ringui.tabs.ringTab
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
@@ -27,6 +22,7 @@ import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.react.visionTree
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
+import styled.styledDiv
 
 internal fun saveData(event: Event, fileName: String, mimeType: String = "text/plain", dataBuilder: () -> String) {
     event.stopPropagation();
@@ -89,38 +85,35 @@ public external interface ThreeControlsProps : RProps {
     public var vision: Vision?
     public var selected: Name?
     public var onSelect: (Name?) -> Unit
+    public var additionalTabs: Map<String, RBuilder.() -> Unit>
 }
 
 @JsExport
 public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
-    ringSmartTabs(if (props.selected != null) "Properties" else "Tree") {
-        ringTab("Canvas") {
+    ringSmartTabs("Tree") {
+        props.vision?.let {
+            ringTab("Tree") {
+                styledDiv {
+                    css {
+                        height = 100.pct
+                        overflowY = Overflow.auto
+                    }
+                    ringIsland("Vision tree") {
+                        visionTree(it, props.selected, props.onSelect)
+                    }
+                }
+            }
+        }
+        ringTab("Settings") {
             ringIsland("Canvas configuration") {
                 canvasControls(props.canvasOptions, props.vision)
             }
         }
-        props.vision?.let {
-            ringTab("Tree") {
-                ringIsland("Vision tree") {
-                    visionTree(it, props.selected, props.onSelect)
-                }
+        props.additionalTabs.forEach { (name, handler) ->
+            ringTab(name){
+                handler()
             }
         }
-        if (props.selected != null) {
-            ringTab("Properties") {
-                props.selected.let { selected ->
-                    val selectedObject: Vision? = when {
-                        selected == null -> null
-                        selected.isEmpty() -> props.vision
-                        else -> (props.vision as? VisionGroup)?.get(selected)
-                    }
-                    if (selectedObject != null) {
-                        ringPropertyEditor(selectedObject, key = selected)
-                    }
-                }
-            }
-        }
-        props.children()
     }
 }
 
@@ -129,13 +122,13 @@ public fun RBuilder.ringThreeControls(
     vision: Vision?,
     selected: Name?,
     onSelect: (Name?) -> Unit = {},
-    builder: RBuilder.() -> Unit = {},
+    additionalTabs: Map<String, RBuilder.() -> Unit>? = null
 ): ReactElement = child(ThreeControls) {
     attrs {
         this.canvasOptions = canvasOptions
         this.vision = vision
         this.selected = selected
         this.onSelect = onSelect
+        this.additionalTabs = additionalTabs?: emptyMap()
     }
-    builder()
 }

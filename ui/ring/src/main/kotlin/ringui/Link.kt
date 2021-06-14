@@ -2,6 +2,7 @@ package ringui
 
 import org.w3c.dom.events.MouseEvent
 import react.RBuilder
+import react.RClass
 import react.RHandler
 import react.dom.WithClassName
 
@@ -17,8 +18,14 @@ public external interface LinkProps : WithClassName {
     public var onClick: (MouseEvent) -> Unit
 }
 
+@JsModule("@jetbrains/ring-ui/components/link/link")
+internal external object LinkModule {
+    @JsName("default")
+    val Link: RClass<LinkProps>
+}
+
 public fun RBuilder.ringLink(handler: RHandler<LinkProps>) {
-    RingUI.Link {
+    LinkModule.Link {
         handler()
     }
 }

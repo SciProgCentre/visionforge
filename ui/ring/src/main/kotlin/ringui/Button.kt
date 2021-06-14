@@ -2,6 +2,7 @@ package ringui
 
 import org.w3c.dom.events.MouseEvent
 import react.RBuilder
+import react.RClass
 import react.RHandler
 import react.dom.WithClassName
 
@@ -28,8 +29,15 @@ public external interface ButtonProps : WithClassName {
     public var onMouseDown: (MouseEvent) -> Unit
 }
 
+@JsModule("@jetbrains/ring-ui/components/button/button")
+internal external object ButtonModule {
+    @JsName("default")
+    val Button: RClass<ButtonProps>
+}
+
+
 public fun RBuilder.ringButton(handler: RHandler<ButtonProps>) {
-    RingUI.Button {
+    ButtonModule.Button {
         handler()
     }
 }

@@ -1,6 +1,7 @@
 package ringui
 
 import react.RBuilder
+import react.RClass
 import react.RHandler
 import react.dom.WithClassName
 
@@ -27,8 +28,14 @@ public object AlertTypes {
     public var LOADING: String = "loading"
 }
 
+@JsModule("@jetbrains/ring-ui/components/alert/alert")
+internal external object AlertModule {
+    @JsName("default")
+    val Alert: RClass<AlertProps>
+}
+
 public fun RBuilder.ringAlert(handler: RHandler<AlertProps>) {
-    RingUI.Alert {
+    AlertModule.Alert {
         handler()
     }
 }
