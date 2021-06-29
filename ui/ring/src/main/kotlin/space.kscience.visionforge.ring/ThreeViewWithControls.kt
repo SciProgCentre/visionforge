@@ -4,7 +4,7 @@ import kotlinx.css.*
 import react.*
 import react.dom.div
 import react.dom.span
-import ringui.ringLink
+import ringui.Link
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
@@ -36,7 +36,7 @@ public fun ThreeCanvasWithControlsProps.tab(title: String, block: RBuilder.() ->
 
 public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement = styledDiv {
     div {
-        ringLink {
+        Link {
             attrs {
                 onClick = {
                     link(Name.EMPTY)
@@ -51,7 +51,7 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement 
                 tokens.add(token)
                 val fullName = Name(tokens.toList())
                 span { +"/" }
-                ringLink {
+                Link {
                     +token.toString()
                     attrs {
                         onClick = {

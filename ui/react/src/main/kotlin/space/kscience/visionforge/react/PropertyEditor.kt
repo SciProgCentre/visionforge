@@ -87,13 +87,15 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     }
 
     if (props.updateFlow != null) {
-        useEffectWithCleanup(listOf(props.ownProperties, props.updateFlow)) {
+        useEffect(props.ownProperties, props.updateFlow) {
             val updateJob = props.updateFlow!!.onEach { updatedName ->
                 if (updatedName == props.name) {
                     update()
                 }
             }.launchIn(props.scope ?: GlobalScope)
-            return@useEffectWithCleanup { updateJob.cancel() }
+            cleanup {
+                updateJob.cancel()
+            }
         }
     }
 

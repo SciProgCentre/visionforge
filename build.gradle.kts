@@ -1,14 +1,14 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-    kotlin("multiplatform") apply false
-    kotlin("jvm") apply false
-    kotlin("js") apply false
-    kotlin("jupyter.api") apply false
-    id("ru.mipt.npm.gradle.js") apply false
+
+    //Override kotlin version
+//    val kotlinVersion = "1.5.20-RC"
+//    kotlin("multiplatform") version(kotlinVersion) apply false
+//    kotlin("jvm") version(kotlinVersion) apply false
+//    kotlin("js") version(kotlinVersion) apply false
 }
 
-val dataforgeVersion by extra("0.4.2")
-val kotlinWrappersVersion by extra("pre.206-kotlin-1.5.10")
+val dataforgeVersion by extra("0.4.3")
 val fxVersion by extra("11")
 
 allprojects {
@@ -17,10 +17,11 @@ allprojects {
         jcenter()
         maven("https://repo.kotlin.link")
         maven("https://maven.jzy3d.org/releases")
+        maven("https://maven.pkg.jetbrains.space/mipt-npm/p/mipt-npm/maven")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-19"
+    version = "0.2.0-dev-20"
 }
 
 subprojects {

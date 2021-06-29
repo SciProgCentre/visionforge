@@ -1,6 +1,6 @@
 pluginManagement {
-    val kotlinVersion = "1.5.10"
-    val toolsVersion = "0.9.10"
+
+    val toolsVersion = "0.10.0"
 
     repositories {
         maven("https://repo.kotlin.link")
@@ -13,10 +13,6 @@ pluginManagement {
         id("ru.mipt.npm.gradle.mpp") version toolsVersion
         id("ru.mipt.npm.gradle.jvm") version toolsVersion
         id("ru.mipt.npm.gradle.js") version toolsVersion
-        kotlin("multiplatform") version kotlinVersion
-        kotlin("jvm") version kotlinVersion
-        kotlin("js") version kotlinVersion
-        kotlin("jupyter.api") version "0.9.1-20"
     }
 }
 

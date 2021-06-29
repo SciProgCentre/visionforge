@@ -13,14 +13,10 @@ kscience {
     application()
 }
 
-val kotlinWrappersVersion: String by rootProject.extra
-
 kotlin {
 
     jvm {
-        afterEvaluate {
-            withJava()
-        }
+        withJava()
     }
 
     sourceSets {
@@ -30,12 +26,12 @@ kotlin {
 //                implementation(project(":visionforge-gdml"))
             }
         }
-        jvmMain{
-            dependencies{
+        jvmMain {
+            dependencies {
                 implementation(project(":visionforge-fx"))
             }
         }
-        jsMain{
+        jsMain {
             dependencies {
                 implementation(project(":visionforge-threejs"))
             }

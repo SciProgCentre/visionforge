@@ -27,22 +27,22 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
     val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    val three: ThreePlugin = useMemo({ props.context.fetch(ThreePlugin) }, arrayOf(props.context))
+    val three: ThreePlugin = useMemo(props.context){ props.context.fetch(ThreePlugin) }
 
-    useEffect(listOf(props.solid, props.options, elementRef)) {
+    useEffect(props.solid, props.options, elementRef) {
         if (canvas == null) {
             val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
             canvas = ThreeCanvas(three, element, props.options ?: Canvas3DOptions())
         }
     }
 
-    useEffect(listOf(canvas, props.solid)) {
+    useEffect(canvas, props.solid) {
         props.solid?.let { obj ->
             canvas?.render(obj)
         }
     }
 
-    useEffect(listOf(canvas, props.selected)) {
+    useEffect(canvas, props.selected) {
         canvas?.select(props.selected)
     }
 

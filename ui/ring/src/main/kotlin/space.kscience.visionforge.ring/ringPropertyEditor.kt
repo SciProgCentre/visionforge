@@ -4,11 +4,9 @@ import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.p
 import react.dom.render
-import ringui.island.ringIsland
-import ringui.island.ringIslandContent
-import ringui.island.ringIslandHeader
-import ringui.tabs.ringSmartTabs
-import ringui.tabs.ringTab
+import ringui.Island
+import ringui.SmartTabs
+import ringui.Tab
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
 import space.kscience.visionforge.*
 import space.kscience.visionforge.react.flexColumn
@@ -28,7 +26,7 @@ public fun RBuilder.ringPropertyEditor(
     }
 
     flexColumn {
-        ringIsland("Properties") {
+        Island("Properties") {
             propertyEditor(
                 ownProperties = vision.ownProperties,
                 allProperties = vision.allProperties(),
@@ -39,33 +37,25 @@ public fun RBuilder.ringPropertyEditor(
         }
 
         if (styles.isNotEmpty()) {
-            ringIsland {
-                ringIslandHeader {
-                    attrs {
-                        border = true
+            Island("Styles") {
+                if (styles.size == 1) {
+                    val styleName = styles.first()
+                    p {
+                        +styleName
                     }
-                    +"Styles"
-                }
-                ringIslandContent {
-                    if (styles.size == 1) {
-                        val styleName = styles.first()
-                        p {
-                            +styleName
+                    val style = vision.getStyle(styleName)
+                    if (style != null) {
+                        Tab(styleName, id = styleName) {
+                            metaViewer(style)
                         }
-                        val style = vision.getStyle(styleName)
-                        if (style != null) {
-                            ringTab(styleName, id = styleName) {
-                                metaViewer(style)
-                            }
-                        }
-                    } else {
-                        ringSmartTabs {
-                            styles.forEach { styleName ->
-                                val style = vision.getStyle(styleName)
-                                if (style != null) {
-                                    ringTab(styleName, id = styleName) {
-                                        metaViewer(style)
-                                    }
+                    }
+                } else {
+                    SmartTabs {
+                        styles.forEach { styleName ->
+                            val style = vision.getStyle(styleName)
+                            if (style != null) {
+                                Tab(styleName, id = styleName) {
+                                    metaViewer(style)
                                 }
                             }
                         }
@@ -75,6 +65,7 @@ public fun RBuilder.ringPropertyEditor(
         }
     }
 }
+
 
 public fun Element.ringPropertyEditor(
     item: Vision,

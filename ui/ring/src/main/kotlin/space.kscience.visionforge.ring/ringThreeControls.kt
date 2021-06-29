@@ -9,9 +9,9 @@ import org.w3c.files.BlobPropertyBag
 import react.*
 import react.dom.attrs
 import react.dom.button
-import ringui.island.ringIsland
-import ringui.tabs.ringSmartTabs
-import ringui.tabs.ringTab
+import ringui.Island
+import ringui.SmartTabs
+import ringui.Tab
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
@@ -90,27 +90,27 @@ public external interface ThreeControlsProps : RProps {
 
 @JsExport
 public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
-    ringSmartTabs("Tree") {
+    SmartTabs("Tree") {
         props.vision?.let {
-            ringTab("Tree") {
+            Tab("Tree") {
                 styledDiv {
                     css {
                         height = 100.pct
                         overflowY = Overflow.auto
                     }
-                    ringIsland("Vision tree") {
+                    Island("Vision tree") {
                         visionTree(it, props.selected, props.onSelect)
                     }
                 }
             }
         }
-        ringTab("Settings") {
-            ringIsland("Canvas configuration") {
+        Tab("Settings") {
+            Island("Canvas configuration") {
                 canvasControls(props.canvasOptions, props.vision)
             }
         }
         props.additionalTabs.forEach { (name, handler) ->
-            ringTab(name){
+            Tab(name) {
                 handler()
             }
         }
@@ -129,6 +129,6 @@ public fun RBuilder.ringThreeControls(
         this.vision = vision
         this.selected = selected
         this.onSelect = onSelect
-        this.additionalTabs = additionalTabs?: emptyMap()
+        this.additionalTabs = additionalTabs ?: emptyMap()
     }
 }

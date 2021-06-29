@@ -145,16 +145,17 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
 }
 
 @JsExport
-public val MetaViewer:FunctionalComponent<MetaViewerProps>  = functionalComponent<MetaViewerProps>("MetaViewer") { props ->
-    child(MetaViewerItem) {
-        attrs {
-            this.key = ""
-            this.root = props.root
-            this.name = Name.EMPTY
-            this.descriptor = props.descriptor
+public val MetaViewer: FunctionalComponent<MetaViewerProps> =
+    functionalComponent<MetaViewerProps>("MetaViewer") { props ->
+        child(MetaViewerItem) {
+            attrs {
+                this.key = ""
+                this.root = props.root
+                this.name = Name.EMPTY
+                this.descriptor = props.descriptor
+            }
         }
     }
-}
 
 public fun RBuilder.metaViewer(meta: Meta, descriptor: NodeDescriptor? = null, key: Any? = null) {
     child(MetaViewer) {

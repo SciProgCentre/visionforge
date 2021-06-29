@@ -17,6 +17,8 @@ kotlin{
 
 dependencies{
     api(project(":ui:react"))
+    //TODO replace by kotlin-wrappers
+    api("ru.mipt.npm:ring-ui:0.1.0")
 
     implementation(npm("@jetbrains/icons", "3.14.1"))
     implementation(npm("@jetbrains/ring-ui", "4.0.7"))

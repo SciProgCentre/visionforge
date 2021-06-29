@@ -1,6 +1,5 @@
 plugins {
     id("ru.mipt.npm.gradle.mpp")
-    kotlin("jupyter.api")
 }
 
 description = "Jupyter api artifact for GDML rendering"
@@ -41,7 +40,6 @@ kotlin{
         jvmMain{
             dependencies {
                 implementation(project(":visionforge-gdml"))
-                implementation(kotlin("script-runtime"))
             }
         }
         jsMain {
@@ -52,6 +50,10 @@ kotlin{
         }
 
     }
+}
+
+kscience{
+    useJupyter()
 }
 
 readme{
