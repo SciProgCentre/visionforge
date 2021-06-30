@@ -72,6 +72,11 @@ public interface Solid : Vision {
                     hide()
                 }
 
+                value(DETAIL_KEY){
+                    type(ValueType.NUMBER)
+                    hide()
+                }
+
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
                 enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
