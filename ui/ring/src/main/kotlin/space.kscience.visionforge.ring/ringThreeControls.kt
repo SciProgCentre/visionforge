@@ -1,7 +1,10 @@
 package space.kscience.visionforge.ring
 
-import kotlinx.css.*
+import kotlinx.css.BorderStyle
+import kotlinx.css.Color
+import kotlinx.css.padding
 import kotlinx.css.properties.border
+import kotlinx.css.px
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
@@ -22,7 +25,6 @@ import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.react.visionTree
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
-import styled.styledDiv
 
 internal fun saveData(event: Event, fileName: String, mimeType: String = "text/plain", dataBuilder: () -> String) {
     event.stopPropagation();
@@ -93,14 +95,8 @@ public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalCo
     SmartTabs("Tree") {
         props.vision?.let {
             Tab("Tree") {
-                styledDiv {
-                    css {
-                        height = 100.pct
-                        overflowY = Overflow.auto
-                    }
-                    Island("Vision tree") {
-                        visionTree(it, props.selected, props.onSelect)
-                    }
+                Island("Vision tree") {
+                    visionTree(it, props.selected, props.onSelect)
                 }
             }
         }

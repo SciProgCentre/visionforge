@@ -1,5 +1,9 @@
 package space.kscience.visionforge.react
 
+import kotlinx.css.margin
+import kotlinx.css.pct
+import kotlinx.css.px
+import kotlinx.css.width
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
@@ -15,13 +19,14 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
+import styled.css
 import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
     public var item: MetaItem?
     public var descriptor: ValueDescriptor?
-    public var nullable: Boolean?
+    //public var nullable: Boolean?
     public var valueChanged: ((Value?) -> Unit)?
 }
 
@@ -41,6 +46,9 @@ public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
             value = (it.target as HTMLInputElement).value
         }
         styledInput(type = InputType.text) {
+            css{
+                width = 100.pct
+            }
             attrs {
                 this.value = value
                 onKeyDownFunction = keyDown
@@ -57,6 +65,9 @@ public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
             props.valueChanged?.invoke(newValue.asValue())
         }
         styledInput(type = InputType.checkBox) {
+            css{
+                width = 100.pct
+            }
             attrs {
                 //this.attributes["indeterminate"] = (props.item == null).toString()
                 defaultChecked = props.item.boolean ?: false
@@ -84,6 +95,9 @@ public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
             innerValue = (it.target as HTMLInputElement).value
         }
         styledInput(type = InputType.number) {
+            css{
+                width = 100.pct
+            }
             attrs {
                 value = innerValue
                 onKeyDownFunction = keyDown
@@ -110,6 +124,9 @@ public val ComboValueChooser: FunctionalComponent<ValueChooserProps> =
             props.valueChanged?.invoke(selected.asValue())
         }
         styledSelect {
+            css{
+                width = 100.pct
+            }
             props.descriptor?.allowedValues?.forEach {
                 option {
                     +it.string
@@ -137,6 +154,10 @@ public val ColorValueChooser: FunctionalComponent<ValueChooserProps> =
             props.valueChanged?.invoke(value.asValue())
         }
         styledInput(type = InputType.color) {
+            css{
+                width = 100.pct
+                margin(0.px)
+            }
             attrs {
                 this.value = value
                 onChangeFunction = handleChange

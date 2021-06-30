@@ -4,6 +4,9 @@ import kotlinx.css.*
 import react.*
 import react.dom.div
 import react.dom.span
+import ringui.Island
+import ringui.IslandContent
+import ringui.IslandHeader
 import ringui.Link
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
@@ -50,7 +53,7 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement 
             name.tokens.forEach { token ->
                 tokens.add(token)
                 val fullName = Name(tokens.toList())
-                span { +"/" }
+                span { +"." }
                 Link {
                     +token.toString()
                     attrs {
@@ -116,43 +119,29 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
 
                 selectedVision?.let { vision ->
                     styledDiv {
-                        css {
+                        css{
                             position = Position.absolute
-                            top = 10.px
-                            right = 10.px
+                            top = 5.px
+                            right = 5.px
+                            width = 450.px
                         }
-                        styledDiv {
-                            css {
-                                minWidth = 450.px
-                                backgroundColor = Color.white
-                                borderRadius = 3.px
-                                borderColor = Color.blue
-                                borderWidth = 1.px
-                                borderStyle = BorderStyle.solid
-                                padding(3.px)
+                        Island{
+                            IslandHeader{
+                                attrs {
+                                    border = true
+                                }
+                                nameCrumbs(selected) { selected = it }
                             }
-                            propertyEditor(
-                                ownProperties = vision.ownProperties,
-                                allProperties = vision.allProperties(),
-                                updateFlow = vision.propertyChanges,
-                                descriptor = vision.descriptor,
-                                key = selected
-                            )
+                            IslandContent{
+                                propertyEditor(
+                                    ownProperties = vision.ownProperties,
+                                    allProperties = vision.allProperties(),
+                                    updateFlow = vision.propertyChanges,
+                                    descriptor = vision.descriptor,
+                                    key = selected
+                                )
+                            }
                         }
-                    }
-                    styledDiv {
-                        css {
-                            position = Position.absolute
-                            bottom = 10.px
-                            left = 10.px
-                            backgroundColor = Color.white
-                            borderRadius = 3.px
-                            borderColor = Color.blue
-                            borderWidth = 1.px
-                            borderStyle = BorderStyle.solid
-                            padding(3.px)
-                        }
-                        nameCrumbs(selected) { selected = it }
                     }
                 }
             }
@@ -161,9 +150,6 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
                     padding(4.px)
                     minWidth = 400.px
                     flex(1.0, 10.0, FlexBasis("300px"))
-                    alignItems = Align.stretch
-                    alignContent = Align.stretch
-                    //border(1.px, BorderStyle.solid, Color.lightGray)
                 }
                 ringThreeControls(options, props.solid, selected, onSelect, additionalTabs = props.additionalTabs)
             }

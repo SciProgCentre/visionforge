@@ -17,11 +17,10 @@ allprojects {
         jcenter()
         maven("https://repo.kotlin.link")
         maven("https://maven.jzy3d.org/releases")
-        maven("https://maven.pkg.jetbrains.space/mipt-npm/p/mipt-npm/maven")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-20"
+    version = "0.2.0-dev-21"
 }
 
 subprojects {

@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.css.*
+import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
@@ -129,10 +131,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         // Do not show nodes without visible children
         if (keys.isEmpty()) return
 
-        styledDiv {
-            css {
-                +TreeStyles.treeLeaf
-            }
+        flexRow {
             styledSpan {
                 css {
                     +TreeStyles.treeCaret
@@ -179,26 +178,25 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
             }
         }
     } else {
-        styledDiv {
+        flexRow {
             css {
-                +TreeStyles.treeLeaf
+                alignItems = Align.center
             }
-            styledDiv {
+            styledSpan {
                 css {
                     +TreeStyles.treeLabel
-                }
-                styledSpan {
-                    css {
-                        if (ownProperty == null) {
-                            +TreeStyles.treeLabelInactive
-                        }
+                    if (ownProperty == null) {
+                        +TreeStyles.treeLabelInactive
                     }
-                    +token
                 }
+                +token
             }
+
             styledDiv {
                 css {
-                    +TreeStyles.resizeableInput
+                    //+TreeStyles.resizeableInput
+                    width = 160.px
+                    margin(1.px, 5.px)
                 }
                 valueChooser(
                     props.name,
@@ -207,9 +205,23 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     valueChanged
                 )
             }
+
             styledButton {
                 css {
-                    +TreeStyles.removeButton
+                    width = 24.px
+                    alignSelf = Align.stretch
+                    margin(1.px, 5.px)
+                    backgroundColor = Color.white
+                    borderStyle = BorderStyle.solid
+                    borderRadius = 2.px
+                    textAlign = TextAlign.center
+                    textDecoration = TextDecoration.none
+                    cursor = Cursor.pointer
+                    disabled {
+                        cursor = Cursor.auto
+                        borderStyle = BorderStyle.dashed
+                        color = Color.lightGray
+                    }
                 }
                 +"\u00D7"
                 attrs {

@@ -1,5 +1,7 @@
 package space.kscience.visionforge.react
 
+import kotlinx.css.pct
+import kotlinx.css.width
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
@@ -12,6 +14,7 @@ import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.values.asValue
+import styled.css
 import styled.styledInput
 
 @JsExport
@@ -45,6 +48,9 @@ public val RangeValueChooser: FunctionalComponent<ValueChooserProps> =
             }
 
             styledInput(type = InputType.range) {
+                css{
+                    width = 100.pct
+                }
                 attrs {
                     disabled = rangeDisabled
                     value = innerValue?.toString() ?: ""

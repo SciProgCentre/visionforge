@@ -1,5 +1,11 @@
 package space.kscience.visionforge.react
 
+import kotlinx.css.Color
+import kotlinx.css.Cursor
+import kotlinx.css.color
+import kotlinx.css.cursor
+import kotlinx.css.properties.TextDecorationLine
+import kotlinx.css.properties.textDecoration
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.*
@@ -12,7 +18,6 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.isEmpty
 import styled.css
-import styled.styledButton
 import styled.styledDiv
 import styled.styledSpan
 
@@ -23,6 +28,27 @@ public external interface ObjectTreeProps : RProps {
     public var clickCallback: (Name) -> Unit
 }
 
+private val TreeLabel = functionalComponent<ObjectTreeProps> { props ->
+    val token = useMemo(props.name) { props.name.lastOrNull()?.toString() ?: "World" }
+    styledSpan {
+        css {
+            +TreeStyles.treeLabel
+            color = Color("#069")
+            cursor = Cursor.pointer
+            hover {
+                textDecoration(TextDecorationLine.underline)
+            }
+            if (props.name == props.selected) {
+                +TreeStyles.treeLabelSelected
+            }
+        }
+        +token
+        attrs {
+            onClickFunction = { props.clickCallback(props.name) }
+        }
+    }
+}
+
 private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
     var expanded: Boolean by useState { props.selected?.startsWith(props.name) ?: false }
 
@@ -30,32 +56,11 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
         expanded = !expanded
     }
 
-    fun RBuilder.treeLabel(text: String) {
-        styledButton {
-            css {
-                //classes = mutableListOf("btn", "btn-link", "align-middle", "text-truncate", "p-0")
-                +TreeStyles.treeLabel
-                +TreeStyles.linkButton
-                if (props.name == props.selected) {
-                    +TreeStyles.treeLabelSelected
-                }
-            }
-            +text
-            attrs {
-                onClickFunction = { props.clickCallback(props.name) }
-            }
-        }
-    }
-
-    val token = props.name.lastOrNull()?.toString() ?: "World"
     val obj = props.obj
 
     //display as node if any child is visible
     if (obj is VisionGroup) {
-        styledDiv {
-            css {
-                +TreeStyles.treeLeaf
-            }
+        flexRow {
             if (obj.children.any { !it.key.body.startsWith("@") }) {
                 styledSpan {
                     css {
@@ -69,7 +74,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                     }
                 }
             }
-            treeLabel(token)
+            child(TreeLabel, props = props)
         }
         if (expanded) {
             flexColumn {
@@ -97,12 +102,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
             }
         }
     } else {
-        styledDiv {
-            css {
-                +TreeStyles.treeLeaf
-            }
-            treeLabel(token)
-        }
+        child(TreeLabel, props = props)
     }
 }
 

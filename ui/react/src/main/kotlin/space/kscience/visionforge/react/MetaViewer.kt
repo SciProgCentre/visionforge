@@ -1,5 +1,7 @@
 package space.kscience.visionforge.react
 
+import kotlinx.css.Align
+import kotlinx.css.alignItems
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.*
@@ -60,9 +62,9 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
 
     when (actualItem) {
         is MetaItemNode -> {
-            styledDiv {
+            flexRow {
                 css {
-                    +TreeStyles.treeLeaf
+                    alignItems = Align.center
                 }
                 styledSpan {
                     css {
@@ -117,22 +119,18 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
             }
         }
         is MetaItemValue -> {
-            styledDiv {
+            flexRow {
                 css {
-                    +TreeStyles.treeLeaf
+                    alignItems = Align.center
                 }
-                styledDiv {
+                styledSpan {
                     css {
                         +TreeStyles.treeLabel
-                    }
-                    styledSpan {
-                        css {
-                            if (item == null) {
-                                +TreeStyles.treeLabelInactive
-                            }
+                        if (item == null) {
+                            +TreeStyles.treeLabelInactive
                         }
-                        +token
                     }
+                    +token
                 }
                 styledDiv {
                     a {

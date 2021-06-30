@@ -18,9 +18,9 @@ import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
+import kotlinx.browser.window
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
 import org.w3c.dom.events.MouseEvent
 import space.kscience.dataforge.context.info
@@ -149,7 +149,7 @@ public class ThreeCanvas(
             }
         }, false)
 
-        (element as? HTMLElement)?.onresize = {
+        window.onresize = {
             updateSize()
         }
 
@@ -188,7 +188,8 @@ public class ThreeCanvas(
                             val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
                             Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
                         }
-                        renderer.clippingPlanes = listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
+                        renderer.clippingPlanes =
+                            listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
                     }
                 } else {
                     renderer.localClippingEnabled = false
