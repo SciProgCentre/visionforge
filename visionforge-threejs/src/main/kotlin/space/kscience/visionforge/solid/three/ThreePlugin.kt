@@ -131,7 +131,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
-    fun renderSolid(
+    internal fun renderSolid(
         element: Element,
         vision: Solid,
     ): ThreeCanvas = getOrCreateCanvas(element).apply {

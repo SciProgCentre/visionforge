@@ -95,6 +95,7 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
 
         flexRow {
             css {
+                height = 100.pct
                 flex(1.0, 1.0, FlexBasis.auto)
                 flexWrap = FlexWrap.wrap
                 alignItems = Align.stretch
