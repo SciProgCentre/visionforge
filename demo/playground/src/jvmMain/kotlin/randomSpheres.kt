@@ -1,5 +1,6 @@
 package space.kscience.visionforge.examples
 
+import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Context
 import space.kscience.visionforge.html.ResourceLocation
@@ -19,18 +20,19 @@ fun main() {
         resourceLocation = ResourceLocation.EMBED
     ) {
         h1 { +"Happy new year!" }
-        vision {
-            solid {
-                repeat(100) {
-                    sphere(5, name = "sphere[$it]") {
-                        x = random.nextDouble(-300.0, 300.0)
-                        y = random.nextDouble(-300.0, 300.0)
-                        z = random.nextDouble(-300.0, 300.0)
-                        material {
-                            color(random.nextInt())
-                            specularColor(random.nextInt())
+        div {
+            vision {
+                solid {
+                    repeat(100) {
+                        sphere(5, name = "sphere[$it]") {
+                            x = random.nextDouble(-300.0, 300.0)
+                            y = random.nextDouble(-300.0, 300.0)
+                            z = random.nextDouble(-300.0, 300.0)
+                            material {
+                                color(random.nextInt())
+                            }
+                            detail = 16
                         }
-                        detail = 16
                     }
                 }
             }

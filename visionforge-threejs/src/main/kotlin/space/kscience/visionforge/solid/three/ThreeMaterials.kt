@@ -59,12 +59,12 @@ public object ThreeMaterials {
     private val materialCache = HashMap<Meta, Material>()
 
     internal fun buildMaterial(meta: Meta): Material {
-        return if (meta[SolidMaterial.SPECULAR_COLOR_KEY] != null) {
+        return meta[SolidMaterial.SPECULAR_COLOR_KEY]?.let { specularColor ->
             MeshPhongMaterial().apply {
                 color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
-                specular = meta[SolidMaterial.SPECULAR_COLOR_KEY]!!.getColor()
+                specular = specularColor.getColor()
                 emissive = specular
-                reflectivity = 1.0
+                reflectivity = 0.5
                 refractionRatio = 1.0
                 shininess = 100.0
                 opacity = meta[SolidMaterial.OPACITY_KEY]?.double ?: 1.0
@@ -72,15 +72,14 @@ public object ThreeMaterials {
                 wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
                 needsUpdate = true
             }
-        } else {
-            MeshBasicMaterial().apply {
-                color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
-                opacity = meta[SolidMaterial.OPACITY_KEY]?.double ?: 1.0
-                transparent = opacity < 1.0
-                wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
-                needsUpdate = true
-            }
+        } ?: MeshBasicMaterial().apply {
+            color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
+            opacity = meta[SolidMaterial.OPACITY_KEY]?.double ?: 1.0
+            transparent = opacity < 1.0
+            wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
+            needsUpdate = true
         }
+
     }
 
     internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta) {
