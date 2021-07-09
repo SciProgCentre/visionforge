@@ -59,13 +59,13 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     private val ry = Rotate(0.0, Rotate.Y_AXIS)
 
-    private val translate = Translate()
+    private val rz = Rotate(0.0, Rotate.Z_AXIS)
 
-    //private val rz = Rotate(180.0, Rotate.Z_AXIS)
+    private val translate = Translate()
 
 
     init {
-        camera.transforms.setAll(ry, rx, translate)
+        camera.transforms.setAll(rx, ry, rz, translate)
         update()
         val listener = InvalidationListener {
             update()
@@ -143,8 +143,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
             mouseOldY = mousePosY
             mousePosX = me.sceneX
             mousePosY = me.sceneY
-            mouseDeltaX = mousePosX - mouseOldX
-            mouseDeltaY = mousePosY - mouseOldY
+            mouseDeltaX = mouseOldX - mousePosX
+            mouseDeltaY = mouseOldY - mousePosY
 
             val modifier = when {
                 me.isControlDown -> CONTROL_MULTIPLIER
