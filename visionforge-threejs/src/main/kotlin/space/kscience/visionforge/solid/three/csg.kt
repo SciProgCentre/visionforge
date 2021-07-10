@@ -32,12 +32,9 @@ external class CSG {
         fun toMesh(csg: CSG, toMatrix: Matrix4): Mesh
         fun iEval(tokens: Mesh, index: Number? = definedExternally)
         fun eval(tokens: Mesh, doRemove: Boolean): Mesh
-        var _tmpm3: Any
-        var doRemove: Any
-        var currentOp: Any
-        var currentPrim: Any
-        var nextPrim: Any
-        var sourceMesh: Any
+        fun union(meshA: Mesh, meshB: Mesh): Mesh
+        fun subtract(meshA: Mesh, meshB: Mesh): Mesh
+        fun intersect(meshA: Mesh, meshB: Mesh): Mesh
     }
 }
 

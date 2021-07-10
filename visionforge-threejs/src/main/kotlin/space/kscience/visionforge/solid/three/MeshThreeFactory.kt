@@ -36,7 +36,8 @@ public abstract class MeshThreeFactory<in T : Solid>(
             matrixAutoUpdate = false
             //set position for mesh
             updatePosition(obj)
-        }.applyProperties(obj)
+            applyProperties(obj)
+        }
 
         //add listener to object properties
         obj.onPropertyChange(three.updateScope) { name ->

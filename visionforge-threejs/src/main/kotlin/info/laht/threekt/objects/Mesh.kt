@@ -36,7 +36,7 @@ import info.laht.threekt.materials.Material
 
 open external class Mesh(geometry: BufferGeometry?, material: Material?) : Object3D {
 
-    var geometry: dynamic
+    var geometry: BufferGeometry
     var material: Material
 
     var drawMode: Int

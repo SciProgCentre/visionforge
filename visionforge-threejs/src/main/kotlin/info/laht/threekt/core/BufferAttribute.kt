@@ -223,7 +223,7 @@ abstract external class BufferAttribute protected constructor(
 
 
 external class Float32BufferAttribute(
-    array: FloatArray,
+    array: Array<Float>,
     itemSize: Int,
     normalized: Boolean = definedExternally
 ) : BufferAttribute

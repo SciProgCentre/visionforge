@@ -52,8 +52,8 @@ public class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
     override fun build(): BufferGeometry = BufferGeometry().apply {
         //setIndex(Int16BufferAttribute(indices.toShortArray(), 1))
         setIndex(indices.toTypedArray())
-        setAttribute("position", Float32BufferAttribute(positions.toFloatArray(), 3))
-        setAttribute("normal", Float32BufferAttribute(normals.toFloatArray(), 3))
+        setAttribute("position", Float32BufferAttribute(positions.toTypedArray(), 3))
+        setAttribute("normal", Float32BufferAttribute(normals.toTypedArray(), 3))
         //setAttribute("color", Float32BufferAttribute(colors.toFloatArray(), 3))
 
         computeBoundingSphere()
