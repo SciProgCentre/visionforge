@@ -45,7 +45,7 @@ fun makeTrack(start: Vector3D, direction: Vector3D): Line {
 fun makeTrack(x: Double, y: Double, theta: Double, phi: Double): Line {
     //TODO check angle definitions
     return makeTrack(
-        Vector3D(x, y, CENTRAL_LAYER_Z),
+        Vector3D(x, y, CENTRAL_LAYER_Z.toDouble()),
         Vector3D(phi, theta)
     )
 }

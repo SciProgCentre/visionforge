@@ -4,9 +4,9 @@ plugins {
 
 description = "Jupyter api artifact for GDML rendering"
 
-kotlin{
+kotlin {
     explicitApi = null
-    js{
+    js {
         useCommonJs()
         browser {
             webpackTask {
@@ -25,19 +25,17 @@ kotlin{
 
         tasks.getByName<ProcessResources>("jvmProcessResources") {
             dependsOn(jsBrowserDistribution)
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
+            from(jsBrowserDistribution)
         }
     }
 
-    sourceSets{
+    sourceSets {
         commonMain {
             dependencies {
                 api(project(":visionforge-solid"))
             }
         }
-        jvmMain{
+        jvmMain {
             dependencies {
                 implementation(project(":visionforge-gdml"))
             }
@@ -52,10 +50,10 @@ kotlin{
     }
 }
 
-kscience{
+kscience {
     useJupyter()
 }
 
-readme{
+readme {
     maturity = ru.mipt.npm.gradle.Maturity.EXPERIMENTAL
 }

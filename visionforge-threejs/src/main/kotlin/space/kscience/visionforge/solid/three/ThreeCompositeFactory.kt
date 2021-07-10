@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid.three
 
 import CSG
 import info.laht.threekt.core.BufferGeometry
+import info.laht.threekt.math.Matrix4
 import info.laht.threekt.objects.Mesh
 import space.kscience.visionforge.solid.Composite
 import space.kscience.visionforge.solid.CompositeType
@@ -23,7 +24,7 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : MeshThreeFac
             CompositeType.INTERSECT -> firstCSG.intersect(secondCSG)
             CompositeType.SUBTRACT -> firstCSG.subtract(secondCSG)
         }
-        return resultCSG.toGeometry().toBufferGeometry()
+        return resultCSG.toGeometry(Matrix4())
     }
 
 }

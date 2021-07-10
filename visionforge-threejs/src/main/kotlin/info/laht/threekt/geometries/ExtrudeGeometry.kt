@@ -11,7 +11,6 @@
 package info.laht.threekt.geometries
 
 import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Geometry
 import info.laht.threekt.extras.core.Shape
 import info.laht.threekt.math.Vector2
 
@@ -68,18 +67,6 @@ external interface UVGenerator {
 }
 
 external open class ExtrudeBufferGeometry : BufferGeometry {
-    constructor(shapes: Shape, options: ExtrudeGeometryOptions?)
-    constructor(shapes: Array<Shape>, options: ExtrudeGeometryOptions?)
-
-    open fun addShapeList(shapes: Array<Shape>, options: Any? = definedExternally)
-    open fun addShape(shape: Shape, options: Any? = definedExternally)
-
-    companion object {
-        var WorldUVGenerator: UVGenerator
-    }
-}
-
-external open class ExtrudeGeometry : Geometry {
     constructor(shapes: Shape, options: ExtrudeGeometryOptions?)
     constructor(shapes: Array<Shape>, options: ExtrudeGeometryOptions?)
 

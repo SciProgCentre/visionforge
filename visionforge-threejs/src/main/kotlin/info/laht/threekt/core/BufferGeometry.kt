@@ -85,14 +85,14 @@ open external class BufferGeometry {
     fun clearGroups()
     fun addGroup(start: Int, count: Int, materialIndex: Int = definedExternally)
 
-    fun addAttribute(name: String, attribute: BufferAttribute)
+    fun setAttribute(name: String, attribute: BufferAttribute)
     fun getAttribute(name: String): BufferAttribute
-    fun removeAttribute(name: String): BufferGeometry
+    fun deleteAttribute(name: String): BufferGeometry
 
     fun setIndex(index: BufferAttribute)
+    fun setIndex(index: Array<Short>)
     fun setDrawRange(start: Int, count: Int)
 
-    fun fromGeometry(geometry: Geometry)
     fun setFromObject(`object`: Object3D): BufferGeometry
     fun updateFromObject(`object`: Object3D): BufferGeometry
     fun setFromPoints(points: Array<Vector3>): BufferGeometry

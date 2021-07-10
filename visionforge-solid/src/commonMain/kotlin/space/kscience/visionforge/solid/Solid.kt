@@ -156,21 +156,21 @@ private fun Solid.position(): Point3D =
 public var Solid.x: Number
     get() = position?.x ?: 0f
     set(value) {
-        position().x = value.toDouble()
+        position().x = value.toFloat()
         invalidateProperty(Solid.X_POSITION_KEY)
     }
 
 public var Solid.y: Number
     get() = position?.y ?: 0f
     set(value) {
-        position().y = value.toDouble()
+        position().y = value.toFloat()
         invalidateProperty(Solid.Y_POSITION_KEY)
     }
 
 public var Solid.z: Number
     get() = position?.z ?: 0f
     set(value) {
-        position().z = value.toDouble()
+        position().z = value.toFloat()
         invalidateProperty(Solid.Z_POSITION_KEY)
     }
 
@@ -180,21 +180,21 @@ private fun Solid.rotation(): Point3D =
 public var Solid.rotationX: Number
     get() = rotation?.x ?: 0f
     set(value) {
-        rotation().x = value.toDouble()
+        rotation().x = value.toFloat()
         invalidateProperty(Solid.X_ROTATION_KEY)
     }
 
 public var Solid.rotationY: Number
     get() = rotation?.y ?: 0f
     set(value) {
-        rotation().y = value.toDouble()
+        rotation().y = value.toFloat()
         invalidateProperty(Solid.Y_ROTATION_KEY)
     }
 
 public var Solid.rotationZ: Number
     get() = rotation?.z ?: 0f
     set(value) {
-        rotation().z = value.toDouble()
+        rotation().z = value.toFloat()
         invalidateProperty(Solid.Z_ROTATION_KEY)
     }
 
@@ -204,20 +204,20 @@ private fun Solid.scale(): Point3D =
 public var Solid.scaleX: Number
     get() = scale?.x ?: 1f
     set(value) {
-        scale().x = value.toDouble()
+        scale().x = value.toFloat()
         invalidateProperty(Solid.X_SCALE_KEY)
     }
 
 public var Solid.scaleY: Number
     get() = scale?.y ?: 1f
     set(value) {
-        scale().y = value.toDouble()
+        scale().y = value.toFloat()
         invalidateProperty(Solid.Y_SCALE_KEY)
     }
 
 public var Solid.scaleZ: Number
     get() = scale?.z ?: 1f
     set(value) {
-        scale().z = value.toDouble()
+        scale().z = value.toFloat()
         invalidateProperty(Solid.Z_SCALE_KEY)
     }

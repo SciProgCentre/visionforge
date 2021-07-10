@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.demo
 
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.BoxBufferGeometry
+import info.laht.threekt.geometries.BoxGeometry
 import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
@@ -26,7 +26,7 @@ internal fun SolidGroup.varBox(
 internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeVision() {
 
     override fun render(three: ThreePlugin): Object3D {
-        val geometry = BoxBufferGeometry(xSize, ySize, 1)
+        val geometry = BoxGeometry(xSize, ySize, 1)
 
         val material = ThreeMaterials.DEFAULT.clone()
 

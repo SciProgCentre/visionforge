@@ -41,7 +41,7 @@ public class GdmlTransformer {
 
     internal val styleCache = HashMap<Name, Meta>()
 
-    public fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+    public fun Solid.registerAndUseStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
             Meta(builder)
         }
@@ -49,7 +49,7 @@ public class GdmlTransformer {
     }
 
     public fun Solid.transparent() {
-        useStyle("transparent") {
+        registerAndUseStyle("transparent") {
             SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
             "edges.enabled" put true
         }
@@ -75,7 +75,7 @@ public class GdmlTransformer {
 
             if (parent.physVolumes.isNotEmpty()) transparent()
 
-            useStyle(styleName) {
+            registerAndUseStyle(styleName) {
                 val vfMaterial = SolidMaterial().apply {
                     configurePaint(material, solid)
                 }
@@ -125,7 +125,11 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
 
     fun Solid.configureSolid(root: Gdml, parent: GdmlVolume, solid: GdmlSolid) {
         val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
-        settings.run { configureSolid(parent, solid, material) }
+        with(settings) {
+            with(this@configureSolid) {
+                configureSolid(parent, solid, material)
+            }
+        }
     }
 
     private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReferenceGroup {

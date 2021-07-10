@@ -27,14 +27,14 @@
 
 package info.laht.threekt.objects
 
-import info.laht.threekt.core.*
+import info.laht.threekt.core.BufferGeometry
+import info.laht.threekt.core.Intersect
+import info.laht.threekt.core.Object3D
+import info.laht.threekt.core.Raycaster
 import info.laht.threekt.materials.Material
 
 
-open external class Mesh : Object3D {
-
-    constructor(geometry: Geometry?, material: Material?)
-    constructor(geometry: BufferGeometry?, material: Material?)
+open external class Mesh(geometry: BufferGeometry?, material: Material?) : Object3D {
 
     var geometry: dynamic
     var material: Material

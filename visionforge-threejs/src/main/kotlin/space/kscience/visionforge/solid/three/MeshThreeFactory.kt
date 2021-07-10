@@ -30,9 +30,6 @@ public abstract class MeshThreeFactory<in T : Solid>(
     override fun invoke(three: ThreePlugin, obj: T): Mesh {
         val geometry = buildGeometry(obj)
 
-        //JS sometimes tries to pass Geometry as BufferGeometry
-        @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
-
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
         val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {

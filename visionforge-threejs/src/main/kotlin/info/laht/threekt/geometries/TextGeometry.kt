@@ -34,10 +34,7 @@ external interface TextGeometryParameters {
         set(value) = definedExternally
 }
 
-external class TextBufferGeometry(text: String, parameters: TextGeometryParameters? = definedExternally) : ExtrudeBufferGeometry {
-    val parameters: TextGeometryParameters
-}
-
-external class TextGeometry(text: String, parameters: TextGeometryParameters? = definedExternally) : ExtrudeGeometry {
+external class TextBufferGeometry(text: String, parameters: TextGeometryParameters? = definedExternally) :
+    ExtrudeBufferGeometry {
     val parameters: TextGeometryParameters
 }

@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.DoubleSide
 import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.PlaneBufferGeometry
+import info.laht.threekt.geometries.PlaneGeometry
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.textures.Texture
@@ -46,7 +46,7 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
         }
 
         val mesh = Mesh(
-            PlaneBufferGeometry(canvas.width, canvas.height),
+            PlaneGeometry(canvas.width, canvas.height),
             material
         )
 
