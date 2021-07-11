@@ -1,7 +1,6 @@
 import kotlinx.browser.document
 import kotlinx.css.height
-import kotlinx.css.vh
-import kotlinx.css.vw
+import kotlinx.css.pct
 import kotlinx.css.width
 import react.child
 import react.dom.render
@@ -32,8 +31,8 @@ private class JsPlaygroundApp : Application {
         render(element) {
             styledDiv {
                 css{
-                    height = 100.vh
-                    width = 100.vw
+                    height = 100.pct
+                    width = 100.pct
                 }
                 child(ThreeCanvasWithControls) {
                     attrs {
