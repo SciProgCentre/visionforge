@@ -11,22 +11,14 @@ public expect class Counter() {
     public fun incrementAndGet(): Int
 }
 
-private fun Point3D?.safePlus(other: Point3D?): Point3D? = if (this == null && other == null) {
-    null
-} else {
-    (this ?: Point3D(0, 0, 0)) + (other ?: Point3D(0, 0, 0))
-}
-
 @DFExperimental
 internal fun Vision.updateFrom(other: Vision): Vision {
     if (this is Solid && other is Solid) {
-        position = position.safePlus(other.position)
-        rotation = rotation.safePlus(other.rotation)
-        if (this.scale != null || other.scale != null) {
-            scaleX = scaleX.toDouble() * other.scaleX.toDouble()
-            scaleY = scaleY.toDouble() * other.scaleY.toDouble()
-            scaleZ = scaleZ.toDouble() * other.scaleZ.toDouble()
-        }
+        position += other.position
+        rotation += other.rotation
+        scaleX = scaleX.toDouble() * other.scaleX.toDouble()
+        scaleY = scaleY.toDouble() * other.scaleY.toDouble()
+        scaleZ = scaleZ.toDouble() * other.scaleZ.toDouble()
         other.meta.itemSequence().forEach { (name, item) ->
             if (getProperty(name) == null) {
                 setProperty(name, item)

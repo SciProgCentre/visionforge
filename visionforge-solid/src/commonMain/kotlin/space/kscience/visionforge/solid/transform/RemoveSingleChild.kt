@@ -14,18 +14,14 @@ internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
         //parent.properties?.let { config.update(it) }
 
         if (this is Solid && parent is Solid) {
-            position = (position ?: Point3D.ZERO) + (parent.position ?: Point3D.ZERO)
-            rotation = (parent.rotation ?: Point3D.ZERO) + (parent.rotation ?: Point3D.ZERO)
-            scale = when {
-                scale == null && parent.scale == null -> null
-                scale == null -> parent.scale
-                parent.scale == null -> scale
-                else -> Point3D(
-                    scale!!.x * parent.scale!!.x,
-                    scale!!.y * parent.scale!!.y,
-                    scale!!.z * parent.scale!!.z
-                )
-            }
+            position += parent.position
+            rotation += parent.rotation
+            scale = Point3D(
+                scale.x * parent.scale.x,
+                scale.y * parent.scale.y,
+                scale.z * parent.scale.z
+            )
+
         }
 
     }

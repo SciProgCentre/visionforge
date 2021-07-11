@@ -1,7 +1,5 @@
 import kotlinx.browser.document
-import kotlinx.css.height
-import kotlinx.css.pct
-import kotlinx.css.width
+import kotlinx.css.*
 import react.child
 import react.dom.render
 import space.kscience.dataforge.context.Context
@@ -31,8 +29,10 @@ private class JsPlaygroundApp : Application {
         render(element) {
             styledDiv {
                 css{
-                    height = 100.pct
-                    width = 100.pct
+                    padding(0.pt)
+                    margin(0.pt)
+                    height = 100.vh
+                    width = 100.vw
                 }
                 child(ThreeCanvasWithControls) {
                     attrs {
