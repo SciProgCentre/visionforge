@@ -48,7 +48,7 @@ public interface Solid : Vision {
         public val Y_KEY: Name = "y".asName()
         public val Z_KEY: Name = "z".asName()
 
-        public val POSITION_KEY: Name = "pos".asName()
+        public val POSITION_KEY: Name = "position".asName()
 
         public val X_POSITION_KEY: Name = POSITION_KEY + X_KEY
         public val Y_POSITION_KEY: Name = POSITION_KEY + Y_KEY
@@ -80,6 +80,18 @@ public interface Solid : Vision {
                 value(Vision.STYLE_KEY) {
                     type(ValueType.STRING)
                     multiple = true
+                    hide()
+                }
+
+                node(POSITION_KEY){
+                    hide()
+                }
+
+                node(ROTATION_KEY){
+                    hide()
+                }
+
+                node(SCALE_KEY){
                     hide()
                 }
 
@@ -145,7 +157,7 @@ public var Vision.ignore: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
 //    set(value) = setProperty(SELECTED_KEY, value)
 
-internal fun number(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
+internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
     object : ReadWriteProperty<Solid, Number> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
             return thisRef.getOwnProperty(name)?.number ?: default
@@ -156,33 +168,40 @@ internal fun number(name: Name, default: Number): ReadWriteProperty<Solid, Numbe
         }
     }
 
-internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D> =
-    object : ReadWriteProperty<Solid, Point3D> {
-        override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D = object : Point3D {
-            override val x: Float get() = thisRef.getOwnProperty(name + X_KEY)?.float ?: default
-            override val y: Float get() = thisRef.getOwnProperty(name + Y_KEY)?.float ?: default
-            override val z: Float get() = thisRef.getOwnProperty(name + Z_KEY)?.float ?: default
+internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
+    object : ReadWriteProperty<Solid, Point3D?> {
+        override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
+            val item = thisRef.getOwnProperty(name) ?: return null
+            return object : Point3D {
+                override val x: Float get() = item[X_KEY]?.float ?: default
+                override val y: Float get() = item[Y_KEY]?.float ?: default
+                override val z: Float get() = item[Z_KEY]?.float ?: default
+            }
         }
 
-        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D) {
-            thisRef.setProperty(name + X_KEY, value.x)
-            thisRef.setProperty(name + Y_KEY, value.y)
-            thisRef.setProperty(name + Z_KEY, value.z)
+        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
+            if (value == null) {
+                thisRef.setProperty(name, null)
+            } else {
+                thisRef.setProperty(name + X_KEY, value.x)
+                thisRef.setProperty(name + Y_KEY, value.y)
+                thisRef.setProperty(name + Z_KEY, value.z)
+            }
         }
     }
 
-public var Solid.position: Point3D by point(POSITION_KEY, 0f)
-public var Solid.rotation: Point3D by point(ROTATION_KEY, 0f)
-public var Solid.scale: Point3D by point(SCALE_KEY, 1f)
+public var Solid.position: Point3D? by point(POSITION_KEY, 0f)
+public var Solid.rotation: Point3D? by point(ROTATION_KEY, 0f)
+public var Solid.scale: Point3D? by point(SCALE_KEY, 1f)
 
-public var Solid.x: Number by number(X_POSITION_KEY, 0f)
-public var Solid.y: Number by number(Y_POSITION_KEY, 0f)
-public var Solid.z: Number by number(Z_POSITION_KEY, 0f)
+public var Solid.x: Number by float(X_POSITION_KEY, 0f)
+public var Solid.y: Number by float(Y_POSITION_KEY, 0f)
+public var Solid.z: Number by float(Z_POSITION_KEY, 0f)
 
-public var Solid.rotationX: Number by number(X_ROTATION_KEY, 0f)
-public var Solid.rotationY: Number by number(Y_ROTATION_KEY, 0f)
-public var Solid.rotationZ: Number by number(Z_ROTATION_KEY, 0f)
+public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
+public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
+public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 
-public var Solid.scaleX: Number by number(X_SCALE_KEY, 1f)
-public var Solid.scaleY: Number by number(Y_SCALE_KEY, 1f)
-public var Solid.scaleZ: Number by number(Z_SCALE_KEY, 1f)
+public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
+public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)
+public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)

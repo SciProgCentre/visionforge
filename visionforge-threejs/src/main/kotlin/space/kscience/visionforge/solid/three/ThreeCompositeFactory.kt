@@ -42,9 +42,9 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
         val first = three.buildObject3D(obj.first) as? Mesh ?: error("First part of composite is not a mesh")
         val second = three.buildObject3D(obj.second) as? Mesh ?: error("Second part of composite is not a mesh")
         return when (obj.compositeType) {
-            CompositeType.UNION -> CSG.union(first,second)
-            CompositeType.INTERSECT -> CSG.intersect(first,second)
-            CompositeType.SUBTRACT -> CSG.subtract(first,second)
+            CompositeType.SUM, CompositeType.UNION -> CSG.union(first, second)
+            CompositeType.INTERSECT -> CSG.intersect(first, second)
+            CompositeType.SUBTRACT -> CSG.subtract(first, second)
         }.apply {
             updatePosition(obj)
             applyProperties(obj)

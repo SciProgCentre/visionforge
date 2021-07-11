@@ -1,31 +1,38 @@
 package space.kscience.visionforge.solid.transform
 
+import space.kscience.dataforge.meta.itemSequence
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.*
+import space.kscience.visionforge.MutableVisionGroup
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.meta
 import space.kscience.visionforge.solid.*
 
+private operator fun Number.plus(other: Number) = toFloat() + other.toFloat()
+private operator fun Number.times(other: Number) = toFloat() * other.toFloat()
+
 @DFExperimental
-internal fun mergeChild(parent: VisionGroup, child: Vision): Vision {
-    return child.apply {
-
-        configure(parent.meta)
-
-        //parent.properties?.let { config.update(it) }
-
-        if (this is Solid && parent is Solid) {
-            position += parent.position
-            rotation += parent.rotation
-            scale = Point3D(
-                scale.x * parent.scale.x,
-                scale.y * parent.scale.y,
-                scale.z * parent.scale.z
-            )
-
+internal fun Vision.updateFrom(other: Vision): Vision {
+    if (this is Solid && other is Solid) {
+        x += other.x
+        y += other.y
+        z += other.y
+        rotationX += other.rotationX
+        rotationY += other.rotationY
+        rotationZ += other.rotationZ
+        scaleX *= other.scaleX
+        scaleY *= other.scaleY
+        scaleZ *= other.scaleZ
+        other.meta.itemSequence().forEach { (name, item) ->
+            if (getProperty(name) == null) {
+                setProperty(name, item)
+            }
         }
-
     }
+    return this
 }
+
 
 @DFExperimental
 internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
@@ -39,7 +46,7 @@ internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
                 }
                 if (parent is VisionGroup && parent.children.size == 1) {
                     val child = parent.children.values.first()
-                    val newParent = mergeChild(parent, child)
+                    val newParent = child.updateFrom(parent)
                     newParent.parent = null
                     set(childName.asName(), newParent)
                 }

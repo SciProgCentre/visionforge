@@ -163,25 +163,26 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
         newScale: GdmlScale? = null,
     ): T = apply {
         newPos?.let {
-            val point = Point3D(it.x(settings.lUnit), it.y(settings.lUnit), it.z(settings.lUnit))
-            if (point != Point3D.ZERO) {
-                position = point
-            }
+            val gdmlX = it.x(settings.lUnit)
+            if (gdmlX != 0f) x = gdmlX
+            val gdmlY = it.y(settings.lUnit)
+            if (gdmlY != 0f) y = gdmlY
+            val gdmlZ = it.z(settings.lUnit)
+            if (gdmlZ != 0f) z = gdmlZ
         }
         newRotation?.let {
-            val point = Point3D(it.x(settings.aUnit), it.y(settings.aUnit), it.z(settings.aUnit))
-            if (point != Point3D.ZERO) {
-                rotation = point
-            }
-            //this@withPosition.rotationOrder = RotationOrder.ZXY
+            val gdmlX = it.x(settings.aUnit)
+            if (gdmlX != 0f) rotationX = gdmlX
+            val gdmlY = it.y(settings.aUnit)
+            if (gdmlY != 0f) rotationY = gdmlY
+            val gdmlZ = it.z(settings.aUnit)
+            if (gdmlZ != 0f) rotationZ = gdmlZ
         }
         newScale?.let {
-            val point = Point3D(it.x, it.y, it.z)
-            if (point != Point3D.ONE) {
-                scale = point
-            }
+            if (it.x != 1f) scaleX = it.x
+            if (it.y != 1f) scaleY = it.y
+            if (it.z != 1f) scaleZ = it.z
         }
-        //TODO convert units if needed
     }
 
     fun <T : Solid> T.withPosition(root: Gdml, physVolume: GdmlPhysVolume): T = withPosition(
@@ -301,7 +302,7 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                 val first: GdmlSolid = solid.first.resolve(root) ?: error("")
                 val second: GdmlSolid = solid.second.resolve(root) ?: error("")
                 val type: CompositeType = when (solid) {
-                    is GdmlUnion -> CompositeType.UNION
+                    is GdmlUnion -> CompositeType.SUM // dumb sum for better performance
                     is GdmlSubtraction -> CompositeType.SUBTRACT
                     is GdmlIntersection -> CompositeType.INTERSECT
                 }
