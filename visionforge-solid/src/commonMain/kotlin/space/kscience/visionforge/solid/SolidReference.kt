@@ -95,23 +95,6 @@ public class SolidReferenceGroup(
      * (properties are stored in external cache) and created and destroyed on-demand).
      */
     private inner class ReferenceChild(private val childName: Name) : SolidReference, VisionGroup {
-
-//        //TODO replace by properties
-//        override var position: Point3D?
-//            get() = prototype.position
-//            set(_) {
-//                error("Can't set position of reference")
-//            }
-//        override var rotation: Point3D?
-//            get() = prototype.rotation
-//            set(_) {
-//                error("Can't set position of reference")
-//            }
-//        override var scale: Point3D?
-//            get() = prototype.scale
-//            set(_) {
-//                error("Can't set position of reference")
-//            }
         override val prototype: Solid get() = prototypeFor(childName)
 
         override val children: Map<NameToken, Vision>
