@@ -7,10 +7,19 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
 
+/**
+ * A container with prototype support
+ */
 public interface PrototypeHolder {
+    /**
+     * Build or update prototype tree
+     */
     @VisionBuilder
     public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit)
 
+    /**
+     * Resolve a prototype from this container. Should never return a ref.
+     */
     public fun getPrototype(name: Name): Solid?
 }
 
@@ -24,7 +33,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override val children: Map<NameToken, Vision> get() = super.childrenInternal.filter { it.key != PROTOTYPES_TOKEN }
 
-    public var prototypes: MutableVisionGroup?
+    private var prototypes: MutableVisionGroup?
         get() = childrenInternal[PROTOTYPES_TOKEN] as? MutableVisionGroup
         set(value) {
             set(PROTOTYPES_TOKEN, value)
@@ -35,7 +44,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     /**
      * Get a prototype redirecting the request to the parent if prototype is not found.
-     * If prototype is a ref, then it is unfolded until
+     * If prototype is a ref, then it is unfolded automatically.
      */
     override fun getPrototype(name: Name): Solid? =
         prototypes?.get(name)?.unref ?: (parent as? PrototypeHolder)?.getPrototype(name)

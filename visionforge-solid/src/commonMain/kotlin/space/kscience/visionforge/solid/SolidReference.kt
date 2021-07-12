@@ -37,16 +37,20 @@ private fun SolidReference.getRefProperty(
     inherit: Boolean,
     includeStyles: Boolean,
     includeDefaults: Boolean,
-): MetaItem? = buildList {
-    add(getOwnProperty(name))
-    if (includeStyles) {
-        addAll(getStyleItems(name))
-    }
-    add(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
-    if (inherit) {
-        add(parent?.getProperty(name, inherit))
-    }
-}.merge()
+): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
+    getOwnProperty(name)
+} else {
+    buildList {
+        add(getOwnProperty(name))
+        if (includeStyles) {
+            addAll(getStyleItems(name))
+        }
+        add(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
+        if (inherit) {
+            add(parent?.getProperty(name, inherit))
+        }
+    }.merge()
+}
 
 private fun childToken(childName: Name): NameToken =
     NameToken(SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString())
@@ -102,7 +106,8 @@ public class SolidReferenceGroup(
             if (childName.isEmpty()) owner.prototype else {
                 val proto = (owner.prototype as? VisionGroup)?.get(childName)
                     ?: error("Prototype with name $childName not found in SolidReferenceGroup ${owner.refName}")
-                proto.unref as? Solid ?: error("Prototype with name $childName is ${proto::class} but expected Solid")
+                proto.unref as? Solid
+                    ?: error("Prototype with name $childName is ${proto::class} but expected Solid")
             }
         }
 
@@ -125,11 +130,7 @@ public class SolidReferenceGroup(
             inherit: Boolean,
             includeStyles: Boolean,
             includeDefaults: Boolean,
-        ): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
-            getOwnProperty(name)
-        } else {
-            getRefProperty(name, inherit, includeStyles, includeDefaults)
-        }
+        ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
         override var parent: VisionGroup?
             get() {
