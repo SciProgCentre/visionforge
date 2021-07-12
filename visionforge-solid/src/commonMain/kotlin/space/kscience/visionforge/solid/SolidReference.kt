@@ -100,7 +100,7 @@ public class SolidReferenceGroup(
     private class ReferenceChild(
         val owner: SolidReferenceGroup,
         private val childName: Name
-    ) : SolidReference, VisionGroup {
+    ) : SolidReference, VisionGroup, Solid {
 
         override val prototype: Solid by lazy {
             if (childName.isEmpty()) owner.prototype else {

@@ -21,6 +21,7 @@
 - Tube is replaced by more general ConeSurface
 - position, rotation and size moved to properties
 - prototypes moved to children
+- Immutable Solid instances
 
 ### Deprecated
 

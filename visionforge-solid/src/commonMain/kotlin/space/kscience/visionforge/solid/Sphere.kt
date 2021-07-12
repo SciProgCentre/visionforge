@@ -17,7 +17,7 @@ public class Sphere(
     public val phiStart: Float = 0f,
     public val phi: Float = PI2,
     public val thetaStart: Float = 0f,
-    public val theta: Float = PI.toFloat(),
+    public val theta: Float = PI .toFloat(),
 ) : SolidBase(), GeometrySolid, VisionPropertyContainer<Sphere> {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {

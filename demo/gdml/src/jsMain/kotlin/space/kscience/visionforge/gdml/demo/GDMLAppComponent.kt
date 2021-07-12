@@ -32,7 +32,10 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         val parsedVision = when {
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = Gdml.decodeFromString(data)
-                gdml.toVision()
+                gdml.toVision().apply {
+//                    console.info("Marking layers for file $name")
+//                    markLayers()
+                }
             }
             name.endsWith(".json") -> visionManager.decodeFromString(data)
             else -> {
