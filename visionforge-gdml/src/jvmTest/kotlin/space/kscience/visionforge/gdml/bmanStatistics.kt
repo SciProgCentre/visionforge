@@ -5,7 +5,6 @@ import kotlinx.coroutines.withContext
 import nl.adaptivity.xmlutil.StAXReader
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromReader
-import space.kscience.visionforge.solid.prototype
 import space.kscience.visionforge.visitor.countDistinct
 import space.kscience.visionforge.visitor.flowStatistics
 import java.io.File
@@ -23,7 +22,7 @@ suspend fun main() {
 
 
         vision.flowStatistics<KClass<*>>{ _, child ->
-            child.prototype::class
+            child::class
         }.countDistinct().forEach { (depth, size) ->
             println("$depth\t$size")
         }

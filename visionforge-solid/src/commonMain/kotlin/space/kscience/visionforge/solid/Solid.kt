@@ -34,6 +34,7 @@ import kotlin.reflect.KProperty
  * Interface for 3-dimensional [Vision]
  */
 public interface Solid : Vision {
+
     override val descriptor: NodeDescriptor get() = Companion.descriptor
 
     public companion object {

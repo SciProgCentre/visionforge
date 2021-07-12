@@ -11,9 +11,26 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
 
-public interface SolidReference : Solid {
+
+public interface SolidReference : VisionGroup {
+    /**
+     * The prototype for this reference. Always returns a "real" prototype, not a reference
+     */
     public val prototype: Solid
 }
+
+
+/**
+ * Get a vision prototype if it is a [SolidReference] or vision itself if it is not.
+ * Unref is recursive, so it always returns a non-reference.
+ */
+public val Vision.unref: Solid
+    get() = when (this) {
+        is SolidReference -> prototype.unref
+        is Solid -> this
+        else -> error("This Vision is neither Solid nor SolidReference")
+    }
+
 
 private fun SolidReference.getRefProperty(
     name: Name,
@@ -31,6 +48,12 @@ private fun SolidReference.getRefProperty(
     }
 }.merge()
 
+private fun childToken(childName: Name): NameToken =
+    NameToken(SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString())
+
+private fun childPropertyName(childName: Name, propertyName: Name): Name =
+    childToken(childName) + propertyName
+
 /**
  * A reference [Solid] to reuse a template object
  */
@@ -38,47 +61,23 @@ private fun SolidReference.getRefProperty(
 @SerialName("solid.ref")
 public class SolidReferenceGroup(
     public val refName: Name,
-) : SolidBase(), SolidReference, VisionGroup {
+) : VisionBase(), SolidReference, VisionGroup, Solid {
 
     /**
      * Recursively search for defined template in the parent
      */
-    override val prototype: Solid
-        get() {
-            if (parent == null) error("No parent is present for SolidReferenceGroup")
-            if (parent !is SolidGroup) error("Reference parent is not a group")
-            return (parent as? SolidGroup)?.getPrototype(refName)
-                ?: error("Prototype with name $refName not found")
-        }
+    override val prototype: Solid by lazy {
+        if (parent == null) error("No parent is present for SolidReferenceGroup")
+        if (parent !is PrototypeHolder) error("Parent does not hold prototypes")
+        (parent as? PrototypeHolder)?.getPrototype(refName) ?: error("Prototype with name $refName not found")
+    }
 
     override val children: Map<NameToken, Vision>
         get() = (prototype as? VisionGroup)?.children
-            ?.filter { !it.key.toString().startsWith("@") }
+            ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
             ?.mapValues {
-                ReferenceChild(it.key.asName())
+                ReferenceChild(this, it.key.asName())
             } ?: emptyMap()
-
-    private fun childToken(childName: Name): NameToken =
-        NameToken(REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString())
-
-    private fun childPropertyName(childName: Name, propertyName: Name): Name =
-        childToken(childName) + propertyName
-
-    private fun getChildProperty(childName: Name, propertyName: Name): MetaItem? {
-        return getOwnProperty(childPropertyName(childName, propertyName))
-    }
-
-    private fun setChildProperty(childName: Name, propertyName: Name, item: MetaItem?, notify: Boolean) {
-        setProperty(childPropertyName(childName, propertyName), item, notify)
-    }
-
-    private fun prototypeFor(name: Name): Solid {
-        return if (name.isEmpty()) prototype else {
-            val proto = (prototype as? SolidGroup)?.get(name)
-                ?: error("Prototype with name $name not found in SolidReferenceGroup $refName")
-            proto as? Solid ?: error("Prototype with name $name is ${proto::class} but expected Solid")
-        }
-    }
 
     override fun getProperty(
         name: Name,
@@ -94,20 +93,31 @@ public class SolidReferenceGroup(
      * A ProxyChild is created temporarily only to interact with properties, it does not store any values
      * (properties are stored in external cache) and created and destroyed on-demand).
      */
-    private inner class ReferenceChild(private val childName: Name) : SolidReference, VisionGroup {
-        override val prototype: Solid get() = prototypeFor(childName)
+    private class ReferenceChild(
+        val owner: SolidReferenceGroup,
+        private val childName: Name
+    ) : SolidReference, VisionGroup {
+
+        override val prototype: Solid by lazy {
+            if (childName.isEmpty()) owner.prototype else {
+                val proto = (owner.prototype as? VisionGroup)?.get(childName)
+                    ?: error("Prototype with name $childName not found in SolidReferenceGroup ${owner.refName}")
+                proto.unref as? Solid ?: error("Prototype with name $childName is ${proto::class} but expected Solid")
+            }
+        }
 
         override val children: Map<NameToken, Vision>
             get() = (prototype as? VisionGroup)?.children
-                ?.filter { !it.key.toString().startsWith("@") }
+                ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
                 ?.mapValues { (key, _) ->
-                    ReferenceChild(childName + key.asName())
+                    ReferenceChild(owner, childName + key.asName())
                 } ?: emptyMap()
 
-        override fun getOwnProperty(name: Name): MetaItem? = getChildProperty(childName, name)
+        override fun getOwnProperty(name: Name): MetaItem? =
+            owner.getOwnProperty(childPropertyName(childName, name))
 
         override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-            setChildProperty(childName, name, item, notify)
+            owner.setProperty(childPropertyName(childName, name), item, notify)
         }
 
         override fun getProperty(
@@ -124,7 +134,7 @@ public class SolidReferenceGroup(
         override var parent: VisionGroup?
             get() {
                 val parentName = childName.cutLast()
-                return if (parentName.isEmpty()) this@SolidReferenceGroup else ReferenceChild(parentName)
+                return if (parentName.isEmpty()) owner else ReferenceChild(owner, parentName)
             }
             set(_) {
                 error("Setting a parent for a reference child is not possible")
@@ -132,7 +142,7 @@ public class SolidReferenceGroup(
 
         @DFExperimental
         override val propertyChanges: Flow<Name>
-            get() = this@SolidReferenceGroup.propertyChanges.mapNotNull { name ->
+            get() = owner.propertyChanges.mapNotNull { name ->
                 if (name.startsWith(childToken(childName))) {
                     name.cutFirst()
                 } else {
@@ -141,7 +151,7 @@ public class SolidReferenceGroup(
             }
 
         override fun invalidateProperty(propertyName: Name) {
-            this@SolidReferenceGroup.invalidateProperty(childPropertyName(childName, propertyName))
+            owner.invalidateProperty(childPropertyName(childName, propertyName))
         }
 
         override fun update(change: VisionChange) {
@@ -158,12 +168,6 @@ public class SolidReferenceGroup(
         public const val REFERENCE_CHILD_PROPERTY_PREFIX: String = "@child"
     }
 }
-
-/**
- * Get a vision prototype if it is a [SolidReferenceGroup] or vision itself if it is not
- */
-public val Vision.prototype: Vision
-    get() = if (this is SolidReference) prototype.prototype else this
 
 /**
  * Create ref for existing prototype

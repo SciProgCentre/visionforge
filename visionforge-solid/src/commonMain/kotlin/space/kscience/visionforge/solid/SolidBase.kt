@@ -12,11 +12,7 @@ import space.kscience.visionforge.VisionChange
 
 @Serializable
 @SerialName("solid")
-public open class SolidBase(
-//    override var position: Point3D? = null,
-//    override var rotation: Point3D? = null,
-//    override var scale: Point3D? = null,
-) : VisionBase(), Solid {
+public open class SolidBase : VisionBase(), Solid {
     override val descriptor: NodeDescriptor get() = Solid.descriptor
 
     override fun update(change: VisionChange) {
