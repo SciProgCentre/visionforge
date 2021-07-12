@@ -232,11 +232,10 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     bottomRadius = solid.rmax1 * lScale,
                     height = solid.z * lScale,
                     upperRadius = solid.rmax2 * lScale,
+                    startAngle = solid.startphi * aScale,
+                    angle = solid.deltaphi * aScale,
                     name = name
-                ) {
-                    startAngle = solid.startphi * aScale
-                    angle = solid.deltaphi * aScale
-                }
+                )
             } else {
                 coneSurface(
                     bottomOuterRadius = solid.rmax1 * lScale,
@@ -244,11 +243,10 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     height = solid.z * lScale,
                     topOuterRadius = solid.rmax2 * lScale,
                     topInnerRadius = solid.rmin2 * lScale,
+                    startAngle = solid.startphi * aScale,
+                    angle = solid.deltaphi * aScale,
                     name = name
-                ) {
-                    startAngle = solid.startphi * aScale
-                    angle = solid.deltaphi * aScale
-                }
+                )
             }
             is GdmlXtru -> extrude(name) {
                 shape {
@@ -276,12 +274,15 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     scaleZ = solid.scale.z.toFloat()
                 }
             }
-            is GdmlSphere -> sphereLayer(solid.rmax * lScale, solid.rmin * lScale, name) {
-                phi = solid.deltaphi * aScale
-                theta = solid.deltatheta * aScale
-                phiStart = solid.startphi * aScale
-                thetaStart = solid.starttheta * aScale
-            }
+            is GdmlSphere -> sphereLayer(
+                outerRadius = solid.rmax * lScale,
+                innerRadius = solid.rmin * lScale,
+                phi = solid.deltaphi * aScale,
+                theta = solid.deltatheta * aScale,
+                phiStart = solid.startphi * aScale,
+                thetaStart = solid.starttheta * aScale,
+                name = name,
+            )
             is GdmlOrb -> sphere(solid.r * lScale, name = name)
             is GdmlPolyhedra -> extrude(name) {
                 //getting the radius of first

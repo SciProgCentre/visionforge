@@ -49,7 +49,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     }
 
     public fun buildObject3D(obj: Solid): Object3D = when (obj) {
-        is ThreeVision -> obj.render(this)
+        is ThreeJsVision -> obj.render(this)
         is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
         is SolidGroup -> {
             val group = ThreeGroup()

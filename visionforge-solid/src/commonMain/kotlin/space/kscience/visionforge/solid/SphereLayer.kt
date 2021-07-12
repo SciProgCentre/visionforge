@@ -15,12 +15,12 @@ import kotlin.math.sin
 @Serializable
 @SerialName("solid.sphereLayer")
 public class SphereLayer(
-    public var outerRadius: Float,
-    public var innerRadius: Float,
-    public var phiStart: Float = 0f,
-    public var phi: Float = PI2,
-    public var thetaStart: Float = 0f,
-    public var theta: Float = PI.toFloat(),
+    public val outerRadius: Float,
+    public val innerRadius: Float,
+    public val phiStart: Float = 0f,
+    public val phi: Float = PI2,
+    public val thetaStart: Float = 0f,
+    public val theta: Float = PI.toFloat(),
 ) : SolidBase(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>): Unit = geometryBuilder.run {
@@ -72,9 +72,17 @@ public class SphereLayer(
 public inline fun VisionContainerBuilder<Solid>.sphereLayer(
     outerRadius: Number,
     innerRadius: Number,
+    phiStart: Number = 0f,
+    phi: Number = PI2,
+    thetaStart: Number = 0f,
+    theta: Number = PI.toFloat(),
     name: String? = null,
     action: SphereLayer.() -> Unit = {},
 ): SphereLayer = SphereLayer(
     outerRadius.toFloat(),
     innerRadius.toFloat(),
+    phiStart.toFloat(),
+    phi.toFloat(),
+    thetaStart.toFloat(),
+    theta.toFloat()
 ).apply(action).also { set(name, it) }

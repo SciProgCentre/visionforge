@@ -23,7 +23,7 @@ internal fun SolidGroup.varBox(
     action: VariableBox.() -> Unit = {},
 ): VariableBox = VariableBox(xSize, ySize).apply(action).also { set(name, it) }
 
-internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeVision() {
+internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision() {
 
     override fun render(three: ThreePlugin): Object3D {
         val geometry = BoxGeometry(xSize, ySize, 1)

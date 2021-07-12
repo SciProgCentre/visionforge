@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 import kotlin.math.PI
 import kotlin.math.cos
@@ -12,12 +13,12 @@ import kotlin.math.sin
 @Serializable
 @SerialName("solid.sphere")
 public class Sphere(
-    public var radius: Float,
-    public var phiStart: Float = 0f,
-    public var phi: Float = PI2,
-    public var thetaStart: Float = 0f,
-    public var theta: Float = PI.toFloat(),
-) : SolidBase(), GeometrySolid {
+    public val radius: Float,
+    public val phiStart: Float = 0f,
+    public val phi: Float = PI2,
+    public val thetaStart: Float = 0f,
+    public val theta: Float = PI.toFloat(),
+) : SolidBase(), GeometrySolid, VisionPropertyContainer<Sphere> {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {

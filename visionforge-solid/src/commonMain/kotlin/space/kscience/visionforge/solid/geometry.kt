@@ -106,3 +106,16 @@ public fun Point3D.toMeta(): MetaBuilder = Meta {
     Y_KEY put y
     Z_KEY put z
 }
+
+
+internal fun Meta.toVector(default: Float = 0f) = Point3D(
+    this[Solid.X_KEY].float ?: default,
+    this[Solid.Y_KEY].float ?: default,
+    this[Solid.Z_KEY].float ?: default
+)
+
+internal fun Solid.updatePosition(meta: Meta?) {
+    meta[Solid.POSITION_KEY].node?.toVector()?.let { position = it }
+    meta[Solid.ROTATION_KEY].node?.toVector()?.let { rotation = it }
+    meta[Solid.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
+}
