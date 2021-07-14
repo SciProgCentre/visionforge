@@ -10,6 +10,7 @@ import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
+import space.kscience.visionforge.gdml.markLayers
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.tab
@@ -33,8 +34,9 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
             name.endsWith(".gdml") || name.endsWith(".xml") -> {
                 val gdml = Gdml.decodeFromString(data)
                 gdml.toVision().apply {
-//                    console.info("Marking layers for file $name")
-//                    markLayers()
+                    root(visionManager)
+                    console.info("Marking layers for file $name")
+                    markLayers()
                 }
             }
             name.endsWith(".json") -> visionManager.decodeFromString(data)

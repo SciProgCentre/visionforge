@@ -74,9 +74,9 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
     updateMaterial(obj)
     applyEdges(obj)
     //applyWireFrame(obj)
-    layers.enable(obj.layer)
+    layers.set(obj.layer)
     children.forEach {
-        it.layers.enable(obj.layer)
+        it.layers.set(obj.layer)
     }
 }
 

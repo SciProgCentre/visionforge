@@ -1,5 +1,7 @@
 package space.kscience.visionforge.gdml
 
+import space.kscience.dataforge.context.info
+import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.length
@@ -7,24 +9,36 @@ import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.SolidReferenceGroup
 import space.kscience.visionforge.solid.layer
+
 
 private class VisionCounterTree(
     val name: Name,
     val vision: Solid,
+    val prototypes: HashMap<Name, VisionCounterTree>
 ) {
-    val children: Map<NameToken, VisionCounterTree> =
-        (vision as? VisionGroup)?.children?.mapValues {
-            VisionCounterTree(name + it.key, it.value as Solid)
+
+    // self count for prototypes
+    var selfCount = 1
+
+    val children: Map<NameToken, VisionCounterTree> by lazy {
+        (vision as? VisionGroup)?.children?.mapValues { (key, vision) ->
+            if (vision is SolidReferenceGroup) {
+                prototypes.getOrPut(vision.refName) {
+                    VisionCounterTree(vision.refName, vision.prototype, prototypes)
+                }.apply {
+                    selfCount += 1
+                }
+            } else {
+                VisionCounterTree(name + key, vision as Solid, prototypes)
+            }
         } ?: emptyMap()
+    }
 
-//
-//    val directChildrenCount: Int by lazy {
-//        children.size
-//    }
-
-    val childrenCount: Int =
+    val childrenCount: Int by lazy {
         children.values.sumOf { it.childrenCount + 1 }
+    }
 
 }
 
@@ -36,27 +50,41 @@ private fun VisionCounterTree.topToBottom(): Sequence<VisionCounterTree> = seque
     }
 }
 
-public fun SolidGroup.markLayers(thresholds: List<Int> = listOf(1000, 20000, 100000)) {
-    val counterTree = VisionCounterTree(Name.EMPTY, this)
+public fun SolidGroup.markLayers(thresholds: List<Int> = listOf(500, 1000, 20000, 50000)) {
+    val logger = manager?.context?.logger
+    val counterTree = VisionCounterTree(Name.EMPTY, this, hashMapOf())
     val totalCount = counterTree.childrenCount
     if (totalCount > thresholds.firstOrNull() ?: 0) {
-        val allNodes = counterTree.topToBottom().toMutableList()
+        val allNodes = counterTree.topToBottom().filter { it.selfCount > 1 }.distinct().toMutableList()
         //println("tree construction finished")
-        allNodes.sortWith(compareBy<VisionCounterTree>({ it.name.length }, { it.childrenCount }).reversed())
+        allNodes.sortWith(
+            compareBy<VisionCounterTree>(
+                { it.name.length },
+                { it.childrenCount * it.selfCount }
+            ).reversed()
+        )
 
         //mark layers
-        var removed = 0
-        var thresholdIndex = thresholds.indexOfLast { it < totalCount }
+        var remaining = totalCount
 
         for (node in allNodes) {
-            node.vision.layer = thresholdIndex + 1
-            removed++
-            if (totalCount - removed < thresholds[thresholdIndex]) {
-                thresholdIndex--
+            val layerIndex = if (remaining > thresholds.last())
+                thresholds.size
+            else
+                thresholds.indexOfLast { remaining < it }
+
+            if (layerIndex == 0) break
+
+            node.vision.layer = layerIndex
+            val removedCount = node.selfCount * node.children.size
+            logger?.apply {
+                if (node.selfCount > 1) {
+                    info { "Prototype with name ${node.name} moved to layer $layerIndex" }
+                } else {
+                    info { "Vision with name ${node.name} moved to layer $layerIndex" }
+                }
             }
-            if (thresholdIndex < 0) break
+            remaining -= removedCount
         }
-
-
     }
 }

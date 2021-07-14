@@ -54,6 +54,9 @@ public class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
         setAttribute("position", Float32BufferAttribute(positions.toTypedArray(), 3))
         setAttribute("normal", Float32BufferAttribute(normals.toTypedArray(), 3))
         //setAttribute("color", Float32BufferAttribute(colors.toFloatArray(), 3))
+        //a temporary fix for CSG problem
+        val uvsArray = Array<Float>((counter+1)*2){0f}
+        setAttribute("uv", Float32BufferAttribute(uvsArray, 2))
 
         computeBoundingSphere()
     }

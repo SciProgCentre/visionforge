@@ -99,15 +99,15 @@ public class SolidReferenceGroup(
      */
     private class ReferenceChild(
         val owner: SolidReferenceGroup,
-        private val childName: Name
+        private val refName: Name
     ) : SolidReference, VisionGroup, Solid {
 
         override val prototype: Solid by lazy {
-            if (childName.isEmpty()) owner.prototype else {
-                val proto = (owner.prototype as? VisionGroup)?.get(childName)
-                    ?: error("Prototype with name $childName not found in SolidReferenceGroup ${owner.refName}")
+            if (refName.isEmpty()) owner.prototype else {
+                val proto = (owner.prototype as? VisionGroup)?.get(refName)
+                    ?: error("Prototype with name $refName not found in SolidReferenceGroup ${owner.refName}")
                 proto.unref as? Solid
-                    ?: error("Prototype with name $childName is ${proto::class} but expected Solid")
+                    ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
             }
         }
 
@@ -115,14 +115,14 @@ public class SolidReferenceGroup(
             get() = (prototype as? VisionGroup)?.children
                 ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
                 ?.mapValues { (key, _) ->
-                    ReferenceChild(owner, childName + key.asName())
+                    ReferenceChild(owner, refName + key.asName())
                 } ?: emptyMap()
 
         override fun getOwnProperty(name: Name): MetaItem? =
-            owner.getOwnProperty(childPropertyName(childName, name))
+            owner.getOwnProperty(childPropertyName(refName, name))
 
         override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-            owner.setProperty(childPropertyName(childName, name), item, notify)
+            owner.setProperty(childPropertyName(refName, name), item, notify)
         }
 
         override fun getProperty(
@@ -134,7 +134,7 @@ public class SolidReferenceGroup(
 
         override var parent: VisionGroup?
             get() {
-                val parentName = childName.cutLast()
+                val parentName = refName.cutLast()
                 return if (parentName.isEmpty()) owner else ReferenceChild(owner, parentName)
             }
             set(_) {
@@ -144,7 +144,7 @@ public class SolidReferenceGroup(
         @DFExperimental
         override val propertyChanges: Flow<Name>
             get() = owner.propertyChanges.mapNotNull { name ->
-                if (name.startsWith(childToken(childName))) {
+                if (name.startsWith(childToken(refName))) {
                     name.cutFirst()
                 } else {
                     null
@@ -152,7 +152,7 @@ public class SolidReferenceGroup(
             }
 
         override fun invalidateProperty(propertyName: Name) {
-            owner.invalidateProperty(childPropertyName(childName, propertyName))
+            owner.invalidateProperty(childPropertyName(refName, propertyName))
         }
 
         override fun update(change: VisionChange) {
