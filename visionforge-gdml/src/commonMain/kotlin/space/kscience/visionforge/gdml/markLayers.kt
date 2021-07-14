@@ -76,15 +76,14 @@ public fun SolidGroup.markLayers(thresholds: List<Int> = listOf(500, 1000, 20000
             if (layerIndex == 0) break
 
             node.vision.layer = layerIndex
-            val removedCount = node.selfCount * node.children.size
+            remaining -= node.selfCount * node.childrenCount
             logger?.apply {
                 if (node.selfCount > 1) {
-                    info { "Prototype with name ${node.name} moved to layer $layerIndex" }
+                    info { "Prototype with name ${node.name} moved to layer $layerIndex. $remaining nodes remains" }
                 } else {
-                    info { "Vision with name ${node.name} moved to layer $layerIndex" }
+                    info { "Vision with name ${node.name} moved to layer $layerIndex. $remaining nodes remains" }
                 }
             }
-            remaining -= removedCount
         }
     }
 }
