@@ -37,8 +37,6 @@ public interface Solid : Vision {
 
     override val descriptor: NodeDescriptor get() = Companion.descriptor
 
-
-
     public companion object {
         //        val SELECTED_KEY = "selected".asName()
         public val DETAIL_KEY: Name = "detail".asName()
