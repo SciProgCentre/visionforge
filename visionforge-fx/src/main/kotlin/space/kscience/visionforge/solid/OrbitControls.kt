@@ -1,54 +1,72 @@
 package space.kscience.visionforge.solid
 
-import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
-import javafx.geometry.Point3D
 import javafx.scene.Camera
 import javafx.scene.Node
 import javafx.scene.SubScene
-import javafx.scene.input.MouseEvent
-import javafx.scene.input.ScrollEvent
 import javafx.scene.shape.Sphere
 import javafx.scene.transform.Rotate
+import javafx.scene.transform.Rotate.X_AXIS
+import javafx.scene.transform.Rotate.Y_AXIS
 import javafx.scene.transform.Translate
+import space.kscience.dataforge.meta.useProperty
 import tornadofx.*
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
 import space.kscience.visionforge.solid.specifications.Camera as CameraSpec
 
-
 public class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {
-
-    public val distanceProperty: SimpleDoubleProperty = SimpleDoubleProperty(spec.distance)
-    public var distance: Double by distanceProperty
 
     public val azimuthProperty: SimpleDoubleProperty = SimpleDoubleProperty(spec.azimuth)
     public var azimuth: Double by azimuthProperty
 
     public val zenithProperty: SimpleDoubleProperty = SimpleDoubleProperty(PI / 2 - spec.latitude)
     public var zenith: Double by zenithProperty
-//
-//    public val latitudeProperty: DoubleBinding = zenithProperty.unaryMinus().plus(PI / 2)
-//    public val latitude by latitudeProperty
 
-    public val baseXProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
-    public var x: Double by baseXProperty
-    public val baseYProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
-    public var y: Double by baseYProperty
-    public val baseZProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
-    public var z: Double by baseZProperty
 
     private val baseTranslate = Translate(0.0, 0.0, 0.0)
 
-//    val basePositionProperty: ObjectBinding<Point3D> =
-//        nonNullObjectBinding(baseXProperty, baseYProperty, baseZProperty) {
-//            Point3D(x, y, z)
-//        }
-//
-//    val basePosition by basePositionProperty
+    public var x: Double by baseTranslate.xProperty()
+    public var y: Double by baseTranslate.yProperty()
+    public var z: Double by baseTranslate.zProperty()
+
+    private val distanceProperty = SimpleDoubleProperty().apply {
+        spec.useProperty(CameraSpec::distance) {
+            set(it)
+        }
+    }
+
+    private val distanceTranslation = Translate().apply {
+        zProperty().bind(-distanceProperty)
+    }
+
+    public var distance: Double by distanceProperty
+
+    private val centering = Translate().apply {
+        xProperty().bind(-canvas.widthProperty() / 2)
+        yProperty().bind(-canvas.heightProperty() / 2)
+    }
+
+    private val yUpRotation = Rotate(180.0, X_AXIS)
+
+    private val azimuthRotation = Rotate().apply {
+        axis = Y_AXIS
+        angleProperty().bind(azimuthProperty * (180.0 / PI))
+    }
+
+    private val zenithRotation = Rotate().apply {
+        axisProperty().bind(objectBinding(azimuthProperty) {
+            azimuthRotation.inverseTransform(X_AXIS)
+        })
+        angleProperty().bind(-zenithProperty * (180.0 / PI))
+    }
 
     private val inProgressProperty = SimpleBooleanProperty(false)
+
 
     public val centerMarker: Node by lazy {
         Sphere(10.0).also {
@@ -57,74 +75,20 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
         }
     }
 
-
-    private val rx = Rotate(0.0, Rotate.X_AXIS)
-
-    private val ry = Rotate(0.0, Rotate.Y_AXIS)
-
-    private val translate = Translate(0.0, 0.0, 0.0)
-
-    //private val rz = Rotate(0.0, Rotate.Z_AXIS)
-
-
     init {
-        camera.transforms.setAll(baseTranslate, ry, rx, translate)
-
-        update()
-        val listener = InvalidationListener {
-            update()
-        }
-        distanceProperty.addListener(listener)
-        azimuthProperty.addListener(listener)
-        zenithProperty.addListener(listener)
-        baseXProperty.addListener(listener)
-        baseYProperty.addListener(listener)
-        baseZProperty.addListener(listener)
+        camera.transforms.setAll(
+            baseTranslate,
+            yUpRotation,
+            azimuthRotation,
+            zenithRotation,
+            distanceTranslation,
+            centering,
+        )
 
         canvas.apply {
-            //center.xProperty().bind(widthProperty().divide(2))
-            //center.zProperty().bind(heightProperty().divide(2))
             handleMouse()
         }
-//        coordinateContainer?.vbox {
-//            label(distanceProperty.asString())
-//            label(azimuthProperty.asString())
-//            label(zenithProperty.asString())
-//        }
     }
-
-    private fun update() {
-        val spherePosition = Point3D(
-            sin(zenith) * sin(azimuth),
-            cos(zenith),
-            sin(zenith) * cos(azimuth),
-        ).times(distance)
-        val basePosition = Point3D(x, y, z)
-        baseTranslate.x = x
-        baseTranslate.y = y
-        baseTranslate.z = z
-        //Create direction vector
-        val camPosition = basePosition+spherePosition
-        val camDirection: Point3D = (-spherePosition).normalize()
-
-        val xRotation = Math.toDegrees(asin(-camDirection.y))
-        val yRotation = Math.toDegrees(atan2(camDirection.x, camDirection.z))
-
-        rx.pivotX = camPosition.x
-        rx.pivotY = camPosition.y
-        rx.pivotZ = camPosition.z
-        rx.angle = xRotation
-
-        ry.pivotX = camPosition.x
-        ry.pivotY = camPosition.y
-        ry.pivotZ = camPosition.z
-        ry.angle = yRotation
-
-        translate.x = camPosition.x
-        translate.y = camPosition.y
-        translate.z = camPosition.z
-    }
-
 
     private fun Node.handleMouse() {
 
@@ -135,7 +99,7 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
         var mouseDeltaX: Double
         var mouseDeltaY: Double
 
-        onMousePressed = EventHandler<MouseEvent> { me ->
+        onMousePressed = EventHandler { me ->
             mousePosX = me.sceneX
             mousePosY = me.sceneY
             mouseOldX = me.sceneX
@@ -143,7 +107,7 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
             inProgressProperty.set(true)
         }
 
-        onMouseDragged = EventHandler<MouseEvent> { me ->
+        onMouseDragged = EventHandler { me ->
             mouseOldX = mousePosX
             mouseOldY = mousePosY
             mousePosX = me.sceneX
@@ -158,11 +122,11 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
             }
 
             if (me.isPrimaryButtonDown) {
-                azimuth = (azimuth - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0, 2 * PI)
-                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0, PI)
+                azimuth = (azimuth - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED)
+                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(-PI, PI)
             } else if (me.isSecondaryButtonDown) {
-                x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) + mouseDeltaY * sin(azimuth))
-                z += MOUSE_SPEED * modifier * TRACK_SPEED * (-mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))
+                x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) - mouseDeltaY * sin(azimuth))
+                z += MOUSE_SPEED * modifier * TRACK_SPEED * ( mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))
             }
         }
 
@@ -170,7 +134,7 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
             inProgressProperty.set(false)
         }
 
-        onScroll = EventHandler<ScrollEvent> { event ->
+        onScroll = EventHandler { event ->
             distance = max(1.0, distance - MOUSE_SPEED * event.deltaY * RESIZE_SPEED)
         }
     }
