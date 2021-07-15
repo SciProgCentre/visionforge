@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.geometries.CylinderBufferGeometry
+import info.laht.threekt.geometries.CylinderGeometry
 import space.kscience.visionforge.solid.ConeSegment
 import space.kscience.visionforge.solid.detail
 import kotlin.math.PI
@@ -11,7 +11,7 @@ public object ThreeConeFactory : MeshThreeFactory<ConeSegment>(ConeSegment::clas
     override fun buildGeometry(obj: ConeSegment): BufferGeometry {
         val cylinder =  obj.detail?.let {
             val segments = it.toDouble().pow(0.5).toInt()
-            CylinderBufferGeometry(
+            CylinderGeometry(
                 radiusTop = obj.topRadius,
                 radiusBottom = obj.bottomRadius,
                 height = obj.height,
@@ -21,7 +21,7 @@ public object ThreeConeFactory : MeshThreeFactory<ConeSegment>(ConeSegment::clas
                 thetaStart = obj.startAngle,
                 thetaLength = obj.angle
             )
-        } ?: CylinderBufferGeometry(
+        } ?: CylinderGeometry(
             radiusTop = obj.topRadius,
             radiusBottom = obj.bottomRadius,
             height = obj.height,

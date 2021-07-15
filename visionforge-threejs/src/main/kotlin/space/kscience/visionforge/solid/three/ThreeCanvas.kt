@@ -250,8 +250,11 @@ public class ThreeCanvas(
     }
 
     public fun render(vision: Solid) {
-        three.logger.info { "Replacing root node in three canvas" }
-        scene.findChild("@root".asName())?.let { scene.remove(it) }
+        if (root != null) {
+            three.logger.info { "Replacing root node in three canvas" }
+            scene.findChild("@root".asName())?.let { scene.remove(it) }
+            root?.dispose()
+        }
 
         val object3D = three.buildObject3D(vision)
         object3D.name = "@root"

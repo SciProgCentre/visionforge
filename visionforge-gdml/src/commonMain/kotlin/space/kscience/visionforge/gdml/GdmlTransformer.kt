@@ -41,7 +41,7 @@ public class GdmlTransformer {
 
     internal val styleCache = HashMap<Name, Meta>()
 
-    public fun Solid.useStyle(name: String, builder: MetaBuilder.() -> Unit) {
+    public fun Solid.registerAndUseStyle(name: String, builder: MetaBuilder.() -> Unit) {
         styleCache.getOrPut(name.toName()) {
             Meta(builder)
         }
@@ -49,7 +49,7 @@ public class GdmlTransformer {
     }
 
     public fun Solid.transparent() {
-        useStyle("transparent") {
+        registerAndUseStyle("transparent") {
             SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
             "edges.enabled" put true
         }
@@ -75,7 +75,7 @@ public class GdmlTransformer {
 
             if (parent.physVolumes.isNotEmpty()) transparent()
 
-            useStyle(styleName) {
+            registerAndUseStyle(styleName) {
                 val vfMaterial = SolidMaterial().apply {
                     configurePaint(material, solid)
                 }
@@ -125,7 +125,11 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
 
     fun Solid.configureSolid(root: Gdml, parent: GdmlVolume, solid: GdmlSolid) {
         val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
-        settings.run { configureSolid(parent, solid, material) }
+        with(settings) {
+            with(this@configureSolid) {
+                configureSolid(parent, solid, material)
+            }
+        }
     }
 
     private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReferenceGroup {
@@ -159,25 +163,26 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
         newScale: GdmlScale? = null,
     ): T = apply {
         newPos?.let {
-            val point = Point3D(it.x(settings.lUnit), it.y(settings.lUnit), it.z(settings.lUnit))
-            if (point != Point3D.ZERO) {
-                position = point
-            }
+            val gdmlX = it.x(settings.lUnit)
+            if (gdmlX != 0f) x = gdmlX
+            val gdmlY = it.y(settings.lUnit)
+            if (gdmlY != 0f) y = gdmlY
+            val gdmlZ = it.z(settings.lUnit)
+            if (gdmlZ != 0f) z = gdmlZ
         }
         newRotation?.let {
-            val point = Point3D(it.x(settings.aUnit), it.y(settings.aUnit), it.z(settings.aUnit))
-            if (point != Point3D.ZERO) {
-                rotation = point
-            }
-            //this@withPosition.rotationOrder = RotationOrder.ZXY
+            val gdmlX = it.x(settings.aUnit)
+            if (gdmlX != 0f) rotationX = gdmlX
+            val gdmlY = it.y(settings.aUnit)
+            if (gdmlY != 0f) rotationY = gdmlY
+            val gdmlZ = it.z(settings.aUnit)
+            if (gdmlZ != 0f) rotationZ = gdmlZ
         }
         newScale?.let {
-            val point = Point3D(it.x, it.y, it.z)
-            if (point != Point3D.ONE) {
-                scale = point
-            }
+            if (it.x != 1f) scaleX = it.x
+            if (it.y != 1f) scaleY = it.y
+            if (it.z != 1f) scaleZ = it.z
         }
-        //TODO convert units if needed
     }
 
     fun <T : Solid> T.withPosition(root: Gdml, physVolume: GdmlPhysVolume): T = withPosition(
@@ -227,11 +232,10 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     bottomRadius = solid.rmax1 * lScale,
                     height = solid.z * lScale,
                     upperRadius = solid.rmax2 * lScale,
+                    startAngle = solid.startphi * aScale,
+                    angle = solid.deltaphi * aScale,
                     name = name
-                ) {
-                    startAngle = solid.startphi * aScale
-                    angle = solid.deltaphi * aScale
-                }
+                )
             } else {
                 coneSurface(
                     bottomOuterRadius = solid.rmax1 * lScale,
@@ -239,11 +243,10 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     height = solid.z * lScale,
                     topOuterRadius = solid.rmax2 * lScale,
                     topInnerRadius = solid.rmin2 * lScale,
+                    startAngle = solid.startphi * aScale,
+                    angle = solid.deltaphi * aScale,
                     name = name
-                ) {
-                    startAngle = solid.startphi * aScale
-                    angle = solid.deltaphi * aScale
-                }
+                )
             }
             is GdmlXtru -> extrude(name) {
                 shape {
@@ -271,12 +274,15 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     scaleZ = solid.scale.z.toFloat()
                 }
             }
-            is GdmlSphere -> sphereLayer(solid.rmax * lScale, solid.rmin * lScale, name) {
-                phi = solid.deltaphi * aScale
-                theta = solid.deltatheta * aScale
-                phiStart = solid.startphi * aScale
-                thetaStart = solid.starttheta * aScale
-            }
+            is GdmlSphere -> sphereLayer(
+                outerRadius = solid.rmax * lScale,
+                innerRadius = solid.rmin * lScale,
+                phi = solid.deltaphi * aScale,
+                theta = solid.deltatheta * aScale,
+                phiStart = solid.startphi * aScale,
+                thetaStart = solid.starttheta * aScale,
+                name = name,
+            )
             is GdmlOrb -> sphere(solid.r * lScale, name = name)
             is GdmlPolyhedra -> extrude(name) {
                 //getting the radius of first
@@ -297,7 +303,7 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                 val first: GdmlSolid = solid.first.resolve(root) ?: error("")
                 val second: GdmlSolid = solid.second.resolve(root) ?: error("")
                 val type: CompositeType = when (solid) {
-                    is GdmlUnion -> CompositeType.UNION
+                    is GdmlUnion -> CompositeType.SUM // dumb sum for better performance
                     is GdmlSubtraction -> CompositeType.SUBTRACT
                     is GdmlIntersection -> CompositeType.INTERSECT
                 }

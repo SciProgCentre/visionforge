@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
 import javafx.beans.InvalidationListener
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
 import javafx.geometry.Point3D
@@ -17,26 +18,26 @@ import kotlin.math.*
 import space.kscience.visionforge.solid.specifications.Camera as CameraSpec
 
 
-class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {
+public class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {
 
-    val distanceProperty = SimpleDoubleProperty(spec.distance)
-    var distance by distanceProperty
+    public val distanceProperty: SimpleDoubleProperty = SimpleDoubleProperty(spec.distance)
+    public var distance: Double by distanceProperty
 
-    val azimuthProperty = SimpleDoubleProperty(spec.azimuth)
-    var azimuth by azimuthProperty
+    public val azimuthProperty: SimpleDoubleProperty = SimpleDoubleProperty(spec.azimuth)
+    public var azimuth: Double by azimuthProperty
 
-    val zenithProperty = SimpleDoubleProperty(PI / 2 - spec.latitude)
-    var zenith by zenithProperty
+    public val zenithProperty: SimpleDoubleProperty = SimpleDoubleProperty(PI / 2 - spec.latitude)
+    public var zenith: Double by zenithProperty
+//
+//    public val latitudeProperty: DoubleBinding = zenithProperty.unaryMinus().plus(PI / 2)
+//    public val latitude by latitudeProperty
 
-    val latitudeProperty = zenithProperty.unaryMinus().plus(PI / 2)
-    val latitude by latitudeProperty
-
-    val baseXProperty = SimpleDoubleProperty(0.0)
-    var x by baseXProperty
-    val baseYProperty = SimpleDoubleProperty(0.0)
-    var y by baseYProperty
-    val baseZProperty = SimpleDoubleProperty(0.0)
-    var z by baseZProperty
+    public val baseXProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
+    public var x: Double by baseXProperty
+    public val baseYProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
+    public var y: Double by baseYProperty
+    public val baseZProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0)
+    public var z: Double by baseZProperty
 
     private val baseTranslate = Translate(0.0, 0.0, 0.0)
 
@@ -47,13 +48,15 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 //
 //    val basePosition by basePositionProperty
 
-    val centerMarker by lazy {
+    private val inProgressProperty = SimpleBooleanProperty(false)
+
+    public val centerMarker: Node by lazy {
         Sphere(10.0).also {
             it.transforms.setAll(baseTranslate)
+            it.visibleProperty().bind(inProgressProperty)
         }
     }
 
-    //private val center = Translate()
 
     private val rx = Rotate(0.0, Rotate.X_AXIS)
 
@@ -66,6 +69,7 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     init {
         camera.transforms.setAll(baseTranslate, ry, rx, translate)
+
         update()
         val listener = InvalidationListener {
             update()
@@ -136,6 +140,7 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
             mousePosY = me.sceneY
             mouseOldX = me.sceneX
             mouseOldY = me.sceneY
+            inProgressProperty.set(true)
         }
 
         onMouseDragged = EventHandler<MouseEvent> { me ->
@@ -154,18 +159,23 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
             if (me.isPrimaryButtonDown) {
                 azimuth = (azimuth - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0, 2 * PI)
-                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0,PI)
+                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(0.0, PI)
             } else if (me.isSecondaryButtonDown) {
                 x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) + mouseDeltaY * sin(azimuth))
                 z += MOUSE_SPEED * modifier * TRACK_SPEED * (-mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))
             }
         }
+
+        onMouseReleased = EventHandler {
+            inProgressProperty.set(false)
+        }
+
         onScroll = EventHandler<ScrollEvent> { event ->
             distance = max(1.0, distance - MOUSE_SPEED * event.deltaY * RESIZE_SPEED)
         }
     }
 
-    companion object {
+    public companion object {
         private const val CONTROL_MULTIPLIER = 0.1
         private const val SHIFT_MULTIPLIER = 10.0
         private const val MOUSE_SPEED = 0.1
@@ -175,5 +185,5 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
     }
 }
 
-fun Camera.orbitControls(canvas: SubScene, spec: CameraSpec) =
+public fun Camera.orbitControls(canvas: SubScene, spec: CameraSpec): OrbitControls =
     OrbitControls(this, canvas, spec)

@@ -17,7 +17,7 @@ import space.kscience.dataforge.names.*
 @Serializable
 @SerialName("vision.group")
 public open class VisionGroupBase(
-    @SerialName("children") internal val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
+    @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
 ) : VisionBase(), MutableVisionGroup {
 
     /**
