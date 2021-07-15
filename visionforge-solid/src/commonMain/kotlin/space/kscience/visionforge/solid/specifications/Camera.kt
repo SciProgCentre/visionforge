@@ -18,7 +18,6 @@ public class Camera : Scheme() {
     public var distance: Double by double(INITIAL_DISTANCE)
     public var azimuth: Double by double(INITIAL_AZIMUTH)
     public var latitude: Double by double(INITIAL_LATITUDE)
-    public val zenith: Double get() = PI / 2 - latitude
 
     public companion object : SchemeSpec<Camera>(::Camera) {
         public const val INITIAL_DISTANCE: Double = 300.0
@@ -52,3 +51,5 @@ public class Camera : Scheme() {
         }
     }
 }
+
+public val Camera.zenith: Double get() = PI / 2 - latitude

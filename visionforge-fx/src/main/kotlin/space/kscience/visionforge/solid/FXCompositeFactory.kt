@@ -38,7 +38,7 @@ private fun MeshView.toCSG(): CSG {
     return CSG.fromPolygons(polygons)
 }
 
-class FXCompositeFactory(val plugin: FX3DPlugin) : FX3DFactory<Composite> {
+public class FXCompositeFactory(public val plugin: FX3DPlugin) : FX3DFactory<Composite> {
     override val type: KClass<in Composite>
         get() = Composite::class
 

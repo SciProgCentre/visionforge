@@ -21,10 +21,25 @@ import space.kscience.visionforge.solid.specifications.Camera as CameraSpec
 
 public class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {
 
-    public val azimuthProperty: SimpleDoubleProperty = SimpleDoubleProperty(spec.azimuth)
+    /**
+     * Azimuth angle in radians
+     */
+    public val azimuthProperty: SimpleDoubleProperty = SimpleDoubleProperty().apply {
+        spec.useProperty(CameraSpec::azimuth){
+            set(spec.azimuth)
+        }
+    }
     public var azimuth: Double by azimuthProperty
 
-    public val zenithProperty: SimpleDoubleProperty = SimpleDoubleProperty(PI / 2 - spec.latitude)
+    /**
+     * Zenith angle in radians
+     */
+    public val zenithProperty: SimpleDoubleProperty = SimpleDoubleProperty().apply {
+        spec.useProperty(CameraSpec::latitude){
+            set(PI / 2 - spec.latitude)
+        }
+    }
+
     public var zenith: Double by zenithProperty
 
 
@@ -123,7 +138,7 @@ public class OrbitControls internal constructor(camera: Camera, canvas: SubScene
 
             if (me.isPrimaryButtonDown) {
                 azimuth = (azimuth - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED)
-                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(-PI, PI)
+                zenith = (zenith - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED).coerceIn(-PI/2, PI/2)
             } else if (me.isSecondaryButtonDown) {
                 x += MOUSE_SPEED * modifier * TRACK_SPEED * (mouseDeltaX * cos(azimuth) - mouseDeltaY * sin(azimuth))
                 z += MOUSE_SPEED * modifier * TRACK_SPEED * ( mouseDeltaX * sin(azimuth) + mouseDeltaY * cos(azimuth))

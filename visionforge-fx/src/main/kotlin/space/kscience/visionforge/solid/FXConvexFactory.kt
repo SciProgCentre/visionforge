@@ -7,7 +7,7 @@ import javafx.scene.Node
 import kotlin.reflect.KClass
 
 
-object FXConvexFactory : FX3DFactory<Convex> {
+public object FXConvexFactory : FX3DFactory<Convex> {
     override val type: KClass<in Convex> get() = Convex::class
 
     override fun invoke(obj: Convex, binding: VisualObjectFXBinding): Node {
