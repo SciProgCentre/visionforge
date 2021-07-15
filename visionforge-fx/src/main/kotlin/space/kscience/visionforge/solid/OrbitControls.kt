@@ -38,7 +38,7 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
     val baseZProperty = SimpleDoubleProperty(0.0)
     var z by baseZProperty
 
-    private val baseTranslate = Translate()
+    private val baseTranslate = Translate(0.0, 0.0, 0.0)
 
 //    val basePositionProperty: ObjectBinding<Point3D> =
 //        nonNullObjectBinding(baseXProperty, baseYProperty, baseZProperty) {
@@ -59,13 +59,13 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
 
     private val ry = Rotate(0.0, Rotate.Y_AXIS)
 
-    private val rz = Rotate(0.0, Rotate.Z_AXIS)
+    private val translate = Translate(0.0, 0.0, 0.0)
 
-    private val translate = Translate()
+    //private val rz = Rotate(0.0, Rotate.Z_AXIS)
 
 
     init {
-        camera.transforms.setAll(rx, ry, rz, translate)
+        camera.transforms.setAll(baseTranslate, ry, rx, translate)
         update()
         val listener = InvalidationListener {
             update()
@@ -78,8 +78,8 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
         baseZProperty.addListener(listener)
 
         canvas.apply {
-//            center.xProperty().bind(widthProperty().divide(2))
-//            center.zProperty().bind(heightProperty().divide(2))
+            //center.xProperty().bind(widthProperty().divide(2))
+            //center.zProperty().bind(heightProperty().divide(2))
             handleMouse()
         }
 //        coordinateContainer?.vbox {
@@ -93,32 +93,32 @@ class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec:
         val spherePosition = Point3D(
             sin(zenith) * sin(azimuth),
             cos(zenith),
-            sin(zenith) * cos(azimuth)
+            sin(zenith) * cos(azimuth),
         ).times(distance)
         val basePosition = Point3D(x, y, z)
         baseTranslate.x = x
         baseTranslate.y = y
         baseTranslate.z = z
         //Create direction vector
-        val cameraPosition = basePosition + spherePosition
+        val camPosition = basePosition+spherePosition
         val camDirection: Point3D = (-spherePosition).normalize()
 
         val xRotation = Math.toDegrees(asin(-camDirection.y))
         val yRotation = Math.toDegrees(atan2(camDirection.x, camDirection.z))
 
-        rx.pivotX = cameraPosition.x
-        rx.pivotY = cameraPosition.y
-        rx.pivotZ = cameraPosition.z
+        rx.pivotX = camPosition.x
+        rx.pivotY = camPosition.y
+        rx.pivotZ = camPosition.z
         rx.angle = xRotation
 
-        ry.pivotX = cameraPosition.x
-        ry.pivotY = cameraPosition.y
-        ry.pivotZ = cameraPosition.z
+        ry.pivotX = camPosition.x
+        ry.pivotY = camPosition.y
+        ry.pivotZ = camPosition.z
         ry.angle = yRotation
 
-        translate.x = cameraPosition.x
-        translate.y = cameraPosition.y
-        translate.z = cameraPosition.z
+        translate.x = camPosition.x
+        translate.y = camPosition.y
+        translate.z = camPosition.z
     }
 
 
