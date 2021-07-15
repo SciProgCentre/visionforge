@@ -65,7 +65,8 @@ class FX3DPlugin : AbstractPlugin() {
             }
             is SolidLabel -> Text(obj.text).apply {
                 font = Font.font(obj.fontFamily, obj.fontSize)
-
+                transforms.add(Rotate(180.0, Rotate.Y_AXIS))
+                transforms.add(Rotate(180.0, Rotate.Z_AXIS))
                 x = -layoutBounds.width / 2
                 y = layoutBounds.height / 2
             }
