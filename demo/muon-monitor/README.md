@@ -1,4 +1,3 @@
-
 ### Muon Monitor Visualization
 
 This directory contains a full-stack application example built with `visionforge`.
@@ -31,4 +30,3 @@ run `demo/muon-monitor/Tasks/application/run` task.
 ##### Example view:
 
 ![](../../docs/images/muon-monitor.png)
-
