@@ -2,6 +2,9 @@ package space.kscience.visionforge
 
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -13,14 +16,14 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNEC
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
-import kotlin.collections.set
 import kotlin.reflect.KClass
+import kotlin.time.Duration
 
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
     private val visionManager: VisionManager by require(VisionManager)
 
-    private val visionMap = HashMap<Element, Vision>()
+    //private val visionMap = HashMap<Element, Vision>()
 
     /**
      * Up-going tree traversal in search for endpoint attribute
@@ -53,11 +56,73 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
-    private fun renderVision(element: Element, vision: Vision?, outputMeta: Meta) {
+    private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
-            visionMap[element] = vision
             val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
             renderer.render(element, vision, outputMeta)
+
+            element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
+                val wsUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                    val endpoint = resolveEndpoint(element)
+                    logger.info { "Vision server is resolved to $endpoint" }
+                    URL(endpoint).apply {
+                        pathname += "/ws"
+                    }
+                } else {
+                    URL(attr.value)
+                }.apply {
+                    protocol = "ws"
+                    searchParams.append("name", name)
+                }
+
+                logger.info { "Updating vision data from $wsUrl" }
+
+                //Individual websocket for this element
+                WebSocket(wsUrl.toString()).apply {
+                    onmessage = { messageEvent ->
+                        val stringData: String? = messageEvent.data as? String
+                        if (stringData != null) {
+                            val change: VisionChange = visionManager.jsonFormat.decodeFromString(
+                                VisionChange.serializer(),
+                                stringData
+                            )
+
+                            if (change.vision != null) {
+                                renderer.render(element, vision, outputMeta)
+                            }
+
+                            logger.debug { "Got update $change for output with name $name" }
+                            vision.update(change)
+                        } else {
+                            console.error("WebSocket message data is not a string")
+                        }
+                    }
+
+
+                    //Backward change propagation
+                    var feedbackJob: Job? = null
+
+                    onopen = {
+                        feedbackJob = vision.flowChanges(
+                            visionManager,
+                            Duration.Companion.milliseconds(300)
+                        ).onEach { change ->
+                            send(visionManager.encodeToString(change))
+                        }.launchIn(visionManager.context)
+
+                        console.info("WebSocket update channel established for output '$name'")
+                    }
+
+                    onclose = {
+                        feedbackJob?.cancel()
+                        console.info("WebSocket update channel closed for output '$name'")
+                    }
+                    onerror = {
+                        feedbackJob?.cancel()
+                        console.error("WebSocket update channel error for output '$name'")
+                    }
+                }
+            }
         }
     }
 
@@ -79,85 +144,39 @@ public class VisionClient : AbstractPlugin() {
             visionManager.decodeFromString(it)
         }
 
-        if (embeddedVision != null) {
-            logger.info { "Found embedded vision for output with name $name" }
-            renderVision(element, embeddedVision, outputMeta)
-        }
-
-        element.attributes[OUTPUT_FETCH_ATTRIBUTE]?.let { attr ->
-
-            val fetchUrl = if (attr.value.isBlank() || attr.value == "auto") {
-                val endpoint = resolveEndpoint(element)
-                logger.info { "Vision server is resolved to $endpoint" }
-                URL(endpoint).apply {
-                    pathname += "/vision"
-                }
-            } else {
-                URL(attr.value)
-            }.apply {
-                searchParams.append("name", name)
+        when {
+            embeddedVision != null -> {
+                logger.info { "Found embedded vision for output with name $name" }
+                renderVision(name, element, embeddedVision, outputMeta)
             }
+            element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
+                val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 
-            logger.info { "Fetching vision data from $fetchUrl" }
-            window.fetch(fetchUrl).then { response ->
-                if (response.ok) {
-                    response.text().then { text ->
-                        val vision = visionManager.decodeFromString(text)
-                        renderVision(element, vision, outputMeta)
+                val fetchUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                    val endpoint = resolveEndpoint(element)
+                    logger.info { "Vision server is resolved to $endpoint" }
+                    URL(endpoint).apply {
+                        pathname += "/vision"
                     }
                 } else {
-                    logger.error { "Failed to fetch initial vision state from $fetchUrl" }
+                    URL(attr.value)
+                }.apply {
+                    searchParams.append("name", name)
                 }
 
-            }
-        }
-
-        element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
-            val wsUrl = if (attr.value.isBlank() || attr.value == "auto") {
-                val endpoint = resolveEndpoint(element)
-                logger.info { "Vision server is resolved to $endpoint" }
-                URL(endpoint).apply {
-                    pathname += "/ws"
-                }
-            } else {
-                URL(attr.value)
-            }.apply {
-                protocol = "ws"
-                searchParams.append("name", name)
-            }
-
-            logger.info { "Updating vision data from $wsUrl" }
-
-            WebSocket(wsUrl.toString()).apply {
-                onmessage = { messageEvent ->
-                    val stringData: String? = messageEvent.data as? String
-                    if (stringData != null) {
-                        val change = visionManager.jsonFormat.decodeFromString(
-                            VisionChange.serializer(),
-                            stringData
-                        )
-
-                        if (change.vision != null) {
-                            renderVision(element, change.vision, outputMeta)
+                logger.info { "Fetching vision data from $fetchUrl" }
+                window.fetch(fetchUrl).then { response ->
+                    if (response.ok) {
+                        response.text().then { text ->
+                            val vision = visionManager.decodeFromString(text)
+                            renderVision(name, element, vision, outputMeta)
                         }
-
-                        logger.debug { "Got update $change for output with name $name" }
-                        visionMap[element]?.update(change)
-                            ?: console.info("Target vision for element $element with name $name not found")
                     } else {
-                        console.error("WebSocket message data is not a string")
+                        logger.error { "Failed to fetch initial vision state from $fetchUrl" }
                     }
                 }
-                onopen = {
-                    console.info("WebSocket update channel established for output '$name'")
-                }
-                onclose = {
-                    console.info("WebSocket update channel closed for output '$name'")
-                }
-                onerror = {
-                    console.error("WebSocket update channel error for output '$name'")
-                }
             }
+            else -> error("No embedded vision data / fetch url for $name")
         }
     }
 

@@ -14,17 +14,17 @@ import info.laht.threekt.math.Matrix4
 import info.laht.threekt.math.Vector3
 import info.laht.threekt.objects.Mesh
 
-external class CSG {
-    fun clone(): CSG
-    fun toPolygons(): Array<Polygon>
-    fun toGeometry(toMatrix: Matrix4): BufferGeometry
-    fun union(csg: CSG): CSG
-    fun subtract(csg: CSG): CSG
-    fun intersect(csg: CSG): CSG
-    fun inverse(): CSG
+public external class CSG {
+    public fun clone(): CSG
+    public fun toPolygons(): Array<Polygon>
+    public fun toGeometry(toMatrix: Matrix4): BufferGeometry
+    public fun union(csg: CSG): CSG
+    public fun subtract(csg: CSG): CSG
+    public fun intersect(csg: CSG): CSG
+    public fun inverse(): CSG
 
 
-    companion object {
+    public companion object {
         fun fromPolygons(polygons: Array<Polygon>): CSG
         fun fromGeometry(geom: BufferGeometry, objectIndex: dynamic = definedExternally): CSG
         fun fromMesh(mesh: Mesh, objectIndex: dynamic = definedExternally): CSG

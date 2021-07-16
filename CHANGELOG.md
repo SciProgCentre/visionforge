@@ -22,6 +22,8 @@
 - position, rotation and size moved to properties
 - prototypes moved to children
 - Immutable Solid instances
+- Property listeners are not triggered if there are no changes.
+- Feedback websocket connection in the client.
 
 ### Deprecated
 

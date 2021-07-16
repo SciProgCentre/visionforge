@@ -134,7 +134,7 @@ public open class VisionGroupBase(
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.void -> set(name, null)
+                change.delete -> set(name, null)
                 change.vision != null -> set(name, change.vision)
                 else -> get(name)?.update(change)
             }
