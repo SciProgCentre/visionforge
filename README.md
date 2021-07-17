@@ -3,11 +3,14 @@
 
 ![Gradle build](https://github.com/mipt-npm/visionforge/workflows/Gradle%20build/badge.svg)
 
+[![Slack](https://img.shields.io/badge/slack-channel-green?logo=slack)](https://kotlinlang.slack.com/archives/CEXV2QWNM)
+
 # DataForge Visualization Platform
 
 ## Table of Contents
 
 * [Introduction](#introduction)
+* [Requirements](#requirements)
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
@@ -32,6 +35,9 @@ Other applications including 2D plots are planned for the future.
 The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
 application, currently targeting browser JavaScript and JVM.
 
+## Requirements
+
+JVM backend requires JDK 11 or later
 
 ## Features
 
@@ -67,7 +73,7 @@ The `visionforge-core` module also includes configuration editors for JS (in `js
 
 **Class diagram:**
 
-![](doc/resources/class-diag-core.png)
+![](docs/images/class-diag-core.png)
 
 
 ### visionforge-solid
@@ -76,7 +82,7 @@ Includes common classes and serializers for 3D visualization, as well as Three.j
 
 **Class diagram:**
 
-![](doc/resources/class-diag-solid.png)
+![](docs/images/class-diag-solid.png)
 
 ##### Prototypes
 
@@ -85,7 +91,7 @@ also referred to as templates). The idea is that prototype geometry can be rende
 for multiple objects. This helps to significantly decrease memory usage.
 
 The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and 
-`Proxy` class helps to reuse a template object. 
+`SolidReference` class helps to reuse a template object.
 
 ##### Styles
 
@@ -121,7 +127,7 @@ Some shapes will also periodically change their color and visibility.
 
 **Example view:**
 
-![](doc/resources/spatial-showcase.png)
+![](docs/images/spatial-showcase.png)
 
 
 ### Full-Stack Application Example - Muon Monitor Visualization
@@ -133,7 +139,7 @@ A full-stack application example, showing the
 
 **Example view:**
 
-![](doc/resources/muon-monitor.png)
+![](docs/images/muon-monitor.png)
 
 
 ### GDML Example
@@ -144,7 +150,7 @@ Visualization example for geometry defined as GDML file.
 
 ##### Example view:
 
-![](doc/resources/gdml-demo.png)
+![](docs/images/gdml-demo.png)
 
 
 ## Thanks and references

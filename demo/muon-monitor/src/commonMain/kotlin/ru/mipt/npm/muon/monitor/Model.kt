@@ -1,13 +1,15 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.removeAll
-import hep.dataforge.vision.solid.*
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
+import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.removeAll
+import space.kscience.visionforge.root
+import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 
-class Model {
+class Model(val manager: VisionManager) {
     private val map = HashMap<String, SolidGroup>()
     private val events = HashSet<Event>()
 
@@ -34,6 +36,7 @@ class Model {
     var tracks: SolidGroup
 
     val root: SolidGroup = SolidGroup().apply {
+        root(this@Model.manager)
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {
@@ -52,18 +55,16 @@ class Model {
                 detector(it)
             }
         }
-
         tracks = group("tracks")
     }
 
     private fun highlight(pixel: String) {
-        map[pixel]?.color("blue")
+        map[pixel]?.color?.invoke("blue")
     }
 
     fun reset() {
         map.values.forEach {
-            it.config
-            it.setItem(SolidMaterial.MATERIAL_COLOR_KEY, null)
+            it.setProperty(SolidMaterial.MATERIAL_COLOR_KEY, null)
         }
         tracks.removeAll()
     }
@@ -80,7 +81,5 @@ class Model {
         }
     }
 
-    companion object {
-        fun buildGeometry() = Model().root
-    }
+    fun encodeToString(): String = manager.encodeToString(this.root)
 }

@@ -1,9 +1,9 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.vision.solid.Point3D
-import hep.dataforge.vision.solid.plus
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
+import space.kscience.visionforge.solid.Point3D
+import space.kscience.visionforge.solid.plus
 
 /**
  * A single pixel
@@ -11,7 +11,7 @@ import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
 class SC1(
     val name: String,
     val center: Point3D,
-    val xSize: Double = PIXEL_XY_SIZE, val ySize: Double = PIXEL_XY_SIZE, val zSize: Double = PIXEL_Z_SIZE
+    val xSize: Float = PIXEL_XY_SIZE, val ySize: Float = PIXEL_XY_SIZE, val zSize: Float = PIXEL_Z_SIZE
 )
 
 class SC16(
@@ -121,12 +121,12 @@ internal expect fun readMonitorConfig(): String
 object Monitor {
 
     const val GEOMETRY_TOLERANCE = 0.01
-    const val PIXEL_XY_SIZE = 122.0
-    const val PIXEL_XY_SPACING = 123.2
-    const val PIXEL_Z_SIZE = 30.0
-    const val CENTRAL_LAYER_Z = 0.0
-    const val UPPER_LAYER_Z = -166.0
-    const val LOWER_LAYER_Z = 180.0
+    const val PIXEL_XY_SIZE = 122.0f
+    const val PIXEL_XY_SPACING = 123.2f
+    const val PIXEL_Z_SIZE = 30.0f
+    const val CENTRAL_LAYER_Z = 0.0f
+    const val UPPER_LAYER_Z = -166.0f
+    const val LOWER_LAYER_Z = 180.0f
 
     /**
      * Build map for the whole monitor

@@ -1,6 +1,7 @@
 package ru.mipt.npm.muon.monitor
 
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class GeometryTest {
 

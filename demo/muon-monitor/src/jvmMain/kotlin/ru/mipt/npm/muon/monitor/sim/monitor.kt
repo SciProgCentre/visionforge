@@ -7,19 +7,18 @@ import ru.mipt.npm.muon.monitor.Event
 import ru.mipt.npm.muon.monitor.Monitor
 import ru.mipt.npm.muon.monitor.SC1
 import ru.mipt.npm.muon.monitor.readResource
-import java.util.*
 
 
 // minimal track length in detector
 internal const val MINIMAL_TRACK_LENGTH = 10.0
 
 
-private val layerCache = HashMap<Double, Plane>()
+private val layerCache = HashMap<Float, Plane>()
 
-fun findLayer(z: Double): Plane = layerCache.getOrPut(z) {
+fun findLayer(z: Float): Plane = layerCache.getOrPut(z) {
     Plane(
-        Vector3D(0.0, 0.0, z), Vector3D(0.0, 0.0, 1.0),
-        Monitor.GEOMETRY_TOLERANCE
+        Vector3D(0.0, 0.0, z.toDouble()), Vector3D(0.0, 0.0, 1.0),
+        Monitor.GEOMETRY_TOLERANCE.toDouble()
     )
 }
 

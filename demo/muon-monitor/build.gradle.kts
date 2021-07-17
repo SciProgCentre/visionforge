@@ -1,43 +1,31 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import scientifik.jsDistDirectory
-
 plugins {
-    id("scientifik.mpp")
-    id("application")
+    id("ru.mipt.npm.gradle.mpp")
+    application
 }
 
 group = "ru.mipt.npm"
 
-val ktorVersion = "1.3.2"
+val ktorVersion: String = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
+
+kscience {
+    useCoroutines()
+    useSerialization()
+    application()
+}
 
 kotlin {
-
-    val installJS = tasks.getByName("jsBrowserDistribution")
-
-    js {
-        browser {
-            dceTask {
-                dceOptions {
-                    keep("ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io")
-                }
-            }
-            webpackTask {
-                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
-            }
-        }
-    }
-
     jvm {
         withJava()
-        compilations[MAIN_COMPILATION_NAME]?.apply {
-            tasks.getByName<ProcessResources>(processResourcesTaskName) {
-                dependsOn(installJS)
-                afterEvaluate {
-                    from(project.jsDistDirectory)
-                }
-            }
-        }
+    }
 
+    afterEvaluate {
+        val jsBrowserDistribution by tasks.getting
+
+        tasks.getByName<ProcessResources>("jvmProcessResources") {
+            dependsOn(jsBrowserDistribution)
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            from(jsBrowserDistribution)
+        }
     }
 
     sourceSets {
@@ -57,31 +45,31 @@ kotlin {
             dependencies {
                 implementation(project(":ui:bootstrap"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization-js:$ktorVersion")
-                implementation(npm("text-encoding"))
-                implementation(npm("abort-controller"))
-                implementation(npm("bufferutil"))
-                implementation(npm("utf-8-validate"))
-                implementation(npm("fs"))
-//                implementation(npm("jquery"))
-//                implementation(npm("popper.js"))
-//                implementation(npm("react-is"))
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation(project(":visionforge-threejs"))
+                implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
             }
         }
     }
 }
 
 application {
-    mainClassName = "ru.mipt.npm.muon.monitor.server.MMServerKt"
+    mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
-distributions {
-    main {
-        contents {
-            from("$buildDir/libs") {
-                rename("${rootProject.name}-jvm", rootProject.name)
-                into("lib")
-            }
-        }
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>() {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xir-property-lazy-initialization"
     }
 }
+
+//distributions {
+//    main {
+//        contents {
+//            from("$buildDir/libs") {
+//                rename("${rootProject.name}-jvm", rootProject.name)
+//                into("lib")
+//            }
+//        }
+//    }
+//}

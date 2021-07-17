@@ -1,11 +1,11 @@
 package ru.mipt.npm.muon.monitor.sim
 
-import hep.dataforge.vision.solid.Point3D
 import org.apache.commons.math3.geometry.euclidean.threed.Line
 import org.apache.commons.math3.geometry.euclidean.threed.Plane
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.GEOMETRY_TOLERANCE
+import space.kscience.visionforge.solid.Point3D
 
 /**
  * Created by darksnake on 11-May-16.
@@ -45,7 +45,7 @@ fun makeTrack(start: Vector3D, direction: Vector3D): Line {
 fun makeTrack(x: Double, y: Double, theta: Double, phi: Double): Line {
     //TODO check angle definitions
     return makeTrack(
-        Vector3D(x, y, CENTRAL_LAYER_Z),
+        Vector3D(x, y, CENTRAL_LAYER_Z.toDouble()),
         Vector3D(phi, theta)
     )
 }

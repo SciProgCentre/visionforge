@@ -1,0 +1,45 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Vision{
+    val parent: Vision?
+    fun getProperty(name): MetaItem?
+    fun setProperty(name, value)
+}
+
+class VisionBase{
+    basic vision
+    implementation
+}
+Vision <|-- VisionBase
+
+interface VisionGroup{
+    A group of Visions
+}
+Vision <|-- VisionGroup
+
+interface Solid{
+    The base for 3D geometry
+}
+
+Vision <|-- Solid
+
+class SolidGroup
+
+Solid <|-- SolidGroup
+VisionGroup <|-- SolidGroup
+
+class Composite
+Solid <|-- Composite
+VisionGroup <|-- Composite
+
+class Box
+Solid <|-- Box
+
+class Tube
+Solid <|-- Tube
+
+class Sphere
+Solid <|-- Sphere
+
+@enduml

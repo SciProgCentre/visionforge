@@ -17,19 +17,19 @@ import kotlin.random.Random
 internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
     //    val layer: Layer = findLayer(center.z);
     private val upLayer =
-        findLayer(sc.center.z + sc.zSize / 2.0)//Layer("${name}_up", center.z + zSize / 2.0);
+        findLayer(sc.center.z + sc.zSize / 2f)//Layer("${name}_up", center.z + zSize / 2.0);
     private val bottomLayer =
-        findLayer(sc.center.z - sc.zSize / 2.0)//Layer("${name}_bottom", center.z - zSize / 2.0);
+        findLayer(sc.center.z - sc.zSize / 2f)//Layer("${name}_bottom", center.z - zSize / 2.0);
     private val centralLayer = findLayer(sc.center.z)
 
-    private val center = Vector3D(sc.center.x, sc.center.y, sc.center.z)
+    private val center = Vector3D(sc.center.x.toDouble(), sc.center.y.toDouble(), sc.center.z.toDouble())
 
     private val sideLayers: Array<Plane> = arrayOf(
-        Plane(center.add(Vector3D(PIXEL_XY_SIZE / 2, 0.0, 0.0)), Vector3D(1.0, 0.0, 0.0), GEOMETRY_TOLERANCE),
-        Plane(center.add(Vector3D(-PIXEL_XY_SIZE / 2, 0.0, 0.0)), Vector3D(-1.0, 0.0, 0.0), GEOMETRY_TOLERANCE),
-        Plane(center.add(Vector3D(0.0, PIXEL_XY_SIZE / 2, 0.0)), Vector3D(0.0, 1.0, 0.0), GEOMETRY_TOLERANCE),
-        Plane(center.add(Vector3D(0.0, -PIXEL_XY_SIZE / 2, 0.0)), Vector3D(0.0, -1.0, 0.0), GEOMETRY_TOLERANCE)
-    );
+        Plane(center.add(Vector3D(PIXEL_XY_SIZE / 2.0, 0.0, 0.0)), Vector3D(1.0, 0.0, 0.0), GEOMETRY_TOLERANCE),
+        Plane(center.add(Vector3D(-PIXEL_XY_SIZE / 2.0, 0.0, 0.0)), Vector3D(-1.0, 0.0, 0.0), GEOMETRY_TOLERANCE),
+        Plane(center.add(Vector3D(0.0, PIXEL_XY_SIZE / 2.0, 0.0)), Vector3D(0.0, 1.0, 0.0), GEOMETRY_TOLERANCE),
+        Plane(center.add(Vector3D(0.0, -PIXEL_XY_SIZE / 2.0, 0.0)), Vector3D(0.0, -1.0, 0.0), GEOMETRY_TOLERANCE)
+    )
 
     //TODO add efficiency
     private fun containsPoint(x: Double, y: Double, z: Double, tolerance: Double = GEOMETRY_TOLERANCE): Boolean {
@@ -63,8 +63,8 @@ internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
      * The layer number from up to bottom
      */
     fun getLayerNumber(): Int {
-        return when (this.center.z) {
-            UPPER_LAYER_Z -> 1;
+        return when (this.center.z.toFloat()) {
+            UPPER_LAYER_Z -> 1
             CENTRAL_LAYER_Z -> 2;
             LOWER_LAYER_Z -> 3;
             else -> throw RuntimeException("Unknown layer");

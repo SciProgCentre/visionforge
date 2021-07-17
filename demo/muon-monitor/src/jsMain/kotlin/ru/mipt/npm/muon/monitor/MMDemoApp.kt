@@ -1,43 +1,42 @@
 package ru.mipt.npm.muon.monitor
 
-import hep.dataforge.context.Global
-import hep.dataforge.js.Application
-import hep.dataforge.js.startApplication
-import hep.dataforge.vision.solid.SolidManager
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import kotlinx.serialization.json.Json
+import kotlinx.browser.document
 import react.child
-import react.dom.div
 import react.dom.render
-import kotlin.browser.document
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.fetch
+import space.kscience.visionforge.Application
+import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.bootstrap.useBootstrap
+import space.kscience.visionforge.startApplication
 
 private class MMDemoApp : Application {
 
-    private val model = Model()
+    private val visionManager = Global.fetch(VisionManager)
+    private val model = Model(visionManager)
 
     private val connection = HttpClient {
         install(JsonFeature) {
-            serializer = KotlinxSerializer(Json(context = SolidManager.serialModule))
+            serializer = KotlinxSerializer()
         }
     }
 
-    //TODO introduce react application
-
     override fun start(state: Map<String, Any>) {
+        useBootstrap()
 
-        val context = Global.context("demo") {}
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
 
+        val context = Context("demo")
         render(element) {
-            div("container-fluid h-100") {
-                child(MMApp) {
-                    attrs {
-                        model = this@MMDemoApp.model
-                        connection = this@MMDemoApp.connection
-                        this.context = context
-                    }
+            child(MMApp) {
+                attrs {
+                    this.model = this@MMDemoApp.model
+                    this.connection = this@MMDemoApp.connection
+                    this.context = context
                 }
             }
         }
