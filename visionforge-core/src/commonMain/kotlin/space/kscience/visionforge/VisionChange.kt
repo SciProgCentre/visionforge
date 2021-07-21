@@ -21,7 +21,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
     private var reset: Boolean = false
     private var vision: Vision? = null
-    private val propertyChange = Config()
+    private val propertyChange = MetaBuilder()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()

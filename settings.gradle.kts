@@ -33,6 +33,7 @@ include(
     ":visionforge-gdml",
     ":visionforge-server",
     ":visionforge-plotly",
+    ":visionforge-markdown",
     ":demo:solid-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",

@@ -54,7 +54,7 @@ public class VisionServer internal constructor(
     private val application: Application,
     private val rootRoute: String,
 ) : Configurable, CoroutineScope by application {
-    override val config: Config = Config()
+    override val config: ObservableMeta = ObservableMeta()
     public var updateInterval: Long by config.long(300, key = UPDATE_INTERVAL_KEY)
     public var cacheFragments: Boolean by config.boolean(true)
     public var dataEmbed: Boolean by config.boolean(true, "data.embed".toName())

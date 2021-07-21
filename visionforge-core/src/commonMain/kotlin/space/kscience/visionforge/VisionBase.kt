@@ -30,13 +30,13 @@ internal data class PropertyListener(
 @SerialName("vision")
 public open class VisionBase(
     override @Transient var parent: VisionGroup? = null,
-    protected var properties: Config? = null
+    protected var properties: MutableItemProvider? = null
 ) : Vision {
 
     @Synchronized
-    protected fun getOrCreateProperties(): Config {
+    protected fun getOrCreateProperties(): MutableItemProvider {
         if (properties == null) {
-            val newProperties = Config()
+            val newProperties = MetaBuilder()
             properties = newProperties
         }
         return properties!!
@@ -46,7 +46,7 @@ public open class VisionBase(
      * A fast accessor method to get own property (no inheritance or styles
      */
     override fun getOwnProperty(name: Name): MetaItem? = if (name == Name.EMPTY) {
-        properties?.asMetaItem()
+        properties?.rootItem
     } else {
         properties?.getItem(name)
     }

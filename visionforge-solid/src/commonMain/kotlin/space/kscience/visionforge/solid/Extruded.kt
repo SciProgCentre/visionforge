@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.Config
+import space.kscience.dataforge.meta.ObservableMeta
 import space.kscience.visionforge.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -95,7 +95,7 @@ public class Extruded(
 public class ExtrudeBuilder(
     public var shape: List<Point2D> = emptyList(),
     public var layers: ArrayList<Layer> = ArrayList(),
-    config: Config = Config()
+    config: ObservableMeta = ObservableMeta()
 ) : SimpleVisionPropertyContainer<Extruded>(config) {
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()

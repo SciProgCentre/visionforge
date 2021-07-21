@@ -1,9 +1,6 @@
 package space.kscience.visionforge
 
-import space.kscience.dataforge.meta.Config
-import space.kscience.dataforge.meta.MetaItem
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.set
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 
 /**
@@ -20,7 +17,7 @@ public interface VisionPropertyContainer<out V: Vision> {
     public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
 }
 
-public open class SimpleVisionPropertyContainer<out V: Vision>(protected val config: Config): VisionPropertyContainer<V>{
+public open class SimpleVisionPropertyContainer<out V: Vision>(protected val config: ObservableMeta): VisionPropertyContainer<V>{
     override fun getProperty(
         name: Name,
         inherit: Boolean,
