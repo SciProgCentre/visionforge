@@ -14,7 +14,7 @@ import tornadofx.*
 /**
  * A caching binding collection for [Vision] properties
  */
-public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vision) {
+public class VisualObjectFXBinding(private val fx: FX3DPlugin, public val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<MetaItem?>>()
 
     init {
@@ -33,15 +33,13 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
         }
     }
 
-    public operator fun get(key: Name): ObjectBinding<MetaItem?> {
-        return bindings.getOrPut(key) {
-            object : ObjectBinding<MetaItem?>() {
-                override fun computeValue(): MetaItem? = obj.getProperty(key)
-            }
+    public operator fun get(key: Name): ObjectBinding<MetaItem?> = bindings.getOrPut(key) {
+        object : ObjectBinding<MetaItem?>() {
+            override fun computeValue(): MetaItem? = obj.getProperty(key)
         }
     }
 
-    public operator fun get(key: String) = get(key.toName())
+    public operator fun get(key: String): ObjectBinding<TypedMetaItem<*>?> = get(key.toName())
 }
 
 public fun ObjectBinding<MetaItem?>.value(): Binding<Value?> = objectBinding { it.value }

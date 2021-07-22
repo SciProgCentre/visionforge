@@ -15,7 +15,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.*
 import tornadofx.*
 
-class TextValueChooser : ValueChooserBase<TextField>() {
+public class TextValueChooser : ValueChooserBase<TextField>() {
 
     private val displayText: String
         get() = currentValue().let {

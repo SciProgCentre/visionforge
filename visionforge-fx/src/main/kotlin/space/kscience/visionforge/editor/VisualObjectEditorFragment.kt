@@ -13,13 +13,13 @@ import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.*
 import tornadofx.*
 
-class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
+public class VisualObjectEditorFragment(public val selector: (Vision) -> Meta) : Fragment() {
 
-    val itemProperty = SimpleObjectProperty<Vision>()
-    var item: Vision? by itemProperty
-    val descriptorProperty = SimpleObjectProperty<NodeDescriptor>()
+    public val itemProperty: SimpleObjectProperty<Vision> = SimpleObjectProperty<Vision>()
+    public var item: Vision? by itemProperty
+    public val descriptorProperty: SimpleObjectProperty<NodeDescriptor> = SimpleObjectProperty<NodeDescriptor>()
 
-    constructor(
+    public constructor(
         item: Vision?,
         descriptor: NodeDescriptor?,
         selector: (Vision) -> MutableItemProvider = { it.allProperties() },
@@ -30,13 +30,13 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
 
     private var currentConfig: Config? = null
 
-    private val configProperty: Binding<Config?> = itemProperty.objectBinding { visualObject ->
-        if (visualObject == null) return@objectBinding null
-        val meta = selector(visualObject)
+    private val configProperty: Binding<Config?> = itemProperty.objectBinding { vision ->
+        if (vision == null) return@objectBinding null
+        val meta = selector(vision)
         val config = Config().apply {
             update(meta)
             onChange(this@VisualObjectEditorFragment) { key, _, after ->
-                visualObject.setProperty(key, after)
+                vision.setProperty(key, after)
             }
         }
         //remember old config reference to cleanup listeners
@@ -51,7 +51,7 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
         }
     }
 
-    private val styleBoxProperty: Binding<Node?> = configProperty.objectBinding() {
+    private val styleBoxProperty: Binding<Node?> = configProperty.objectBinding {
         VBox().apply {
             item?.styles?.forEach { styleName ->
                 val styleMeta = item?.getStyle(styleName)
