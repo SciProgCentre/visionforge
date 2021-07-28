@@ -51,7 +51,7 @@ box(10, 10, 10, name = "small box"){
    rotation = Point3D(0, 0, 0)
 }
 ```
-![](../docs/images/small box.png)
+![](../docs/images/small-box.png)
 
 The `big box` will have properties with custom values. 
 ```kotlin
@@ -64,7 +64,7 @@ box(40, 40, 40, name = "big box"){
    rotation = Point3D(60, 80, 0)
 }
 ```
-![](../docs/images/big rotated box.png)
+![](../docs/images/big-rotated-box.png)
 If we compare these boxes, we will see all differences. 
 
 Here is the function `main` with both boxes.
