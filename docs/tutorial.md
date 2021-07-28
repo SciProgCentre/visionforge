@@ -65,6 +65,7 @@ box(40, 40, 40, name = "big box"){
 }
 ```
 ![](../docs/images/big-rotated-box.png)
+
 If we compare these boxes, we will see all differences. 
 
 Here is the function `main` with both boxes.
