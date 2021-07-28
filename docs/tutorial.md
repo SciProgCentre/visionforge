@@ -108,6 +108,7 @@ fun main(){
 ![](../docs/images/two-boxes-2.png)
 
 ###Basic Solids
+
 Now, let's see which solids can be visualized:
 1) PolyLine
 2) Box
