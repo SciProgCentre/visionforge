@@ -19,7 +19,7 @@
   * [visionforge-gdml](#visionforge-gdml)
 * [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
-  * [Simple Example - Spatial Showcase](#simple-example---spatial-showcase)
+  * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
   * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
   * [GDML Example](#gdml-example)
 
@@ -118,16 +118,16 @@ The `demo` module contains several example projects (demonstrations) of using th
 They are briefly described in this section, for more details please consult the corresponding per-project
 README file.
 
-### Simple Example - Spatial Showcase
+### Simple Example - Solid Showcase
 
 Contains a simple demonstration with a grid including a few shapes that you can rotate, move camera, and so on.
 Some shapes will also periodically change their color and visibility.
 
-[More details](demo/spatial-showcase/README.md)
+[More details](demo/solid-showcase/README.md)
 
 **Example view:**
 
-![](docs/images/spatial-showcase.png)
+![](docs/images/solid-showcase.png)
 
 
 ### Full-Stack Application Example - Muon Monitor Visualization
