@@ -1,6 +1,6 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.Geometry
+import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
@@ -16,8 +16,8 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
     override fun invoke(three: ThreePlugin, obj: PolyLine): Object3D {
-        val geometry = Geometry().apply {
-            vertices = Array(obj.points.size) { obj.points[it].toVector() }
+        val geometry = BufferGeometry().apply {
+            setFromPoints(Array(obj.points.size) { obj.points[it].toVector() })
         }
 
         val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)

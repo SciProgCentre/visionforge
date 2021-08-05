@@ -9,9 +9,9 @@ import space.kscience.visionforge.set
 @Serializable
 @SerialName("solid.label")
 public class SolidLabel(
-    public var text: String,
-    public var fontSize: Double,
-    public var fontFamily: String,
+    public val text: String,
+    public val fontSize: Double,
+    public val fontFamily: String,
 ) : SolidBase(), Solid
 
 @VisionBuilder

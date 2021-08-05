@@ -19,6 +19,11 @@
 - VisionGroup builder accepts `null` as name for statics instead of `""`
 - gdml sphere is rendered as a SphereLayer instead of Sphere (#35)
 - Tube is replaced by more general ConeSurface
+- position, rotation and size moved to properties
+- prototypes moved to children
+- Immutable Solid instances
+- Property listeners are not triggered if there are no changes.
+- Feedback websocket connection in the client.
 
 ### Deprecated
 

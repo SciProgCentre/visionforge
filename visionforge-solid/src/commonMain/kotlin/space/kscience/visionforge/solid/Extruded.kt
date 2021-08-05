@@ -94,7 +94,9 @@ public class Extruded(
 
 public class ExtrudeBuilder(
     public var shape: List<Point2D> = emptyList(),
+
     public var layers: MutableList<Layer> = ArrayList(),
+
     config: Config = Config()
 ) : SimpleVisionPropertyContainer<Extruded>(config) {
     public fun shape(block: Shape2DBuilder.() -> Unit) {

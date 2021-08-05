@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     api(project(":visionforge-solid"))
-    implementation(npm("three", "0.124.0"))
-    implementation(npm("three-csg-ts", "2.2.2"))
+    implementation(npm("three", "0.130.1"))
+    implementation(npm("three-csg-ts", "3.1.6"))
 }

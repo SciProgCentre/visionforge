@@ -1,9 +1,7 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.boolean
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.enum
-import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
@@ -14,14 +12,28 @@ import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
 import space.kscience.visionforge.solid.Solid.Companion.IGNORE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.LAYER_KEY
+import space.kscience.visionforge.solid.Solid.Companion.POSITION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.ROTATION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.SCALE_KEY
+import space.kscience.visionforge.solid.Solid.Companion.X_KEY
+import space.kscience.visionforge.solid.Solid.Companion.X_POSITION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.X_ROTATION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.X_SCALE_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Y_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Y_POSITION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Y_ROTATION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Y_SCALE_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Z_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Z_POSITION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Z_ROTATION_KEY
+import space.kscience.visionforge.solid.Solid.Companion.Z_SCALE_KEY
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  * Interface for 3-dimensional [Vision]
  */
 public interface Solid : Vision {
-    public var position: Point3D?
-    public var rotation: Point3D?
-    public var scale: Point3D?
 
     override val descriptor: NodeDescriptor get() = Companion.descriptor
 
@@ -37,7 +49,7 @@ public interface Solid : Vision {
         public val Y_KEY: Name = "y".asName()
         public val Z_KEY: Name = "z".asName()
 
-        public val POSITION_KEY: Name = "pos".asName()
+        public val POSITION_KEY: Name = "position".asName()
 
         public val X_POSITION_KEY: Name = POSITION_KEY + X_KEY
         public val Y_POSITION_KEY: Name = POSITION_KEY + Y_KEY
@@ -72,28 +84,29 @@ public interface Solid : Vision {
                     hide()
                 }
 
+                node(POSITION_KEY){
+                    hide()
+                }
+
+                node(ROTATION_KEY){
+                    hide()
+                }
+
+                node(SCALE_KEY){
+                    hide()
+                }
+
+                value(DETAIL_KEY) {
+                    type(ValueType.NUMBER)
+                    hide()
+                }
+
                 item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
                 enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
                     hide()
                 }
             }
-        }
-
-        internal fun solidEquals(first: Solid, second: Solid): Boolean {
-            if (first.position != second.position) return false
-            if (first.rotation != second.rotation) return false
-            if (first.scale != second.scale) return false
-            if (first.meta != second.meta) return false
-            return true
-        }
-
-        internal fun solidHashCode(solid: Solid): Int {
-            var result = +(solid.position?.hashCode() ?: 0)
-            result = 31 * result + (solid.rotation?.hashCode() ?: 0)
-            result = 31 * result + (solid.scale?.hashCode() ?: 0)
-            result = 31 * result + solid.allProperties().hashCode()
-            return result
         }
     }
 }
@@ -145,74 +158,51 @@ public var Vision.ignore: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
 //    set(value) = setProperty(SELECTED_KEY, value)
 
-private fun Solid.position(): Point3D =
-    position ?: Point3D(0.0, 0.0, 0.0).also { position = it }
+internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
+    object : ReadWriteProperty<Solid, Number> {
+        override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
+            return thisRef.getOwnProperty(name)?.number ?: default
+        }
 
-public var Solid.x: Number
-    get() = position?.x ?: 0f
-    set(value) {
-        position().x = value.toDouble()
-        invalidateProperty(Solid.X_POSITION_KEY)
+        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Number) {
+            thisRef.setProperty(name, value)
+        }
     }
 
-public var Solid.y: Number
-    get() = position?.y ?: 0f
-    set(value) {
-        position().y = value.toDouble()
-        invalidateProperty(Solid.Y_POSITION_KEY)
+internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
+    object : ReadWriteProperty<Solid, Point3D?> {
+        override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
+            val item = thisRef.getOwnProperty(name) ?: return null
+            return object : Point3D {
+                override val x: Float get() = item[X_KEY]?.float ?: default
+                override val y: Float get() = item[Y_KEY]?.float ?: default
+                override val z: Float get() = item[Z_KEY]?.float ?: default
+            }
+        }
+
+        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
+            if (value == null) {
+                thisRef.setProperty(name, null)
+            } else {
+                thisRef.setProperty(name + X_KEY, value.x)
+                thisRef.setProperty(name + Y_KEY, value.y)
+                thisRef.setProperty(name + Z_KEY, value.z)
+            }
+        }
     }
 
-public var Solid.z: Number
-    get() = position?.z ?: 0f
-    set(value) {
-        position().z = value.toDouble()
-        invalidateProperty(Solid.Z_POSITION_KEY)
-    }
+public var Solid.position: Point3D? by point(POSITION_KEY, 0f)
+public var Solid.rotation: Point3D? by point(ROTATION_KEY, 0f)
+public var Solid.scale: Point3D? by point(SCALE_KEY, 1f)
 
-private fun Solid.rotation(): Point3D =
-    rotation ?: Point3D(0.0, 0.0, 0.0).also { rotation = it }
+public var Solid.x: Number by float(X_POSITION_KEY, 0f)
+public var Solid.y: Number by float(Y_POSITION_KEY, 0f)
+public var Solid.z: Number by float(Z_POSITION_KEY, 0f)
 
-public var Solid.rotationX: Number
-    get() = rotation?.x ?: 0f
-    set(value) {
-        rotation().x = value.toDouble()
-        invalidateProperty(Solid.X_ROTATION_KEY)
-    }
+public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
+public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
+public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 
-public var Solid.rotationY: Number
-    get() = rotation?.y ?: 0f
-    set(value) {
-        rotation().y = value.toDouble()
-        invalidateProperty(Solid.Y_ROTATION_KEY)
-    }
-
-public var Solid.rotationZ: Number
-    get() = rotation?.z ?: 0f
-    set(value) {
-        rotation().z = value.toDouble()
-        invalidateProperty(Solid.Z_ROTATION_KEY)
-    }
-
-private fun Solid.scale(): Point3D =
-    scale ?: Point3D(1.0, 1.0, 1.0).also { scale = it }
-
-public var Solid.scaleX: Number
-    get() = scale?.x ?: 1f
-    set(value) {
-        scale().x = value.toDouble()
-        invalidateProperty(Solid.X_SCALE_KEY)
-    }
-
-public var Solid.scaleY: Number
-    get() = scale?.y ?: 1f
-    set(value) {
-        scale().y = value.toDouble()
-        invalidateProperty(Solid.Y_SCALE_KEY)
-    }
-
-public var Solid.scaleZ: Number
-    get() = scale?.z ?: 1f
-    set(value) {
-        scale().z = value.toDouble()
-        invalidateProperty(Solid.Z_SCALE_KEY)
-    }
+public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
+public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)
+public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)

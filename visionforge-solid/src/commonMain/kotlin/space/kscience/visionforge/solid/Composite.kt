@@ -6,7 +6,8 @@ import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.*
 
 public enum class CompositeType {
-    UNION,
+    SUM, // Dumb sum of meshes
+    UNION, //CSG union
     INTERSECT,
     SUBTRACT
 }

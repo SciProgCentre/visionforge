@@ -58,6 +58,7 @@ public operator fun VisionGroup.iterator(): Iterator<Vision> = children.values.i
 public val VisionGroup.isEmpty: Boolean get() = this.children.isEmpty()
 
 public interface VisionContainerBuilder<in V : Vision> {
+    //TODO add documentation
     public operator fun set(name: Name?, child: V?)
 }
 

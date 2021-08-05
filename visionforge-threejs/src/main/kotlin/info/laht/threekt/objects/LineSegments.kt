@@ -28,12 +28,10 @@
 package info.laht.threekt.objects
 
 import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Geometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.materials.Material
 
 open external class LineSegments(geometry: BufferGeometry, material: Material) : Object3D {
-    constructor(geometry: Geometry, material: Material)
 
     var geometry: BufferGeometry
     var material: Material

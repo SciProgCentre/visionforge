@@ -8,7 +8,7 @@ import org.fxyz3d.geometry.Face3
 import space.kscience.dataforge.meta.Meta
 import kotlin.reflect.KClass
 
-object FXShapeFactory : FX3DFactory<GeometrySolid> {
+public object FXShapeFactory : FX3DFactory<GeometrySolid> {
     override val type: KClass<in GeometrySolid> get() = GeometrySolid::class
 
     override fun invoke(obj: GeometrySolid, binding: VisualObjectFXBinding): MeshView {

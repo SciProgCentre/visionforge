@@ -23,7 +23,7 @@ import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.reflect.KClass
 
-class FX3DPlugin : AbstractPlugin() {
+public class FX3DPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
     private val objectFactories = HashMap<KClass<out Solid>, FX3DFactory<*>>()
@@ -42,7 +42,7 @@ class FX3DPlugin : AbstractPlugin() {
                 as FX3DFactory<Solid>?
     }
 
-    fun buildNode(obj: Solid): Node {
+    public fun buildNode(obj: Solid): Node {
         val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
             is SolidReferenceGroup -> referenceFactory(obj, binding)
@@ -65,6 +65,8 @@ class FX3DPlugin : AbstractPlugin() {
             }
             is SolidLabel -> Text(obj.text).apply {
                 font = Font.font(obj.fontFamily, obj.fontSize)
+                transforms.add(Rotate(180.0, Rotate.Y_AXIS))
+                transforms.add(Rotate(180.0, Rotate.Z_AXIS))
                 x = -layoutBounds.width / 2
                 y = layoutBounds.height / 2
             }
@@ -129,10 +131,10 @@ class FX3DPlugin : AbstractPlugin() {
         }
     }
 
-    companion object : PluginFactory<FX3DPlugin> {
-        override val tag = PluginTag("vision.fx3D", PluginTag.DATAFORGE_GROUP)
-        override val type = FX3DPlugin::class
-        override fun invoke(meta: Meta, context: Context) = FX3DPlugin()
+    public companion object : PluginFactory<FX3DPlugin> {
+        override val tag: PluginTag = PluginTag("vision.fx3D", PluginTag.DATAFORGE_GROUP)
+        override val type: KClass<FX3DPlugin> = FX3DPlugin::class
+        override fun invoke(meta: Meta, context: Context): FX3DPlugin = FX3DPlugin()
     }
 }
 
@@ -140,14 +142,14 @@ class FX3DPlugin : AbstractPlugin() {
  * Builder and updater for three.js object
  */
 @Type(TYPE)
-interface FX3DFactory<in T : Solid> {
+public interface FX3DFactory<in T : Solid> {
 
-    val type: KClass<in T>
+    public val type: KClass<in T>
 
-    operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
+    public operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
 
-    companion object {
-        const val TYPE = "fx3DFactory"
+    public companion object {
+        public const val TYPE: String = "fx3DFactory"
     }
 }
 

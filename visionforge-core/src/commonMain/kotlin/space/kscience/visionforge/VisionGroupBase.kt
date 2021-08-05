@@ -17,7 +17,7 @@ import space.kscience.dataforge.names.*
 @Serializable
 @SerialName("vision.group")
 public open class VisionGroupBase(
-    @SerialName("children") internal val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
+    @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
 ) : VisionBase(), MutableVisionGroup {
 
     /**
@@ -134,7 +134,7 @@ public open class VisionGroupBase(
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.void -> set(name, null)
+                change.delete -> set(name, null)
                 change.vision != null -> set(name, change.vision)
                 else -> get(name)?.update(change)
             }

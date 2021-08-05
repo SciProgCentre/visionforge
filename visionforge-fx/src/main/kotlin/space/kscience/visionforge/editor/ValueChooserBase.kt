@@ -18,16 +18,18 @@ import tornadofx.*
  *
  * @author Alexander Nozik
  */
-abstract class ValueChooserBase<out T : Node> : ValueChooser {
+public abstract class ValueChooserBase<out T : Node> : ValueChooser {
 
-    override val node by lazy { buildNode() }
-    final override val valueProperty = SimpleObjectProperty<Value>(Null)
-    final override val descriptorProperty = SimpleObjectProperty<ValueDescriptor>()
+    override val node: T by lazy { buildNode() }
+    final override val valueProperty: SimpleObjectProperty<Value> =
+        SimpleObjectProperty<Value>(Null)
+    final override val descriptorProperty: SimpleObjectProperty<ValueDescriptor> =
+        SimpleObjectProperty<ValueDescriptor>()
 
     override var descriptor: ValueDescriptor? by descriptorProperty
     override var value: Value? by valueProperty
 
-    fun resetValue() {
+    public fun resetValue() {
         setDisplayValue(currentValue())
     }
 
