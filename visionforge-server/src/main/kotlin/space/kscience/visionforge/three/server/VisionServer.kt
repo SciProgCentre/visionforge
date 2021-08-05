@@ -19,7 +19,9 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
@@ -130,6 +132,15 @@ public class VisionServer internal constructor(
 
             application.log.debug("Opened server socket for $name")
             val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
+
+            launch {
+                incoming.consumeEach {
+                    val change = visionManager.jsonFormat.decodeFromString(
+                        VisionChange.serializer(), it.data.decodeToString()
+                    )
+                    vision.update(change)
+                }
+            }
 
             try {
                 withContext(visionManager.context.coroutineContext) {

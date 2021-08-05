@@ -13,7 +13,7 @@ import space.kscience.visionforge.set
 
 @Serializable
 @SerialName("solid.line")
-public class PolyLine(public var points: List<Point3D>) : SolidBase(), Solid {
+public class PolyLine(public val points: List<Point3D>) : SolidBase(), Solid {
 
     //var lineType by string()
     public var thickness: Number by allProperties(inherit = false).number(1.0,

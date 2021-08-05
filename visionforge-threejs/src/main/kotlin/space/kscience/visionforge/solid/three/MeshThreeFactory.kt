@@ -30,16 +30,14 @@ public abstract class MeshThreeFactory<in T : Solid>(
     override fun invoke(three: ThreePlugin, obj: T): Mesh {
         val geometry = buildGeometry(obj)
 
-        //JS sometimes tries to pass Geometry as BufferGeometry
-        @Suppress("USELESS_IS_CHECK") if (geometry !is BufferGeometry) error("BufferGeometry expected")
-
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
         val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {
             matrixAutoUpdate = false
             //set position for mesh
             updatePosition(obj)
-        }.applyProperties(obj)
+            applyProperties(obj)
+        }
 
         //add listener to object properties
         obj.onPropertyChange(three.updateScope) { name ->
@@ -76,9 +74,9 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
     updateMaterial(obj)
     applyEdges(obj)
     //applyWireFrame(obj)
-    layers.enable(obj.layer)
+    layers.set(obj.layer)
     children.forEach {
-        it.layers.enable(obj.layer)
+        it.layers.set(obj.layer)
     }
 }
 

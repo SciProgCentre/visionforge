@@ -4,6 +4,7 @@ import javafx.application.Platform
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.*
+import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import org.fxyz3d.scene.Axes
 import space.kscience.dataforge.context.Context
@@ -11,31 +12,32 @@ import space.kscience.dataforge.context.ContextAware
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import tornadofx.*
 
-class FXCanvas3D(
-    val plugin: FX3DPlugin,
-    val spec: Canvas3DOptions = Canvas3DOptions.empty(),
+public class FXCanvas3D(
+    public val fx3d: FX3DPlugin,
+    public val options: Canvas3DOptions = Canvas3DOptions.empty(),
 ) : Fragment(), ContextAware {
 
-    override val context: Context get() = plugin.context
+    override val context: Context get() = fx3d.context
 
-    val world = Group().apply {
+    public val world: Group = Group().apply {
         //transforms.add(Rotate(180.0, Rotate.Z_AXIS))
     }
 
-    val axes = Axes().also {
-        it.setHeight(spec.axes.size)
-        it.setRadius(spec.axes.width)
-        it.isVisible = spec.axes.visible
+    public val axes: Axes = Axes().also {
+        it.setHeight(options.axes.size)
+        it.setRadius(options.axes.width)
+        it.isVisible = options.axes.visible
         world.add(it)
     }
 
-    val light = AmbientLight()
+    public val light: AmbientLight = AmbientLight()
 
     private val camera = PerspectiveCamera().apply {
-        nearClip = spec.camera.nearClip
-        farClip = spec.camera.farClip
-        fieldOfView = spec.camera.fov.toDouble()
-        this.add(light)
+        nearClip = options.camera.nearClip
+        farClip = options.camera.farClip
+        fieldOfView = options.camera.fov.toDouble()
+
+        add(light)
     }
 
     private val canvas = SubScene(
@@ -49,19 +51,19 @@ class FXCanvas3D(
         scene.camera = camera
     }
 
-    override val root = borderpane {
+    override val root: BorderPane = borderpane {
         center = canvas
     }
 
-    val controls = camera.orbitControls(canvas, spec.camera).also {
+    public val controls: OrbitControls = camera.orbitControls(canvas, options.camera).also {
         world.add(it.centerMarker)
     }
 
-    val rootObjectProperty: ObjectProperty<Solid> = SimpleObjectProperty()
-    var rootObject: Solid? by rootObjectProperty
+    public val rootObjectProperty: ObjectProperty<Solid> = SimpleObjectProperty()
+    public var rootObject: Solid? by rootObjectProperty
 
     private val rootNodeProperty = rootObjectProperty.objectBinding {
-        it?.let { plugin.buildNode(it) }
+        it?.let { fx3d.buildNode(it) }
     }
 
     init {
@@ -79,7 +81,7 @@ class FXCanvas3D(
         }
     }
 
-    fun render(vision: Solid) {
+    public fun render(vision: Solid) {
         rootObject = vision
     }
 }

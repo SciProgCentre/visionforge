@@ -65,14 +65,14 @@ private fun Vision.isolate(manager: VisionManager): Vision {
 }
 
 /**
- * @param void flag showing that this vision child should be removed
+ * @param delete flag showing that this vision child should be removed
  * @param vision a new value for vision content
  * @param properties updated properties
- * @param children a map of children changed in ths [VisionChange]. If a child to be removed, set [void] flag to true.
+ * @param children a map of children changed in ths [VisionChange]. If a child to be removed, set [delete] flag to true.
  */
 @Serializable
 public data class VisionChange(
-    public val void: Boolean = false,
+    public val delete: Boolean = false,
     public val vision: Vision? = null,
     @Serializable(MetaSerializer::class) public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,

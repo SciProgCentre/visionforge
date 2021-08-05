@@ -15,11 +15,11 @@ import kotlin.math.sin
 @Serializable
 @SerialName("solid.cone")
 public class ConeSegment(
-    public var bottomRadius: Float,
-    public var height: Float,
-    public var topRadius: Float,
-    public var startAngle: Float = 0f,
-    public var angle: Float = PI2
+    public val bottomRadius: Float,
+    public val height: Float,
+    public val topRadius: Float,
+    public val startAngle: Float = 0f,
+    public val angle: Float = PI2
 ) : SolidBase(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -83,10 +83,14 @@ public inline fun VisionContainerBuilder<Solid>.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,
+    startAngle: Number = 0f,
+    angle: Number = PI2,
     name: String? = null,
     block: ConeSegment.() -> Unit = {}
 ): ConeSegment = ConeSegment(
     bottomRadius.toFloat(),
     height.toFloat(),
-    topRadius = upperRadius.toFloat()
+    topRadius = upperRadius.toFloat(),
+    startAngle = startAngle.toFloat(),
+    angle = angle.toFloat()
 ).apply(block).also { set(name, it) }

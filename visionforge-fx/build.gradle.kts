@@ -22,7 +22,7 @@ dependencies {
         exclude(group = "org.openjfx")
     }
 
-    api("org.fxyz3d:fxyz3d:0.5.2") {
+    api("org.fxyz3d:fxyz3d:0.5.4") {
         exclude(module = "slf4j-simple")
     }
     api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${ru.mipt.npm.gradle.KScienceVersions.coroutinesVersion}")

@@ -28,11 +28,10 @@ internal data class PropertyListener(
  */
 @Serializable
 @SerialName("vision")
-public open class VisionBase : Vision {
+public open class VisionBase(
+    override @Transient var parent: VisionGroup? = null,
     protected var properties: Config? = null
-
-    @Transient
-    override var parent: VisionGroup? = null
+) : Vision {
 
     @Synchronized
     protected fun getOrCreateProperties(): Config {
@@ -75,9 +74,12 @@ public open class VisionBase : Vision {
     }
 
     override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-        getOrCreateProperties().setItem(name, item)
-        if (notify) {
-            invalidateProperty(name)
+        val oldItem = properties?.getItem(name)
+        if(oldItem!= item) {
+            getOrCreateProperties().setItem(name, item)
+            if (notify) {
+                invalidateProperty(name)
+            }
         }
     }
 

@@ -2,9 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.set
+import space.kscience.dataforge.meta.Config
+import space.kscience.visionforge.*
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -13,7 +12,7 @@ import kotlin.math.sin
 public typealias Shape2D = List<Point2D>
 
 @Serializable
-public class Shape2DBuilder(private val points: MutableList<Point2D> = ArrayList()) {
+public class Shape2DBuilder(private val points: ArrayList<Point2D> = ArrayList()) {
 
     public fun point(x: Number, y: Number) {
         points.add(Point2D(x, y))
@@ -38,19 +37,9 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 @Serializable
 @SerialName("solid.extrude")
 public class Extruded(
-    public var shape: List<Point2D> = ArrayList(),
-    public var layers: MutableList<Layer> = ArrayList()
-) : SolidBase(), GeometrySolid {
-
-    public fun shape(block: Shape2DBuilder.() -> Unit) {
-        this.shape = Shape2DBuilder().apply(block).build()
-        //TODO send invalidation signal
-    }
-
-    public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
-        layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
-        //TODO send invalidation signal
-    }
+    public val shape: List<Point2D>,
+    public val layers: List<Layer>
+) : SolidBase(), GeometrySolid, VisionPropertyContainer<Extruded> {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
@@ -103,6 +92,26 @@ public class Extruded(
     }
 }
 
+public class ExtrudeBuilder(
+    public var shape: List<Point2D> = emptyList(),
+
+    public var layers: MutableList<Layer> = ArrayList(),
+
+    config: Config = Config()
+) : SimpleVisionPropertyContainer<Extruded>(config) {
+    public fun shape(block: Shape2DBuilder.() -> Unit) {
+        this.shape = Shape2DBuilder().apply(block).build()
+    }
+
+    public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
+        layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
+    }
+
+    internal fun build(): Extruded = Extruded(shape, layers).apply { configure(config) }
+}
+
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.extrude(name: String? = null, action: Extruded.() -> Unit = {}): Extruded =
-    Extruded().apply(action).also { set(name, it) }
+public fun VisionContainerBuilder<Solid>.extruded(
+    name: String? = null,
+    action: ExtrudeBuilder.() -> Unit = {}
+): Extruded = ExtrudeBuilder().apply(action).build().also { set(name, it) }

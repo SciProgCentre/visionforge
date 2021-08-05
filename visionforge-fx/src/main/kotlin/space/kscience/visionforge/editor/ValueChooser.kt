@@ -14,7 +14,6 @@ import space.kscience.dataforge.meta.descriptors.ValueDescriptor
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.toName
-import space.kscience.dataforge.provider.provideByType
 import space.kscience.dataforge.values.Null
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.widget
@@ -63,7 +62,7 @@ public interface ValueChooser {
 
     public fun setCallback(callback: ValueCallback)
 
-    @Type("space.kscience.dataforge.vis.fx.valueChooserFactory")
+    @Type("space.kscience..fx.valueChooserFactory")
     public interface Factory : Named {
         public operator fun invoke(meta: Meta = Meta.EMPTY): ValueChooser
     }
@@ -75,7 +74,7 @@ public interface ValueChooser {
                 TextValueChooser.name -> TextValueChooser
                 ColorValueChooser.name -> ColorValueChooser
                 ComboBoxValueChooser.name -> ComboBoxValueChooser
-                else -> context.provideByType(type)//Search for additional factories in the plugin
+                else -> null//context.provideByType(type)//Search for additional factories in the plugin
             }
         }
 
@@ -101,7 +100,7 @@ public interface ValueChooser {
             }
         }
 
-        fun build(
+        public fun build(
             context: Context,
             value: ObservableValue<Value?>,
             descriptor: ValueDescriptor? = null,

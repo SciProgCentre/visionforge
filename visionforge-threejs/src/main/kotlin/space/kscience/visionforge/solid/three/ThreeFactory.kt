@@ -63,9 +63,7 @@ public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
  * Generic factory for elements which provide inside geometry builder
  */
 public object ThreeShapeFactory : MeshThreeFactory<GeometrySolid>(GeometrySolid::class) {
-    override fun buildGeometry(obj: GeometrySolid): BufferGeometry {
-        return obj.run {
-            ThreeGeometryBuilder().apply { toGeometry(this) }.build()
-        }
-    }
+    override fun buildGeometry(obj: GeometrySolid): BufferGeometry = ThreeGeometryBuilder().apply {
+        obj.toGeometry(this)
+    }.build()
 }

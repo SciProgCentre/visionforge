@@ -31,7 +31,7 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
         }
         children.filter { (it.value as? SolidReferenceGroup)?.refName == name }.forEach { (key, value) ->
             val reference = value as SolidReferenceGroup
-            val newChild = mergeChild(reference, reference.prototype)
+            val newChild = reference.prototype.updateFrom(reference)
             newChild.parent = null
             set(key.asName(), newChild) // replace proxy with merged object
         }

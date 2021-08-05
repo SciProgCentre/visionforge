@@ -44,6 +44,7 @@ abstract external class BufferAttribute protected constructor(
          * Default is 0. Position at whcih to start update.
          */
         var offset: Int
+
         /**
          * Default is -1, which means don't use update ranges.
 
@@ -56,16 +57,19 @@ abstract external class BufferAttribute protected constructor(
      * UUID of this object instance. This gets automatically assigned and this shouldn't be edited.
      */
     val uuid: String
+
     /**
      * Optional name for this attribute instance. Default is an empty string.
      */
     var name: String
 
     var array: dynamic
+
     /**
      * The length of vectors that are being stored in the array.
      */
     val itemSize: Int
+
     /**
      * Stores the array's length divided by the itemSize.
      *
@@ -73,6 +77,7 @@ abstract external class BufferAttribute protected constructor(
      * then this will count the number of such vectors stored.
      */
     val count: Int
+
     /**
      * Indicates how the underlying data in the buffer maps to the values in the GLSL shader code. See the constructor above for details.
      */
@@ -86,6 +91,7 @@ abstract external class BufferAttribute protected constructor(
      * This corresponds to the gl.DYNAMIC_DRAW flag.
      */
     var dynamic: Boolean
+
     /**
      * This can be used to only update some components of stored vectors (
      * for example, just the component related to color).
@@ -99,7 +105,15 @@ abstract external class BufferAttribute protected constructor(
      */
     var needsUpdate: Boolean
 
+    /**
+     * A callback function that is executed after the Renderer has transferred the attribute array data to the GPU.
+     */
     var onUploadCallback: () -> Unit
+
+    /**
+     * Sets the value of the [onUploadCallback] property.
+     */
+    fun onUpload(callback: () -> Unit)
 
     /**
      * A version number, incremented every time the needsUpdate property is set to true.
@@ -119,6 +133,7 @@ abstract external class BufferAttribute protected constructor(
     fun getW(index: Int): Number
 
     fun copy(source: BufferAttribute): BufferAttribute
+
     /**
      * Copy a vector from bufferAttribute[index2] to array[index1].
      */
@@ -205,3 +220,22 @@ abstract external class BufferAttribute protected constructor(
      */
     fun setXYZW(index: Int, x: Number, y: Number, z: Number, w: Number)
 }
+
+
+external class Float32BufferAttribute(
+    array: Array<Float>,
+    itemSize: Int,
+    normalized: Boolean = definedExternally
+) : BufferAttribute
+
+external class Int32BufferAttribute(
+    array: IntArray,
+    itemSize: Int,
+    normalized: Boolean = definedExternally
+) : BufferAttribute
+
+external class Int16BufferAttribute(
+    array: ShortArray,
+    itemSize: Int,
+    normalized: Boolean = definedExternally
+) : BufferAttribute

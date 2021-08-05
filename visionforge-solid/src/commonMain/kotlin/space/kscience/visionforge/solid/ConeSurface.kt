@@ -16,13 +16,13 @@ import kotlin.math.sin
 @Serializable
 @SerialName("solid.coneSurface")
 public class ConeSurface(
-    public var bottomRadius: Float,
-    public var bottomInnerRadius: Float,
-    public var height: Float,
-    public var topRadius: Float,
-    public var topInnerRadius: Float,
-    public var startAngle: Float = 0f,
-    public var angle: Float = PI2,
+    public val bottomRadius: Float,
+    public val bottomInnerRadius: Float,
+    public val height: Float,
+    public val topRadius: Float,
+    public val topInnerRadius: Float,
+    public val startAngle: Float = 0f,
+    public val angle: Float = PI2,
 ) : SolidBase(), GeometrySolid {
 
     init {
@@ -148,6 +148,8 @@ public inline fun VisionContainerBuilder<Solid>.coneSurface(
     height: Number,
     topOuterRadius: Number,
     topInnerRadius: Number,
+    startAngle: Number = 0f,
+    angle: Number = PI2,
     name: String? = null,
     block: ConeSurface.() -> Unit = {},
 ): ConeSurface = ConeSurface(
@@ -156,4 +158,6 @@ public inline fun VisionContainerBuilder<Solid>.coneSurface(
     height = height.toFloat(),
     topRadius = topOuterRadius.toFloat(),
     topInnerRadius = topInnerRadius.toFloat(),
+    startAngle = startAngle.toFloat(),
+    angle = angle.toFloat()
 ).apply(block).also { set(name, it) }

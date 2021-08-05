@@ -7,7 +7,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.onPropertyChange
 import kotlin.reflect.KClass
 
-class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGroup> {
+public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGroup> {
     override val type: KClass<in SolidReferenceGroup> get() = SolidReferenceGroup::class
 
     override fun invoke(obj: SolidReferenceGroup, binding: VisualObjectFXBinding): Node {

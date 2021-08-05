@@ -39,6 +39,8 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(visionSerializer, string)
 
     public fun encodeToString(vision: Vision): String = jsonFormat.encodeToString(visionSerializer, vision)
+    public fun encodeToString(change: VisionChange): String =
+        jsonFormat.encodeToString(VisionChange.serializer(), change)
 
     public fun decodeFromJson(json: JsonElement): Vision = jsonFormat.decodeFromJsonElement(visionSerializer, json)
 
