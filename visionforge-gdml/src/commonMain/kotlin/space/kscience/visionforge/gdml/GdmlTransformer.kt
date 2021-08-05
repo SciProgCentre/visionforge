@@ -248,7 +248,7 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                     name = name
                 )
             }
-            is GdmlXtru -> extrude(name) {
+            is GdmlXtru -> extruded(name) {
                 shape {
                     solid.vertices.forEach {
                         point(it.x * lScale, it.y * lScale)
@@ -284,7 +284,7 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
                 name = name,
             )
             is GdmlOrb -> sphere(solid.r * lScale, name = name)
-            is GdmlPolyhedra -> extrude(name) {
+            is GdmlPolyhedra -> extruded(name) {
                 //getting the radius of first
                 require(solid.planes.size > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = solid.planes.first().rmax * lScale
