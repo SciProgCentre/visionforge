@@ -244,18 +244,19 @@ Let's make classic parallelepiped.
 Now, let's make a custom hexagon.
 
    ```kotlin
-   hexagon(
-        Point3D(5, 30, 5),
-        Point3D(24, 30, 8),
-        Point3D(20, 30, -10),
-        Point3D(5, 30, -7),
-        Point3D(8, 16, 0),
-        Point3D(12, 16, 0),
-        Point3D(10, 16, -5),
-        Point3D(6.5, 12, -3),
-        name = "custom_hexagon"){
-        color("brown")
-   }
+hexagon(
+    Point3D(5, 30, 5),
+    Point3D(24, 30, 8),
+    Point3D(20, 30, -10),
+    Point3D(5, 30, -7),
+    Point3D(8, 16, 0),
+    Point3D(12, 16, 0),
+    Point3D(10, 16, -5),
+    Point3D(6.5, 12, -3),
+    name = "custom_hexagon"
+) {
+    color("brown")
+}
    ```
    ![](../docs/images/custom-hexagon.png)
 ### 3) Cone
@@ -370,4 +371,3 @@ tube(50, 40, 20, 0f, PI, name = "fragmented tube"){
 `extruded` is set by two values: `shape`, and `layer`. 
 * `shape` is a value of `List<Point2D>` type. It' s just a list of all points of the solid. *`shape` has to consist of not less than two points!*
 * `layer` is `MutableList` types variable. (here is a sentence with description of the work of this function). *The amount of `layer`-s has to be more than one*
-
