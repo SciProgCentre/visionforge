@@ -125,7 +125,7 @@ It's scarcely a solid, but it can be visualized, so we mention it.
 
 `polyline` requires two values - `points`, and `name`:
 * `points` is a `vararg` with `Point3D` type. It takes pairs of points, which you want to connect.
-* `name` is an identifier of *any solid*, but in this case it is an identifier of `polyline`.
+* `name` is an identifier of *any solid*; but in this case, it is an identifier of `polyline`.
 It's type is `String`. **This value can be required by any solid;
 you can set it, you can not to set it, but without you won't be able to control solid, since it won't be inherited.**
 
