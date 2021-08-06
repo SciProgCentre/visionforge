@@ -1,8 +1,8 @@
 # Tutorial
 
-#### The main goal of this tutorial is to show all capabilities of ... (this part will be supplemented)
+#### The main goal of this tutorial is to show the main capabilities of the visualization instrument.
 
-The simple visualization can be made with function `main`. (this part will be supplemented as well)
+The simple visualization can be made with function `main`. (this part will be supplemented)
 ```kotlin
 import kotlinx.html.div
 import space.kscience.dataforge.context.Context
@@ -16,14 +16,22 @@ fun main(){
     }
 
     context.makeVisionFile (
-        Paths.get("customFile.html"),
+        Paths.get("nameFile.html"),
         resourceLocation = ResourceLocation.EMBED
     ){
         div {
+           //first vision
             vision {
                 solid {
+                    //solids which you want to visualize
                 }
             }
+           //second vision
+           vision {
+              solid {
+                 //solids which you want to visualize
+              }
+           }
         }
     }
 }
@@ -32,13 +40,13 @@ fun main(){
 **We will analyze which basic properties solids have using `box` solid.**
 
 *Basic properties:*
-1. `opacity` - It is set in `float`. It takes on values from 0 to 1, which represent percents of solid opacity. It's initial value is 1.
-2. `color` - It can be specified as `Int`, `String`, or as three `Ubytes`, which represent color in `rgb`. Elementally, the solid will have `green` color.
-3. `rotation` - it's the point, around which the solid will be rotated. Initially, the value is `Point3D(0, 0, 0)`. Changing `x` coordinate of the point, you make pivot around `x axis`. The same for other coordinates: changing `y` - pivot around `y axis`, changing `z` - pivot around `z axis`.
-4. position, which is given by values `x`, `y`, `z`. Initial values are `x = 0`, `y = 0`, `z = 0`. The coordinate system is Cartesian. It's elemental position is this - vertical `y` axis and horizontal `Oxz` plane.
+1. `opacity` &mdash; It is set in `float`. It takes on values from 0 to 1, which represent percents of solid opacity. It's initial value is 1.
+2. `color` &mdash; It can be specified as `Int`, `String`, or as three `Ubytes`, which represent color in `rgb`. Elementally, the solid will have `green` color.
+3. `rotation` &mdash; it's the point, which sets rotations along axes. Initially, the value is `Point3D(0, 0, 0)`. Changing `x` coordinate of the point, you make pivot around `x axis`. The same for other coordinates: changing `y` &mdash; pivot around `y axis`, changing `z` &mdash; pivot around `z axis`.
+4. position, which is given by values `x`, `y`, `z`. Initial values are `x = 0`, `y = 0`, `z = 0`. The coordinate system is Cartesian. It's elemental position is this &mdash; vertical `y` axis and horizontal `Oxz` plane.
 
 Let's see how properties are set in solids.
-The `small box` will have elemental values of properties. If you will not set properties, it will have the same `position`, `color`, `rotation`, and `opacity` values.
+The `small box` will have elemental values of properties. If you don't set properties, it will have the same `position`, `color`, `rotation`, and `opacity` values.
 
 ***You can see that `box` take four values. Later, we will discuss what they do in more detail. Now, it does not really matter.***
 ```kotlin
@@ -106,21 +114,49 @@ fun main(){
 ![](../docs/images/two-boxes-1.png)
 ![](../docs/images/two-boxes-2.png)
 
-***There is plenty of other properties, especially of those, which you can create by yourself. Here we mention just small part.***
+***There is plenty of other properties, especially those, which you can create by yourself. Here we mention just a small part.***
 
 ## Basic Solids
 Now, let's see which solids can be visualized:
 ### 1) PolyLine
+
+It's scarcely a solid, but it can be visualized, so we mention it.
+`polyline` build lines, obviously. Let's take a look at it's work.
+
+`polyline` requires two values &mdash; `points`, and `name`:
+* `points` is a `vararg` with `Point3D` type. It takes pairs of points, which you want to connect.
+* `name` is an identifier of *any solid*; but in this case, it is an identifier of `polyline`.
+It's type is `String`. **This value can be required by any solid;
+you can set it, you can not to set it, but without you won't be able to control solid, since it won't be inherited.**
+
+This is an example of polyline with other solid `box`:
+```kotlin
+box(100, 100, 100, name = "box"){
+   x = -10
+   y = -10
+   z = -10
+   opacity = 0.4
+}
+polyline(Point3D(30, 20, 10), Point3D(30, -100, 30), Point3D(30, -100, 30), Point3D(50, -100, 30), name = "polyline"){
+   color("red")
+}
+```
+
+![](../docs/images/polyline-points.png)
+![](../docs/images/polyline-points-2.png)
+
 ### 2) Box
 
 First thing which has to be mentioned is that `box` takes four values: `box(x, y, z, name)`
-* `x` - x-axis length of the `box`
-* `y` - y-axis length of the `box`
-* `z` - z-axis length of the `box`
+* `x` &mdash; x-axis length of the `box`
+* `y` &mdash; y-axis length of the `box`
+* `z` &mdash; z-axis length of the `box`
 
-These values have `Float` type. *`x`, `y`, and `z` are necessary values, which cannot be ignored. You have to set them.*
+These values have `Float` type. 
 
-* `name` - `box`'es identifier with `String` type. *It's an optional value, but without it you won't be able to control solid.*
+*`x`, `y`, and `z` are necessary values, which cannot be ignored. You have to set them.*
+
+* `name` &mdash; `box`'es identifier. You've already met it. 
 
 Let's create just usual `box` with equal ribs.
 
@@ -137,11 +173,11 @@ Now, let's make `box` with bigger `y` value.
         color("black")
    }
    ```
-As you can see, only rib of `y-axis` differs from other ribs.
+As you can see, only the rib of `y-axis` differs from other ribs.
 
    ![](../docs/images/high-box.png)
 
-For final trial, let's create `box` with bigger `x` value.
+For a final trial, let's create a `box` with a bigger `x` value.
    
    ```kotlin
    box(65, 40, 40, name = "wide box") {
@@ -151,16 +187,16 @@ For final trial, let's create `box` with bigger `x` value.
         color("black")
    }
    ```
-Predictably, only `x-axis` rib bigger than other ribs. 
+Predictably, only the `x-axis` rib is bigger than other ribs. 
 
    ![](../docs/images/wide-box.png)
    
 ### 3) Sphere
 
 It takes in two values: `radius`, and `name`. 
-Actually, `name` is general value for all solids, so do not wonder, since all solids need their own identifier.
+We bring you to mind that `name` is a general value for all solids, so do not wonder, since all solids need their own identifier.
 
-As for `radius`, it has `Float` type, and, as you can guess, it sets radius of the sphere, which will be created.
+As for `radius`, it has `Float` type, and, as you can guess, it sets the radius of the sphere which will be created.
    ```kotlin
    sphere(50, name = "sphere") {
         x = 0
@@ -186,7 +222,7 @@ It is solid which has six edges. It is set by eight values: `node1`,..., `node8`
 
 ![](../docs/images/scheme.png)
 
-As hexagon takes in specific points, we understand that this solid cannot be moved, it fixed in space, and it can't make pivots.
+As the hexagon takes in specific points, we understand that this solid cannot be moved, it is fixed in space, and it can't make pivots.
 
 Let's make classic parallelepiped.
 ```kotlin
@@ -208,28 +244,29 @@ Let's make classic parallelepiped.
 Now, let's make a custom hexagon.
 
    ```kotlin
-   hexagon(
-        Point3D(5, 30, 5),
-        Point3D(24, 30, 8),
-        Point3D(20, 30, -10),
-        Point3D(5, 30, -7),
-        Point3D(8, 16, 0),
-        Point3D(12, 16, 0),
-        Point3D(10, 16, -5),
-        Point3D(6.5, 12, -3),
-        name = "custom_hexagon"){
-        color("brown")
-   }
+hexagon(
+    Point3D(5, 30, 5),
+    Point3D(24, 30, 8),
+    Point3D(20, 30, -10),
+    Point3D(5, 30, -7),
+    Point3D(8, 16, 0),
+    Point3D(12, 16, 0),
+    Point3D(10, 16, -5),
+    Point3D(6.5, 12, -3),
+    name = "custom_hexagon"
+) {
+    color("brown")
+}
    ```
    ![](../docs/images/custom-hexagon.png)
 ### 3) Cone
 It takes in six values: `bottomRadius`, `height`, `upperRadius`, `startAngle`, `angle`, and `name`. 
 
-Obviously, `bottomRadius` is responsible for radius of a bottom base, and `height` sets height of a cone along the `z-axis`.
+Obviously, `bottomRadius` is responsible for the radius of a bottom base, and `height` sets the height of a cone along the `z-axis`.
 
-As it takes such values as `upperRadius`, `startAngle`, `angle`, `cone` can build not only usual cones, but also cone segments. Initially, `upperRadius` will have `0.0` value, `startAngle` - `0f`, `angle` - `PI2`, so if you don't set them, you'll get just a simple cone. 
+As it takes such values as `upperRadius`, `startAngle`, `angle`, `cone` can build not only usual cones, but also cone segments. Initially, `upperRadius` will have `0.0` value, `startAngle` &mdash; `0f`, `angle` &mdash; `PI2`, so if you don't set them, you'll get just a simple cone. 
 
-Setting `upperRadius`, you make a frustum cone, since it sets a radius of the upper base of a cone. Set `startAngle`, and `angle` let to cut off segments by planes perpendicular to the base. `startAngle` - an angle, starting with which segment will be left, `angle` - an angle of cone, which will be set from `startAngle`. 
+Setting `upperRadius`, you make a frustum cone, since it sets a radius of the upper base of a cone. Set `startAngle`, and `angle` let to cut off segments by planes perpendicular to the base. `startAngle` &mdash; an angle, starting with which segment will be left, `angle` &mdash; an angle of cone, which will be set from `startAngle`. 
 
 Let's build a classic cone:
 ```kotlin
@@ -270,7 +307,7 @@ cone(60, 100, 20, PI*3/4, angle = PI/3, name = "cone") {
 This solid is set by seven values:`bottomOuterRadius`, `bottomInnerRadius`, `height`, `topOuterRadius`, `topInnerRadius`, `startAngle`, and `angle`.
 
 In addition to `height`, `startAngle`, and `angle`, which work as they work in `cone`, there are some new values.
-`bottomOuterRadius`, and `bottomInnerRadius` set properties of the bottom circle, `topOuterRadius`, `topInnerRadius` - of the upper circle. They have no initial value, so that means they have to be set.
+`bottomOuterRadius`, and `bottomInnerRadius` set properties of the bottom circle, `topOuterRadius`, `topInnerRadius` &mdash; of the upper circle. They have no initial value, so that means they have to be set.
 
 Generally, `cone`, and `coneSurface` buildings work in the same way, it's possible to make `coneSurface`'s fragments as in `cone`
 
@@ -331,3 +368,6 @@ tube(50, 40, 20, 0f, PI, name = "fragmented tube"){
 ![](../docs/images/tube-fragment.png)
 ### 7) Extruded
 
+`extruded` is set by two values: `shape`, and `layer`. 
+* `shape` is a value of `List<Point2D>` type. It's just a list of all points of the solid. *`shape` has to consist of not less than two points!*
+* `layer` is `MutableList` types variable. (here is a sentence with a description of the work of this function). *The amount of `layer`-s has to be more than one*

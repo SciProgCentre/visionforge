@@ -94,7 +94,9 @@ public class Extruded(
 
 public class ExtrudeBuilder(
     public var shape: List<Point2D> = emptyList(),
-    public var layers: ArrayList<Layer> = ArrayList(),
+
+    public var layers: MutableList<Layer> = ArrayList(),
+
     config: Config = Config()
 ) : SimpleVisionPropertyContainer<Extruded>(config) {
     public fun shape(block: Shape2DBuilder.() -> Unit) {
@@ -109,7 +111,7 @@ public class ExtrudeBuilder(
 }
 
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.extrude(
+public fun VisionContainerBuilder<Solid>.extruded(
     name: String? = null,
     action: ExtrudeBuilder.() -> Unit = {}
 ): Extruded = ExtrudeBuilder().apply(action).build().also { set(name, it) }
