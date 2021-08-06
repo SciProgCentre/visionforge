@@ -369,5 +369,5 @@ tube(50, 40, 20, 0f, PI, name = "fragmented tube"){
 ### 7) Extruded
 
 `extruded` is set by two values: `shape`, and `layer`. 
-* `shape` is a value of `List<Point2D>` type. It' s just a list of all points of the solid. *`shape` has to consist of not less than two points!*
+* `shape` is a value of `List<Point2D>` type. It's just a list of all points of the solid. *`shape` has to consist of not less than two points!*
 * `layer` is `MutableList` types variable. (here is a sentence with description of the work of this function). *The amount of `layer`-s has to be more than one*
