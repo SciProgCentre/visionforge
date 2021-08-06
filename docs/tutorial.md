@@ -196,7 +196,7 @@ Predictably, only the `x-axis` rib is bigger than other ribs.
 It takes in two values: `radius`, and `name`. 
 We bring you to mind that `name` is a general value for all solids, so do not wonder, since all solids need their own identifier.
 
-As for `radius`, it has `Float` type, and, as you can guess, it sets radius of the sphere, which will be created.
+As for `radius`, it has `Float` type, and, as you can guess, it sets the radius of the sphere which will be created.
    ```kotlin
    sphere(50, name = "sphere") {
         x = 0
