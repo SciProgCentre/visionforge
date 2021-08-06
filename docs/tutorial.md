@@ -114,7 +114,7 @@ fun main(){
 ![](../docs/images/two-boxes-1.png)
 ![](../docs/images/two-boxes-2.png)
 
-***There is plenty of other properties, especially of those, which you can create by yourself. Here we mention just small part.***
+***There is plenty of other properties, especially those, which you can create by yourself. Here we mention just a small part.***
 
 ## Basic Solids
 Now, let's see which solids can be visualized:
