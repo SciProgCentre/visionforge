@@ -108,7 +108,7 @@ fun VisionLayout<Solid>.showcase() {
     }
 
     demo("extrude", "extruded shape") {
-        extrude {
+        extruded {
             shape {
                 polygon(8, 50)
             }
