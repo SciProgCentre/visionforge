@@ -177,7 +177,7 @@ As you can see, only the rib of `y-axis` differs from other ribs.
 
    ![](../docs/images/high-box.png)
 
-For final trial, let's create `box` with bigger `x` value.
+For a final trial, let's create a `box` with a bigger `x` value.
    
    ```kotlin
    box(65, 40, 40, name = "wide box") {
