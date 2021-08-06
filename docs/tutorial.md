@@ -1,6 +1,6 @@
 # Tutorial
 
-#### The main goal of this tutorial is to show main capabilities of the visualization instrument.
+#### The main goal of this tutorial is to show the main capabilities of the visualization instrument.
 
 The simple visualization can be made with function `main`. (this part will be supplemented)
 ```kotlin
