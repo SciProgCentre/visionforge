@@ -173,7 +173,7 @@ Now, let's make `box` with bigger `y` value.
         color("black")
    }
    ```
-As you can see, only rib of `y-axis` differs from other ribs.
+As you can see, only the rib of `y-axis` differs from other ribs.
 
    ![](../docs/images/high-box.png)
 
