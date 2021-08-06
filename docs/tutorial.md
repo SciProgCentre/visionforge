@@ -40,10 +40,10 @@ fun main(){
 **We will analyze which basic properties solids have using `box` solid.**
 
 *Basic properties:*
-1. `opacity` - It is set in `float`. It takes on values from 0 to 1, which represent percents of solid opacity. It's initial value is 1.
-2. `color` - It can be specified as `Int`, `String`, or as three `Ubytes`, which represent color in `rgb`. Elementally, the solid will have `green` color.
-3. `rotation` - it's the point, which sets rotations along axes. Initially, the value is `Point3D(0, 0, 0)`. Changing `x` coordinate of the point, you make pivot around `x axis`. The same for other coordinates: changing `y` - pivot around `y axis`, changing `z` - pivot around `z axis`.
-4. position, which is given by values `x`, `y`, `z`. Initial values are `x = 0`, `y = 0`, `z = 0`. The coordinate system is Cartesian. It's elemental position is this - vertical `y` axis and horizontal `Oxz` plane.
+1. `opacity` &mdash; It is set in `float`. It takes on values from 0 to 1, which represent percents of solid opacity. It's initial value is 1.
+2. `color` &mdash; It can be specified as `Int`, `String`, or as three `Ubytes`, which represent color in `rgb`. Elementally, the solid will have `green` color.
+3. `rotation` &mdash; it's the point, which sets rotations along axes. Initially, the value is `Point3D(0, 0, 0)`. Changing `x` coordinate of the point, you make pivot around `x axis`. The same for other coordinates: changing `y` &mdash; pivot around `y axis`, changing `z` &mdash; pivot around `z axis`.
+4. position, which is given by values `x`, `y`, `z`. Initial values are `x = 0`, `y = 0`, `z = 0`. The coordinate system is Cartesian. It's elemental position is this &mdash; vertical `y` axis and horizontal `Oxz` plane.
 
 Let's see how properties are set in solids.
 The `small box` will have elemental values of properties. If you don't set properties, it will have the same `position`, `color`, `rotation`, and `opacity` values.
@@ -123,7 +123,7 @@ Now, let's see which solids can be visualized:
 It's scarcely a solid, but it can be visualized, so we mention it.
 `polyline` build lines, obviously. Let's take a look at it's work.
 
-`polyline` requires two values - `points`, and `name`:
+`polyline` requires two values &mdash; `points`, and `name`:
 * `points` is a `vararg` with `Point3D` type. It takes pairs of points, which you want to connect.
 * `name` is an identifier of *any solid*; but in this case, it is an identifier of `polyline`.
 It's type is `String`. **This value can be required by any solid;
@@ -148,15 +148,15 @@ polyline(Point3D(30, 20, 10), Point3D(30, -100, 30), Point3D(30, -100, 30), Poin
 ### 2) Box
 
 First thing which has to be mentioned is that `box` takes four values: `box(x, y, z, name)`
-* `x` - x-axis length of the `box`
-* `y` - y-axis length of the `box`
-* `z` - z-axis length of the `box`
+* `x` &mdash; x-axis length of the `box`
+* `y` &mdash; y-axis length of the `box`
+* `z` &mdash; z-axis length of the `box`
 
 These values have `Float` type. 
 
 *`x`, `y`, and `z` are necessary values, which cannot be ignored. You have to set them.*
 
-* `name` - `box`'es identifier. You've already met it. 
+* `name` &mdash; `box`'es identifier. You've already met it. 
 
 Let's create just usual `box` with equal ribs.
 
@@ -264,9 +264,9 @@ It takes in six values: `bottomRadius`, `height`, `upperRadius`, `startAngle`, `
 
 Obviously, `bottomRadius` is responsible for the radius of a bottom base, and `height` sets the height of a cone along the `z-axis`.
 
-As it takes such values as `upperRadius`, `startAngle`, `angle`, `cone` can build not only usual cones, but also cone segments. Initially, `upperRadius` will have `0.0` value, `startAngle` - `0f`, `angle` - `PI2`, so if you don't set them, you'll get just a simple cone. 
+As it takes such values as `upperRadius`, `startAngle`, `angle`, `cone` can build not only usual cones, but also cone segments. Initially, `upperRadius` will have `0.0` value, `startAngle` &mdash; `0f`, `angle` &mdash; `PI2`, so if you don't set them, you'll get just a simple cone. 
 
-Setting `upperRadius`, you make a frustum cone, since it sets a radius of the upper base of a cone. Set `startAngle`, and `angle` let to cut off segments by planes perpendicular to the base. `startAngle` - an angle, starting with which segment will be left, `angle` - an angle of cone, which will be set from `startAngle`. 
+Setting `upperRadius`, you make a frustum cone, since it sets a radius of the upper base of a cone. Set `startAngle`, and `angle` let to cut off segments by planes perpendicular to the base. `startAngle` &mdash; an angle, starting with which segment will be left, `angle` &mdash; an angle of cone, which will be set from `startAngle`. 
 
 Let's build a classic cone:
 ```kotlin
@@ -307,7 +307,7 @@ cone(60, 100, 20, PI*3/4, angle = PI/3, name = "cone") {
 This solid is set by seven values:`bottomOuterRadius`, `bottomInnerRadius`, `height`, `topOuterRadius`, `topInnerRadius`, `startAngle`, and `angle`.
 
 In addition to `height`, `startAngle`, and `angle`, which work as they work in `cone`, there are some new values.
-`bottomOuterRadius`, and `bottomInnerRadius` set properties of the bottom circle, `topOuterRadius`, `topInnerRadius` - of the upper circle. They have no initial value, so that means they have to be set.
+`bottomOuterRadius`, and `bottomInnerRadius` set properties of the bottom circle, `topOuterRadius`, `topInnerRadius` &mdash; of the upper circle. They have no initial value, so that means they have to be set.
 
 Generally, `cone`, and `coneSurface` buildings work in the same way, it's possible to make `coneSurface`'s fragments as in `cone`
 
