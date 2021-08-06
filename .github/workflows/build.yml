@@ -1,0 +1,33 @@
+name: Gradle build
+
+on:
+  push:
+    branches: [ dev, master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v2
+      - uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: 21.2.0
+          java: java11
+          arch: amd64
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - uses: actions/cache@v2
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - run: ./gradlew build --build-cache --no-daemon --stacktrace
