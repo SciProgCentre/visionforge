@@ -222,7 +222,7 @@ It is solid which has six edges. It is set by eight values: `node1`,..., `node8`
 
 ![](../docs/images/scheme.png)
 
-As hexagon takes in specific points, we understand that this solid cannot be moved, it fixed in space, and it can't make pivots.
+As the hexagon takes in specific points, we understand that this solid cannot be moved, it is fixed in space, and it can't make pivots.
 
 Let's make classic parallelepiped.
 ```kotlin
