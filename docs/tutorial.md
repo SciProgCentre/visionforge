@@ -120,7 +120,7 @@ fun main(){
 Now, let's see which solids can be visualized:
 ### 1) PolyLine
 
-It's scarcely a solid, but it can be visualized, so we mention it. 
+It's scarcely a solid, but it can be visualized, so we mention it.
 `polyline` build lines, obviously. Let's take a look at it's work.
 
 `polyline` requires two values - `points`, and `name`:
