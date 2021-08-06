@@ -262,7 +262,7 @@ hexagon(
 ### 3) Cone
 It takes in six values: `bottomRadius`, `height`, `upperRadius`, `startAngle`, `angle`, and `name`. 
 
-Obviously, `bottomRadius` is responsible for radius of a bottom base, and `height` sets height of a cone along the `z-axis`.
+Obviously, `bottomRadius` is responsible for the radius of a bottom base, and `height` sets the height of a cone along the `z-axis`.
 
 As it takes such values as `upperRadius`, `startAngle`, `angle`, `cone` can build not only usual cones, but also cone segments. Initially, `upperRadius` will have `0.0` value, `startAngle` - `0f`, `angle` - `PI2`, so if you don't set them, you'll get just a simple cone. 
 
