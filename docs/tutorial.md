@@ -187,7 +187,7 @@ For final trial, let's create `box` with bigger `x` value.
         color("black")
    }
    ```
-Predictably, only `x-axis` rib bigger than other ribs. 
+Predictably, only the `x-axis` rib is bigger than other ribs. 
 
    ![](../docs/images/wide-box.png)
    
