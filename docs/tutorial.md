@@ -42,7 +42,9 @@ fun main(){
 *Basic properties:*
 1. `opacity` &mdash; It is set in `float`. It takes on values from 0 to 1, which represent percents of solid opacity. It's initial value is 1.
 2. `color` &mdash; It can be specified as `Int`, `String`, or as three `Ubytes`, which represent color in `rgb`. Elementally, the solid will have `green` color.
+
 3. `rotation` &mdash; it's the point, which sets rotations along axes. Initially, the value is `Point3D(0, 0, 0)`. Changing `x` coordinate of the point, you make pivot around `x axis`. The same for other coordinates: changing `y` &mdash; pivot around `y axis`, changing `z` &mdash; pivot around `z axis`.
+
 4. position, which is given by values `x`, `y`, `z`. Initial values are `x = 0`, `y = 0`, `z = 0`. The coordinate system is Cartesian. It's elemental position is this &mdash; vertical `y` axis and horizontal `Oxz` plane.
 
 Let's see how properties are set in solids.
