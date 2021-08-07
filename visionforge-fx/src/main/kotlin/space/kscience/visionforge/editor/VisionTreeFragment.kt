@@ -3,6 +3,7 @@ package space.kscience.visionforge.editor
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeItem
+import javafx.scene.layout.VBox
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
 import tornadofx.*
@@ -29,13 +30,13 @@ private fun toTreeItem(vision: Vision, title: String): TreeItem<Pair<String, Vis
 }
 
 
-class VisualObjectTreeFragment : Fragment() {
-    val itemProperty = SimpleObjectProperty<Vision>()
-    var item: Vision? by itemProperty
+public class VisionTreeFragment : Fragment() {
+    public val itemProperty: SimpleObjectProperty<Vision> = SimpleObjectProperty<Vision>()
+    public var item: Vision? by itemProperty
 
-    val selectedProperty = SimpleObjectProperty<Vision>()
+    public val selectedProperty: SimpleObjectProperty<Vision> = SimpleObjectProperty<Vision>()
 
-    override val root = vbox {
+    override val root: VBox = vbox {
         titledpane("Object tree", collapsible = false) {
             treeview<Pair<String, Vision>> {
                 cellFormat {

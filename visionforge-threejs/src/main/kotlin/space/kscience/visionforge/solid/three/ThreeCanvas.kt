@@ -168,10 +168,10 @@ public class ThreeCanvas(
         }
 
         //Clipping planes
-        options.onChange(this@ThreeCanvas) { name, _, _ ->
+        options.meta.onChange(this@ThreeCanvas) { name->
             if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
                 val clipping = options.clipping
-                if (!clipping.isEmpty()) {
+                if (!clipping.meta.isEmpty()) {
                     renderer.localClippingEnabled = true
                     boundingBox?.let { boundingBox ->
                         val xClippingPlane = clipping.x?.let {
@@ -212,9 +212,9 @@ public class ThreeCanvas(
     private fun Object3D.fullName(): Name {
         if (root == null) error("Can't resolve element name without the root")
         return if (parent == root) {
-            name.toName()
+            Name.parse(name)
         } else {
-            (parent?.fullName() ?: Name.EMPTY) + name.toName()
+            (parent?.fullName() ?: Name.EMPTY) + Name.parse(name)
         }
     }
 
@@ -237,7 +237,7 @@ public class ThreeCanvas(
     private fun buildLight(spec: Light?): info.laht.threekt.lights.Light = AmbientLight(0x404040)
 
     private fun addControls(element: Node, controls: Controls) {
-        when (controls["type"].string) {
+        when (controls.meta["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }

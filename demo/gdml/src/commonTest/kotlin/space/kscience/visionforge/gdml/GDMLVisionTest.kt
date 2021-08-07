@@ -1,7 +1,7 @@
 package space.kscience.visionforge.gdml
 
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.values.asValue
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.setProperty
@@ -24,7 +24,7 @@ class GDMLVisionTest {
     @Test
     fun testPrototypeProperty() {
         val vision = GdmlShowCase.cubes().toVision()
-        val child = vision["composite-000.segment-0".toName()]
+        val child = vision[Name.of("composite-000","segment-0")]
         assertNotNull(child)
         child.setProperty(SolidMaterial.MATERIAL_COLOR_KEY, "red".asValue())
         assertEquals("red", child.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).string)

@@ -31,7 +31,7 @@ public inline fun VisionContainerBuilder<Solid>.composite(
     if (children.size != 2) error("Composite requires exactly two children")
     return Composite(type, children[0], children[1]).also { composite ->
         composite.configure {
-            update(group.meta)
+            update(group.meta())
         }
         if (group.position != null) {
             composite.position = group.position

@@ -8,12 +8,10 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.node
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.toJson
-import space.kscience.dataforge.meta.toMetaItem
+import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.toName
 import kotlin.reflect.KClass
 
 public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
@@ -48,12 +46,11 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
         jsonFormat.encodeToJsonElement(visionSerializer, vision)
 
     //TODO remove double transformation with dedicated Meta serial format
-    public fun decodeFromMeta(meta: Meta, descriptor: NodeDescriptor? = null): Vision =
+    public fun decodeFromMeta(meta: Meta, descriptor: MetaDescriptor? = null): Vision =
         decodeFromJson(meta.toJson(descriptor))
 
-    public fun encodeToMeta(vision: Vision, descriptor: NodeDescriptor? = null): Meta =
-        encodeToJsonElement(vision).toMetaItem(descriptor).node
-            ?: error("Expected node, but value found. Check your serializer!")
+    public fun encodeToMeta(vision: Vision, descriptor: MetaDescriptor? = null): Meta =
+        encodeToJsonElement(vision).toMeta(descriptor)
 
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)
@@ -89,7 +86,7 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
     protected abstract val visionSerializersModule: SerializersModule
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        VisionManager.VISION_SERIALIZER_MODULE_TARGET -> mapOf(tag.toString().toName() to visionSerializersModule)
+        VisionManager.VISION_SERIALIZER_MODULE_TARGET -> mapOf(Name.parse(tag.toString()) to visionSerializersModule)
         else -> super.content(target)
     }
 }

@@ -131,15 +131,15 @@ public open class VisionGroupBase(
         }
     }
 
-    override fun update(change: VisionChange) {
+    override fun change(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
                 change.delete -> set(name, null)
                 change.vision != null -> set(name, change.vision)
-                else -> get(name)?.update(change)
+                else -> get(name)?.change(change)
             }
         }
-        super.update(change)
+        super.change(change)
     }
 }
 

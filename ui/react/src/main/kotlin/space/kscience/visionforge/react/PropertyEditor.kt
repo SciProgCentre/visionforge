@@ -18,14 +18,10 @@ import react.*
 import react.dom.attrs
 import react.dom.render
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.ItemDescriptor
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.ValueDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.ValueRequirement
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.lastOrNull
-import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.*
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.hidden
 import styled.css
@@ -38,12 +34,12 @@ public external interface PropertyEditorProps : RProps {
     /**
      * Root config object - always non null
      */
-    public var ownProperties: MutableItemProvider
+    public var ownProperties: MutableMetaProvider
 
     /**
      * Provide default item (greyed out if used)
      */
-    public var allProperties: ItemProvider?
+    public var allProperties: MetaProvider?
 
     /**
      * Full path to the displayed node in [ownProperties]. Could be empty
@@ -53,7 +49,7 @@ public external interface PropertyEditorProps : RProps {
     /**
      * Root descriptor
      */
-    public var descriptor: NodeDescriptor?
+    public var descriptor: MetaDescriptor?
 
     /**
      * A coroutine scope for updates
@@ -71,21 +67,21 @@ public external interface PropertyEditorProps : RProps {
     public var expanded: Boolean?
 }
 
-private val PropertyEditorItem: FunctionalComponent<PropertyEditorProps> =
+private val PropertyEditorItem: FunctionComponent<PropertyEditorProps> =
     functionalComponent("ConfigEditorItem") { props ->
         propertyEditorItem(props)
     }
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { props.expanded ?: true }
-    val descriptorItem: ItemDescriptor? = props.descriptor?.get(props.name)
-    var ownProperty: MetaItem? by useState { props.ownProperties.getItem(props.name) }
-    val actualItem: MetaItem? = props.allProperties?.getItem(props.name)
+    val descriptor: MetaDescriptor? = props.descriptor?.get(props.name)
+    var ownProperty: Meta? by useState { props.ownProperties.getMeta(props.name) }
+    val actualMeta = props.allProperties?.getMeta(props.name)
 
     val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        ownProperty = props.ownProperties.getItem(props.name)
+        ownProperty = props.ownProperties.getMeta(props.name)
     }
 
     if (props.updateFlow != null) {
@@ -109,7 +105,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         if (it == null) {
             props.ownProperties.remove(props.name)
         } else {
-            props.ownProperties[props.name] = it
+            props.ownProperties.setValue(props.name, it)
         }
         update()
     }
@@ -119,19 +115,20 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         update()
     }
 
-    if (actualItem is MetaItemNode) {
-        val keys = buildSet {
-            (descriptorItem as? NodeDescriptor)?.items?.filterNot {
-                it.key.startsWith("@") || it.value.hidden
-            }?.forEach {
-                add(NameToken(it.key))
-            }
-            ownProperty?.node?.items?.keys?.filterNot { it.body.startsWith("@") }?.let { addAll(it) }
+    val keys = buildSet {
+        descriptor?.children?.filterNot {
+            it.key.startsWith("@") || it.value.hidden
+        }?.forEach {
+            add(NameToken(it.key))
         }
-        // Do not show nodes without visible children
-        if (keys.isEmpty()) return
+        ownProperty?.items?.keys?.filterNot { it.body.startsWith("@") }?.let { addAll(it) }
+    }
 
-        flexRow {
+    flexRow {
+        css {
+            alignItems = Align.center
+        }
+        if(keys.isNotEmpty()) {
             styledSpan {
                 css {
                     +TreeStyles.treeCaret
@@ -143,55 +140,17 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     onClickFunction = expanderClick
                 }
             }
-            styledSpan {
-                css {
-                    +TreeStyles.treeLabel
-                    if (ownProperty == null) {
-                        +TreeStyles.treeLabelInactive
-                    }
-                }
-                +token
-            }
         }
-        if (expanded) {
-            flexColumn {
-                css {
-                    +TreeStyles.tree
-                }
-                keys.forEach { token ->
-                    styledDiv {
-                        css {
-                            +TreeStyles.treeItem
-                        }
-                        child(PropertyEditorItem) {
-                            attrs {
-                                this.key = props.name.toString()
-                                this.ownProperties = props.ownProperties
-                                this.allProperties = props.allProperties
-                                this.name = props.name + token
-                                this.descriptor = props.descriptor
-                            }
-                        }
-                        //configEditor(props.root, props.name + token, props.descriptor, props.default)
-                    }
-                }
-            }
-        }
-    } else {
-        flexRow {
+        styledSpan {
             css {
-                alignItems = Align.center
-            }
-            styledSpan {
-                css {
-                    +TreeStyles.treeLabel
-                    if (ownProperty == null) {
-                        +TreeStyles.treeLabelInactive
-                    }
+                +TreeStyles.treeLabel
+                if (ownProperty == null) {
+                    +TreeStyles.treeLabelInactive
                 }
-                +token
             }
-
+            +token
+        }
+        if(!props.name.isEmpty() && descriptor?.valueRequirement != ValueRequirement.ABSENT) {
             styledDiv {
                 css {
                     //+TreeStyles.resizeableInput
@@ -200,8 +159,8 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 valueChooser(
                     props.name,
-                    actualItem,
-                    descriptorItem as? ValueDescriptor,
+                    actualMeta,
+                    descriptor,
                     valueChanged
                 )
             }
@@ -232,14 +191,38 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     }
                 }
             }
-
         }
     }
+    if (expanded) {
+        flexColumn {
+            css {
+                +TreeStyles.tree
+            }
+            keys.forEach { token ->
+                styledDiv {
+                    css {
+                        +TreeStyles.treeItem
+                    }
+                    child(PropertyEditorItem) {
+                        attrs {
+                            this.key = props.name.toString()
+                            this.ownProperties = props.ownProperties
+                            this.allProperties = props.allProperties
+                            this.name = props.name + token
+                            this.descriptor = props.descriptor
+                        }
+                    }
+                    //configEditor(props.root, props.name + token, props.descriptor, props.default)
+                }
+            }
+        }
+    }
+
 }
 
 
 @JsExport
-public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functionalComponent("PropertyEditor") { props ->
+public val PropertyEditor: FunctionComponent<PropertyEditorProps> = functionalComponent("PropertyEditor") { props ->
     child(PropertyEditorItem) {
         attrs {
             this.key = ""
@@ -254,10 +237,10 @@ public val PropertyEditor: FunctionalComponent<PropertyEditorProps> = functional
 }
 
 public fun RBuilder.propertyEditor(
-    ownProperties: MutableItemProvider,
-    allProperties: ItemProvider? = ownProperties,
+    ownProperties: MutableMetaProvider,
+    allProperties: MetaProvider? = ownProperties,
     updateFlow: Flow<Name>? = null,
-    descriptor: NodeDescriptor? = null,
+    descriptor: MetaDescriptor? = null,
     scope: CoroutineScope? = null,
     key: Any? = null,
     expanded: Boolean? = null
@@ -276,8 +259,8 @@ public fun RBuilder.propertyEditor(
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-private fun Config.flowUpdates(): Flow<Name> = callbackFlow {
-    onChange(this) { name, _, _ ->
+private fun ObservableMutableMeta.flowUpdates(): Flow<Name> = callbackFlow {
+    onChange(this) { name ->
         launch {
             send(name)
         }
@@ -289,16 +272,16 @@ private fun Config.flowUpdates(): Flow<Name> = callbackFlow {
 
 
 public fun RBuilder.configEditor(
-    config: Config,
-    default: ItemProvider? = null,
-    descriptor: NodeDescriptor? = null,
+    config: ObservableMutableMeta,
+    default: MetaProvider? = null,
+    descriptor: MetaDescriptor? = null,
     key: Any? = null,
     scope: CoroutineScope? = null,
 ): Unit = propertyEditor(config, default, config.flowUpdates(), descriptor, scope, key = key)
 
 public fun Element.configEditor(
-    config: Config,
-    descriptor: NodeDescriptor? = null,
+    config: ObservableMutableMeta,
+    descriptor: MetaDescriptor? = null,
     default: Meta? = null,
     key: Any? = null,
     scope: CoroutineScope? = null,

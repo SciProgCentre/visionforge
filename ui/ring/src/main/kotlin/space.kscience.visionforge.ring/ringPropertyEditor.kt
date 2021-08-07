@@ -7,16 +7,19 @@ import react.dom.render
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.visionforge.*
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.getStyle
+import space.kscience.visionforge.meta
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.metaViewer
 import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.solid.SolidReference
+import space.kscience.visionforge.styles
 
 public fun RBuilder.ringPropertyEditor(
     vision: Vision,
-    descriptor: NodeDescriptor? = vision.descriptor,
+    descriptor: MetaDescriptor? = vision.descriptor,
     key: Any? = null,
 ) {
     val styles = if (vision is SolidReference) {
@@ -28,8 +31,8 @@ public fun RBuilder.ringPropertyEditor(
     flexColumn {
         Island("Properties") {
             propertyEditor(
-                ownProperties = vision.ownProperties,
-                allProperties = vision.allProperties(),
+                ownProperties = vision.meta(false,false,false),
+                allProperties = vision.meta(),
                 updateFlow = vision.propertyChanges,
                 descriptor = descriptor,
                 key = key
@@ -69,7 +72,7 @@ public fun RBuilder.ringPropertyEditor(
 
 public fun Element.ringPropertyEditor(
     item: Vision,
-    descriptor: NodeDescriptor? = item.descriptor,
+    descriptor: MetaDescriptor? = item.descriptor,
 ): Unit = render(this) {
     ringPropertyEditor(item, descriptor = descriptor)
 }

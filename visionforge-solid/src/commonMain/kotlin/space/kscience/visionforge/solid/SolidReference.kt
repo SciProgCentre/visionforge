@@ -4,11 +4,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.MetaItem
-import space.kscience.dataforge.meta.asMetaItem
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
+import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.*
 
 
@@ -37,7 +37,7 @@ private fun SolidReference.getRefProperty(
     inherit: Boolean,
     includeStyles: Boolean,
     includeDefaults: Boolean,
-): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
+): Meta? = if (!inherit && !includeStyles && !includeDefaults) {
     getOwnProperty(name)
 } else {
     buildList {
@@ -88,9 +88,9 @@ public class SolidReferenceGroup(
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+    ): Meta? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
-    override val descriptor: NodeDescriptor get() = prototype.descriptor
+    override val descriptor: MetaDescriptor get() = prototype.descriptor
 
 
     /**
@@ -118,11 +118,15 @@ public class SolidReferenceGroup(
                     ReferenceChild(owner, refName + key.asName())
                 } ?: emptyMap()
 
-        override fun getOwnProperty(name: Name): MetaItem? =
+        override fun getOwnProperty(name: Name): Meta? =
             owner.getOwnProperty(childPropertyName(refName, name))
 
-        override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-            owner.setProperty(childPropertyName(refName, name), item, notify)
+        override fun setPropertyNode(name: Name, node: Meta?, notify: Boolean) {
+            owner.setPropertyNode(childPropertyName(refName, name), node, notify)
+        }
+
+        override fun setPropertyValue(name: Name, value: Value?, notify: Boolean) {
+            owner.setPropertyValue(childPropertyName(refName, name), value, notify)
         }
 
         override fun getProperty(
@@ -130,7 +134,7 @@ public class SolidReferenceGroup(
             inherit: Boolean,
             includeStyles: Boolean,
             includeDefaults: Boolean,
-        ): MetaItem? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+        ): Meta? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
         override var parent: VisionGroup?
             get() {
@@ -155,13 +159,13 @@ public class SolidReferenceGroup(
             owner.invalidateProperty(childPropertyName(refName, propertyName))
         }
 
-        override fun update(change: VisionChange) {
+        override fun change(change: VisionChange) {
             change.properties?.let {
-                updateProperties(Name.EMPTY, it.asMetaItem())
+                updateProperties(Name.EMPTY, it)
             }
         }
 
-        override val descriptor: NodeDescriptor get() = prototype.descriptor
+        override val descriptor: MetaDescriptor get() = prototype.descriptor
 
     }
 
@@ -184,7 +188,7 @@ public fun SolidGroup.ref(
 public fun SolidGroup.ref(
     name: String,
     obj: Solid,
-    templateName: Name = name.toName(),
+    templateName: Name = Name.parse(name),
 ): SolidReferenceGroup {
     val existing = getPrototype(templateName)
     if (existing == null) {

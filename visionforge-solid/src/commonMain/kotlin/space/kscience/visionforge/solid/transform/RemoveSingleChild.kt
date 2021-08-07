@@ -1,12 +1,9 @@
 package space.kscience.visionforge.solid.transform
 
-import space.kscience.dataforge.meta.itemSequence
+import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.MutableVisionGroup
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.meta
+import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.*
 
 private operator fun Number.plus(other: Number) = toFloat() + other.toFloat()
@@ -24,10 +21,8 @@ internal fun Vision.updateFrom(other: Vision): Vision {
         scaleX *= other.scaleX
         scaleY *= other.scaleY
         scaleZ *= other.scaleZ
-        other.meta.itemSequence().forEach { (name, item) ->
-            if (getProperty(name) == null) {
-                setProperty(name, item)
-            }
+        configure{
+            update(other.meta())
         }
     }
     return this

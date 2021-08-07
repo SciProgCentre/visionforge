@@ -12,7 +12,7 @@ class PropertyTest {
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            setProperty("test", 22)
+            setPropertyNode("test", 22)
             group {
                 box = box(100, 100, 100)
             }

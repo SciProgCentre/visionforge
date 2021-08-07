@@ -3,7 +3,7 @@
 
 interface Vision{
     val parent: Vision?
-    fun getProperty(name): MetaItem?
+    fun getProperty(name): Meta?
     fun setProperty(name, value)
 }
 

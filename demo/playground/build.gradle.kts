@@ -67,6 +67,7 @@ kotlin {
         val jvmMain by getting{
             dependencies {
                 api(project(":visionforge-server"))
+                api(project(":visionforge-markdown"))
                 api("ch.qos.logback:logback-classic:1.2.3")
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }

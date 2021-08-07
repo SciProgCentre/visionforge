@@ -5,39 +5,36 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.layout.VBox
-import space.kscience.dataforge.meta.Config
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MutableItemProvider
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.update
+import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.visionforge.*
 import tornadofx.*
 
-class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
+public class VisionEditorFragment(public val selector: (Vision) -> Meta) : Fragment() {
 
-    val itemProperty = SimpleObjectProperty<Vision>()
-    var item: Vision? by itemProperty
-    val descriptorProperty = SimpleObjectProperty<NodeDescriptor>()
+    public val itemProperty: SimpleObjectProperty<Vision> = SimpleObjectProperty<Vision>()
+    public var item: Vision? by itemProperty
+    public val descriptorProperty: SimpleObjectProperty<MetaDescriptor> = SimpleObjectProperty<MetaDescriptor>()
 
-    constructor(
+    public constructor(
         item: Vision?,
-        descriptor: NodeDescriptor?,
-        selector: (Vision) -> MutableItemProvider = { it.allProperties() },
+        descriptor: MetaDescriptor?,
+        selector: (Vision) -> MutableMetaProvider = { it.meta() },
     ) : this({ it.describedProperties }) {
         this.item = item
         this.descriptorProperty.set(descriptor)
     }
 
-    private var currentConfig: Config? = null
+    private var currentConfig: ObservableMutableMeta? = null
 
-    private val configProperty: Binding<Config?> = itemProperty.objectBinding { visualObject ->
-        if (visualObject == null) return@objectBinding null
-        val meta = selector(visualObject)
-        val config = Config().apply {
+    private val configProperty: Binding<ObservableMutableMeta?> = itemProperty.objectBinding { vision ->
+        if (vision == null) return@objectBinding null
+        val meta = selector(vision)
+        val config = MutableMeta {
             update(meta)
-            onChange(this@VisualObjectEditorFragment) { key, _, after ->
-                visualObject.setProperty(key, after)
-            }
+        }
+        config.onChange(this@VisionEditorFragment) { key ->
+            vision.setPropertyNode(key, config[key])
         }
         //remember old config reference to cleanup listeners
         currentConfig?.removeListener(this)
@@ -47,7 +44,7 @@ class VisualObjectEditorFragment(val selector: (Vision) -> Meta) : Fragment() {
 
     private val configEditorProperty: Binding<Node?> = configProperty.objectBinding(descriptorProperty) {
         it?.let {
-            ConfigEditor(it, descriptorProperty.get()).root
+            MutableMetaEditor(it, descriptorProperty.get()).root
         }
     }
 

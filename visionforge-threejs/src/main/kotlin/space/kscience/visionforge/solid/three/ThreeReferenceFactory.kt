@@ -3,9 +3,9 @@ package space.kscience.visionforge.solid.three
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.cutFirst
 import space.kscience.dataforge.names.firstOrNull
-import space.kscience.dataforge.names.toName
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidReferenceGroup
@@ -49,7 +49,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
 
         obj.onPropertyChange(three.updateScope) { name->
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
+                val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
                 val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")

@@ -14,8 +14,7 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
 import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.allProperties
-import space.kscience.visionforge.ownProperties
+import space.kscience.visionforge.meta
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
@@ -70,7 +69,7 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement 
 }
 
 @JsExport
-public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsProps> =
+public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsProps> =
     functionalComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
 
@@ -120,23 +119,23 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
 
                 selectedVision?.let { vision ->
                     styledDiv {
-                        css{
+                        css {
                             position = Position.absolute
                             top = 5.px
                             right = 5.px
                             width = 450.px
                         }
-                        Island{
-                            IslandHeader{
+                        Island {
+                            IslandHeader {
                                 attrs {
                                     border = true
                                 }
                                 nameCrumbs(selected) { selected = it }
                             }
-                            IslandContent{
+                            IslandContent {
                                 propertyEditor(
-                                    ownProperties = vision.ownProperties,
-                                    allProperties = vision.allProperties(),
+                                    ownProperties = vision.meta(false, false, false),
+                                    allProperties = vision.meta(),
                                     updateFlow = vision.propertyChanges,
                                     descriptor = vision.descriptor,
                                     key = selected

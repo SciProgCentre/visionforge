@@ -10,12 +10,13 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.descriptors.validate
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.*
 import tornadofx.*
 
-class TextValueChooser : ValueChooserBase<TextField>() {
+public class TextValueChooser : ValueChooserBase<TextField>() {
 
     private val displayText: String
         get() = currentValue().let {
@@ -85,7 +86,7 @@ class TextValueChooser : ValueChooserBase<TextField>() {
     }
 
     private fun validate(value: Value): Boolean {
-        return descriptor?.isAllowedValue(value) ?: true
+        return descriptor?.validate(value) ?: true
     }
 
     //    @Override
@@ -101,7 +102,7 @@ class TextValueChooser : ValueChooserBase<TextField>() {
         }
     }
 
-    companion object : ValueChooser.Factory {
+    public companion object : ValueChooser.Factory {
         override val name: Name = "text".asName()
         override fun invoke(meta: Meta): ValueChooser =
             TextValueChooser()

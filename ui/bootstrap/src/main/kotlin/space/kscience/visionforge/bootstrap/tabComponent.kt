@@ -18,7 +18,7 @@ public external class TabProps : RProps {
 }
 
 @JsExport
-public val Tab: FunctionalComponent<TabProps> = functionalComponent { props ->
+public val Tab: FunctionComponent<TabProps> = functionalComponent { props ->
     props.children()
 }
 
@@ -27,7 +27,7 @@ public external class TabPaneProps : RProps {
 }
 
 @JsExport
-public val TabPane: FunctionalComponent<TabPaneProps> = functionalComponent("TabPane") { props ->
+public val TabPane: FunctionComponent<TabPaneProps> = functionalComponent("TabPane") { props ->
     var activeTab: String? by useState(props.activeTab)
 
     val children: Array<out ReactElement?> = Children.map(props.children) {

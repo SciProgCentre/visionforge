@@ -1,7 +1,7 @@
 package space.kscience.visionforge
 
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaBuilder
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.Specification
 import kotlin.properties.ReadOnlyProperty
@@ -27,7 +27,7 @@ public fun Vision.useStyle(reference: StyleReference) {
 @VisionBuilder
 public fun VisionGroup.style(
     styleKey: String? = null,
-    builder: MetaBuilder.() -> Unit,
+    builder: MutableMeta.() -> Unit,
 ): ReadOnlyProperty<Any?, StyleReference> = ReadOnlyProperty { _, property ->
     val styleName = styleKey ?: property.name
     styleSheet.define(styleName, Meta(builder))

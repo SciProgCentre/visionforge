@@ -1,12 +1,12 @@
 package space.kscience.visionforge.gdml
 
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaBuilder
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.names.toName
+
 import space.kscience.gdml.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
@@ -41,8 +41,8 @@ public class GdmlTransformer {
 
     internal val styleCache = HashMap<Name, Meta>()
 
-    public fun Solid.registerAndUseStyle(name: String, builder: MetaBuilder.() -> Unit) {
-        styleCache.getOrPut(name.toName()) {
+    public fun Solid.registerAndUseStyle(name: String, builder: MutableMeta.() -> Unit) {
+        styleCache.getOrPut(Name.parse(name)) {
             Meta(builder)
         }
         useStyle(name)
@@ -118,7 +118,7 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
     private val proto = SolidGroup()
 
     private val solids = proto.group(solidsName) {
-        setProperty("edges.enabled", false)
+        setPropertyNode("edges.enabled", false)
     }
 
     private val referenceStore = HashMap<Name, MutableList<SolidReferenceGroup>>()

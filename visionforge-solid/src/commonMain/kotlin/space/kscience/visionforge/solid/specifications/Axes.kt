@@ -3,7 +3,7 @@ package space.kscience.visionforge.solid.specifications
 import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.SchemeSpec
 import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.double
 import space.kscience.visionforge.value
 
@@ -16,8 +16,8 @@ public class Axes : Scheme() {
         public const val AXIS_SIZE: Double = 1000.0
         public const val AXIS_WIDTH: Double = 3.0
 
-        override val descriptor: NodeDescriptor by lazy {
-            NodeDescriptor {
+        override val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
                 value(Axes::visible){
                     default(false)
                 }

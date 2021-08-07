@@ -9,8 +9,8 @@ import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
 import javafx.util.StringConverter
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.Value
@@ -56,7 +56,7 @@ public class ComboBoxValueChooser(public val values: Collection<Value>? = null) 
         override val name: Name = "combo".asName()
 
         override fun invoke(meta: Meta): ValueChooser =
-            ComboBoxValueChooser(meta["values"].value?.list)
+            ComboBoxValueChooser(meta["values"]?.value?.list)
     }
 
 }

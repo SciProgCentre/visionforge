@@ -143,7 +143,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
             element,
             vision as? Solid ?: error("Solid expected but ${vision::class} found"),
         ).apply {
-            options.update(meta)
+            options.meta.update(meta)
         }
     }
 
@@ -195,8 +195,4 @@ internal fun Object3D.findChild(name: Name): Object3D? {
         name.length == 1 -> this.children.find { it.name == name.tokens.first().toString() }
         else -> findChild(name.tokens.first().asName())?.findChild(name.cutFirst())
     }
-}
-
-public fun Context.withThreeJs(): Context = apply {
-    plugins.fetch(ThreePlugin)
 }

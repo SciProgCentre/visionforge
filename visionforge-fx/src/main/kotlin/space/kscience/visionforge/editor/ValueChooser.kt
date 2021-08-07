@@ -10,10 +10,12 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.Node
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.descriptors.ValueDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.allowedValues
+import space.kscience.dataforge.meta.descriptors.validate
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.misc.Type
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.provider.provideByType
 import space.kscience.dataforge.values.Null
 import space.kscience.dataforge.values.Value
@@ -42,8 +44,8 @@ public interface ValueChooser {
      *
      * @return
      */
-    public val descriptorProperty: ObjectProperty<ValueDescriptor?>
-    public var descriptor: ValueDescriptor?
+    public val descriptorProperty: ObjectProperty<MetaDescriptor?>
+    public var descriptor: MetaDescriptor?
 
     public val valueProperty: ObjectProperty<Value?>
     public var value: Value?
@@ -71,7 +73,7 @@ public interface ValueChooser {
     public companion object {
 
         private fun findWidgetByType(context: Context, type: String): Factory? {
-            return when (type.toName()) {
+            return when (Name.parse(type)) {
                 TextValueChooser.name -> TextValueChooser
                 ColorValueChooser.name -> ColorValueChooser
                 ComboBoxValueChooser.name -> ComboBoxValueChooser
@@ -79,7 +81,7 @@ public interface ValueChooser {
             }
         }
 
-        private fun build(context: Context, descriptor: ValueDescriptor?): ValueChooser {
+        private fun build(context: Context, descriptor: MetaDescriptor?): ValueChooser {
             return if (descriptor == null) {
                 TextValueChooser();
             } else {
@@ -93,7 +95,7 @@ public interface ValueChooser {
                             descriptor.widget
                         ) ?: TextValueChooser()
                     }
-                    descriptor.allowedValues.isNotEmpty() -> ComboBoxValueChooser()
+                    !descriptor.allowedValues.isNullOrEmpty() -> ComboBoxValueChooser()
                     else -> TextValueChooser()
                 }
                 chooser.descriptor = descriptor
@@ -101,10 +103,10 @@ public interface ValueChooser {
             }
         }
 
-        fun build(
+        public fun build(
             context: Context,
             value: ObservableValue<Value?>,
-            descriptor: ValueDescriptor? = null,
+            descriptor: MetaDescriptor? = null,
             setter: (Value) -> Unit,
         ): ValueChooser {
             val chooser = build(context, descriptor)
@@ -113,7 +115,7 @@ public interface ValueChooser {
                 chooser.setDisplayValue(it ?: Null)
             }
             chooser.setCallback { result ->
-                if (descriptor?.isAllowedValue(result) != false) {
+                if (descriptor?.validate(result) != false) {
                     setter(result)
                     ValueCallbackResponse(true, result, "OK")
                 } else {

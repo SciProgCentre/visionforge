@@ -1,8 +1,6 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.MutableItemProvider
-import space.kscience.dataforge.meta.set
-import space.kscience.dataforge.meta.value
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
@@ -11,11 +9,17 @@ import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionBuilder
 
 @VisionBuilder
-public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
+public class ColorAccessor(private val parent: MutableMetaProvider, private val colorKey: Name) {
     public var value: Value?
-        get() = parent.getItem(colorKey).value
+        get() = parent.getMeta(colorKey)?.value
         set(value) {
-            parent[colorKey] = value
+            parent.setValue(colorKey,value)
+        }
+
+    public var item: Meta?
+        get() = parent.getMeta(colorKey)
+        set(value) {
+            parent.setMeta(colorKey,value)
         }
 }
 

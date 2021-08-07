@@ -13,8 +13,12 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import react.dom.option
-import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.ValueDescriptor
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.boolean
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.allowedValues
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
@@ -24,14 +28,15 @@ import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
-    public var item: MetaItem?
-    public var descriptor: ValueDescriptor?
+    public var item: Meta?
+    public var descriptor: MetaDescriptor?
+
     //public var nullable: Boolean?
     public var valueChanged: ((Value?) -> Unit)?
 }
 
 @JsExport
-public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
+public val StringValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("StringValueChooser") { props ->
         var value by useState(props.item.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
@@ -46,7 +51,7 @@ public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
             value = (it.target as HTMLInputElement).value
         }
         styledInput(type = InputType.text) {
-            css{
+            css {
                 width = 100.pct
             }
             attrs {
@@ -58,14 +63,14 @@ public val StringValueChooser: FunctionalComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
+public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("BooleanValueChooser") { props ->
         val handleChange: (Event) -> Unit = {
             val newValue = (it.target as HTMLInputElement).checked
             props.valueChanged?.invoke(newValue.asValue())
         }
         styledInput(type = InputType.checkBox) {
-            css{
+            css {
                 width = 100.pct
             }
             attrs {
@@ -77,7 +82,7 @@ public val BooleanValueChooser: FunctionalComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
+public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("NumberValueChooser") { props ->
         var innerValue by useState(props.item.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
@@ -95,7 +100,7 @@ public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
             innerValue = (it.target as HTMLInputElement).value
         }
         styledInput(type = InputType.number) {
-            css{
+            css {
                 width = 100.pct
             }
             attrs {
@@ -116,7 +121,7 @@ public val NumberValueChooser: FunctionalComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val ComboValueChooser: FunctionalComponent<ValueChooserProps> =
+public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("ComboValueChooser") { props ->
         var selected by useState(props.item.string ?: "")
         val handleChange: (Event) -> Unit = {
@@ -124,7 +129,7 @@ public val ComboValueChooser: FunctionalComponent<ValueChooserProps> =
             props.valueChanged?.invoke(selected.asValue())
         }
         styledSelect {
-            css{
+            css {
                 width = 100.pct
             }
             props.descriptor?.allowedValues?.forEach {
@@ -141,10 +146,10 @@ public val ComboValueChooser: FunctionalComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val ColorValueChooser: FunctionalComponent<ValueChooserProps> =
+public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("ColorValueChooser") { props ->
         var value by useState(
-            props.item.value?.let { value ->
+            props.item?.value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
                 else value.string
             } ?: "#000000"
@@ -154,7 +159,7 @@ public val ColorValueChooser: FunctionalComponent<ValueChooserProps> =
             props.valueChanged?.invoke(value.asValue())
         }
         styledInput(type = InputType.color) {
-            css{
+            css {
                 width = 100.pct
                 margin(0.px)
             }
@@ -166,11 +171,11 @@ public val ColorValueChooser: FunctionalComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val ValueChooser: FunctionalComponent<ValueChooserProps> = functionalComponent("ValueChooser") { props ->
+public val ValueChooser: FunctionComponent<ValueChooserProps> = functionalComponent("ValueChooser") { props ->
     val rawInput by useState(false)
 
     val descriptor = props.descriptor
-    val type = descriptor?.type?.firstOrNull()
+    val type = descriptor?.valueTypes?.firstOrNull()
 
     when {
         rawInput -> child(StringValueChooser, props)
@@ -187,8 +192,8 @@ public val ValueChooser: FunctionalComponent<ValueChooserProps> = functionalComp
 
 internal fun RBuilder.valueChooser(
     name: Name,
-    item: MetaItem?,
-    descriptor: ValueDescriptor? = null,
+    item: Meta?,
+    descriptor: MetaDescriptor? = null,
     callback: (Value?) -> Unit,
 ) {
     child(ValueChooser) {

@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.SchemeSpec
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.int
 import space.kscience.visionforge.value
@@ -27,8 +27,8 @@ public class Camera : Scheme() {
         public const val FAR_CLIP: Double = 10000.0
         public const val FIELD_OF_VIEW: Int = 75
 
-        override val descriptor: NodeDescriptor  by lazy {
-            NodeDescriptor {
+        override val descriptor: MetaDescriptor  by lazy {
+            MetaDescriptor {
                 value(Camera::fov){
                     default(FIELD_OF_VIEW)
                 }

@@ -2,8 +2,9 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
-import space.kscience.dataforge.meta.MetaItem
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.values.asValue
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.get
 import kotlin.test.Test
@@ -24,10 +25,10 @@ class VisionUpdateTest {
                 color(123)
                 box(100,100,100)
             }
-            propertyChanged("top".toName(), SolidMaterial.MATERIAL_COLOR_KEY, MetaItem.of("red"))
-            propertyChanged("origin".toName(), SolidMaterial.MATERIAL_COLOR_KEY, MetaItem.of("red"))
+            propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
+            propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
-        targetVision.update(dif)
+        targetVision.change(dif)
         assertTrue { targetVision["top"] is SolidGroup }
         assertEquals("red", (targetVision["origin"] as Solid).color.string) // Should work
         assertEquals("#00007b", (targetVision["top"] as Solid).color.string) // new item always takes precedence
@@ -40,8 +41,8 @@ class VisionUpdateTest {
                 color(123)
                 box(100,100,100)
             }
-            propertyChanged("top".toName(), SolidMaterial.MATERIAL_COLOR_KEY, MetaItem.of("red"))
-            propertyChanged("origin".toName(), SolidMaterial.MATERIAL_COLOR_KEY, MetaItem.of("red"))
+            propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
+            propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
         val serialized = visionManager.jsonFormat.encodeToString(VisionChange.serializer(), change)
         println(serialized)

@@ -31,7 +31,7 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
     override fun render(element: Element, vision: Vision, meta: Meta) {
         val plot = (vision as? VisionOfPlotly)?.plot ?: error("VisionOfPlotly expected but ${vision::class} found")
         val config = PlotlyConfig.read(meta)
-        println(plot.config)
+        println(plot.meta)
         println(plot.data[0].toMeta())
         element.plot(plot, config)
     }

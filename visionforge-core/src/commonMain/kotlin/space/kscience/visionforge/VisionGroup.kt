@@ -75,12 +75,12 @@ public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision
     public val structureChanges: Flow<StructureChange>
 }
 
-public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(str.toName())
+public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
 
 public operator fun <V : Vision> VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit =
     set(token.asName(), child)
 
 public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit =
-    set(key?.toName(), child)
+    set(key?.let(Name::parse), child)
 
 public fun MutableVisionGroup.removeAll(): Unit = children.keys.map { it.asName() }.forEach { this[it] = null }

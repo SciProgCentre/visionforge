@@ -2,12 +2,14 @@ package space.kscience.visionforge.demo
 
 import javafx.geometry.Orientation
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.asConfig
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.node
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.values.ValueType
-import space.kscience.visionforge.editor.ConfigEditor
-import space.kscience.visionforge.editor.FXMeta
+import space.kscience.visionforge.editor.FXMetaModel
 import space.kscience.visionforge.editor.MetaViewer
+import space.kscience.visionforge.editor.MutableMetaEditor
 import tornadofx.*
 
 
@@ -15,7 +17,7 @@ class MetaEditorDemoApp : App(MetaEditorDemo::class)
 
 class MetaEditorDemo : View("Meta editor demo") {
 
-    val meta = Meta {
+    val meta = MutableMeta {
         "aNode" put {
             "innerNode" put {
                 "innerValue" put true
@@ -23,18 +25,16 @@ class MetaEditorDemo : View("Meta editor demo") {
             "b" put 223
             "c" put "StringValue"
         }
-    }.asConfig()
+    }
 
-    val descriptor = NodeDescriptor {
+    val descriptor = MetaDescriptor {
         node("aNode") {
             info = "A root demo node"
-            value("b") {
+            value("b", ValueType.NUMBER) {
                 info = "b number value"
-                type(ValueType.NUMBER)
             }
             node("otherNode") {
-                value("otherValue") {
-                    type(ValueType.BOOLEAN)
+                value("otherValue", ValueType.BOOLEAN) {
                     default(false)
                     info = "default value"
                 }
@@ -46,12 +46,13 @@ class MetaEditorDemo : View("Meta editor demo") {
         }
     }
 
-    private val rootNode = FXMeta.root(meta, descriptor)
+    private val rootNode = FXMetaModel.root(meta, descriptor)
 
-    override val root =
-        splitpane(Orientation.HORIZONTAL, MetaViewer(rootNode).root, ConfigEditor(
-            rootNode
-        ).root)
+    override val root = splitpane(
+        Orientation.HORIZONTAL,
+        MetaViewer(rootNode as Meta).root,
+        MutableMetaEditor(rootNode as FXMetaModel<MutableMeta>).root
+    )
 }
 
 fun main() {

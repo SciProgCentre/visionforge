@@ -4,7 +4,6 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
-import space.kscience.dataforge.meta.node
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
 import space.kscience.visionforge.solid.color
@@ -20,7 +19,10 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             setFromPoints(Array(obj.points.size) { obj.points[it].toVector() })
         }
 
-        val material = ThreeMaterials.getLineMaterial(obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY).node, true)
+        val material = ThreeMaterials.getLineMaterial(
+            obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY),
+            true
+        )
 
         material.linewidth = obj.thickness.toDouble()
         material.color = obj.color.string?.let { Color(it) } ?: DEFAULT_LINE_COLOR

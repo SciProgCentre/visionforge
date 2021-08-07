@@ -7,7 +7,7 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBase
 import space.kscience.visionforge.setProperty
@@ -27,7 +27,7 @@ public class VisionOfMarkup(
         }
 
     public companion object {
-        public val CONTENT_PROPERTY_KEY: Name = "content".toName()
+        public val CONTENT_PROPERTY_KEY: Name = "content".asName()
         public const val COMMONMARK_FORMAT: String = "markdown.commonmark"
         public const val GFM_FORMAT: String = "markdown.gfm"
     }

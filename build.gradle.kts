@@ -1,18 +1,13 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-
-    //Override kotlin version
-//    val kotlinVersion = "1.5.20-RC"
-//    kotlin("multiplatform") version(kotlinVersion) apply false
-//    kotlin("jvm") version(kotlinVersion) apply false
-//    kotlin("js") version(kotlinVersion) apply false
 }
 
-val dataforgeVersion by extra("0.5.0-dev-2")
+val dataforgeVersion by extra("0.5.0-dev-9")
 val fxVersion by extra("11")
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
         maven("https://repo.kotlin.link")
@@ -29,7 +24,7 @@ subprojects {
     }
 }
 
-ksciencePublish{
+ksciencePublish {
     github("visionforge")
     space()
     sonatype()

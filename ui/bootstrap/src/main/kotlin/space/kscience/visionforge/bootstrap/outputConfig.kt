@@ -12,6 +12,7 @@ import org.w3c.files.BlobPropertyBag
 import react.*
 import react.dom.attrs
 import react.dom.button
+import space.kscience.dataforge.meta.descriptors.defaultNode
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.react.flexColumn
@@ -43,7 +44,7 @@ public external interface CanvasControlsProps : RProps {
     public var vision: Vision?
 }
 
-public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
@@ -66,7 +67,7 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
         }
         propertyEditor(
             ownProperties = props.canvasOptions,
-            allProperties = props.canvasOptions.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            allProperties = props.canvasOptions.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

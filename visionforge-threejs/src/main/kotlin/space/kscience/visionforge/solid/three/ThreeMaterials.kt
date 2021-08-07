@@ -13,7 +13,7 @@ import space.kscience.dataforge.values.int
 import space.kscience.dataforge.values.string
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.ownProperties
+import space.kscience.visionforge.meta
 import space.kscience.visionforge.solid.SolidMaterial
 
 
@@ -41,7 +41,7 @@ public object ThreeMaterials {
     private val lineMaterialCache = HashMap<Meta, LineBasicMaterial>()
 
     private fun buildLineMaterial(meta: Meta): LineBasicMaterial = LineBasicMaterial().apply {
-        color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_LINE_COLOR
+        color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_LINE_COLOR
         opacity = meta[SolidMaterial.OPACITY_KEY].double ?: 1.0
         transparent = opacity < 1.0
         linewidth = meta["thickness"].double ?: 1.0
@@ -59,11 +59,12 @@ public object ThreeMaterials {
     private val materialCache = HashMap<Meta, Material>()
 
     internal fun buildMaterial(meta: Meta): Material {
+        val material = SolidMaterial.read(meta)
         return meta[SolidMaterial.SPECULAR_COLOR_KEY]?.let { specularColor ->
             MeshPhongMaterial().apply {
-                color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
-                specular = specularColor.getColor()
-                emissive = specular
+                color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
+                specular = specularColor.threeColor()
+                emissive = material.emissiveColor.item?.threeColor() ?: specular
                 reflectivity = 0.5
                 refractionRatio = 1.0
                 shininess = 100.0
@@ -73,7 +74,7 @@ public object ThreeMaterials {
                 needsUpdate = true
             }
         } ?: MeshBasicMaterial().apply {
-            color = meta[SolidMaterial.COLOR_KEY]?.getColor() ?: DEFAULT_COLOR
+            color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
             opacity = meta[SolidMaterial.OPACITY_KEY]?.double ?: 1.0
             transparent = opacity < 1.0
             wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
@@ -93,22 +94,19 @@ public object ThreeMaterials {
 /**
  * Infer color based on meta item
  */
-public fun MetaItem.getColor(): Color {
-    return when (this) {
-        is MetaItemValue -> if (this.value.type == ValueType.NUMBER) {
+public fun Meta.threeColor(): Color {
+    return value?.let { value ->
+        if (value.type == ValueType.NUMBER) {
             val int = value.int
             Color(int)
         } else {
-            Color(this.value.string)
+            Color(value.string)
         }
-        is MetaItemNode -> {
-            Color(
-                node[Colors.RED_KEY]?.int ?: 0,
-                node[Colors.GREEN_KEY]?.int ?: 0,
-                node[Colors.BLUE_KEY]?.int ?: 0
-            )
-        }
-    }
+    } ?: Color(
+        this[Colors.RED_KEY]?.int ?: 0,
+        this[Colors.GREEN_KEY]?.int ?: 0,
+        this[Colors.BLUE_KEY]?.int ?: 0
+    )
 }
 
 private var Material.cached: Boolean
@@ -119,7 +117,7 @@ private var Material.cached: Boolean
 
 public fun Mesh.updateMaterial(vision: Vision) {
     //val meta = vision.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node
-    val ownMaterialMeta = vision.ownProperties[SolidMaterial.MATERIAL_KEY]
+    val ownMaterialMeta = vision.meta()[SolidMaterial.MATERIAL_KEY]
     val parentMaterialMeta = vision.parent?.getProperty(
         SolidMaterial.MATERIAL_KEY,
         inherit = true,
@@ -135,7 +133,7 @@ public fun Mesh.updateMaterial(vision: Vision) {
                 inherit = false,
                 includeStyles = true,
                 includeDefaults = false
-            ).node?.let {
+            )?.let {
                 ThreeMaterials.cacheMaterial(it)
             } ?: ThreeMaterials.DEFAULT
         }
@@ -143,7 +141,7 @@ public fun Mesh.updateMaterial(vision: Vision) {
             vision.getProperty(
                 SolidMaterial.MATERIAL_KEY,
                 inherit = true
-            ).node?.let {
+            )?.let {
                 ThreeMaterials.buildMaterial(it)
             } ?: ThreeMaterials.DEFAULT
         }
@@ -162,7 +160,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                     inherit = true,
                     includeStyles = true,
                     includeDefaults = false
-                )?.getColor() ?: ThreeMaterials.DEFAULT_COLOR
+                )?.threeColor() ?: ThreeMaterials.DEFAULT_COLOR
                 material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_OPACITY_KEY -> {

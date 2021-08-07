@@ -1,8 +1,8 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.attributes
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
@@ -26,6 +26,8 @@ public class SolidMaterial : Scheme() {
      */
     public val specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
 
+    public val emissiveColor: ColorAccessor = ColorAccessor(this, "emissiveColor".asName())
+
     /**
      * Opacity
      */
@@ -48,43 +50,37 @@ public class SolidMaterial : Scheme() {
         public val WIREFRAME_KEY: Name = "wireframe".asName()
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
-        public override val descriptor: NodeDescriptor by lazy {
+        public override val descriptor: MetaDescriptor by lazy {
             //must be lazy to avoid initialization bug
-            NodeDescriptor {
+            MetaDescriptor {
                 inherited = true
                 usesStyles = true
 
-                value(COLOR_KEY) {
+                value(COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
                     usesStyles = true
-                    type(ValueType.STRING, ValueType.NUMBER)
                     widgetType = "color"
                 }
 
-                value(SPECULAR_COLOR_KEY) {
+                value(SPECULAR_COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
                     usesStyles = true
-                    type(ValueType.STRING, ValueType.NUMBER)
                     widgetType = "color"
                     hide()
                 }
 
-                value(OPACITY_KEY) {
+                value(OPACITY_KEY, ValueType.NUMBER) {
                     inherited = true
                     usesStyles = true
-                    type(ValueType.NUMBER)
                     default(1.0)
-                    attributes {
-                        this["min"] = 0.0
-                        this["max"] = 1.0
-                        this["step"] = 0.1
-                    }
+                    attributes["min"] = 0.0
+                    attributes["max"] = 1.0
+                    attributes["step"] = 0.1
                     widgetType = "slider"
                 }
-                value(WIREFRAME_KEY) {
+                value(WIREFRAME_KEY, ValueType.BOOLEAN) {
                     inherited = true
                     usesStyles = true
-                    type(ValueType.BOOLEAN)
                     default(false)
                 }
             }
@@ -94,21 +90,23 @@ public class SolidMaterial : Scheme() {
 
 public val Solid.color: ColorAccessor
     get() = ColorAccessor(
-        allProperties(inherit = true),
+        meta(inherit = true),
         MATERIAL_COLOR_KEY
     )
 
 public var Solid.material: SolidMaterial?
-    get() = getProperty(MATERIAL_KEY, inherit = true).node?.let { SolidMaterial.read(it) }
-    set(value) = setProperty(MATERIAL_KEY, value?.rootNode)
+    get() = getProperty(MATERIAL_KEY, inherit = true)?.let { SolidMaterial.read(it) }
+    set(value) = setPropertyNode(MATERIAL_KEY, value?.meta)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    ownProperties.getChild(MATERIAL_KEY).update(SolidMaterial, builder)
+    configure(MATERIAL_KEY){
+        updateWith(SolidMaterial,builder)
+    }
 }
 
 public var Solid.opacity: Number?
     get() = getProperty(MATERIAL_OPACITY_KEY, inherit = true).number
     set(value) {
-        setProperty(MATERIAL_OPACITY_KEY, value?.asValue())
+        setPropertyValue(MATERIAL_OPACITY_KEY, value?.asValue())
     }

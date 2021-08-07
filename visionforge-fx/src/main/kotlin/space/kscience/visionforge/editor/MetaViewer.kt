@@ -16,45 +16,42 @@
 
 package space.kscience.visionforge.editor
 
-import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeSortMode
 import javafx.scene.control.TreeTableView
+import javafx.scene.layout.BorderPane
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.values.string
 import space.kscience.visionforge.dfIconView
 import tornadofx.*
 
-class MetaViewer(val rootNode: FXMetaNode<*>, title: String = "Meta viewer") : Fragment(title,
-    dfIconView
-) {
-    constructor(meta: Meta, title: String = "Meta viewer"): this(
-        FXMeta.root(
-            meta
-        ),title = title)
+public class MetaViewer(
+    private val rootNode: FXMetaModel<Meta>,
+    title: String = "Meta viewer"
+) : Fragment(title, dfIconView) {
 
-    override val root = borderpane {
+    public constructor(meta: Meta, title: String = "Meta viewer") : this(
+        FXMetaModel.root(
+            meta
+        ), title = title
+    )
+
+    override val root: BorderPane = borderpane {
         center {
-            treetableview<FXMeta<*>> {
+            treetableview<FXMetaModel<*>> {
                 isShowRoot = false
                 root = TreeItem(rootNode)
                 populate {
-                    when (val fxMeta = it.value) {
-                        is FXMetaNode -> {
-                            fxMeta.children
-                        }
-                        is FXMetaValue -> null
-                    }
+                    val fxMeta = it.value
+                    fxMeta.children
                 }
                 root.isExpanded = true
                 sortMode = TreeSortMode.ALL_DESCENDANTS
                 columnResizePolicy = TreeTableView.CONSTRAINED_RESIZE_POLICY
-                column("Name", FXMeta<*>::name)
-                column<FXMeta<*>, String>("Value") { cellDataFeatures ->
-                    when (val item = cellDataFeatures.value.value) {
-                        is FXMetaValue -> item.valueProperty.stringBinding { it?.string ?: "" }
-                        is FXMetaNode -> SimpleStringProperty("[node]")
-                    }
+                column("Name", FXMetaModel<*>::title)
+                column<FXMetaModel<*>, String>("Value") { cellDataFeatures ->
+                    val item = cellDataFeatures.value.value
+                    item.valueProperty.stringBinding { it?.string ?: "" }
                 }
             }
         }

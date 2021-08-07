@@ -4,14 +4,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.Described
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.get
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.Vision.Companion.TYPE
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -45,13 +46,13 @@ public interface Vision : Described, CoroutineScope {
         inherit: Boolean = false,
         includeStyles: Boolean = true,
         includeDefaults: Boolean = true,
-    ): MetaItem?
+    ): Meta?
 
     /**
      * Get an intrinsic property of this Vision excluding any inheritance or defaults. In most cases should be the same as
      * `getProperty(name, false, false, false`.
      */
-    public fun getOwnProperty(name: Name): MetaItem? = getProperty(
+    public fun getOwnProperty(name: Name): Meta? = getProperty(
         name,
         inherit = false,
         includeStyles = false,
@@ -59,9 +60,14 @@ public interface Vision : Described, CoroutineScope {
     )
 
     /**
-     * Set the property value
+     * Replace the property node. If [node] is null remove node and its descendants
      */
-    public fun setProperty(name: Name, item: MetaItem?, notify: Boolean = true)
+    public fun setPropertyNode(name: Name, node: Meta?, notify: Boolean = true)
+
+    /**
+     * Set a value of specific property node
+     */
+    public fun setPropertyValue(name: Name, value: Value?, notify: Boolean = true)
 
     /**
      * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
@@ -77,9 +83,9 @@ public interface Vision : Described, CoroutineScope {
     /**
      * Update this vision using a dif represented by [VisionChange].
      */
-    public fun update(change: VisionChange)
+    public fun change(change: VisionChange)
 
-    override val descriptor: NodeDescriptor?
+    override val descriptor: MetaDescriptor?
 
     public companion object {
         public const val TYPE: String = "vision"
@@ -88,11 +94,6 @@ public interface Vision : Described, CoroutineScope {
         public val VISIBLE_KEY: Name = "visible".asName()
     }
 }
-
-/**
- * Root property node
- */
-public val Vision.meta: Meta get() = ownProperties[Name.EMPTY]?.node ?: Meta.EMPTY
 
 /**
  * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
@@ -105,30 +106,25 @@ public fun Vision.onPropertyChange(scope: CoroutineScope, callback: suspend (Nam
 /**
  * Own properties, excluding inheritance, styles and descriptor
  */
-public val Vision.ownProperties: MutableItemProvider
-    get() = object : MutableItemProvider {
-        override fun getItem(name: Name): MetaItem? = getOwnProperty(name)
-        override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
-    }
-
-/**
- * Convenient accessor for all properties of a vision.
- * @param inherit - inherit property value from the parent by default. If null, inheritance is inferred from descriptor
- */
-public fun Vision.allProperties(
-    inherit: Boolean? = null,
-    includeStyles: Boolean? = null,
+public fun Vision.meta(
+    inherit: Boolean = false,
+    includeStyles: Boolean = true,
     includeDefaults: Boolean = true,
-): MutableItemProvider = object : MutableItemProvider {
-    override fun getItem(name: Name): MetaItem? = getProperty(
-        name,
-        inherit = inherit ?: (descriptor?.get(name)?.inherited == true),
-        includeStyles = includeStyles ?: (descriptor?.get(name)?.usesStyles != false),
-        includeDefaults = includeDefaults
-    )
+): MutableMeta = VisionProperties(this, Name.EMPTY, inherit, includeStyles, includeDefaults)
 
-    override fun setItem(name: Name, item: MetaItem?): Unit = setProperty(name, item)
+public fun Vision.configure(target: Name = Name.EMPTY, block: MutableMeta.() -> Unit): Unit {
+    VisionProperties(this, target).apply(block)
 }
+
+public fun Vision.configure(meta: Meta) {
+    configure(Name.EMPTY) {
+        update(meta)
+    }
+}
+
+public fun Vision.configure(block: MutableMeta.() -> Unit): Unit = configure(Meta(block))
+
+public fun Vision.getOwnProperty(key: String): Meta? = getOwnProperty(Name.parse(key))
 
 /**
  * Get [Vision] property using key as a String
@@ -138,18 +134,20 @@ public fun Vision.getProperty(
     inherit: Boolean = false,
     includeStyles: Boolean = true,
     includeDefaults: Boolean = true,
-): MetaItem? = getProperty(key.toName(), inherit, includeStyles, includeDefaults)
+): Meta? = getProperty(Name.parse(key), inherit, includeStyles, includeDefaults)
+
 
 /**
- * A convenience method to pair [getProperty]
+ * A convenience method to set property node or value. If Item is null, then node is removed, not a value
  */
-public fun Vision.setProperty(key: Name, item: Any?) {
-    setProperty(key, MetaItem.of(item))
+public fun Vision.setProperty(name: Name, item: Any?) {
+    when (item) {
+        null -> setPropertyNode(name, null)
+        is Meta -> setPropertyNode(name, item)
+        is Value -> setPropertyValue(name, item)
+    }
 }
 
-/**
- * A convenience method to pair [getProperty]
- */
-public fun Vision.setProperty(key: String, item: Any?) {
-    setProperty(key.toName(), MetaItem.of(item))
+public fun Vision.setPropertyNode(key: String, item: Any?) {
+    setProperty(Name.parse(key), item)
 }

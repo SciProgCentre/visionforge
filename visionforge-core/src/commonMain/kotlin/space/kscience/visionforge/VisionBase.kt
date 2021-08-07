@@ -7,20 +7,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.defaultNode
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.Null
+import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 import kotlin.jvm.Synchronized
-
-internal data class PropertyListener(
-    val owner: Any? = null,
-    val action: (name: Name) -> Unit,
-)
 
 /**
  * A full base implementation for a [Vision]
@@ -29,14 +26,17 @@ internal data class PropertyListener(
 @Serializable
 @SerialName("vision")
 public open class VisionBase(
-    override @Transient var parent: VisionGroup? = null,
-    protected var properties: MutableItemProvider? = null
+    @Transient override var parent: VisionGroup? = null,
+    @Serializable(MutableMetaSerializer::class)
+    protected var properties: MutableMeta? = null
 ) : Vision {
 
+    //protected val observableProperties: ObservableMutableMeta by lazy { properties.asObservable() }
+
     @Synchronized
-    protected fun getOrCreateProperties(): MutableItemProvider {
+    protected fun getOrCreateProperties(): MutableMeta {
         if (properties == null) {
-            val newProperties = MetaBuilder()
+            val newProperties = MutableMeta()
             properties = newProperties
         }
         return properties!!
@@ -45,18 +45,14 @@ public open class VisionBase(
     /**
      * A fast accessor method to get own property (no inheritance or styles
      */
-    override fun getOwnProperty(name: Name): MetaItem? = if (name == Name.EMPTY) {
-        properties?.rootItem
-    } else {
-        properties?.getItem(name)
-    }
+    override fun getOwnProperty(name: Name): Meta? = properties?.getMeta(name)
 
     override fun getProperty(
         name: Name,
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
+    ): Meta? = if (!inherit && !includeStyles && !includeDefaults) {
         getOwnProperty(name)
     } else {
         buildList {
@@ -68,22 +64,32 @@ public open class VisionBase(
                 add(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
             }
             if (includeDefaults) {
-                add(descriptor?.defaultMeta?.get(name))
+                add(descriptor?.defaultNode?.get(name))
             }
         }.merge()
     }
 
-    override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-        val oldItem = properties?.getItem(name)
-        if(oldItem!= item) {
-            getOrCreateProperties().setItem(name, item)
+    override fun setPropertyNode(name: Name, node: Meta?, notify: Boolean) {
+        val oldItem = properties?.get(name)
+        if (oldItem != node) {
+            getOrCreateProperties().setMeta(name, node)
             if (notify) {
                 invalidateProperty(name)
             }
         }
     }
 
-    override val descriptor: NodeDescriptor? get() = null
+    override fun setPropertyValue(name: Name, value: Value?, notify: Boolean) {
+        val oldItem = properties?.get(name)?.value
+        if (oldItem != value) {
+            getOrCreateProperties()[name] = value
+            if (notify) {
+                invalidateProperty(name)
+            }
+        }
+    }
+
+    override val descriptor: MetaDescriptor? get() = null
 
     private suspend fun updateStyles(names: List<String>) {
         names.mapNotNull { getStyle(it) }.asSequence()
@@ -111,31 +117,23 @@ public open class VisionBase(
         }
     }
 
-    override fun update(change: VisionChange) {
+    override fun change(change: VisionChange) {
         change.properties?.let {
-            updateProperties(Name.EMPTY, it.asMetaItem())
+            updateProperties(Name.EMPTY, it)
         }
     }
 
     public companion object {
-        public val descriptor: NodeDescriptor = NodeDescriptor {
-            value(STYLE_KEY) {
-                type(ValueType.STRING)
+        public val descriptor: MetaDescriptor = MetaDescriptor {
+            value(STYLE_KEY, ValueType.STRING) {
                 multiple = true
             }
         }
 
-        public fun Vision.updateProperties(at: Name, item: MetaItem) {
-            when (item) {
-                is MetaItemValue -> {
-                    if (item.value == Null) {
-                        setProperty(at, null)
-                    } else
-                        setProperty(at, item)
-                }
-                is MetaItemNode -> item.node.items.forEach { (token, childItem) ->
-                    updateProperties(at + token, childItem)
-                }
+        public fun Vision.updateProperties(at: Name, item: Meta) {
+            setPropertyValue(at, item.value)
+            item.items.forEach { (token, item) ->
+                updateProperties(at + token, item)
             }
         }
 

@@ -6,7 +6,7 @@ import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
-import react.FunctionalComponent
+import react.FunctionComponent
 import react.dom.attrs
 import react.functionalComponent
 import react.useState
@@ -18,7 +18,7 @@ import styled.css
 import styled.styledInput
 
 @JsExport
-public val RangeValueChooser: FunctionalComponent<ValueChooserProps> =
+public val RangeValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("RangeValueChooser") { props ->
         var innerValue by useState(props.item.double)
         var rangeDisabled: Boolean by useState(props.item == null)

@@ -6,6 +6,7 @@ import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.removeAll
 import space.kscience.visionforge.root
+import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 

@@ -90,7 +90,7 @@ public fun Mesh.applyEdges(obj: Solid) {
                 MeshThreeFactory.EDGES_MATERIAL_KEY,
                 inherit = true,
                 includeStyles = true
-            ).node,
+            ),
             true
         )
         if (edges == null) {

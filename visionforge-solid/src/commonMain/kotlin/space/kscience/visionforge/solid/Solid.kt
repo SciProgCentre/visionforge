@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
@@ -35,7 +35,7 @@ import kotlin.reflect.KProperty
  */
 public interface Solid : Vision {
 
-    override val descriptor: NodeDescriptor get() = Companion.descriptor
+    override val descriptor: MetaDescriptor get() = Companion.descriptor
 
     public companion object {
         //        val SELECTED_KEY = "selected".asName()
@@ -69,39 +69,38 @@ public interface Solid : Vision {
         public val Y_SCALE_KEY: Name = SCALE_KEY + Y_KEY
         public val Z_SCALE_KEY: Name = SCALE_KEY + Z_KEY
 
-        public val descriptor: NodeDescriptor by lazy {
-            NodeDescriptor {
-                value(VISIBLE_KEY) {
+        public val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
+                value(VISIBLE_KEY, ValueType.BOOLEAN) {
                     inherited = false
-                    type(ValueType.BOOLEAN)
                     default(true)
                 }
 
                 //TODO replace by descriptor merge
-                value(Vision.STYLE_KEY) {
-                    type(ValueType.STRING)
+                value(Vision.STYLE_KEY, ValueType.STRING) {
                     multiple = true
                     hide()
                 }
 
-                node(POSITION_KEY){
+                node(POSITION_KEY) {
                     hide()
                 }
 
-                node(ROTATION_KEY){
+                node(ROTATION_KEY) {
                     hide()
                 }
 
-                node(SCALE_KEY){
+                node(SCALE_KEY) {
                     hide()
                 }
 
-                value(DETAIL_KEY) {
-                    type(ValueType.NUMBER)
+                value(DETAIL_KEY, ValueType.NUMBER) {
                     hide()
                 }
 
-                item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
+                item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial){
+                    valueRequirement = ValueRequirement.ABSENT
+                }
 
                 enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
                     hide()
@@ -115,7 +114,7 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = allProperties().getItem(LAYER_KEY).int ?: 0
+    get() = getProperty(LAYER_KEY, inherit = true).int ?: 0
     set(value) {
         setProperty(LAYER_KEY, value)
     }
@@ -136,7 +135,7 @@ public enum class RotationOrder {
  */
 public var Solid.rotationOrder: RotationOrder
     get() = getProperty(Solid.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(Solid.ROTATION_ORDER_KEY, value.name.asValue())
+    set(value) = setPropertyValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
@@ -144,7 +143,7 @@ public var Solid.rotationOrder: RotationOrder
  */
 public var Solid.detail: Int?
     get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setProperty(DETAIL_KEY, value?.asValue())
+    set(value) = setPropertyValue(DETAIL_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
@@ -152,7 +151,7 @@ public var Solid.detail: Int?
  */
 public var Vision.ignore: Boolean?
     get() = getProperty(IGNORE_KEY, false).boolean
-    set(value) = setProperty(IGNORE_KEY, value?.asValue())
+    set(value) = setPropertyValue(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
@@ -182,7 +181,7 @@ internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
             if (value == null) {
-                thisRef.setProperty(name, null)
+                thisRef.setPropertyNode(name, null)
             } else {
                 thisRef.setProperty(name + X_KEY, value.x)
                 thisRef.setProperty(name + Y_KEY, value.y)

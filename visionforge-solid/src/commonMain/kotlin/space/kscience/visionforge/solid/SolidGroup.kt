@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
@@ -40,7 +40,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
         }
 
 
-    override val descriptor: NodeDescriptor get() = Solid.descriptor
+    override val descriptor: MetaDescriptor get() = Solid.descriptor
 
     /**
      * Get a prototype redirecting the request to the parent if prototype is not found.
@@ -60,9 +60,9 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override fun createGroup(): SolidGroup = SolidGroup()
 
-    override fun update(change: VisionChange) {
+    override fun change(change: VisionChange) {
         updatePosition(change.properties)
-        super.update(change)
+        super.change(change)
     }
 
     public companion object {

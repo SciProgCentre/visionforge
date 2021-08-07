@@ -6,9 +6,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.VisionLayout
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -23,7 +22,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
         "title" put title
     }
     val vision = SolidGroup(block)
-    render(name.toName(), vision)
+    render(Name.parse(name), vision)
 }
 
 val canvasOptions = Canvas3DOptions {
