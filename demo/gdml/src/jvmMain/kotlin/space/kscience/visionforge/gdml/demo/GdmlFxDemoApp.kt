@@ -7,7 +7,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.describedProperties
+import space.kscience.visionforge.computeProperties
 import space.kscience.visionforge.editor.VisionEditorFragment
 import space.kscience.visionforge.editor.VisionTreeFragment
 import space.kscience.visionforge.gdml.toVision
@@ -34,10 +34,10 @@ class GDMLView : View() {
     }
 
     private val propertyEditor = VisionEditorFragment {
-        it.describedProperties
+        it.computeProperties()
     }.apply {
         descriptorProperty.set(SolidMaterial.descriptor)
-        itemProperty.bind(treeFragment.selectedProperty)
+        visionProperty.bind(treeFragment.selectedProperty)
     }
 
     override val root: Parent = borderpane {

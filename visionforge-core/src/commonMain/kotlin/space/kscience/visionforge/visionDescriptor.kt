@@ -2,7 +2,6 @@ package space.kscience.visionforge
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.*
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.asValue
 
 private const val INHERITED_DESCRIPTOR_ATTRIBUTE = "inherited"
@@ -22,14 +21,6 @@ public val MetaDescriptor.usesStyles: Boolean
 public var MetaDescriptorBuilder.usesStyles: Boolean
     get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean ?: true
     set(value) = attributes.set(STYLE_DESCRIPTOR_ATTRIBUTE, value)
-
-
-public val Vision.describedProperties: Meta
-    get() = Meta {
-        descriptor?.children?.forEach { (key, descriptor) ->
-            this.setMeta(key.asName(), getProperty(key, inherit = descriptor.inherited))
-        }
-    }
 
 public val MetaDescriptor.widget: Meta
     get() = attributes["widget"] ?: Meta.EMPTY

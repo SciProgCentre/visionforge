@@ -8,6 +8,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.ValueType
 import space.kscience.dataforge.values.asValue
+import space.kscience.dataforge.values.number
 import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
@@ -19,14 +20,14 @@ public class SolidMaterial : Scheme() {
     /**
      * Primary web-color for the material
      */
-    public val color: ColorAccessor = ColorAccessor(this, COLOR_KEY)
+    public val color: ColorAccessor = ColorAccessor(COLOR_KEY) { meta }
 
     /**
      * Specular color for phong material
      */
-    public val specularColor: ColorAccessor = ColorAccessor(this, SPECULAR_COLOR_KEY)
+    public val specularColor: ColorAccessor = ColorAccessor(SPECULAR_COLOR_KEY) { meta }
 
-    public val emissiveColor: ColorAccessor = ColorAccessor(this, "emissiveColor".asName())
+    public val emissiveColor: ColorAccessor = ColorAccessor("emissiveColor".asName()) { meta }
 
     /**
      * Opacity
@@ -89,24 +90,19 @@ public class SolidMaterial : Scheme() {
 }
 
 public val Solid.color: ColorAccessor
-    get() = ColorAccessor(
-        meta(inherit = true),
-        MATERIAL_COLOR_KEY
-    )
+    get() = ColorAccessor(MATERIAL_COLOR_KEY) { computeProperties() }
 
 public var Solid.material: SolidMaterial?
-    get() = getProperty(MATERIAL_KEY, inherit = true)?.let { SolidMaterial.read(it) }
-    set(value) = setPropertyNode(MATERIAL_KEY, value?.meta)
+    get() = computePropertyNode(MATERIAL_KEY)?.let { SolidMaterial.read(it) }
+    set(value) = meta.setMeta(MATERIAL_KEY, value?.meta)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    configure(MATERIAL_KEY){
-        updateWith(SolidMaterial,builder)
-    }
+    meta.getOrCreate(MATERIAL_KEY).updateWith(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?
-    get() = getProperty(MATERIAL_OPACITY_KEY, inherit = true).number
+    get() = getPropertyValue(MATERIAL_OPACITY_KEY, inherit = true)?.number
     set(value) {
-        setPropertyValue(MATERIAL_OPACITY_KEY, value?.asValue())
+        meta.setValue(MATERIAL_OPACITY_KEY, value?.asValue())
     }

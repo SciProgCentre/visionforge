@@ -11,8 +11,8 @@ import space.kscience.visionforge.VisionChange
 public open class SolidBase : VisionBase(), Solid {
     override val descriptor: MetaDescriptor get() = Solid.descriptor
 
-    override fun change(change: VisionChange) {
+    override fun update(change: VisionChange) {
         updatePosition(change.properties)
-        super.change(change)
+        super.update(change)
     }
 }

@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.configure
 import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.*
 
@@ -29,20 +30,20 @@ public inline fun VisionContainerBuilder<Solid>.composite(
     val group = SolidGroup().apply(builder)
     val children = group.children.values.filterIsInstance<Solid>()
     if (children.size != 2) error("Composite requires exactly two children")
-    return Composite(type, children[0], children[1]).also { composite ->
-        composite.configure {
-            update(group.meta())
+    return Composite(type, children[0], children[1]).apply {
+        configure {
+            update(group.meta)
         }
         if (group.position != null) {
-            composite.position = group.position
+            position = group.position
         }
         if (group.rotation != null) {
-            composite.rotation = group.rotation
+            rotation = group.rotation
         }
         if (group.scale != null) {
-            composite.scale = group.scale
+            scale = group.scale
         }
-        set(name, composite)
+        set(name, this)
     }
 }
 

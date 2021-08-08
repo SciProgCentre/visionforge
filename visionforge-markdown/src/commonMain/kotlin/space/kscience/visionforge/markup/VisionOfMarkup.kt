@@ -21,7 +21,7 @@ public class VisionOfMarkup(
     //TODO add templates
 
     public var content: String?
-        get() = getOwnProperty(CONTENT_PROPERTY_KEY).string
+        get() = meta.getMeta(CONTENT_PROPERTY_KEY).string
         set(value) {
             setProperty(CONTENT_PROPERTY_KEY, value)
         }

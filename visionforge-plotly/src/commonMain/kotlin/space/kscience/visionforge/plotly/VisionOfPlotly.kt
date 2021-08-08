@@ -2,8 +2,6 @@ package space.kscience.visionforge.plotly
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.MutableMeta
-import space.kscience.dataforge.meta.asObservable
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
@@ -18,7 +16,7 @@ public class VisionOfPlotly private constructor() : VisionBase() {
         properties = plot.meta
     }
 
-    public val plot: Plot get() = Plot(properties?.asObservable() ?: MutableMeta())
+    public val plot: Plot get() = Plot(meta)
 }
 
 public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)

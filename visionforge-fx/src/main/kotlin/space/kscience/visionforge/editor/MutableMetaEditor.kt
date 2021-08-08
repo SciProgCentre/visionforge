@@ -5,6 +5,7 @@
  */
 package space.kscience.visionforge.editor
 
+import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTreeTableCell
 import javafx.scene.layout.BorderPane
@@ -13,6 +14,7 @@ import javafx.scene.text.Text
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.remove
 import space.kscience.visionforge.dfIconView
 import tornadofx.*
 
@@ -32,8 +34,7 @@ public class MutableMetaEditor(
         MutableMeta: MutableMeta,
         descriptor: MetaDescriptor?,
         title: String = "Configuration editor"
-    ) :
-            this(FXMetaModel.root(MutableMeta, descriptor = descriptor), title = title)
+    ) : this(FXMetaModel.root(MutableMeta, descriptor = descriptor), title = title)
 
     override val root: BorderPane = borderpane {
         center = treetableview<FXMetaModel<MutableMeta>> {
@@ -64,7 +65,7 @@ public class MutableMetaEditor(
                                         contextmenu {
                                             item("Remove") {
                                                 action {
-                                                    content.remove()
+                                                    content.root.remove(content.nodeName)
                                                 }
                                             }
                                         }
@@ -83,7 +84,7 @@ public class MutableMetaEditor(
             }
 
             column("Description") { param: TreeTableColumn.CellDataFeatures<FXMetaModel<MutableMeta>, String> ->
-                (param.value.value.descriptor?.info ?: "").observable()
+                SimpleStringProperty(param.value.value.descriptor?.info ?: "")
             }.setCellFactory { param: TreeTableColumn<FXMetaModel<MutableMeta>, String> ->
                 val cell = TreeTableCell<FXMetaModel<MutableMeta>, String>()
                 val text = Text()
@@ -126,51 +127,10 @@ public class MutableMetaEditor(
                         Global,
                         item.valueProperty,
                         item.descriptor
-                    ) {
-                        item.setValue(it)
+                    ) { value ->
+                        item.root.setValue(item.nodeName, value)
                     }
                     graphic = chooser.node
-//                    when (item) {
-//                        is FXMetaValue<MutableMeta> -> {
-//                            text = null
-//                            val chooser = ValueChooser.build(
-//                                Global,
-//                                item.valueProperty,
-//                                item.descriptor
-//                            ) {
-//                                item.set(it)
-//                            }
-//                            graphic = chooser.node
-//                        }
-//                        is FXMetaNode<MutableMeta> -> {
-//                            if (allowNew) {
-//                                text = null
-//                                graphic = HBox().apply {
-//                                    val glyph: Node = FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE)
-//                                    button("node", graphic = glyph) {
-//                                        hgrow = Priority.ALWAYS
-//                                        maxWidth = Double.POSITIVE_INFINITY
-//                                        action {
-//                                            showNodeDialog()?.let {
-//                                                item.addNode(it)
-//                                            }
-//                                        }
-//                                    }
-//                                    button("value", graphic = FontAwesomeIconView(FontAwesomeIcon.PLUS_SQUARE)) {
-//                                        hgrow = Priority.ALWAYS
-//                                        maxWidth = Double.POSITIVE_INFINITY
-//                                        action {
-//                                            showValueDialog()?.let {
-//                                                item.addValue(it)
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            } else {
-//                                text = ""
-//                            }
-//                        }
-//                    }
 
                 } else {
                     text = null

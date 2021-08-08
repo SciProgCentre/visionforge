@@ -137,7 +137,7 @@ public class VisionServer internal constructor(
                     val change = visionManager.jsonFormat.decodeFromString(
                         VisionChange.serializer(), it.data.decodeToString()
                     )
-                    vision.change(change)
+                    vision.update(change)
                 }
             }
 

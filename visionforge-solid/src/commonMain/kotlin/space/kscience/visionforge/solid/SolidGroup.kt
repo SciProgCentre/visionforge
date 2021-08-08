@@ -60,9 +60,9 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override fun createGroup(): SolidGroup = SolidGroup()
 
-    override fun change(change: VisionChange) {
+    override fun update(change: VisionChange) {
         updatePosition(change.properties)
-        super.change(change)
+        super.update(change)
     }
 
     public companion object {

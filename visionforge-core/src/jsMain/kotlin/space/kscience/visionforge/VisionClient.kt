@@ -92,7 +92,7 @@ public class VisionClient : AbstractPlugin() {
                             }
 
                             logger.debug { "Got update $change for output with name $name" }
-                            vision.change(change)
+                            vision.update(change)
                         } else {
                             console.error("WebSocket message data is not a string")
                         }

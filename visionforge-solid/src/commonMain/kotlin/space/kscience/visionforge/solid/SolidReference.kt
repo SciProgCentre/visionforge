@@ -1,12 +1,10 @@
 package space.kscience.visionforge.solid
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.*
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.*
@@ -17,6 +15,18 @@ public interface SolidReference : VisionGroup {
      * The prototype for this reference. Always returns a "real" prototype, not a reference
      */
     public val prototype: Solid
+
+    override fun getPropertyValue(name: Name, inherit: Boolean, includeStyles: Boolean, includeDefaults: Boolean): Value? {
+        meta[name]?.value?.let { return it }
+        if (includeStyles) {
+            getStyleProperty(name)?.let { return it }
+        }
+        prototype.getPropertyValue(name, inherit, includeStyles, includeDefaults)?.let { return it }
+        if (inherit) {
+            parent?.getPropertyValue(name, inherit, includeStyles, includeDefaults)?.let { return it }
+        }
+        return null
+    }
 }
 
 
@@ -30,27 +40,6 @@ public val Vision.unref: Solid
         is Solid -> this
         else -> error("This Vision is neither Solid nor SolidReference")
     }
-
-
-private fun SolidReference.getRefProperty(
-    name: Name,
-    inherit: Boolean,
-    includeStyles: Boolean,
-    includeDefaults: Boolean,
-): Meta? = if (!inherit && !includeStyles && !includeDefaults) {
-    getOwnProperty(name)
-} else {
-    buildList {
-        add(getOwnProperty(name))
-        if (includeStyles) {
-            addAll(getStyleItems(name))
-        }
-        add(prototype.getProperty(name, inherit, includeStyles, includeDefaults))
-        if (inherit) {
-            add(parent?.getProperty(name, inherit))
-        }
-    }.merge()
-}
 
 private fun childToken(childName: Name): NameToken =
     NameToken(SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX, childName.toString())
@@ -83,12 +72,8 @@ public class SolidReferenceGroup(
                 ReferenceChild(this, it.key.asName())
             } ?: emptyMap()
 
-    override fun getProperty(
-        name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
-        includeDefaults: Boolean,
-    ): Meta? = getRefProperty(name, inherit, includeStyles, includeDefaults)
+    override fun getPropertyValue(name: Name, inherit: Boolean, includeStyles: Boolean, includeDefaults: Boolean): Value? =
+        super<SolidReference>.getPropertyValue(name, inherit, includeStyles, includeDefaults)
 
     override val descriptor: MetaDescriptor get() = prototype.descriptor
 
@@ -111,30 +96,16 @@ public class SolidReferenceGroup(
             }
         }
 
+        override val meta: ObservableMutableMeta by lazy {
+            owner.meta.getOrCreate(childToken(refName).asName())
+        }
+
         override val children: Map<NameToken, Vision>
             get() = (prototype as? VisionGroup)?.children
                 ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
                 ?.mapValues { (key, _) ->
                     ReferenceChild(owner, refName + key.asName())
                 } ?: emptyMap()
-
-        override fun getOwnProperty(name: Name): Meta? =
-            owner.getOwnProperty(childPropertyName(refName, name))
-
-        override fun setPropertyNode(name: Name, node: Meta?, notify: Boolean) {
-            owner.setPropertyNode(childPropertyName(refName, name), node, notify)
-        }
-
-        override fun setPropertyValue(name: Name, value: Value?, notify: Boolean) {
-            owner.setPropertyValue(childPropertyName(refName, name), value, notify)
-        }
-
-        override fun getProperty(
-            name: Name,
-            inherit: Boolean,
-            includeStyles: Boolean,
-            includeDefaults: Boolean,
-        ): Meta? = getRefProperty(name, inherit, includeStyles, includeDefaults)
 
         override var parent: VisionGroup?
             get() {
@@ -145,21 +116,11 @@ public class SolidReferenceGroup(
                 error("Setting a parent for a reference child is not possible")
             }
 
-        @DFExperimental
-        override val propertyChanges: Flow<Name>
-            get() = owner.propertyChanges.mapNotNull { name ->
-                if (name.startsWith(childToken(refName))) {
-                    name.cutFirst()
-                } else {
-                    null
-                }
-            }
-
         override fun invalidateProperty(propertyName: Name) {
             owner.invalidateProperty(childPropertyName(refName, propertyName))
         }
 
-        override fun change(change: VisionChange) {
+        override fun update(change: VisionChange) {
             change.properties?.let {
                 updateProperties(Name.EMPTY, it)
             }

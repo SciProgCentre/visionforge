@@ -1,9 +1,6 @@
 package space.kscience.visionforge.solid.demo
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
@@ -76,7 +73,7 @@ fun VisionLayout<Solid>.showcase() {
                 //override color for this cube
                 color(1530)
 
-                launch(Dispatchers.Main) {
+                GlobalScope.launch(Dispatchers.Main) {
                     while (isActive) {
                         delay(500)
                         visible = !(visible ?: false)
@@ -85,7 +82,7 @@ fun VisionLayout<Solid>.showcase() {
             }
         }
 
-        launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             val random = Random(111)
             while (isActive) {
                 delay(1000)

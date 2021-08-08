@@ -5,6 +5,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
 import kotlin.jvm.JvmInline
 
@@ -14,7 +15,7 @@ import kotlin.jvm.JvmInline
 @JvmInline
 public value class StyleSheet(private val owner: VisionGroup) {
 
-    private val styleNode: Meta? get() = owner.getOwnProperty(STYLESHEET_KEY)
+    private val styleNode: Meta? get() = owner.meta[STYLESHEET_KEY]
 
     public val items: Map<NameToken, Meta>? get() = styleNode?.items
 
@@ -24,7 +25,7 @@ public value class StyleSheet(private val owner: VisionGroup) {
      * Define a style without notifying owner
      */
     public fun define(key: String, style: Meta?) {
-        owner.setPropertyNode(STYLESHEET_KEY + key, style)
+        owner.meta.setMeta(STYLESHEET_KEY + key, style)
     }
 
     /**
@@ -71,9 +72,9 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
  * List of names of styles applied to this object. Order matters. Not inherited.
  */
 public var Vision.styles: List<String>
-    get() = getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    get() = meta.getMeta(Vision.STYLE_KEY)?.stringList ?: emptyList()
     set(value) {
-        setPropertyValue(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
+        meta.setValue(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
     }
 
 /**
@@ -86,7 +87,7 @@ public val VisionGroup.styleSheet: StyleSheet get() = StyleSheet(this)
  * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
  */
 public fun Vision.useStyle(name: String) {
-    styles = (getOwnProperty(Vision.STYLE_KEY)?.stringList ?: emptyList()) + name
+    styles = (meta.getMeta(Vision.STYLE_KEY)?.stringList ?: emptyList()) + name
 }
 
 
@@ -94,7 +95,12 @@ public fun Vision.useStyle(name: String) {
  * Find a style with given name for given [Vision]. The style is not necessary applied to this [Vision].
  */
 public tailrec fun Vision.getStyle(name: String): Meta? =
-    getOwnProperty(StyleSheet.STYLESHEET_KEY + name) ?: parent?.getStyle(name)
+    meta.getMeta(StyleSheet.STYLESHEET_KEY + name) ?: parent?.getStyle(name)
+
+/**
+ * Resolve a property from all styles
+ */
+public fun Vision.getStyleProperty(name: Name): Value? = styles.firstNotNullOfOrNull { getStyle(it)?.get(name)?.value }
 
 /**
  * Resolve an item in all style layers

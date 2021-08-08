@@ -16,6 +16,7 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.misc.Type
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.solid.FX3DFactory.Companion.TYPE
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_WIREFRAME_KEY
@@ -73,7 +74,7 @@ class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
-                obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY, inherit = true)?.color()
+                obj.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }

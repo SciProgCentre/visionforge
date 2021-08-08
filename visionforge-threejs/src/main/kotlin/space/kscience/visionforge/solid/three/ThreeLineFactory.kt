@@ -4,6 +4,7 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
 import space.kscience.visionforge.solid.color
@@ -20,7 +21,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            obj.getProperty(MeshThreeFactory.EDGES_MATERIAL_KEY),
+            obj.computePropertyNode(MeshThreeFactory.EDGES_MATERIAL_KEY),
             true
         )
 
@@ -31,7 +32,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
             updatePosition(obj)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.onPropertyChange(three.updateScope) { propertyName ->
+            obj.onPropertyChange { propertyName ->
                 updateProperty(obj, propertyName)
             }
         }

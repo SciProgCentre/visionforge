@@ -6,20 +6,23 @@ import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.string
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.VisionPropertyContainer
+import kotlin.jvm.JvmInline
 
 @VisionBuilder
-public class ColorAccessor(private val parent: MutableMetaProvider, private val colorKey: Name) {
+public class ColorAccessor(private val colorKey: Name, private val parent: () -> MutableMetaProvider) {
     public var value: Value?
-        get() = parent.getMeta(colorKey)?.value
+        get() = parent().getMeta(colorKey)?.value
         set(value) {
-            parent.setValue(colorKey,value)
+            parent().setValue(colorKey,value)
         }
 
     public var item: Meta?
-        get() = parent.getMeta(colorKey)
+        get() = parent().getMeta(colorKey)
         set(value) {
-            parent.setMeta(colorKey,value)
+            parent().setMeta(colorKey,value)
         }
 }
 

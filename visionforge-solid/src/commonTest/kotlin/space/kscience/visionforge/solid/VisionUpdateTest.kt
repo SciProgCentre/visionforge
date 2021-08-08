@@ -28,7 +28,7 @@ class VisionUpdateTest {
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
-        targetVision.change(dif)
+        targetVision.update(dif)
         assertTrue { targetVision["top"] is SolidGroup }
         assertEquals("red", (targetVision["origin"] as Solid).color.string) // Should work
         assertEquals("#00007b", (targetVision["top"] as Solid).color.string) // new item always takes precedence

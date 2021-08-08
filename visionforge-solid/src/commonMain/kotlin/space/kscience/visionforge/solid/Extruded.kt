@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
+import space.kscience.dataforge.meta.configure
 import space.kscience.visionforge.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -106,7 +107,9 @@ public class ExtrudeBuilder(
         layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
     }
 
-    internal fun build(): Extruded = Extruded(shape, layers).apply { configure(meta()) }
+    internal fun build(): Extruded = Extruded(shape, layers).apply {
+        configure(this@ExtrudeBuilder.meta)
+    }
 }
 
 @VisionBuilder

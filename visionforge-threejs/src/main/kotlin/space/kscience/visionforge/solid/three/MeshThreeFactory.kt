@@ -4,12 +4,13 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
-import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.meta.node
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
+import space.kscience.dataforge.values.boolean
+import space.kscience.visionforge.computeProperties
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
@@ -40,7 +41,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
         }
 
         //add listener to object properties
-        obj.onPropertyChange(three.updateScope) { name ->
+        obj.onPropertyChange { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry
@@ -83,14 +84,10 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
 public fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, inherit = true, includeStyles = true).boolean != false) {
+    if (obj.getPropertyValue(MeshThreeFactory.EDGES_ENABLED_KEY, inherit = true, includeStyles = true)?.boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
         val material = ThreeMaterials.getLineMaterial(
-            obj.getProperty(
-                MeshThreeFactory.EDGES_MATERIAL_KEY,
-                inherit = true,
-                includeStyles = true
-            ),
+            obj.computeProperties().get(MeshThreeFactory.EDGES_MATERIAL_KEY),
             true
         )
         if (edges == null) {

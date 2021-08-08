@@ -4,8 +4,8 @@ import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.SchemeSpec
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.double
-import space.kscience.visionforge.value
 
 public class Axes : Scheme() {
     public var visible: Boolean by boolean(false)

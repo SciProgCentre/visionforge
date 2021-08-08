@@ -3,7 +3,6 @@ package space.kscience.visionforge.solid
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.MutableVisionGroup
 import space.kscience.visionforge.get
-import space.kscience.visionforge.meta
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,7 +31,7 @@ class SerializationTest {
         val string = Solids.encodeToString(cube)
         println(string)
         val newCube = Solids.decodeFromString(string)
-        assertEquals(cube.meta(), newCube.meta())
+        assertEquals(cube.meta, newCube.meta)
     }
 
     @Test
@@ -53,7 +52,7 @@ class SerializationTest {
         val string = Solids.encodeToString(group)
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
-        assertEquals(group["cube"]?.meta(), reconstructed["cube"]?.meta())
+        assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
     }
 
 }

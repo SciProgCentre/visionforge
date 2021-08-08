@@ -7,6 +7,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.onPropertyChange
 import tornadofx.*
 
@@ -17,7 +18,7 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
     private val bindings = HashMap<Name, ObjectBinding<Meta?>>()
 
     init {
-        obj.onPropertyChange(fx.context) { name ->
+        obj.onPropertyChange { name ->
             bindings.filter { it.key.startsWith(name) }.forEach { entry ->
                 Platform.runLater {
                     entry.value.invalidate()
@@ -35,7 +36,7 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
     public operator fun get(key: Name): ObjectBinding<Meta?> {
         return bindings.getOrPut(key) {
             object : ObjectBinding<Meta?>() {
-                override fun computeValue(): Meta? = obj.getProperty(key)
+                override fun computeValue(): Meta? = obj.computePropertyNode(key)
             }
         }
     }

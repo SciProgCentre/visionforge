@@ -8,12 +8,10 @@ import info.laht.threekt.math.Color
 import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.int
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.meta
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.solid.SolidMaterial
 
 
@@ -117,8 +115,8 @@ private var Material.cached: Boolean
 
 public fun Mesh.updateMaterial(vision: Vision) {
     //val meta = vision.getProperty(SolidMaterial.MATERIAL_KEY, inherit = true).node
-    val ownMaterialMeta = vision.meta()[SolidMaterial.MATERIAL_KEY]
-    val parentMaterialMeta = vision.parent?.getProperty(
+    val ownMaterialMeta = vision.meta.getMeta(SolidMaterial.MATERIAL_KEY)
+    val parentMaterialMeta = vision.parent?.getPropertyValue(
         SolidMaterial.MATERIAL_KEY,
         inherit = true,
         includeStyles = false,
@@ -128,19 +126,15 @@ public fun Mesh.updateMaterial(vision: Vision) {
     material = when {
         ownMaterialMeta == null && parentMaterialMeta == null -> {
             //If material is style-based, use cached
-            vision.getProperty(
+            vision.computePropertyNode(
                 SolidMaterial.MATERIAL_KEY,
-                inherit = false,
-                includeStyles = true,
-                includeDefaults = false
             )?.let {
                 ThreeMaterials.cacheMaterial(it)
             } ?: ThreeMaterials.DEFAULT
         }
         else -> {
-            vision.getProperty(
+            vision.computePropertyNode(
                 SolidMaterial.MATERIAL_KEY,
-                inherit = true
             )?.let {
                 ThreeMaterials.buildMaterial(it)
             } ?: ThreeMaterials.DEFAULT
@@ -155,32 +149,29 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
     } else {
         when (propertyName) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {
-                material.asDynamic().color = vision.getProperty(
+                material.asDynamic().color = vision.computePropertyNode(
                     SolidMaterial.MATERIAL_COLOR_KEY,
-                    inherit = true,
-                    includeStyles = true,
-                    includeDefaults = false
                 )?.threeColor() ?: ThreeMaterials.DEFAULT_COLOR
                 material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_OPACITY_KEY -> {
-                val opacity = vision.getProperty(
+                val opacity = vision.getPropertyValue(
                     SolidMaterial.MATERIAL_OPACITY_KEY,
                     inherit = true,
                     includeStyles = true,
                     includeDefaults = false
-                ).double ?: 1.0
+                )?.double ?: 1.0
                 material.opacity = opacity
                 material.transparent = opacity < 1.0
                 material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_WIREFRAME_KEY -> {
-                material.asDynamic().wireframe = vision.getProperty(
+                material.asDynamic().wireframe = vision.getPropertyValue(
                     SolidMaterial.MATERIAL_WIREFRAME_KEY,
                     inherit = true,
                     includeStyles = true,
                     includeDefaults = false
-                ).boolean ?: false
+                )?.boolean ?: false
                 material.needsUpdate = true
             }
             else -> console.warn("Unrecognized material property: $propertyName")

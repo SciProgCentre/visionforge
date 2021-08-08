@@ -1,5 +1,6 @@
 package space.kscience.visionforge.solid.transform
 
+import space.kscience.dataforge.meta.configure
 import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.asName
@@ -22,7 +23,7 @@ internal fun Vision.updateFrom(other: Vision): Vision {
         scaleY *= other.scaleY
         scaleZ *= other.scaleZ
         configure{
-            update(other.meta())
+            update(other.meta)
         }
     }
     return this

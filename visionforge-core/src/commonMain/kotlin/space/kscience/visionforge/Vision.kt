@@ -1,27 +1,27 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MutableMeta
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.Described
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.update
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.Value
+import space.kscience.dataforge.values.asValue
+import space.kscience.dataforge.values.boolean
 import space.kscience.visionforge.Vision.Companion.TYPE
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * A root type for display hierarchy
  */
 @Type(TYPE)
-public interface Vision : Described, CoroutineScope {
+public interface Vision : Described, Configurable {
 
     /**
      * The parent object of this one. If null, this one is a root.
@@ -33,47 +33,23 @@ public interface Vision : Described, CoroutineScope {
      */
     public val manager: VisionManager? get() = parent?.manager
 
-    override val coroutineContext: CoroutineContext
-        get() = manager?.context?.coroutineContext ?: EmptyCoroutineContext
+    /**
+     * This Vision own properties (ignoring inheritance, styles and defaults
+     */
+    override val meta: ObservableMutableMeta
 
     /**
-     * Get property.
+     * Get property value with given layer flags.
      * @param inherit toggles parent node property lookup. Null means inference from descriptor. Default is false.
-     * @param includeStyles toggles inclusion of. Null means inference from descriptor. Default is true.
+     * @param includeStyles toggles inclusion of properties from styles. default is true
      */
-    public fun getProperty(
+    public fun getPropertyValue(
         name: Name,
         inherit: Boolean = false,
         includeStyles: Boolean = true,
         includeDefaults: Boolean = true,
-    ): Meta?
+    ): Value?
 
-    /**
-     * Get an intrinsic property of this Vision excluding any inheritance or defaults. In most cases should be the same as
-     * `getProperty(name, false, false, false`.
-     */
-    public fun getOwnProperty(name: Name): Meta? = getProperty(
-        name,
-        inherit = false,
-        includeStyles = false,
-        includeDefaults = false
-    )
-
-    /**
-     * Replace the property node. If [node] is null remove node and its descendants
-     */
-    public fun setPropertyNode(name: Name, node: Meta?, notify: Boolean = true)
-
-    /**
-     * Set a value of specific property node
-     */
-    public fun setPropertyValue(name: Name, value: Value?, notify: Boolean = true)
-
-    /**
-     * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
-     * if it should include inherited properties etc.
-     */
-    public val propertyChanges: Flow<Name>
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated
@@ -83,7 +59,7 @@ public interface Vision : Described, CoroutineScope {
     /**
      * Update this vision using a dif represented by [VisionChange].
      */
-    public fun change(change: VisionChange)
+    public fun update(change: VisionChange)
 
     override val descriptor: MetaDescriptor?
 
@@ -96,58 +72,60 @@ public interface Vision : Described, CoroutineScope {
 }
 
 /**
- * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
+ * Flow of property invalidation events. It does not contain property values after invalidation since it is not clear
+ * if it should include inherited properties etc.
  */
-public fun Vision.onPropertyChange(scope: CoroutineScope, callback: suspend (Name) -> Unit) {
-    propertyChanges.onEach(callback).launchIn(scope)
-}
-
+@OptIn(ExperimentalCoroutinesApi::class)
+@DFExperimental
+public val Vision.propertyChanges: Flow<Name>
+    get() = callbackFlow {
+        meta.onChange(this) { name ->
+            launch {
+                send(name)
+            }
+        }
+        awaitClose {
+            meta.removeListener(this)
+        }
+    }
 
 /**
- * Own properties, excluding inheritance, styles and descriptor
+ * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
  */
-public fun Vision.meta(
-    inherit: Boolean = false,
-    includeStyles: Boolean = true,
-    includeDefaults: Boolean = true,
-): MutableMeta = VisionProperties(this, Name.EMPTY, inherit, includeStyles, includeDefaults)
-
-public fun Vision.configure(target: Name = Name.EMPTY, block: MutableMeta.() -> Unit): Unit {
-    VisionProperties(this, target).apply(block)
+public fun Vision.onPropertyChange(callback: Meta.(Name) -> Unit) {
+    meta.onChange(null, callback)
 }
-
-public fun Vision.configure(meta: Meta) {
-    configure(Name.EMPTY) {
-        update(meta)
-    }
-}
-
-public fun Vision.configure(block: MutableMeta.() -> Unit): Unit = configure(Meta(block))
-
-public fun Vision.getOwnProperty(key: String): Meta? = getOwnProperty(Name.parse(key))
 
 /**
  * Get [Vision] property using key as a String
  */
-public fun Vision.getProperty(
+public fun Vision.getPropertyValue(
     key: String,
     inherit: Boolean = false,
     includeStyles: Boolean = true,
     includeDefaults: Boolean = true,
-): Meta? = getProperty(Name.parse(key), inherit, includeStyles, includeDefaults)
-
+): Value? = getPropertyValue(Name.parse(key), inherit, includeStyles, includeDefaults)
 
 /**
  * A convenience method to set property node or value. If Item is null, then node is removed, not a value
  */
 public fun Vision.setProperty(name: Name, item: Any?) {
     when (item) {
-        null -> setPropertyNode(name, null)
-        is Meta -> setPropertyNode(name, item)
-        is Value -> setPropertyValue(name, item)
+        null -> meta.remove(name)
+        is Meta -> meta.setMeta(name, item)
+        is Value -> meta.setValue(name, item)
+        else -> meta.setValue(name, Value.of(item))
     }
 }
 
 public fun Vision.setPropertyNode(key: String, item: Any?) {
     setProperty(Name.parse(key), item)
 }
+
+/**
+ * Control visibility of the element
+ */
+public var Vision.visible: Boolean?
+    get() = getPropertyValue(Vision.VISIBLE_KEY)?.boolean
+    set(value) = meta.setValue(Vision.VISIBLE_KEY, value?.asValue())
+

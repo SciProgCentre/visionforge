@@ -1,5 +1,6 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -7,7 +8,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.names.*
-
 
 /**
  * Abstract implementation of mutable group of [Vision]
@@ -48,7 +48,7 @@ public open class VisionGroupBase(
      * Propagate children change event upwards
      */
     private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        launch {
+        (manager?.context?: GlobalScope).launch {
             _structureChanges.emit(MutableVisionGroup.StructureChange(name, before, after))
         }
     }
@@ -131,15 +131,15 @@ public open class VisionGroupBase(
         }
     }
 
-    override fun change(change: VisionChange) {
+    override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
                 change.delete -> set(name, null)
                 change.vision != null -> set(name, change.vision)
-                else -> get(name)?.change(change)
+                else -> get(name)?.update(change)
             }
         }
-        super.change(change)
+        super.update(change)
     }
 }
 
@@ -151,6 +151,6 @@ internal class RootVisionGroup(override val manager: VisionManager) : VisionGrou
 /**
  * Designate this [VisionGroup] as a root group and assign a [VisionManager] as its parent
  */
-public fun Vision.root(manager: VisionManager){
+public fun Vision.root(manager: VisionManager) {
     parent = RootVisionGroup(manager)
 }

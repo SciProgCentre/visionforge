@@ -17,7 +17,7 @@ class FXReferenceFactory(val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGro
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
-        obj.onPropertyChange(plugin.context) { name->
+        obj.onPropertyChange { name->
             if (name.firstOrNull()?.body == SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()

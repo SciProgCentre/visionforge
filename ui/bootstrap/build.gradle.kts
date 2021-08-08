@@ -11,5 +11,5 @@ dependencies {
     implementation(npm("file-saver", "2.0.2"))
     implementation(npm("bootstrap","4.6.0"))
     implementation(npm("jquery","3.5.1"))
-    implementation(npm("@popperjs/core","2.9.3"))
+    implementation(npm("popper.js","1.16.1"))
 }

@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.project")
 }
 
-val dataforgeVersion by extra("0.5.0-dev-9")
+val dataforgeVersion by extra("0.5.0-dev-10")
 val fxVersion by extra("11")
 
 allprojects {

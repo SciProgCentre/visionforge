@@ -69,7 +69,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 updatePosition(obj)
                 //obj.onChildrenChange()
 
-                obj.onPropertyChange(updateScope) { name ->
+                obj.onPropertyChange { name ->
                     if (
                         name.startsWith(Solid.POSITION_KEY) ||
                         name.startsWith(Solid.ROTATION_KEY) ||
