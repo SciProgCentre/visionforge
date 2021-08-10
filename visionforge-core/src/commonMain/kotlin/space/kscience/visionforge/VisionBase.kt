@@ -17,11 +17,6 @@ import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 import kotlin.jvm.Synchronized
 
-internal data class PropertyListener(
-    val owner: Any? = null,
-    val action: (name: Name) -> Unit,
-)
-
 /**
  * A full base implementation for a [Vision]
  * @param properties Object own properties excluding styles and inheritance
@@ -43,7 +38,7 @@ public open class VisionBase(
     }
 
     /**
-     * A fast accessor method to get own property (no inheritance or styles
+     * A fast accessor method to get own property (no inheritance or styles)
      */
     override fun getOwnProperty(name: Name): MetaItem? = if (name == Name.EMPTY) {
         properties?.asMetaItem()
