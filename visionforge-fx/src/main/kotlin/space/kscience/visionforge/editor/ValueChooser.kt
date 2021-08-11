@@ -16,7 +16,6 @@ import space.kscience.dataforge.meta.descriptors.validate
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.provider.provideByType
 import space.kscience.dataforge.values.Null
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.widget
@@ -77,7 +76,7 @@ public interface ValueChooser {
                 TextValueChooser.name -> TextValueChooser
                 ColorValueChooser.name -> ColorValueChooser
                 ComboBoxValueChooser.name -> ComboBoxValueChooser
-                else -> context.provideByType(type)//Search for additional factories in the plugin
+                else -> null//context.provideByType(type)//Search for additional factories in the plugin
             }
         }
 

@@ -48,7 +48,9 @@ public class VisionTreeFragment : Fragment() {
                     }
                 }
                 selectionModel.selectionMode = SelectionMode.SINGLE
-                val selectedValue = selectionModel.selectedItemProperty().objectBinding { it?.value?.second }
+                val selectedValue = selectionModel.selectedItemProperty().objectBinding {
+                    it?.value?.second
+                }
                 selectedProperty.bind(selectedValue)
             }
         }
