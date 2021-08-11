@@ -7,9 +7,11 @@ import info.laht.threekt.objects.LineSegments
 import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
+import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.color
 import space.kscience.visionforge.solid.string
 import space.kscience.visionforge.solid.three.ThreeMaterials.DEFAULT_LINE_COLOR
+import kotlin.math.ceil
 import kotlin.reflect.KClass
 
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
@@ -17,12 +19,14 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
 
     override fun invoke(three: ThreePlugin, obj: PolyLine): Object3D {
         val geometry = BufferGeometry().apply {
-            setFromPoints(Array(obj.points.size) { obj.points[it].toVector() })
+            setFromPoints(Array((obj.points.size - 1) * 2) {
+                obj.points[ceil(it / 2.0).toInt()].toVector()
+            })
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            obj.computePropertyNode(MeshThreeFactory.EDGES_MATERIAL_KEY),
-            true
+            obj.computePropertyNode(SolidMaterial.MATERIAL_KEY),
+            false
         )
 
         material.linewidth = obj.thickness.toDouble()

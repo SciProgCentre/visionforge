@@ -28,7 +28,6 @@ class Model(val manager: VisionManager) {
 
     private fun SolidGroup.detector(detector: SC16) {
         group(detector.name) {
-            position = detector.center
             detector.pixels.forEach {
                 pixel(it)
             }
@@ -65,6 +64,7 @@ class Model(val manager: VisionManager) {
     }
 
     private fun highlight(pixel: String) {
+        println("highlight $pixel")
         map[pixel]?.color?.invoke("blue")
     }
 
@@ -76,6 +76,7 @@ class Model(val manager: VisionManager) {
     }
 
     fun displayEvent(event: Event) {
+        println("Received event: $event")
         events.add(event)
         event.hits.forEach {
             highlight(it)
@@ -83,6 +84,7 @@ class Model(val manager: VisionManager) {
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
                 thickness = 4
+                color("red")
             }
         }
     }

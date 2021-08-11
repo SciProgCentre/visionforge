@@ -56,8 +56,10 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
         }
     }
 
-    val root = props.model.root.apply {
-        edges()
+    val root = useMemo(props.model) {
+        props.model.root.apply {
+            edges()
+        }
     }
 
     gridRow {
