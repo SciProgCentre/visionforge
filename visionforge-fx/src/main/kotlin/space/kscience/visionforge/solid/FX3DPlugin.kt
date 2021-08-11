@@ -150,7 +150,7 @@ public interface FX3DFactory<in T : Solid> {
     public operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
 
     public companion object {
-        public const val TYPE = "fx3DFactory"
+        public const val TYPE: String = "fx3DFactory"
     }
 }
 
