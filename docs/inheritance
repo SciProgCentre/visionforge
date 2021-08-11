@@ -1,0 +1,16 @@
+## Inheritance
+
+Inheritance is a very useful ability of `children` elements to get the same property in default as his parent does have (to 'inherit' it).
+
+### Main properties' inheritance:
+* styles
+* parents
+* parent's styles
+* defaults
+
+### Reference properties' inheritance:
+* styles
+* prototypes
+* parents
+* parent's styles
+* defaults
