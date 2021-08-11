@@ -13,7 +13,6 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Text
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.MutableMeta
-import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.remove
 import space.kscience.visionforge.dfIconView
 import tornadofx.*
@@ -25,16 +24,16 @@ import tornadofx.*
  */
 public class MutableMetaEditor(
     public val rootNode: FXMetaModel<MutableMeta>,
-    public val allowNew: Boolean = true,
-    title: String = "Configuration editor"
+    //public val allowNew: Boolean = true,
+    title: String = "Meta editor"
 ) : Fragment(title = title, icon = dfIconView) {
     //TODO replace parameters by properties
-
-    public constructor(
-        MutableMeta: MutableMeta,
-        descriptor: MetaDescriptor?,
-        title: String = "Configuration editor"
-    ) : this(FXMetaModel.root(MutableMeta, descriptor = descriptor), title = title)
+//
+//    public constructor(
+//        MutableMeta: MutableMeta,
+//        descriptor: MetaDescriptor?,
+//        title: String = "Configuration editor"
+//    ) : this(FXMetaModel.root(MutableMeta, descriptor = descriptor), title = title)
 
     override val root: BorderPane = borderpane {
         center = treetableview<FXMetaModel<MutableMeta>> {
@@ -65,7 +64,7 @@ public class MutableMetaEditor(
                                         contextmenu {
                                             item("Remove") {
                                                 action {
-                                                    content.root.remove(content.nodeName)
+                                                    content.root.remove(content.pathName)
                                                 }
                                             }
                                         }
@@ -128,7 +127,7 @@ public class MutableMetaEditor(
                         item.valueProperty,
                         item.descriptor
                     ) { value ->
-                        item.root.setValue(item.nodeName, value)
+                        item.root.setValue(item.pathName, value)
                     }
                     graphic = chooser.node
 

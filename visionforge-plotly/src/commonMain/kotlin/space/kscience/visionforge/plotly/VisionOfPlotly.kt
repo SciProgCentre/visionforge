@@ -15,7 +15,6 @@ public class VisionOfPlotly private constructor() : VisionBase() {
     public constructor(plot: Plot) : this() {
         properties = plot.meta
     }
-
     public val plot: Plot get() = Plot(meta)
 }
 

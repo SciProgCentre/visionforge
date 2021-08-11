@@ -7,6 +7,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
+import space.kscience.dataforge.values.stringList
 import kotlin.jvm.JvmInline
 
 /**
@@ -72,7 +73,7 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
  * List of names of styles applied to this object. Order matters. Not inherited.
  */
 public var Vision.styles: List<String>
-    get() = meta.getMeta(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    get() = meta.getValue(Vision.STYLE_KEY)?.stringList ?: emptyList()
     set(value) {
         meta.setValue(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
     }
@@ -105,7 +106,7 @@ public fun Vision.getStyleProperty(name: Name): Value? = styles.firstNotNullOfOr
 /**
  * Resolve an item in all style layers
  */
-public fun Vision.getStyleItems(name: Name): List<Meta> = styles.mapNotNull {
+public fun Vision.getStyleNodes(name: Name): List<Meta> = styles.mapNotNull {
     getStyle(it)?.get(name)
 }
 

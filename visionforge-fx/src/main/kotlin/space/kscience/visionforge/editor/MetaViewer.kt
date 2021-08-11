@@ -26,14 +26,12 @@ import space.kscience.visionforge.dfIconView
 import tornadofx.*
 
 public class MetaViewer(
-    private val rootNode: FXMetaModel<Meta>,
+    private val rootNode: FXMetaModel<out Meta>,
     title: String = "Meta viewer"
 ) : Fragment(title, dfIconView) {
 
     public constructor(meta: Meta, title: String = "Meta viewer") : this(
-        FXMetaModel.root(
-            meta
-        ), title = title
+        FXMetaModel.root(meta), title = title
     )
 
     override val root: BorderPane = borderpane {

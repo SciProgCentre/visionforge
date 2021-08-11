@@ -3,7 +3,6 @@ package ru.mipt.npm.muon.monitor
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
 import space.kscience.visionforge.solid.Point3D
-import space.kscience.visionforge.solid.plus
 
 /**
  * A single pixel
@@ -98,7 +97,7 @@ class SC16(
             }
             val offset = Point3D(-y, x, 0)//rotateDetector(Point3D(x, y, 0.0));
             val pixelName = "${name}_${index}"
-            SC1(pixelName, center + offset)
+            SC1(pixelName, offset)
         }
     }
 }

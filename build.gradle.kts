@@ -2,14 +2,13 @@ plugins {
     id("ru.mipt.npm.gradle.project")
 }
 
-val dataforgeVersion by extra("0.5.0-dev-10")
+val dataforgeVersion by extra("0.5.0-dev-11")
 val fxVersion by extra("11")
 
 allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        jcenter()
         maven("https://repo.kotlin.link")
         maven("https://maven.jzy3d.org/releases")
     }

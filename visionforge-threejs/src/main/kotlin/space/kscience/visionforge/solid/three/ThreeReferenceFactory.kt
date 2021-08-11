@@ -1,6 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.names.Name
@@ -19,7 +18,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
 
     private fun Object3D.replicate(): Object3D {
         return when (this) {
-            is Mesh -> Mesh(geometry as BufferGeometry, material).also {
+            is Mesh -> Mesh(geometry, material).also {
                 it.applyMatrix4(matrix)
             }
             else -> clone(false)

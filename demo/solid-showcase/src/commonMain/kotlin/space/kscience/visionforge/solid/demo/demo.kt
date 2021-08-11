@@ -19,7 +19,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
         "title" put title
     }
     val vision = SolidGroup(block)
-    render(Name.parse(name), vision)
+    render(Name.parse(name), vision, meta)
 }
 
 val canvasOptions = Canvas3DOptions {
@@ -36,6 +36,7 @@ val canvasOptions = Canvas3DOptions {
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {

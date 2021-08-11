@@ -1,7 +1,6 @@
 package space.kscience.visionforge.demo
 
 import javafx.geometry.Orientation
-import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.node
@@ -46,12 +45,12 @@ class MetaEditorDemo : View("Meta editor demo") {
         }
     }
 
-    private val rootNode = FXMetaModel.root(meta, descriptor)
+    private val rootNode:FXMetaModel<MutableMeta> = FXMetaModel.root(meta, descriptor)
 
     override val root = splitpane(
         Orientation.HORIZONTAL,
-        MetaViewer(rootNode as Meta).root,
-        MutableMetaEditor(rootNode as FXMetaModel<MutableMeta>).root
+        MetaViewer(rootNode).root,
+        MutableMetaEditor(rootNode).root
     )
 }
 

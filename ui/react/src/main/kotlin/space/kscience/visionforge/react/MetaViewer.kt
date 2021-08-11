@@ -9,7 +9,6 @@ import react.dom.a
 import react.dom.attrs
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.defaultNode
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf

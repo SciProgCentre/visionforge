@@ -20,14 +20,14 @@ public class SolidMaterial : Scheme() {
     /**
      * Primary web-color for the material
      */
-    public val color: ColorAccessor = ColorAccessor(COLOR_KEY) { meta }
+    public val color: ColorAccessor = ColorAccessor(meta, COLOR_KEY)
 
     /**
      * Specular color for phong material
      */
-    public val specularColor: ColorAccessor = ColorAccessor(SPECULAR_COLOR_KEY) { meta }
+    public val specularColor: ColorAccessor = ColorAccessor(meta, SPECULAR_COLOR_KEY)
 
-    public val emissiveColor: ColorAccessor = ColorAccessor("emissiveColor".asName()) { meta }
+    public val emissiveColor: ColorAccessor = ColorAccessor(meta, "emissiveColor".asName())
 
     /**
      * Opacity
@@ -55,33 +55,29 @@ public class SolidMaterial : Scheme() {
             //must be lazy to avoid initialization bug
             MetaDescriptor {
                 inherited = true
-                usesStyles = true
 
                 value(COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
-                    usesStyles = true
                     widgetType = "color"
                 }
 
                 value(SPECULAR_COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
-                    usesStyles = true
                     widgetType = "color"
                     hide()
                 }
 
                 value(OPACITY_KEY, ValueType.NUMBER) {
                     inherited = true
-                    usesStyles = true
                     default(1.0)
                     attributes["min"] = 0.0
                     attributes["max"] = 1.0
                     attributes["step"] = 0.1
                     widgetType = "slider"
                 }
+
                 value(WIREFRAME_KEY, ValueType.BOOLEAN) {
                     inherited = true
-                    usesStyles = true
                     default(false)
                 }
             }
@@ -90,7 +86,7 @@ public class SolidMaterial : Scheme() {
 }
 
 public val Solid.color: ColorAccessor
-    get() = ColorAccessor(MATERIAL_COLOR_KEY) { computeProperties() }
+    get() = ColorAccessor(computePropertyValues(), MATERIAL_COLOR_KEY)
 
 public var Solid.material: SolidMaterial?
     get() = computePropertyNode(MATERIAL_KEY)?.let { SolidMaterial.read(it) }

@@ -121,7 +121,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         }?.forEach {
             add(NameToken(it.key))
         }
-        ownProperty?.items?.keys?.filterNot { it.body.startsWith("@") }?.let { addAll(it) }
+        //ownProperty?.items?.keys?.filterNot { it.body.startsWith("@") }?.let { addAll(it) }
     }
 
     flexRow {

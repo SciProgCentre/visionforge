@@ -12,9 +12,9 @@ import org.w3c.files.BlobPropertyBag
 import react.*
 import react.dom.attrs
 import react.dom.button
-import space.kscience.dataforge.meta.descriptors.defaultNode
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.react.propertyEditor
@@ -51,12 +51,12 @@ public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalCo
                 border(1.px, BorderStyle.solid, Color.blue)
                 padding(4.px)
             }
-            props.vision?.manager?.let { manager ->
+            props.vision?.let{ vision ->
                 button {
                     +"Export"
                     attrs {
                         onClickFunction = {
-                            val json = manager.encodeToString(props.vision!!)
+                            val json = vision.encodeToString()
                             saveData(it, "object.json", "text/json") {
                                 json
                             }

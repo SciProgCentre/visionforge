@@ -4,6 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import space.kscience.dataforge.names.*
 import space.kscience.dataforge.provider.Provider
 
+@DslMarker
+public annotation class VisionBuilder
+
 public interface VisionContainer<out V : Vision> {
     public operator fun get(name: Name): V?
 }

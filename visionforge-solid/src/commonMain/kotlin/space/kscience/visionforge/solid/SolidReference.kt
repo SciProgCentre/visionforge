@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.get
@@ -12,11 +13,16 @@ import space.kscience.visionforge.*
 
 public interface SolidReference : VisionGroup {
     /**
-     * The prototype for this reference. Always returns a "real" prototype, not a reference
+     * The prototype for this reference.
      */
     public val prototype: Solid
 
-    override fun getPropertyValue(name: Name, inherit: Boolean, includeStyles: Boolean, includeDefaults: Boolean): Value? {
+    override fun getPropertyValue(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean
+    ): Value? {
         meta[name]?.value?.let { return it }
         if (includeStyles) {
             getStyleProperty(name)?.let { return it }
@@ -56,6 +62,8 @@ public class SolidReferenceGroup(
     public val refName: Name,
 ) : VisionBase(), SolidReference, VisionGroup, Solid {
 
+    override var properties: MutableMeta? = null
+
     /**
      * Recursively search for defined template in the parent
      */
@@ -72,8 +80,12 @@ public class SolidReferenceGroup(
                 ReferenceChild(this, it.key.asName())
             } ?: emptyMap()
 
-    override fun getPropertyValue(name: Name, inherit: Boolean, includeStyles: Boolean, includeDefaults: Boolean): Value? =
-        super<SolidReference>.getPropertyValue(name, inherit, includeStyles, includeDefaults)
+    override fun getPropertyValue(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+        includeDefaults: Boolean
+    ): Value? = super<SolidReference>.getPropertyValue(name, inherit, includeStyles, includeDefaults)
 
     override val descriptor: MetaDescriptor get() = prototype.descriptor
 
@@ -88,11 +100,14 @@ public class SolidReferenceGroup(
     ) : SolidReference, VisionGroup, Solid {
 
         override val prototype: Solid by lazy {
-            if (refName.isEmpty()) owner.prototype else {
+            if (refName.isEmpty()) {
+                owner.prototype
+            } else {
                 val proto = (owner.prototype as? VisionGroup)?.get(refName)
                     ?: error("Prototype with name $refName not found in SolidReferenceGroup ${owner.refName}")
-                proto.unref as? Solid
-                    ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
+                proto as? Solid ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
+//                proto.unref as? Solid
+//                    ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
             }
         }
 

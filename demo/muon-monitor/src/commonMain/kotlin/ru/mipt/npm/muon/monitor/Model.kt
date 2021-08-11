@@ -28,6 +28,7 @@ class Model(val manager: VisionManager) {
 
     private fun SolidGroup.detector(detector: SC16) {
         group(detector.name) {
+            position = detector.center
             detector.pixels.forEach {
                 pixel(it)
             }
@@ -38,6 +39,10 @@ class Model(val manager: VisionManager) {
 
     val root: SolidGroup = SolidGroup().apply {
         root(this@Model.manager)
+        material {
+            wireframe
+            color("darkgreen")
+        }
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {

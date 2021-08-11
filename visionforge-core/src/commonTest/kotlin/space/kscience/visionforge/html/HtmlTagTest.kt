@@ -12,9 +12,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBase
 import space.kscience.visionforge.VisionManager
-import kotlin.collections.HashMap
-import kotlin.collections.Map
-import kotlin.collections.forEach
 import kotlin.collections.set
 import kotlin.test.Test
 

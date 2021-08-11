@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.int
 import space.kscience.visionforge.*
@@ -10,13 +11,32 @@ import kotlin.test.assertEquals
 @Suppress("UNUSED_VARIABLE")
 class PropertyTest {
     @Test
-    fun testColorUpdate(){
+    fun testColor(){
         val box = Box(10.0f, 10.0f,10.0f)
         box.material {
             //meta["color"] = "pink"
             color("pink")
         }
         assertEquals("pink", box.meta["material.color"]?.string)
+        assertEquals("pink", box.color.string)
+    }
+
+    @Test
+    fun testColorUpdate(){
+        val box = Box(10.0f, 10.0f,10.0f)
+
+        var c: String? = null
+        box.onPropertyChange {
+            if(it == SolidMaterial.MATERIAL_COLOR_KEY){
+                c = box.color.string
+            }
+        }
+
+        box.material {
+            color("pink")
+        }
+
+        assertEquals("pink", c)
     }
 
     @Test

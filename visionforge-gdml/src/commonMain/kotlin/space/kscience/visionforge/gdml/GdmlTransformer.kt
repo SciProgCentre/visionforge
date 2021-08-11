@@ -441,20 +441,6 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
         }
         final.useStyle(rootStyle)
 
-        //inline prototypes
-//        referenceStore.forEach { (protoName, list) ->
-//            val proxy = list.singleOrNull() ?: return@forEach
-//            val parent = proxy.parent as? MutableVisionGroup ?: return@forEach
-//            val token = parent.children.entries.find { it.value == proxy }?.key ?: error("Inconsistent reference cache")
-//            val prototype = proto[protoName] as? Solid ?:  error("Inconsistent reference cache")
-//            prototype.parent = null
-//            parent[token] = prototype
-//            prototype.updateFrom(proxy)
-//
-//            //FIXME update prototype
-//            proto[protoName] = null
-//        }
-
         final.prototypes {
             proto.children.forEach { (token, item) ->
                 item.parent = null

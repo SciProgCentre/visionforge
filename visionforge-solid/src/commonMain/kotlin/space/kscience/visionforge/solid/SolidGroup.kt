@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
@@ -30,6 +31,9 @@ public interface PrototypeHolder {
 @Serializable
 @SerialName("group.solid")
 public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
+
+    //FIXME to be removed after https://github.com/Kotlin/kotlinx.serialization/issues/1602 fix
+    override var properties: MutableMeta? = null
 
     override val children: Map<NameToken, Vision> get() = super.childrenInternal.filter { it.key != PROTOTYPES_TOKEN }
 

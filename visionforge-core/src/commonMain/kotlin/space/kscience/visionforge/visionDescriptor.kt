@@ -7,20 +7,20 @@ import space.kscience.dataforge.values.asValue
 private const val INHERITED_DESCRIPTOR_ATTRIBUTE = "inherited"
 private const val STYLE_DESCRIPTOR_ATTRIBUTE = "useStyles"
 
-public val MetaDescriptor.inherited: Boolean
-    get() = attributes[INHERITED_DESCRIPTOR_ATTRIBUTE].boolean ?: false
+public val MetaDescriptor.inherited: Boolean?
+    get() = attributes[INHERITED_DESCRIPTOR_ATTRIBUTE].boolean
 
-public var MetaDescriptorBuilder.inherited: Boolean
-    get() = attributes[INHERITED_DESCRIPTOR_ATTRIBUTE].boolean ?: false
-    set(value) = attributes.set(INHERITED_DESCRIPTOR_ATTRIBUTE, value)
+public var MetaDescriptorBuilder.inherited: Boolean?
+    get() = attributes[INHERITED_DESCRIPTOR_ATTRIBUTE].boolean
+    set(value) = attributes.set(INHERITED_DESCRIPTOR_ATTRIBUTE, value?.asValue())
 
 
-public val MetaDescriptor.usesStyles: Boolean
-    get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean ?: true
+public val MetaDescriptor.usesStyles: Boolean?
+    get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean
 
-public var MetaDescriptorBuilder.usesStyles: Boolean
-    get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean ?: true
-    set(value) = attributes.set(STYLE_DESCRIPTOR_ATTRIBUTE, value)
+public var MetaDescriptorBuilder.usesStyles: Boolean?
+    get() = attributes[STYLE_DESCRIPTOR_ATTRIBUTE].boolean
+    set(value) = attributes.set(STYLE_DESCRIPTOR_ATTRIBUTE, value?.asValue())
 
 public val MetaDescriptor.widget: Meta
     get() = attributes["widget"] ?: Meta.EMPTY
@@ -38,7 +38,7 @@ public val MetaDescriptor.widgetType: String?
     get() = attributes["widget.type"].string
 
 /**
- * Extension property to access the "widget.type" key of [ValueDescriptor]
+ * Extension property to access the "widget.type" key of [MetaDescriptorBuilder]
  */
 public var MetaDescriptorBuilder.widgetType: String?
     get() = attributes["widget.type"].string

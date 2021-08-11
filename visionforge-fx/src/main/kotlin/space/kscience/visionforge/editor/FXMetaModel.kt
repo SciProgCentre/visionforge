@@ -21,23 +21,29 @@ import tornadofx.*
 public class FXMetaModel<M : Meta>(
     public val root: M,
     public val rootDescriptor: MetaDescriptor?,
-    public val nodeName: Name,
-    public val title: String = nodeName.lastOrNull()?.toString() ?: "Meta"
+    public val defaultRoot: Meta?,
+    public val pathName: Name,
+    public val title: String = pathName.lastOrNull()?.toString() ?: "Meta"
 ) : Comparable<FXMetaModel<*>> {
 
     private val existingNode = object: ObjectBinding<Meta?>() {
-        override fun computeValue(): Meta? =root[nodeName]
+        override fun computeValue(): Meta? = root[pathName]
     }
+
+    private val defaultNode: Meta? get() = defaultRoot?.getMeta(pathName)
+
+    public val descriptor: MetaDescriptor? = rootDescriptor?.get(pathName)
 
     public val children: ListBinding<FXMetaModel<M>> = object : ListBinding<FXMetaModel<M>>() {
         override fun computeValue(): ObservableList<FXMetaModel<M>> {
             val nodeKeys = existingNode.get()?.items?.keys?: emptySet()
-            val descriptorKeys = descriptor?.children?.keys?.map { NameToken(it) } ?: emptySet()
-            return (nodeKeys + descriptorKeys).map {
+            val defaultKeys = defaultNode?.items?.keys ?: emptySet()
+            return (nodeKeys + defaultKeys).map {
                 FXMetaModel(
                     root,
                     rootDescriptor,
-                    nodeName + it
+                    defaultRoot,
+                    pathName + it
                 )
             }.filter(filter).asObservable()
         }
@@ -47,15 +53,13 @@ public class FXMetaModel<M : Meta>(
         //add listener to the root node if possible
         if (root is ObservableMeta) {
             root.onChange(this) { changed ->
-                if (changed.startsWith(nodeName)) {
-                    if (nodeName.length == changed.length) existingNode.invalidate()
-                    else if (changed.length == nodeName.length + 1) children.invalidate()
+                if (changed.startsWith(pathName)) {
+                    if (pathName.length == changed.length) existingNode.invalidate()
+                    else if (changed.length == pathName.length + 1) children.invalidate()
                 }
             }
         }
     }
-
-    public val descriptor: MetaDescriptor? = rootDescriptor?.get(nodeName)
 
     public val existsProperty: BooleanBinding = existingNode.isNotNull
 
@@ -66,7 +70,7 @@ public class FXMetaModel<M : Meta>(
     }
 
     override fun compareTo(other: FXMetaModel<*>): Int = if (this.exists == other.exists) {
-        this.nodeName.toString().compareTo(other.nodeName.toString())
+        this.pathName.toString().compareTo(other.pathName.toString())
     } else {
         this.exists.compareTo(other.exists)
     }
@@ -79,7 +83,8 @@ public class FXMetaModel<M : Meta>(
         public fun <M : Meta> root(
             node: M,
             descriptor: MetaDescriptor? = null,
+            defaultRoot: Meta? = null,
             rootName: String = "root"
-        ): FXMetaModel<M> = FXMetaModel(node, descriptor, Name.EMPTY, title = rootName)
+        ): FXMetaModel<M> = FXMetaModel(node, descriptor, defaultRoot, Name.EMPTY, title = rootName)
     }
 }

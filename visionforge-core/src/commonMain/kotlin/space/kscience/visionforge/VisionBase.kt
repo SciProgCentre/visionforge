@@ -7,7 +7,6 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.defaultNode
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.misc.DFExperimental
@@ -30,8 +29,10 @@ internal data class MetaListener(
 @SerialName("vision")
 public open class VisionBase(
     @Transient override var parent: VisionGroup? = null,
-    protected var properties: MutableMeta? = null
 ) : Vision {
+
+    @Transient
+    protected open var properties: MutableMeta? = null
 
     @Synchronized
     protected fun getOrCreateProperties(): MutableMeta {
@@ -45,50 +46,55 @@ public open class VisionBase(
     @Transient
     private val listeners = HashSet<MetaListener>()
 
-    private inner class VisionBaseProperties(val rootName: Name) : ObservableMutableMeta {
+    private inner class VisionProperties(val pathName: Name) : ObservableMutableMeta {
 
         override val items: Map<NameToken, ObservableMutableMeta>
-            get() = properties?.get(rootName)?.items?.mapValues { entry ->
-                VisionBaseProperties(rootName + entry.key)
+            get() = properties?.get(pathName)?.items?.mapValues { entry ->
+                VisionProperties(pathName + entry.key)
             } ?: emptyMap()
 
         override var value: Value?
-            get() = properties?.get(rootName)?.value
+            get() = properties?.get(pathName)?.value
             set(value) {
-                getOrCreateProperties().setValue(rootName, value)
+                val oldValue = properties?.get(pathName)?.value
+                getOrCreateProperties().setValue(pathName, value)
+                if (oldValue != value) {
+                    invalidate(Name.EMPTY)
+                }
             }
 
-        override fun getOrCreate(name: Name): ObservableMutableMeta = VisionBaseProperties(this.rootName + name)
+        override fun getOrCreate(name: Name): ObservableMutableMeta = VisionProperties(pathName + name)
 
         override fun setMeta(name: Name, node: Meta?) {
-            getOrCreateProperties().setMeta(name, node)
+            getOrCreateProperties().setMeta(pathName + name, node)
+            invalidate(name)
         }
 
         @DFExperimental
         override fun attach(name: Name, node: ObservableMutableMeta) {
             val ownProperties = getOrCreateProperties()
             if (ownProperties is ObservableMutableMeta) {
-                ownProperties.attach(rootName + name, node)
+                ownProperties.attach(pathName + name, node)
             } else {
-                ownProperties.setMeta(rootName + name, node)
+                ownProperties.setMeta(pathName + name, node)
                 node.onChange(this) { childName ->
-                    ownProperties.setMeta(rootName + name + childName, this[childName])
+                    ownProperties.setMeta(pathName + name + childName, this[childName])
                 }
             }
         }
 
         override fun invalidate(name: Name) {
-            invalidateProperty(rootName + name)
+            invalidateProperty(pathName + name)
         }
 
         @Synchronized
         override fun onChange(owner: Any?, callback: Meta.(name: Name) -> Unit) {
-            if (rootName.isEmpty()) {
+            if (pathName.isEmpty()) {
                 listeners.add((MetaListener(owner, callback)))
             } else {
                 listeners.add(MetaListener(owner) { name ->
-                    if (name.startsWith(rootName)) {
-                        (get(rootName) ?: Meta.EMPTY).callback(name.removeHeadOrNull(rootName)!!)
+                    if (name.startsWith(pathName)) {
+                        (this@MetaListener[pathName] ?: Meta.EMPTY).callback(name.removeHeadOrNull(pathName)!!)
                     }
                 })
             }
@@ -104,7 +110,7 @@ public open class VisionBase(
         override fun hashCode(): Int = Meta.hashCode(this)
     }
 
-    override val meta: ObservableMutableMeta get() = VisionBaseProperties(Name.EMPTY)
+    override val meta: ObservableMutableMeta get() = VisionProperties(Name.EMPTY)
 
     override fun getPropertyValue(
         name: Name,

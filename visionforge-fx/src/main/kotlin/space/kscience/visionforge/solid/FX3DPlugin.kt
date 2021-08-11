@@ -24,7 +24,7 @@ import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.reflect.KClass
 
-class FX3DPlugin : AbstractPlugin() {
+public class FX3DPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
     private val objectFactories = HashMap<KClass<out Solid>, FX3DFactory<*>>()
@@ -43,7 +43,7 @@ class FX3DPlugin : AbstractPlugin() {
                 as FX3DFactory<Solid>?
     }
 
-    fun buildNode(obj: Solid): Node {
+    public fun buildNode(obj: Solid): Node {
         val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
             is SolidReferenceGroup -> referenceFactory(obj, binding)

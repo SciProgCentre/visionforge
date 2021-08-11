@@ -15,7 +15,6 @@ import react.dom.button
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
-import space.kscience.dataforge.meta.descriptors.defaultNode
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision

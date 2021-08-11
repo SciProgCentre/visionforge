@@ -37,24 +37,22 @@ public object FXMaterials {
  * Infer color based on meta item
  * @param opacity default opacity
  */
-public fun Meta.color(opacity: Double = 1.0): Color {
-    return value?.let {
-        if (it.type == ValueType.NUMBER) {
-            val int = it.int
-            val red = int and 0x00ff0000 shr 16
-            val green = int and 0x0000ff00 shr 8
-            val blue = int and 0x000000ff
-            Color.rgb(red, green, blue, opacity)
-        } else {
-            Color.web(it.string)
-        }
-    } ?: Color.rgb(
-        this[Colors.RED_KEY]?.int ?: 0,
-        this[Colors.GREEN_KEY]?.int ?: 0,
-        this[Colors.BLUE_KEY]?.int ?: 0,
-        this[SolidMaterial.OPACITY_KEY]?.double ?: opacity
-    )
-}
+public fun Meta.color(opacity: Double = 1.0): Color = value?.let {
+    if (it.type == ValueType.NUMBER) {
+        val int = it.int
+        val red = int and 0x00ff0000 shr 16
+        val green = int and 0x0000ff00 shr 8
+        val blue = int and 0x000000ff
+        Color.rgb(red, green, blue, opacity)
+    } else {
+        Color.web(it.string)
+    }
+} ?: Color.rgb(
+    this[Colors.RED_KEY]?.int ?: 0,
+    this[Colors.GREEN_KEY]?.int ?: 0,
+    this[Colors.BLUE_KEY]?.int ?: 0,
+    this[SolidMaterial.OPACITY_KEY]?.double ?: opacity
+)
 
 /**
  * Infer FX material based on meta item
