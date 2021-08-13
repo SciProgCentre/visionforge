@@ -23,7 +23,7 @@ internal data class MetaListener(
 
 /**
  * A full base implementation for a [Vision]
- * @param properties Object own properties excluding styles and inheritance
+ * @param parent the parent object for this vision. Could ve set later. Not serialized.
  */
 @Serializable
 @SerialName("vision")

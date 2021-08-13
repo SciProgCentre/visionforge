@@ -82,6 +82,7 @@ public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilde
     VisionChangeBuilder().apply(block).isolate(manager)
 
 
+@OptIn(DFExperimental::class)
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
@@ -102,11 +103,13 @@ private fun CoroutineScope.collectChange(
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
-            source.structureChanges.onEach { (token, _, after) ->
+            source.structureChanges.onEach { changedName ->
+                val after = source[changedName]
+                val fullName = name + changedName
                 if (after != null) {
-                    collectChange(name + token, after, collector)
+                    collectChange(fullName, after, collector)
                 }
-                collector()[name + token] = after
+                collector()[fullName] = after
             }.launchIn(this)
         }
     }

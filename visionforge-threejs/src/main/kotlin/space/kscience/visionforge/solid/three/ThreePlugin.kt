@@ -2,8 +2,6 @@ package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
@@ -15,6 +13,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.solid.three.set
 import space.kscience.visionforge.visible
 import kotlin.collections.set
 import kotlin.reflect.KClass
@@ -82,9 +81,11 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     }
                 }
 
-                obj.structureChanges.onEach { (nameToken, _, child) ->
+                obj.onStructureChanged(this){ childName ->
+                    val child = get(childName)
+
                     //removing old object
-                    findChild(nameToken.asName())?.let { oldChild ->
+                    findChild(childName)?.let { oldChild ->
                         oldChild.parent?.remove(oldChild)
                     }
 
@@ -92,12 +93,12 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     if (child != null && child is Solid) {
                         try {
                             val object3D = buildObject3D(child)
-                            set(nameToken, object3D)
+                            set(childName, object3D)
                         } catch (ex: Throwable) {
                             logger.error(ex) { "Failed to render $child" }
                         }
                     }
-                }.launchIn(updateScope)
+                }
             }
         }
         is Composite -> compositeFactory(this, obj)

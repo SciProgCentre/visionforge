@@ -1,6 +1,11 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
 import space.kscience.dataforge.provider.Provider
 
@@ -69,14 +74,29 @@ public interface VisionContainerBuilder<in V : Vision> {
  * Mutable version of [VisionGroup]
  */
 public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision> {
+    public fun onStructureChanged(owner: Any?, block: VisionGroup.(Name) -> Unit)
 
-    public data class StructureChange(val token: NameToken, val before: Vision?, val after: Vision?)
-
-    /**
-     * Flow structure changes of this group. Unconsumed changes are discarded
-     */
-    public val structureChanges: Flow<StructureChange>
+    public fun removeStructureListener(owner: Any?)
 }
+
+
+/**
+ * Flow structure changes of this group. Unconsumed changes are discarded
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+@DFExperimental
+public val MutableVisionGroup.structureChanges: Flow<Name>
+    get() = callbackFlow {
+        meta.onChange(this) { name ->
+            launch {
+                send(name)
+            }
+        }
+        awaitClose {
+            removeStructureListener(this)
+        }
+    }
+
 
 public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
 

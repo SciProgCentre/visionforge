@@ -49,28 +49,4 @@ class VisionUpdateTest {
         val reconstructed = visionManager.jsonFormat.decodeFromString(VisionChange.serializer(), serialized)
         assertEquals(change.properties,reconstructed.properties)
     }
-
-    @Test
-    fun testDeserialization(){
-        val str = """
-            {
-                "propertyChange": {
-                    "layer[4]": {
-                        "material": {
-                            "color": 123
-                        }
-                    },
-                    "layer[2]": {
-                        "material": {
-                        }
-                    }
-                },
-                "childrenChange": {
-                }
-            }
-        """.trimIndent()
-
-        val reconstructed = visionManager.jsonFormat.decodeFromString(VisionChange.serializer(), str)
-    }
-
 }
