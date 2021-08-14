@@ -11,6 +11,7 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.root
 import kotlin.collections.set
 
 @DslMarker
@@ -84,6 +85,7 @@ public abstract class VisionTagConsumer<R>(
     ): T {
         val output = VisionOutput(manager)
         val vision = output.visionProvider()
+        vision.root(manager)
         return vision(name, vision, output.meta)
     }
 
