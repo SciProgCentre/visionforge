@@ -2,16 +2,15 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.MutableValueProvider
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionBuilder
 
 @VisionBuilder
-public class ColorAccessor(private val provider: MutableValueProvider, private val colorKey: Name) :
-    MutableValueProvider {
+public class ColorAccessor(
+    private val provider: MutableValueProvider,
+    private val colorKey: Name
+) : MutableValueProvider {
     public var value: Value?
         get() = provider.getValue(colorKey)
         set(value) {
@@ -26,7 +25,7 @@ public class ColorAccessor(private val provider: MutableValueProvider, private v
 }
 
 public var ColorAccessor?.string: String?
-    get() = this?.value?.string
+    get() = this?.value?.let { if(it == Null) null else it.string }
     set(value) {
         this?.value = value?.asValue()
     }

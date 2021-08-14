@@ -20,7 +20,7 @@ kotlin {
                 this.outputFileName = "js/visionforge-playground.js"
             }
             commonWebpackConfig {
-                sourceMaps = false
+                sourceMaps = true
                 cssSupport.enabled = false
             }
         }
@@ -37,7 +37,7 @@ kotlin {
     }
 
     afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
+        val jsBrowserDistribution  = tasks.getByName("jsBrowserDevelopmentExecutableDistribution")
 
         tasks.getByName<ProcessResources>("jvmProcessResources") {
             dependsOn(jsBrowserDistribution)

@@ -1,9 +1,9 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-    kotlin("multiplatform") version "1.5.30-RC" apply false
+//    kotlin("multiplatform") version "1.5.30-RC" apply false
 }
 
-val dataforgeVersion by extra("0.5.0")
+val dataforgeVersion by extra("0.5.1")
 val fxVersion by extra("11")
 
 allprojects {

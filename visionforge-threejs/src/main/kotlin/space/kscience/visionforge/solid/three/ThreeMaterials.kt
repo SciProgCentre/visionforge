@@ -5,10 +5,7 @@ import info.laht.threekt.materials.Material
 import info.laht.threekt.materials.MeshBasicMaterial
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.Mesh
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.meta.double
-import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.*
@@ -100,18 +97,23 @@ public object ThreeMaterials {
 /**
  * Compute color
  */
-public fun Meta.threeColor(): Color = getValue(Name.EMPTY)?.let { value ->
-    if (value.type == ValueType.NUMBER) {
-        val int = value.int
-        Color(int)
+public fun Meta.threeColor(): Color? {
+    val value = getValue(Name.EMPTY)
+    return if (isLeaf) {
+        when {
+            value == null -> null
+            value === Null -> null
+            value.type == ValueType.NUMBER -> Color(value.int)
+            else -> Color(value.string)
+        }
     } else {
-        Color(value.string)
+        Color(
+            getValue(Colors.RED_KEY.asName())?.int ?: 0,
+            getValue(Colors.GREEN_KEY.asName())?.int ?: 0,
+            getValue(Colors.BLUE_KEY.asName())?.int ?: 0
+        )
     }
-} ?: Color(
-    getValue(Colors.RED_KEY.asName())?.int ?: 0,
-    getValue(Colors.GREEN_KEY.asName())?.int ?: 0,
-    getValue(Colors.BLUE_KEY.asName())?.int ?: 0
-)
+}
 
 private var Material.cached: Boolean
     get() = userData["cached"] == true
