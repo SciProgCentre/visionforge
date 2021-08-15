@@ -15,7 +15,6 @@ import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.computeProperties
-import space.kscience.visionforge.propertyChanges
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
@@ -137,7 +136,6 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
                                 propertyEditor(
                                     ownProperties = vision.meta,
                                     allProperties = vision.computeProperties(),
-                                    updateFlow = vision.propertyChanges,
                                     descriptor = vision.descriptor,
                                     key = selected
                                 )

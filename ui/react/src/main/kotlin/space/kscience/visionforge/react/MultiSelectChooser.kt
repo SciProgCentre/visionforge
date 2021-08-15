@@ -10,7 +10,6 @@ import react.dom.attrs
 import react.dom.option
 import react.dom.select
 import react.functionalComponent
-import react.useState
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.string
@@ -18,19 +17,16 @@ import space.kscience.dataforge.values.string
 @JsExport
 public val MultiSelectChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("MultiSelectChooser") { props ->
-        var selectedItems by useState { props.item?.value?.list ?: emptyList() }
-
         val onChange: (Event) -> Unit = { event: Event ->
             val newSelected = (event.target as HTMLSelectElement).selectedOptions.asList()
                 .map { (it as HTMLOptionElement).value.asValue() }
-            props.valueChanged?.invoke(newSelected.asValue())
-            selectedItems = newSelected
+            props.meta.value = newSelected.asValue()
         }
 
         select {
             attrs {
                 multiple = true
-                values = selectedItems.mapTo(HashSet()) { it.string }
+                values = (props.actual.value?.list ?: emptyList()).mapTo(HashSet()) { it.string }
                 onChangeFunction = onChange
             }
             props.descriptor?.allowedValues?.forEach { optionValue ->

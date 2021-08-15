@@ -5,7 +5,6 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.scheme
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.hide
 import space.kscience.visionforge.widgetType
 
@@ -21,20 +20,21 @@ public class Clipping : Scheme() {
                 attributes["min"] = 0.0
                 attributes["max"] = 1.0
                 attributes["step"] = 0.01
+                default(1.0)
             }
             value(Clipping::y) {
                 widgetType = "range"
                 attributes["min"] = 0.0
                 attributes["max"] = 1.0
                 attributes["step"] = 0.01
-
+                default(1.0)
             }
             value(Clipping::z) {
                 widgetType = "range"
                 attributes["min"] = 0.0
                 attributes["max"] = 1.0
                 attributes["step"] = 0.01
-
+                default(1.0)
             }
         }
     }

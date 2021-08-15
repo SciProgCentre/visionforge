@@ -44,7 +44,7 @@ public open class VisionBase(
     }
 
     @Transient
-    private val listeners = HashSet<MetaListener>()
+    private val listeners: MutableList<MetaListener> = mutableListOf()
 
     private inner class VisionProperties(val pathName: Name) : ObservableMutableMeta {
 

@@ -11,7 +11,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBase
-import space.kscience.visionforge.setProperty
 
 @Serializable
 @SerialName("vision.markup")
@@ -20,15 +19,11 @@ public class VisionOfMarkup(
 ) : VisionBase() {
 
     //FIXME to be removed after https://github.com/Kotlin/kotlinx.serialization/issues/1602 fix
-    override var properties: MutableMeta? = null
+    protected override var properties: MutableMeta? = null
 
     //TODO add templates
 
-    public var content: String?
-        get() = meta.getMeta(CONTENT_PROPERTY_KEY).string
-        set(value) {
-            setProperty(CONTENT_PROPERTY_KEY, value)
-        }
+    public var content: String? by meta.string(CONTENT_PROPERTY_KEY)
 
     public companion object {
         public val CONTENT_PROPERTY_KEY: Name = "content".asName()

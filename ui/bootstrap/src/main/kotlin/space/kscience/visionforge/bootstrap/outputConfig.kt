@@ -66,7 +66,7 @@ public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalCo
             }
         }
         propertyEditor(
-            ownProperties = props.canvasOptions,
+            ownProperties = props.canvasOptions.meta,
             allProperties = props.canvasOptions.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false

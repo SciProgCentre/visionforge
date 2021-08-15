@@ -13,14 +13,13 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import react.dom.option
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.boolean
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.allowedValues
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.*
+import space.kscience.dataforge.values.ValueType
+import space.kscience.dataforge.values.asValue
+import space.kscience.dataforge.values.int
+import space.kscience.dataforge.values.string
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
 import styled.css
@@ -28,23 +27,19 @@ import styled.styledInput
 import styled.styledSelect
 
 public external interface ValueChooserProps : RProps {
-    public var item: Meta?
     public var descriptor: MetaDescriptor?
-
-    //public var nullable: Boolean?
-    public var valueChanged: ((Value?) -> Unit)?
+    public var meta: ObservableMutableMeta
+    public var actual: Meta
 }
 
 @JsExport
 public val StringValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("StringValueChooser") { props ->
-        var value by useState(props.item.string ?: "")
+        var value by useState(props.actual.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
                 value = (event.target as HTMLInputElement).value
-                if (value != props.item.string) {
-                    props.valueChanged?.invoke(value.asValue())
-                }
+                props.meta.value = value.asValue()
             }
         }
         val handleChange: (Event) -> Unit = {
@@ -67,7 +62,7 @@ public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("BooleanValueChooser") { props ->
         val handleChange: (Event) -> Unit = {
             val newValue = (it.target as HTMLInputElement).checked
-            props.valueChanged?.invoke(newValue.asValue())
+            props.meta.value = newValue.asValue()
         }
         styledInput(type = InputType.checkBox) {
             css {
@@ -75,7 +70,7 @@ public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
             }
             attrs {
                 //this.attributes["indeterminate"] = (props.item == null).toString()
-                defaultChecked = props.item.boolean ?: false
+                defaultChecked = props.actual.boolean ?: false
                 onChangeFunction = handleChange
             }
         }
@@ -84,7 +79,7 @@ public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
 @JsExport
 public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("NumberValueChooser") { props ->
-        var innerValue by useState(props.item.string ?: "")
+        var innerValue by useState(props.actual.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
                 innerValue = (event.target as HTMLInputElement).value
@@ -92,7 +87,7 @@ public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
                 if (number == null) {
                     console.error("The input value $innerValue is not a number")
                 } else {
-                    props.valueChanged?.invoke(number.asValue())
+                    props.meta.value = number.asValue()
                 }
             }
         }
@@ -123,10 +118,10 @@ public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
 @JsExport
 public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("ComboValueChooser") { props ->
-        var selected by useState(props.item.string ?: "")
+        var selected by useState(props.actual.string ?: "")
         val handleChange: (Event) -> Unit = {
             selected = (it.target as HTMLSelectElement).value
-            props.valueChanged?.invoke(selected.asValue())
+            props.meta.value = selected.asValue()
         }
         styledSelect {
             css {
@@ -138,7 +133,7 @@ public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
                 }
             }
             attrs {
-                this.value = props.item?.string ?: ""
+                this.value = props.actual.string ?: ""
                 multiple = false
                 onChangeFunction = handleChange
             }
@@ -149,14 +144,14 @@ public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
 public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("ColorValueChooser") { props ->
         var value by useState(
-            props.item?.value?.let { value ->
+            props.actual.value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
                 else value.string
             } ?: "#000000"
         )
         val handleChange: (Event) -> Unit = {
             value = (it.target as HTMLInputElement).value
-            props.valueChanged?.invoke(value.asValue())
+            props.meta.value = value.asValue()
         }
         styledInput(type = InputType.color) {
             css {
@@ -187,21 +182,5 @@ public val ValueChooser: FunctionComponent<ValueChooserProps> = functionalCompon
         descriptor?.allowedValues?.isNotEmpty() ?: false -> child(ComboValueChooser, props)
         //TODO handle lists
         else -> child(StringValueChooser, props)
-    }
-}
-
-internal fun RBuilder.valueChooser(
-    name: Name,
-    item: Meta?,
-    descriptor: MetaDescriptor? = null,
-    callback: (Value?) -> Unit,
-) {
-    child(ValueChooser) {
-        attrs {
-            key = name.toString()
-            this.item = item
-            this.descriptor = descriptor
-            this.valueChanged = callback
-        }
     }
 }

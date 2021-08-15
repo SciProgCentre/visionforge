@@ -12,10 +12,12 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.boolean
 import space.kscience.visionforge.Vision.Companion.TYPE
+import kotlin.reflect.KProperty1
 
 /**
  * A root type for display hierarchy
@@ -129,3 +131,17 @@ public var Vision.visible: Boolean?
     get() = getPropertyValue(Vision.VISIBLE_KEY)?.boolean
     set(value) = meta.setValue(Vision.VISIBLE_KEY, value?.asValue())
 
+
+public fun <V : Vision, T> V.useProperty(
+    property: KProperty1<V, T>,
+    owner: Any? = null,
+    callBack: V.(T) -> Unit,
+) {
+    //Pass initial value.
+    callBack(property.get(this))
+    meta.onChange(owner) { name ->
+        if (name.startsWith(property.name.asName())) {
+            callBack(property.get(this@useProperty))
+        }
+    }
+}
