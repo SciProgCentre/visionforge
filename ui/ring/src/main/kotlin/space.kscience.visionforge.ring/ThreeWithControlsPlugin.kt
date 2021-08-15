@@ -1,5 +1,6 @@
 package space.kscience.visionforge.ring
 
+import kotlinx.coroutines.async
 import org.w3c.dom.Element
 import react.child
 import space.kscience.dataforge.context.AbstractPlugin
@@ -28,7 +29,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
             child(ThreeCanvasWithControls) {
                 attrs {
                     this.context = this@ThreeWithControlsPlugin.context
-                    this.solid = vision as? Solid
+                    this.builderOfSolid = context.async { vision as Solid}
                 }
             }
         }

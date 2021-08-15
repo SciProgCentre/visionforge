@@ -1,6 +1,9 @@
 package space.kscience.visionforge.gdml.demo
 
 import kotlinx.browser.window
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.*
@@ -27,32 +30,43 @@ external interface GDMLAppProps : RProps {
 @JsExport
 val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     val visionManager = useMemo(props.context) { props.context.fetch(Solids).visionManager }
-    var vision: Solid? by useState { props.vision?.apply { root(visionManager) } }
+    var deferredVision: Deferred<Solid?> by useState {
+        CompletableDeferred(props.vision)
+    }
 
-    fun loadData(name: String, data: String) {
-        val parsedVision = when {
-            name.endsWith(".gdml") || name.endsWith(".xml") -> {
-                val gdml = Gdml.decodeFromString(data)
-                gdml.toVision().apply {
-                    root(visionManager)
-                    console.info("Marking layers for file $name")
-                    markLayers()
+    fun readFileAsync(file: File): Deferred<Solid?> {
+        val deferred = CompletableDeferred<Solid?>()
+        FileReader().apply {
+            onload = {
+                val data = result as String
+                val name = file.name
+                val parsedVision = when {
+                    name.endsWith(".gdml") || name.endsWith(".xml") -> {
+                        val gdml = Gdml.decodeFromString(data)
+                        gdml.toVision().apply {
+                            root(visionManager)
+                            console.info("Marking layers for file $name")
+                            markLayers()
+                        }
+                    }
+                    name.endsWith(".json") -> visionManager.decodeFromString(data)
+                    else -> {
+                        window.alert("File extension is not recognized: $name")
+                        error("File extension is not recognized: $name")
+                    }
                 }
+                deferred.complete(parsedVision as? Solid ?: error("Parsed vision is not a solid"))
             }
-            name.endsWith(".json") -> visionManager.decodeFromString(data)
-            else -> {
-                window.alert("File extension is not recognized: $name")
-                error("File extension is not recognized: $name")
-            }
+            readAsText(file)
         }
 
-        vision = parsedVision as? Solid ?: error("Parsed vision is not a solid")
+        return deferred
     }
 
     child(ThreeCanvasWithControls) {
         attrs {
             this.context = props.context
-            this.solid = vision
+            this.builderOfSolid = deferredVision
             this.selected = props.selected
             tab("Load") {
                 h2 {
@@ -61,13 +75,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
                 fileDrop("(drag file here)") { files ->
                     val file = files?.get(0)
                     if (file != null) {
-                        FileReader().apply {
-                            onload = {
-                                val string = result as String
-                                loadData(file.name, string)
-                            }
-                            readAsText(file)
-                        }
+                        deferredVision = readFileAsync(file)
                     }
                 }
             }
