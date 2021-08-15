@@ -1,4 +1,4 @@
-import kotlinx.css.*
+import kotlinx.css.flex
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.RProps
@@ -27,8 +27,6 @@ val Plotly = functionalComponent<PlotlyProps>("Plotly"){props ->
 
     styledDiv {
         css {
-            maxWidth = 100.vw
-            maxHeight = 100.vh
             flex(1.0)
         }
         ref = elementRef

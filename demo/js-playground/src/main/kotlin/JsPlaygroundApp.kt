@@ -9,11 +9,11 @@ import react.dom.render
 import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
-import space.kscience.gdml.GdmlShowCase
+import space.kscience.plotly.models.Trace
+import space.kscience.plotly.models.appendXY
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionClient
-import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.ThreeWithControlsPlugin
@@ -36,6 +36,8 @@ private class JsPlaygroundApp : Application {
 
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
+        val bouncingSphereTrace = Trace()
+
         val bouncingSphere = SolidGroup {
             sphere(5.0, "ball") {
                 detail = 16
@@ -52,20 +54,19 @@ private class JsPlaygroundApp : Application {
                         time += dt
                         velocity -= g * dt
                         y = y.toDouble() + velocity * dt
-                        if (y.toDouble() <= 2.5){
-                            velocity = sqrt(2*g*h)
+                        bouncingSphereTrace.appendXY(time, y)
+                        if (y.toDouble() <= 2.5) {
+                            //conservation of energy
+                            velocity = sqrt(2 * g * h)
                         }
                     }
                 }
             }
 
-            box(200, 5, 200, name = "floor"){
+            box(200, 5, 200, name = "floor") {
                 y = -2.5
             }
         }
-
-        val visionOfD0 = GdmlShowCase.babyIaxo().toVision()
-
         val random = Random(112233)
 
         val visionOfSpheres = SolidGroup {
@@ -92,22 +93,41 @@ private class JsPlaygroundApp : Application {
                 }
                 SmartTabs("gravity") {
                     Tab("gravity") {
-                        child(ThreeCanvasWithControls) {
-                            attrs {
-                                context = playgroundContext
-                                solid = bouncingSphere
+                        styledDiv {
+                            css{
+                                height = 50.vh
+                            }
+                            child(ThreeCanvasWithControls) {
+                                attrs {
+                                    context = playgroundContext
+                                    solid = bouncingSphere
+                                }
+                            }
+                        }
+                        styledDiv {
+                            css{
+                                height = 40.vh
+                            }
+
+                            Plotly {
+                                attrs {
+                                    context = playgroundContext
+                                    plot = space.kscience.plotly.Plotly.plot {
+                                        traces(bouncingSphereTrace)
+                                    }
+                                }
                             }
                         }
                     }
 
-                    Tab("D0") {
-                        child(ThreeCanvasWithControls) {
-                            attrs {
-                                context = playgroundContext
-                                solid = visionOfD0
-                            }
-                        }
-                    }
+//                    Tab("D0") {
+//                        child(ThreeCanvasWithControls) {
+//                            attrs {
+//                                context = playgroundContext
+//                                solid = GdmlShowCase.babyIaxo().toVision()
+//                            }
+//                        }
+//                    }
                     Tab("spheres") {
                         child(ThreeCanvasWithControls) {
                             attrs {
