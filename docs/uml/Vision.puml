@@ -3,13 +3,13 @@
 interface Vision
 
 interface Solid
-Vision <-- Solid
+Vision <- Solid
 
 class VisionGroup
 Vision <-- VisionGroup
 
 class VisionBase
-Vision <-- VisionBase
+Vision <- VisionBase
 
 
 class SolidLabel
