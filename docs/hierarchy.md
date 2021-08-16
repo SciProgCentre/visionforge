@@ -1,6 +1,7 @@
 # Hierarchy
 
-![](../docs/images/hierarchy.png)
+![](../docs/images/hierarchy.png) 
+**the image will be changed**
 
 ### Vision
 
@@ -14,19 +15,3 @@ It gets properties of element with `name` identification.
 * function `setProperty(name: Name, item: MetaItem?, notify: Boolean = true)`
 
 Sets the `item` property to the element with the `name` identification. `notify` is a value which toggles the necessity of the change notification. Default is true.
-
-### About properties
-**Properties have to be set in particular order:**
-
-* styles
-* prototypes
-* parent
-* parent's styles
-* defaults
-
-
-## Inheritance
-
-Inheritance is a very useful ability of `children` elements to get the same property in default as his parent does have (to 'inherit' it). 
-
-
