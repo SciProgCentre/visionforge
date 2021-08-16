@@ -14,17 +14,10 @@ dependencies {
 
     api("no.tornado:tornadofx:1.7.20")
 
-    api("de.jensd:fontawesomefx-fontawesome:4.7.0-11") {
-        exclude(group = "org.openjfx")
-    }
-
-    api("de.jensd:fontawesomefx-commons:11.0") {
-        exclude(group = "org.openjfx")
-    }
-
     api("org.fxyz3d:fxyz3d:0.5.4") {
         exclude(module = "slf4j-simple")
     }
+
     api("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:${ru.mipt.npm.gradle.KScienceVersions.coroutinesVersion}")
 
     implementation("eu.mihosoft.vrl.jcsg:jcsg:0.5.7") {

@@ -8,7 +8,7 @@ package space.kscience.visionforge.editor
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
 import org.slf4j.LoggerFactory
-import space.kscience.dataforge.meta.descriptors.ValueDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.values.Null
 import space.kscience.dataforge.values.Value
 import tornadofx.*
@@ -21,12 +21,10 @@ import tornadofx.*
 public abstract class ValueChooserBase<out T : Node> : ValueChooser {
 
     override val node: T by lazy { buildNode() }
-    final override val valueProperty: SimpleObjectProperty<Value> =
-        SimpleObjectProperty<Value>(Null)
-    final override val descriptorProperty: SimpleObjectProperty<ValueDescriptor> =
-        SimpleObjectProperty<ValueDescriptor>()
+    final override val valueProperty: SimpleObjectProperty<Value> = SimpleObjectProperty<Value>(Null)
+    final override val descriptorProperty: SimpleObjectProperty<MetaDescriptor> = SimpleObjectProperty<MetaDescriptor>()
 
-    override var descriptor: ValueDescriptor? by descriptorProperty
+    override var descriptor: MetaDescriptor? by descriptorProperty
     override var value: Value? by valueProperty
 
     public fun resetValue() {
@@ -38,7 +36,7 @@ public abstract class ValueChooserBase<out T : Node> : ValueChooser {
      * @return
      */
     protected fun currentValue(): Value {
-        return value ?: descriptor?.default ?: Null
+        return value ?: descriptor?.defaultValue ?: Null
     }
 
     /**

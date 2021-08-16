@@ -98,7 +98,7 @@ class SC16(
             }
             val offset = Point3D(-y, x, 0)//rotateDetector(Point3D(x, y, 0.0));
             val pixelName = "${name}_${index}"
-            SC1(pixelName, center + offset)
+            SC1(pixelName, offset + center)
         }
     }
 }

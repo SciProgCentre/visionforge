@@ -1,35 +1,42 @@
 package space.kscience.visionforge.ring
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.css.*
 import react.*
 import react.dom.div
 import react.dom.span
-import ringui.Island
-import ringui.IslandContent
-import ringui.IslandHeader
-import ringui.Link
+import ringui.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.allProperties
-import space.kscience.visionforge.ownProperties
+import space.kscience.visionforge.computeProperties
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.solid.Solid
+import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
 public external interface ThreeCanvasWithControlsProps : RProps {
     public var context: Context
-    public var solid: Solid?
+    public var builderOfSolid: Deferred<Solid?>
     public var selected: Name?
     public var additionalTabs: Map<String, RBuilder.() -> Unit>?
+}
+
+public fun ThreeCanvasWithControlsProps.solid(block: SolidGroup.() -> Unit) {
+    builderOfSolid = context.async {
+        SolidGroup(block)
+    }
 }
 
 public fun ThreeCanvasWithControlsProps.tab(title: String, block: RBuilder.() -> Unit) {
@@ -70,9 +77,16 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement 
 }
 
 @JsExport
-public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsProps> =
+public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsProps> =
     functionalComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
+        var solid: Solid? by useState(null)
+
+        useEffect {
+            props.context.launch {
+                solid = props.builderOfSolid.await()
+            }
+        }
 
         val onSelect: (Name?) -> Unit = {
             selected = it
@@ -84,14 +98,15 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
             }
         }
 
-        val selectedVision = useMemo(selected) {
+        val selectedVision: Vision? = useMemo(props.builderOfSolid, selected) {
             selected?.let {
                 when {
-                    it.isEmpty() -> props.solid
-                    else -> (props.solid as? VisionGroup)?.get(it)
+                    it.isEmpty() -> solid
+                    else -> (solid as? VisionGroup)?.get(it)
                 }
             }
         }
+
 
         flexRow {
             css {
@@ -109,35 +124,42 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
                     position = Position.relative
                 }
 
-                child(ThreeCanvasComponent) {
-                    attrs {
-                        this.context = props.context
-                        this.solid = props.solid
-                        this.selected = selected
-                        this.options = options
+                if (solid == null) {
+                    LoaderScreen {
+                        attrs {
+                            message = "Loading Three vision"
+                        }
+                    }
+                } else {
+                    child(ThreeCanvasComponent) {
+                        attrs {
+                            this.context = props.context
+                            this.solid = solid
+                            this.selected = selected
+                            this.options = options
+                        }
                     }
                 }
 
                 selectedVision?.let { vision ->
                     styledDiv {
-                        css{
+                        css {
                             position = Position.absolute
                             top = 5.px
                             right = 5.px
                             width = 450.px
                         }
-                        Island{
-                            IslandHeader{
+                        Island {
+                            IslandHeader {
                                 attrs {
                                     border = true
                                 }
                                 nameCrumbs(selected) { selected = it }
                             }
-                            IslandContent{
+                            IslandContent {
                                 propertyEditor(
-                                    ownProperties = vision.ownProperties,
-                                    allProperties = vision.allProperties(),
-                                    updateFlow = vision.propertyChanges,
+                                    ownProperties = vision.meta,
+                                    allProperties = vision.computeProperties(),
                                     descriptor = vision.descriptor,
                                     key = selected
                                 )
@@ -152,7 +174,8 @@ public val ThreeCanvasWithControls: FunctionalComponent<ThreeCanvasWithControlsP
                     minWidth = 400.px
                     flex(1.0, 10.0, FlexBasis("300px"))
                 }
-                ringThreeControls(options, props.solid, selected, onSelect, additionalTabs = props.additionalTabs)
+                ringThreeControls(options, solid, selected, onSelect, additionalTabs = props.additionalTabs)
             }
         }
     }
+

@@ -168,42 +168,40 @@ public class ThreeCanvas(
         }
 
         //Clipping planes
-        options.onChange(this@ThreeCanvas) { name, _, _ ->
-            if (name.startsWith(Canvas3DOptions::clipping.name.asName())) {
-                val clipping = options.clipping
-                if (!clipping.isEmpty()) {
-                    renderer.localClippingEnabled = true
-                    boundingBox?.let { boundingBox ->
-                        val xClippingPlane = clipping.x?.let {
-                            val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
-                            Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
-
-                        }
-                        val yClippingPlane = clipping.y?.let {
-                            val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
-                            Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
-                        }
-
-                        val zClippingPlane = clipping.z?.let {
-                            val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
-                            Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
-                        }
-                        renderer.clippingPlanes =
-                            listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
+        options.useProperty(Canvas3DOptions::clipping){clipping ->
+            if (!clipping.meta.isEmpty()) {
+                renderer.localClippingEnabled = true
+                boundingBox?.let { boundingBox ->
+                    val xClippingPlane = clipping.x?.let {
+                        val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
+                        Plane(Vector3(-1.0, 0.0, 0.0), absoluteValue)
                     }
-                } else {
-                    renderer.localClippingEnabled = false
-                }
-            } else if (name.startsWith(Canvas3DOptions::size.name.asName())) {
-                canvas.style.apply {
-                    minWidth = "${options.size.minWith.toInt()}px"
-                    maxWidth = "${options.size.maxWith.toInt()}px"
-                    minHeight = "${options.size.minHeight.toInt()}px"
-                    maxHeight = "${options.size.maxHeight.toInt()}px"
-                }
-            }
+                    val yClippingPlane = clipping.y?.let {
+                        val absoluteValue = boundingBox.min.y + (boundingBox.max.y - boundingBox.min.y) * it
+                        Plane(Vector3(0.0, -1.0, 0.0), absoluteValue)
+                    }
 
+                    val zClippingPlane = clipping.z?.let {
+                        val absoluteValue = boundingBox.min.z + (boundingBox.max.z - boundingBox.min.z) * it
+                        Plane(Vector3(0.0, 0.0, -1.0), absoluteValue)
+                    }
+                    renderer.clippingPlanes =
+                        listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
+                }
+            } else {
+                renderer.localClippingEnabled = false
+            }
         }
+
+        options.useProperty(Canvas3DOptions::size){
+            canvas.style.apply {
+                minWidth = "${options.size.minWith.toInt()}px"
+                maxWidth = "${options.size.maxWith.toInt()}px"
+                minHeight = "${options.size.minHeight.toInt()}px"
+                maxHeight = "${options.size.maxHeight.toInt()}px"
+            }
+        }
+
     }
 
     /**
@@ -212,9 +210,9 @@ public class ThreeCanvas(
     private fun Object3D.fullName(): Name {
         if (root == null) error("Can't resolve element name without the root")
         return if (parent == root) {
-            name.toName()
+            Name.parse(name)
         } else {
-            (parent?.fullName() ?: Name.EMPTY) + name.toName()
+            (parent?.fullName() ?: Name.EMPTY) + Name.parse(name)
         }
     }
 
@@ -237,7 +235,7 @@ public class ThreeCanvas(
     private fun buildLight(spec: Light?): info.laht.threekt.lights.Light = AmbientLight(0x404040)
 
     private fun addControls(element: Node, controls: Controls) {
-        when (controls["type"].string) {
+        when (controls.meta["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
         }

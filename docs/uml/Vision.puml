@@ -2,8 +2,10 @@
 'https://plantuml.com/class-diagram
 interface Vision
 
+
 interface Solid
 Vision <- Solid
+
 
 class VisionGroup
 Vision <-- VisionGroup

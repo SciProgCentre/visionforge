@@ -48,7 +48,7 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
         }.apply {
             updatePosition(obj)
             applyProperties(obj)
-            obj.onPropertyChange(three.updateScope) { name ->
+            obj.onPropertyChange { name ->
                 when {
                     //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
                     name.startsWith(MeshThreeFactory.EDGES_KEY) -> applyEdges(obj)

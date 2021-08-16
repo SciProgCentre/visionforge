@@ -7,9 +7,8 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.describedProperties
-import space.kscience.visionforge.editor.VisualObjectEditorFragment
-import space.kscience.visionforge.editor.VisualObjectTreeFragment
+import space.kscience.visionforge.editor.VisionEditorFragment
+import space.kscience.visionforge.editor.VisionTreeFragment
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.solid.FX3DPlugin
 import space.kscience.visionforge.solid.FXCanvas3D
@@ -29,17 +28,14 @@ class GDMLView : View() {
     private val visionManager = context.fetch(VisionManager)
     private val canvas = FXCanvas3D(fx3d)
 
-    private val treeFragment = VisualObjectTreeFragment().apply {
+    private val treeFragment = VisionTreeFragment().apply {
         this.itemProperty.bind(canvas.rootObjectProperty)
     }
 
-    private val propertyEditor = VisualObjectEditorFragment {
-        it.describedProperties
-    }.apply {
+    private val propertyEditor = VisionEditorFragment().apply {
         descriptorProperty.set(SolidMaterial.descriptor)
-        itemProperty.bind(treeFragment.selectedProperty)
+        visionProperty.bind(treeFragment.selectedProperty)
     }
-
 
     override val root: Parent = borderpane {
         top {
@@ -47,7 +43,7 @@ class GDMLView : View() {
                 button("Load GDML/json") {
                     action {
                         val file = chooseFile("Select a GDML/json file", filters = fileNameFilter).firstOrNull()
-                        if(file!= null) {
+                        if (file != null) {
                             runAsync {
                                 visionManager.readFile(file) as Solid
                             } ui {

@@ -2,6 +2,7 @@ package ru.mipt.npm.muon.monitor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
@@ -23,6 +24,7 @@ import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.visionTree
 import space.kscience.visionforge.solid.specifications.Camera
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.solid.three.edges
 import styled.css
 import styled.styledDiv
 import kotlin.math.PI
@@ -34,6 +36,7 @@ external interface MMAppProps : RProps {
     var selected: Name?
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 @JsExport
 val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
     var selected by useState { props.selected }
@@ -53,7 +56,11 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
         }
     }
 
-    val root = props.model.root
+    val root = useMemo(props.model) {
+        props.model.root.apply {
+            edges()
+        }
+    }
 
     gridRow {
         flexColumn {

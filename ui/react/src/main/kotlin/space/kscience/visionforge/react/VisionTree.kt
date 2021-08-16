@@ -107,7 +107,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
 }
 
 @JsExport
-public val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
+public val ObjectTree: FunctionComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
     visionTree(props)
 }
 

@@ -30,7 +30,6 @@ import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.toName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.VisionManager
@@ -54,12 +53,12 @@ public class VisionServer internal constructor(
     private val application: Application,
     private val rootRoute: String,
 ) : Configurable, CoroutineScope by application {
-    override val config: Config = Config()
-    public var updateInterval: Long by config.long(300, key = UPDATE_INTERVAL_KEY)
-    public var cacheFragments: Boolean by config.boolean(true)
-    public var dataEmbed: Boolean by config.boolean(true, "data.embed".toName())
-    public var dataFetch: Boolean by config.boolean(false, "data.fetch".toName())
-    public var dataConnect: Boolean by config.boolean(true, "data.connect".toName())
+    override val meta: ObservableMutableMeta = MutableMeta()
+    public var updateInterval: Long by meta.long(300, key = UPDATE_INTERVAL_KEY)
+    public var cacheFragments: Boolean by meta.boolean(true)
+    public var dataEmbed: Boolean by meta.boolean(true, Name.parse("data.embed"))
+    public var dataFetch: Boolean by meta.boolean(false, Name.parse("data.fetch"))
+    public var dataConnect: Boolean by meta.boolean(true, Name.parse("data.connect"))
 
     /**
      * a list of headers that should be applied to all pages
@@ -131,7 +130,7 @@ public class VisionServer internal constructor(
                 ?: error("Vision name is not defined in parameters")
 
             application.log.debug("Opened server socket for $name")
-            val vision: Vision = visions[name.toName()] ?: error("Plot with id='$name' not registered")
+            val vision: Vision = visions[Name.parse(name)] ?: error("Plot with id='$name' not registered")
 
             launch {
                 incoming.consumeEach {
@@ -161,7 +160,7 @@ public class VisionServer internal constructor(
             val name: String = call.request.queryParameters["name"]
                 ?: error("Vision name is not defined in parameters")
 
-            val vision: Vision? = visions[name.toName()]
+            val vision: Vision? = visions[Name.parse(name)]
             if (vision == null) {
                 call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
             } else {
@@ -232,7 +231,7 @@ public class VisionServer internal constructor(
 
     public companion object {
         public const val DEFAULT_PAGE: String = "/"
-        public val UPDATE_INTERVAL_KEY: Name = "update.interval".toName()
+        public val UPDATE_INTERVAL_KEY: Name = Name.parse("update.interval")
     }
 }
 

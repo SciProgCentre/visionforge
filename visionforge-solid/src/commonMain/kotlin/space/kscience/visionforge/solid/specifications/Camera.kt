@@ -2,10 +2,10 @@ package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.SchemeSpec
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.int
-import space.kscience.visionforge.value
 import kotlin.math.PI
 
 public class Camera : Scheme() {
@@ -27,24 +27,24 @@ public class Camera : Scheme() {
         public const val FAR_CLIP: Double = 10000.0
         public const val FIELD_OF_VIEW: Int = 75
 
-        override val descriptor: NodeDescriptor  by lazy {
-            NodeDescriptor {
-                value(Camera::fov){
+        override val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
+                value(Camera::fov) {
                     default(FIELD_OF_VIEW)
                 }
-                value(Camera::nearClip){
+                value(Camera::nearClip) {
                     default(NEAR_CLIP)
                 }
-                value(Camera::farClip){
+                value(Camera::farClip) {
                     default(FAR_CLIP)
                 }
-                value(Camera::distance){
+                value(Camera::distance) {
                     default(INITIAL_DISTANCE)
                 }
-                value(Camera::azimuth){
+                value(Camera::azimuth) {
                     default(INITIAL_AZIMUTH)
                 }
-                value(Camera::latitude){
+                value(Camera::latitude) {
                     default(INITIAL_LATITUDE)
                 }
             }

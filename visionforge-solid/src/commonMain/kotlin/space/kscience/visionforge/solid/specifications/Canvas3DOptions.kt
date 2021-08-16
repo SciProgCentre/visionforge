@@ -1,13 +1,11 @@
 package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
-import space.kscience.dataforge.meta.descriptors.attributes
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.scheme
+import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.hide
-import space.kscience.visionforge.scheme
-import space.kscience.visionforge.value
 import space.kscience.visionforge.widgetType
 
 public class Clipping : Scheme() {
@@ -16,30 +14,27 @@ public class Clipping : Scheme() {
     public var z: Double? by double()
 
     public companion object : SchemeSpec<Clipping>(::Clipping) {
-        override val descriptor: NodeDescriptor = NodeDescriptor {
+        override val descriptor: MetaDescriptor = MetaDescriptor {
             value(Clipping::x) {
                 widgetType = "range"
-                attributes {
-                    set("min", 0.0)
-                    set("max", 1.0)
-                    set("step", 0.01)
-                }
+                attributes["min"] = 0.0
+                attributes["max"] = 1.0
+                attributes["step"] = 0.01
+                default(1.0)
             }
             value(Clipping::y) {
                 widgetType = "range"
-                attributes {
-                    set("min", 0.0)
-                    set("max", 1.0)
-                    set("step", 0.01)
-                }
+                attributes["min"] = 0.0
+                attributes["max"] = 1.0
+                attributes["step"] = 0.01
+                default(1.0)
             }
             value(Clipping::z) {
                 widgetType = "range"
-                attributes {
-                    set("min", 0.0)
-                    set("max", 1.0)
-                    set("step", 0.01)
-                }
+                attributes["min"] = 0.0
+                attributes["max"] = 1.0
+                attributes["step"] = 0.01
+                default(1.0)
             }
         }
     }
@@ -55,7 +50,7 @@ public class CanvasSize : Scheme() {
     public var maxHeight: Number by number { maxSize }
 
     public companion object : SchemeSpec<CanvasSize>(::CanvasSize) {
-        override val descriptor: NodeDescriptor = NodeDescriptor {
+        override val descriptor: MetaDescriptor = MetaDescriptor {
             value(CanvasSize::minSize)
             value(CanvasSize::minWith)
             value(CanvasSize::minHeight)
@@ -82,10 +77,22 @@ public class Canvas3DOptions : Scheme() {
 
 
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions) {
-        override val descriptor: NodeDescriptor by lazy {
-            NodeDescriptor {
+        override val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
                 scheme(Canvas3DOptions::axes, Axes)
-                scheme(Canvas3DOptions::light, Light)
+
+                value(Canvas3DOptions::layers) {
+                    multiple = true
+                    default(listOf(0))
+                    widgetType = "multiSelect"
+                    allowedValues(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                }
+
+                scheme(Canvas3DOptions::clipping, Clipping)
+
+                scheme(Canvas3DOptions::light, Light){
+                    hide()
+                }
 
                 scheme(Canvas3DOptions::camera, Camera) {
                     hide()
@@ -98,15 +105,6 @@ public class Canvas3DOptions : Scheme() {
                 scheme(Canvas3DOptions::size, CanvasSize) {
                     hide()
                 }
-
-                value(Canvas3DOptions::layers) {
-                    type(ValueType.NUMBER)
-                    multiple = true
-                    default(listOf(0))
-                    widgetType = "multiSelect"
-                    allow(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                }
-                scheme(Canvas3DOptions::clipping, Clipping)
             }
         }
     }

@@ -1,6 +1,6 @@
 pluginManagement {
 
-    val toolsVersion = "0.10.0"
+    val toolsVersion = "0.10.2"
 
     repositories {
         maven("https://repo.kotlin.link")
@@ -33,6 +33,7 @@ include(
     ":visionforge-gdml",
     ":visionforge-server",
     ":visionforge-plotly",
+    ":visionforge-markdown",
     ":demo:solid-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",

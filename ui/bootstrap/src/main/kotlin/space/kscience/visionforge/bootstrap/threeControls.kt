@@ -21,7 +21,7 @@ public external interface ThreeControlsProps : RProps {
 }
 
 @JsExport
-public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
+public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionalComponent { props ->
     tabPane(if (props.selected != null) "Properties" else null) {
         tab("Canvas") {
             card("Canvas configuration") {

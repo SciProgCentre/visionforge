@@ -1,7 +1,10 @@
 package space.kscience.visionforge
 
 import kotlinx.browser.document
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.dom.hasClass
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 
 public external val module: Module
@@ -25,7 +28,10 @@ public external interface Module {
  *
  * Base interface for applications supporting Hot Module Replacement (HMR).
  */
-public interface Application {
+public interface Application: CoroutineScope {
+
+    override val coroutineContext: CoroutineContext get() = EmptyCoroutineContext
+
     /**
      * Starting point for an application.
      * @param state Initial state between Hot Module Replacement (HMR).

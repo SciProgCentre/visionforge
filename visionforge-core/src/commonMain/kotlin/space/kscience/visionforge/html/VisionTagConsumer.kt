@@ -2,14 +2,16 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaBuilder
 import space.kscience.dataforge.meta.MetaSerializer
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.root
 import kotlin.collections.set
 
 @DslMarker
@@ -25,7 +27,7 @@ public class VisionOutput @PublishedApi internal constructor(public val manager:
 
     //TODO expose a way to define required plugins.
 
-    public inline fun meta(block: MetaBuilder.() -> Unit) {
+    public inline fun meta(block: MutableMeta.() -> Unit) {
         this.meta = Meta(block)
     }
 }
@@ -36,7 +38,7 @@ public class VisionOutput @PublishedApi internal constructor(public val manager:
 @VisionDSL
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
-    public val manager:VisionManager,
+    public val manager: VisionManager,
     private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
@@ -83,6 +85,7 @@ public abstract class VisionTagConsumer<R>(
     ): T {
         val output = VisionOutput(manager)
         val vision = output.visionProvider()
+        vision.root(manager)
         return vision(name, vision, output.meta)
     }
 
@@ -94,11 +97,11 @@ public abstract class VisionTagConsumer<R>(
     public inline fun <T> TagConsumer<T>.vision(
         name: String = DEFAULT_VISION_NAME,
         visionProvider: VisionOutput.() -> Vision,
-    ): T = vision(name.toName(), visionProvider)
+    ): T = vision(Name.parse(name), visionProvider)
 
     public fun <T> TagConsumer<T>.vision(
         vision: Vision,
-    ): T = vision("vision[${vision.hashCode()}]".toName(), vision)
+    ): T = vision(NameToken("vision", vision.hashCode().toString()).asName(), vision)
 
     /**
      * Process the resulting object produced by [TagConsumer]

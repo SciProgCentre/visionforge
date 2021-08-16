@@ -27,7 +27,7 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
         return Mesh(textGeo, ThreeMaterials.DEFAULT).apply {
             updateMaterial(obj)
             updatePosition(obj)
-            obj.onPropertyChange(three.updateScope) { _ ->
+            obj.onPropertyChange { _ ->
                 //TODO
                 three.logger.warn { "Label parameter change not implemented" }
             }
