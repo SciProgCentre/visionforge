@@ -2,53 +2,49 @@
 'https://plantuml.com/class-diagram
 interface Vision
 
-interface Solid
+interface Solid{
+    base of 3D geometries
+}
 Vision <- Solid
 
-class VisionGroup
+class VisionGroup{
+    a group of visions
+}
 Vision <-- VisionGroup
 
-class VisionBase
+class VisionBase{
+    basic vision
+    implementation
+}
 Vision <- VisionBase
 
 
 class SolidLabel
 Solid <--- SolidLabel
-SolidBase <-- SolidLabel
 
 class SolidGroup
 Solid <--- SolidGroup
 VisionGroupBase <-- SolidGroup
 
-class SolidBase
-Solid <--- SolidBase
-VisionBase <-- SolidBase
-
 
 class SphereLayer
-SolidBase <-- SphereLayer
 GeometrySolid <-- SphereLayer
 
 class Sphere
-SolidBase <-- Sphere
 GeometrySolid <-- Sphere
 
 class Box
-SolidBase <-- Box
 Hexagon <-- Box
 
 class GenericHexagon
-SolidBase <-- GenericHexagon
 Hexagon <-- GenericHexagon
 
 class Extruded
-SolidBase <-- Extruded
 GeometrySolid <-- Extruded
 
 
 class PolyLine
 Solid <--- PolyLine
-SolidBase <-- PolyLine
 
 interface GeometrySolid
 Solid <--- GeometrySolid
@@ -66,18 +62,13 @@ GeometrySolid <-- ConeSurface
 
 class Convex
 Solid <--- Convex
-SolidBase <-- Convex
 
 class Composite
 Solid <--- Composite
-SolidBase <-- Composite
 
 
 interface SolidReference
 VisionGroup <---- SolidReference
-
-interface MutableVisionGroup
-VisionGroup <---- MutableVisionGroup
 
 class SolidReferenceGroup
 VisionGroup <-- SolidReferenceGroup
@@ -93,8 +84,6 @@ SolidReference <-- ReferenceChild
 
 class VisionGroupBase
 VisionBase <-- VisionGroupBase
-MutableVisionGroup <-- VisionGroupBase
-
 
 
 class RootVisionGroup
