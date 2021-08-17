@@ -1,6 +1,10 @@
 @startuml
 'https://plantuml.com/class-diagram
-interface Vision
+interface Vision{
+    val parent: VisionGroup?
+    fun getProperty(name):TypedMetaItem?
+    fun setProperty(name, item)
+}
 
 interface Solid{
     base of 3D geometries
@@ -24,7 +28,7 @@ Solid <--- SolidLabel
 
 class SolidGroup
 Solid <--- SolidGroup
-VisionGroupBase <-- SolidGroup
+MutableVisionGroup <-- SolidGroup
 
 
 class SphereLayer
@@ -70,6 +74,9 @@ Solid <--- Composite
 interface SolidReference
 VisionGroup <---- SolidReference
 
+interface MutableVisionGroup
+VisionGroup <---- MutableVisionGroup
+
 class SolidReferenceGroup
 VisionGroup <-- SolidReferenceGroup
 Solid <-- SolidReferenceGroup
@@ -82,12 +89,9 @@ Solid <-- ReferenceChild
 SolidReference <-- ReferenceChild
 
 
-class VisionGroupBase
-VisionBase <-- VisionGroupBase
-
 
 class RootVisionGroup
-VisionGroupBase <-- RootVisionGroup
+MutableVisionGroup <-- RootVisionGroup
 
 
 class VisionOfPlotly
