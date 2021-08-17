@@ -32,6 +32,11 @@ public class VisionOfMarkup(
     }
 }
 
+//language = markdown
+public fun VisionOfMarkup.content(text: () -> String) {
+    content = text()
+}
+
 internal val markupSerializersModule = SerializersModule {
     polymorphic(Vision::class) {
         subclass(VisionOfMarkup.serializer())

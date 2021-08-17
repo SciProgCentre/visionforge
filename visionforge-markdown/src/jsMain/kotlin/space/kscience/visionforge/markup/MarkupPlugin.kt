@@ -39,7 +39,6 @@ public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
             div.clear()
             div.append {
                 markdown(flavour) { vision.content ?: "" }
-
             }
         }
         element.append(div)

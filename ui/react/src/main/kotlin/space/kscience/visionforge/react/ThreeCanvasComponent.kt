@@ -50,7 +50,8 @@ public val ThreeCanvasComponent: FunctionComponent<ThreeCanvasProps> = functiona
         css {
             maxWidth = 100.vw
             maxHeight = 100.vh
-            flex(1.0)
+            width = 100.pct
+            height = 100.pct
         }
         ref = elementRef
     }

@@ -112,7 +112,7 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
         flexRow {
             css {
                 height = 100.pct
-                flex(1.0, 1.0, FlexBasis.auto)
+                width = 100.pct
                 flexWrap = FlexWrap.wrap
                 alignItems = Align.stretch
                 alignContent = Align.stretch
@@ -120,6 +120,7 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
 
             flexColumn {
                 css {
+                    height = 100.pct
                     minWidth = 600.px
                     flex(10.0, 1.0, FlexBasis("600px"))
                     position = Position.relative
