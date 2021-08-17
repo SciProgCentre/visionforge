@@ -49,7 +49,7 @@ internal external interface CanvasControlsProps : RProps {
     public var vision: Vision?
 }
 
-internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+internal val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
@@ -72,8 +72,8 @@ internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = function
             }
         }
         propertyEditor(
-            ownProperties = props.options,
-            allProperties = props.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            ownProperties = props.options.meta,
+            allProperties = props.options.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )
@@ -91,7 +91,7 @@ public external interface ThreeControlsProps : RProps {
 }
 
 @JsExport
-public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
+public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionalComponent { props ->
     SmartTabs("Tree") {
         props.vision?.let {
             Tab("Tree") {

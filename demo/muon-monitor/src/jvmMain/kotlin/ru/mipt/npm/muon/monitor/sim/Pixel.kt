@@ -16,10 +16,10 @@ import kotlin.random.Random
  */
 internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
     //    val layer: Layer = findLayer(center.z);
-    private val upLayer =
-        findLayer(sc.center.z + sc.zSize / 2f)//Layer("${name}_up", center.z + zSize / 2.0);
-    private val bottomLayer =
-        findLayer(sc.center.z - sc.zSize / 2f)//Layer("${name}_bottom", center.z - zSize / 2.0);
+    private val upLayer = findLayer(sc.center.z + sc.zSize / 2f)
+    //Layer("${name}_up", center.z + zSize / 2.0);
+    private val bottomLayer = findLayer(sc.center.z - sc.zSize / 2f)
+    //Layer("${name}_bottom", center.z - zSize / 2.0);
     private val centralLayer = findLayer(sc.center.z)
 
     private val center = Vector3D(sc.center.x.toDouble(), sc.center.y.toDouble(), sc.center.z.toDouble())
@@ -115,8 +115,8 @@ internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
 
 private val auxCache = HashMap<SC1, SC1Aux>()
 
-fun SC1.isHit(track: Line): Boolean{
-    return auxCache.getOrPut(this){
+fun SC1.isHit(track: Line): Boolean {
+    return auxCache.getOrPut(this) {
         SC1Aux(this)
     }.isHit(track)
 }

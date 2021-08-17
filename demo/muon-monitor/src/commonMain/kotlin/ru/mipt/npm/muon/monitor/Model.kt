@@ -6,6 +6,7 @@ import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.removeAll
 import space.kscience.visionforge.root
+import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 
@@ -37,6 +38,10 @@ class Model(val manager: VisionManager) {
 
     val root: SolidGroup = SolidGroup().apply {
         root(this@Model.manager)
+        material {
+            wireframe
+            color("darkgreen")
+        }
         rotationX = PI / 2
         group("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {
@@ -59,6 +64,7 @@ class Model(val manager: VisionManager) {
     }
 
     private fun highlight(pixel: String) {
+        println("highlight $pixel")
         map[pixel]?.color?.invoke("blue")
     }
 
@@ -70,6 +76,7 @@ class Model(val manager: VisionManager) {
     }
 
     fun displayEvent(event: Event) {
+        println("Received event: $event")
         events.add(event)
         event.hits.forEach {
             highlight(it)
@@ -77,6 +84,7 @@ class Model(val manager: VisionManager) {
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
                 thickness = 4
+                color("red")
             }
         }
     }

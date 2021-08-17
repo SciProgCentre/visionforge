@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.three.server.*
 import space.kscience.visionforge.visionManager
@@ -42,7 +42,7 @@ fun main() {
             val randomLayer = Random.nextInt(1, 11)
             val randomI = Random.nextInt(1, 4)
             val randomJ = Random.nextInt(1, 4)
-            val target = "layer[$randomLayer].segment[$randomI,$randomJ]".toName()
+            val target = Name.parse("layer[$randomLayer].segment[$randomI,$randomJ]")
             val targetVision = sat[target] as Solid
             targetVision.color("red")
             delay(1000)

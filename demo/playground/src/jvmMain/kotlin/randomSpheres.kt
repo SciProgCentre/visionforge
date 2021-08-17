@@ -17,7 +17,7 @@ fun main() {
 
     context.makeVisionFile(
         Paths.get("randomSpheres.html"),
-        resourceLocation = ResourceLocation.EMBED
+        resourceLocation = ResourceLocation.SYSTEM
     ) {
         h1 { +"Happy new year!" }
         div {

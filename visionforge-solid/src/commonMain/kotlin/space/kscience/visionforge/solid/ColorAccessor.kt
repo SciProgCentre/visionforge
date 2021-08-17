@@ -1,26 +1,31 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.MutableItemProvider
-import space.kscience.dataforge.meta.set
-import space.kscience.dataforge.meta.value
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionBuilder
 
 @VisionBuilder
-public class ColorAccessor(private val parent: MutableItemProvider, private val colorKey: Name) {
+public class ColorAccessor(
+    private val provider: MutableValueProvider,
+    private val colorKey: Name
+) : MutableValueProvider {
     public var value: Value?
-        get() = parent.getItem(colorKey).value
+        get() = provider.getValue(colorKey)
         set(value) {
-            parent[colorKey] = value
+            provider.setValue(colorKey, value)
         }
+
+    override fun getValue(name: Name): Value? = provider.getValue(colorKey + name)
+
+    override fun setValue(name: Name, value: Value?) {
+        provider.setValue(colorKey + name, value)
+    }
 }
 
 public var ColorAccessor?.string: String?
-    get() = this?.value?.string
+    get() = this?.value?.let { if(it == Null) null else it.string }
     set(value) {
         this?.value = value?.asValue()
     }

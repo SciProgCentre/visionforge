@@ -14,7 +14,7 @@ class FXDemoApp : App(FXDemoGrid::class) {
         stage.height = 600.0
 
         view.showcase()
-        view.showcaseCSG()
+        //view.showcaseCSG()
     }
 }
 

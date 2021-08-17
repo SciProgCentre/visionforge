@@ -1,26 +1,21 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-
-    //Override kotlin version
-//    val kotlinVersion = "1.5.20-RC"
-//    kotlin("multiplatform") version(kotlinVersion) apply false
-//    kotlin("jvm") version(kotlinVersion) apply false
-//    kotlin("js") version(kotlinVersion) apply false
+//    kotlin("multiplatform") version "1.5.30-RC" apply false
 }
 
-val dataforgeVersion by extra("0.4.3")
+val dataforgeVersion by extra("0.5.1")
 val fxVersion by extra("11")
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
-        jcenter()
         maven("https://repo.kotlin.link")
         maven("https://maven.jzy3d.org/releases")
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-22"
+    version = "0.2.0-dev-23"
 }
 
 subprojects {
@@ -29,7 +24,7 @@ subprojects {
     }
 }
 
-ksciencePublish{
+ksciencePublish {
     github("visionforge")
     space()
     sonatype()

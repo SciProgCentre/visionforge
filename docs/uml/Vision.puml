@@ -1,5 +1,6 @@
 @startuml
 'https://plantuml.com/class-diagram
+
 interface Vision{
     val parent: VisionGroup?
     fun getProperty(name):TypedMetaItem?
@@ -14,6 +15,7 @@ Vision <- Solid
 class VisionGroup{
     a group of visions
 }
+
 Vision <-- VisionGroup
 
 class VisionBase{

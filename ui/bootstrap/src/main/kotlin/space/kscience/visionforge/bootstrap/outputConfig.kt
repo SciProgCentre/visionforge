@@ -14,6 +14,7 @@ import react.dom.attrs
 import react.dom.button
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.react.propertyEditor
@@ -43,19 +44,19 @@ public external interface CanvasControlsProps : RProps {
     public var vision: Vision?
 }
 
-public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
                 border(1.px, BorderStyle.solid, Color.blue)
                 padding(4.px)
             }
-            props.vision?.manager?.let { manager ->
+            props.vision?.let{ vision ->
                 button {
                     +"Export"
                     attrs {
                         onClickFunction = {
-                            val json = manager.encodeToString(props.vision!!)
+                            val json = vision.encodeToString()
                             saveData(it, "object.json", "text/json") {
                                 json
                             }
@@ -65,8 +66,8 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
             }
         }
         propertyEditor(
-            ownProperties = props.canvasOptions,
-            allProperties = props.canvasOptions.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            ownProperties = props.canvasOptions.meta,
+            allProperties = props.canvasOptions.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

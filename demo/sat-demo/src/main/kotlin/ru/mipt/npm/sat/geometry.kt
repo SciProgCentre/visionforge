@@ -17,6 +17,7 @@ internal fun visionOfSatellite(
     ySegmentSize: Number = xSegmentSize,
     fiberDiameter: Number = 1.0,
 ): SolidGroup = SolidGroup {
+    color("darkgreen")
     val transparent by style {
         this[SolidMaterial.MATERIAL_OPACITY_KEY] = 0.3
     }

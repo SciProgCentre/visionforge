@@ -1,7 +1,7 @@
 package space.kscience.visionforge.gdml
 
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.gdml.*
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.get
@@ -23,7 +23,7 @@ class TestCubes {
     fun testCubesDirect() {
         val vision = cubes.toVision()
 //        println(Solids.encodeToString(vision))
-        val smallBoxPrototype = vision.getPrototype("solids.smallBox".toName()) as? Box
+        val smallBoxPrototype = vision.getPrototype(Name.parse("solids.smallBox")) as? Box
         assertNotNull(smallBoxPrototype)
         assertEquals(30.0, smallBoxPrototype.xSize.toDouble())
         val smallBoxVision = vision["composite-111.smallBox"]?.unref as? Box
@@ -46,7 +46,7 @@ class TestCubes {
         val vision = cubes.toVision()
         val serialized = Solids.encodeToString(vision)
         val deserialized = testContext.visionManager.decodeFromString(serialized) as SolidGroup
-        val smallBox = deserialized.getPrototype("solids.smallBox".toName()) as? Box
+        val smallBox = deserialized.getPrototype(Name.parse("solids.smallBox")) as? Box
         assertNotNull(smallBox)
         assertEquals(30.0, smallBox.xSize.toDouble())
         //println(testContext.visionManager.encodeToString(deserialized))
