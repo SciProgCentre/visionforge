@@ -14,6 +14,6 @@ The actual layering scheme is more complicated. All objects support styling. The
 
 ### Intermediate representation
 
-An important thing about VisionForge is that it does not strictly bound to a single format representation. 
+An important thing about VisionForge is that it does not strictly bound to a single format representation.
 
 ### Kotlin DSL for creating vision-graphs

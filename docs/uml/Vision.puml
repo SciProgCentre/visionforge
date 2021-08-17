@@ -1,45 +1,108 @@
 @startuml
 'https://plantuml.com/class-diagram
+interface Vision
 
-interface Vision{
-    val parent: Vision?
-    fun getProperty(name): Meta?
-    fun setProperty(name, value)
-}
 
-class VisionBase{
-    basic vision
-    implementation
-}
-Vision <|-- VisionBase
+interface Solid
+Vision <- Solid
 
-interface VisionGroup{
-    A group of Visions
-}
-Vision <|-- VisionGroup
 
-interface Solid{
-    The base for 3D geometry
-}
+class VisionGroup
+Vision <-- VisionGroup
 
-Vision <|-- Solid
+class VisionBase
+Vision <- VisionBase
+
+
+class SolidLabel
+Solid <--- SolidLabel
+SolidBase <-- SolidLabel
 
 class SolidGroup
+Solid <--- SolidGroup
+VisionGroupBase <-- SolidGroup
 
-Solid <|-- SolidGroup
-VisionGroup <|-- SolidGroup
+class SolidBase
+Solid <--- SolidBase
+VisionBase <-- SolidBase
 
-class Composite
-Solid <|-- Composite
-VisionGroup <|-- Composite
 
-class Box
-Solid <|-- Box
-
-class Tube
-Solid <|-- Tube
+class SphereLayer
+SolidBase <-- SphereLayer
+GeometrySolid <-- SphereLayer
 
 class Sphere
-Solid <|-- Sphere
+SolidBase <-- Sphere
+GeometrySolid <-- Sphere
 
+class Box
+SolidBase <-- Box
+Hexagon <-- Box
+
+class GenericHexagon
+SolidBase <-- GenericHexagon
+Hexagon <-- GenericHexagon
+
+class Extruded
+SolidBase <-- Extruded
+GeometrySolid <-- Extruded
+
+
+class PolyLine
+Solid <--- PolyLine
+SolidBase <-- PolyLine
+
+interface GeometrySolid
+Solid <--- GeometrySolid
+
+
+interface Hexagon
+GeometrySolid <-- Hexagon
+
+class ConeSegment
+GeometrySolid <-- ConeSegment
+
+class ConeSurface
+GeometrySolid <-- ConeSurface
+
+
+class Convex
+Solid <--- Convex
+SolidBase <-- Convex
+
+class Composite
+Solid <--- Composite
+SolidBase <-- Composite
+
+
+interface SolidReference
+VisionGroup <---- SolidReference
+
+interface MutableVisionGroup
+VisionGroup <---- MutableVisionGroup
+
+class SolidReferenceGroup
+VisionGroup <-- SolidReferenceGroup
+Solid <-- SolidReferenceGroup
+VisionBase <-- SolidReferenceGroup
+SolidReference <-- SolidReferenceGroup
+
+class ReferenceChild
+VisionGroup <-- ReferenceChild
+Solid <-- ReferenceChild
+SolidReference <-- ReferenceChild
+
+
+class VisionGroupBase
+VisionBase <-- VisionGroupBase
+MutableVisionGroup <-- VisionGroupBase
+
+
+
+class RootVisionGroup
+VisionGroupBase <-- RootVisionGroup
+
+
+class VisionOfPlotly
+VisionBase <-- VisionOfPlotly
 @enduml
