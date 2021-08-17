@@ -1,56 +1,56 @@
 @startuml
 'https://plantuml.com/class-diagram
-interface Vision
 
+interface Vision{
+    val parent: VisionGroup?
+    fun getProperty(name):TypedMetaItem?
+    fun setProperty(name, item)
+}
 
-interface Solid
+interface Solid{
+    base of 3D geometries
+}
 Vision <- Solid
 
+class VisionGroup{
+    a group of visions
+}
 
-class VisionGroup
 Vision <-- VisionGroup
 
-class VisionBase
+class VisionBase{
+    basic vision
+    implementation
+}
 Vision <- VisionBase
 
 
 class SolidLabel
 Solid <--- SolidLabel
-SolidBase <-- SolidLabel
 
 class SolidGroup
 Solid <--- SolidGroup
-VisionGroupBase <-- SolidGroup
-
-class SolidBase
-Solid <--- SolidBase
-VisionBase <-- SolidBase
+MutableVisionGroup <-- SolidGroup
 
 
 class SphereLayer
-SolidBase <-- SphereLayer
 GeometrySolid <-- SphereLayer
 
 class Sphere
-SolidBase <-- Sphere
 GeometrySolid <-- Sphere
 
 class Box
-SolidBase <-- Box
 Hexagon <-- Box
 
 class GenericHexagon
-SolidBase <-- GenericHexagon
 Hexagon <-- GenericHexagon
 
 class Extruded
-SolidBase <-- Extruded
 GeometrySolid <-- Extruded
 
 
 class PolyLine
 Solid <--- PolyLine
-SolidBase <-- PolyLine
 
 interface GeometrySolid
 Solid <--- GeometrySolid
@@ -68,11 +68,9 @@ GeometrySolid <-- ConeSurface
 
 class Convex
 Solid <--- Convex
-SolidBase <-- Convex
 
 class Composite
 Solid <--- Composite
-SolidBase <-- Composite
 
 
 interface SolidReference
@@ -93,14 +91,9 @@ Solid <-- ReferenceChild
 SolidReference <-- ReferenceChild
 
 
-class VisionGroupBase
-VisionBase <-- VisionGroupBase
-MutableVisionGroup <-- VisionGroupBase
-
-
 
 class RootVisionGroup
-VisionGroupBase <-- RootVisionGroup
+MutableVisionGroup <-- RootVisionGroup
 
 
 class VisionOfPlotly
