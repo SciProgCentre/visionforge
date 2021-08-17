@@ -2,31 +2,27 @@ package ru.mipt.npm.muon.monitor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import react.*
-import react.dom.*
+import react.dom.attrs
+import react.dom.button
+import react.dom.p
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.isEmpty
-import space.kscience.dataforge.names.length
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.bootstrap.canvasControls
-import space.kscience.visionforge.bootstrap.card
-import space.kscience.visionforge.bootstrap.gridRow
-import space.kscience.visionforge.bootstrap.visionPropertyEditor
-import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
-import space.kscience.visionforge.react.visionTree
+import space.kscience.visionforge.react.flexRow
+import space.kscience.visionforge.ring.ThreeCanvasWithControls
+import space.kscience.visionforge.ring.tab
 import space.kscience.visionforge.solid.specifications.Camera
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.edges
 import styled.css
 import styled.styledDiv
+import styled.styledSpan
 import kotlin.math.PI
 
 external interface MMAppProps : RProps {
@@ -39,11 +35,6 @@ external interface MMAppProps : RProps {
 @OptIn(DelicateCoroutinesApi::class)
 @JsExport
 val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
-    var selected by useState { props.selected }
-
-    val onSelect: (Name?) -> Unit = {
-        selected = it
-    }
 
     val mmOptions = useMemo {
         Canvas3DOptions {
@@ -52,7 +43,6 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
                 latitude = PI / 6
                 azimuth = PI + PI / 6
             }
-            this.onSelect = onSelect
         }
     }
 
@@ -62,142 +52,210 @@ val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
         }
     }
 
-    gridRow {
-        flexColumn {
-            css {
-                +"col-lg-3"
-                +"order-lg-1"
-                +"order-2"
-                padding(0.px)
-                overflowY = Overflow.auto
-                height = 100.vh
-            }
-            //tree
-            card("Object tree") {
-                css {
-                    flex(1.0, 1.0, FlexBasis.auto)
-                }
-                visionTree(root, selected, onSelect)
-            }
-        }
-        flexColumn {
-            css {
-                +"col-lg-6"
-                +"order-lg-2"
-                +"order-1"
-                height = 100.vh
-            }
-            h1("mx-auto page-header") {
-                +"Muon monitor demo"
-            }
-            //canvas
+    var events: Set<Event> by useState(emptySet())
 
-            child(ThreeCanvasComponent) {
-                attrs {
-                    this.context = props.context
-                    this.solid = root
-                    this.selected = selected
-                    this.options = mmOptions
-                }
-            }
+    styledDiv {
+        css {
+            height = 100.vh - 12.pt
         }
-        flexColumn {
-            css {
-                +"col-lg-3"
-                +"order-3"
-                padding(0.px)
-                height = 100.vh
-            }
-            styledDiv {
-                css {
-                    flex(0.0, 1.0, FlexBasis.zero)
-                }
-                //settings
-                card("Canvas configuration") {
-                    canvasControls(mmOptions, root)
-                }
-
-                card("Events") {
-                    button {
-                        +"Next"
-                        attrs {
-                            onClickFunction = {
-                                GlobalScope.launch {
-                                    val event = props.connection.get<Event>("http://localhost:8080/event")
-                                    props.model.displayEvent(event)
-                                }
-                            }
-                        }
-                    }
-                    button {
-                        +"Clear"
-                        attrs {
-                            onClickFunction = {
-                                props.model.reset()
-                            }
-                        }
-                    }
-                }
-            }
-            styledDiv {
-                css {
-                    padding(0.px)
-                }
-                nav {
-                    attrs {
-                        attributes["aria-label"] = "breadcrumb"
-                    }
-                    ol("breadcrumb") {
-                        li("breadcrumb-item") {
-                            button(classes = "btn btn-link p-0") {
-                                +"World"
+        child(ThreeCanvasWithControls) {
+            attrs {
+                this.context = props.context
+                this.builderOfSolid = CompletableDeferred(root)
+                this.selected = props.selected
+                this.options = mmOptions
+                tab("Events") {
+                    flexColumn {
+                        flexRow {
+                            button {
+                                +"Next"
                                 attrs {
                                     onClickFunction = {
-                                        selected = Name.EMPTY
-                                    }
-                                }
-                            }
-                        }
-                        if (selected != null) {
-                            val tokens = ArrayList<NameToken>(selected?.length ?: 1)
-                            selected?.tokens?.forEach { token ->
-                                tokens.add(token)
-                                val fullName = Name(tokens.toList())
-                                li("breadcrumb-item") {
-                                    button(classes = "btn btn-link p-0") {
-                                        +token.toString()
-                                        attrs {
-                                            onClickFunction = {
-                                                console.log("Selected = $fullName")
-                                                selected = fullName
-                                            }
+                                        context.launch {
+                                            val event = props.connection.get<Event>(
+                                                "http://localhost:8080/event"
+                                            )
+                                            events = events + event
+                                            props.model.displayEvent(event)
                                         }
                                     }
                                 }
                             }
+                            button {
+                                +"Clear"
+                                attrs {
+                                    onClickFunction = {
+                                        events = emptySet()
+                                        props.model.reset()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    events.forEach { event ->
+                        p {
+                            styledSpan {
+                                +event.id.toString()
+                            }
+                            +" : "
+                            styledSpan {
+                                css{
+                                    color = Color.blue
+                                }
+                                +event.hits.toString()
+                            }
                         }
                     }
                 }
             }
-            styledDiv {
-                css {
-                    overflowY = Overflow.auto
-                }
-                //properties
-                card("Properties") {
-                    selected.let { selected ->
-                        val selectedObject: Vision? = when {
-                            selected == null -> null
-                            selected.isEmpty() -> root
-                            else -> root[selected]
-                        }
-                        if (selectedObject != null) {
-                            visionPropertyEditor(selectedObject, key = selected)
-                        }
-                    }
-                }
-            }
-        }
 
+        }
     }
+
+//    var selected by useState { props.selected }
+//
+//    val onSelect: (Name?) -> Unit = {
+//        selected = it
+//    }
+//
+
+//
+//    gridRow {
+//        flexColumn {
+//            css {
+//                +"col-lg-3"
+//                +"order-lg-1"
+//                +"order-2"
+//                padding(0.px)
+//                overflowY = Overflow.auto
+//                height = 100.vh
+//            }
+//            //tree
+//            card("Object tree") {
+//                css {
+//                    flex(1.0, 1.0, FlexBasis.auto)
+//                }
+//                visionTree(root, selected, onSelect)
+//            }
+//        }
+//        flexColumn {
+//            css {
+//                +"col-lg-6"
+//                +"order-lg-2"
+//                +"order-1"
+//                height = 100.vh
+//            }
+//            h1("mx-auto page-header") {
+//                +"Muon monitor demo"
+//            }
+//            //canvas
+//
+//            child(ThreeCanvasComponent) {
+//                attrs {
+//                    this.context = props.context
+//                    this.solid = root
+//                    this.selected = selected
+//                    this.options = mmOptions
+//                }
+//            }
+//        }
+//        flexColumn {
+//            css {
+//                +"col-lg-3"
+//                +"order-3"
+//                padding(0.px)
+//                height = 100.vh
+//            }
+//            styledDiv {
+//                css {
+//                    flex(0.0, 1.0, FlexBasis.zero)
+//                }
+//                //settings
+//                card("Canvas configuration") {
+//                    canvasControls(mmOptions, root)
+//                }
+//
+//                card("Events") {
+//                    button {
+//                        +"Next"
+//                        attrs {
+//                            onClickFunction = {
+//                                GlobalScope.launch {
+//                                    val event = props.connection.get<Event>("http://localhost:8080/event")
+//                                    props.model.displayEvent(event)
+//                                }
+//                            }
+//                        }
+//                    }
+//                    button {
+//                        +"Clear"
+//                        attrs {
+//                            onClickFunction = {
+//                                props.model.reset()
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            styledDiv {
+//                css {
+//                    padding(0.px)
+//                }
+//                nav {
+//                    attrs {
+//                        attributes["aria-label"] = "breadcrumb"
+//                    }
+//                    ol("breadcrumb") {
+//                        li("breadcrumb-item") {
+//                            button(classes = "btn btn-link p-0") {
+//                                +"World"
+//                                attrs {
+//                                    onClickFunction = {
+//                                        selected = Name.EMPTY
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        if (selected != null) {
+//                            val tokens = ArrayList<NameToken>(selected?.length ?: 1)
+//                            selected?.tokens?.forEach { token ->
+//                                tokens.add(token)
+//                                val fullName = Name(tokens.toList())
+//                                li("breadcrumb-item") {
+//                                    button(classes = "btn btn-link p-0") {
+//                                        +token.toString()
+//                                        attrs {
+//                                            onClickFunction = {
+//                                                console.log("Selected = $fullName")
+//                                                selected = fullName
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            styledDiv {
+//                css {
+//                    overflowY = Overflow.auto
+//                }
+//                //properties
+//                card("Properties") {
+//                    selected.let { selected ->
+//                        val selectedObject: Vision? = when {
+//                            selected == null -> null
+//                            selected.isEmpty() -> root
+//                            else -> root[selected]
+//                        }
+//                        if (selectedObject != null) {
+//                            visionPropertyEditor(selectedObject, key = selected)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
 }

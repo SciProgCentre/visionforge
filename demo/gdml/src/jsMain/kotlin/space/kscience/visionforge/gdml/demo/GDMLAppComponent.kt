@@ -3,6 +3,9 @@ package space.kscience.visionforge.gdml.demo
 import kotlinx.browser.window
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import kotlinx.css.height
+import kotlinx.css.pt
+import kotlinx.css.vh
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -20,6 +23,8 @@ import space.kscience.visionforge.ring.tab
 import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
+import styled.css
+import styled.styledDiv
 
 external interface GDMLAppProps : RProps {
     var context: Context
@@ -63,24 +68,29 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
         return deferred
     }
 
-    child(ThreeCanvasWithControls) {
-        attrs {
-            this.context = props.context
-            this.builderOfSolid = deferredVision
-            this.selected = props.selected
-            tab("Load") {
-                h2 {
-                    +"Drag and drop .gdml or .json VisionForge files here"
-                }
-                fileDrop("(drag file here)") { files ->
-                    val file = files?.get(0)
-                    if (file != null) {
-                        deferredVision = readFileAsync(file)
+    styledDiv {
+        css {
+            height = 100.vh - 12.pt
+        }
+        child(ThreeCanvasWithControls) {
+            attrs {
+                this.context = props.context
+                this.builderOfSolid = deferredVision
+                this.selected = props.selected
+                tab("Load") {
+                    h2 {
+                        +"Drag and drop .gdml or .json VisionForge files here"
+                    }
+                    fileDrop("(drag file here)") { files ->
+                        val file = files?.get(0)
+                        if (file != null) {
+                            deferredVision = readFileAsync(file)
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
 }
 

@@ -10,7 +10,6 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.bootstrap.useBootstrap
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 
@@ -23,7 +22,6 @@ private class MMDemoApp : Application {
     }
 
     override fun start(state: Map<String, Any>) {
-        useBootstrap()
 
         val context = Context("MM-demo"){
             plugin(ThreePlugin)

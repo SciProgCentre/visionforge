@@ -70,7 +70,7 @@ public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
             }
             attrs {
                 //this.attributes["indeterminate"] = (props.item == null).toString()
-                defaultChecked = props.actual.boolean ?: false
+                checked = props.actual.boolean ?: false
                 onChangeFunction = handleChange
             }
         }

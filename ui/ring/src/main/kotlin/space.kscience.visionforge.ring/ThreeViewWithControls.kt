@@ -30,6 +30,7 @@ public external interface ThreeCanvasWithControlsProps : RProps {
     public var context: Context
     public var builderOfSolid: Deferred<Solid?>
     public var selected: Name?
+    public var options: Canvas3DOptions?
     public var additionalTabs: Map<String, RBuilder.() -> Unit>?
 }
 
@@ -92,8 +93,8 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
             selected = it
         }
 
-        val options = useMemo(props.context) {
-            Canvas3DOptions.invoke {
+        val options = useMemo(props.options) {
+            (props.options?: Canvas3DOptions()).apply {
                 this.onSelect = onSelect
             }
         }
@@ -172,6 +173,8 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
                 css {
                     padding(4.px)
                     minWidth = 400.px
+                    height = 100.pct
+                    overflowY = Overflow.auto
                     flex(1.0, 10.0, FlexBasis("300px"))
                 }
                 ringThreeControls(options, solid, selected, onSelect, additionalTabs = props.additionalTabs)

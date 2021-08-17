@@ -17,6 +17,14 @@ kotlin {
     jvm {
         withJava()
     }
+    js {
+        useCommonJs()
+        browser {
+            commonWebpackConfig {
+                cssSupport.enabled = false
+            }
+        }
+    }
 
     afterEvaluate {
         val jsBrowserDistribution by tasks.getting
@@ -43,7 +51,7 @@ kotlin {
         }
         jsMain {
             dependencies {
-                implementation(project(":ui:bootstrap"))
+                implementation(project(":ui:ring"))
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation(project(":visionforge-threejs"))
