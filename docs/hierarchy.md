@@ -1,7 +1,6 @@
 # Hierarchy
 
-![](../docs/images/hierarchy.png) 
-**the image will be changed**
+![](../docs/images/hierarchy.png)
 
 ### Vision
 
