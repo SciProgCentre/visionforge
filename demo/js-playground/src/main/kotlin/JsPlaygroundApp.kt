@@ -9,7 +9,6 @@ import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
 import space.kscience.plotly.models.Trace
-import space.kscience.plotly.models.appendXY
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionClient
@@ -23,6 +22,14 @@ import styled.css
 import styled.styledDiv
 import kotlin.math.sqrt
 import kotlin.random.Random
+
+fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number? = null, yErr: Number? = null) {
+    this.x.numbers = (this.x.numbers + x).takeLast(history)
+    this.y.numbers = (this.y.numbers + y).takeLast(history)
+    xErr?.let { error_x.array = (error_x.array + xErr).takeLast(history) }
+    yErr?.let { error_y.array = (error_y.array + yErr).takeLast(history) }
+}
+
 
 private class JsPlaygroundApp : Application {
 
@@ -71,7 +78,7 @@ private class JsPlaygroundApp : Application {
                                                     time += dt
                                                     velocity -= g * dt
                                                     y = y.toDouble() + velocity * dt
-                                                    bouncingSphereTrace.appendXY(time, y)
+                                                    bouncingSphereTrace.appendXYLatest(time, y)
                                                     if (y.toDouble() <= 2.5) {
                                                         //conservation of energy
                                                         velocity = sqrt(2 * g * h)

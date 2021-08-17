@@ -143,15 +143,8 @@ public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
 @JsExport
 public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
     functionalComponent("ColorValueChooser") { props ->
-        var value by useState(
-            props.actual.value?.let { value ->
-                if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                else value.string
-            } ?: "#000000"
-        )
         val handleChange: (Event) -> Unit = {
-            value = (it.target as HTMLInputElement).value
-            props.meta.value = value.asValue()
+            props.meta.value = (it.target as HTMLInputElement).value.asValue()
         }
         styledInput(type = InputType.color) {
             css {
@@ -159,7 +152,10 @@ public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
                 margin(0.px)
             }
             attrs {
-                this.value = value
+                this.value = props.actual.value?.let { value ->
+                    if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
+                    else value.string
+                } ?: "#000000"
                 onChangeFunction = handleChange
             }
         }
