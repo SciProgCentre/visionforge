@@ -32,7 +32,7 @@ val Markup = functionalComponent<MarkupProps>("Markup") { props ->
                 //TODO add new formats via plugins
                 else -> error("Format ${vision.format} not recognized")
             }
-            vision.useProperty(VisionOfMarkup::content) { content ->
+            vision.useProperty(VisionOfMarkup::content) { content: String? ->
                 element.clear()
                 element.append {
                     markdown(flavour) { content ?: "" }

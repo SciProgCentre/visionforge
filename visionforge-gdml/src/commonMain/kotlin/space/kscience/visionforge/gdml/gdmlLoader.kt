@@ -1,7 +1,5 @@
 package space.kscience.visionforge.gdml
 
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -11,10 +9,8 @@ import space.kscience.gdml.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.solid.*
-import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 
 private val solidsName = "solids".asName()
 private val volumesName = "volumes".asName()
@@ -25,91 +21,7 @@ private inline operator fun Number.times(d: Double) = toDouble() * d
 @Suppress("NOTHING_TO_INLINE")
 private inline operator fun Number.times(f: Float) = toFloat() * f
 
-public class GdmlTransformer {
-
-    public enum class Action {
-        ADD,
-        REJECT,
-        PROTOTYPE
-    }
-
-    public var lUnit: LUnit = LUnit.MM
-    public var aUnit: AUnit = AUnit.RADIAN
-
-    public var solidAction: (GdmlSolid) -> Action = { Action.PROTOTYPE }
-    public var volumeAction: (GdmlGroup) -> Action = { Action.PROTOTYPE }
-
-    internal val styleCache = HashMap<Name, Meta>()
-
-    public fun Solid.registerAndUseStyle(name: String, builder: MutableMeta.() -> Unit) {
-        styleCache.getOrPut(Name.parse(name)) {
-            Meta(builder)
-        }
-        useStyle(name)
-    }
-
-    public fun Solid.transparent() {
-        registerAndUseStyle("transparent") {
-            SolidMaterial.MATERIAL_OPACITY_KEY put 0.3
-            "edges.enabled" put true
-        }
-    }
-
-    /**
-     * Configure paint for given solid with given [GdmlMaterial]
-     */
-    public var configurePaint: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit =
-        { material, _ -> color(randomColor(material)) }
-        private set
-
-    public fun paint(block: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit) {
-        configurePaint = block
-    }
-
-    /**
-     * Configure given solid
-     */
-    public var configureSolid: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit =
-        { parent, solid, material ->
-            val styleName = "materials.${material.name}"
-
-            if (parent.physVolumes.isNotEmpty()) transparent()
-
-            registerAndUseStyle(styleName) {
-                val vfMaterial = SolidMaterial().apply {
-                    configurePaint(material, solid)
-                }
-                MATERIAL_KEY put vfMaterial.toMeta()
-                "Gdml.material" put material.name
-            }
-        }
-        private set
-
-    public fun configure(block: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit) {
-        val oldConfigure = configureSolid
-        configureSolid = { parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial ->
-            oldConfigure(parent, solid, material)
-            block(parent, solid, material)
-        }
-    }
-
-
-    public companion object {
-        private val random: Random = Random(222)
-
-        private val colorCache = HashMap<GdmlMaterial, Int>()
-
-        /**
-         * Use random color and cache it based on the material. Meaning that colors are random, but always the same for the
-         * same material.
-         */
-        public fun randomColor(material: GdmlMaterial): Int {
-            return colorCache.getOrPut(material) { random.nextInt(16777216) }
-        }
-    }
-}
-
-private class GdmlTransformerEnv(val settings: GdmlTransformer) {
+private class GdmlLoader(val settings: GdmlLoaderOptions) {
     //private val materialCache = HashMap<GdmlMaterial, Meta>()
 
     /**
@@ -356,13 +268,13 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
     ): Solid? {
         require(name != "") { "Can't use empty solid name. Use null instead." }
         return when (settings.solidAction(solid)) {
-            GdmlTransformer.Action.ADD -> {
+            GdmlLoaderOptions.Action.ADD -> {
                 addSolid(root, solid, name)
             }
-            GdmlTransformer.Action.PROTOTYPE -> {
+            GdmlLoaderOptions.Action.PROTOTYPE -> {
                 proxySolid(root, this, solid, name ?: solid.name)
             }
-            GdmlTransformer.Action.REJECT -> {
+            GdmlLoaderOptions.Action.REJECT -> {
                 //ignore
                 null
             }
@@ -388,14 +300,14 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
         }
 
         when (settings.volumeAction(volume)) {
-            GdmlTransformer.Action.ADD -> {
+            GdmlLoaderOptions.Action.ADD -> {
                 val group: SolidGroup = volume(root, volume)
                 this[physVolume.name] = group.withPosition(root, physVolume)
             }
-            GdmlTransformer.Action.PROTOTYPE -> {
+            GdmlLoaderOptions.Action.PROTOTYPE -> {
                 proxyVolume(root, this, physVolume, volume)
             }
-            GdmlTransformer.Action.REJECT -> {
+            GdmlLoaderOptions.Action.REJECT -> {
                 //ignore
             }
         }
@@ -460,16 +372,16 @@ private class GdmlTransformerEnv(val settings: GdmlTransformer) {
 }
 
 
-public fun Gdml.toVision(block: GdmlTransformer.() -> Unit = {}): SolidGroup {
-    val settings = GdmlTransformer().apply(block)
-    val context = GdmlTransformerEnv(settings)
+public fun Gdml.toVision(block: GdmlLoaderOptions.() -> Unit = {}): SolidGroup {
+    val settings = GdmlLoaderOptions().apply(block)
+    val context = GdmlLoader(settings)
     return context.transform(this)
 }
 
 /**
  * Append Gdml node to the group
  */
-public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlTransformer.() -> Unit = {}) {
+public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlLoaderOptions.() -> Unit = {}) {
     val visual = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
     set(key, visual)

@@ -32,6 +32,7 @@ include(
     ":visionforge-threejs",
     ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
+    ":cern-root-loader",
     ":visionforge-server",
     ":visionforge-plotly",
     ":visionforge-markdown",

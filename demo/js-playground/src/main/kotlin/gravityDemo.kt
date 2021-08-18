@@ -6,6 +6,7 @@ import react.RProps
 import react.child
 import react.functionalComponent
 import space.kscience.dataforge.context.Context
+import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.markup.VisionOfMarkup
 import space.kscience.visionforge.react.flexRow
@@ -91,7 +92,10 @@ val GravityDemo = functionalComponent<DemoProps> { props ->
                 height = 50.vh - 50.pt
             }
             plotly {
-                traces(velocityTrace)
+                traces(velocityTrace,energyTrace)
+                layout {
+                    xaxis.title = "time"
+                }
             }
             Markup {
                 attrs {
