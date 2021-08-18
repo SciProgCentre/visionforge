@@ -3,9 +3,7 @@ package space.kscience.visionforge.gdml.demo
 import kotlinx.browser.window
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import kotlinx.css.height
-import kotlinx.css.pt
-import kotlinx.css.vh
+import kotlinx.css.*
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
@@ -71,6 +69,7 @@ val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
     styledDiv {
         css {
             height = 100.vh - 12.pt
+            width = 100.vw
         }
         child(ThreeCanvasWithControls) {
             attrs {
