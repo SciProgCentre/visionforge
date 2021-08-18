@@ -1,6 +1,8 @@
 package space.kscience.visionforge
 
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.values.ValueType
 import space.kscience.dataforge.values.int
 import space.kscience.dataforge.values.string
@@ -190,25 +192,18 @@ public object Colors {
     /**
      * Convert color represented as Meta to string of format #rrggbb
      */
-    fun fromMeta(item: MetaItem): String {
-        return when (item) {
-            is MetaItemNode -> {
-                val node = item.node
-                rgbToString(
-                    node[RED_KEY].number?.toByte()?.toUByte() ?: 0u,
-                    node[GREEN_KEY].number?.toByte()?.toUByte() ?: 0u,
-                    node[BLUE_KEY].number?.toByte()?.toUByte() ?: 0u
-                )
-            }
-            is MetaItemValue -> {
-                if (item.value.type == ValueType.NUMBER) {
-                    rgbToString(item.value.int)
-                } else {
-                    item.value.string
-                }
-            }
+    fun fromMeta(meta: Meta): String = meta.value?.let { value ->
+        //if value is present, use it
+        if (value.type == ValueType.NUMBER) {
+            rgbToString(value.int)
+        } else {
+            value.string
         }
-    }
+    } ?: rgbToString(
+        meta[RED_KEY].number?.toByte()?.toUByte() ?: 0u,
+        meta[GREEN_KEY].number?.toByte()?.toUByte() ?: 0u,
+        meta[BLUE_KEY].number?.toByte()?.toUByte() ?: 0u
+    )
 
     /**
      * Convert Int color to string of format #rrggbb

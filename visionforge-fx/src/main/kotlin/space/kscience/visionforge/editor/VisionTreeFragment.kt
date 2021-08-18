@@ -30,7 +30,7 @@ private fun toTreeItem(vision: Vision, title: String): TreeItem<Pair<String, Vis
 }
 
 
-public class VisualObjectTreeFragment : Fragment() {
+public class VisionTreeFragment : Fragment() {
     public val itemProperty: SimpleObjectProperty<Vision> = SimpleObjectProperty<Vision>()
     public var item: Vision? by itemProperty
 

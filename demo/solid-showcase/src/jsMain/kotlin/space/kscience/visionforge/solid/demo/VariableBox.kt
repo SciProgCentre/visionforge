@@ -3,6 +3,7 @@ package space.kscience.visionforge.solid.demo
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxGeometry
 import info.laht.threekt.objects.Mesh
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.asName
@@ -43,13 +44,13 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
                 it.layers.enable(this@VariableBox.layer)
             }
         }
-        mesh.scale.z = getOwnProperty(VALUE).number?.toDouble() ?: 1.0
+        mesh.scale.z = meta[VALUE].number?.toDouble() ?: 1.0
 
         //add listener to object properties
-        onPropertyChange(three.context) { name ->
+        onPropertyChange { name ->
             when {
                 name == VALUE -> {
-                    val value = getOwnProperty(VALUE).int ?: 0
+                    val value = meta.get(VALUE).int ?: 0
                     val size = value.toFloat() / 255f * 20f
                     mesh.scale.z = size.toDouble()
                     mesh.position.z = size.toDouble() / 2
@@ -69,7 +70,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
     }
 
     var value: Int
-        get() = getOwnProperty(VALUE).int ?: 0
+        get() = meta[VALUE].int ?: 0
         set(value) {
             setProperty(VALUE, value.asValue())
         }

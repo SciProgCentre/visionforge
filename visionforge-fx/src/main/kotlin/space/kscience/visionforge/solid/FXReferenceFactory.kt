@@ -2,7 +2,10 @@ package space.kscience.visionforge.solid
 
 import javafx.scene.Group
 import javafx.scene.Node
-import space.kscience.dataforge.names.*
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.cutFirst
+import space.kscience.dataforge.names.firstOrNull
+import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.onPropertyChange
 import kotlin.reflect.KClass
@@ -14,9 +17,9 @@ public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<Sol
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
-        obj.onPropertyChange(plugin.context) { name->
+        obj.onPropertyChange { name->
             if (name.firstOrNull()?.body == SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.toName() ?: error("Wrong syntax for reference child property: '$name'")
+                val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
                 val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")

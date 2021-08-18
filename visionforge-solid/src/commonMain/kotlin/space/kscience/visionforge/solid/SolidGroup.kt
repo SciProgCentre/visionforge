@@ -2,7 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
@@ -31,6 +32,9 @@ public interface PrototypeHolder {
 @SerialName("group.solid")
 public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
+    //FIXME to be removed after https://github.com/Kotlin/kotlinx.serialization/issues/1602 fix
+    override var properties: MutableMeta? = null
+
     override val children: Map<NameToken, Vision> get() = super.childrenInternal.filter { it.key != PROTOTYPES_TOKEN }
 
     private var prototypes: MutableVisionGroup?
@@ -40,7 +44,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
         }
 
 
-    override val descriptor: NodeDescriptor get() = Solid.descriptor
+    override val descriptor: MetaDescriptor get() = Solid.descriptor
 
     /**
      * Get a prototype redirecting the request to the parent if prototype is not found.

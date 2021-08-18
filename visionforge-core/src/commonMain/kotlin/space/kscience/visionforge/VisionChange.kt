@@ -21,7 +21,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
     private var reset: Boolean = false
     private var vision: Vision? = null
-    private val propertyChange = Config()
+    private val propertyChange = MutableMeta()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
@@ -30,17 +30,17 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
         children.getOrPut(visionName) { VisionChangeBuilder() }
 
-    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem?) {
+    public fun propertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         if (visionName == Name.EMPTY) {
             //Write property removal as [Null]
-            propertyChange[propertyName] = (item ?: Null.asMetaItem())
+            propertyChange[propertyName] = (item ?: Meta(Null))
         } else {
             getOrPutChild(visionName).propertyChanged(Name.EMPTY, propertyName, item)
         }
     }
 
     override fun set(name: Name?, child: Vision?) {
-        if(name == null) error("Static children are not allowed in VisionChange")
+        if (name == null) error("Static children are not allowed in VisionChange")
         getOrPutChild(name).apply {
             vision = child
             reset = vision == null
@@ -82,6 +82,7 @@ public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilde
     VisionChangeBuilder().apply(block).isolate(manager)
 
 
+@OptIn(DFExperimental::class)
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
@@ -89,8 +90,8 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.onPropertyChange(this) { propertyName ->
-        val newItem = source.ownProperties[propertyName]
+    source.onPropertyChange { propertyName ->
+        val newItem = source.meta[propertyName]
         collector().propertyChanged(name, propertyName, newItem)
     }
 
@@ -102,11 +103,13 @@ private fun CoroutineScope.collectChange(
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
-            source.structureChanges.onEach { (token, _, after) ->
+            source.structureChanges.onEach { changedName ->
+                val after = source[changedName]
+                val fullName = name + changedName
                 if (after != null) {
-                    collectChange(name + token, after, collector)
+                    collectChange(fullName, after, collector)
                 }
-                collector()[name + token] = after
+                collector()[fullName] = after
             }.launchIn(this)
         }
     }

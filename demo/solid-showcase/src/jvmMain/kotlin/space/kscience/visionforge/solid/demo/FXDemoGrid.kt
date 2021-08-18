@@ -7,7 +7,6 @@ import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.VisionLayout
 import space.kscience.visionforge.solid.FX3DPlugin
 import space.kscience.visionforge.solid.FXCanvas3D
 import space.kscience.visionforge.solid.Solid

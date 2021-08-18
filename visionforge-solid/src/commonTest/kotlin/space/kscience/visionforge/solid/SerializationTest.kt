@@ -1,10 +1,8 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.toName
 import space.kscience.visionforge.MutableVisionGroup
 import space.kscience.visionforge.get
-import space.kscience.visionforge.meta
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,7 +12,7 @@ import kotlin.test.assertEquals
  */
 fun SolidGroup.refGroup(
     name: String,
-    templateName: Name = name.toName(),
+    templateName: Name = Name.parse(name),
     block: MutableVisionGroup.() -> Unit
 ): SolidReferenceGroup {
     val group = SolidGroup().apply(block)
@@ -30,7 +28,7 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val string =  Solids.encodeToString(cube)
+        val string = Solids.encodeToString(cube)
         println(string)
         val newCube = Solids.decodeFromString(string)
         assertEquals(cube.meta, newCube.meta)
@@ -43,10 +41,10 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val group = SolidGroup{
+        val group = SolidGroup {
             ref("cube", cube)
-            refGroup("pg", "pg.content".toName()){
-                sphere(50){
+            refGroup("pg", Name.parse("pg.content")) {
+                sphere(50) {
                     x = -100
                 }
             }

@@ -4,16 +4,20 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
-import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.meta.node
+import space.kscience.dataforge.meta.updateWith
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
+import space.kscience.dataforge.values.boolean
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.onPropertyChange
+import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.layer
+import space.kscience.visionforge.solid.three.MeshThreeFactory.Companion.EDGES_ENABLED_KEY
+import space.kscience.visionforge.solid.three.MeshThreeFactory.Companion.EDGES_MATERIAL_KEY
 import kotlin.reflect.KClass
 
 /**
@@ -40,7 +44,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
         }
 
         //add listener to object properties
-        obj.onPropertyChange(three.updateScope) { name ->
+        obj.onPropertyChange { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry as BufferGeometry
@@ -61,6 +65,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
     public companion object {
         public val EDGES_KEY: Name = "edges".asName()
+
         //public val WIREFRAME_KEY: Name = "wireframe".asName()
         public val ENABLED_KEY: Name = "enabled".asName()
         public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
@@ -68,6 +73,11 @@ public abstract class MeshThreeFactory<in T : Solid>(
         //public val WIREFRAME_ENABLED_KEY: Name = WIREFRAME_KEY + ENABLED_KEY
         //public val WIREFRAME_MATERIAL_KEY: Name = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
     }
+}
+
+public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
+    setProperty(EDGES_ENABLED_KEY, enabled)
+    meta.getOrCreate(EDGES_MATERIAL_KEY).updateWith(SolidMaterial, block)
 }
 
 internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
@@ -83,16 +93,9 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
 public fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.getProperty(MeshThreeFactory.EDGES_ENABLED_KEY, inherit = true, includeStyles = true).boolean != false) {
+    if (obj.getPropertyValue(EDGES_ENABLED_KEY, inherit = true)?.boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(
-            obj.getProperty(
-                MeshThreeFactory.EDGES_MATERIAL_KEY,
-                inherit = true,
-                includeStyles = true
-            ).node,
-            true
-        )
+        val material = ThreeMaterials.getLineMaterial(obj.computePropertyNode(EDGES_MATERIAL_KEY), true)
         if (edges == null) {
             add(
                 LineSegments(

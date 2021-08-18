@@ -1,9 +1,8 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.MetaItemNode
 import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.node
-import space.kscience.dataforge.meta.toMetaItem
+import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.misc.DFExperimental
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,9 +28,9 @@ class ConvexTest {
         val convex = group.children.values.first() as Convex
 
         val json = Solids.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
-        val meta = json.toMetaItem().node!!
+        val meta = json.toMeta()
 
-        val points = meta.getIndexed("points").values.map { (it as MetaItemNode<*>).node.point3D() }
+        val points = meta.getIndexed("points").values.map { it.point3D() }
         assertEquals(8, points.count())
 
         assertEquals(8, convex.points.size)

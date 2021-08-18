@@ -5,10 +5,14 @@ import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.configure
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.VisionManager
+import kotlin.collections.set
 import kotlin.test.Test
 
 typealias HtmlVisionRenderer = FlowContent.(name: Name, vision: Vision, meta: Meta) -> Unit

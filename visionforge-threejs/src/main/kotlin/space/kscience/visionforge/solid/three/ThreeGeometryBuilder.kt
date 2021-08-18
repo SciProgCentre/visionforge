@@ -40,7 +40,7 @@ public class ThreeGeometryBuilder : GeometryBuilder<BufferGeometry> {
     }
 
     override fun face(vertex1: Point3D, vertex2: Point3D, vertex3: Point3D, normal: Point3D?, meta: Meta) {
-        val actualNormal: Point3D = normal ?: (vertex3 - vertex2) cross (vertex1 - vertex2)
+        val actualNormal: Point3D = normal ?: ((vertex3 - vertex2) cross (vertex1 - vertex2))
         indices.add(
             vertex(vertex1, actualNormal),
             vertex(vertex2, actualNormal),

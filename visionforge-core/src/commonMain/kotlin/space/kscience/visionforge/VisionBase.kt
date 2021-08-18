@@ -1,136 +1,168 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.ObservableMutableMeta
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.Null
+import space.kscience.dataforge.names.*
+import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 import kotlin.jvm.Synchronized
 
+internal data class MetaListener(
+    val owner: Any? = null,
+    val callback: Meta.(name: Name) -> Unit,
+)
+
 /**
  * A full base implementation for a [Vision]
- * @param properties Object own properties excluding styles and inheritance
+ * @param parent the parent object for this vision. Could ve set later. Not serialized.
  */
 @Serializable
 @SerialName("vision")
 public open class VisionBase(
-    override @Transient var parent: VisionGroup? = null,
-    protected var properties: Config? = null
+    @Transient override var parent: VisionGroup? = null,
 ) : Vision {
 
+    @Transient
+    protected open var properties: MutableMeta? = null
+
     @Synchronized
-    protected fun getOrCreateProperties(): Config {
+    protected fun getOrCreateProperties(): MutableMeta {
         if (properties == null) {
-            val newProperties = Config()
+            val newProperties = MutableMeta()
             properties = newProperties
         }
         return properties!!
     }
 
-    /**
-     * A fast accessor method to get own property (no inheritance or styles)
-     */
-    override fun getOwnProperty(name: Name): MetaItem? = if (name == Name.EMPTY) {
-        properties?.asMetaItem()
-    } else {
-        properties?.getItem(name)
+    @Transient
+    private val listeners: MutableList<MetaListener> = mutableListOf()
+
+    private inner class VisionProperties(val pathName: Name) : ObservableMutableMeta {
+
+        override val items: Map<NameToken, ObservableMutableMeta>
+            get() = properties?.get(pathName)?.items?.mapValues { entry ->
+                VisionProperties(pathName + entry.key)
+            } ?: emptyMap()
+
+        override var value: Value?
+            get() = properties?.get(pathName)?.value
+            set(value) {
+                val oldValue = properties?.get(pathName)?.value
+                getOrCreateProperties().setValue(pathName, value)
+                if (oldValue != value) {
+                    invalidate(Name.EMPTY)
+                }
+            }
+
+        override fun getOrCreate(name: Name): ObservableMutableMeta = VisionProperties(pathName + name)
+
+        override fun setMeta(name: Name, node: Meta?) {
+            getOrCreateProperties().setMeta(pathName + name, node)
+            invalidate(name)
+        }
+
+        @DFExperimental
+        override fun attach(name: Name, node: ObservableMutableMeta) {
+            val ownProperties = getOrCreateProperties()
+            if (ownProperties is ObservableMutableMeta) {
+                ownProperties.attach(pathName + name, node)
+            } else {
+                ownProperties.setMeta(pathName + name, node)
+                node.onChange(this) { childName ->
+                    ownProperties.setMeta(pathName + name + childName, this[childName])
+                }
+            }
+        }
+
+        override fun invalidate(name: Name) {
+            invalidateProperty(pathName + name)
+        }
+
+        @Synchronized
+        override fun onChange(owner: Any?, callback: Meta.(name: Name) -> Unit) {
+            if (pathName.isEmpty()) {
+                listeners.add((MetaListener(owner, callback)))
+            } else {
+                listeners.add(MetaListener(owner) { name ->
+                    if (name.startsWith(pathName)) {
+                        (this@MetaListener[pathName] ?: Meta.EMPTY).callback(name.removeHeadOrNull(pathName)!!)
+                    }
+                })
+            }
+        }
+
+        @Synchronized
+        override fun removeListener(owner: Any?) {
+            listeners.removeAll { it.owner === owner }
+        }
+
+        override fun toString(): String = Meta.toString(this)
+        override fun equals(other: Any?): Boolean = Meta.equals(this, other as? Meta)
+        override fun hashCode(): Int = Meta.hashCode(this)
     }
 
-    override fun getProperty(
+    override val meta: ObservableMutableMeta get() = VisionProperties(Name.EMPTY)
+
+    override fun getPropertyValue(
         name: Name,
         inherit: Boolean,
         includeStyles: Boolean,
         includeDefaults: Boolean,
-    ): MetaItem? = if (!inherit && !includeStyles && !includeDefaults) {
-        getOwnProperty(name)
-    } else {
-        buildList {
-            add(getOwnProperty(name))
-            if (includeStyles) {
-                addAll(getStyleItems(name))
-            }
-            if (inherit) {
-                add(parent?.getProperty(name, inherit, includeStyles, includeDefaults))
-            }
-            if (includeDefaults) {
-                add(descriptor?.defaultMeta?.get(name))
-            }
-        }.merge()
-    }
-
-    override fun setProperty(name: Name, item: MetaItem?, notify: Boolean) {
-        val oldItem = properties?.getItem(name)
-        if(oldItem!= item) {
-            getOrCreateProperties().setItem(name, item)
-            if (notify) {
-                invalidateProperty(name)
-            }
+    ): Value? {
+        properties?.get(name)?.value?.let { return it }
+        if (includeStyles) {
+            getStyleProperty(name)?.let { return it }
         }
+        if (inherit) {
+            parent?.getPropertyValue(name, inherit, includeStyles, includeDefaults)?.let { return it }
+        }
+        if (includeDefaults) {
+            descriptor?.defaultNode?.get(name)?.value.let { return it }
+        }
+        return null
     }
 
-    override val descriptor: NodeDescriptor? get() = null
+    override val descriptor: MetaDescriptor? get() = null
 
-    private suspend fun updateStyles(names: List<String>) {
-        names.mapNotNull { getStyle(it) }.asSequence()
-            .flatMap { it.items.asSequence() }
-            .distinctBy { it.key }
-            .forEach {
-                invalidateProperty(it.key.asName())
-            }
-    }
-
-    //TODO check memory consumption for the flow
-    @Transient
-    private val propertyInvalidationFlow: MutableSharedFlow<Name> = MutableSharedFlow()
-
-    @DFExperimental
-    override val propertyChanges: Flow<Name>
-        get() = propertyInvalidationFlow
 
     override fun invalidateProperty(propertyName: Name) {
-        launch {
-            if (propertyName == STYLE_KEY) {
-                updateStyles(styles)
-            }
-            propertyInvalidationFlow.emit(propertyName)
+        if (propertyName == STYLE_KEY) {
+            styles.mapNotNull { getStyle(it) }.asSequence()
+                .flatMap { it.items.asSequence() }
+                .distinctBy { it.key }
+                .forEach {
+                    invalidateProperty(it.key.asName())
+                }
         }
+        listeners.forEach { it.callback(properties ?: Meta.EMPTY, propertyName) }
     }
 
     override fun update(change: VisionChange) {
         change.properties?.let {
-            updateProperties(Name.EMPTY, it.asMetaItem())
+            updateProperties(Name.EMPTY, it)
         }
     }
 
     public companion object {
-        public val descriptor: NodeDescriptor = NodeDescriptor {
-            value(STYLE_KEY) {
-                type(ValueType.STRING)
+        public val descriptor: MetaDescriptor = MetaDescriptor {
+            value(STYLE_KEY, ValueType.STRING) {
                 multiple = true
             }
         }
 
-        public fun Vision.updateProperties(at: Name, item: MetaItem) {
-            when (item) {
-                is MetaItemValue -> {
-                    if (item.value == Null) {
-                        setProperty(at, null)
-                    } else
-                        setProperty(at, item)
-                }
-                is MetaItemNode -> item.node.items.forEach { (token, childItem) ->
-                    updateProperties(at + token, childItem)
-                }
+        public fun Vision.updateProperties(at: Name, item: Meta) {
+            meta.setValue(at, item.value)
+            item.items.forEach { (token, item) ->
+                updateProperties(at + token, item)
             }
         }
 

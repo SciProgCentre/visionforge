@@ -1,7 +1,9 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.values.int
 import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -9,15 +11,44 @@ import kotlin.test.assertEquals
 @Suppress("UNUSED_VARIABLE")
 class PropertyTest {
     @Test
+    fun testColor(){
+        val box = Box(10.0f, 10.0f,10.0f)
+        box.material {
+            //meta["color"] = "pink"
+            color("pink")
+        }
+        assertEquals("pink", box.meta["material.color"]?.string)
+        assertEquals("pink", box.color.string)
+    }
+
+    @Test
+    fun testColorUpdate(){
+        val box = Box(10.0f, 10.0f,10.0f)
+
+        var c: String? = null
+        box.onPropertyChange {
+            if(it == SolidMaterial.MATERIAL_COLOR_KEY){
+                c = box.color.string
+            }
+        }
+
+        box.material {
+            color("pink")
+        }
+
+        assertEquals("pink", c)
+    }
+
+    @Test
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            setProperty("test", 22)
+            setPropertyNode("test", 22)
             group {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getProperty("test", inherit = true).int)
+        assertEquals(22, box?.getPropertyValue("test", inherit = true)?.int)
     }
 
     @Test
@@ -35,11 +66,11 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals(22, box?.getProperty("test").int)
+        assertEquals(22, box?.getPropertyValue("test")?.int)
     }
 
     @Test
-    fun testColor() {
+    fun testStyleColor() {
         var box: Box? = null
         val group = SolidGroup().apply {
             styleSheet {

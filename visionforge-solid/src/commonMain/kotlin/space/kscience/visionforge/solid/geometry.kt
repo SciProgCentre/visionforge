@@ -95,13 +95,13 @@ public fun MutablePoint3D.normalizeInPlace() {
     z /= norm
 }
 
-internal fun ItemProvider.point3D(default: Float = 0f) = object : Point3D {
+internal fun MetaProvider.point3D(default: Float = 0f) = object : Point3D {
     override val x: Float by float(default)
     override val y: Float by float(default)
     override val z: Float by float(default)
 }
 
-public fun Point3D.toMeta(): MetaBuilder = Meta {
+public fun Point3D.toMeta(): Meta = Meta {
     X_KEY put x
     Y_KEY put y
     Z_KEY put z
@@ -115,7 +115,7 @@ internal fun Meta.toVector(default: Float = 0f) = Point3D(
 )
 
 internal fun Solid.updatePosition(meta: Meta?) {
-    meta[Solid.POSITION_KEY].node?.toVector()?.let { position = it }
-    meta[Solid.ROTATION_KEY].node?.toVector()?.let { rotation = it }
-    meta[Solid.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
+    meta?.get(Solid.POSITION_KEY)?.toVector()?.let { position = it }
+    meta?.get(Solid.ROTATION_KEY)?.toVector()?.let { rotation = it }
+    meta?.get(Solid.SCALE_KEY)?.toVector(1f)?.let { scale = it }
 }
