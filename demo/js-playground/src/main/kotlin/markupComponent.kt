@@ -46,7 +46,7 @@ val Markup = functionalComponent<MarkupProps>("Markup") { props ->
             width = 100.pct
             height = 100.pct
             border(2.pt, BorderStyle.solid, Color.blue)
-            padding(8.pt)
+            padding(left = 8.pt)
             backgroundColor = Color.white
             flex(1.0)
             zIndex = 10000

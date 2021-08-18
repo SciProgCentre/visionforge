@@ -20,9 +20,9 @@ kotlin{
 
 
 dependencies{
-    implementation(project(":visionforge-gdml"))
-    implementation(project(":visionforge-plotly"))
+    implementation(projects.visionforge.visionforgeGdml)
+    implementation(projects.visionforge.visionforgePlotly)
     implementation(projects.visionforge.visionforgeMarkdown)
-    implementation(project(":visionforge-threejs"))
-    implementation(project(":ui:ring"))
+    implementation(projects.visionforge.visionforgeThreejs)
+    implementation(projects.ui.ring)
 }
