@@ -20,6 +20,9 @@ public class TGeoManager : TNamed() {
          * Load Json encoded TGeoManager
          */
         public fun decodeFromJson(jsonObject: JsonObject): TGeoManager = TODO()
+        
+        public fun decodeFromString(string: String): TGeoManager =
+            RootJsonSerialFormat().decodeFromString(serializer(), string)
     }
 }
 
