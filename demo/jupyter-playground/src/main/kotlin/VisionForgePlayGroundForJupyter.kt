@@ -1,4 +1,4 @@
-package space.kscience.dataforge.playground
+package playground
 
 import kotlinx.html.div
 import kotlinx.html.id
@@ -24,7 +24,7 @@ import space.kscience.visionforge.visionManager
 
 @JupyterLibrary
 @DFExperimental
-internal class VisionForgePlayGroundForJupyter : JupyterIntegration() {
+public class VisionForgePlayGroundForJupyter : JupyterIntegration() {
 
     private val context = Context("VisionForge") {
         plugin(Solids)
