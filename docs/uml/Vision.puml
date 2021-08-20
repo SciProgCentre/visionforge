@@ -7,23 +7,23 @@ interface Vision{
 }
 
 interface Solid{
-    val descriptor: MetaDescriptor
-    val parent: VisionGroup?
+    The base for 3D geometry
 }
 Vision <-- Solid
 
 class VisionGroup{
+    A group of Visions
+
     val children: Map<NameToken, Vision>
     val defaultTarget: String
+
     fun content(target): Map<Name, Any>
     fun get(name: Name): Vision?
 }
 Vision <-- VisionGroup
 
 class VisionBase{
-    var parent: VisionGroup?
-    var properties: MutableMeta?
-    fun getOrCreateProperties(): MutableMeta
+    basic vision implementation
 }
 Vision <-- VisionBase
 
@@ -109,7 +109,6 @@ MutableVisionGroup <-- VisionGroupBase
 
 class RootVisionGroup
 VisionGroupBase <-- RootVisionGroup
-
 
 class VisionOfPlotly{
      var properties: MutableMeta?
