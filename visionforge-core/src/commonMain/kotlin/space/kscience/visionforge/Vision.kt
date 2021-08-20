@@ -109,7 +109,7 @@ public fun Vision.getPropertyValue(
 ): Value? = getPropertyValue(Name.parse(key), inherit, includeStyles, includeDefaults)
 
 /**
- * A convenience method to set property node or value. If Item is null, then node is removed, not a value
+ * A convenient method to set property node or value. If Item is null, then node is removed, not a value
  */
 public fun Vision.setProperty(name: Name, item: Any?) {
     when (item) {

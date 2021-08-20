@@ -26,7 +26,7 @@ public interface PrototypeHolder {
 
 /**
  * Represents 3-dimensional Visual Group
- * @param prototypes A container for templates visible inside this group
+ * @param prototypes is a container for templates visible inside this group
  */
 @Serializable
 @SerialName("group.solid")

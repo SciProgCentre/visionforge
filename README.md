@@ -17,6 +17,11 @@
   * [visionforge-core](#visionforge-core)
   * [visionforge-solid](#visionforge-solid)
   * [visionforge-gdml](#visionforge-gdml)
+  * [visionforge-fx](#visionforge-fx)
+  * [visionforge-markdown](#visionforge-markdown)
+  * [visionforge-plotly](#visionforge-plotly)
+  * [visionforge-server](#visionforge-server)
+  * [visionforge-threejs](#visionforge-threejs)
 * [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
   * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
@@ -65,6 +70,13 @@ To learn more about DataForge, please consult the following URLs:
 ## Modules contained in this repository
 
 ### visionforge-core
+> Core classes, algebra definitions, basic linear algebra
+>
+> **Maturity**: DEVELOPMENT
+>
+> **Features:**
+> - [vision](visionforge-core/src/commonMain/kotlin/space/kscience/visionforge/Vision.kt) : an architecture of visions.
+<hr/>
 
 Contains a general hierarchy of classes and interfaces useful for visualization. 
 This module is not specific to 3D-visualization.

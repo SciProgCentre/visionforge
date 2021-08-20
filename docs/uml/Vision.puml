@@ -3,41 +3,50 @@
 
 interface Vision{
     val parent: VisionGroup?
-    fun getProperty(name):TypedMetaItem?
-    fun setProperty(name, item)
+    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
 }
 
 interface Solid{
-    base of 3D geometries
+    val descriptor: MetaDescriptor
+    val parent: VisionGroup?
 }
-Vision <- Solid
+Vision <-- Solid
 
 class VisionGroup{
-    a group of visions
+    val children: Map<NameToken, Vision>
+    val defaultTarget: String
+    fun content(target): Map<Name, Any>
+    fun get(name: Name): Vision?
 }
-
 Vision <-- VisionGroup
 
 class VisionBase{
-    basic vision
-    implementation
+    var parent: VisionGroup?
+    var properties: MutableMeta?
+    fun getOrCreateProperties(): MutableMeta
 }
-Vision <- VisionBase
+Vision <-- VisionBase
 
 
 class SolidLabel
 Solid <--- SolidLabel
 
-class SolidGroup
-Solid <--- SolidGroup
-MutableVisionGroup <-- SolidGroup
+class SolidGroup{
+    var properties: MutableMeta?
+    val children: Map<NameToken, Vision>
+    var prototypes: MutableVisionGroup?
 
+    fun getPrototype(name): Solid?
+    fun prototypes(builder)
+}
+Solid <--- SolidGroup
+VisionGroupBase <-- SolidGroup
 
 class SphereLayer
-GeometrySolid <-- SphereLayer
+Solid <-- SphereLayer
 
 class Sphere
-GeometrySolid <-- Sphere
+Solid <-- Sphere
 
 class Box
 Hexagon <-- Box
@@ -46,24 +55,21 @@ class GenericHexagon
 Hexagon <-- GenericHexagon
 
 class Extruded
-GeometrySolid <-- Extruded
+Solid <-- Extruded
 
 
 class PolyLine
 Solid <--- PolyLine
 
-interface GeometrySolid
-Solid <--- GeometrySolid
-
 
 interface Hexagon
-GeometrySolid <-- Hexagon
+Solid <-- Hexagon
 
 class ConeSegment
-GeometrySolid <-- ConeSegment
+Solid <-- ConeSegment
 
 class ConeSurface
-GeometrySolid <-- ConeSurface
+Solid <-- ConeSurface
 
 
 class Convex
@@ -73,29 +79,47 @@ class Composite
 Solid <--- Composite
 
 
-interface SolidReference
+interface SolidReference{
+    val prototype: Solid
+    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
+}
 VisionGroup <---- SolidReference
 
-interface MutableVisionGroup
+class SolidReferenceGroup{
+    val refName: Name
+    var properties: MutableMeta?
+    val prototype: Solid
+    val children: Map<NameToken, Vision>
+    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
+}
+VisionBase <-- SolidReferenceGroup
+
+interface MutableVisionGroup{
+    fun onStructureChanged(owner, block)
+    fun removeStructureListener(owner)
+}
 VisionGroup <---- MutableVisionGroup
 
-class SolidReferenceGroup
-VisionGroup <-- SolidReferenceGroup
-Solid <-- SolidReferenceGroup
-VisionBase <-- SolidReferenceGroup
-SolidReference <-- SolidReferenceGroup
-
-class ReferenceChild
-VisionGroup <-- ReferenceChild
-Solid <-- ReferenceChild
-SolidReference <-- ReferenceChild
-
-
+class VisionGroupBase{
+    val children: Map<NameToken, Vision>
+    fun set(name: Name?, child: Vision?)
+}
+VisionBase <-- VisionGroupBase
+MutableVisionGroup <-- VisionGroupBase
 
 class RootVisionGroup
-MutableVisionGroup <-- RootVisionGroup
+VisionGroupBase <-- RootVisionGroup
 
 
-class VisionOfPlotly
+class VisionOfPlotly{
+     var properties: MutableMeta?
+     val plot: Plot
+}
 VisionBase <-- VisionOfPlotly
+
+class VisionOfMarkup{
+    val format: String
+    var content: String?
+}
+VisionBase <-- VisionOfMarkup
 @enduml
