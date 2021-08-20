@@ -5,6 +5,7 @@ plugins {
 }
 
 repositories {
+    jcenter()
     mavenCentral()
     maven("https://repo.kotlin.link")
 }
@@ -15,7 +16,6 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
     kotlinOptions {
-        useIR = true
         jvmTarget = ru.mipt.npm.gradle.KScienceVersions.JVM_TARGET.toString()
     }
 }
@@ -29,7 +29,7 @@ tasks.withType<Test> {
 }
 
 tasks.processJupyterApiResources {
-    libraryProducers = listOf("space.kscience.dataforge.playground.VisionForgePlayGroundForJupyter")
+    libraryProducers = listOf("playground.VisionForgePlayGroundForJupyter")
 }
 
 tasks.findByName("shadowJar")?.dependsOn("processJupyterApiResources")
