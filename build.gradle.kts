@@ -1,6 +1,7 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
 //    kotlin("multiplatform") version "1.5.30-RC" apply false
+//    kotlin("js") version "1.5.30-RC" apply false
 }
 
 val dataforgeVersion by extra("0.5.1")
@@ -35,6 +36,4 @@ apiValidation {
     ignoredPackages.add("info.laht.threekt")
 }
 
-rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
-    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.webpackDevServer.version = "4.0.0-rc.0"
-}
+//workaround for https://youtrack.jetbrains.com/issue/KT-48273

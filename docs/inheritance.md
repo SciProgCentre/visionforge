@@ -65,4 +65,6 @@ Properties, which can or cannot be inherited, are these:
   ![](../docs/images/inheritance-2-2-5.png)
 
 * `rotation` - rotation of an element. Here, it is set by `x` value. It is inheritable and unable to be changed in `children` elements.
-* `position` - position of an element, cannot be inherited.
+
+* `position` &mdash; position of an element, cannot be inherited.
+

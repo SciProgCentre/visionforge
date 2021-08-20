@@ -18,6 +18,7 @@ pluginManagement {
 
 rootProject.name = "visionforge"
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
 //    ":ui",

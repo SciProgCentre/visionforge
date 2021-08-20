@@ -2,7 +2,6 @@ package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.WebGLRenderer
 import info.laht.threekt.cameras.PerspectiveCamera
-import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.core.Raycaster
 import info.laht.threekt.external.controls.OrbitControls
@@ -276,7 +275,7 @@ public class ThreeCanvas(
         if (this is Mesh) {
             if (highlight) {
                 val edges = LineSegments(
-                    EdgesGeometry(geometry as BufferGeometry),
+                    EdgesGeometry(geometry),
                     material
                 ).apply {
                     name = edgesName

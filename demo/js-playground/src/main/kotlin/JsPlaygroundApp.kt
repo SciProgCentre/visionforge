@@ -1,7 +1,4 @@
 import kotlinx.browser.document
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlinx.css.*
 import react.child
 import react.dom.render
@@ -20,7 +17,6 @@ import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.startApplication
 import styled.css
 import styled.styledDiv
-import kotlin.math.sqrt
 import kotlin.random.Random
 
 fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number? = null, yErr: Number? = null) {
@@ -29,7 +25,6 @@ fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number?
     xErr?.let { error_x.array = (error_x.array + xErr).takeLast(history) }
     yErr?.let { error_y.array = (error_y.array + yErr).takeLast(history) }
 }
-
 
 private class JsPlaygroundApp : Application {
 
@@ -43,8 +38,6 @@ private class JsPlaygroundApp : Application {
 
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
-        val bouncingSphereTrace = Trace()
-
         render(element) {
             styledDiv {
                 css {
@@ -55,57 +48,9 @@ private class JsPlaygroundApp : Application {
                 }
                 SmartTabs("gravity") {
                     Tab("gravity") {
-                        styledDiv {
-                            css {
-                                height = 50.vh
-                            }
-                            child(ThreeCanvasWithControls) {
-                                attrs {
-                                    context = playgroundContext
-                                    solid {
-                                        sphere(5.0, "ball") {
-                                            detail = 16
-                                            color("red")
-                                            val h = 100.0
-                                            y = h
-                                            launch {
-                                                val g = 10.0
-                                                val dt = 0.1
-                                                var time = 0.0
-                                                var velocity = 0.0
-                                                while (isActive) {
-                                                    delay(20)
-                                                    time += dt
-                                                    velocity -= g * dt
-                                                    y = y.toDouble() + velocity * dt
-                                                    bouncingSphereTrace.appendXYLatest(time, y)
-                                                    if (y.toDouble() <= 2.5) {
-                                                        //conservation of energy
-                                                        velocity = sqrt(2 * g * h)
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        box(200, 5, 200, name = "floor") {
-                                            y = -2.5
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        styledDiv {
-                            css {
-                                height = 40.vh
-                            }
-
-                            Plotly {
-                                attrs {
-                                    context = playgroundContext
-                                    plot = space.kscience.plotly.Plotly.plot {
-                                        traces(bouncingSphereTrace)
-                                    }
-                                }
+                        GravityDemo{
+                            attrs {
+                                this.context = playgroundContext
                             }
                         }
                     }
@@ -121,7 +66,7 @@ private class JsPlaygroundApp : Application {
                     Tab("spheres") {
                         styledDiv {
                             css {
-                                height = 90.vh
+                                height = 100.vh - 50.pt
                             }
                             child(ThreeCanvasWithControls) {
                                 val random = Random(112233)
@@ -147,7 +92,6 @@ private class JsPlaygroundApp : Application {
                     Tab("plotly") {
                         Plotly {
                             attrs {
-                                context = playgroundContext
                                 plot = space.kscience.plotly.Plotly.plot {
                                     scatter {
                                         x(1, 2, 3)

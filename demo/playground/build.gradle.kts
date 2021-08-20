@@ -51,24 +51,24 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":visionforge-solid"))
-                api(project(":visionforge-gdml"))
-                api(project(":visionforge-plotly"))
+                implementation(project(":visionforge-solid"))
+                implementation(project(":visionforge-gdml"))
+                implementation(project(":visionforge-plotly"))
+                implementation(projects.visionforge.visionforgeMarkdown)
             }
         }
 
         val jsMain by getting{
             dependencies {
                 implementation(project(":ui:ring"))
-                api(project(":visionforge-threejs"))
+                implementation(project(":visionforge-threejs"))
             }
         }
 
         val jvmMain by getting{
             dependencies {
-                api(project(":visionforge-server"))
-                api(project(":visionforge-markdown"))
-                api("ch.qos.logback:logback-classic:1.2.3")
+                implementation(project(":visionforge-server"))
+                implementation("ch.qos.logback:logback-classic:1.2.3")
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }
         }
