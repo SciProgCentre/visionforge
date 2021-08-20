@@ -1,8 +1,10 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@SerialName("TGeoVolume")
 public open class TGeoVolume : TNamed(){
     //    "fGeoAtt" : 3084,
 //    "fLineColor" : 3,
@@ -19,4 +21,5 @@ public open class TGeoVolume : TNamed(){
 }
 
 @Serializable
+@SerialName("TGeoVolumeAssembly")
 public class TGeoVolumeAssembly : TGeoVolume()

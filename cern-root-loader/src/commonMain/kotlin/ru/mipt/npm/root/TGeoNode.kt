@@ -1,9 +1,11 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public class TGeoNode : TNamed() {
+@SerialName("TGeoNode")
+public open class TGeoNode : TNamed() {
     //val fGeoAtt: UInt
     public val fVolume: TGeoVolume? = null
     public val fMother: TGeoVolume? = null
@@ -12,6 +14,8 @@ public class TGeoNode : TNamed() {
     public val fOverlaps: IntArray = intArrayOf()
 }
 
-public class TGeoNodeMatrix : TGeoMatrix() {
+@Serializable
+@SerialName("TGeoNodeMatrix")
+public class TGeoNodeMatrix : TGeoNode() {
     public val fMatrix: TGeoMatrix? = null
 }

@@ -1,5 +1,6 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,6 +16,7 @@ public abstract class TNamed : TObject() {
 }
 
 @Serializable
+@SerialName("TObjArray")
 public class TObjArray(public val arr: List<TObject>){
     public companion object{
         public val empty = TObjArray(emptyList())
