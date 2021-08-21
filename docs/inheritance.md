@@ -37,9 +37,9 @@ Properties, which can or cannot be inherited, are these:
   ![](../docs/images/inheritance-2-1-2.png)
 
 * `material` - a group of properties, which can be inherited and which can be changed in `children` elements.
-    * `color` - color of an element.
-    * `opacity` - a number from 0 to 1 which represents percents of opacity (0 for 0%, 1 for 100%).
-    * `wireframe` - toggles the wireframe mode.
+  * `color` - color of an element.
+  * `opacity` - a number from 0 to 1 which represents percents of opacity (0 for 0%, 1 for 100%).
+  * `wireframe` - toggles the wireframe mode.
 
   Let's see how elements of the `material` group inherit changing `color` property; ***other properties of this group inherit in the same way.***
 
