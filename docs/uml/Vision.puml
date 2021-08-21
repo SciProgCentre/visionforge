@@ -84,6 +84,7 @@ interface SolidReference{
     fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
 }
 VisionGroup <---- SolidReference
+SolidReferenceGroup -- SolidReference
 
 class SolidReferenceGroup{
     val refName: Name
@@ -93,6 +94,7 @@ class SolidReferenceGroup{
     fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
 }
 VisionBase <-- SolidReferenceGroup
+VisionGroup <-- SolidReferenceGroup
 
 interface MutableVisionGroup{
     fun onStructureChanged(owner, block)
