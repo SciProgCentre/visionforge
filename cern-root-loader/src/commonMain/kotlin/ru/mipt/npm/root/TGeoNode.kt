@@ -1,5 +1,6 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -7,7 +8,10 @@ import kotlinx.serialization.Serializable
 @SerialName("TGeoNode")
 public open class TGeoNode : TNamed() {
     //val fGeoAtt: UInt
+    @Contextual
     public val fVolume: TGeoVolume? = null
+
+    @Contextual
     public val fMother: TGeoVolume? = null
     public val fNumber: Int = 0
     public val fNovlp: Int = 0
@@ -17,5 +21,6 @@ public open class TGeoNode : TNamed() {
 @Serializable
 @SerialName("TGeoNodeMatrix")
 public class TGeoNodeMatrix : TGeoNode() {
+    @Contextual
     public val fMatrix: TGeoMatrix? = null
 }

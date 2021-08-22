@@ -1,5 +1,6 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,36 +23,55 @@ public open class TGeoBBox : TGeoShape() {
 @Serializable
 @SerialName("TGeoBoolNode")
 public sealed class TGeoBoolNode : TObject() {
+    @Contextual
     public abstract val fLeft: TGeoShape
+
+    @Contextual
     public abstract val fLeftMat: TGeoMatrix
+
+    @Contextual
     public abstract val fRight: TGeoShape
+
+    @Contextual
     public abstract val fRightMat: TGeoMatrix
 }
 
 @Serializable
 @SerialName("TGeoUnion")
 public class TGeoUnion(
+    @Contextual
     override val fLeft: TGeoShape,
+    @Contextual
     override val fLeftMat: TGeoMatrix,
+    @Contextual
     override val fRight: TGeoShape,
+    @Contextual
     override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
 @Serializable
 @SerialName("TGeoSubtraction")
 public class TGeoSubtraction(
+    @Contextual
     override val fLeft: TGeoShape,
+    @Contextual
     override val fLeftMat: TGeoMatrix,
+    @Contextual
     override val fRight: TGeoShape,
+    @Contextual
     override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
 @Serializable
 @SerialName("TGeoIntersection")
 public class TGeoIntersection(
+    @Contextual
     override val fLeft: TGeoShape,
+    @Contextual
     override val fLeftMat: TGeoMatrix,
+    @Contextual
     override val fRight: TGeoShape,
+    @Contextual
     override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
@@ -103,6 +123,7 @@ public class TGeoTubeSeg(
 @Serializable
 @SerialName("TGeoShapeAssembly")
 public class TGeoShapeAssembly(
+    @Contextual
     public val fVolume: TGeoVolumeAssembly,
     public val fBBoxOK: Boolean = true
 ) : TGeoBBox()

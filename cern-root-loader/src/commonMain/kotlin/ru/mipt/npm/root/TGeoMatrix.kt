@@ -1,5 +1,6 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -30,11 +31,12 @@ public class TGeoTranslation(
 @SerialName("TGeoRotation")
 public class TGeoRotation(
     public val fRotationMatrix: DoubleArray
-): TGeoMatrix()
+) : TGeoMatrix()
 
 @Serializable
 @SerialName("TGeoCombiTrans")
 public class TGeoCombiTrans(
     public val fTranslation: DoubleArray,
+    @Contextual
     public val fRotation: TGeoRotation? = null,
-): TGeoMatrix()
+) : TGeoMatrix()
