@@ -15,8 +15,13 @@
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
   * [visionforge-core](#visionforge-core)
-  * [visionforge-solid](#visionforge-solid)
+  * [visionforge-fx](#visionforge-fx)
   * [visionforge-gdml](#visionforge-gdml)
+  * [visionforge-markdown](#visionforge-markdown)
+  * [visionforge-plotly](#visionforge-plotly)
+  * [visionforge-server](#visionforge-server)
+  * [visionforge-solid](#visionforge-solid)
+  * [visionforge-threejs](#visionforge-threejs)
 * [Visualization for External Systems](#visualization-for-external-systems)  
 * [Demonstrations](#demonstrations)
   * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
@@ -75,6 +80,17 @@ The `visionforge-core` module also includes configuration editors for JS (in `js
 
 ![](docs/images/class-diag-core.png)
 
+### visionforge-fx
+
+### visionforge-gdml
+
+GDML bindings for 3D visualization (to be moved to gdml project).
+
+### visionforge-markdown
+
+### visionforge-plotly
+
+### visionforge-server
 
 ### visionforge-solid
 
@@ -96,13 +112,9 @@ The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHo
 ##### Styles
 
 `VisionGroup` has a `styleSheet` property that can optionally define styles at the Group's 
-level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property. 
+level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property.
 
-
-### visionforge-gdml
-
-GDML bindings for 3D visualization (to be moved to gdml project).
-
+### visionforge-threejs
 
 ## Visualization for External Systems 
 
