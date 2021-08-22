@@ -36,7 +36,7 @@ public interface Vision : Described, Configurable {
     public val manager: VisionManager? get() = parent?.manager
 
     /**
-     * This Vision own properties (ignoring inheritance, styles and defaults
+     * This Vision own properties (ignoring inheritance, styles and defaults)
      */
     override val meta: ObservableMutableMeta
 
@@ -92,7 +92,7 @@ public val Vision.propertyChanges: Flow<Name>
     }
 
 /**
- * Subscribe on property updates. The subscription is bound to the given [scope] and canceled when the scope is canceled
+ * Subscribe on property updates. The subscription is bound to the given scope and canceled when the scope is canceled
  */
 public fun Vision.onPropertyChange(callback: Meta.(Name) -> Unit) {
     meta.onChange(null, callback)

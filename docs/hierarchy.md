@@ -27,6 +27,7 @@ low structure changes of this group. Unconsumed changes are discarded.
 Interface for 3-dimensional Vision.
 
 ### SolidGroup
+3D Visual Group with a container for templates visible inside this group. It has an interface `PrototypeHolder` which stands for being a container with prototype support.
 
 * function `getPrototype(name: Name)` - get a prototype redirecting the request to the parent if prototype is not found. If prototype is a ref, then it is unfolded automatically.
 
@@ -34,10 +35,16 @@ Interface for 3-dimensional Vision.
 
 ### SolidReferenceGroup
 
-A reference Solid to reuse a template object.
+A class with `SolidReference` interface with reference `Solid`s for template objects reuse.
+
+### VisionGroupBase
+
+Abstract implementation of mutable group of `Vision`.
 
 ### RootVisionGroup
 
 Non-serializable root group used to propagate manager to its children.
 
-* function Vision.root(manager: VisionManager) - designate this [VisionGroup] as a root group and assign a [VisionManager] as its parent.
+### MutableVisionGroup
+
+Just a mutable version of `VisionGroup`
