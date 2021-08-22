@@ -2,18 +2,20 @@
 
 Inheritance is an ability of an element to transfer a pack of properties to its `children` elements 'wrapped inside'.
 
-
+`VisionBase`
 Properties have to be set in a specific order:
 ### Main properties' inheritance:
-* styles
+* styles - `StyleSheet`
 * parents
 * parent's styles
 * defaults
 
+
+`SolidReference`
 As for `prototypes`, this property has to be set after styles, but before parents. So the order will be this:
 ### Reference properties' inheritance:
 * styles
-* prototypes
+* prototypes - `PrototypeHolder` in `SolidGroup`
 * parents
 * parent's styles
 * defaults
