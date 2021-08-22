@@ -2,19 +2,16 @@
 
 Inheritance is an ability of an element to transfer a pack of properties to its `children` elements 'wrapped inside'.
 
+Properties, which can be inherited by objects, are `styles`, `prototypes` (if the object is a reference), `inherit` (it stands for the presence of `parent` objects), and `defaults`. 
 
-Properties have to be set in a specific order:
-### Main properties' inheritance:
-* styles
-* parents
-* parent's styles
-* defaults
+All values of `styles` property are contained in class `StyleSheet`, where they all are defined at `Group`s level. The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and
+`SolidReference` class helps to reuse a template object. 
 
-As for `prototypes`, this property has to be set after styles, but before parents. So the order will be this:
-### Reference properties' inheritance:
-* styles
+The order of inheritance of properties is set in function `getPropertyValue` in `VisionBase` class.
+The order is this:
+* own styles
 * prototypes
-* parents
+* parent
 * parent's styles
 * defaults
 
