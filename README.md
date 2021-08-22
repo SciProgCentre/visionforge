@@ -95,7 +95,7 @@ The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHo
 
 ##### Styles
 
-`SolidGroup` has a `styleSheet` property that can optionally define styles at the Group's 
+`VisionGroup` has a `styleSheet` property that can optionally define styles at the Group's 
 level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property. 
 
 
