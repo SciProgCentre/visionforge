@@ -127,3 +127,7 @@ public class TGeoShapeAssembly(
     public val fVolume: TGeoVolumeAssembly,
     public val fBBoxOK: Boolean = true
 ) : TGeoBBox()
+
+public class TGeoShapeRef(provider: () -> TGeoShape) : TGeoShape() {
+    public val value: TGeoShape by lazy(provider)
+}

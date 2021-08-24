@@ -1,5 +1,6 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -15,9 +16,10 @@ public open class TNamed : TObject() {
     public val fTitle: String = ""
 }
 
+
 @Serializable
 @SerialName("TObjArray")
-public class TObjArray(public val arr: List<TObject>): TObject() {
+public class TObjArray(public val arr: List<@Contextual TObject>): TObject() {
     public companion object{
         public val empty: TObjArray = TObjArray(emptyList())
     }
@@ -25,8 +27,8 @@ public class TObjArray(public val arr: List<TObject>): TObject() {
 
 @Serializable
 @SerialName("TList")
-public class TList(public val arr: List<TObject>): TObject()
+public class TList(public val arr: List<@Contextual TObject>): TObject()
 
 @Serializable
 @SerialName("THashList")
-public class THashList(public val arr: List<TObject>): TObject()
+public class THashList(public val arr: List<@Contextual TObject>): TObject()

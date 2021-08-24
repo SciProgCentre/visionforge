@@ -1,6 +1,8 @@
 package ru.mipt.npm.root
 
 import kotlinx.serialization.json.*
+import java.time.Duration
+import kotlin.system.measureTimeMillis
 
 private fun JsonElement.countTypes(): Sequence<String> = sequence {
     val json = this@countTypes
@@ -27,5 +29,9 @@ fun main() {
         println(it)
     }
 
-    val geo = TObject.decodeFromString(TGeoManager.serializer(), string)
+    val time = measureTimeMillis {
+        val geo = TObject.decodeFromString(TGeoManager.serializer(), string)
+    }
+
+    println(Duration.ofMillis(time))
 }

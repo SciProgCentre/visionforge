@@ -7,12 +7,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("TGeoNode")
 public open class TGeoNode : TNamed() {
-    //val fGeoAtt: UInt
+    public val fGeoAtt: UInt = 0u
+
     @Contextual
     public val fVolume: TGeoVolume? = null
 
-    @Contextual
-    public val fMother: TGeoVolume? = null
+//    @Contextual
+//    public val fMother: TGeoVolume? = null
+
     public val fNumber: Int = 0
     public val fNovlp: Int = 0
     public val fOverlaps: IntArray = intArrayOf()

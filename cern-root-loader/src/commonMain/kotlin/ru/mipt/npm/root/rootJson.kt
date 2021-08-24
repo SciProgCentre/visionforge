@@ -1,12 +1,10 @@
 package ru.mipt.npm.root
 
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
-import kotlin.reflect.KClass
 
 
 /**
@@ -24,8 +22,8 @@ private object RootDecoder {
 
     private class RootUnrefSerializer<T>(
         private val tSerializer: KSerializer<T>,
-        private val refCache: MutableList<RefEntry>,// = ArrayList<RefEntry>(4096)
-        private val counter: ReferenceCounter
+        private val refCache: List<RefEntry>,// = ArrayList<RefEntry>(4096)
+        //private val counter: ReferenceCounter
     ) : KSerializer<T> by tSerializer {
 
         override fun deserialize(decoder: Decoder): T {
@@ -33,67 +31,74 @@ private object RootDecoder {
             val element = input.decodeJsonElement()
             val refId = (element as? JsonObject)?.get("\$ref")?.jsonPrimitive?.int
             val ref = if (refId != null) {
-                //Do unref
-                refCache[refId]
-            } else {
-                refCache[counter.value].also {
-                    counter.increment()
+                //println("Substituting ref $refId")
+                //Forward ref for shapes
+                when (tSerializer.descriptor.serialName) {
+                    "TGeoShape" -> return TGeoShapeRef{
+                        //Should be not null at the moment of actualization
+                        refCache[refId].value as TGeoShape
+                    } as T
+                    "TGeoVolumeAssembly" -> return TGeoVolumeAssemblyRef{
+                        //Should be not null at the moment of actualization
+                        refCache[refId].value as TGeoVolumeAssembly
+                    } as T
+                    //Do unref
+                    else -> refCache[refId]
                 }
+            } else {
+                refCache.find { it.element == element } ?: error("Element '$element' not found in the cache")
             }
-            return ref.value(tSerializer) as T //TODO research means to make it safe
+
+            return ref.getOrPutValue {
+//                val actualTypeName = it.jsonObject["_typename"]?.jsonPrimitive?.content
+                input.json.decodeFromJsonElement(tSerializer, it)
+            }
         }
     }
 
-    private fun <T> KSerializer<T>.unref(refCache: MutableList<RefEntry>, counter: ReferenceCounter): KSerializer<T> =
-        RootUnrefSerializer(this, refCache, counter)
+    private fun <T> KSerializer<T>.unref(refCache: List<RefEntry>): KSerializer<T> =
+        RootUnrefSerializer(this, refCache)
 
     @OptIn(ExperimentalSerializationApi::class)
     fun unrefSerializersModule(
-        refCache: MutableList<RefEntry>, counter: ReferenceCounter
+        refCache: List<RefEntry>
     ): SerializersModule = SerializersModule {
-        val collector = this
-        val unrefCollector = object : SerializersModuleCollector {
+        include(serializersModule)
 
-            override fun <T : Any> contextual(
-                kClass: KClass<T>,
-                provider: (typeArgumentsSerializers: List<KSerializer<*>>) -> KSerializer<*>
-            ) {
-                collector.contextual(kClass) { provider(it).unref(refCache, counter) }
-            }
+        contextual(TGeoManager.serializer().unref(refCache))
+        contextual(TObjArray.serializer().unref(refCache))
+        contextual(TGeoVolumeAssembly.serializer().unref(refCache))
+        contextual(TGeoShapeAssembly.serializer().unref(refCache))
+        contextual(TGeoRotation.serializer().unref(refCache))
+        contextual(TGeoMedium.serializer().unref(refCache))
+        contextual(TGeoVolume.serializer().unref(refCache))
+        contextual(TGeoMatrix.serializer().unref(refCache))
+        contextual(TGeoNodeMatrix.serializer().unref(refCache))
+        contextual(TGeoShape.serializer().unref(refCache))
+        contextual(TObject.serializer().unref(refCache))
 
-            override fun <Base : Any, Sub : Base> polymorphic(
-                baseClass: KClass<Base>,
-                actualClass: KClass<Sub>,
-                actualSerializer: KSerializer<Sub>
-            ) {
-                collector.polymorphic(baseClass, actualClass, actualSerializer.unref(refCache, counter))
-            }
 
-            override fun <Base : Any> polymorphicDefault(
-                baseClass: KClass<Base>,
-                defaultSerializerProvider: (className: String?) -> DeserializationStrategy<out Base>?
-            ) {
-                collector.polymorphicDefault(baseClass) {
-                    (defaultSerializerProvider(it) as KSerializer<out Base>).unref(refCache, counter)
-                }
-            }
+        polymorphicDefault(TGeoShape::class) {
+            TGeoShape.serializer().unref(refCache)
         }
-        serializersModule.dumpTo(unrefCollector)
+
+        polymorphicDefault(TGeoMatrix::class) {
+            TGeoMatrix.serializer().unref(refCache)
+        }
     }
 
     /**
      * Create an instance of Json with unfolding Root references. This instance could not be reused because of the cache.
      */
-    private fun unrefJson(refCache: MutableList<RefEntry>, counter: ReferenceCounter): Json = Json {
+    private fun unrefJson(refCache: MutableList<RefEntry>): Json = Json {
         encodeDefaults = true
         ignoreUnknownKeys = true
         classDiscriminator = "_typename"
-        serializersModule = unrefSerializersModule(refCache, counter)
+        serializersModule = unrefSerializersModule(refCache)
     }
 
 
     fun decode(sourceDeserializer: KSerializer<out TObject>, source: JsonElement): TObject {
-        val counter = ReferenceCounter()
         val refCache = ArrayList<RefEntry>()
 
         fun fillCache(element: JsonElement) {
@@ -112,34 +117,35 @@ private object RootDecoder {
                     }
                 }
                 else -> {
+                    //ignore primitives
                 }
             }
         }
         fillCache(source)
 
-        return unrefJson(refCache, counter).decodeFromJsonElement(sourceDeserializer.unref(refCache, counter), source)
+        return unrefJson(refCache).decodeFromJsonElement(sourceDeserializer.unref(refCache), source)
     }
 
-    class ReferenceCounter(var value: Int = 0) {
-        fun increment() {
-            value += 1
-        }
+//    class ReferenceCounter(var value: Int = 0) {
+//        fun increment() {
+//            value += 1
+//        }
+//
+//        override fun toString(): String = value.toString()
+//    }
 
-        override fun toString(): String = value.toString()
-    }
+    class RefEntry(val element: JsonElement) {
 
-    class RefEntry(val obj: JsonObject) {
+        var value: Any? = null
 
-        private var cachedValue: Any? = null
-
-        fun value(serializer: KSerializer<*>): Any {
-            if (cachedValue == null) {
-                cachedValue = json.decodeFromJsonElement(serializer, obj)
+        fun <T> getOrPutValue(builder: (JsonElement) -> T): T {
+            if (value == null) {
+                value = builder(element)
             }
-            return cachedValue!!
+            return value as T
         }
 
-        override fun toString(): String = obj.toString()
+        override fun toString(): String = element.toString()
     }
 
     private fun PolymorphicModuleBuilder<TGeoShape>.shapes() {
@@ -166,27 +172,9 @@ private object RootDecoder {
     }
 
     private val serializersModule = SerializersModule {
-        contextual(TGeoManager::class) { TGeoManager.serializer() }
-        contextual(TObjArray::class) { TObjArray.serializer() }
-        contextual(TGeoVolumeAssembly::class) { TGeoVolumeAssembly.serializer() }
-        contextual(TGeoShapeAssembly::class) { TGeoShapeAssembly.serializer() }
-        contextual(TGeoRotation::class) { TGeoRotation.serializer() }
-        contextual(TGeoMedium::class) { TGeoMedium.serializer() }
-
-        polymorphic(TGeoShape::class) {
-            default { TGeoBBox.serializer() }
-            shapes()
-        }
-
-        polymorphic(TGeoMatrix::class) {
-            matrices()
-        }
-
-        polymorphic(TGeoBoolNode::class) {
-            boolNodes()
-        }
 
         polymorphic(TObject::class) {
+            default { JsonRootSerializer }
             subclass(TObjArray.serializer())
 
             shapes()
@@ -202,6 +190,19 @@ private object RootDecoder {
             subclass(TGeoNodeMatrix.serializer())
             subclass(TGeoVolume.serializer())
             subclass(TGeoVolumeAssembly.serializer())
+            subclass(TGeoManager.serializer())
+        }
+
+        polymorphic(TGeoShape::class) {
+            shapes()
+        }
+
+        polymorphic(TGeoMatrix::class) {
+            matrices()
+        }
+
+        polymorphic(TGeoBoolNode::class) {
+            boolNodes()
         }
 
         polymorphic(TGeoNode::class, TGeoNode.serializer()) {
