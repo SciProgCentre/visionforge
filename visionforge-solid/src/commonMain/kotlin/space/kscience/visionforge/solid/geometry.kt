@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.MetaProvider
+import space.kscience.dataforge.meta.float
+import space.kscience.dataforge.meta.get
 import space.kscience.visionforge.solid.Solid.Companion.X_KEY
 import space.kscience.visionforge.solid.Solid.Companion.Y_KEY
 import space.kscience.visionforge.solid.Solid.Companion.Z_KEY
@@ -54,7 +57,7 @@ internal object Point3DSerializer : KSerializer<Point3D> {
     override val descriptor: SerialDescriptor = Point3DImpl.serializer().descriptor
 
 
-    override fun deserialize(decoder: Decoder): Point3D = decoder.decodeSerializableValue(Point3DImpl.serializer())
+    override fun deserialize(decoder: Decoder): MutablePoint3D = decoder.decodeSerializableValue(Point3DImpl.serializer())
 
     override fun serialize(encoder: Encoder, value: Point3D) {
         val impl: Point3DImpl = (value as? Point3DImpl) ?: Point3DImpl(value.x, value.y, value.z)

@@ -3,6 +3,7 @@ package ru.mipt.npm.root
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.math.PI
 
 @Serializable
 @SerialName("TGeoShape")
@@ -27,13 +28,13 @@ public sealed class TGeoBoolNode : TObject() {
     public abstract val fLeft: TGeoShape
 
     @Contextual
-    public abstract val fLeftMat: TGeoMatrix
+    public val fLeftMat: TGeoMatrix? = null
 
     @Contextual
     public abstract val fRight: TGeoShape
 
     @Contextual
-    public abstract val fRightMat: TGeoMatrix
+    public val fRightMat: TGeoMatrix? = null
 }
 
 @Serializable
@@ -42,11 +43,7 @@ public class TGeoUnion(
     @Contextual
     override val fLeft: TGeoShape,
     @Contextual
-    override val fLeftMat: TGeoMatrix,
-    @Contextual
     override val fRight: TGeoShape,
-    @Contextual
-    override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
 @Serializable
@@ -55,11 +52,7 @@ public class TGeoSubtraction(
     @Contextual
     override val fLeft: TGeoShape,
     @Contextual
-    override val fLeftMat: TGeoMatrix,
-    @Contextual
     override val fRight: TGeoShape,
-    @Contextual
-    override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
 @Serializable
@@ -68,11 +61,7 @@ public class TGeoIntersection(
     @Contextual
     override val fLeft: TGeoShape,
     @Contextual
-    override val fLeftMat: TGeoMatrix,
-    @Contextual
     override val fRight: TGeoShape,
-    @Contextual
-    override val fRightMat: TGeoMatrix
 ) : TGeoBoolNode()
 
 
@@ -97,18 +86,15 @@ public class TGeoXtru(
 
 @Serializable
 @SerialName("TGeoTube")
-public open class TGeoTube(
-    public val fRmin: Double,
-    public val fRmax: Double,
-    public val fDz: Double,
-) : TGeoBBox()
+public open class TGeoTube : TGeoBBox() {
+    public val fRmin: Double = 0.0
+    public val fRmax: Double = 0.0
+    public val fDz: Double = 0.0
+}
 
 @Serializable
 @SerialName("TGeoTubeSeg")
 public class TGeoTubeSeg(
-    public val fRmin: Double,
-    public val fRmax: Double,
-    public val fDz: Double,
     public val fPhi1: Double,
     public val fPhi2: Double,
     public val fS1: Double,
@@ -118,7 +104,24 @@ public class TGeoTubeSeg(
     public val fSm: Double,
     public val fCm: Double,
     public val fCdfi: Double,
-) : TGeoBBox()
+) : TGeoTube()
+
+@Serializable
+@SerialName("TGeoPcon")
+public open class TGeoPcon : TGeoBBox() {
+    public val fNz: Int = 0                         // number of z planes (at least two)
+    public val fPhi1: Double = 0.0                  // lower phi limit (converted to [0,2*pi)
+    public val fDphi: Double = PI * 2               // phi range
+    public val fRmin: DoubleArray = doubleArrayOf() //[fNz] pointer to array of inner radii
+    public val fRmax: DoubleArray = doubleArrayOf() //[fNz] pointer to array of outer radii
+    public val fZ: DoubleArray = doubleArrayOf()    //[fNz] pointer to array of Z planes positions
+}
+
+@Serializable
+@SerialName("TGeoPgon")
+public open class TGeoPgon : TGeoPcon() {
+    public val fNedges: Int = 0
+}
 
 @Serializable
 @SerialName("TGeoShapeAssembly")

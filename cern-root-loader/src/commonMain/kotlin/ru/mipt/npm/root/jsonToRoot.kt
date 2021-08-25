@@ -1,11 +1,26 @@
 package ru.mipt.npm.root
 
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 
+
+private fun <T> jsonRootDeserializer(tSerializer: KSerializer<T>, builder: (JsonElement) -> T): DeserializationStrategy<T> = object :
+    DeserializationStrategy<T> {
+    private val jsonElementSerializer = JsonElement.serializer()
+
+    override val descriptor: SerialDescriptor
+        get() = jsonElementSerializer.descriptor
+
+    override fun deserialize(decoder: Decoder): T {
+        val json = decoder.decodeSerializableValue(jsonElementSerializer)
+        return builder(json)
+    }
+}
 
 /**
  * Load Json encoded TObject
@@ -22,8 +37,7 @@ private object RootDecoder {
 
     private class RootUnrefSerializer<T>(
         private val tSerializer: KSerializer<T>,
-        private val refCache: List<RefEntry>,// = ArrayList<RefEntry>(4096)
-        //private val counter: ReferenceCounter
+        private val refCache: List<RefEntry>,
     ) : KSerializer<T> by tSerializer {
 
         override fun deserialize(decoder: Decoder): T {
@@ -31,14 +45,14 @@ private object RootDecoder {
             val element = input.decodeJsonElement()
             val refId = (element as? JsonObject)?.get("\$ref")?.jsonPrimitive?.int
             val ref = if (refId != null) {
-                //println("Substituting ref $refId")
+                //println("Substituting ${tSerializer.descriptor.serialName} ref $refId")
                 //Forward ref for shapes
                 when (tSerializer.descriptor.serialName) {
-                    "TGeoShape" -> return TGeoShapeRef{
+                    "TGeoShape" -> return TGeoShapeRef {
                         //Should be not null at the moment of actualization
                         refCache[refId].value as TGeoShape
                     } as T
-                    "TGeoVolumeAssembly" -> return TGeoVolumeAssemblyRef{
+                    "TGeoVolumeAssembly" -> return TGeoVolumeAssemblyRef {
                         //Should be not null at the moment of actualization
                         refCache[refId].value as TGeoVolumeAssembly
                     } as T
@@ -66,24 +80,50 @@ private object RootDecoder {
         include(serializersModule)
 
         contextual(TGeoManager.serializer().unref(refCache))
-        contextual(TObjArray.serializer().unref(refCache))
+        contextual(TObjArray::class) { TObjArray.serializer(it[0]).unref(refCache) }
         contextual(TGeoVolumeAssembly.serializer().unref(refCache))
         contextual(TGeoShapeAssembly.serializer().unref(refCache))
         contextual(TGeoRotation.serializer().unref(refCache))
         contextual(TGeoMedium.serializer().unref(refCache))
         contextual(TGeoVolume.serializer().unref(refCache))
         contextual(TGeoMatrix.serializer().unref(refCache))
+        contextual(TGeoNode.serializer().unref(refCache))
+        contextual(TGeoNodeOffset.serializer().unref(refCache))
         contextual(TGeoNodeMatrix.serializer().unref(refCache))
         contextual(TGeoShape.serializer().unref(refCache))
         contextual(TObject.serializer().unref(refCache))
 
 
         polymorphicDefault(TGeoShape::class) {
-            TGeoShape.serializer().unref(refCache)
+            if (it == null) {
+                TGeoShape.serializer().unref(refCache)
+            } else {
+                error("Unrecognized shape $it")
+            }
         }
 
         polymorphicDefault(TGeoMatrix::class) {
-            TGeoMatrix.serializer().unref(refCache)
+            if (it == null) {
+                TGeoMatrix.serializer().unref(refCache)
+            } else {
+                error("Unrecognized matrix $it")
+            }
+        }
+
+        polymorphicDefault(TGeoVolume::class) {
+            if (it == null) {
+                TGeoVolume.serializer().unref(refCache)
+            } else {
+                error("Unrecognized volume $it")
+            }
+        }
+
+        polymorphicDefault(TGeoNode::class) {
+            if (it == null) {
+                TGeoNode.serializer().unref(refCache)
+            } else {
+                error("Unrecognized node $it")
+            }
         }
     }
 
@@ -126,14 +166,6 @@ private object RootDecoder {
         return unrefJson(refCache).decodeFromJsonElement(sourceDeserializer.unref(refCache), source)
     }
 
-//    class ReferenceCounter(var value: Int = 0) {
-//        fun increment() {
-//            value += 1
-//        }
-//
-//        override fun toString(): String = value.toString()
-//    }
-
     class RefEntry(val element: JsonElement) {
 
         var value: Any? = null
@@ -154,6 +186,8 @@ private object RootDecoder {
         subclass(TGeoXtru.serializer())
         subclass(TGeoTube.serializer())
         subclass(TGeoTubeSeg.serializer())
+        subclass(TGeoPcon.serializer())
+        subclass(TGeoPgon.serializer())
         subclass(TGeoShapeAssembly.serializer())
     }
 
@@ -173,25 +207,24 @@ private object RootDecoder {
 
     private val serializersModule = SerializersModule {
 
-        polymorphic(TObject::class) {
-            default { JsonRootSerializer }
-            subclass(TObjArray.serializer())
-
-            shapes()
-            matrices()
-            boolNodes()
-
-            subclass(TGeoMaterial.serializer())
-            subclass(TGeoMixture.serializer())
-
-            subclass(TGeoMedium.serializer())
-
-            subclass(TGeoNode.serializer())
-            subclass(TGeoNodeMatrix.serializer())
-            subclass(TGeoVolume.serializer())
-            subclass(TGeoVolumeAssembly.serializer())
-            subclass(TGeoManager.serializer())
-        }
+//        polymorphic(TObject::class) {
+//            default { JsonRootSerializer }
+//
+//            shapes()
+//            matrices()
+//            boolNodes()
+//
+//            subclass(TGeoMaterial.serializer())
+//            subclass(TGeoMixture.serializer())
+//
+//            subclass(TGeoMedium.serializer())
+//
+//            //subclass(TGeoNode.serializer())
+//            subclass(TGeoNodeMatrix.serializer())
+//            subclass(TGeoVolume.serializer())
+//            subclass(TGeoVolumeAssembly.serializer())
+//            subclass(TGeoManager.serializer())
+//        }
 
         polymorphic(TGeoShape::class) {
             shapes()
@@ -205,8 +238,9 @@ private object RootDecoder {
             boolNodes()
         }
 
-        polymorphic(TGeoNode::class, TGeoNode.serializer()) {
+        polymorphic(TGeoNode::class) {
             subclass(TGeoNodeMatrix.serializer())
+            subclass(TGeoNodeOffset.serializer())
         }
 
         polymorphic(TGeoVolume::class, TGeoVolume.serializer()) {

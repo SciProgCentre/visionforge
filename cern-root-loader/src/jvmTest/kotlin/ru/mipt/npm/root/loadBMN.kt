@@ -31,6 +31,7 @@ fun main() {
 
     val time = measureTimeMillis {
         val geo = TObject.decodeFromString(TGeoManager.serializer(), string)
+        println(geo)
     }
 
     println(Duration.ofMillis(time))

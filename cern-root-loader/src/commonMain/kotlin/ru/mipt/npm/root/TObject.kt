@@ -19,9 +19,9 @@ public open class TNamed : TObject() {
 
 @Serializable
 @SerialName("TObjArray")
-public class TObjArray(public val arr: List<@Contextual TObject>): TObject() {
+public class TObjArray<T: TObject>(public val arr: List<@Contextual T>): TObject() {
     public companion object{
-        public val empty: TObjArray = TObjArray(emptyList())
+        public fun <T: TObject> getEmpty(): TObjArray<T> = TObjArray(emptyList())
     }
 }
 

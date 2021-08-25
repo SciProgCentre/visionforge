@@ -15,7 +15,7 @@ public open class TGeoVolume : TNamed() {
     public val fFillStyle: Int? = null
 
     @Contextual
-    public val fNodes: TObjArray? = null
+    public val fNodes: TObjArray<TGeoNode>? = null
 
     @Contextual
     public val fShape: TGeoShape? = null

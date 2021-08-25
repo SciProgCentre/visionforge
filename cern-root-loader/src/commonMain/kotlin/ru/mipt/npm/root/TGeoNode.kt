@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("TGeoNode")
-public open class TGeoNode : TNamed() {
+public sealed class TGeoNode : TNamed() {
     public val fGeoAtt: UInt = 0u
 
     @Contextual
@@ -25,4 +25,10 @@ public open class TGeoNode : TNamed() {
 public class TGeoNodeMatrix : TGeoNode() {
     @Contextual
     public val fMatrix: TGeoMatrix? = null
+}
+
+@Serializable
+@SerialName("TGeoNodeOffset")
+public class TGeoNodeOffset : TGeoNode() {
+    public val fOffset: Double = 0.0
 }
