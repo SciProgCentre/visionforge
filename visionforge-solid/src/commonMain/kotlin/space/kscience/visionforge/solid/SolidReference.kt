@@ -158,21 +158,28 @@ public fun SolidGroup.ref(
     name: String? = null,
 ): SolidReferenceGroup = SolidReferenceGroup(templateName).also { set(name, it) }
 
-/**
- * Add new [SolidReferenceGroup] wrapping given object and automatically adding it to the prototypes
- */
 public fun SolidGroup.ref(
-    name: String,
+    templateName: String,
+    name: String? = null,
+): SolidReferenceGroup = ref(Name.parse(templateName), name)
+
+/**
+ * Add new [SolidReferenceGroup] wrapping given object and automatically adding it to the prototypes.
+ * One must ensure that [prototypeHolder] is the owner of this group.
+ */
+public fun SolidGroup.newRef(
+    name: String?,
     obj: Solid,
-    templateName: Name = Name.parse(name),
+    prototypeHolder: PrototypeHolder = this,
+    templateName: Name = Name.parse(name ?: obj.toString()),
 ): SolidReferenceGroup {
     val existing = getPrototype(templateName)
     if (existing == null) {
-        prototypes {
-            this[templateName] = obj
+        prototypeHolder.prototypes {
+            set(templateName, obj)
         }
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }
-    return this@ref.ref(templateName, name)
+    return ref(templateName, name)
 }

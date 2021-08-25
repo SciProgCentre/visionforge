@@ -14,7 +14,7 @@ class SolidReferenceTest {
         val theStyle by style {
             SolidMaterial.MATERIAL_COLOR_KEY put "red"
         }
-        ref("test", Box(100f,100f,100f).apply {
+        newRef("test", Box(100f,100f,100f).apply {
             color("blue")
             useStyle(theStyle)
         })

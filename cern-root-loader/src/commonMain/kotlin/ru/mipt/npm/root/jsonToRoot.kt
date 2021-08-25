@@ -25,10 +25,10 @@ private fun <T> jsonRootDeserializer(tSerializer: KSerializer<T>, builder: (Json
 /**
  * Load Json encoded TObject
  */
-public fun TObject.Companion.decodeFromJson(serializer: KSerializer<out TObject>, jsonElement: JsonElement): TObject =
+public fun <T: TObject> TObject.Companion.decodeFromJson(serializer: KSerializer<T>, jsonElement: JsonElement): T =
     RootDecoder.decode(serializer, jsonElement)
 
-public fun TObject.Companion.decodeFromString(serializer: KSerializer<out TObject>, string: String): TObject {
+public fun <T: TObject> TObject.Companion.decodeFromString(serializer: KSerializer<T>, string: String): T {
     val json = RootDecoder.json.parseToJsonElement(string)
     return RootDecoder.decode(serializer, json)
 }
@@ -49,12 +49,14 @@ private object RootDecoder {
                 //Forward ref for shapes
                 when (tSerializer.descriptor.serialName) {
                     "TGeoShape" -> return TGeoShapeRef {
-                        //Should be not null at the moment of actualization
-                        refCache[refId].value as TGeoShape
+                        refCache[refId].getOrPutValue {
+                            input.json.decodeFromJsonElement(tSerializer, it) as TGeoShape
+                        }
                     } as T
                     "TGeoVolumeAssembly" -> return TGeoVolumeAssemblyRef {
-                        //Should be not null at the moment of actualization
-                        refCache[refId].value as TGeoVolumeAssembly
+                        refCache[refId].getOrPutValue {
+                            input.json.decodeFromJsonElement(tSerializer, it) as TGeoVolumeAssembly
+                        }
                     } as T
                     //Do unref
                     else -> refCache[refId]
@@ -138,7 +140,7 @@ private object RootDecoder {
     }
 
 
-    fun decode(sourceDeserializer: KSerializer<out TObject>, source: JsonElement): TObject {
+    fun <T: TObject> decode(sourceDeserializer: KSerializer<T>, source: JsonElement): T {
         val refCache = ArrayList<RefEntry>()
 
         fun fillCache(element: JsonElement) {
