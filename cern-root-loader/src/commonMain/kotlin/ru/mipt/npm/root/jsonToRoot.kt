@@ -81,19 +81,19 @@ private object RootDecoder {
     ): SerializersModule = SerializersModule {
         include(serializersModule)
 
-        contextual(TGeoManager.serializer().unref(refCache))
+        //contextual(TGeoManager.serializer().unref(refCache))
         contextual(TObjArray::class) { TObjArray.serializer(it[0]).unref(refCache) }
-        contextual(TGeoVolumeAssembly.serializer().unref(refCache))
-        contextual(TGeoShapeAssembly.serializer().unref(refCache))
+        //contextual(TGeoVolumeAssembly.serializer().unref(refCache))
+        //contextual(TGeoShapeAssembly.serializer().unref(refCache))
         contextual(TGeoRotation.serializer().unref(refCache))
         contextual(TGeoMedium.serializer().unref(refCache))
-        contextual(TGeoVolume.serializer().unref(refCache))
-        contextual(TGeoMatrix.serializer().unref(refCache))
-        contextual(TGeoNode.serializer().unref(refCache))
-        contextual(TGeoNodeOffset.serializer().unref(refCache))
-        contextual(TGeoNodeMatrix.serializer().unref(refCache))
-        contextual(TGeoShape.serializer().unref(refCache))
-        contextual(TObject.serializer().unref(refCache))
+        //contextual(TGeoVolume.serializer().unref(refCache))
+        //contextual(TGeoMatrix.serializer().unref(refCache))
+        //contextual(TGeoNode.serializer().unref(refCache))
+        //contextual(TGeoNodeOffset.serializer().unref(refCache))
+        //contextual(TGeoNodeMatrix.serializer().unref(refCache))
+        //contextual(TGeoShape.serializer().unref(refCache))
+        //contextual(TObject.serializer().unref(refCache))
 
 
         polymorphicDefault(TGeoShape::class) {
@@ -245,7 +245,8 @@ private object RootDecoder {
             subclass(TGeoNodeOffset.serializer())
         }
 
-        polymorphic(TGeoVolume::class, TGeoVolume.serializer()) {
+        polymorphic(TGeoVolume::class) {
+            subclass(TGeoVolume.serializer())
             subclass(TGeoVolumeAssembly.serializer())
         }
     }

@@ -115,7 +115,7 @@ private fun SolidGroup.addShape(shape: TGeoShape) {
 
 private fun SolidGroup.node(obj: TGeoNode) {
     if (obj.fVolume != null) {
-        volume(obj.fVolume).apply {
+        volume(obj.fVolume, obj.fName).apply {
             when (obj) {
                 is TGeoNodeMatrix -> {
                     useMatrix(obj.fMatrix)
@@ -145,15 +145,22 @@ private fun buildGroup(volume: TGeoVolume): SolidGroup {
 
 private val SolidGroup.rootPrototypes: SolidGroup get() = (parent as? SolidGroup)?.rootPrototypes ?: this
 
-private fun SolidGroup.volume(volume: TGeoVolume, cache: Boolean = true): Solid {
+private fun SolidGroup.volume(volume: TGeoVolume, name: String? = null, cache: Boolean = true): Solid {
     val group = buildGroup(volume)
+    val combinedName = if (volume.fName.isEmpty()) {
+        name
+    } else if (name == null) {
+        volume.fName
+    } else {
+        "${name}_${volume.fName}"
+    }
     return if (!cache) {
         group
     } else newRef(
-        name = volume.fName.ifEmpty { null },
+        name = combinedName,
         obj = group,
         prototypeHolder = rootPrototypes,
-        templateName = volumesName + Name.parse(volume.fName.ifEmpty { group.toString() })
+        templateName = volumesName + Name.parse(combinedName ?: "volume[${group.hashCode()}]")
     )
 }
 

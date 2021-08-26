@@ -1,12 +1,12 @@
 package ru.mipt.npm.root
 
 import kotlinx.serialization.json.*
+import space.kscience.visionforge.solid.Solids
 import java.time.Duration
 import kotlin.system.measureTimeMillis
 
 private fun JsonElement.countTypes(): Sequence<String> = sequence {
-    val json = this@countTypes
-    when (json){
+    when (val json = this@countTypes){
         is JsonObject -> {
             json["_typename"]?.let { yield(it.jsonPrimitive.content) }
             json.values.forEach { yieldAll(it.countTypes()) }
@@ -33,7 +33,7 @@ fun main() {
         val geo = TObject.decodeFromString(TGeoManager.serializer(), string)
         val solid = geo.toSolid()
 
-        println(solid)
+        println(Solids.encodeToString(solid))
     }
 
     println(Duration.ofMillis(time))
