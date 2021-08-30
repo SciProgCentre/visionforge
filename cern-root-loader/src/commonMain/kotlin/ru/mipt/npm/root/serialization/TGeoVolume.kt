@@ -1,4 +1,4 @@
-package ru.mipt.npm.root
+package ru.mipt.npm.root.serialization
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -15,7 +15,7 @@ public open class TGeoVolume : TNamed() {
     public val fFillStyle: Int? = null
 
     @Contextual
-    public val fNodes: TObjArray<TGeoNode>? = null
+    public val fNodes: TObjArray<@Contextual TGeoNode>? = null
 
     @Contextual
     public val fShape: TGeoShape? = null

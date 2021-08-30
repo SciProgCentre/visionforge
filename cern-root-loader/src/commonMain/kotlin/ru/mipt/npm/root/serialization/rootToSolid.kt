@@ -1,4 +1,4 @@
-package ru.mipt.npm.root
+package ru.mipt.npm.root.serialization
 
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName

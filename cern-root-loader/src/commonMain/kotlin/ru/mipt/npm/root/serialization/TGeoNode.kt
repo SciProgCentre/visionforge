@@ -1,4 +1,4 @@
-package ru.mipt.npm.root
+package ru.mipt.npm.root.serialization
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("TGeoNode")
-public sealed class TGeoNode : TNamed() {
+public open class TGeoNode : TNamed() {
     public val fGeoAtt: UInt = 0u
 
     @Contextual

@@ -1,4 +1,4 @@
-package ru.mipt.npm.root
+package ru.mipt.npm.root.serialization
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
