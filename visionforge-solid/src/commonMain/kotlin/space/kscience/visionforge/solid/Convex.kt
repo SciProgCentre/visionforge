@@ -3,11 +3,12 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 
 @Serializable
 @SerialName("solid.convex")
-public class Convex(public val points: List<Point3D>) : SolidBase(), Solid
+public class Convex(public val points: List<Point3D>) : SolidBase(), VisionPropertyContainer<Convex>
 
 public inline fun VisionContainerBuilder<Solid>.convex(name: String? = null, action: ConvexBuilder.() -> Unit = {}): Convex =
     ConvexBuilder().apply(action).build().also { set(name, it) }

@@ -5,14 +5,11 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.numberProperty
-import space.kscience.visionforge.set
+import space.kscience.visionforge.*
 
 @Serializable
 @SerialName("solid.line")
-public class PolyLine(public val points: List<Point3D>) : SolidBase(), Solid {
+public class PolyLine(public val points: List<Point3D>) : SolidBase(), VisionPropertyContainer<PolyLine> {
 
     //var lineType by string()
     public var thickness: Number by numberProperty(name = SolidMaterial.MATERIAL_KEY + THICKNESS_KEY) { 1.0 }
