@@ -165,7 +165,7 @@ public fun SolidGroup.ref(
 
 /**
  * Add new [SolidReferenceGroup] wrapping given object and automatically adding it to the prototypes.
- * One must ensure that [prototypeHolder] is the owner of this group.
+ * One must ensure that [prototypeHolder] is a parent of this group.
  */
 public fun SolidGroup.newRef(
     name: String?,

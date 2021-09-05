@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 
 public enum class CompositeType {
@@ -20,7 +21,7 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid,
-) : SolidBase(), Solid
+) : SolidBase(), VisionPropertyContainer<Composite>
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.composite(
@@ -30,7 +31,7 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 ): Composite {
     val group = SolidGroup().apply(builder)
     val children = group.children.values.filterIsInstance<Solid>()
-    if (children.size != 2) error("Composite requires exactly two children")
+    if (children.size != 2) error("Composite requires exactly two children, but found ${children.size}")
     val res = Composite(type, children[0], children[1])
 
     res.meta.update(group.meta)
