@@ -76,7 +76,7 @@ public open class VisionGroupBase(
      * Set parent for given child and attach it
      */
     private fun attachChild(token: NameToken, child: Vision?) {
-        val before = children[token]
+        val before = childrenInternal[token]
         when {
             child == null -> {
                 childrenInternal.remove(token)

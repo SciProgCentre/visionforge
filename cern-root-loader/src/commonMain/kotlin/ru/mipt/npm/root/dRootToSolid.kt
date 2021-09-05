@@ -3,6 +3,7 @@ package ru.mipt.npm.root
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.solid.*
@@ -228,14 +229,22 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
     }
 }
 
-private fun buildGroup(volume: DGeoVolume, context: RootToSolidContext): SolidGroup = SolidGroup {
-    volume.fShape?.let {
-        addShape(it, context)
-    }
-    volume.fNodes.let {
-        it.forEach { node ->
+private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid {
+    val group = SolidGroup {
+        if(volume.fNodes.isEmpty()) {
+            //TODO add smart filter
+            volume.fShape?.let { shape ->
+                addShape(shape, context)
+            }
+        }
+        volume.fNodes.forEach { node ->
             addRootNode(node, context)
         }
+    }
+    return if (group.children.size == 1 && group.meta.isEmpty()) {
+        (group.children.values.first() as Solid).apply { parent = null }
+    } else {
+        group
     }
 }
 
@@ -256,7 +265,7 @@ private fun SolidGroup.addRootVolume(
     }
 
     return if (!cache) {
-        val group = buildGroup(volume, context)
+        val group = buildVolume(volume, context)
         set(combinedName?.let { Name.parse(it) }, group)
         group
     } else {
@@ -264,7 +273,7 @@ private fun SolidGroup.addRootVolume(
         val existing = getPrototype(templateName)
         if (existing == null) {
             context.prototypeHolder.prototypes {
-                set(templateName, buildGroup(volume, context))
+                set(templateName, buildVolume(volume, context))
             }
         }
 
