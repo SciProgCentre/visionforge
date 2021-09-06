@@ -1,12 +1,11 @@
 package ru.mipt.npm.root
 
-import space.kscience.dataforge.meta.double
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.int
-import space.kscience.dataforge.meta.isEmpty
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.values.doubleArray
 import space.kscience.visionforge.solid.*
+import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import kotlin.math.*
 
 private val volumesName = Name.EMPTY //"volumes".asName()
@@ -50,9 +49,8 @@ private fun Solid.useMatrix(matrix: DGeoMatrix?) {
             val fTranslation by matrix.meta.doubleArray()
 
             translate(fTranslation)
-            if (matrix.meta["fRotationMatrix"] != null) {
-                val fRotationMatrix by matrix.meta.doubleArray()
-                rotate(fRotationMatrix)
+            matrix.meta["fRotation.fRotationMatrix"]?.value?.let {
+                rotate(it.doubleArray)
             }
         }
         "TGeoHMatrix" -> {
@@ -77,15 +75,15 @@ private fun SolidGroup.addShape(
         val compositeType = when (node.typename) {
             "TGeoIntersection" -> CompositeType.INTERSECT
             "TGeoSubtraction" -> CompositeType.SUBTRACT
-            "TGeoUnion" -> CompositeType.UNION
+            "TGeoUnion" -> CompositeType.GROUP
             else -> error("Unknown bool node type ${node.typename}")
         }
-        composite(compositeType, name = name) {
-            addShape(node.fLeft!!, context, "left").also {
+        smartComposite(compositeType, name = name) {
+            addShape(node.fLeft!!, context, null).also {
                 if (it == null) TODO()
                 it.useMatrix(node.fLeftMat)
             }
-            addShape(node.fRight!!, context, "right").also {
+            addShape(node.fRight!!, context, null).also {
                 if (it == null) TODO()
                 it.useMatrix(node.fRightMat)
             }
@@ -277,7 +275,11 @@ private fun SolidGroup.addRootVolume(
             }
         }
 
-        return ref(templateName, name)
+        ref(templateName, name)
+    }.apply {
+        volume.fFillColor?.let {
+            meta[MATERIAL_COLOR_KEY] = RootColors[it]
+        }
     }
 }
 

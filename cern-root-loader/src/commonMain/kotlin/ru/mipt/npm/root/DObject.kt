@@ -105,6 +105,8 @@ public class DGeoVolume(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCa
     public val fShape: DGeoShape? by dObject(::DGeoShape)
     public val fMedium: DGeoMedium? by dObject(::DGeoMedium)
 
+    public val fFillColor: Int? by meta.int()
+
     override val name: Name by lazy { Name.parse(fName.ifEmpty { "volume[${meta.hashCode().toUInt()}]" }) }
 }
 

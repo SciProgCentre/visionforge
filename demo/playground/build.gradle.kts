@@ -55,6 +55,7 @@ kotlin {
                 api(project(":visionforge-gdml"))
                 api(project(":visionforge-plotly"))
                 api(projects.visionforge.visionforgeMarkdown)
+                api(projects.visionforge.cernRootLoader)
             }
         }
 
