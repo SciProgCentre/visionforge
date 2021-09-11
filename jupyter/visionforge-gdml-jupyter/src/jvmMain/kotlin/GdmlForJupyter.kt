@@ -2,7 +2,6 @@ package space.kscience.visionforge.gdml.jupyter
 
 import kotlinx.html.stream.createHTML
 import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import space.kscience.dataforge.context.Context
@@ -16,7 +15,6 @@ import space.kscience.visionforge.html.embedAndRenderVisionFragment
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
-@JupyterLibrary
 @DFExperimental
 internal class GdmlForJupyter : JupyterIntegration() {
 
