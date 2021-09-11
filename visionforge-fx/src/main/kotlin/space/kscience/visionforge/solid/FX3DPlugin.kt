@@ -27,6 +27,8 @@ import kotlin.reflect.KClass
 public class FX3DPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
+    public val solids: Solids by require(Solids)
+
     private val objectFactories = HashMap<KClass<out Solid>, FX3DFactory<*>>()
     private val compositeFactory = FXCompositeFactory(this)
     private val referenceFactory = FXReferenceFactory(this)
@@ -50,6 +52,7 @@ public class FX3DPlugin : AbstractPlugin() {
             is SolidGroup -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {
+                        logger.info { token.toString() }
                         buildNode(it).apply {
                             properties["name"] = token.toString()
                         }

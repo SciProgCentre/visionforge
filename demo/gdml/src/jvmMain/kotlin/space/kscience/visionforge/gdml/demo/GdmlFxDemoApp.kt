@@ -21,7 +21,6 @@ class GDMLDemoApp : App(GDMLView::class)
 class GDMLView : View() {
     private val context = Context {
         plugin(FX3DPlugin)
-        plugin(VisionManager)
     }
 
     private val fx3d = context.fetch(FX3DPlugin)

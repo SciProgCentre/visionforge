@@ -83,7 +83,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                 }
                 obj.children.entries
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true } // ignore empty groups
+                    .sortedBy { (it.value as? VisionGroup)?.isEmpty() ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
                         styledDiv {
                             css {

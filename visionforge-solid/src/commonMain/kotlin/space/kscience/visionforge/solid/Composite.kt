@@ -2,13 +2,15 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 
 public enum class CompositeType {
-    SUM, // Dumb sum of meshes
+    GROUP, // Dumb sum of meshes
     UNION, //CSG union
     INTERSECT,
     SUBTRACT
@@ -20,7 +22,7 @@ public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid,
-) : SolidBase(), Solid
+) : SolidBase(), VisionPropertyContainer<Composite>
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.composite(
@@ -30,7 +32,9 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 ): Composite {
     val group = SolidGroup().apply(builder)
     val children = group.children.values.filterIsInstance<Solid>()
-    if (children.size != 2) error("Composite requires exactly two children")
+    if (children.size != 2){
+        error("Composite requires exactly two children, but found ${children.size}")
+    }
     val res = Composite(type, children[0], children[1])
 
     res.meta.update(group.meta)
@@ -47,6 +51,31 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 
     set(name, res)
     return res
+}
+
+/**
+ * A smart form of [Composite] that in case of [CompositeType.GROUP] creates a static group instead
+ */
+@VisionBuilder
+public fun SolidGroup.smartComposite(
+    type: CompositeType,
+    name: String? = null,
+    builder: SolidGroup.() -> Unit,
+): Solid = if (type == CompositeType.GROUP) {
+    val group = SolidGroup(builder)
+    if (name == null && group.meta.isEmpty()) {
+        //append directly to group if no properties are defined
+        group.children.forEach { (key, value) ->
+            value.parent = null
+            set(null, value)
+        }
+        this
+    } else {
+        set(name, group)
+        group
+    }
+} else {
+    composite(type, name, builder)
 }
 
 @VisionBuilder

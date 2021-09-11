@@ -9,7 +9,7 @@ public fun SolidGroup.gdml(
     file: Path,
     key: String = "",
     usePreprocessor: Boolean = false,
-    transformer: GdmlTransformer.() -> Unit = {},
+    transformer: GdmlLoaderOptions.() -> Unit = {},
 ) {
     val gdml = Gdml.decodeFromFile(file, usePreprocessor)
     gdml(gdml, key, transformer)

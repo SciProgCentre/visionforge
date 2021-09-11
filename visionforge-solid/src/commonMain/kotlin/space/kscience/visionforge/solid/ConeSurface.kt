@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 import kotlin.math.PI
 import kotlin.math.cos
@@ -23,7 +24,7 @@ public class ConeSurface(
     public val topInnerRadius: Float,
     public val startAngle: Float = 0f,
     public val angle: Float = PI2,
-) : SolidBase(), GeometrySolid {
+) : SolidBase(), GeometrySolid, VisionPropertyContainer<ConeSurface> {
 
     init {
         require(bottomRadius > 0) { "Cone surface bottom radius must be positive" }

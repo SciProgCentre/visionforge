@@ -6,7 +6,6 @@ import kotlinx.html.script
 import kotlinx.html.stream.createHTML
 import kotlinx.html.unsafe
 import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
@@ -22,7 +21,6 @@ import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.visionManager
 
-@JupyterLibrary
 @DFExperimental
 public class VisionForgePlayGroundForJupyter : JupyterIntegration() {
 

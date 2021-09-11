@@ -13,9 +13,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.computeProperties
+import space.kscience.visionforge.*
 import space.kscience.visionforge.react.ThreeCanvasComponent
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
@@ -85,7 +83,9 @@ public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsPro
 
         useEffect {
             props.context.launch {
-                solid = props.builderOfSolid.await()
+                solid = props.builderOfSolid.await().also {
+                    it?.root(props.context.visionManager)
+                }
             }
         }
 

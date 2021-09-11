@@ -57,3 +57,7 @@ kscience {
 readme {
     maturity = ru.mipt.npm.gradle.Maturity.EXPERIMENTAL
 }
+
+tasks.named<org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask>("processJupyterApiResources") {
+    libraryProducers = listOf("space.kscience.visionforge.gdml.jupyter.GdmlForJupyter")
+}

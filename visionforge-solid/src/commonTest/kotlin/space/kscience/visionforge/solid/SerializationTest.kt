@@ -16,7 +16,7 @@ fun SolidGroup.refGroup(
     block: MutableVisionGroup.() -> Unit
 ): SolidReferenceGroup {
     val group = SolidGroup().apply(block)
-    return ref(name, group, templateName)
+    return newRef(name, group, templateName = templateName)
 }
 
 
@@ -42,7 +42,7 @@ class SerializationTest {
             z = -100
         }
         val group = SolidGroup {
-            ref("cube", cube)
+            newRef("cube", cube)
             refGroup("pg", Name.parse("pg.content")) {
                 sphere(50) {
                     x = -100

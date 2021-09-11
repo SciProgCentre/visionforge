@@ -167,7 +167,7 @@ public class ThreeCanvas(
         }
 
         //Clipping planes
-        options.useProperty(Canvas3DOptions::clipping){clipping ->
+        options.useProperty(Canvas3DOptions::clipping) { clipping ->
             if (!clipping.meta.isEmpty()) {
                 renderer.localClippingEnabled = true
                 boundingBox?.let { boundingBox ->
@@ -192,7 +192,7 @@ public class ThreeCanvas(
             }
         }
 
-        options.useProperty(Canvas3DOptions::size){
+        options.useProperty(Canvas3DOptions::size) {
             canvas.style.apply {
                 minWidth = "${options.size.minWith.toInt()}px"
                 maxWidth = "${options.size.maxWith.toInt()}px"
@@ -273,18 +273,14 @@ public class ThreeCanvas(
             return
         }
         if (this is Mesh) {
-            if (highlight) {
-                val edges = LineSegments(
-                    EdgesGeometry(geometry),
-                    material
-                ).apply {
-                    name = edgesName
-                }
-                add(edges)
-            } else {
-                val highlightEdges = children.find { it.name == edgesName }
-                highlightEdges?.let { remove(it) }
+            val edges = getObjectByName(edgesName) ?: LineSegments(
+                EdgesGeometry(geometry),
+                material
+            ).also {
+                it.name = edgesName
+                add(it)
             }
+            edges.visible = highlight
         } else {
             children.filter { it.name != edgesName }.forEach {
                 it.toggleHighlight(highlight, edgesName, material)

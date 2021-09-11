@@ -57,8 +57,8 @@ public inline fun VisionContainerBuilder<Solid>.box(
     ySize: Number,
     zSize: Number,
     name: String? = null,
-    action: Box.() -> Unit = {},
-): Box = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(action).also { set(name, it) }
+    block: Box.() -> Unit = {},
+): Box = Box(xSize.toFloat(), ySize.toFloat(), zSize.toFloat()).apply(block).also { set(name, it) }
 
 @Serializable
 @SerialName("solid.hexagon")
