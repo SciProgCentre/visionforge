@@ -15,7 +15,6 @@ public fun MetaProvider.doubleArray(
     it?.doubleArray ?: doubleArrayOf(*default)
 }
 
-
 public class DObjectCache(private val cache: List<Meta>, public val refStack: List<Int> = emptyList()) {
     public operator fun get(index: Int): Meta = cache[index]
 
@@ -25,28 +24,6 @@ public class DObjectCache(private val cache: List<Meta>, public val refStack: Li
         public val empty: DObjectCache = DObjectCache(emptyList(), emptyList())
     }
 }
-//
-//public interface ObjectRef<T : DObject> {
-//    public fun resolve(): T?
-//}
-
-//public class ChildObjectRef<T : DObject>(
-//    public val builder: (Meta, DObjectCache) -> T,
-//    public val refCache: DObjectCache,
-//    public val metaProvider: () -> Meta?
-//) : ObjectRef<T> {
-//    override fun resolve(): T? {
-//        val meta = metaProvider() ?: return null
-//        meta["\$ref"]?.int?.let { refId ->
-//            if (refCache.refStack.contains(refId)) {
-//                println("Circular reference $refId in stack ${refCache.refStack}")
-//                return null
-//            }
-//            return builder(refCache[refId], refCache.stack(refId))
-//        }
-//        return builder(meta, refCache)
-//    }
-//}
 
 public open class DObject(public val meta: Meta, private val refCache: DObjectCache) {
 

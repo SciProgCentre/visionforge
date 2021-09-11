@@ -63,7 +63,7 @@ public interface VisionGroup : Provider, Vision, VisionContainer<Vision> {
  */
 public operator fun VisionGroup.iterator(): Iterator<Vision> = children.values.iterator()
 
-public val VisionGroup.isEmpty: Boolean get() = this.children.isEmpty()
+public fun VisionGroup.isEmpty(): Boolean = this.children.isEmpty()
 
 public interface VisionContainerBuilder<in V : Vision> {
     //TODO add documentation

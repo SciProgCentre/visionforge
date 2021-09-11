@@ -4,6 +4,7 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.doubleArray
+import space.kscience.visionforge.isEmpty
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import kotlin.math.*
@@ -16,7 +17,16 @@ private operator fun Number.times(f: Float) = toFloat() * f
 
 private fun degToRad(d: Double) = d * PI / 180.0
 
-private class RootToSolidContext(val prototypeHolder: PrototypeHolder)
+private class RootToSolidContext(val prototypeHolder: PrototypeHolder, val maxLayer: Int = 3) {
+    val layers: MutableList<Int> = mutableListOf(0)
+
+    val layerLimits = listOf(10_000, 25_000, 50_000, 100_000, 200_000, 400_000, 600_000)
+
+    val bottomLayer: Int get() = layers.size - 1
+    fun addLayer() {
+        layers.add(0)
+    }
+}
 
 // converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
 private fun Solid.rotate(rot: DoubleArray) {
@@ -67,157 +77,164 @@ private fun Solid.useMatrix(matrix: DGeoMatrix?) {
 private fun SolidGroup.addShape(
     shape: DGeoShape,
     context: RootToSolidContext,
-    name: String? = shape.fName.ifEmpty { null }
-): Solid? = when (shape.typename) {
-    "TGeoCompositeShape" -> {
-        val fNode: DGeoBoolNode? by shape.dObject(::DGeoBoolNode)
-        val node = fNode ?: error("Composite shape node not resolved")
-        val compositeType = when (node.typename) {
-            "TGeoIntersection" -> CompositeType.INTERSECT
-            "TGeoSubtraction" -> CompositeType.SUBTRACT
-            "TGeoUnion" -> CompositeType.GROUP
-            else -> error("Unknown bool node type ${node.typename}")
-        }
-        smartComposite(compositeType, name = name) {
-            addShape(node.fLeft!!, context, null).also {
-                if (it == null) TODO()
-                it.useMatrix(node.fLeftMat)
+    name: String? = shape.fName.ifEmpty { null },
+    block: Solid.() -> Unit = {}
+) {
+    when (shape.typename) {
+        "TGeoCompositeShape" -> {
+            val fNode: DGeoBoolNode? by shape.dObject(::DGeoBoolNode)
+            val node = fNode ?: error("Composite shape node not resolved")
+            val compositeType = when (node.typename) {
+                "TGeoIntersection" -> CompositeType.INTERSECT
+                "TGeoSubtraction" -> CompositeType.SUBTRACT
+                "TGeoUnion" -> CompositeType.GROUP
+                else -> error("Unknown bool node type ${node.typename}")
             }
-            addShape(node.fRight!!, context, null).also {
-                if (it == null) TODO()
-                it.useMatrix(node.fRightMat)
-            }
-        }
-    }
-    "TGeoXtru" -> {
-        val fNvert by shape.meta.int(0)
-        val fX by shape.meta.doubleArray()
-        val fY by shape.meta.doubleArray()
-        val fNz by shape.meta.int(0)
-        val fZ by shape.meta.doubleArray()
-        val fX0 by shape.meta.doubleArray()
-        val fY0 by shape.meta.doubleArray()
-        val fScale by shape.meta.doubleArray()
-
-        extruded(name = name) {
-            (0 until fNvert).forEach { index ->
-                shape {
-                    point(fX[index], fY[index])
+            smartComposite(compositeType, name = name) {
+                addShape(node.fLeft!!, context, null) {
+                    this.useMatrix(node.fLeftMat)
                 }
-            }
-
-            (0 until fNz).forEach { index ->
-                layer(
-                    fZ[index],
-                    fX0[index],
-                    fY0[index],
-                    fScale[index]
-                )
-            }
+                addShape(node.fRight!!, context, null) {
+                    this.useMatrix(node.fRightMat)
+                }
+            }.apply(block)
         }
-    }
-    "TGeoTube" -> {
-        val fRmax by shape.meta.double(0.0)
-        val fDz by shape.meta.double(0.0)
-        val fRmin by shape.meta.double(0.0)
+        "TGeoXtru" -> {
+            val fNvert by shape.meta.int(0)
+            val fX by shape.meta.doubleArray()
+            val fY by shape.meta.doubleArray()
+            val fNz by shape.meta.int(0)
+            val fZ by shape.meta.doubleArray()
+            val fX0 by shape.meta.doubleArray()
+            val fY0 by shape.meta.doubleArray()
+            val fScale by shape.meta.doubleArray()
 
-        tube(
-            radius = fRmax,
-            height = fDz * 2,
-            innerRadius = fRmin,
-            name = name
-        )
-    }
-    "TGeoTubeSeg" -> {
-        val fRmax by shape.meta.double(0.0)
-        val fDz by shape.meta.double(0.0)
-        val fRmin by shape.meta.double(0.0)
-        val fPhi1 by shape.meta.double(0.0)
-        val fPhi2 by shape.meta.double(0.0)
+            extruded(name = name) {
+                (0 until fNvert).forEach { index ->
+                    shape {
+                        point(fX[index], fY[index])
+                    }
+                }
 
-        tube(
-            radius = fRmax,
-            height = fDz * 2,
-            innerRadius = fRmin,
-            startAngle = degToRad(fPhi1),
-            angle = degToRad(fPhi2 - fPhi1),
-            name = name
-        )
-    }
-    "TGeoPcon" -> {
-        val fDphi by shape.meta.double(0.0)
-        val fNz by shape.meta.int(2)
-        val fPhi1 by shape.meta.double(360.0)
-        val fRmax by shape.meta.doubleArray()
-        val fRmin by shape.meta.doubleArray()
-        val fZ by shape.meta.doubleArray()
-        if (fNz == 2) {
-            coneSurface(
-                bottomOuterRadius = fRmax[0],
-                bottomInnerRadius = fRmin[0],
-                height = fZ[1] - fZ[0],
-                topOuterRadius = fRmax[1],
-                topInnerRadius = fRmin[1],
+                (0 until fNz).forEach { index ->
+                    layer(
+                        fZ[index],
+                        fX0[index],
+                        fY0[index],
+                        fScale[index]
+                    )
+                }
+            }.apply(block)
+        }
+        "TGeoTube" -> {
+            val fRmax by shape.meta.double(0.0)
+            val fDz by shape.meta.double(0.0)
+            val fRmin by shape.meta.double(0.0)
+
+            tube(
+                radius = fRmax,
+                height = fDz * 2,
+                innerRadius = fRmin,
+                name = name,
+                block = block
+            )
+        }
+        "TGeoTubeSeg" -> {
+            val fRmax by shape.meta.double(0.0)
+            val fDz by shape.meta.double(0.0)
+            val fRmin by shape.meta.double(0.0)
+            val fPhi1 by shape.meta.double(0.0)
+            val fPhi2 by shape.meta.double(0.0)
+
+            tube(
+                radius = fRmax,
+                height = fDz * 2,
+                innerRadius = fRmin,
                 startAngle = degToRad(fPhi1),
-                angle = degToRad(fDphi),
-                name = name
-            ) {
-                z = (fZ[1] + fZ[0]) / 2
-            }
-        } else {
-            TODO()
+                angle = degToRad(fPhi2 - fPhi1),
+                name = name,
+                block = block
+            )
         }
-    }
-    "TGeoPgon" -> {
-        val fDphi by shape.meta.double(0.0)
-        val fNz by shape.meta.int(2)
-        val fPhi1 by shape.meta.double(360.0)
-        val fRmax by shape.meta.doubleArray()
-        val fRmin by shape.meta.doubleArray()
-        val fZ by shape.meta.doubleArray()
+        "TGeoPcon" -> {
+            val fDphi by shape.meta.double(0.0)
+            val fNz by shape.meta.int(2)
+            val fPhi1 by shape.meta.double(360.0)
+            val fRmax by shape.meta.doubleArray()
+            val fRmin by shape.meta.doubleArray()
+            val fZ by shape.meta.doubleArray()
+            if (fNz == 2) {
+                coneSurface(
+                    bottomOuterRadius = fRmax[0],
+                    bottomInnerRadius = fRmin[0],
+                    height = fZ[1] - fZ[0],
+                    topOuterRadius = fRmax[1],
+                    topInnerRadius = fRmin[1],
+                    startAngle = degToRad(fPhi1),
+                    angle = degToRad(fDphi),
+                    name = name,
+                ) {
+                    z = (fZ[1] + fZ[0]) / 2
 
-        val fNedges by shape.meta.int(1)
+                }.apply(block)
+            } else {
+                TODO()
+            }
+        }
+        "TGeoPgon" -> {
+            val fDphi by shape.meta.double(0.0)
+            val fNz by shape.meta.int(2)
+            val fPhi1 by shape.meta.double(360.0)
+            val fRmax by shape.meta.doubleArray()
+            val fRmin by shape.meta.doubleArray()
+            val fZ by shape.meta.doubleArray()
 
-        val startphi = degToRad(fPhi1)
-        val deltaphi = degToRad(fDphi)
+            val fNedges by shape.meta.int(1)
 
-        extruded(name) {
-            //getting the radius of first
-            require(fNz > 1) { "The polyhedron geometry requires at least two planes" }
-            val baseRadius = fRmax[0]
-            shape {
-                (0..fNedges).forEach {
-                    val phi = deltaphi * fNedges * it + startphi
-                    (baseRadius * cos(phi) to baseRadius * sin(phi))
+            val startphi = degToRad(fPhi1)
+            val deltaphi = degToRad(fDphi)
+
+            extruded(name) {
+                //getting the radius of first
+                require(fNz > 1) { "The polyhedron geometry requires at least two planes" }
+                val baseRadius = fRmax[0]
+                shape {
+                    (0..fNedges).forEach {
+                        val phi = deltaphi * fNedges * it + startphi
+                        (baseRadius * cos(phi) to baseRadius * sin(phi))
+                    }
                 }
-            }
-            (0 until fNz).forEach { index ->
-                //scaling all radii relative to first layer radius
-                layer(fZ[index], scale = fRmax[index] / baseRadius)
+                (0 until fNz).forEach { index ->
+                    //scaling all radii relative to first layer radius
+                    layer(fZ[index], scale = fRmax[index] / baseRadius)
+                }
+            }.apply(block)
+        }
+        "TGeoShapeAssembly" -> {
+            val fVolume by shape.dObject(::DGeoVolume)
+            fVolume?.let { volume ->
+                addRootVolume(volume, context, block = block)
             }
         }
-    }
-    "TGeoShapeAssembly" -> {
-        val fVolume by shape.dObject(::DGeoVolume)
-        fVolume?.let { volume ->
-            addRootVolume(volume, context)
+        "TGeoBBox" -> {
+            box(shape.fDX * 2, shape.fDY * 2, shape.fDZ * 2, name = name, block = block)
         }
-    }
-    "TGeoBBox" -> {
-        box(shape.fDX * 2, shape.fDY * 2, shape.fDZ * 2, name = name)
-    }
-    else -> {
-        TODO("A shape with type ${shape.typename} not implemented")
+        else -> {
+            TODO("A shape with type ${shape.typename} not implemented")
+        }
     }
 }
 
 private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
     val volume = obj.fVolume ?: return
-    addRootVolume(volume, context, obj.fName).apply {
+    addRootVolume(volume, context, obj.fName) {
+        if (context.bottomLayer > 0) {
+            this.layer = context.bottomLayer
+        }
         when (obj.typename) {
             "TGeoNodeMatrix" -> {
                 val fMatrix by obj.dObject(::DGeoMatrix)
-                useMatrix(fMatrix)
+                this.useMatrix(fMatrix)
             }
             "TGeoNodeOffset" -> {
                 val fOffset by obj.meta.double(0.0)
@@ -227,19 +244,29 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
     }
 }
 
-private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid {
+private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid? {
     val group = SolidGroup {
-        if(volume.fNodes.isEmpty()) {
+        val nodesNum = volume.fNodes.size
+        if (nodesNum == 0) {
             //TODO add smart filter
             volume.fShape?.let { shape ->
                 addShape(shape, context)
             }
         }
+        val expectedLayerSize = context.layers.last() + nodesNum
+        //If expected number exceeds layer limit, move everything else to the bottom layer.
+        if (expectedLayerSize >= context.layerLimits[context.bottomLayer]) {
+            context.addLayer()
+            println("Adding new layer. Sizes after add: ${context.layers}")
+        }
+        context.layers[context.bottomLayer] += nodesNum
         volume.fNodes.forEach { node ->
             addRootNode(node, context)
         }
     }
-    return if (group.children.size == 1 && group.meta.isEmpty()) {
+    return if (group.isEmpty()) {
+        null
+    } else if (group.children.size == 1 && group.meta.isEmpty()) {
         (group.children.values.first() as Solid).apply { parent = null }
     } else {
         group
@@ -252,8 +279,15 @@ private fun SolidGroup.addRootVolume(
     volume: DGeoVolume,
     context: RootToSolidContext,
     name: String? = null,
-    cache: Boolean = true
-): Solid {
+    cache: Boolean = true,
+    block: Solid.() -> Unit = {}
+) {
+    //skip if maximum layer number is reached
+    if (context.bottomLayer > context.maxLayer){
+        println("Maximum layer depth reached. Skipping ${volume.fName}")
+        return
+    }
+
     val combinedName = if (volume.fName.isEmpty()) {
         name
     } else if (name == null) {
@@ -262,23 +296,29 @@ private fun SolidGroup.addRootVolume(
         "${name}_${volume.fName}"
     }
 
-    return if (!cache) {
-        val group = buildVolume(volume, context)
+    if (!cache) {
+        val group = buildVolume(volume, context)?.apply {
+            volume.fFillColor?.let {
+                meta[MATERIAL_COLOR_KEY] = RootColors[it]
+            }
+            block()
+        }
         set(combinedName?.let { Name.parse(it) }, group)
-        group
     } else {
         val templateName = volumesName + volume.name
         val existing = getPrototype(templateName)
         if (existing == null) {
             context.prototypeHolder.prototypes {
-                set(templateName, buildVolume(volume, context))
+                val group = buildVolume(volume, context)
+                set(templateName, group)
             }
         }
 
-        ref(templateName, name)
-    }.apply {
-        volume.fFillColor?.let {
-            meta[MATERIAL_COLOR_KEY] = RootColors[it]
+        ref(templateName, name).apply {
+            volume.fFillColor?.let {
+                meta[MATERIAL_COLOR_KEY] = RootColors[it]
+            }
+            block()
         }
     }
 }

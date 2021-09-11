@@ -67,8 +67,8 @@ internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String):
     if (!skip) {
         logger.debug("File $fullPath does not exist or wrong checksum. Writing file")
         Files.createDirectories(fullPath.parent)
-        Files.write(fullPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+        Files.write(fullPath, bytes, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
     }
 
     return if (htmlPath.isAbsolute && fullPath.startsWith(htmlPath.parent)) {

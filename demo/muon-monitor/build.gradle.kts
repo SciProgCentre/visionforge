@@ -65,12 +65,6 @@ application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>() {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-Xir-property-lazy-initialization"
-    }
-}
-
 //distributions {
 //    main {
 //        contents {

@@ -9,6 +9,8 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
 import space.kscience.dataforge.values.string
 import space.kscience.visionforge.solid.Solids
+import java.nio.file.Paths
+import kotlin.io.path.writeText
 
 
 private fun Meta.countTypes(): Sequence<String> = sequence {
@@ -37,12 +39,18 @@ fun main() {
 
     val solid = geo.toSolid()
 
-    //Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))
+    Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))
     //println(Solids.encodeToString(solid))
 
     context.makeVisionFile {
         vision("canvas") {
             solid
+       }
+    }
+}
+
+
+
 /*            SolidGroup {
                 set(
                     "Coil",
@@ -99,6 +107,3 @@ fun main() {
                     }
                 }*//*
             }*/
-        }
-    }
-}
