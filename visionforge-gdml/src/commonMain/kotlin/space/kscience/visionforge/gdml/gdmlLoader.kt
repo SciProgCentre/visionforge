@@ -215,7 +215,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
                 val first: GdmlSolid = solid.first.resolve(root) ?: error("")
                 val second: GdmlSolid = solid.second.resolve(root) ?: error("")
                 val type: CompositeType = when (solid) {
-                    is GdmlUnion -> CompositeType.GROUP // dumb sum for better performance
+                    is GdmlUnion -> CompositeType.UNION // dumb sum for better performance
                     is GdmlSubtraction -> CompositeType.SUBTRACT
                     is GdmlIntersection -> CompositeType.INTERSECT
                 }

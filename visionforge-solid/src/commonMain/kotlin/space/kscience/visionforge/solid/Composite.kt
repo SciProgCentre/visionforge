@@ -32,7 +32,9 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 ): Composite {
     val group = SolidGroup().apply(builder)
     val children = group.children.values.filterIsInstance<Solid>()
-    if (children.size != 2) error("Composite requires exactly two children, but found ${children.size}")
+    if (children.size != 2){
+        error("Composite requires exactly two children, but found ${children.size}")
+    }
     val res = Composite(type, children[0], children[1])
 
     res.meta.update(group.meta)
