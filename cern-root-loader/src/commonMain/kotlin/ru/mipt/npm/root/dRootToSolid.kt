@@ -17,16 +17,11 @@ private operator fun Number.times(f: Float) = toFloat() * f
 
 private fun degToRad(d: Double) = d * PI / 180.0
 
-private class RootToSolidContext(val prototypeHolder: PrototypeHolder, val maxLayer: Int = 3) {
-    val layers: MutableList<Int> = mutableListOf(0)
-
-    val layerLimits = listOf(10_000, 25_000, 50_000, 100_000, 200_000, 400_000, 600_000)
-
-    val bottomLayer: Int get() = layers.size - 1
-    fun addLayer() {
-        layers.add(0)
-    }
-}
+private data class RootToSolidContext(
+    val prototypeHolder: PrototypeHolder,
+    val currentLayer: Int = 0,
+    val maxLayer: Int = 5
+)
 
 // converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
 private fun Solid.rotate(rot: DoubleArray) {
@@ -267,9 +262,6 @@ private fun SolidGroup.addShape(
 private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
     val volume = obj.fVolume ?: return
     addRootVolume(volume, context, obj.fName) {
-        if (context.bottomLayer > 0) {
-            this.layer = context.bottomLayer
-        }
         when (obj.typename) {
             "TGeoNodeMatrix" -> {
                 val fMatrix by obj.dObject(::DGeoMatrix)
@@ -285,22 +277,28 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
 
 private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid? {
     val group = SolidGroup {
-        val nodesNum = volume.fNodes.size
-        if (nodesNum == 0) {
+        //set current layer
+        layer = context.currentLayer
+        val nodes = volume.fNodes
+
+        if (nodes.isEmpty() || context.currentLayer >= context.maxLayer) {
             //TODO add smart filter
             volume.fShape?.let { shape ->
                 addShape(shape, context)
             }
-        }
-        val expectedLayerSize = context.layers.last() + nodesNum
-        //If expected number exceeds layer limit, move everything else to the bottom layer.
-        if (expectedLayerSize >= context.layerLimits[context.bottomLayer]) {
-            context.addLayer()
-            println("Adding new layer. Sizes after add: ${context.layers}")
-        }
-        context.layers[context.bottomLayer] += nodesNum
-        volume.fNodes.forEach { node ->
-            addRootNode(node, context)
+        } else {
+            val newLayer = if (nodes.size <= 2) {
+                context.currentLayer
+            } else if (nodes.size > 10) {
+                context.currentLayer + 2
+            } else {
+                context.currentLayer + 1
+            }
+            val newContext = context.copy(currentLayer = newLayer)
+            nodes.forEach { node ->
+                //add children to the next layer
+                addRootNode(node, newContext)
+            }
         }
     }
     return if (group.isEmpty()) {
@@ -321,12 +319,6 @@ private fun SolidGroup.addRootVolume(
     cache: Boolean = true,
     block: Solid.() -> Unit = {}
 ) {
-    //skip if maximum layer number is reached
-    if (context.bottomLayer > context.maxLayer) {
-        println("Maximum layer depth reached. Skipping ${volume.fName}")
-        return
-    }
-
     val combinedName = if (volume.fName.isEmpty()) {
         name
     } else if (name == null) {

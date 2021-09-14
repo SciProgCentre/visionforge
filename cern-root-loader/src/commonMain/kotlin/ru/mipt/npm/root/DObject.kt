@@ -25,7 +25,7 @@ public class DObjectCache(private val cache: List<Meta>, public val refStack: Li
     }
 }
 
-public open class DObject(public val meta: Meta, private val refCache: DObjectCache) {
+public open class DObject(public val meta: Meta, public val refCache: DObjectCache) {
 
     public val typename: String by meta.string(key = "_typename".asName()) {
         error("Type is not defined")
@@ -85,10 +85,6 @@ public class DGeoVolume(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCa
     public val fFillColor: Int? by meta.int()
 
     override val name: Name by lazy { Name.parse(fName.ifEmpty { "volume[${meta.hashCode().toUInt()}]" }) }
-
-    public val numberOfChildren: Int by lazy {
-        fNodes.sumOf { (it.fVolume?.numberOfChildren ?: 0) + 1 }
-    }
 }
 
 public class DGeoNode(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
