@@ -9,14 +9,14 @@ import react.FunctionComponent
 import react.dom.attrs
 import react.dom.option
 import react.dom.select
-import react.functionalComponent
+import react.functionComponent
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.string
 
 @JsExport
 public val MultiSelectChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("MultiSelectChooser") { props ->
+    functionComponent("MultiSelectChooser") { props ->
         val onChange: (Event) -> Unit = { event: Event ->
             val newSelected = (event.target as HTMLSelectElement).selectedOptions.asList()
                 .map { (it as HTMLOptionElement).value.asValue() }

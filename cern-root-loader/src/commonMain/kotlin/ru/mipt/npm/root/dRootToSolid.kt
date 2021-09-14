@@ -182,6 +182,7 @@ private fun SolidGroup.addShape(
             }
         }
         "TGeoPgon" -> {
+            //TODO add a inner polygone layer
             val fDphi by shape.meta.double(0.0)
             val fNz by shape.meta.int(2)
             val fPhi1 by shape.meta.double(360.0)
@@ -218,6 +219,44 @@ private fun SolidGroup.addShape(
         }
         "TGeoBBox" -> {
             box(shape.fDX * 2, shape.fDY * 2, shape.fDZ * 2, name = name, block = block)
+        }
+        "TGeoTrap" -> {
+            val fTheta by shape.meta.double(0.0)
+            val fPhi by shape.meta.double(0.0)
+            val fAlpha1 by shape.meta.double(0.0)
+            val fAlpha2 by shape.meta.double(0.0)
+            if (fAlpha1 != 0.0 || fAlpha2 != 0.0 || fTheta != 0.0 || fPhi != 0.0) {
+                TODO("Angled trapezoid not implemented")
+            }
+            val fH1 by shape.meta.double(0.0)
+            val fBl1 by shape.meta.double(0.0)
+            val fTl1 by shape.meta.double(0.0)
+            val fH2 by shape.meta.double(0.0)
+            val fBl2 by shape.meta.double(0.0)
+            val fTl2 by shape.meta.double(0.0)
+
+            val fDz by shape.meta.double(0.0)
+            //TODO check proper node order
+            val node1 = Point3D(-fBl1, -fH1, -fDz)
+            val node2 = Point3D(fBl1, -fH1, -fDz)
+            val node3 = Point3D(fTl1, fH1, -fDz)
+            val node4 = Point3D(-fTl1, fH1, -fDz)
+            val node5 = Point3D(-fBl2, -fH2, fDz)
+            val node6 = Point3D(fBl2, -fH2, fDz)
+            val node7 = Point3D(fTl2, fH2, fDz)
+            val node8 = Point3D(-fTl2, fH2, fDz)
+            hexagon(node1, node2, node3, node4, node5, node6, node7, node8, name)
+        }
+        "TGeoScaledShape" -> {
+            val fShape by shape.dObject(::DGeoShape)
+            val fScale by shape.dObject(::DGeoScale)
+            fShape?.let { scaledShape ->
+                group(name?.let { Name.parse(it) }) {
+                    scale = Point3D(fScale?.x ?: 1.0, fScale?.y ?: 1.0, fScale?.z ?: 1.0)
+                    addShape(scaledShape, context)
+                    apply(block)
+                }
+            }
         }
         else -> {
             TODO("A shape with type ${shape.typename} not implemented")
@@ -283,7 +322,7 @@ private fun SolidGroup.addRootVolume(
     block: Solid.() -> Unit = {}
 ) {
     //skip if maximum layer number is reached
-    if (context.bottomLayer > context.maxLayer){
+    if (context.bottomLayer > context.maxLayer) {
         println("Maximum layer depth reached. Skipping ${volume.fName}")
         return
     }

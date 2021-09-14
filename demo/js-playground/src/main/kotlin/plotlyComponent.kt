@@ -14,7 +14,7 @@ external interface PlotlyProps : RProps {
 }
 
 
-val Plotly = functionalComponent<PlotlyProps>("Plotly") { props ->
+val Plotly = functionComponent<PlotlyProps>("Plotly") { props ->
     val elementRef = useRef<Element>(null)
 
     useEffect(props.plot, elementRef) {

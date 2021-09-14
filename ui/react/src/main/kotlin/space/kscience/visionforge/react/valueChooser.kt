@@ -10,9 +10,12 @@ import kotlinx.html.js.onKeyDownFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
-import react.*
+import react.FunctionComponent
+import react.RProps
 import react.dom.attrs
 import react.dom.option
+import react.functionComponent
+import react.useState
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.allowedValues
@@ -34,7 +37,7 @@ public external interface ValueChooserProps : RProps {
 
 @JsExport
 public val StringValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("StringValueChooser") { props ->
+    functionComponent("StringValueChooser") { props ->
         var value by useState(props.actual.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
@@ -59,7 +62,7 @@ public val StringValueChooser: FunctionComponent<ValueChooserProps> =
 
 @JsExport
 public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("BooleanValueChooser") { props ->
+    functionComponent("BooleanValueChooser") { props ->
         val handleChange: (Event) -> Unit = {
             val newValue = (it.target as HTMLInputElement).checked
             props.meta.value = newValue.asValue()
@@ -78,7 +81,7 @@ public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
 
 @JsExport
 public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("NumberValueChooser") { props ->
+    functionComponent("NumberValueChooser") { props ->
         var innerValue by useState(props.actual.string ?: "")
         val keyDown: (Event) -> Unit = { event ->
             if (event.type == "keydown" && event.asDynamic().key == "Enter") {
@@ -117,7 +120,7 @@ public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
 
 @JsExport
 public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("ComboValueChooser") { props ->
+    functionComponent("ComboValueChooser") { props ->
         var selected by useState(props.actual.string ?: "")
         val handleChange: (Event) -> Unit = {
             selected = (it.target as HTMLSelectElement).value
@@ -142,7 +145,7 @@ public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
 
 @JsExport
 public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("ColorValueChooser") { props ->
+    functionComponent("ColorValueChooser") { props ->
         val handleChange: (Event) -> Unit = {
             props.meta.value = (it.target as HTMLInputElement).value.asValue()
         }
@@ -162,7 +165,7 @@ public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
     }
 
 @JsExport
-public val ValueChooser: FunctionComponent<ValueChooserProps> = functionalComponent("ValueChooser") { props ->
+public val ValueChooser: FunctionComponent<ValueChooserProps> = functionComponent("ValueChooser") { props ->
     val rawInput by useState(false)
 
     val descriptor = props.descriptor

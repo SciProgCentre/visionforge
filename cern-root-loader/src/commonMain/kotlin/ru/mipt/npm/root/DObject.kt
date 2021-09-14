@@ -85,13 +85,23 @@ public class DGeoVolume(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCa
     public val fFillColor: Int? by meta.int()
 
     override val name: Name by lazy { Name.parse(fName.ifEmpty { "volume[${meta.hashCode().toUInt()}]" }) }
+
+    public val numberOfChildren: Int by lazy {
+        fNodes.sumOf { (it.fVolume?.numberOfChildren ?: 0) + 1 }
+    }
 }
 
 public class DGeoNode(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
     public val fVolume: DGeoVolume? by dObject(::DGeoVolume)
 }
 
-public class DGeoMatrix(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
+public open class DGeoMatrix(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache)
+
+public open class DGeoScale(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+    public val fScale: DoubleArray by meta.doubleArray(1.0, 1.0, 1.0)
+    public val x: Double get() = fScale[0]
+    public val y: Double get() = fScale[1]
+    public val z: Double get() = fScale[2]
 }
 
 

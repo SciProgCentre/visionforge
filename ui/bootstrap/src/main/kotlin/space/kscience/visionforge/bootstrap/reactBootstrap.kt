@@ -5,7 +5,6 @@ import kotlinx.html.DIV
 import kotlinx.html.id
 import kotlinx.html.js.onClickFunction
 import react.RBuilder
-import react.ReactElement
 import react.dom.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
@@ -16,7 +15,7 @@ import styled.styledDiv
 import styled.styledNav
 
 
-public inline fun RBuilder.card(title: String, crossinline block: StyledDOMBuilder<DIV>.() -> Unit): ReactElement =
+public inline fun RBuilder.card(title: String, crossinline block: StyledDOMBuilder<DIV>.() -> Unit): Unit =
     styledDiv {
         css {
             +"card"
@@ -36,7 +35,7 @@ public inline fun RBuilder.card(title: String, crossinline block: StyledDOMBuild
 public fun RBuilder.accordion(
     id: String,
     elements: List<Pair<String, StyledDOMBuilder<DIV>.() -> Unit>>,
-): ReactElement = styledDiv {
+): Unit = styledDiv {
     css {
         +"accordion"
         //+"p-1"
@@ -82,7 +81,7 @@ public fun RBuilder.accordion(
 }
 
 
-public fun RBuilder.nameCrumbs(name: Name?, rootTitle: String, link: (Name) -> Unit): ReactElement = styledNav {
+public fun RBuilder.nameCrumbs(name: Name?, rootTitle: String, link: (Name) -> Unit): Unit = styledNav {
     css {
         +"p-0"
     }
@@ -127,9 +126,9 @@ public fun RSectionsBuilder.entry(title: String, builder: StyledDOMBuilder<DIV>.
     add(title to builder)
 }
 
-public fun RBuilder.accordion(id: String, builder: RSectionsBuilder.() -> Unit): ReactElement {
+public fun RBuilder.accordion(id: String, builder: RSectionsBuilder.() -> Unit): Unit {
     val list = ArrayList<Pair<String, StyledDOMBuilder<DIV>.() -> Unit>>().apply(builder)
-    return accordion(id, list)
+    accordion(id, list)
 }
 
 public enum class ContainerSize(public val suffix: String) {
@@ -144,7 +143,7 @@ public enum class ContainerSize(public val suffix: String) {
 public inline fun RBuilder.container(
     size: ContainerSize = ContainerSize.FLUID,
     block: StyledDOMBuilder<DIV>.() -> Unit,
-): ReactElement = styledDiv {
+): Unit = styledDiv {
     css {
         classes.add("container${size.suffix}")
     }
@@ -164,7 +163,7 @@ public inline fun RBuilder.gridColumn(
     weight: Int? = null,
     maxSize: GridMaxSize = GridMaxSize.NONE,
     block: StyledDOMBuilder<DIV>.() -> Unit,
-): ReactElement = styledDiv {
+): Unit = styledDiv {
     val weightSuffix = weight?.let { "-$it" } ?: ""
     css {
         classes.add("col${maxSize.suffix}$weightSuffix")
@@ -174,7 +173,7 @@ public inline fun RBuilder.gridColumn(
 
 public inline fun RBuilder.gridRow(
     block: StyledDOMBuilder<DIV>.() -> Unit,
-): ReactElement = styledDiv {
+): Unit = styledDiv {
     css {
         classes.add("row")
     }

@@ -1,8 +1,9 @@
 pluginManagement {
 
-    val toolsVersion = "0.10.2"
+    val toolsVersion = "0.10.3"
 
     repositories {
+        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
         gradlePluginPortal()
@@ -19,6 +20,7 @@ pluginManagement {
 rootProject.name = "visionforge"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("VERSION_CATALOGS")
 
 include(
 //    ":ui",

@@ -21,7 +21,7 @@ public external interface ThreeCanvasProps : RProps {
     public var selected: Name?
 }
 
-public val ThreeCanvasComponent: FunctionComponent<ThreeCanvasProps> = functionalComponent(
+public val ThreeCanvasComponent: FunctionComponent<ThreeCanvasProps> = functionComponent(
     "ThreeCanvasComponent"
 ) { props ->
     val elementRef = useRef<Element>(null)

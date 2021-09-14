@@ -6,8 +6,8 @@ package drop
 import org.w3c.dom.DragEvent
 import org.w3c.files.FileList
 import react.Component
-import react.RProps
-import react.RState
+import react.Props
+import react.State
 
 external enum class DropEffects {
     copy,
@@ -16,7 +16,7 @@ external enum class DropEffects {
     none
 }
 
-external interface FileDropProps: RProps {
+external interface FileDropProps: Props {
     var className: String?
     var targetClassName: String?
     var draggingOverFrameClassName: String?
@@ -32,7 +32,7 @@ external interface FileDropProps: RProps {
     var dropEffect: DropEffects?
 }
 
-external interface FileDropState: RState {
+external interface FileDropState: State {
     var draggingOverFrame: Boolean
     var draggingOverTarget: Boolean
 }

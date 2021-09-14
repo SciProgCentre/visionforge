@@ -4,10 +4,11 @@
 package ringui
 
 import react.ComponentClass
-import react.dom.WithClassName
+import react.PropsWithClassName
+
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/loader/loader.js
-public external interface LoaderProps : WithClassName {
+public external interface LoaderProps : PropsWithClassName {
     public var size: Number
     public var colors: Array<String>
     public var message: String

@@ -48,7 +48,7 @@ public external interface PropertyEditorProps : RProps {
 }
 
 private val PropertyEditorItem: FunctionComponent<PropertyEditorProps> =
-    functionalComponent("PropertyEditorItem") { props ->
+    functionComponent("PropertyEditorItem") { props ->
         propertyEditorItem(props)
     }
 
@@ -193,7 +193,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
 }
 
 @JsExport
-public val PropertyEditor: FunctionComponent<PropertyEditorProps> = functionalComponent("PropertyEditor") { props ->
+public val PropertyEditor: FunctionComponent<PropertyEditorProps> = functionComponent("PropertyEditor") { props ->
     child(PropertyEditorItem) {
         attrs {
             this.key = ""

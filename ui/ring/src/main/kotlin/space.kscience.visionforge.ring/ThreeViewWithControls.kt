@@ -43,7 +43,7 @@ public fun ThreeCanvasWithControlsProps.tab(title: String, block: RBuilder.() ->
 }
 
 
-public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement = styledDiv {
+public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): Unit = styledDiv {
     div {
         Link {
             attrs {
@@ -77,7 +77,7 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): ReactElement 
 
 @JsExport
 public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsProps> =
-    functionalComponent("ThreeViewWithControls") { props ->
+    functionComponent("ThreeViewWithControls") { props ->
         var selected by useState { props.selected }
         var solid: Solid? by useState(null)
 

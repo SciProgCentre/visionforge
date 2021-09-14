@@ -3,8 +3,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import react.RProps
-import react.child
-import react.functionalComponent
+import react.functionComponent
 import space.kscience.dataforge.context.Context
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
@@ -21,7 +20,7 @@ external interface DemoProps : RProps {
     var context: Context
 }
 
-val GravityDemo = functionalComponent<DemoProps> { props ->
+val GravityDemo = functionComponent<DemoProps> { props ->
     val velocityTrace = Trace{
         name = "velocity"
     }

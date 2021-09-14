@@ -10,6 +10,7 @@ import space.kscience.dataforge.meta.isLeaf
 import space.kscience.dataforge.values.string
 import space.kscience.visionforge.solid.Solids
 import java.nio.file.Paths
+import java.util.zip.ZipInputStream
 import kotlin.io.path.writeText
 
 
@@ -25,8 +26,11 @@ fun main() {
         plugin(Solids)
     }
 
-    val string = TGeoManager::class.java.getResourceAsStream("/root/BM@N.root.json")!!
-        .readAllBytes().decodeToString()
+
+    val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/BM@N_geometry.zip")!!).use {
+        it.nextEntry
+        it.readAllBytes().decodeToString()
+    }
 
     val geo = DGeoManager.parse(string)
 
@@ -45,10 +49,9 @@ fun main() {
     context.makeVisionFile {
         vision("canvas") {
             solid
-       }
+        }
     }
 }
-
 
 
 /*            SolidGroup {

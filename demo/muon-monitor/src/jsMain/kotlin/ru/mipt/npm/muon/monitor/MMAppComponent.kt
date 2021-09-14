@@ -7,10 +7,13 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
-import react.*
+import react.RProps
 import react.dom.attrs
 import react.dom.button
 import react.dom.p
+import react.functionComponent
+import react.useMemo
+import react.useState
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.react.flexColumn
@@ -34,7 +37,7 @@ external interface MMAppProps : RProps {
 
 @OptIn(DelicateCoroutinesApi::class)
 @JsExport
-val MMApp = functionalComponent<MMAppProps>("Muon monitor") { props ->
+val MMApp = functionComponent<MMAppProps>("Muon monitor") { props ->
 
     val mmOptions = useMemo {
         Canvas3DOptions {

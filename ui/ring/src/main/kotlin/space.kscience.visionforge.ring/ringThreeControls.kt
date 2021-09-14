@@ -9,9 +9,12 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.*
+import react.FunctionComponent
+import react.RBuilder
+import react.RProps
 import react.dom.attrs
 import react.dom.button
+import react.functionComponent
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
@@ -35,8 +38,8 @@ internal fun saveData(event: Event, fileName: String, mimeType: String = "text/p
     fileSaver.saveAs(blob, fileName)
 }
 
-internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?): ReactElement {
-    return child(CanvasControls) {
+internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?): Unit {
+    child(CanvasControls) {
         attrs {
             this.options = options
             this.vision = vision
@@ -49,7 +52,7 @@ internal external interface CanvasControlsProps : RProps {
     public var vision: Vision?
 }
 
-internal val CanvasControls: FunctionComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+internal val CanvasControls: FunctionComponent<CanvasControlsProps> = functionComponent("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
@@ -91,7 +94,7 @@ public external interface ThreeControlsProps : RProps {
 }
 
 @JsExport
-public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionalComponent { props ->
+public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionComponent { props ->
     SmartTabs("Tree") {
         props.vision?.let {
             Tab("Tree") {
@@ -119,7 +122,7 @@ public fun RBuilder.ringThreeControls(
     selected: Name?,
     onSelect: (Name?) -> Unit = {},
     additionalTabs: Map<String, RBuilder.() -> Unit>? = null
-): ReactElement = child(ThreeControls) {
+): Unit = child(ThreeControls) {
     attrs {
         this.canvasOptions = canvasOptions
         this.vision = vision

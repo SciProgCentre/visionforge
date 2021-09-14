@@ -28,7 +28,7 @@ public external interface ObjectTreeProps : RProps {
     public var clickCallback: (Name) -> Unit
 }
 
-private val TreeLabel = functionalComponent<ObjectTreeProps> { props ->
+private val TreeLabel = functionComponent<ObjectTreeProps> { props ->
     val token = useMemo(props.name) { props.name.lastOrNull()?.toString() ?: "World" }
     styledSpan {
         css {
@@ -107,7 +107,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
 }
 
 @JsExport
-public val ObjectTree: FunctionComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
+public val ObjectTree: FunctionComponent<ObjectTreeProps> = functionComponent("ObjectTree") { props ->
     visionTree(props)
 }
 

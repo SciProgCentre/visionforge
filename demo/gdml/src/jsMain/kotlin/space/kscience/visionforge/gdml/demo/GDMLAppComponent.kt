@@ -7,8 +7,11 @@ import kotlinx.css.*
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import react.*
+import react.RProps
 import react.dom.h2
+import react.functionComponent
+import react.useMemo
+import react.useState
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
@@ -31,7 +34,7 @@ external interface GDMLAppProps : RProps {
 }
 
 @JsExport
-val GDMLApp = functionalComponent<GDMLAppProps>("GDMLApp") { props ->
+val GDMLApp = functionComponent<GDMLAppProps>("GDMLApp") { props ->
     val visionManager = useMemo(props.context) { props.context.fetch(Solids).visionManager }
     var deferredVision: Deferred<Solid?> by useState {
         CompletableDeferred(props.vision)

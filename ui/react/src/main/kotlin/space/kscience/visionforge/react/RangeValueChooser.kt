@@ -8,7 +8,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.FunctionComponent
 import react.dom.attrs
-import react.functionalComponent
+import react.functionComponent
 import react.useState
 import space.kscience.dataforge.meta.descriptors.ValueRequirement
 import space.kscience.dataforge.meta.double
@@ -20,7 +20,7 @@ import styled.styledInput
 
 @JsExport
 public val RangeValueChooser: FunctionComponent<ValueChooserProps> =
-    functionalComponent("RangeValueChooser") { props ->
+    functionComponent("RangeValueChooser") { props ->
         var innerValue by useState(props.actual.double)
         var rangeDisabled: Boolean by useState(props.meta.value == null)
 

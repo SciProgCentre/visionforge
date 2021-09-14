@@ -4,10 +4,10 @@
 package ringui
 
 import react.ComponentClass
-import react.dom.WithClassName
+import react.PropsWithClassName
 
 // https://github.com/JetBrains/ring-ui/blob/master/components/loader-screen/loader-screen.js
-public external interface LoaderScreenProps : WithClassName {
+public external interface LoaderScreenProps : PropsWithClassName {
     public var containerClassName: String
     public var message: String
 }
