@@ -339,6 +339,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
             when (val vol: GdmlPlacement? = group.placement) {
                 is GdmlPhysVolume -> addPhysicalVolume(root, vol)
                 is GdmlDivisionVolume -> addDivisionVolume(root, vol)
+                else -> {}
             }
         }
 

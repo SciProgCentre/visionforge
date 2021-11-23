@@ -40,7 +40,6 @@ fun main() {
         println(it)
     }
 
-
     val solid = geo.toSolid()
 
     Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))

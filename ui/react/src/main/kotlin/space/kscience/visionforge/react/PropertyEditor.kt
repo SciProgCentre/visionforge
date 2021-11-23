@@ -19,7 +19,7 @@ import styled.styledButton
 import styled.styledDiv
 import styled.styledSpan
 
-public external interface PropertyEditorProps : RProps {
+public external interface PropertyEditorProps : Props {
 
     /**
      * Root config object - always non-null

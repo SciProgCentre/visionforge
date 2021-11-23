@@ -1,6 +1,6 @@
 pluginManagement {
 
-    val toolsVersion = "0.10.3"
+    val toolsVersion = "0.10.7"
 
     repositories {
         //mavenLocal()

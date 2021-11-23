@@ -10,8 +10,8 @@ import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.FunctionComponent
+import react.Props
 import react.RBuilder
-import react.RProps
 import react.dom.attrs
 import react.dom.button
 import react.functionComponent
@@ -47,7 +47,7 @@ internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?):
     }
 }
 
-internal external interface CanvasControlsProps : RProps {
+internal external interface CanvasControlsProps : Props {
     public var options: Canvas3DOptions
     public var vision: Vision?
 }
@@ -85,7 +85,7 @@ internal val CanvasControls: FunctionComponent<CanvasControlsProps> = functionCo
 }
 
 
-public external interface ThreeControlsProps : RProps {
+public external interface ThreeControlsProps : Props {
     public var canvasOptions: Canvas3DOptions
     public var vision: Vision?
     public var selected: Name?

@@ -11,7 +11,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
 import react.FunctionComponent
-import react.RProps
+import react.Props
 import react.dom.attrs
 import react.dom.option
 import react.functionComponent
@@ -29,7 +29,7 @@ import styled.css
 import styled.styledInput
 import styled.styledSelect
 
-public external interface ValueChooserProps : RProps {
+public external interface ValueChooserProps : Props {
     public var descriptor: MetaDescriptor?
     public var meta: ObservableMutableMeta
     public var actual: Meta

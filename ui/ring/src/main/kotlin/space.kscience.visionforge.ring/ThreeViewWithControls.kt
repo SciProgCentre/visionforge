@@ -24,7 +24,7 @@ import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeCanvasWithControlsProps : RProps {
+public external interface ThreeCanvasWithControlsProps : Props {
     public var context: Context
     public var builderOfSolid: Deferred<Solid?>
     public var selected: Name?

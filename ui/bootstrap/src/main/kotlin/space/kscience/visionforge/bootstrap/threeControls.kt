@@ -3,8 +3,8 @@ package space.kscience.visionforge.bootstrap
 import kotlinx.css.*
 import kotlinx.css.properties.border
 import react.FunctionComponent
+import react.PropsWithChildren
 import react.RBuilder
-import react.RProps
 import react.dom.h2
 import react.functionComponent
 import space.kscience.dataforge.names.Name
@@ -16,7 +16,7 @@ import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeControlsProps : RProps {
+public external interface ThreeControlsProps : PropsWithChildren {
     public var canvasOptions: Canvas3DOptions
     public var vision: Vision?
     public var selected: Name?

@@ -21,7 +21,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledSpan
 
-public external interface ObjectTreeProps : RProps {
+public external interface ObjectTreeProps : Props {
     public var name: Name
     public var selected: Name?
     public var obj: Vision

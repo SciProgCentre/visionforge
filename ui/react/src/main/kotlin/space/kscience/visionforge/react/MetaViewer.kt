@@ -20,7 +20,7 @@ import styled.css
 import styled.styledDiv
 import styled.styledSpan
 
-public external interface MetaViewerProps : RProps {
+public external interface MetaViewerProps : Props {
     /**
      * Root meta
      */

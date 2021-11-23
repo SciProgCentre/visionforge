@@ -14,7 +14,7 @@ import space.kscience.visionforge.solid.three.ThreePlugin
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeCanvasProps : RProps {
+public external interface ThreeCanvasProps : Props {
     public var context: Context
     public var options: Canvas3DOptions?
     public var solid: Solid?

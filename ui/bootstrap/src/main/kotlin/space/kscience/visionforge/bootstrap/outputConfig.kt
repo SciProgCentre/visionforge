@@ -10,8 +10,8 @@ import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.FunctionComponent
+import react.Props
 import react.RBuilder
-import react.RProps
 import react.dom.attrs
 import react.dom.button
 import react.functionComponent
@@ -42,7 +42,7 @@ public fun RBuilder.canvasControls(canvasOptions: Canvas3DOptions, vision: Visio
     }
 }
 
-public external interface CanvasControlsProps : RProps {
+public external interface CanvasControlsProps : Props {
     public var canvasOptions: Canvas3DOptions
     public var vision: Vision?
 }
@@ -54,7 +54,7 @@ public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionComp
                 border(1.px, BorderStyle.solid, Color.blue)
                 padding(4.px)
             }
-            props.vision?.let{ vision ->
+            props.vision?.let { vision ->
                 button {
                     +"Export"
                     attrs {

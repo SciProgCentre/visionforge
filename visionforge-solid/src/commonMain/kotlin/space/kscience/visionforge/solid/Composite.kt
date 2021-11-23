@@ -65,7 +65,7 @@ public fun SolidGroup.smartComposite(
     val group = SolidGroup(builder)
     if (name == null && group.meta.isEmpty()) {
         //append directly to group if no properties are defined
-        group.children.forEach { (key, value) ->
+        group.children.forEach { (_, value) ->
             value.parent = null
             set(null, value)
         }
