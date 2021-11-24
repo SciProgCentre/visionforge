@@ -9,7 +9,7 @@ import space.kscience.plotly.plot
 import styled.css
 import styled.styledDiv
 
-external interface PlotlyProps : RProps {
+external interface PlotlyProps : Props {
     var plot: Plot?
 }
 

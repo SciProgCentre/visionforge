@@ -7,7 +7,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
-import react.RProps
+import react.Props
 import react.dom.attrs
 import react.dom.button
 import react.dom.p
@@ -28,7 +28,7 @@ import styled.styledDiv
 import styled.styledSpan
 import kotlin.math.PI
 
-external interface MMAppProps : RProps {
+external interface MMAppProps : Props {
     var model: Model
     var context: Context
     var connection: HttpClient

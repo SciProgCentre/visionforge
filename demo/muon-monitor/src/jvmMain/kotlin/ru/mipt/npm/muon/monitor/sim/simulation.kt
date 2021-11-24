@@ -78,6 +78,6 @@ class Cos2TrackGenerator(
                 return makeTrack(x, y, thetaCandidate, phi)
             }
         }
-        throw RuntimeException("Failed to generate theta from distribution")
+        error("Failed to generate theta from distribution")
     }
 }

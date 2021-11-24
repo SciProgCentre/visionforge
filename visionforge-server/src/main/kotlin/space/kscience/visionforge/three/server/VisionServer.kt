@@ -43,6 +43,7 @@ import java.awt.Desktop
 import java.net.URI
 import kotlin.collections.set
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 
 /**
@@ -143,7 +144,7 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-                    vision.flowChanges(visionManager, Duration.milliseconds(updateInterval)).collect { update ->
+                    vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update

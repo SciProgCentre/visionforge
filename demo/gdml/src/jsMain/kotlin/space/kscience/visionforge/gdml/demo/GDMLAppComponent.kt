@@ -7,7 +7,7 @@ import kotlinx.css.*
 import org.w3c.files.File
 import org.w3c.files.FileReader
 import org.w3c.files.get
-import react.RProps
+import react.Props
 import react.dom.h2
 import react.functionComponent
 import react.useMemo
@@ -27,7 +27,7 @@ import space.kscience.visionforge.solid.Solids
 import styled.css
 import styled.styledDiv
 
-external interface GDMLAppProps : RProps {
+external interface GDMLAppProps : Props {
     var context: Context
     var vision: Solid?
     var selected: Name?

@@ -6,7 +6,7 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
-import react.RProps
+import react.Props
 import react.functionComponent
 import react.useEffect
 import react.useRef
@@ -16,7 +16,7 @@ import space.kscience.visionforge.useProperty
 import styled.css
 import styled.styledDiv
 
-external interface MarkupProps : RProps {
+external interface MarkupProps : Props {
     var markup: VisionOfMarkup?
 }
 

@@ -2,9 +2,8 @@ package space.kscience.visionforge.gdml.demo
 
 import kotlinx.browser.document
 import kotlinx.css.*
-import react.child
 import react.dom.render
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.gdml.toVision
@@ -16,7 +15,7 @@ import styled.injectGlobal
 private class GDMLDemoApp : Application {
 
     override fun start(state: Map<String, Any>) {
-        val context = Global.buildContext("gdml-demo"){
+        val context = Context("gdml-demo"){
             plugin(ThreePlugin)
         }
 

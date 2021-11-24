@@ -52,12 +52,12 @@ public class FXPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(meta) {
 
                 while (!FX.initialized.get()) {
                     if (Thread.interrupted()) {
-                        throw RuntimeException("Interrupted application start")
+                        error("Interrupted application start")
                     }
                 }
                 Platform.setImplicitExit(false)
             } else {
-                throw RuntimeException("FX Application not defined")
+                error("FX Application not defined")
             }
         }
     }

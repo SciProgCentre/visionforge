@@ -2,7 +2,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.css.*
-import react.RProps
+import react.Props
 import react.functionComponent
 import space.kscience.dataforge.context.Context
 import space.kscience.plotly.layout
@@ -16,7 +16,7 @@ import styled.css
 import styled.styledDiv
 import kotlin.math.sqrt
 
-external interface DemoProps : RProps {
+external interface DemoProps : Props {
     var context: Context
 }
 

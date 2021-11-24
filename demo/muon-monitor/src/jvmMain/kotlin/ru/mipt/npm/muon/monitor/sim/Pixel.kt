@@ -67,7 +67,7 @@ internal class SC1Aux(val sc: SC1, var efficiency: Double = 1.0) {
             UPPER_LAYER_Z -> 1
             CENTRAL_LAYER_Z -> 2;
             LOWER_LAYER_Z -> 3;
-            else -> throw RuntimeException("Unknown layer");
+            else -> error("Unknown layer");
         }
     }
 
