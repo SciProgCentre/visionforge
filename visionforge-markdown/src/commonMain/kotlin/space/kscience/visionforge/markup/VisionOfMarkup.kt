@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -17,9 +16,6 @@ import space.kscience.visionforge.VisionBase
 public class VisionOfMarkup(
     public val format: String = COMMONMARK_FORMAT
 ) : VisionBase() {
-
-    //FIXME to be removed after https://github.com/Kotlin/kotlinx.serialization/issues/1602 fix
-    protected override var properties: MutableMeta? = null
 
     //TODO add templates
 

@@ -29,10 +29,8 @@ internal data class MetaListener(
 @SerialName("vision")
 public open class VisionBase(
     @Transient override var parent: VisionGroup? = null,
+    protected var properties: MutableMeta? = null
 ) : Vision {
-
-    @Transient
-    protected open var properties: MutableMeta? = null
 
     @Synchronized
     protected fun getOrCreateProperties(): MutableMeta {

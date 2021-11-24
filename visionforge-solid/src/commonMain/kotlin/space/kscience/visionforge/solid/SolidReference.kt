@@ -2,7 +2,6 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.get
@@ -61,8 +60,6 @@ private fun childPropertyName(childName: Name, propertyName: Name): Name =
 public class SolidReferenceGroup(
     public val refName: Name,
 ) : VisionBase(), SolidReference, VisionGroup, Solid {
-
-    override var properties: MutableMeta? = null
 
     /**
      * Recursively search for defined template in the parent

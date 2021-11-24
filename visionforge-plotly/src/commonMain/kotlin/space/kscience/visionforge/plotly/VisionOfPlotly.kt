@@ -2,7 +2,6 @@ package space.kscience.visionforge.plotly
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
@@ -12,8 +11,6 @@ import space.kscience.visionforge.html.VisionOutput
 @Serializable
 @SerialName("vision.plotly")
 public class VisionOfPlotly private constructor() : VisionBase() {
-    //FIXME to be removed after https://github.com/Kotlin/kotlinx.serialization/issues/1602 fix
-    override var properties: MutableMeta? = null
 
     public constructor(plot: Plot) : this() {
         properties = plot.meta
