@@ -4,7 +4,7 @@ plugins {
 //    kotlin("js") version "1.5.30" apply false
 }
 
-val dataforgeVersion by extra("0.5.2-dev-2")
+val dataforgeVersion by extra("0.5.2-dev-3")
 val fxVersion by extra("11")
 
 allprojects {

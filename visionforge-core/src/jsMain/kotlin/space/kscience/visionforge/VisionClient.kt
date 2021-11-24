@@ -17,7 +17,7 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOI
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import kotlin.reflect.KClass
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
@@ -105,7 +105,7 @@ public class VisionClient : AbstractPlugin() {
                     onopen = {
                         feedbackJob = vision.flowChanges(
                             visionManager,
-                            Duration.Companion.milliseconds(300)
+                            300.milliseconds
                         ).onEach { change ->
                             send(visionManager.encodeToString(change))
                         }.launchIn(visionManager.context)
