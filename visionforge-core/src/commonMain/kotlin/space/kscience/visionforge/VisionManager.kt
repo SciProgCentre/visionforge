@@ -1,5 +1,6 @@
 package space.kscience.visionforge
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -68,12 +69,14 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             }
         }
 
+        @OptIn(ExperimentalSerializationApi::class)
         public val defaultJson: Json = Json {
             serializersModule = defaultSerialModule
             prettyPrint = true
             useArrayPolymorphism = false
             encodeDefaults = false
             ignoreUnknownKeys = true
+            explicitNulls = false
         }
 
         internal val visionSerializer: PolymorphicSerializer<Vision> = PolymorphicSerializer(Vision::class)

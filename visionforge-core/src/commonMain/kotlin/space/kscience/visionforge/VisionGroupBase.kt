@@ -1,5 +1,6 @@
 package space.kscience.visionforge
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -16,7 +17,7 @@ private class StructureChangeListener(val owner: Any?, val callback: VisionGroup
 @Serializable
 @SerialName("vision.group")
 public open class VisionGroupBase(
-    @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
+    @EncodeDefault @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
 ) : VisionBase(), MutableVisionGroup {
 
     /**
@@ -102,21 +103,19 @@ public open class VisionGroupBase(
     /**
      * Recursively create a child group
      */
-    private fun createGroups(name: Name): VisionGroupBase {
-        return when {
-            name.isEmpty() -> error("Should be unreachable")
-            name.length == 1 -> {
-                val token = name.tokens.first()
-                when (val current = children[token]) {
-                    null -> createGroup().also { child ->
-                        attachChild(token, child)
-                    }
-                    is VisionGroupBase -> current
-                    else -> error("Can't create group with name $name because it exists and not a group")
+    private fun createGroups(name: Name): VisionGroupBase = when {
+        name.isEmpty() -> error("Should be unreachable")
+        name.length == 1 -> {
+            val token = name.tokens.first()
+            when (val current = children[token]) {
+                null -> createGroup().also { child ->
+                    attachChild(token, child)
                 }
+                is VisionGroupBase -> current
+                else -> error("Can't create group with name $name because it exists and not a group")
             }
-            else -> createGroups(name.tokens.first().asName()).createGroups(name.cutFirst())
         }
+        else -> createGroups(name.tokens.first().asName()).createGroups(name.cutFirst())
     }
 
     /**

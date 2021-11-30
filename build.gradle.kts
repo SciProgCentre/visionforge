@@ -4,7 +4,7 @@ plugins {
 //    kotlin("js") version "1.5.30" apply false
 }
 
-val dataforgeVersion by extra("0.5.2-dev-3")
+val dataforgeVersion by extra("0.5.2")
 val fxVersion by extra("11")
 
 allprojects {
@@ -16,7 +16,7 @@ allprojects {
     }
 
     group = "space.kscience"
-    version = "0.2.0-dev-25"
+    version = "0.2.0"
 }
 
 subprojects {

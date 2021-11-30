@@ -1,5 +1,6 @@
 package space.kscience.visionforge
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -29,7 +30,7 @@ internal data class MetaListener(
 @SerialName("vision")
 public open class VisionBase(
     @Transient override var parent: VisionGroup? = null,
-    protected var properties: MutableMeta? = null
+    @EncodeDefault protected var properties: MutableMeta? = null,
 ) : Vision {
 
     @Synchronized
@@ -130,7 +131,6 @@ public open class VisionBase(
     }
 
     override val descriptor: MetaDescriptor? get() = null
-
 
     override fun invalidateProperty(propertyName: Name) {
         if (propertyName == STYLE_KEY) {

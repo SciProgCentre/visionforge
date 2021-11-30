@@ -37,8 +37,7 @@ fun FlowContent.renderVisionFragment(
 @DFExperimental
 class HtmlTagTest {
 
-    fun VisionOutput.base(block: VisionBase.() -> Unit) =
-        VisionBase().apply(block)
+    fun VisionOutput.base(block: VisionBase.() -> Unit) = VisionBase().apply(block)
 
     val fragment: HtmlVisionFragment = {
         div {

@@ -44,6 +44,7 @@ import java.net.URI
 import kotlin.collections.set
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
 
 /**
@@ -121,7 +122,7 @@ public class VisionServer internal constructor(
     /**
      * Server a map of visions without providing explicit html page for them
      */
-    @OptIn(DFExperimental::class)
+    @OptIn(DFExperimental::class, ExperimentalTime::class)
     public fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
         application.log.info("Serving visions $visions at $route")
 

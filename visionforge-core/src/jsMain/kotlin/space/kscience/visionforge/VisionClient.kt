@@ -18,6 +18,7 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
@@ -56,6 +57,7 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
+    @OptIn(ExperimentalTime::class)
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
             val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")

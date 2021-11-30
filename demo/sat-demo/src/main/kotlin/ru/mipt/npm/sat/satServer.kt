@@ -7,7 +7,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.html.div
 import kotlinx.html.h1
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.three.server.*
@@ -15,7 +15,7 @@ import space.kscience.visionforge.visionManager
 import kotlin.random.Random
 
 fun main() {
-    val satContext = Global.buildContext ("sat") {
+    val satContext = Context("sat") {
         plugin(Solids)
     }
 
