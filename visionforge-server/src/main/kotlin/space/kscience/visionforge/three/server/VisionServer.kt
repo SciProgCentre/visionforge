@@ -34,10 +34,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.flowChanges
-import space.kscience.visionforge.html.HtmlFragment
-import space.kscience.visionforge.html.HtmlVisionFragment
-import space.kscience.visionforge.html.VisionTagConsumer
-import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.html.*
 import space.kscience.visionforge.three.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
@@ -71,36 +68,12 @@ public class VisionServer internal constructor(
         globalHeaders.add(block)
     }
 
-    private fun HTML.buildPage(
-        visionFragment: HtmlVisionFragment,
+    private fun HTML.visionPage(
         title: String,
         headers: List<HtmlFragment>,
+        visionFragment: HtmlVisionFragment,
     ): Map<Name, Vision> {
-        val visionMap = HashMap<Name, Vision>()
-
-        val consumer = object : VisionTagConsumer<Any?>(consumer, visionManager) {
-            override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
-                visionMap[name] = vision
-                // Toggle update mode
-                if (dataConnect) {
-                    attributes[OUTPUT_CONNECT_ATTRIBUTE] = "auto"
-                }
-
-                if (dataFetch) {
-                    attributes[OUTPUT_FETCH_ATTRIBUTE] = "auto"
-                }
-
-                if (dataEmbed) {
-                    script {
-                        type = "text/json"
-                        attributes["class"] = OUTPUT_DATA_CLASS
-                        unsafe {
-                            +"\n${visionManager.encodeToString(vision)}\n"
-                        }
-                    }
-                }
-            }
-        }
+        var visionMap: Map<Name,Vision>? = null
 
         head {
             meta {
@@ -113,16 +86,22 @@ public class VisionServer internal constructor(
         }
         body {
             //Load the fragment and remember all loaded visions
-            visionFragment(consumer)
+            visionMap = embedVisionFragment(
+                manager = visionManager,
+                embedData = true,
+                fetchDataUrl = VisionTagConsumer.AUTO_DATA_ATTRIBUTE,
+                fetchUpdatesUrl = VisionTagConsumer.AUTO_DATA_ATTRIBUTE,
+                fragment = visionFragment
+            )
         }
 
-        return visionMap
+        return visionMap!!
     }
 
     /**
      * Server a map of visions without providing explicit html page for them
      */
-    @OptIn(DFExperimental::class, ExperimentalTime::class)
+    @OptIn(DFExperimental::class)
     public fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
         application.log.info("Serving visions $visions at $route")
 
@@ -176,6 +155,22 @@ public class VisionServer internal constructor(
     }
 
     /**
+     * Create a static html page and serve visions produced in the process
+     */
+    @DFExperimental
+    public fun createHtmlAndServe(route: String, title: String, headers: List<HtmlFragment>, visionFragment: HtmlVisionFragment): String{
+        val htmlString =  createHTML().apply {
+            html {
+                visionPage(title, headers, visionFragment).also {
+                    serveVisions(route, it)
+                }
+            }
+        }.finalize()
+
+        return htmlString
+    }
+
+    /**
      * Serv visions in a given [route] without providing a page template
      */
     public fun serveVisions(route: String, visions: Map<Name, Vision>): Unit {
@@ -203,7 +198,7 @@ public class VisionServer internal constructor(
         val cachedHtml: String? = if (cacheFragments) {
             //Create and cache page html and map of visions
             createHTML(true).html {
-                visions.putAll(buildPage(visionFragment, title, headers))
+                visions.putAll(visionPage(title, headers, visionFragment))
             }
         } else {
             null
@@ -219,7 +214,7 @@ public class VisionServer internal constructor(
                             //re-create html and vision list on each call
                             call.respondHtml {
                                 visions.clear()
-                                visions.putAll(buildPage(visionFragment, title, headers))
+                                visions.putAll(visionPage(title, headers, visionFragment))
                             }
                         } else {
                             //Use cached html

@@ -22,6 +22,19 @@ rootProject.name = "visionforge"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
 
+dependencyResolutionManagement {
+    repositories {
+        maven("https://repo.kotlin.link")
+        mavenCentral()
+    }
+
+    versionCatalogs {
+        create("npmlibs") {
+            from("ru.mipt.npm:version-catalog:0.10.7")
+        }
+    }
+}
+
 include(
 //    ":ui",
     ":ui:react",
@@ -46,5 +59,6 @@ include(
     ":demo:jupyter-playground",
     ":demo:plotly-fx",
     ":demo:js-playground",
-    ":jupyter:visionforge-gdml-jupyter"
+    ":jupyter:visionforge-jupyter-base",
+    ":jupyter:visionforge-jupyter-gdml"
 )

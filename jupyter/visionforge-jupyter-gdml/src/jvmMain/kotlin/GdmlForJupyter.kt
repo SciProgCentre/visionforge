@@ -25,7 +25,7 @@ internal class GdmlForJupyter : JupyterIntegration() {
     private var counter = 0
 
     private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().apply {
-        embedAndRenderVisionFragment(context.visionManager, counter++, fragment)
+        embedAndRenderVisionFragment(context.visionManager, counter++, fragment = fragment)
     }.finalize()
 
     override fun Builder.onLoaded() {

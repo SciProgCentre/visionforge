@@ -18,7 +18,6 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
 
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
@@ -27,7 +26,7 @@ public class VisionClient : AbstractPlugin() {
     //private val visionMap = HashMap<Element, Vision>()
 
     /**
-     * Up-going tree traversal in search for endpoint attribute
+     * Up-going tree traversal in search for endpoint attribute. If element is null, return window URL
      */
     private fun resolveEndpoint(element: Element?): String {
         if (element == null) return window.location.href
@@ -57,14 +56,13 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
-    @OptIn(ExperimentalTime::class)
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
             val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
             renderer.render(element, vision, outputMeta)
 
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
-                val wsUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {
@@ -154,7 +152,7 @@ public class VisionClient : AbstractPlugin() {
             element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
                 val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 
-                val fetchUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val fetchUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {

@@ -126,6 +126,8 @@ public abstract class VisionTagConsumer<R>(
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"
         public const val DEFAULT_ENDPOINT: String = "."
 
+        public const val AUTO_DATA_ATTRIBUTE: String = "@auto"
+
         public const val DEFAULT_VISION_NAME: String = "vision"
     }
 }
