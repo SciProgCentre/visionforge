@@ -52,8 +52,6 @@ kotlin {
         jsMain {
             dependencies {
                 implementation(project(":ui:ring"))
-                implementation(npmlibs.ktor.client.js)
-                implementation(npmlibs.ktor.client.serialization)
                 implementation(project(":visionforge-threejs"))
                 //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
             }

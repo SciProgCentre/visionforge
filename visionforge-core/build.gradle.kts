@@ -15,7 +15,7 @@ kotlin {
         commonMain {
             dependencies {
                 api("space.kscience:dataforge-context:$dataforgeVersion")
-                api("org.jetbrains.kotlinx:kotlinx-html:${ru.mipt.npm.gradle.KScienceVersions.htmlVersion}")
+                api(npmlibs.kotlinx.html)
                 api("org.jetbrains.kotlin-wrappers:kotlin-css")
             }
         }

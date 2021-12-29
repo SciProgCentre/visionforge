@@ -38,10 +38,7 @@ import space.kscience.visionforge.html.*
 import space.kscience.visionforge.three.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
-import kotlin.collections.set
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.ExperimentalTime
 
 
 /**
@@ -53,10 +50,30 @@ public class VisionServer internal constructor(
     private val rootRoute: String,
 ) : Configurable, CoroutineScope by application {
     override val meta: ObservableMutableMeta = MutableMeta()
+
+    /**
+     * Update minimal interval between updates in milliseconds (if there are no updates, push will not happen
+     */
     public var updateInterval: Long by meta.long(300, key = UPDATE_INTERVAL_KEY)
+
+    /**
+     * Cache page fragments. If false, pages will be reconstructed on each call. Default: `true`
+     */
     public var cacheFragments: Boolean by meta.boolean(true)
+
+    /**
+     * Embed the initial state of the vision inside its html tag. Default: `true`
+     */
     public var dataEmbed: Boolean by meta.boolean(true, Name.parse("data.embed"))
+
+    /**
+     * Fetch data on vision load. Overrides embedded data. Default: `false`
+     */
     public var dataFetch: Boolean by meta.boolean(false, Name.parse("data.fetch"))
+
+    /**
+     * Connect to server to get pushes. The address of the server is embedded in the tag. Default: `true`
+     */
     public var dataConnect: Boolean by meta.boolean(true, Name.parse("data.connect"))
 
     /**
@@ -64,6 +81,9 @@ public class VisionServer internal constructor(
      */
     private val globalHeaders: ArrayList<HtmlFragment> = ArrayList()
 
+    /**
+     * Add a header to all pages produced by this server
+     */
     public fun header(block: TagConsumer<*>.() -> Unit) {
         globalHeaders.add(block)
     }
@@ -73,7 +93,7 @@ public class VisionServer internal constructor(
         headers: List<HtmlFragment>,
         visionFragment: HtmlVisionFragment,
     ): Map<Name, Vision> {
-        var visionMap: Map<Name,Vision>? = null
+        var visionMap: Map<Name, Vision>? = null
 
         head {
             meta {
@@ -102,7 +122,7 @@ public class VisionServer internal constructor(
      * Server a map of visions without providing explicit html page for them
      */
     @OptIn(DFExperimental::class)
-    public fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
+    internal fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
         application.log.info("Serving visions $visions at $route")
 
         //Update websocket
@@ -158,8 +178,13 @@ public class VisionServer internal constructor(
      * Create a static html page and serve visions produced in the process
      */
     @DFExperimental
-    public fun createHtmlAndServe(route: String, title: String, headers: List<HtmlFragment>, visionFragment: HtmlVisionFragment): String{
-        val htmlString =  createHTML().apply {
+    public fun createHtmlAndServe(
+        route: String,
+        title: String,
+        headers: List<HtmlFragment>,
+        visionFragment: HtmlVisionFragment,
+    ): String {
+        val htmlString = createHTML().apply {
             html {
                 visionPage(title, headers, visionFragment).also {
                     serveVisions(route, it)
@@ -171,7 +196,7 @@ public class VisionServer internal constructor(
     }
 
     /**
-     * Serv visions in a given [route] without providing a page template
+     * Serve visions in a given [route] without providing a page template
      */
     public fun serveVisions(route: String, visions: Map<Name, Vision>): Unit {
         application.routing {
@@ -245,6 +270,9 @@ public inline fun VisionServer.useScript(src: String, crossinline block: SCRIPT.
     }
 }
 
+/**
+ * Use css with given stylesheet link as a global header for all pages.
+ */
 public inline fun VisionServer.useCss(href: String, crossinline block: LINK.() -> Unit = {}) {
     header {
         link {
@@ -256,7 +284,7 @@ public inline fun VisionServer.useCss(href: String, crossinline block: LINK.() -
 }
 
 /**
- * Attach plotly application to given server
+ * Attach VisionForge server application to given server
  */
 public fun Application.visionServer(context: Context, route: String = DEFAULT_PAGE): VisionServer {
     if (featureOrNull(WebSockets) == null) {
@@ -286,6 +314,9 @@ public fun Application.visionServer(context: Context, route: String = DEFAULT_PA
     return VisionServer(visionManager, this, route)
 }
 
+/**
+ * Start a stand-alone VisionForge server at given host/port
+ */
 public fun VisionManager.serve(
     host: String = "localhost",
     port: Int = 7777,
@@ -294,10 +325,16 @@ public fun VisionManager.serve(
     visionServer(context).apply(block)
 }.start()
 
-public fun ApplicationEngine.show() {
+/**
+ * Connect to a given Ktor server using browser
+ */
+public fun ApplicationEngine.openInBrowser() {
     val connector = environment.connectors.first()
     val uri = URI("http", null, connector.host, connector.port, null, null, null)
     Desktop.getDesktop().browse(uri)
 }
 
+/**
+ * Stop the server with default timeouts
+ */
 public fun ApplicationEngine.close(): Unit = stop(1000, 5000)

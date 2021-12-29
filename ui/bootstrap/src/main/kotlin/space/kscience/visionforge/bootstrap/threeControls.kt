@@ -2,11 +2,11 @@ package space.kscience.visionforge.bootstrap
 
 import kotlinx.css.*
 import kotlinx.css.properties.border
-import react.FunctionComponent
+import react.FC
 import react.PropsWithChildren
 import react.RBuilder
 import react.dom.h2
-import react.functionComponent
+import react.fc
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
@@ -24,7 +24,7 @@ public external interface ThreeControlsProps : PropsWithChildren {
 }
 
 @JsExport
-public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionComponent { props ->
+public val ThreeControls: FC<ThreeControlsProps> = fc { props ->
     tabPane(if (props.selected != null) "Properties" else null) {
         tab("Canvas") {
             card("Canvas configuration") {

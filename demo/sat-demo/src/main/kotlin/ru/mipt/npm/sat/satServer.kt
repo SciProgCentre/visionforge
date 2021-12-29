@@ -35,7 +35,7 @@ fun main() {
         }
     }
 
-    server.show()
+    server.openInBrowser()
 
     GlobalScope.launch {
         while (isActive) {

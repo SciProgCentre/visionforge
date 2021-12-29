@@ -9,7 +9,7 @@ import org.w3c.files.FileReader
 import org.w3c.files.get
 import react.Props
 import react.dom.h2
-import react.functionComponent
+import react.fc
 import react.useMemo
 import react.useState
 import space.kscience.dataforge.context.Context
@@ -34,7 +34,7 @@ external interface GDMLAppProps : Props {
 }
 
 @JsExport
-val GDMLApp = functionComponent<GDMLAppProps>("GDMLApp") { props ->
+val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
     val visionManager = useMemo(props.context) { props.context.fetch(Solids).visionManager }
     var deferredVision: Deferred<Solid?> by useState {
         CompletableDeferred(props.vision)

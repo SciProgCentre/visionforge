@@ -1,17 +1,19 @@
 package ru.mipt.npm.muon.monitor
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
+import kotlinx.browser.window
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
+import kotlinx.serialization.json.Json
+import org.w3c.fetch.RequestInit
 import react.Props
 import react.dom.attrs
 import react.dom.button
 import react.dom.p
-import react.functionComponent
+import react.fc
 import react.useMemo
 import react.useState
 import space.kscience.dataforge.context.Context
@@ -31,13 +33,12 @@ import kotlin.math.PI
 external interface MMAppProps : Props {
     var model: Model
     var context: Context
-    var connection: HttpClient
     var selected: Name?
 }
 
 @OptIn(DelicateCoroutinesApi::class)
 @JsExport
-val MMApp = functionComponent<MMAppProps>("Muon monitor") { props ->
+val MMApp = fc<MMAppProps>("Muon monitor") { props ->
 
     val mmOptions = useMemo {
         Canvas3DOptions {
@@ -75,9 +76,21 @@ val MMApp = functionComponent<MMAppProps>("Muon monitor") { props ->
                                 attrs {
                                     onClickFunction = {
                                         context.launch {
-                                            val event = props.connection.get<Event>(
-                                                "http://localhost:8080/event"
-                                            )
+//                                            val event = props.connection.get<Event>(
+//                                                "http://localhost:8080/event"
+//                                            )
+                                            val event = window.fetch(
+                                                "http://localhost:8080/event",
+                                                RequestInit("GET")
+                                            ).then { response ->
+                                                if (response.ok) {
+                                                    response.text()
+                                                } else {
+                                                    error("Failed to get event")
+                                                }
+                                            }.then { body ->
+                                                Json.decodeFromString(Event.serializer(), body)
+                                            }.await()
                                             events = events + event
                                             props.model.displayEvent(event)
                                         }
@@ -102,7 +115,7 @@ val MMApp = functionComponent<MMAppProps>("Muon monitor") { props ->
                             }
                             +" : "
                             styledSpan {
-                                css{
+                                css {
                                     color = Color.blue
                                 }
                                 +event.hits.toString()

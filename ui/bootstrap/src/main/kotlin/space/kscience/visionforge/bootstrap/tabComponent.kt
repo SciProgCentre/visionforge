@@ -18,7 +18,7 @@ public external interface TabProps : PropsWithChildren {
 }
 
 @JsExport
-public val Tab: FunctionComponent<TabProps> = functionComponent { props ->
+public val Tab: FC<TabProps> = fc { props ->
     props.children()
 }
 
@@ -27,7 +27,7 @@ public external interface TabPaneProps : PropsWithChildren {
 }
 
 @JsExport
-public val TabPane: FunctionComponent<TabPaneProps> = functionComponent("TabPane") { props ->
+public val TabPane: FC<TabPaneProps> = fc("TabPane") { props ->
     var activeTab: String? by useState(props.activeTab)
 
     val children: Array<out ReactElement?> = Children.map(props.children) {

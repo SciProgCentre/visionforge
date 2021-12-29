@@ -9,12 +9,12 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.FunctionComponent
+import react.FC
 import react.Props
 import react.RBuilder
 import react.dom.attrs
 import react.dom.button
-import react.functionComponent
+import react.fc
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
@@ -52,7 +52,7 @@ internal external interface CanvasControlsProps : Props {
     public var vision: Vision?
 }
 
-internal val CanvasControls: FunctionComponent<CanvasControlsProps> = functionComponent("CanvasControls") { props ->
+internal val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
@@ -94,7 +94,7 @@ public external interface ThreeControlsProps : Props {
 }
 
 @JsExport
-public val ThreeControls: FunctionComponent<ThreeControlsProps> = functionComponent { props ->
+public val ThreeControls: FC<ThreeControlsProps> = fc { props ->
     SmartTabs("Tree") {
         props.vision?.let {
             Tab("Tree") {

@@ -7,7 +7,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.Props
-import react.functionComponent
+import react.fc
 import react.useEffect
 import react.useRef
 import space.kscience.visionforge.markup.VisionOfMarkup
@@ -20,7 +20,7 @@ external interface MarkupProps : Props {
     var markup: VisionOfMarkup?
 }
 
-val Markup = functionComponent<MarkupProps>("Markup") { props ->
+val Markup = fc<MarkupProps>("Markup") { props ->
     val elementRef = useRef<Element>(null)
 
     useEffect(props.markup, elementRef) {

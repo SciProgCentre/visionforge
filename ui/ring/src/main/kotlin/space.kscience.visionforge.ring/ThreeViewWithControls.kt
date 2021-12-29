@@ -76,110 +76,109 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): Unit = styled
 }
 
 @JsExport
-public val ThreeCanvasWithControls: FunctionComponent<ThreeCanvasWithControlsProps> =
-    functionComponent("ThreeViewWithControls") { props ->
-        var selected by useState { props.selected }
-        var solid: Solid? by useState(null)
+public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("ThreeViewWithControls") { props ->
+    var selected by useState { props.selected }
+    var solid: Solid? by useState(null)
 
-        useEffect {
-            props.context.launch {
-                solid = props.builderOfSolid.await().also {
-                    it?.root(props.context.visionManager)
-                }
-            }
-        }
-
-        val onSelect: (Name?) -> Unit = {
-            selected = it
-        }
-
-        val options = useMemo(props.options) {
-            (props.options?: Canvas3DOptions()).apply {
-                this.onSelect = onSelect
-            }
-        }
-
-        val selectedVision: Vision? = useMemo(props.builderOfSolid, selected) {
-            selected?.let {
-                when {
-                    it.isEmpty() -> solid
-                    else -> (solid as? VisionGroup)?.get(it)
-                }
-            }
-        }
-
-
-        flexRow {
-            css {
-                height = 100.pct
-                width = 100.pct
-                flexWrap = FlexWrap.wrap
-                alignItems = Align.stretch
-                alignContent = Align.stretch
-            }
-
-            flexColumn {
-                css {
-                    height = 100.pct
-                    minWidth = 600.px
-                    flex(10.0, 1.0, FlexBasis("600px"))
-                    position = Position.relative
-                }
-
-                if (solid == null) {
-                    LoaderScreen {
-                        attrs {
-                            message = "Loading Three vision"
-                        }
-                    }
-                } else {
-                    child(ThreeCanvasComponent) {
-                        attrs {
-                            this.context = props.context
-                            this.solid = solid
-                            this.selected = selected
-                            this.options = options
-                        }
-                    }
-                }
-
-                selectedVision?.let { vision ->
-                    styledDiv {
-                        css {
-                            position = Position.absolute
-                            top = 5.px
-                            right = 5.px
-                            width = 450.px
-                        }
-                        Island {
-                            IslandHeader {
-                                attrs {
-                                    border = true
-                                }
-                                nameCrumbs(selected) { selected = it }
-                            }
-                            IslandContent {
-                                propertyEditor(
-                                    ownProperties = vision.meta,
-                                    allProperties = vision.computeProperties(),
-                                    descriptor = vision.descriptor,
-                                    key = selected
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            flexColumn {
-                css {
-                    padding(4.px)
-                    minWidth = 400.px
-                    height = 100.pct
-                    overflowY = Overflow.auto
-                    flex(1.0, 10.0, FlexBasis("300px"))
-                }
-                ringThreeControls(options, solid, selected, onSelect, additionalTabs = props.additionalTabs)
+    useEffect {
+        props.context.launch {
+            solid = props.builderOfSolid.await().also {
+                it?.root(props.context.visionManager)
             }
         }
     }
+
+    val onSelect: (Name?) -> Unit = {
+        selected = it
+    }
+
+    val options = useMemo(props.options) {
+        (props.options ?: Canvas3DOptions()).apply {
+            this.onSelect = onSelect
+        }
+    }
+
+    val selectedVision: Vision? = useMemo(props.builderOfSolid, selected) {
+        selected?.let {
+            when {
+                it.isEmpty() -> solid
+                else -> (solid as? VisionGroup)?.get(it)
+            }
+        }
+    }
+
+
+    flexRow {
+        css {
+            height = 100.pct
+            width = 100.pct
+            flexWrap = FlexWrap.wrap
+            alignItems = Align.stretch
+            alignContent = Align.stretch
+        }
+
+        flexColumn {
+            css {
+                height = 100.pct
+                minWidth = 600.px
+                flex(10.0, 1.0, FlexBasis("600px"))
+                position = Position.relative
+            }
+
+            if (solid == null) {
+                LoaderScreen {
+                    attrs {
+                        message = "Loading Three vision"
+                    }
+                }
+            } else {
+                child(ThreeCanvasComponent) {
+                    attrs {
+                        this.context = props.context
+                        this.solid = solid
+                        this.selected = selected
+                        this.options = options
+                    }
+                }
+            }
+
+            selectedVision?.let { vision ->
+                styledDiv {
+                    css {
+                        position = Position.absolute
+                        top = 5.px
+                        right = 5.px
+                        width = 450.px
+                    }
+                    Island {
+                        IslandHeader {
+                            attrs {
+                                border = true
+                            }
+                            nameCrumbs(selected) { selected = it }
+                        }
+                        IslandContent {
+                            propertyEditor(
+                                ownProperties = vision.meta,
+                                allProperties = vision.computeProperties(),
+                                descriptor = vision.descriptor,
+                                key = selected
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        flexColumn {
+            css {
+                padding(4.px)
+                minWidth = 400.px
+                height = 100.pct
+                overflowY = Overflow.auto
+                flex(1.0, 10.0, FlexBasis("300px"))
+            }
+            ringThreeControls(options, solid, selected, onSelect, additionalTabs = props.additionalTabs)
+        }
+    }
+}
 

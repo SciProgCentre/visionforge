@@ -42,7 +42,7 @@ public external interface MetaViewerProps : Props {
     public var descriptor: MetaDescriptor?
 }
 
-private val MetaViewerItem: FunctionComponent<MetaViewerProps> = functionComponent("MetaViewerItem") { props ->
+private val MetaViewerItem: FC<MetaViewerProps> = fc("MetaViewerItem") { props ->
     metaViewerItem(props)
 }
 
@@ -127,7 +127,7 @@ private fun RBuilder.metaViewerItem(props: MetaViewerProps) {
 }
 
 @JsExport
-public val MetaViewer: FunctionComponent<MetaViewerProps> = functionComponent("MetaViewer") { props ->
+public val MetaViewer: FC<MetaViewerProps> = fc("MetaViewer") { props ->
     child(MetaViewerItem) {
         attrs {
             this.key = ""

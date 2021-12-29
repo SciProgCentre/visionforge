@@ -9,12 +9,12 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.FunctionComponent
+import react.FC
 import react.Props
 import react.RBuilder
 import react.dom.attrs
 import react.dom.button
-import react.functionComponent
+import react.fc
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.encodeToString
@@ -47,7 +47,7 @@ public external interface CanvasControlsProps : Props {
     public var vision: Vision?
 }
 
-public val CanvasControls: FunctionComponent<CanvasControlsProps> = functionComponent("CanvasControls") { props ->
+public val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {

@@ -46,6 +46,7 @@ private object RootDecoder {
         private val refCache: List<RefEntry>,
     ) : KSerializer<T> by tSerializer {
 
+        @Suppress("UNCHECKED_CAST")
         override fun deserialize(decoder: Decoder): T {
             val input = decoder as JsonDecoder
             val element = input.decodeJsonElement()

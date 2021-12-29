@@ -1,10 +1,6 @@
 package ru.mipt.npm.muon.monitor
 
-import io.ktor.client.HttpClient
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
 import kotlinx.browser.document
-import react.child
 import react.dom.render
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
@@ -15,15 +11,9 @@ import space.kscience.visionforge.startApplication
 
 private class MMDemoApp : Application {
 
-    private val connection = HttpClient {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
-    }
-
     override fun start(state: Map<String, Any>) {
 
-        val context = Context("MM-demo"){
+        val context = Context("MM-demo") {
             plugin(ThreePlugin)
         }
         val visionManager = context.fetch(VisionManager)
@@ -35,7 +25,6 @@ private class MMDemoApp : Application {
             child(MMApp) {
                 attrs {
                     this.model = model
-                    this.connection = this@MMDemoApp.connection
                     this.context = context
                 }
             }
