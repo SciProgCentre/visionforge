@@ -10,11 +10,11 @@ import kotlinx.html.js.onKeyDownFunction
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.events.Event
-import react.FunctionComponent
+import react.FC
 import react.Props
 import react.dom.attrs
 import react.dom.option
-import react.functionComponent
+import react.fc
 import react.useState
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -36,136 +36,131 @@ public external interface ValueChooserProps : Props {
 }
 
 @JsExport
-public val StringValueChooser: FunctionComponent<ValueChooserProps> =
-    functionComponent("StringValueChooser") { props ->
-        var value by useState(props.actual.string ?: "")
-        val keyDown: (Event) -> Unit = { event ->
-            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-                value = (event.target as HTMLInputElement).value
-                props.meta.value = value.asValue()
-            }
+public val StringValueChooser: FC<ValueChooserProps> = fc("StringValueChooser") { props ->
+    var value by useState(props.actual.string ?: "")
+    val keyDown: (Event) -> Unit = { event ->
+        if (event.type == "keydown" && event.asDynamic().key == "Enter") {
+            value = (event.target as HTMLInputElement).value
+            props.meta.value = value.asValue()
         }
-        val handleChange: (Event) -> Unit = {
-            value = (it.target as HTMLInputElement).value
+    }
+    val handleChange: (Event) -> Unit = {
+        value = (it.target as HTMLInputElement).value
+    }
+    styledInput(type = InputType.text) {
+        css {
+            width = 100.pct
         }
-        styledInput(type = InputType.text) {
-            css {
-                width = 100.pct
-            }
-            attrs {
-                this.value = value
-                onKeyDownFunction = keyDown
-                onChangeFunction = handleChange
+        attrs {
+            this.value = value
+            onKeyDownFunction = keyDown
+            onChangeFunction = handleChange
+        }
+    }
+}
+
+@JsExport
+public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser") { props ->
+    val handleChange: (Event) -> Unit = {
+        val newValue = (it.target as HTMLInputElement).checked
+        props.meta.value = newValue.asValue()
+    }
+    styledInput(type = InputType.checkBox) {
+        css {
+            width = 100.pct
+        }
+        attrs {
+            //this.attributes["indeterminate"] = (props.item == null).toString()
+            checked = props.actual.boolean ?: false
+            onChangeFunction = handleChange
+        }
+    }
+}
+
+@JsExport
+public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") { props ->
+    var innerValue by useState(props.actual.string ?: "")
+    val keyDown: (Event) -> Unit = { event ->
+        if (event.type == "keydown" && event.asDynamic().key == "Enter") {
+            innerValue = (event.target as HTMLInputElement).value
+            val number = innerValue.toDoubleOrNull()
+            if (number == null) {
+                console.error("The input value $innerValue is not a number")
+            } else {
+                props.meta.value = number.asValue()
             }
         }
     }
-
-@JsExport
-public val BooleanValueChooser: FunctionComponent<ValueChooserProps> =
-    functionComponent("BooleanValueChooser") { props ->
-        val handleChange: (Event) -> Unit = {
-            val newValue = (it.target as HTMLInputElement).checked
-            props.meta.value = newValue.asValue()
+    val handleChange: (Event) -> Unit = {
+        innerValue = (it.target as HTMLInputElement).value
+    }
+    styledInput(type = InputType.number) {
+        css {
+            width = 100.pct
         }
-        styledInput(type = InputType.checkBox) {
-            css {
-                width = 100.pct
+        attrs {
+            value = innerValue
+            onKeyDownFunction = keyDown
+            onChangeFunction = handleChange
+            props.descriptor?.attributes?.get("step").string?.let {
+                step = it
             }
-            attrs {
-                //this.attributes["indeterminate"] = (props.item == null).toString()
-                checked = props.actual.boolean ?: false
-                onChangeFunction = handleChange
+            props.descriptor?.attributes?.get("min").string?.let {
+                min = it
+            }
+            props.descriptor?.attributes?.get("max").string?.let {
+                max = it
             }
         }
     }
+}
 
 @JsExport
-public val NumberValueChooser: FunctionComponent<ValueChooserProps> =
-    functionComponent("NumberValueChooser") { props ->
-        var innerValue by useState(props.actual.string ?: "")
-        val keyDown: (Event) -> Unit = { event ->
-            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-                innerValue = (event.target as HTMLInputElement).value
-                val number = innerValue.toDoubleOrNull()
-                if (number == null) {
-                    console.error("The input value $innerValue is not a number")
-                } else {
-                    props.meta.value = number.asValue()
-                }
+public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { props ->
+    var selected by useState(props.actual.string ?: "")
+    val handleChange: (Event) -> Unit = {
+        selected = (it.target as HTMLSelectElement).value
+        props.meta.value = selected.asValue()
+    }
+    styledSelect {
+        css {
+            width = 100.pct
+        }
+        props.descriptor?.allowedValues?.forEach {
+            option {
+                +it.string
             }
         }
-        val handleChange: (Event) -> Unit = {
-            innerValue = (it.target as HTMLInputElement).value
-        }
-        styledInput(type = InputType.number) {
-            css {
-                width = 100.pct
-            }
-            attrs {
-                value = innerValue
-                onKeyDownFunction = keyDown
-                onChangeFunction = handleChange
-                props.descriptor?.attributes?.get("step").string?.let {
-                    step = it
-                }
-                props.descriptor?.attributes?.get("min").string?.let {
-                    min = it
-                }
-                props.descriptor?.attributes?.get("max").string?.let {
-                    max = it
-                }
-            }
+        attrs {
+            this.value = props.actual.string ?: ""
+            multiple = false
+            onChangeFunction = handleChange
         }
     }
+}
 
 @JsExport
-public val ComboValueChooser: FunctionComponent<ValueChooserProps> =
-    functionComponent("ComboValueChooser") { props ->
-        var selected by useState(props.actual.string ?: "")
-        val handleChange: (Event) -> Unit = {
-            selected = (it.target as HTMLSelectElement).value
-            props.meta.value = selected.asValue()
+public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { props ->
+    val handleChange: (Event) -> Unit = {
+        props.meta.value = (it.target as HTMLInputElement).value.asValue()
+    }
+    styledInput(type = InputType.color) {
+        css {
+            width = 100.pct
+            margin(0.px)
         }
-        styledSelect {
-            css {
-                width = 100.pct
-            }
-            props.descriptor?.allowedValues?.forEach {
-                option {
-                    +it.string
-                }
-            }
-            attrs {
-                this.value = props.actual.string ?: ""
-                multiple = false
-                onChangeFunction = handleChange
-            }
+        attrs {
+            this.value = props.actual.value?.let { value ->
+                if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
+                else value.string
+            } ?: "#000000"
+            onChangeFunction = handleChange
         }
     }
+}
 
 @JsExport
-public val ColorValueChooser: FunctionComponent<ValueChooserProps> =
-    functionComponent("ColorValueChooser") { props ->
-        val handleChange: (Event) -> Unit = {
-            props.meta.value = (it.target as HTMLInputElement).value.asValue()
-        }
-        styledInput(type = InputType.color) {
-            css {
-                width = 100.pct
-                margin(0.px)
-            }
-            attrs {
-                this.value = props.actual.value?.let { value ->
-                    if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                    else value.string
-                } ?: "#000000"
-                onChangeFunction = handleChange
-            }
-        }
-    }
-
-@JsExport
-public val ValueChooser: FunctionComponent<ValueChooserProps> = functionComponent("ValueChooser") { props ->
+public val ValueChooser: FC<ValueChooserProps> = fc("ValueChooser") { props ->
     val rawInput by useState(false)
 
     val descriptor = props.descriptor

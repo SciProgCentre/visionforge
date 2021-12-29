@@ -21,13 +21,11 @@ public external interface ThreeCanvasProps : Props {
     public var selected: Name?
 }
 
-public val ThreeCanvasComponent: FunctionComponent<ThreeCanvasProps> = functionComponent(
-    "ThreeCanvasComponent"
-) { props ->
+public val ThreeCanvasComponent: FC<ThreeCanvasProps> = fc("ThreeCanvasComponent") { props ->
     val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    val three: ThreePlugin = useMemo(props.context){ props.context.fetch(ThreePlugin) }
+    val three: ThreePlugin = useMemo(props.context) { props.context.fetch(ThreePlugin) }
 
     useEffect(props.solid, props.options, elementRef) {
         if (canvas == null) {

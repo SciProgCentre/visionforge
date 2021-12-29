@@ -42,6 +42,7 @@ public interface Point3D {
     }
 }
 
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable(Point3DSerializer::class)
 public interface MutablePoint3D : Point3D {
     override var x: Float
@@ -55,7 +56,6 @@ private class Point3DImpl(override var x: Float, override var y: Float, override
 internal object Point3DSerializer : KSerializer<Point3D> {
 
     override val descriptor: SerialDescriptor = Point3DImpl.serializer().descriptor
-
 
     override fun deserialize(decoder: Decoder): MutablePoint3D = decoder.decodeSerializableValue(Point3DImpl.serializer())
 

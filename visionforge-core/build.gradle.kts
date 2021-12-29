@@ -5,7 +5,9 @@ plugins {
 val dataforgeVersion: String by rootProject.extra
 
 kscience{
-    useSerialization()
+    useSerialization{
+        json()
+    }
 }
 
 kotlin {

@@ -47,10 +47,9 @@ public external interface PropertyEditorProps : Props {
     public var expanded: Boolean?
 }
 
-private val PropertyEditorItem: FunctionComponent<PropertyEditorProps> =
-    functionComponent("PropertyEditorItem") { props ->
-        propertyEditorItem(props)
-    }
+private val PropertyEditorItem: FC<PropertyEditorProps> = fc("PropertyEditorItem") { props ->
+    propertyEditorItem(props)
+}
 
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { props.expanded ?: true }
@@ -129,7 +128,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                     width = 160.px
                     margin(1.px, 5.px)
                 }
-                ValueChooser{
+                ValueChooser {
                     attrs {
                         this.descriptor = descriptor
                         this.meta = ownProperty
@@ -193,7 +192,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
 }
 
 @JsExport
-public val PropertyEditor: FunctionComponent<PropertyEditorProps> = functionComponent("PropertyEditor") { props ->
+public val PropertyEditor: FC<PropertyEditorProps> = fc("PropertyEditor") { props ->
     child(PropertyEditorItem) {
         attrs {
             this.key = ""
@@ -211,7 +210,7 @@ public fun RBuilder.propertyEditor(
     allProperties: MetaProvider = ownProperties,
     descriptor: MetaDescriptor? = null,
     key: Any? = null,
-    expanded: Boolean? = null
+    expanded: Boolean? = null,
 ) {
     child(PropertyEditor) {
         attrs {

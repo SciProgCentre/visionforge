@@ -1,6 +1,6 @@
 pluginManagement {
 
-    val toolsVersion = "0.10.7"
+    val toolsVersion: String by extra
 
     repositories {
         //mavenLocal()
@@ -23,6 +23,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
 
 dependencyResolutionManagement {
+
+    val toolsVersion: String by extra
+
     repositories {
         maven("https://repo.kotlin.link")
         mavenCentral()
@@ -30,7 +33,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("npmlibs") {
-            from("ru.mipt.npm:version-catalog:0.10.7")
+            from("ru.mipt.npm:version-catalog:$toolsVersion")
         }
     }
 }

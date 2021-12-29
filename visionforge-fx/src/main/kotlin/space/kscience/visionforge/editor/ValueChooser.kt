@@ -71,35 +71,31 @@ public interface ValueChooser {
 
     public companion object {
 
-        private fun findWidgetByType(context: Context, type: String): Factory? {
-            return when (Name.parse(type)) {
-                TextValueChooser.name -> TextValueChooser
-                ColorValueChooser.name -> ColorValueChooser
-                ComboBoxValueChooser.name -> ComboBoxValueChooser
-                else -> null//context.provideByType(type)//Search for additional factories in the plugin
-            }
+        private fun findWidgetByType(context: Context, type: String): Factory? = when (Name.parse(type)) {
+            TextValueChooser.name -> TextValueChooser
+            ColorValueChooser.name -> ColorValueChooser
+            ComboBoxValueChooser.name -> ComboBoxValueChooser
+            else -> null//context.provideByType(type)//Search for additional factories in the plugin
         }
 
-        private fun build(context: Context, descriptor: MetaDescriptor?): ValueChooser {
-            return if (descriptor == null) {
-                TextValueChooser();
-            } else {
-                val widgetType = descriptor.widgetType
-                val chooser: ValueChooser = when {
-                    widgetType != null -> {
-                        findWidgetByType(
-                            context,
-                            widgetType
-                        )?.invoke(
-                            descriptor.widget
-                        ) ?: TextValueChooser()
-                    }
-                    !descriptor.allowedValues.isNullOrEmpty() -> ComboBoxValueChooser()
-                    else -> TextValueChooser()
+        private fun build(context: Context, descriptor: MetaDescriptor?): ValueChooser = if (descriptor == null) {
+            TextValueChooser();
+        } else {
+            val widgetType = descriptor.widgetType
+            val chooser: ValueChooser = when {
+                widgetType != null -> {
+                    findWidgetByType(
+                        context,
+                        widgetType
+                    )?.invoke(
+                        descriptor.widget
+                    ) ?: TextValueChooser()
                 }
-                chooser.descriptor = descriptor
-                chooser
+                !descriptor.allowedValues.isNullOrEmpty() -> ComboBoxValueChooser()
+                else -> TextValueChooser()
             }
+            chooser.descriptor = descriptor
+            chooser
         }
 
         public fun build(

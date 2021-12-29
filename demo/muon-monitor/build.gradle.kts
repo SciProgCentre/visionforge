@@ -5,7 +5,7 @@ plugins {
 
 group = "ru.mipt.npm"
 
-val ktorVersion: String = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
+val ktorVersion: String = npmlibs.versions.ktor.get()
 
 kscience {
     useCoroutines()
@@ -45,17 +45,17 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation("io.ktor:ktor-server-cio:$ktorVersion")
-                implementation("io.ktor:ktor-serialization:$ktorVersion")
+                implementation(npmlibs.ktor.server.cio)
+                implementation(npmlibs.ktor.serialization)
             }
         }
         jsMain {
             dependencies {
                 implementation(project(":ui:ring"))
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation(npmlibs.ktor.client.js)
+                implementation(npmlibs.ktor.client.serialization)
                 implementation(project(":visionforge-threejs"))
-                implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
+                //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
             }
         }
     }
