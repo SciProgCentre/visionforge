@@ -15,6 +15,17 @@ import kotlin.jvm.Synchronized
 import kotlin.time.Duration
 
 /**
+ * Create a deep copy of given Vision without external connections.
+ */
+private fun Vision.deepCopy(): Vision {
+    //Assuming that unrooted visions are already isolated
+    val manager = this.manager ?: return this
+    //TODO replace by efficient deep copy
+    val json = manager.encodeToJsonElement(this)
+    return manager.decodeFromJson(json)
+}
+
+/**
  * An update for a [Vision] or a [VisionGroup]
  */
 public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
@@ -50,18 +61,12 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     /**
      * Isolate collected changes by creating detached copies of given visions
      */
-    public fun isolate(manager: VisionManager): VisionChange = VisionChange(
+    public fun deepCopy(): VisionChange = VisionChange(
         reset,
-        vision?.isolate(manager),
+        vision?.deepCopy(),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
-        if (children.isEmpty()) null else children.mapValues { it.value.isolate(manager) }
+        if (children.isEmpty()) null else children.mapValues { it.value.deepCopy() }
     )
-}
-
-private fun Vision.isolate(manager: VisionManager): Vision {
-    //TODO replace by efficient deep copy
-    val json = manager.encodeToJsonElement(this)
-    return manager.decodeFromJson(json)
 }
 
 /**
@@ -78,8 +83,8 @@ public data class VisionChange(
     public val children: Map<Name, VisionChange>? = null,
 )
 
-public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilder.() -> Unit): VisionChange =
-    VisionChangeBuilder().apply(block).isolate(manager)
+public inline fun VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
+    VisionChangeBuilder().apply(block).deepCopy()
 
 
 @OptIn(DFExperimental::class)
@@ -115,9 +120,10 @@ private fun CoroutineScope.collectChange(
     }
 }
 
-@DFExperimental
+/**
+ * Generate a flow of changes of this vision and its children
+ */
 public fun Vision.flowChanges(
-    manager: VisionManager,
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
 
@@ -126,7 +132,7 @@ public fun Vision.flowChanges(
         collectChange(Name.EMPTY, this@flowChanges) { collector }
 
         //Send initial vision state
-        val initialChange = VisionChange(vision = isolate(manager))
+        val initialChange = VisionChange(vision = deepCopy())
         emit(initialChange)
 
         while (currentCoroutineContext().isActive) {
@@ -135,7 +141,7 @@ public fun Vision.flowChanges(
             //Propagate updates only if something is changed
             if (!collector.isEmpty()) {
                 //emit changes
-                emit(collector.isolate(manager))
+                emit(collector.deepCopy())
                 //Reset the collector
                 collector = VisionChangeBuilder()
             }

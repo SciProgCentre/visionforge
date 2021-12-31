@@ -1,12 +1,9 @@
-package playground
+package space.kscience.visionforge.examples
 
-import kotlinx.html.div
-import kotlinx.html.id
-import kotlinx.html.script
 import kotlinx.html.stream.createHTML
-import kotlinx.html.unsafe
 import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.libraries.*
+import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
+import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
@@ -15,7 +12,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.Page
-import space.kscience.visionforge.html.embedVisionFragment
+import space.kscience.visionforge.html.embedAndRenderVisionFragment
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.Solids
@@ -29,27 +26,19 @@ public class VisionForgePlayGroundForJupyter : JupyterIntegration() {
         plugin(PlotlyPlugin)
     }
 
-    private val jsBundle = ResourceFallbacksBundle(listOf(
-        ResourceLocation("js/visionforge-playground.js", ResourcePathType.CLASSPATH_PATH))
-    )
-    private val jsResource = LibraryResource(name = "VisionForge", type = ResourceType.JS, bundles = listOf(jsBundle))
-
     private var counter = 0
 
-    private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().div {
-        val id = "visionforge.vision[${counter++}]"
-        div {
-            this.id = id
-            embedVisionFragment(context.visionManager, fragment = fragment)
-        }
-        script {
-            type = "text/javascript"
-            unsafe { +"window.renderAllVisionsById(\"$id\");" }
-        }
-    }
+    private fun produceHtmlVisionString(fragment: HtmlVisionFragment) = createHTML().apply {
+        embedAndRenderVisionFragment(context.visionManager, counter++, fragment = fragment)
+    }.finalize()
 
     override fun Builder.onLoaded() {
-        resource(jsResource)
+
+        resources {
+            js("VisionForge"){
+                classPath("js/visionforge-playground.js")
+            }
+        }
 
         import(
             "space.kscience.gdml.*",

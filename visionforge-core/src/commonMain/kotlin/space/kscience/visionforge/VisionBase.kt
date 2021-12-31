@@ -109,7 +109,7 @@ public open class VisionBase(
         override fun hashCode(): Int = Meta.hashCode(this)
     }
 
-    override val meta: ObservableMutableMeta get() = VisionProperties(Name.EMPTY)
+    final override val meta: ObservableMutableMeta get() = VisionProperties(Name.EMPTY)
 
     override fun getPropertyValue(
         name: Name,

@@ -226,7 +226,7 @@ fun main() {
                     }
                 }
             }.toVision {
-                configure { parent, solid, material ->
+                configure { _, solid, _ ->
                     //disable visibility for the world box
                     if(solid.name == "world"){
                         visible = false

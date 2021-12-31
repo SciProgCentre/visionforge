@@ -6,7 +6,6 @@ import io.ktor.server.engine.embeddedServer
 import kotlinx.html.stream.createHTML
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
-import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.get
@@ -51,12 +50,6 @@ public abstract class JupyterPluginBase(
             engine?.stop(1000, 1000)
             engine = null
             server = null
-        }
-
-        resources {
-            js("three") {
-                classPath("js/gdml-jupyter.js")
-            }
         }
 
         import(

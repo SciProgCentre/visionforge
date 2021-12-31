@@ -21,7 +21,7 @@ import space.kscience.visionforge.gdml.markLayers
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.tab
-import space.kscience.visionforge.root
+import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import styled.css
@@ -50,7 +50,7 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
                     name.endsWith(".gdml") || name.endsWith(".xml") -> {
                         val gdml = Gdml.decodeFromString(data)
                         gdml.toVision().apply {
-                            root(visionManager)
+                            setAsRoot(visionManager)
                             console.info("Marking layers for file $name")
                             markLayers()
                         }

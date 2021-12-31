@@ -20,7 +20,7 @@ class VisionUpdateTest {
         val targetVision = SolidGroup {
             box(200,200,200, name = "origin")
         }
-        val dif = VisionChange(visionManager){
+        val dif = VisionChange{
             group("top") {
                 color(123)
                 box(100,100,100)
@@ -36,7 +36,7 @@ class VisionUpdateTest {
 
     @Test
     fun testVisionChangeSerialization(){
-        val change = VisionChange(visionManager){
+        val change = VisionChange{
             group("top") {
                 color(123)
                 box(100,100,100)

@@ -5,7 +5,7 @@ import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.removeAll
-import space.kscience.visionforge.root
+import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
@@ -37,7 +37,7 @@ class Model(val manager: VisionManager) {
     var tracks: SolidGroup
 
     val root: SolidGroup = SolidGroup().apply {
-        root(this@Model.manager)
+        setAsRoot(this@Model.manager)
         material {
             wireframe
             color("darkgreen")

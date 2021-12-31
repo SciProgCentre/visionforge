@@ -13,6 +13,10 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.toJson
 import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.html.VisionOfCheckbox
+import space.kscience.visionforge.html.VisionOfHtmlForm
+import space.kscience.visionforge.html.VisionOfNumberField
+import space.kscience.visionforge.html.VisionOfTextField
 import kotlin.reflect.KClass
 
 public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
@@ -66,6 +70,10 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
                 default { VisionBase.serializer() }
                 subclass(VisionBase.serializer())
                 subclass(VisionGroupBase.serializer())
+                subclass(VisionOfNumberField.serializer())
+                subclass(VisionOfTextField.serializer())
+                subclass(VisionOfCheckbox.serializer())
+                subclass(VisionOfHtmlForm.serializer())
             }
         }
 

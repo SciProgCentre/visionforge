@@ -59,7 +59,6 @@ include(
     ":demo:muon-monitor",
     ":demo:sat-demo",
     ":demo:playground",
-    ":demo:jupyter-playground",
     ":demo:plotly-fx",
     ":demo:js-playground",
     ":jupyter:visionforge-jupyter-base",

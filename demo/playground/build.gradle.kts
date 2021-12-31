@@ -1,14 +1,13 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("jupyter.api")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-repositories{
-    jcenter()
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://dl.bintray.com/mipt-npm/dataforge")
-    maven("https://dl.bintray.com/mipt-npm/kscience")
-    maven("https://dl.bintray.com/mipt-npm/dev")
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+    maven("https://repo.kotlin.link")
 }
 
 kotlin {
@@ -27,7 +26,8 @@ kotlin {
         binaries.executable()
     }
 
-    jvm{
+    jvm {
+        withJava()
         compilations.all {
             kotlinOptions.jvmTarget = "11"
         }
@@ -37,7 +37,7 @@ kotlin {
     }
 
     afterEvaluate {
-        val jsBrowserDistribution  = tasks.getByName("jsBrowserDevelopmentExecutableDistribution")
+        val jsBrowserDistribution = tasks.getByName("jsBrowserDevelopmentExecutableDistribution")
 
         tasks.getByName<ProcessResources>("jvmProcessResources") {
             dependsOn(jsBrowserDistribution)
@@ -59,14 +59,14 @@ kotlin {
             }
         }
 
-        val jsMain by getting{
+        val jsMain by getting {
             dependencies {
                 api(project(":ui:ring"))
                 api(project(":visionforge-threejs"))
             }
         }
 
-        val jvmMain by getting{
+        val jvmMain by getting {
             dependencies {
                 api(project(":visionforge-server"))
                 api("ch.qos.logback:logback-classic:1.2.3")
@@ -75,3 +75,9 @@ kotlin {
         }
     }
 }
+
+tasks.withType<org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask> {
+    libraryProducers = listOf("space.kscience.visionforge.examples.VisionForgePlayGroundForJupyter")
+}
+
+tasks.findByName("shadowJar")?.dependsOn("processJupyterApiResources")

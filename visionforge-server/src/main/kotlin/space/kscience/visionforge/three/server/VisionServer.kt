@@ -144,7 +144,7 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-                    vision.flowChanges(visionManager, updateInterval.milliseconds).collect { update ->
+                    vision.flowChanges(updateInterval.milliseconds).collect { update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update

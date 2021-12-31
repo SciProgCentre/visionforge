@@ -76,9 +76,6 @@ val MMApp = fc<MMAppProps>("Muon monitor") { props ->
                                 attrs {
                                     onClickFunction = {
                                         context.launch {
-//                                            val event = props.connection.get<Event>(
-//                                                "http://localhost:8080/event"
-//                                            )
                                             val event = window.fetch(
                                                 "http://localhost:8080/event",
                                                 RequestInit("GET")

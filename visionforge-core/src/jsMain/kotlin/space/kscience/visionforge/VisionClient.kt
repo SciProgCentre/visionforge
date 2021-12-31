@@ -10,6 +10,9 @@ import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.RENDER_FUNCTION_NAME
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
@@ -19,6 +22,9 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_A
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * A Kotlin-browser plugin that renders visions based on provided renderers and governs communication with the server.
+ */
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
     private val visionManager: VisionManager by require(VisionManager)
@@ -102,10 +108,12 @@ public class VisionClient : AbstractPlugin() {
                     //Backward change propagation
                     var feedbackJob: Job? = null
 
+                    //Feedback changes aggregation time in milliseconds
+                    val feedbackAggregationTime = meta["aggregationTime"]?.int ?: 300
+
                     onopen = {
                         feedbackJob = vision.flowChanges(
-                            visionManager,
-                            300.milliseconds
+                            feedbackAggregationTime.milliseconds
                         ).onEach { change ->
                             send(visionManager.encodeToString(change))
                         }.launchIn(visionManager.context)
@@ -179,6 +187,12 @@ public class VisionClient : AbstractPlugin() {
             else -> error("No embedded vision data / fetch url for $name")
         }
     }
+
+    override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) mapOf(
+        numberVisionRenderer.name to numberVisionRenderer,
+        textVisionRenderer.name to textVisionRenderer,
+        formVisionRenderer.name to formVisionRenderer
+    ) else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
 
