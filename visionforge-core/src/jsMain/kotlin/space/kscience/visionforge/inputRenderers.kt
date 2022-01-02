@@ -94,7 +94,7 @@ public val formVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<Vis
     form.onsubmit = { event ->
         event.preventDefault()
         val formData = FormData(form).toMeta()
-        console.log(formData.toString())
+        //console.log(formData.toString())
         vision.values = formData
         false
     }

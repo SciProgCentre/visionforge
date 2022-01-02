@@ -6,26 +6,47 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
-public fun TagConsumer<*>.embedVisionFragment(
+public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
+
+@DFExperimental
+public fun HtmlVisionFragment(content: VisionTagConsumer<*>.() -> Unit): HtmlVisionFragment = content
+
+
+internal const val RENDER_FUNCTION_NAME = "renderAllVisionsById"
+
+
+/**
+ * Render a fragment in the given consumer and return a map of extracted visions
+ * @param manager a VisionManager used for serialization
+ * @param embedData embed Vision initial state in the HTML
+ * @param fetchDataUrl fetch data after first render from given url
+ * @param fetchUpdatesUrl receive push updates from the server at given url
+ * @param idPrefix a prefix to be used before vision ids
+ * @param renderScript if true add rendering script after the fragment
+ */
+public fun TagConsumer<*>.visionFragment(
     manager: VisionManager,
     embedData: Boolean = true,
-    fetchData: String? = null,
-    fetchUpdates: String? = null,
+    fetchDataUrl: String? = null,
+    fetchUpdatesUrl: String? = null,
     idPrefix: String? = null,
+    renderScript: Boolean = true,
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(this@embedVisionFragment, manager, idPrefix) {
+    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, manager, idPrefix) {
         override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             // Toggle update mode
 
-            fetchUpdates?.let {
+            fetchUpdatesUrl?.let {
                 attributes[OUTPUT_CONNECT_ATTRIBUTE] = it
             }
 
-            fetchData?.let {
+            fetchDataUrl?.let {
                 attributes[OUTPUT_FETCH_ATTRIBUTE] = it
             }
 
@@ -40,39 +61,36 @@ public fun TagConsumer<*>.embedVisionFragment(
             }
         }
     }
-    fragment(consumer)
-    return visionMap
-}
-
-public fun FlowContent.embedVisionFragment(
-    manager: VisionManager,
-    embedData: Boolean = true,
-    fetchDataUrl: String? = null,
-    fetchUpdatesUrl: String? = null,
-    idPrefix: String? = null,
-    fragment: HtmlVisionFragment,
-): Map<Name, Vision> = consumer.embedVisionFragment(manager, embedData, fetchDataUrl, fetchUpdatesUrl, idPrefix, fragment)
-
-
-internal const val RENDER_FUNCTION_NAME = "renderAllVisionsById"
-
-public fun TagConsumer<*>.embedAndRenderVisionFragment(
-    manager: VisionManager,
-    id: Any,
-    embedData: Boolean = true,
-    fetchData: String? = null,
-    fetchUpdates: String? = null,
-    idPrefix: String? = null,
-    fragment: HtmlVisionFragment,
-) {
-    div {
+    if (renderScript) {
+        val id = "fragment[${fragment.hashCode()}/${Random.nextUInt()}]"
         div {
-            this.id = id.toString()
-            embedVisionFragment(manager, embedData, fetchData, fetchUpdates, idPrefix, fragment)
+            this.id = id
+            fragment(consumer)
         }
         script {
             type = "text/javascript"
             unsafe { +"window.${RENDER_FUNCTION_NAME}(\"$id\");" }
         }
+    } else {
+        fragment(consumer)
     }
+    return visionMap
 }
+
+public fun FlowContent.visionFragment(
+    manager: VisionManager,
+    embedData: Boolean = true,
+    fetchDataUrl: String? = null,
+    fetchUpdatesUrl: String? = null,
+    idPrefix: String? = null,
+    renderSctipt: Boolean = true,
+    fragment: HtmlVisionFragment,
+): Map<Name, Vision> = consumer.visionFragment(
+    manager,
+    embedData,
+    fetchDataUrl,
+    fetchUpdatesUrl,
+    idPrefix,
+    renderSctipt,
+    fragment
+)

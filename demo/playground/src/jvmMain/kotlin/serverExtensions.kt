@@ -9,6 +9,7 @@ import space.kscience.visionforge.html.scriptHeader
 import space.kscience.visionforge.makeFile
 import space.kscience.visionforge.three.server.VisionServer
 import space.kscience.visionforge.three.server.useScript
+import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Path
 
@@ -25,7 +26,7 @@ public fun Context.makeVisionFile(
     show: Boolean = true,
     content: VisionTagConsumer<*>.() -> Unit
 ): Unit {
-    val actualPath = page(title, content = content).makeFile(path) { actualPath ->
+    val actualPath = visionManager.page(title, content = content).makeFile(path) { actualPath ->
         mapOf("playground" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath))
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

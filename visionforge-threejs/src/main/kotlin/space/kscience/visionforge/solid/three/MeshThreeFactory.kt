@@ -47,7 +47,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
         obj.onPropertyChange { name ->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
-                    val oldGeometry = mesh.geometry as BufferGeometry
+                    val oldGeometry = mesh.geometry
                     val newGeometry = buildGeometry(obj)
                     oldGeometry.attributes = newGeometry.attributes
                     //mesh.applyWireFrame(obj)

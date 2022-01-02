@@ -164,7 +164,7 @@ public class VisionClient : AbstractPlugin() {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {
-                        pathname += "/vision"
+                        pathname += "/data"
                     }
                 } else {
                     URL(attr.value)

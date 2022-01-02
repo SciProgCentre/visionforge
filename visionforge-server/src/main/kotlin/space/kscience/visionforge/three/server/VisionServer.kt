@@ -4,12 +4,10 @@ import io.ktor.application.*
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.html.respondHtml
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.http.withCharset
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.*
@@ -25,8 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
@@ -34,7 +30,10 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.flowChanges
-import space.kscience.visionforge.html.*
+import space.kscience.visionforge.html.HtmlFragment
+import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.three.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
@@ -43,12 +42,13 @@ import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * A ktor plugin container with given [routing]
+ * @param serverUrl a server url including root route
  */
 public class VisionServer internal constructor(
     private val visionManager: VisionManager,
-    private val application: Application,
-    private val rootRoute: String,
-) : Configurable, CoroutineScope by application {
+    private val serverUrl: Url,
+    private val root: Route,
+) : Configurable, CoroutineScope by root.application {
     override val meta: ObservableMutableMeta = MutableMeta()
 
     /**
@@ -74,7 +74,7 @@ public class VisionServer internal constructor(
     /**
      * Connect to server to get pushes. The address of the server is embedded in the tag. Default: `true`
      */
-    public var dataConnect: Boolean by meta.boolean(true, Name.parse("data.connect"))
+    public var dataUpdate: Boolean by meta.boolean(true, Name.parse("data.update"))
 
     /**
      * a list of headers that should be applied to all pages
@@ -90,6 +90,7 @@ public class VisionServer internal constructor(
 
     private fun HTML.visionPage(
         title: String,
+        pagePath: String,
         headers: List<HtmlFragment>,
         visionFragment: HtmlVisionFragment,
     ): Map<Name, Vision> {
@@ -106,11 +107,10 @@ public class VisionServer internal constructor(
         }
         body {
             //Load the fragment and remember all loaded visions
-            visionMap = embedVisionFragment(
+            visionMap = visionFragment(
                 manager = visionManager,
                 embedData = true,
-                fetchDataUrl = VisionTagConsumer.AUTO_DATA_ATTRIBUTE,
-                fetchUpdatesUrl = VisionTagConsumer.AUTO_DATA_ATTRIBUTE,
+                fetchUpdatesUrl = "$serverUrl$pagePath/ws",
                 fragment = visionFragment
             )
         }
@@ -122,7 +122,7 @@ public class VisionServer internal constructor(
      * Server a map of visions without providing explicit html page for them
      */
     @OptIn(DFExperimental::class)
-    internal fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
+    private fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
         application.log.info("Serving visions $visions at $route")
 
         //Update websocket
@@ -157,7 +157,7 @@ public class VisionServer internal constructor(
             }
         }
         //Plots in their json representation
-        get("vision") {
+        get("data") {
             val name: String = call.request.queryParameters["name"]
                 ?: error("Vision name is not defined in parameters")
 
@@ -174,47 +174,40 @@ public class VisionServer internal constructor(
         }
     }
 
-    /**
-     * Create a static html page and serve visions produced in the process
-     */
-    @DFExperimental
-    public fun createHtmlAndServe(
-        route: String,
-        title: String,
-        headers: List<HtmlFragment>,
-        visionFragment: HtmlVisionFragment,
-    ): String {
-        val htmlString = createHTML().apply {
-            html {
-                visionPage(title, headers, visionFragment).also {
-                    serveVisions(route, it)
-                }
-            }
-        }.finalize()
-
-        return htmlString
-    }
 
     /**
      * Serve visions in a given [route] without providing a page template
      */
     public fun serveVisions(route: String, visions: Map<Name, Vision>): Unit {
-        application.routing {
-            route(rootRoute) {
-                route(route) {
-                    serveVisions(this, visions)
-                }
-            }
+        root.route(route) {
+            serveVisions(this, visions)
         }
     }
 
     /**
-     * Serve a page, potentially containing any number of visions at a given [route] with given [headers].
+     * Compile a fragment to string and serve visions from it
+     */
+    public fun serveVisionsFromFragment(
+        route: String,
+        fragment: HtmlVisionFragment,
+    ): String = createHTML().apply {
+        val visions = visionFragment(
+            visionManager,
+            embedData = true,
+            fetchUpdatesUrl = "$serverUrl$route/ws",
+            renderScript = true,
+            fragment = fragment
+        )
+        serveVisions(route, visions)
+    }.finalize()
+
+    /**
+     * Serve a page, potentially containing any number of visions at a given [pagePath] with given [headers].
      *
      */
     public fun page(
-        route: String = DEFAULT_PAGE,
-        title: String = "VisionForge server page '$route'",
+        pagePath: String = DEFAULT_PAGE,
+        title: String = "VisionForge server page '$pagePath'",
         headers: List<HtmlFragment> = emptyList(),
         visionFragment: HtmlVisionFragment,
     ) {
@@ -223,35 +216,34 @@ public class VisionServer internal constructor(
         val cachedHtml: String? = if (cacheFragments) {
             //Create and cache page html and map of visions
             createHTML(true).html {
-                visions.putAll(visionPage(title, headers, visionFragment))
+                visions.putAll(visionPage(title, pagePath, headers, visionFragment))
             }
         } else {
             null
         }
 
-        application.routing {
-            route(rootRoute) {
-                route(route) {
-                    serveVisions(this, visions)
-                    //filled pages
-                    get {
-                        if (cachedHtml == null) {
-                            //re-create html and vision list on each call
-                            call.respondHtml {
-                                visions.clear()
-                                visions.putAll(visionPage(title, headers, visionFragment))
-                            }
-                        } else {
-                            //Use cached html
-                            call.respondText(cachedHtml, ContentType.Text.Html.withCharset(Charsets.UTF_8))
-                        }
+        root.route(pagePath) {
+            serveVisions(this, visions)
+            //filled pages
+            get {
+                if (cachedHtml == null) {
+                    //re-create html and vision list on each call
+                    call.respondHtml {
+                        visions.clear()
+                        visions.putAll(visionPage(title, pagePath, headers, visionFragment))
                     }
+                } else {
+                    //Use cached html
+                    call.respondText(cachedHtml, ContentType.Text.Html.withCharset(Charsets.UTF_8))
                 }
             }
         }
+
+
     }
 
     public companion object {
+        public const val DEFAULT_PORT: Int = 7777
         public const val DEFAULT_PAGE: String = "/"
         public val UPDATE_INTERVAL_KEY: Name = Name.parse("update.interval")
     }
@@ -286,7 +278,11 @@ public inline fun VisionServer.useCss(href: String, crossinline block: LINK.() -
 /**
  * Attach VisionForge server application to given server
  */
-public fun Application.visionServer(context: Context, route: String = DEFAULT_PAGE): VisionServer {
+public fun Application.visionServer(
+    visionManager: VisionManager,
+    webServerUrl: Url,
+    path: String = DEFAULT_PAGE,
+): VisionServer {
     if (featureOrNull(WebSockets) == null) {
         install(WebSockets)
     }
@@ -301,17 +297,15 @@ public fun Application.visionServer(context: Context, route: String = DEFAULT_PA
         install(CallLogging)
     }
 
-    val visionManager = context.fetch(VisionManager)
+    val serverRoute = (featureOrNull(Routing) ?: install(Routing)).createRouteFromPath(path)
 
-    routing {
-        route(route) {
-            static {
-                resources()
-            }
+    serverRoute {
+        static {
+            resources()
         }
     }
 
-    return VisionServer(visionManager, this, route)
+    return VisionServer(visionManager, webServerUrl.copy(encodedPath = path), serverRoute)
 }
 
 /**
@@ -319,10 +313,11 @@ public fun Application.visionServer(context: Context, route: String = DEFAULT_PA
  */
 public fun VisionManager.serve(
     host: String = "localhost",
-    port: Int = 7777,
+    port: Int = VisionServer.DEFAULT_PORT,
     block: VisionServer.() -> Unit,
 ): ApplicationEngine = context.embeddedServer(CIO, port, host) {
-    visionServer(context).apply(block)
+    val url = URLBuilder(host = host, port = port).build()
+    visionServer(this@serve, url).apply(block)
 }.start()
 
 /**

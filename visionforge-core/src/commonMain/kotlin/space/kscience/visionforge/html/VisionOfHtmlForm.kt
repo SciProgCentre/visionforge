@@ -7,6 +7,7 @@ import kotlinx.html.id
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.node
 
 @Serializable
@@ -17,10 +18,29 @@ public class VisionOfHtmlForm(
     public var values: Meta? by meta.node()
 }
 
-public inline fun <R> TagConsumer<R>.visionOfForm(id: String, crossinline builder: FORM.() -> Unit): VisionOfHtmlForm {
-    form {
-        this.id = id
-        builder()
+public class HtmlFormFragment internal constructor(
+    public val vision: VisionOfHtmlForm,
+    public val formBody: HtmlFragment,
+){
+    public val values: Meta? get() = vision.values
+    public operator fun get(valueName: String): Meta? = values?.get(valueName)
+}
+
+public fun HtmlFormFragment(id: String? = null, builder: FORM.() -> Unit): HtmlFormFragment {
+    val realId = id ?: "form[${builder.hashCode().toUInt()}]"
+    return HtmlFormFragment(VisionOfHtmlForm(realId)) {
+        form {
+            this.id = realId
+            builder()
+        }
     }
-    return VisionOfHtmlForm(id)
+}
+
+public fun <R> TagConsumer<R>.formFragment(
+    id: String? = null,
+    builder: FORM.() -> Unit,
+): VisionOfHtmlForm {
+    val formFragment = HtmlFormFragment(id, builder)
+    fragment(formFragment.formBody)
+    return formFragment.vision
 }

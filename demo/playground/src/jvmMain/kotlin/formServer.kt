@@ -5,7 +5,7 @@ import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.html.visionOfForm
+import space.kscience.visionforge.html.formFragment
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.three.server.close
 import space.kscience.visionforge.three.server.openInBrowser
@@ -18,7 +18,7 @@ fun main() {
     val server = visionManager.serve {
         useScript("js/visionforge-playground.js")
         page {
-            val form = visionOfForm("form") {
+            val form = formFragment("form") {
                 label {
                     htmlFor = "fname"
                     +"First name:"

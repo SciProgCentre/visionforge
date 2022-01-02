@@ -53,7 +53,7 @@ public class ThreeCanvas(
     private val mousePosition: Vector2 = Vector2()
 
     private val scene: Scene = Scene().apply {
-        options.useProperty(Canvas3DOptions::axes, this) { axesConfig ->
+        options.useProperty(Canvas3DOptions::axes, this) {
             getObjectByName(AXES_NAME)?.let { remove(it) }
             val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
             axesObject.name = AXES_NAME

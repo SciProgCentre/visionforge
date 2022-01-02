@@ -32,18 +32,19 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-solid"))
+                implementation(projects.visionforgeSolid)
+                implementation(projects.jupyter.jupyterBase)
             }
         }
         jvmMain {
             dependencies {
-                implementation(project(":visionforge-gdml"))
+                implementation(projects.visionforgeGdml)
             }
         }
         jsMain {
             dependencies {
-                api(project(":visionforge-threejs"))
-                implementation(project(":ui:ring"))
+                implementation(projects.visionforgeThreejs)
+                implementation(projects.ui.ring)
             }
         }
 

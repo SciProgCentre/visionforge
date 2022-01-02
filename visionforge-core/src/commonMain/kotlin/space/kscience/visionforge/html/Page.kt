@@ -1,12 +1,11 @@
 package space.kscience.visionforge.html
 
 import kotlinx.html.*
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.visionManager
+import space.kscience.visionforge.VisionManager
 
 public data class Page(
-    public val context: Context,
+    public val visionManager: VisionManager,
     public val title: String,
     public val headers: Map<String, HtmlFragment>,
     public val content: HtmlVisionFragment,
@@ -22,14 +21,14 @@ public data class Page(
             title(this@Page.title)
         }
         body {
-            embedVisionFragment(context.visionManager, fragment = content)
+            visionFragment(visionManager, fragment = content)
         }
     }.finalize()
 }
 
 
 @DFExperimental
-public fun Context.page(
+public fun VisionManager.page(
     title: String = "VisionForge page",
     vararg headers: Pair<String, HtmlFragment>,
     content: HtmlVisionFragment,

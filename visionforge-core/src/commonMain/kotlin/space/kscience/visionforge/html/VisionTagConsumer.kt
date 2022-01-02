@@ -42,7 +42,7 @@ public abstract class VisionTagConsumer<R>(
     private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
-    public open fun resolveId(name: Name): String = (idPrefix ?: "output:") + name.toString()
+    public open fun resolveId(name: Name): String = (idPrefix ?: "output") + "[$name]"
 
     /**
      * Render a vision inside the output fragment

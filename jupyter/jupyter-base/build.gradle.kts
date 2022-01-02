@@ -9,12 +9,12 @@ kotlin {
     sourceSets {
         commonMain{
             dependencies{
-                api(projects.visionforge.visionforgeCore)
+                api(projects.visionforgeCore)
             }
         }
         jvmMain {
             dependencies {
-                implementation(project(":visionforge-server"))
+                api(projects.visionforgeServer)
             }
         }
     }
