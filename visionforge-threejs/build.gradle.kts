@@ -2,6 +2,12 @@ plugins {
     id("ru.mipt.npm.gradle.js")
 }
 
+kotlin{
+    js{
+        binaries.library()
+    }
+}
+
 dependencies {
     api(project(":visionforge-solid"))
     implementation(npm("three", "0.130.1"))

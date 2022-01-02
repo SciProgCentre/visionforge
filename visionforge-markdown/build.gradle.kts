@@ -10,27 +10,7 @@ kscience {
 
 kotlin {
     js {
-        //binaries.library()
-        binaries.executable()
-        browser {
-            webpackTask {
-                outputFileName = "js/visionforge-markdown.js"
-            }
-        }
-    }
-
-    jvm {
-        val processResourcesTaskName =
-            compilations[org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.MAIN_COMPILATION_NAME]
-                .processResourcesTaskName
-    }
-
-
-    val jsBrowserDistribution by tasks.getting
-
-    tasks.getByName<ProcessResources>("jvmProcessResources") {
-        dependsOn(jsBrowserDistribution)
-        from(jsBrowserDistribution)
+        binaries.library()
     }
 
     sourceSets {

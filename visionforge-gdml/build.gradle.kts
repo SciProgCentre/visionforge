@@ -3,10 +3,13 @@ plugins {
 }
 
 kotlin {
+    js{
+        binaries.library()
+    }
     sourceSets {
-        val commonMain by getting {
+        commonMain{
             dependencies {
-                api(project(":visionforge-solid"))
+                api(projects.visionforgeSolid)
                 api("space.kscience:gdml:0.4.0")
             }
         }

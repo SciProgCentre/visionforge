@@ -29,27 +29,16 @@ kotlin {
     jvm {
         withJava()
         compilations.all {
-            kotlinOptions{
+            kotlinOptions {
                 jvmTarget = "11"
-                freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all" + "-Xopt-in=kotlin.RequiresOptIn" + "-Xlambdas=indy"
+                freeCompilerArgs =
+                    freeCompilerArgs + "-Xjvm-default=all" + "-Xopt-in=kotlin.RequiresOptIn" + "-Xlambdas=indy"
             }
         }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
     }
-
-    afterEvaluate {
-        val jsBrowserDistribution = tasks.getByName("jsBrowserDevelopmentExecutableDistribution")
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
-        }
-    }
-
 
     sourceSets {
         val commonMain by getting {
@@ -80,7 +69,16 @@ kotlin {
     }
 }
 
-val processJupyterApiResources by tasks.getting(org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask::class){
+val jsBrowserDistribution = tasks.getByName("jsBrowserDistribution")
+
+tasks.getByName<ProcessResources>("jvmProcessResources") {
+    dependsOn(jsBrowserDistribution)
+    from(jsBrowserDistribution) {
+        exclude("**/*.js.map")
+    }
+}
+
+val processJupyterApiResources by tasks.getting(org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask::class) {
     libraryProducers = listOf("space.kscience.visionforge.examples.VisionForgePlayGroundForJupyter")
 }
 

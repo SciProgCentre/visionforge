@@ -10,20 +10,7 @@ kscience {
 
 kotlin {
     js {
-        //binaries.library()
-        binaries.executable()
-        browser {
-            webpackTask {
-                this.outputFileName = "js/visionforge-three.js"
-            }
-        }
-    }
-
-    val jsBrowserDistribution by tasks.getting
-
-    tasks.getByName<ProcessResources>("jvmProcessResources") {
-        dependsOn(jsBrowserDistribution)
-        from(jsBrowserDistribution)
+        binaries.library()
     }
 
     sourceSets {
