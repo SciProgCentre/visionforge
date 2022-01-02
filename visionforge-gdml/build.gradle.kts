@@ -15,9 +15,3 @@ kotlin {
         }
     }
 }
-
-//tasks{
-//    val jsBrowserWebpack by getting(KotlinWebpack::class) {
-//        sourceMaps = false
-//    }
-//}

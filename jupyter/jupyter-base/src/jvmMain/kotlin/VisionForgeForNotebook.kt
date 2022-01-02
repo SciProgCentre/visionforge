@@ -2,6 +2,7 @@ package space.kscience.visionforge.jupyter
 
 import io.ktor.server.engine.ApplicationEngine
 import kotlinx.html.FORM
+import kotlinx.html.TagConsumer
 import kotlinx.html.p
 import kotlinx.html.stream.createHTML
 import kotlinx.html.style
@@ -15,14 +16,16 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.html.HtmlFormFragment
-import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.three.server.VisionServer
 import space.kscience.visionforge.three.server.serve
 import space.kscience.visionforge.visionManager
 
-public class VisionForgeServerHandler(override val context: Context) : ContextAware {
+/**
+ * A handler class that includes a server and common utilities
+ */
+public class VisionForgeForNotebook(override val context: Context) : ContextAware {
     private var counter = 0
 
     private var engine: ApplicationEngine? = null
@@ -34,27 +37,31 @@ public class VisionForgeServerHandler(override val context: Context) : ContextAw
         isolateFragments = true
     }
 
+    public fun isServerRunning(): Boolean = server != null
+
+    public fun html(block: TagConsumer<*>.() -> Unit): MimeTypedResult = HTML(createHTML().apply(block).finalize())
+
     public fun startServer(
         host: String = context.properties["visionforge.host"].string ?: "localhost",
         port: Int = context.properties["visionforge.port"].int ?: VisionServer.DEFAULT_PORT,
         configuration: VisionServer.() -> Unit = {},
-    ): HtmlFragment {
+    ): MimeTypedResult = html {
+        if (server != null) {
+            p {
+                style = "color: red;"
+                +"Stopping current VisionForge server"
+            }
+        }
+
         engine?.stop(1000, 2000)
         engine = context.visionManager.serve(host, port) {
             configuration()
             server = this
         }.start()
-        return {
-            if(server!= null){
-                p {
-                    style = "color: red;"
-                    +"Stopping current VisionForge server"
-                }
-            }
-            p {
-                style = "color: blue;"
-                +"Starting VisionForge server on http://$host:$port"
-            }
+
+        p {
+            style = "color: blue;"
+            +"Starting VisionForge server on http://$host:$port"
         }
     }
 
@@ -77,5 +84,6 @@ public class VisionForgeServerHandler(override val context: Context) : ContextAw
     public fun fragment(body: HtmlVisionFragment): MimeTypedResult = produceHtml(fragment = body)
     public fun page(body: HtmlVisionFragment): MimeTypedResult = produceHtml(true, body)
 
-    public fun form(builder: FORM.() -> Unit): HtmlFormFragment = HtmlFormFragment("form[${counter++}]", builder = builder)
+    public fun form(builder: FORM.() -> Unit): HtmlFormFragment =
+        HtmlFormFragment("form[${counter++}]", builder = builder)
 }
