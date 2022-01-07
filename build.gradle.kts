@@ -6,6 +6,11 @@ plugins {
 val dataforgeVersion by extra("0.5.2")
 val fxVersion by extra("11")
 
+allprojects{
+    group = "space.kscience"
+    version = "0.2.0-dev-99"
+}
+
 subprojects {
     if (name.startsWith("visionforge")) apply<MavenPublishPlugin>()
 
@@ -14,10 +19,6 @@ subprojects {
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
     }
-
-    group = "space.kscience"
-    version = "0.2.0-dev-99"
-
 }
 
 ksciencePublish {
