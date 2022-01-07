@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-java@v2.5.0
         with:
           java-version: 11
-          distribution: jdk
+          distribution: liberica
       - name: execute build
         uses: gradle/gradle-build-action@v2
         with:
