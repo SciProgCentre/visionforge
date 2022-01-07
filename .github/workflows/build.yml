@@ -15,12 +15,8 @@ jobs:
         uses: actions/setup-java@v2.5.0
         with:
           java-version: 11
-      - uses: actions/cache@v2.1.7
+          distribution: jdk
+      - name: execute build
+        uses: gradle/gradle-build-action@v2
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - run: ./gradlew build --build-cache --no-daemon --stacktrace
+          arguments: build
