@@ -32,11 +32,3 @@ apiValidation {
 }
 
 readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")
-
-//workaround for https://youtrack.jetbrains.com/issue/KT-48273
-rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
-    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.apply {
-        webpack.version = "5.64.3"
-        webpackDevServer.version = "4.5.0"
-    }
-}
