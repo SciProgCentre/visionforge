@@ -16,6 +16,9 @@ jobs:
         with:
           java-version: 11
           distribution: liberica
+      - uses: actions/setup-node@v2.5.1
+        with:
+          node-version: '16'
       - name: execute build
         uses: gradle/gradle-build-action@v2
         with:
