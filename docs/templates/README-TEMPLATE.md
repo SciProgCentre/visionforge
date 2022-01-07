@@ -16,9 +16,9 @@
 * [Modules contained in this repository](#modules-contained-in-this-repository)
 * [Visualization for External Systems](#visualization-for-external-systems)
 * [Demonstrations](#demonstrations)
-    * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
-    * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
-    * [GDML Example](#gdml-example)
+  * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
+  * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
+  * [GDML Example](#gdml-example)
 
 
 ## Introduction

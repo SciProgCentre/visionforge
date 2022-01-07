@@ -24,10 +24,13 @@ public fun Context.makeVisionFile(
     title: String = "VisionForge page",
     resourceLocation: ResourceLocation = ResourceLocation.SYSTEM,
     show: Boolean = true,
-    content: VisionTagConsumer<*>.() -> Unit
+    content: VisionTagConsumer<*>.() -> Unit,
 ): Unit {
     val actualPath = visionManager.page(title, content = content).makeFile(path) { actualPath ->
-        mapOf("playground" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath))
+        mapOf(
+            "playground" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
+            //"tables" to tabulatorCssHader
+        )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

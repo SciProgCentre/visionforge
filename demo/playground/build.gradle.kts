@@ -47,8 +47,9 @@ kotlin {
                 implementation(projects.visionforgeGdml)
                 implementation(projects.visionforgePlotly)
                 implementation(projects.visionforgeMarkdown)
+                implementation(projects.visionforgeTables)
                 implementation(projects.cernRootLoader)
-                implementation(projects.jupyter.jupyterBase)
+                implementation(projects.jupyter)
             }
         }
 
@@ -56,6 +57,7 @@ kotlin {
             dependencies {
                 implementation(projects.ui.ring)
                 implementation(projects.visionforgeThreejs)
+                compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
             }
         }
 
@@ -65,6 +67,9 @@ kotlin {
                 implementation("ch.qos.logback:logback-classic:1.2.3")
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }
+        }
+        all {
+            languageSettings.optIn("space.kscience.dataforge.misc.DFExperimental")
         }
     }
 }

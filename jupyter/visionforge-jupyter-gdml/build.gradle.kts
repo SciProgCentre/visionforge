@@ -33,7 +33,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.visionforgeSolid)
-                implementation(projects.jupyter.jupyterBase)
+                implementation(projects.jupyter)
             }
         }
         jvmMain {

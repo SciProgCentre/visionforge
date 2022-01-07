@@ -19,6 +19,7 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNEC
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
+import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_RENDERED
 import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -64,7 +65,8 @@ public class VisionClient : AbstractPlugin() {
 
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
-            val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
+            val renderer = findRendererFor(vision)
+                ?: error("Could not find renderer for ${visionManager.encodeToString(vision)}")
             renderer.render(element, vision, outputMeta)
 
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
@@ -138,10 +140,15 @@ public class VisionClient : AbstractPlugin() {
      * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
      */
     public fun renderVisionIn(element: Element) {
-        val name = resolveName(element) ?: error("The element is not a vision output")
-        logger.info { "Found DF output with name $name" }
         if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
+        val name = resolveName(element) ?: error("The element is not a vision output")
 
+        if (element.attributes[OUTPUT_RENDERED]?.value == "true") {
+            logger.info { "VF output in element $element is already rendered" }
+            return
+        } else {
+            logger.info { "Rendering VF output with name $name" }
+        }
 
         val outputMeta = element.getEmbeddedData(VisionTagConsumer.OUTPUT_META_CLASS)?.let {
             VisionManager.defaultJson.decodeFromString(MetaSerializer, it)
@@ -186,6 +193,7 @@ public class VisionClient : AbstractPlugin() {
             }
             else -> error("No embedded vision data / fetch url for $name")
         }
+        element.setAttribute(OUTPUT_RENDERED, "true")
     }
 
     override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) mapOf(
@@ -254,5 +262,5 @@ public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
     val visionClient = context.fetch(VisionClient)
     window.asDynamic()[RENDER_FUNCTION_NAME] = visionClient::renderAllVisionsById
 
-    visionClient.renderAllVisions()
+    //visionClient.renderAllVisions()
 }

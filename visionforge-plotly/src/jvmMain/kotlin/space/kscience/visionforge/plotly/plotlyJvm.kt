@@ -9,7 +9,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.VisionPlugin
 import kotlin.reflect.KClass
 
-public actual class PlotlyPlugin : VisionPlugin(), Plugin {
+public actual class PlotlyPlugin : VisionPlugin() {
 
     override val tag: PluginTag get() = Companion.tag
 

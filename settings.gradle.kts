@@ -1,9 +1,14 @@
+rootProject.name = "visionforge"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("VERSION_CATALOGS")
+
 pluginManagement {
 
     val toolsVersion: String by extra
 
     repositories {
-        //mavenLocal()
+        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
         gradlePluginPortal()
@@ -17,16 +22,12 @@ pluginManagement {
     }
 }
 
-rootProject.name = "visionforge"
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
-
 dependencyResolutionManagement {
 
     val toolsVersion: String by extra
 
     repositories {
+        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
     }
@@ -53,6 +54,7 @@ include(
     ":cern-root-loader",
     ":visionforge-server",
     ":visionforge-plotly",
+    ":visionforge-tables",
     ":visionforge-markdown",
     ":demo:solid-showcase",
     ":demo:gdml",
@@ -61,6 +63,6 @@ include(
     ":demo:playground",
     ":demo:plotly-fx",
     ":demo:js-playground",
-    ":jupyter:jupyter-base",
+    ":jupyter",
     ":jupyter:visionforge-jupyter-gdml"
 )

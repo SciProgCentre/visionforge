@@ -82,8 +82,10 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
 
     useEffect {
         props.context.launch {
-            solid = props.builderOfSolid.await().also {
-                it?.setAsRoot(props.context.visionManager)
+            solid = props.builderOfSolid.await()
+            //ensure that the solid is properly rooted
+            if(solid?.parent == null){
+                solid?.setAsRoot(props.context.visionManager)
             }
         }
     }

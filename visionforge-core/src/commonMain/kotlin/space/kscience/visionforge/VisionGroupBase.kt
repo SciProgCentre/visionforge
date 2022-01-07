@@ -163,6 +163,6 @@ internal class RootVisionGroup(override val manager: VisionManager) : VisionGrou
  * Designate this [VisionGroup] as a root and assign a [VisionManager] as its parent
  */
 public fun Vision.setAsRoot(manager: VisionManager) {
-    if (parent != null) error("This Vision already has a parent. It could not be set as root")
+    if (parent != null) error("Vision $this already has a parent. It could not be set as root")
     parent = RootVisionGroup(manager)
 }

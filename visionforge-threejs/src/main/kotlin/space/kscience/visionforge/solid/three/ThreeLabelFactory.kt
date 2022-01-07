@@ -5,6 +5,7 @@ import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.TextBufferGeometry
 import info.laht.threekt.objects.Mesh
 import kotlinext.js.jsObject
+import kotlinext.js.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange
@@ -18,7 +19,7 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
     override fun invoke(three: ThreePlugin, obj: SolidLabel): Object3D {
-        val textGeo = TextBufferGeometry(obj.text, jsObject {
+        val textGeo = TextBufferGeometry(obj.text, jso {
             font = obj.fontFamily
             size = 20
             height = 1

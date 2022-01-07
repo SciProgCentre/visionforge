@@ -20,3 +20,7 @@ dependencies {
         exclude(module = "slf4j-simple")
     }
 }
+
+readme{
+    maturity = ru.mipt.npm.gradle.Maturity.PROTOTYPE
+}

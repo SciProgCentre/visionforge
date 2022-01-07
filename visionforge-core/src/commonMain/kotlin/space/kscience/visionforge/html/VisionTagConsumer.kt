@@ -78,6 +78,10 @@ public abstract class VisionTagConsumer<R>(
         }
     }
 
+    /**
+     * Insert a vision in this HTML.
+     * TODO replace by multi-receiver
+     */
     @OptIn(DFExperimental::class)
     public inline fun <T> TagConsumer<T>.vision(
         name: Name,
@@ -121,6 +125,8 @@ public abstract class VisionTagConsumer<R>(
 
         public const val OUTPUT_FETCH_ATTRIBUTE: String = "data-output-fetch"
         public const val OUTPUT_CONNECT_ATTRIBUTE: String = "data-output-connect"
+
+        public const val OUTPUT_RENDERED: String = "data-output-rendered"
 
         public const val OUTPUT_NAME_ATTRIBUTE: String = "data-output-name"
         public const val OUTPUT_ENDPOINT_ATTRIBUTE: String = "data-output-endpoint"

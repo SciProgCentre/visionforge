@@ -16,6 +16,7 @@ kotlin {
     jvm {
         withJava()
     }
+
     js {
         useCommonJs()
         browser {
@@ -24,6 +25,7 @@ kotlin {
             }
         }
     }
+
     sourceSets {
         commonMain {
             dependencies {
