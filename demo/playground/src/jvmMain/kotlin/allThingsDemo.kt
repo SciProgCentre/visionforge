@@ -1,6 +1,5 @@
 package space.kscience.visionforge.examples
 
-import kotlinx.html.h1
 import kotlinx.html.h2
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.values.ValueType
@@ -13,10 +12,14 @@ import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.markup.markdown
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.plotly
-import space.kscience.visionforge.solid.*
+import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.solid.box
+import space.kscience.visionforge.solid.solid
+import space.kscience.visionforge.solid.z
 import space.kscience.visionforge.tables.TableVisionPlugin
 import space.kscience.visionforge.tables.columnTable
 import java.nio.file.Paths
+
 
 fun main() {
     val context = Context {
@@ -41,7 +44,9 @@ fun main() {
         h2 { +"3D visualization with Three-js" }
         vision("3D") {
             solid {
-                box(100, 100, 100, name = "aBox")
+                box(100, 100, 100, name = "aBox"){
+                    z = 50.0
+                }
             }
         }
 

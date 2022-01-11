@@ -60,10 +60,11 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override fun createGroup(): SolidGroup = SolidGroup()
 
-    override fun update(change: VisionChange) {
-        updatePosition(change.properties)
-        super.update(change)
-    }
+//
+//    override fun update(change: VisionChange) {
+//        updatePosition(change.properties)
+//        super.update(change)
+//    }
 
     public companion object {
         public val PROTOTYPES_TOKEN: NameToken = NameToken("@prototypes")

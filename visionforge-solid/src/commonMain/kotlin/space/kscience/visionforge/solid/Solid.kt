@@ -1,13 +1,21 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.*
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.enum
+import space.kscience.dataforge.meta.descriptors.node
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.meta.float
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.*
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
+import space.kscience.visionforge.hide
+import space.kscience.visionforge.inherited
+import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
 import space.kscience.visionforge.solid.Solid.Companion.IGNORE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.LAYER_KEY
@@ -198,6 +206,13 @@ public var Solid.z: Number by float(Z_POSITION_KEY, 0f)
 public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
 public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
 public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
+
+//public var Solid.quaternion: Quaternion?
+//    get() = meta[Solid::quaternion.name]?.value?.doubleArray?.let { Quaternion(it) }
+//    set(value) {
+//        meta[Solid::quaternion.name] = value?.values?.asValue()
+//    }
+
 
 public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
 public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)

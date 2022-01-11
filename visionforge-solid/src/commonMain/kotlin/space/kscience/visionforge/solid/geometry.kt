@@ -117,8 +117,8 @@ internal fun Meta.toVector(default: Float = 0f) = Point3D(
     this[Solid.Z_KEY].float ?: default
 )
 
-internal fun Solid.updatePosition(meta: Meta?) {
-    meta?.get(Solid.POSITION_KEY)?.toVector()?.let { position = it }
-    meta?.get(Solid.ROTATION_KEY)?.toVector()?.let { rotation = it }
-    meta?.get(Solid.SCALE_KEY)?.toVector(1f)?.let { scale = it }
-}
+//internal fun Solid.updatePosition(meta: Meta?) {
+//    meta?.get(Solid.POSITION_KEY)?.toVector()?.let { position = it }
+//    meta?.get(Solid.ROTATION_KEY)?.toVector()?.let { rotation = it }
+//    meta?.get(Solid.SCALE_KEY)?.toVector(1f)?.let { scale = it }
+//}

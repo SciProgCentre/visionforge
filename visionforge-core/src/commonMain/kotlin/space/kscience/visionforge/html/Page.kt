@@ -4,6 +4,8 @@ import kotlinx.html.*
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.VisionManager
 
+//data class HeaderContainer
+
 public data class Page(
     public val visionManager: VisionManager,
     public val title: String,

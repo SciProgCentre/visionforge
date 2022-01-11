@@ -39,16 +39,6 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 
     res.meta.update(group.meta)
 
-    if (group.position != null) {
-        res.position = group.position
-    }
-    if (group.rotation != null) {
-        res.rotation = group.rotation
-    }
-    if (group.scale != null) {
-        res.scale = group.scale
-    }
-
     set(name, res)
     return res
 }

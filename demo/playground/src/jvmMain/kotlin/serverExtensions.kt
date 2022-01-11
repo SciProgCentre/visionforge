@@ -29,7 +29,6 @@ public fun Context.makeVisionFile(
     val actualPath = visionManager.page(title, content = content).makeFile(path) { actualPath ->
         mapOf(
             "playground" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
-            //"tables" to tabulatorCssHader
         )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
