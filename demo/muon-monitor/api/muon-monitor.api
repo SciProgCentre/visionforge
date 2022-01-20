@@ -1,0 +1,148 @@
+public final class ru/mipt/npm/muon/monitor/Event {
+	public static final field Companion Lru/mipt/npm/muon/monitor/Event$Companion;
+	public synthetic fun <init> (IILjava/util/List;Ljava/util/Collection;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
+	public fun <init> (ILjava/util/List;Ljava/util/Collection;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/Collection;
+	public final fun copy (ILjava/util/List;Ljava/util/Collection;)Lru/mipt/npm/muon/monitor/Event;
+	public static synthetic fun copy$default (Lru/mipt/npm/muon/monitor/Event;ILjava/util/List;Ljava/util/Collection;ILjava/lang/Object;)Lru/mipt/npm/muon/monitor/Event;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHits ()Ljava/util/Collection;
+	public final fun getId ()I
+	public final fun getTrack ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public static final fun write$Self (Lru/mipt/npm/muon/monitor/Event;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+}
+
+public final class ru/mipt/npm/muon/monitor/Event$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lru/mipt/npm/muon/monitor/Event$$serializer;
+	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/muon/monitor/Event;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lru/mipt/npm/muon/monitor/Event;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/muon/monitor/Event$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/muon/monitor/Model {
+	public fun <init> (Lspace/kscience/visionforge/VisionManager;)V
+	public final fun displayEvent (Lru/mipt/npm/muon/monitor/Event;)V
+	public final fun encodeToString ()Ljava/lang/String;
+	public final fun getManager ()Lspace/kscience/visionforge/VisionManager;
+	public final fun getRoot ()Lspace/kscience/visionforge/solid/SolidGroup;
+	public final fun getTracks ()Lspace/kscience/visionforge/solid/SolidGroup;
+	public final fun reset ()V
+	public final fun setTracks (Lspace/kscience/visionforge/solid/SolidGroup;)V
+}
+
+public final class ru/mipt/npm/muon/monitor/Monitor {
+	public static final field CENTRAL_LAYER_Z F
+	public static final field GEOMETRY_TOLERANCE D
+	public static final field INSTANCE Lru/mipt/npm/muon/monitor/Monitor;
+	public static final field LOWER_LAYER_Z F
+	public static final field PIXEL_XY_SIZE F
+	public static final field PIXEL_XY_SPACING F
+	public static final field PIXEL_Z_SIZE F
+	public static final field UPPER_LAYER_Z F
+	public final fun getDetectors ()Ljava/util/Collection;
+	public final fun getPixels ()Ljava/util/Collection;
+}
+
+public final class ru/mipt/npm/muon/monitor/ReadResourceKt {
+	public static final fun readResource (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class ru/mipt/npm/muon/monitor/SC1 {
+	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;FFF)V
+	public synthetic fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCenter ()Lspace/kscience/visionforge/solid/Point3D;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getXSize ()F
+	public final fun getYSize ()F
+	public final fun getZSize ()F
+}
+
+public final class ru/mipt/npm/muon/monitor/SC16 {
+	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;)V
+	public final fun getCenter ()Lspace/kscience/visionforge/solid/Point3D;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPixels ()Ljava/util/Collection;
+}
+
+public final class ru/mipt/npm/muon/monitor/server/MMServerKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+	public static final fun module (Lio/ktor/application/Application;Lspace/kscience/dataforge/context/Context;)V
+	public static synthetic fun module$default (Lio/ktor/application/Application;Lspace/kscience/dataforge/context/Context;ILjava/lang/Object;)V
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/Cos2TrackGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DFF)V
+	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public final fun getMaxX ()F
+	public final fun getMaxY ()F
+	public final fun getPower ()D
+	public fun getRnd ()Lorg/apache/commons/math3/random/RandomGenerator;
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/FixedAngleGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DDFF)V
+	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DDFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public final fun getMaxX ()F
+	public final fun getMaxY ()F
+	public final fun getPhi ()D
+	public fun getRnd ()Lorg/apache/commons/math3/random/RandomGenerator;
+	public final fun getTheta ()D
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/LineKt {
+	public static final fun getPhi (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)D
+	public static final fun getTheta (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)D
+	public static final fun getX (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)D
+	public static final fun getY (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)D
+	public static final fun makeTrack (DDDD)Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public static final fun makeTrack (Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;)Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public static final fun toPoint (Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;)Lspace/kscience/visionforge/solid/Point3D;
+	public static final fun toPoints (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)Ljava/util/List;
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/MonitorKt {
+	public static final fun buildEventByTrack (ILorg/apache/commons/math3/geometry/euclidean/threed/Line;Lkotlin/jvm/functions/Function1;)Lru/mipt/npm/muon/monitor/Event;
+	public static synthetic fun buildEventByTrack$default (ILorg/apache/commons/math3/geometry/euclidean/threed/Line;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lru/mipt/npm/muon/monitor/Event;
+	public static final fun findLayer (F)Lorg/apache/commons/math3/geometry/euclidean/threed/Plane;
+	public static final fun getDefaultHitResolver ()Lkotlin/jvm/functions/Function1;
+	public static final fun readEffs ()Ljava/util/Map;
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/PixelKt {
+	public static final fun isHit (Lru/mipt/npm/muon/monitor/SC1;Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)Z
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/SimulationKt {
+	public static final fun simulateOne (Lru/mipt/npm/muon/monitor/sim/TrackGenerator;)Lru/mipt/npm/muon/monitor/Event;
+}
+
+public abstract interface class ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public abstract fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public abstract fun getRnd ()Lorg/apache/commons/math3/random/RandomGenerator;
+}
+
+public final class ru/mipt/npm/muon/monitor/sim/UniformTrackGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;FF)V
+	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
+	public final fun getMaxX ()F
+	public final fun getMaxY ()F
+	public fun getRnd ()Lorg/apache/commons/math3/random/RandomGenerator;
+}
+

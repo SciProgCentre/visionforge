@@ -1,0 +1,63 @@
+public final class space/kscience/visionforge/tables/ColumnHeaderScheme : space/kscience/dataforge/meta/Scheme, space/kscience/tables/ColumnHeader {
+	public static final field Companion Lspace/kscience/visionforge/tables/ColumnHeaderScheme$Companion;
+	public fun <init> ()V
+	public synthetic fun getMeta ()Lspace/kscience/dataforge/meta/Meta;
+	public fun getName ()Ljava/lang/String;
+	public final fun getProperties ()Lspace/kscience/tables/ValueColumnScheme;
+	public fun getType ()Lkotlin/reflect/KType;
+	public fun setName (Ljava/lang/String;)V
+	public final fun setProperties (Lspace/kscience/tables/ValueColumnScheme;)V
+}
+
+public final class space/kscience/visionforge/tables/ColumnHeaderScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
+}
+
+public final class space/kscience/visionforge/tables/TablePlugin : space/kscience/visionforge/VisionPlugin {
+	public static final field Companion Lspace/kscience/visionforge/tables/TablePlugin$Companion;
+	public fun <init> ()V
+	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
+}
+
+public final class space/kscience/visionforge/tables/TablePlugin$Companion : space/kscience/dataforge/context/PluginFactory {
+	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
+	public fun getType ()Lkotlin/reflect/KClass;
+	public synthetic fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Ljava/lang/Object;
+	public fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Lspace/kscience/visionforge/tables/TablePlugin;
+}
+
+public final class space/kscience/visionforge/tables/VisionOfTable : space/kscience/visionforge/VisionBase, space/kscience/tables/Rows {
+	public static final field Companion Lspace/kscience/visionforge/tables/VisionOfTable$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
+	public final fun getData ()Lspace/kscience/dataforge/values/Value;
+	public fun getHeaders ()Ljava/util/List;
+	public fun rowSequence ()Lkotlin/sequences/Sequence;
+	public final fun setData (Lspace/kscience/dataforge/values/Value;)V
+	public fun setHeaders (Ljava/util/List;)V
+	public static final fun write$Self (Lspace/kscience/visionforge/tables/VisionOfTable;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+}
+
+public final class space/kscience/visionforge/tables/VisionOfTable$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/tables/VisionOfTable$$serializer;
+	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/tables/VisionOfTable;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/tables/VisionOfTable;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/tables/VisionOfTable$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/tables/VisionOfTableKt {
+	public static final fun numberTableToVision (Lspace/kscience/tables/Table;)Lspace/kscience/visionforge/tables/VisionOfTable;
+	public static final fun stringTableToVision (Lspace/kscience/tables/Table;)Lspace/kscience/visionforge/tables/VisionOfTable;
+	public static final fun table (Lspace/kscience/visionforge/html/VisionOutput;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/tables/VisionOfTable;
+	public static final fun toVision (Lspace/kscience/tables/Table;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/tables/VisionOfTable;
+	public static final fun valueTableToVision (Lspace/kscience/tables/Table;)Lspace/kscience/visionforge/tables/VisionOfTable;
+}
+

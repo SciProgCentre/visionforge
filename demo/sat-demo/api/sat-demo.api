@@ -1,0 +1,5 @@
+public final class ru/mipt/npm/sat/SatServerKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+

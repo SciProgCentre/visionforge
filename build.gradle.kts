@@ -8,7 +8,7 @@ val fxVersion by extra("11")
 
 allprojects{
     group = "space.kscience"
-    version = "0.2.0-dev-99"
+    version = "0.2.0"
 }
 
 subprojects {
