@@ -87,7 +87,10 @@ public fun Table<Number>.toVision(): VisionOfTable = toVision { (it ?: Double.Na
 public inline fun VisionOutput.table(
     vararg headers: ColumnHeader<Value>,
     block: MutableRowTable<Value>.() -> Unit,
-): VisionOfTable = RowTable(*headers, block = block).toVision()
+): VisionOfTable {
+    requirePlugin(TableVisionPlugin)
+    return RowTable(*headers, block = block).toVision()
+}
 
 @DFExperimental
 public inline fun VisionOutput.columnTable(
@@ -99,6 +102,7 @@ public inline fun VisionOutput.columnTable(
 public fun VisionOutput.columnTable(
     vararg dataAndHeaders: Pair<ColumnHeader<Value>, List<Any?>>,
 ): VisionOfTable {
+    requirePlugin(TableVisionPlugin)
     val columns = dataAndHeaders.map { (header, data) ->
         ListColumn(header, data.map { Value.of(it) })
     }

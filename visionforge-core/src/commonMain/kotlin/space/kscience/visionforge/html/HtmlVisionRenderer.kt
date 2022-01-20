@@ -1,6 +1,8 @@
 package space.kscience.visionforge.html
 
 import kotlinx.html.*
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
@@ -28,7 +30,7 @@ internal const val RENDER_FUNCTION_NAME = "renderAllVisionsById"
  * @param renderScript if true add rendering script after the fragment
  */
 public fun TagConsumer<*>.visionFragment(
-    manager: VisionManager,
+    context: Context = Global,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
     fetchUpdatesUrl: String? = null,
@@ -37,8 +39,8 @@ public fun TagConsumer<*>.visionFragment(
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, manager, idPrefix) {
-        override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
+    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, context, idPrefix) {
+        override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             // Toggle update mode
 
@@ -78,19 +80,19 @@ public fun TagConsumer<*>.visionFragment(
 }
 
 public fun FlowContent.visionFragment(
-    manager: VisionManager,
+    context: Context = Global,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
     fetchUpdatesUrl: String? = null,
     idPrefix: String? = null,
-    renderSctipt: Boolean = true,
+    renderScript: Boolean = true,
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> = consumer.visionFragment(
-    manager,
+    context,
     embedData,
     fetchDataUrl,
     fetchUpdatesUrl,
     idPrefix,
-    renderSctipt,
+    renderScript,
     fragment
 )

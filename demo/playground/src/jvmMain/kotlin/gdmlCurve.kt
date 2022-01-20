@@ -1,6 +1,5 @@
 package space.kscience.visionforge.examples
 
-import space.kscience.dataforge.context.Context
 import space.kscience.gdml.*
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.ResourceLocation
@@ -10,13 +9,9 @@ import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.visible
 import java.nio.file.Path
 
-fun main() {
-    val context = Context {
-        plugin(Solids)
-    }
-
-    context.makeVisionFile(Path.of("curves.html"), resourceLocation = ResourceLocation.EMBED) {
+fun main() = makeVisionFile(Path.of("curves.html"), resourceLocation = ResourceLocation.EMBED) {
         vision("canvas") {
+            requirePlugin(Solids)
             Gdml {
                 // geometry variables
                 val worldSize = 500
@@ -241,4 +236,3 @@ fun main() {
             }
         }
     }
-}

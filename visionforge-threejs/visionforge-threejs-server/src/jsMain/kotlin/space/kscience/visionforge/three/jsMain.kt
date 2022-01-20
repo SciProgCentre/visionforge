@@ -1,4 +1,4 @@
-package space.kscience.visionforge.three.server
+package space.kscience.visionforge.three
 
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.runVisionClient

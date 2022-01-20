@@ -18,8 +18,8 @@ import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.html.HtmlFormFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.visionFragment
-import space.kscience.visionforge.three.server.VisionServer
-import space.kscience.visionforge.three.server.serve
+import space.kscience.visionforge.server.VisionServer
+import space.kscience.visionforge.server.serve
 import space.kscience.visionforge.visionManager
 
 /**
@@ -75,7 +75,7 @@ public class VisionForgeForNotebook(override val context: Context) : ContextAwar
         fragment: HtmlVisionFragment,
     ): String = server?.serveVisionsFromFragment("content[${counter++}]", fragment)
         ?: createHTML().apply {
-            visionFragment(context.visionManager, fragment = fragment)
+            visionFragment(context, fragment = fragment)
         }.finalize()
 
     public fun produceHtml(isolated: Boolean? = null, fragment: HtmlVisionFragment): MimeTypedResult =

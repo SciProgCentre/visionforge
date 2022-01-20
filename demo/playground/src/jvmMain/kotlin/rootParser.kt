@@ -3,7 +3,6 @@ package space.kscience.visionforge.examples
 import ru.mipt.npm.root.DGeoManager
 import ru.mipt.npm.root.serialization.TGeoManager
 import ru.mipt.npm.root.toSolid
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
@@ -22,11 +21,6 @@ private fun Meta.countTypes(): Sequence<String> = sequence {
 }
 
 fun main() {
-    val context = Context {
-        plugin(Solids)
-    }
-
-
     val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/BM@N_geometry.zip")!!).use {
         it.nextEntry
         it.readAllBytes().decodeToString()
@@ -45,8 +39,9 @@ fun main() {
     Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))
     //println(Solids.encodeToString(solid))
 
-    context.makeVisionFile {
+    makeVisionFile {
         vision("canvas") {
+            requirePlugin(Solids)
             solid
         }
     }

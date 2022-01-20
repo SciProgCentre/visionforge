@@ -44,7 +44,7 @@ public abstract class JupyterPluginBase(final override val context: Context) : J
 
         render<Vision> { vision ->
             handler.produceHtml {
-                vision(vision)
+                vision { vision }
             }
 
         }
@@ -62,7 +62,7 @@ public abstract class JupyterPluginBase(final override val context: Context) : J
                     }
                 }
                 fragment(fragment.formBody)
-                vision(fragment.vision)
+                vision { fragment.vision }
             }
         }
 

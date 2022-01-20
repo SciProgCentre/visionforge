@@ -24,4 +24,7 @@ public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)
 @DFExperimental
 public inline fun VisionOutput.plotly(
     block: Plot.() -> Unit,
-): VisionOfPlotly = VisionOfPlotly(Plotly.plot(block))
+): VisionOfPlotly {
+    requirePlugin(PlotlyPlugin)
+    return VisionOfPlotly(Plotly.plot(block))
+}

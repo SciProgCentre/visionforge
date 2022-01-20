@@ -6,7 +6,7 @@ import kotlinx.html.stream.createHTML
 
 public typealias HtmlFragment = TagConsumer<*>.() -> Unit
 
-public fun HtmlFragment.render(): String = createHTML().apply(this).finalize()
+public fun HtmlFragment.renderToString(): String = createHTML().apply(this).finalize()
 
 public fun TagConsumer<*>.fragment(fragment: HtmlFragment) {
     fragment()
@@ -14,4 +14,9 @@ public fun TagConsumer<*>.fragment(fragment: HtmlFragment) {
 
 public fun FlowContent.fragment(fragment: HtmlFragment) {
     fragment(consumer)
+}
+
+public operator fun HtmlFragment.plus(other: HtmlFragment): HtmlFragment = {
+    this@plus()
+    other()
 }

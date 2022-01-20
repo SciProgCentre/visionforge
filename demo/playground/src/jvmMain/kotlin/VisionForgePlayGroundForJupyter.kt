@@ -36,13 +36,13 @@ internal class VisionForgePlayGroundForJupyter : JupyterPluginBase(
 
         render<Gdml> { gdmlModel ->
             handler.produceHtml {
-                vision(gdmlModel.toVision())
+                vision { gdmlModel.toVision() }
             }
         }
 
         render<Plot> { plot ->
             handler.produceHtml {
-                vision(plot.asVision())
+                vision { plot.asVision() }
             }
         }
     }

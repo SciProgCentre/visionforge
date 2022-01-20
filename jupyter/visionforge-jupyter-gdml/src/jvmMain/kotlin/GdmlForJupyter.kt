@@ -29,7 +29,9 @@ internal class GdmlForJupyter : JupyterPluginBase(
         )
 
         render<Gdml> { gdmlModel ->
-            handler.produceHtml { vision(gdmlModel.toVision()) }
+            handler.produceHtml {
+                vision { gdmlModel.toVision() }
+            }
         }
     }
 }

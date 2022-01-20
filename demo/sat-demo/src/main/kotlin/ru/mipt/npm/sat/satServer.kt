@@ -1,18 +1,21 @@
 package ru.mipt.npm.sat
 
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.html.Page
+import space.kscience.visionforge.html.plus
+import space.kscience.visionforge.server.close
+import space.kscience.visionforge.server.openInBrowser
+import space.kscience.visionforge.server.serve
 import space.kscience.visionforge.solid.*
-import space.kscience.visionforge.three.server.*
+import space.kscience.visionforge.three.threeJsHeader
 import space.kscience.visionforge.visionManager
 import kotlin.random.Random
+
 
 fun main() {
     val satContext = Context("sat") {
@@ -23,20 +26,17 @@ fun main() {
     val sat = visionOfSatellite(ySegments = 3)
 
     val server = satContext.visionManager.serve {
-        //use client library
-        useThreeJs()
-        //use css
-        useCss("css/styles.css")
-        page {
+        page(header = Page.threeJsHeader + Page.styleSheetHeader("css/styles.css")) {
             div("flex-column") {
                 h1 { +"Satellite detector demo" }
-                vision(sat)
+                vision { sat }
             }
         }
     }
 
     server.openInBrowser()
 
+    @OptIn(DelicateCoroutinesApi::class)
     GlobalScope.launch {
         while (isActive) {
             val randomLayer = Random.nextInt(1, 11)

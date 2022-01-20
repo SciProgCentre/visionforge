@@ -1,4 +1,4 @@
-package space.kscience.visionforge.three.server
+package space.kscience.visionforge.server
 
 import io.ktor.application.*
 import io.ktor.features.CORS
@@ -14,9 +14,9 @@ import io.ktor.routing.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
+import io.ktor.util.getOrFail
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -32,9 +32,8 @@ import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.flowChanges
 import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
-import space.kscience.visionforge.html.fragment
 import space.kscience.visionforge.html.visionFragment
-import space.kscience.visionforge.three.server.VisionServer.Companion.DEFAULT_PAGE
+import space.kscience.visionforge.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
 import kotlin.time.Duration.Companion.milliseconds
@@ -48,7 +47,10 @@ public class VisionServer internal constructor(
     private val visionManager: VisionManager,
     private val serverUrl: Url,
     private val root: Route,
-) : Configurable, CoroutineScope by root.application {
+) : Configurable {
+
+    public val application: Application get() = root.application
+
     override val meta: ObservableMutableMeta = MutableMeta()
 
     /**
@@ -76,22 +78,10 @@ public class VisionServer internal constructor(
      */
     public var dataUpdate: Boolean by meta.boolean(true, Name.parse("data.update"))
 
-    /**
-     * a list of headers that should be applied to all pages
-     */
-    private val globalHeaders: ArrayList<HtmlFragment> = ArrayList()
-
-    /**
-     * Add a header to all pages produced by this server
-     */
-    public fun header(block: TagConsumer<*>.() -> Unit) {
-        globalHeaders.add(block)
-    }
-
     private fun HTML.visionPage(
         title: String,
         pagePath: String,
-        headers: List<HtmlFragment>,
+        header: HtmlFragment,
         visionFragment: HtmlVisionFragment,
     ): Map<Name, Vision> {
         var visionMap: Map<Name, Vision>? = null
@@ -99,16 +89,14 @@ public class VisionServer internal constructor(
         head {
             meta {
                 charset = "utf-8"
-                (globalHeaders + headers).forEach {
-                    fragment(it)
-                }
+                header()
             }
             title(title)
         }
         body {
             //Load the fragment and remember all loaded visions
             visionMap = visionFragment(
-                manager = visionManager,
+                context = visionManager.context,
                 embedData = true,
                 fetchUpdatesUrl = "$serverUrl$pagePath/ws",
                 fragment = visionFragment
@@ -127,9 +115,7 @@ public class VisionServer internal constructor(
 
         //Update websocket
         webSocket("ws") {
-            val name: String = call.request.queryParameters["name"]
-                ?: error("Vision name is not defined in parameters")
-
+            val name: String = call.request.queryParameters.getOrFail("name")
             application.log.debug("Opened server socket for $name")
             val vision: Vision = visions[Name.parse(name)] ?: error("Plot with id='$name' not registered")
 
@@ -158,8 +144,7 @@ public class VisionServer internal constructor(
         }
         //Plots in their json representation
         get("data") {
-            val name: String = call.request.queryParameters["name"]
-                ?: error("Vision name is not defined in parameters")
+            val name: String = call.request.queryParameters.getOrFail("name")
 
             val vision: Vision? = visions[Name.parse(name)]
             if (vision == null) {
@@ -178,7 +163,7 @@ public class VisionServer internal constructor(
     /**
      * Serve visions in a given [route] without providing a page template
      */
-    public fun serveVisions(route: String, visions: Map<Name, Vision>): Unit {
+    public fun serveVisions(route: String, visions: Map<Name, Vision>) {
         root.route(route) {
             serveVisions(this, visions)
         }
@@ -192,7 +177,7 @@ public class VisionServer internal constructor(
         fragment: HtmlVisionFragment,
     ): String = createHTML().apply {
         val visions = visionFragment(
-            visionManager,
+            visionManager.context,
             embedData = true,
             fetchUpdatesUrl = "$serverUrl$route/ws",
             renderScript = true,
@@ -203,12 +188,11 @@ public class VisionServer internal constructor(
 
     /**
      * Serve a page, potentially containing any number of visions at a given [pagePath] with given [headers].
-     *
      */
     public fun page(
         pagePath: String = DEFAULT_PAGE,
         title: String = "VisionForge server page '$pagePath'",
-        headers: List<HtmlFragment> = emptyList(),
+        header: HtmlFragment = {},
         visionFragment: HtmlVisionFragment,
     ) {
         val visions = HashMap<Name, Vision>()
@@ -216,7 +200,7 @@ public class VisionServer internal constructor(
         val cachedHtml: String? = if (cacheFragments) {
             //Create and cache page html and map of visions
             createHTML(true).html {
-                visions.putAll(visionPage(title, pagePath, headers, visionFragment))
+                visions.putAll(visionPage(title, pagePath, header, visionFragment))
             }
         } else {
             null
@@ -230,7 +214,7 @@ public class VisionServer internal constructor(
                     //re-create html and vision list on each call
                     call.respondHtml {
                         visions.clear()
-                        visions.putAll(visionPage(title, pagePath, headers, visionFragment))
+                        visions.putAll(visionPage(title, pagePath, header, visionFragment))
                     }
                 } else {
                     //Use cached html
@@ -246,32 +230,6 @@ public class VisionServer internal constructor(
         public const val DEFAULT_PORT: Int = 7777
         public const val DEFAULT_PAGE: String = "/"
         public val UPDATE_INTERVAL_KEY: Name = Name.parse("update.interval")
-    }
-}
-
-/**
- * Use a script with given [src] as a global header for all pages.
- */
-public inline fun VisionServer.useScript(src: String, crossinline block: SCRIPT.() -> Unit = {}) {
-    header {
-        script {
-            type = "text/javascript"
-            this.src = src
-            block()
-        }
-    }
-}
-
-/**
- * Use css with given stylesheet link as a global header for all pages.
- */
-public inline fun VisionServer.useCss(href: String, crossinline block: LINK.() -> Unit = {}) {
-    header {
-        link {
-            rel = "stylesheet"
-            this.href = href
-            block()
-        }
     }
 }
 

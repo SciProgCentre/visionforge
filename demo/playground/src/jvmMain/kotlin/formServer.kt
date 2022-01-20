@@ -3,21 +3,19 @@ package space.kscience.visionforge.examples
 import kotlinx.html.*
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.formFragment
 import space.kscience.visionforge.onPropertyChange
-import space.kscience.visionforge.three.server.close
-import space.kscience.visionforge.three.server.openInBrowser
-import space.kscience.visionforge.three.server.serve
-import space.kscience.visionforge.three.server.useScript
+import space.kscience.visionforge.server.close
+import space.kscience.visionforge.server.openInBrowser
+import space.kscience.visionforge.server.serve
 
 fun main() {
     val visionManager = Global.fetch(VisionManager)
 
     val server = visionManager.serve {
-        useScript("js/visionforge-playground.js")
-        page {
+        page(header = Page.scriptHeader("js/visionforge-playground.js")) {
             val form = formFragment("form") {
                 label {
                     htmlFor = "fname"
@@ -50,7 +48,7 @@ fun main() {
                 }
             }
 
-            vision("form".asName(), form)
+            vision("form") { form }
             form.onPropertyChange {
                 println(this)
             }

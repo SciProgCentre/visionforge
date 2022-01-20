@@ -1,7 +1,6 @@
 package space.kscience.visionforge.solid.demo
 
 import kotlinx.browser.document
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -30,7 +29,8 @@ private class ThreeDemoApp : Application {
                         }
                     }
                 }
-                GlobalScope.launch {
+
+                launch {
                     while (isActive) {
                         delay(500)
                         boxes.forEach { box ->

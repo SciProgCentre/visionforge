@@ -1,6 +1,8 @@
 package space.kscience.visionforge.html
 
 import kotlinx.html.*
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.MutableMeta
@@ -9,9 +11,12 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.html.VisionTagConsumer.Companion.DEFAULT_VISION_NAME
 import space.kscience.visionforge.setAsRoot
+import space.kscience.visionforge.visionManager
 import kotlin.collections.set
 
 @DslMarker
@@ -22,10 +27,25 @@ public annotation class VisionDSL
  */
 @DFExperimental
 @VisionDSL
-public class VisionOutput @PublishedApi internal constructor(public val manager: VisionManager) {
+public class VisionOutput @PublishedApi internal constructor(public val context: Context, public val name: Name?) {
     public var meta: Meta = Meta.EMPTY
 
-    //TODO expose a way to define required plugins.
+    private val requirements: MutableSet<PluginFactory<*>> = HashSet()
+
+    public fun requirePlugin(factory: PluginFactory<*>) {
+        requirements.add(factory)
+    }
+
+    internal fun buildVisionManager(): VisionManager =
+        if (requirements.all { req -> context.plugins.find(true) { it.tag == req.tag } != null }) {
+            context.visionManager
+        } else {
+            val newContext = context.buildContext(NameToken(DEFAULT_VISION_NAME, name.toString()).asName()) {
+                plugin(VisionManager)
+                requirements.forEach { plugin(it) }
+            }
+            newContext.visionManager
+        }
 
     public inline fun meta(block: MutableMeta.() -> Unit) {
         this.meta = Meta(block)
@@ -36,9 +56,10 @@ public class VisionOutput @PublishedApi internal constructor(public val manager:
  * Modified  [TagConsumer] that allows rendering output fragments and visions in them
  */
 @VisionDSL
+@OptIn(DFExperimental::class)
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
-    public val manager: VisionManager,
+    public val context: Context,
     private val idPrefix: String? = null,
 ) : TagConsumer<R> by root {
 
@@ -46,23 +67,26 @@ public abstract class VisionTagConsumer<R>(
 
     /**
      * Render a vision inside the output fragment
+     * @param manager a [VisionManager] to be used in renderer
      * @param name name of the output container
      * @param vision an object to be rendered
      * @param outputMeta optional configuration for the output container
      */
-    protected abstract fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta)
+    protected abstract fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta)
 
     /**
      * Create a placeholder for a vision output with optional [Vision] in it
      * TODO with multi-receivers could be replaced by [VisionTagConsumer, TagConsumer] extension
      */
-    public fun <T> TagConsumer<T>.vision(
+    private fun <T> TagConsumer<T>.vision(
         name: Name,
-        vision: Vision? = null,
+        manager: VisionManager,
+        vision: Vision,
         outputMeta: Meta = Meta.EMPTY,
     ): T = div {
         id = resolveId(name)
         classes = setOf(OUTPUT_CLASS)
+        vision.setAsRoot(manager)
         attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
         if (!outputMeta.isEmpty()) {
             //Hard-code output configuration
@@ -73,9 +97,7 @@ public abstract class VisionTagConsumer<R>(
                 }
             }
         }
-        vision?.let {
-            renderVision(name, it, outputMeta)
-        }
+        renderVision(manager, name, vision, outputMeta)
     }
 
     /**
@@ -83,14 +105,14 @@ public abstract class VisionTagConsumer<R>(
      * TODO replace by multi-receiver
      */
     @OptIn(DFExperimental::class)
-    public inline fun <T> TagConsumer<T>.vision(
-        name: Name,
+    public fun <T> TagConsumer<T>.vision(
+        name: Name? = null,
         @OptIn(DFExperimental::class) visionProvider: VisionOutput.() -> Vision,
     ): T {
-        val output = VisionOutput(manager)
+        val output = VisionOutput(context, name)
         val vision = output.visionProvider()
-        vision.setAsRoot(manager)
-        return vision(name, vision, output.meta)
+        val actualName = name ?: NameToken(DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
+        return vision(actualName, output.buildVisionManager(), vision, output.meta)
     }
 
     /**
@@ -98,14 +120,10 @@ public abstract class VisionTagConsumer<R>(
      */
     @OptIn(DFExperimental::class)
     @VisionDSL
-    public inline fun <T> TagConsumer<T>.vision(
-        name: String = DEFAULT_VISION_NAME,
-        visionProvider: VisionOutput.() -> Vision,
-    ): T = vision(Name.parse(name), visionProvider)
-
     public fun <T> TagConsumer<T>.vision(
-        vision: Vision,
-    ): T = vision(NameToken("vision", vision.hashCode().toString()).asName(), vision)
+        name: String?,
+        @OptIn(DFExperimental::class) visionProvider: VisionOutput.() -> Vision,
+    ): T = vision(name?.parseAsName(), visionProvider)
 
     /**
      * Process the resulting object produced by [TagConsumer]
@@ -114,9 +132,7 @@ public abstract class VisionTagConsumer<R>(
         //do nothing by default
     }
 
-    override fun finalize(): R {
-        return root.finalize().also { processResult(it) }
-    }
+    override fun finalize(): R = root.finalize().also { processResult(it) }
 
     public companion object {
         public const val OUTPUT_CLASS: String = "visionforge-output"

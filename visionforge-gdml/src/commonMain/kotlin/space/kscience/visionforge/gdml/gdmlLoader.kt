@@ -390,4 +390,7 @@ public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlLoa
 
 @VisionBuilder
 @DFExperimental
-public inline fun VisionOutput.gdml(block: Gdml.() -> Unit): SolidGroup = Gdml(block).toVision()
+public inline fun VisionOutput.gdml(block: Gdml.() -> Unit): SolidGroup {
+    requirePlugin(Solids)
+    return Gdml(block).toVision()
+}

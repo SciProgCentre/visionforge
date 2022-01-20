@@ -3,7 +3,6 @@ package space.kscience.visionforge.html
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.configure
 import space.kscience.dataforge.meta.set
@@ -23,8 +22,8 @@ fun FlowContent.renderVisionFragment(
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(consumer, Global.fetch(VisionManager), idPrefix) {
-        override fun DIV.renderVision(name: Name, vision: Vision, outputMeta: Meta) {
+    val consumer = object : VisionTagConsumer<Any?>(consumer, Global, idPrefix) {
+        override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             renderer(name, vision, outputMeta)
         }

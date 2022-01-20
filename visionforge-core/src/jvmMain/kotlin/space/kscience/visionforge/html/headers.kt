@@ -4,7 +4,6 @@ import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
 import org.slf4j.LoggerFactory
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.VisionManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -113,10 +112,9 @@ internal fun fileCssHeader(
 }
 
 /**
- * Make a script header, automatically copying file to appropriate location
+ * Make a script header from a resource file, automatically copying file to appropriate location
  */
-@DFExperimental
-public fun scriptHeader(
+public fun Page.Companion.importScriptHeader(
     scriptResource: String,
     resourceLocation: ResourceLocation,
     htmlPath: Path? = null,
