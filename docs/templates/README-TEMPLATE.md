@@ -61,7 +61,7 @@ To learn more about DataForge, please consult the following URLs:
 
 ## Modules contained in this repository
 
-$modules
+${modules}
 
 **Class diagram:**
 
@@ -131,6 +131,21 @@ Visualization example for geometry defined as GDML file.
 
 ![](docs/images/gdml-demo.png)
 
+
+## Stability and documentation
+
+VisionForge is a modular library. Different modules provide different features with different API stability guarantees. All core modules are released with the same version, but with different API change policy. The features are described in module definitions below. The module stability could have the following levels:
+
+* **PROTOTYPE**. On this level there are no compatibility guarantees. All methods and classes form those modules could break any moment. You can still use it, but be sure to fix the specific version.
+* **EXPERIMENTAL**. The general API is decided, but some changes could be made. Volatile API is marked
+  with `@DFExperimental` or other stability warning annotations.
+* **DEVELOPMENT**. API breaking generally follows semantic versioning ideology. There could be changes in minor
+  versions, but not in patch versions. API is protected with [binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator) tool.
+* **STABLE**. The API stabilized. Breaking changes are allowed only in major releases.
+
+Additionally, one should note that the VisionForge Json format impacts the reproducibility of stored vision fragments. There should not be any breaks of the format between major releases. All problems should be reported.
+
+The documentation for the project is a work in progress. Please report any issues with missing, vague or wrong information. The contributions into documentation are quite welcome.
 
 ## Thanks and references
 The original three.js bindings were made by [Lars Ivar Hatledal](https://github.com/markaren), but the project is discontinued right now.

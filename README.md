@@ -16,9 +16,9 @@
 * [Modules contained in this repository](#modules-contained-in-this-repository)
 * [Visualization for External Systems](#visualization-for-external-systems)
 * [Demonstrations](#demonstrations)
-    * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
-    * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
-    * [GDML Example](#gdml-example)
+  * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
+  * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
+  * [GDML Example](#gdml-example)
 
 
 ## Introduction
@@ -61,7 +61,158 @@ To learn more about DataForge, please consult the following URLs:
 
 ## Modules contained in this repository
 
-$modules
+<hr/>
+
+* ### [cern-root-loader](cern-root-loader)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [demo](demo)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [jupyter](jupyter)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [ui](ui)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-core](visionforge-core)
+> 
+>
+> **Maturity**: DEVELOPMENT
+<hr/>
+
+* ### [visionforge-fx](visionforge-fx)
+> 
+>
+> **Maturity**: PROTOTYPE
+<hr/>
+
+* ### [visionforge-gdml](visionforge-gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-markdown](visionforge-markdown)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-plotly](visionforge-plotly)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-server](visionforge-server)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-solid](visionforge-solid)
+> 
+>
+> **Maturity**: DEVELOPMENT
+<hr/>
+
+* ### [visionforge-tables](visionforge-tables)
+> 
+>
+> **Maturity**: PROTOTYPE
+<hr/>
+
+* ### [visionforge-threejs](visionforge-threejs)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [gdml](demo/gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [js-playground](demo/js-playground)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [muon-monitor](demo/muon-monitor)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [playground](demo/playground)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [plotly-fx](demo/plotly-fx)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [sat-demo](demo/sat-demo)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [solid-showcase](demo/solid-showcase)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-jupyter-gdml](jupyter/visionforge-jupyter-gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [bootstrap](ui/bootstrap)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [react](ui/react)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [ring](ui/ring)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-threejs-server](visionforge-threejs/visionforge-threejs-server)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
 
 **Class diagram:**
 

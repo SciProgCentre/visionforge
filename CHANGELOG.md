@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.2.0]
+### Added
 - Server module
 - Change collector
 - Customizable accessors for colors
@@ -9,6 +22,9 @@
 - Hexagon interface and GenericHexagon implementation (Box inherits Hexagon)
 - Increased the default detail level for spheres and cones to 32
 - Simple clipping for Solids in ThreeJs
+- Markdown module
+- Tables module
+
 
 ### Changed
 - Vision does not implement ItemProvider anymore. Property changes are done via `getProperty`/`setProperty` and `property` delegate.
@@ -25,12 +41,16 @@
 - Property listeners are not triggered if there are no changes.
 - Feedback websocket connection in the client.
 
+
 ### Deprecated
 
 ### Removed
 - Primary modules dependencies on UI
 
+
 ### Fixed
 - Version conflicts
 
+
 ### Security
+

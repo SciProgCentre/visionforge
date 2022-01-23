@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package space.kscience.visionforge.examples
 
 import space.kscience.gdml.*
