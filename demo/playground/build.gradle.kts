@@ -1,14 +1,13 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("jupyter.api")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-repositories{
-    jcenter()
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
-    maven("https://dl.bintray.com/mipt-npm/dataforge")
-    maven("https://dl.bintray.com/mipt-npm/kscience")
-    maven("https://dl.bintray.com/mipt-npm/dev")
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+    maven("https://repo.kotlin.link")
 }
 
 kotlin {
@@ -20,56 +19,72 @@ kotlin {
                 this.outputFileName = "js/visionforge-playground.js"
             }
             commonWebpackConfig {
-                sourceMaps = false
+                sourceMaps = true
                 cssSupport.enabled = false
             }
         }
         binaries.executable()
     }
 
-    jvm{
+    jvm {
+        withJava()
         compilations.all {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions {
+                jvmTarget = "11"
+                freeCompilerArgs =
+                    freeCompilerArgs + "-Xjvm-default=all" + "-Xopt-in=kotlin.RequiresOptIn" + "-Xlambdas=indy"
+            }
         }
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
     }
 
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
-        }
-    }
-
-
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":visionforge-solid"))
-                api(project(":visionforge-gdml"))
-                api(project(":visionforge-plotly"))
+                implementation(projects.visionforgeSolid)
+                implementation(projects.visionforgeGdml)
+                implementation(projects.visionforgePlotly)
+                implementation(projects.visionforgeMarkdown)
+                implementation(projects.visionforgeTables)
+                implementation(projects.cernRootLoader)
+                implementation(projects.jupyter)
             }
         }
 
-        val jsMain by getting{
+        val jsMain by getting {
             dependencies {
-                implementation(project(":ui:ring"))
-                api(project(":visionforge-threejs"))
+                implementation(projects.ui.ring)
+                implementation(projects.visionforgeThreejs)
+                compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
             }
         }
 
-        val jvmMain by getting{
+        val jvmMain by getting {
             dependencies {
-                api(project(":visionforge-server"))
-                api("ch.qos.logback:logback-classic:1.2.3")
+                implementation(projects.visionforgeServer)
+                implementation("ch.qos.logback:logback-classic:1.2.3")
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
             }
         }
+        all {
+            languageSettings.optIn("space.kscience.dataforge.misc.DFExperimental")
+        }
     }
 }
+
+val jsBrowserDistribution = tasks.getByName("jsBrowserDistribution")
+
+tasks.getByName<ProcessResources>("jvmProcessResources") {
+    dependsOn(jsBrowserDistribution)
+    from(jsBrowserDistribution) {
+        exclude("**/*.js.map")
+    }
+}
+
+val processJupyterApiResources by tasks.getting(org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask::class) {
+    libraryProducers = listOf("space.kscience.visionforge.examples.VisionForgePlayGroundForJupyter")
+}
+
+tasks.findByName("shadowJar")?.dependsOn(processJupyterApiResources)

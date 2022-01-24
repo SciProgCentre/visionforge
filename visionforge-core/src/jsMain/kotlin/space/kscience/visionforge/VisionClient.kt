@@ -10,15 +10,22 @@ import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.RENDER_FUNCTION_NAME
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
+import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_RENDERED
 import kotlin.reflect.KClass
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * A Kotlin-browser plugin that renders visions based on provided renderers and governs communication with the server.
+ */
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
     private val visionManager: VisionManager by require(VisionManager)
@@ -26,7 +33,7 @@ public class VisionClient : AbstractPlugin() {
     //private val visionMap = HashMap<Element, Vision>()
 
     /**
-     * Up-going tree traversal in search for endpoint attribute
+     * Up-going tree traversal in search for endpoint attribute. If element is null, return window URL
      */
     private fun resolveEndpoint(element: Element?): String {
         if (element == null) return window.location.href
@@ -58,11 +65,12 @@ public class VisionClient : AbstractPlugin() {
 
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
-            val renderer = findRendererFor(vision) ?: error("Could nof find renderer for $vision")
+            val renderer = findRendererFor(vision)
+                ?: error("Could not find renderer for ${visionManager.encodeToString(vision)}")
             renderer.render(element, vision, outputMeta)
 
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
-                val wsUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {
@@ -102,10 +110,12 @@ public class VisionClient : AbstractPlugin() {
                     //Backward change propagation
                     var feedbackJob: Job? = null
 
+                    //Feedback changes aggregation time in milliseconds
+                    val feedbackAggregationTime = meta["aggregationTime"]?.int ?: 300
+
                     onopen = {
                         feedbackJob = vision.flowChanges(
-                            visionManager,
-                            Duration.Companion.milliseconds(300)
+                            feedbackAggregationTime.milliseconds
                         ).onEach { change ->
                             send(visionManager.encodeToString(change))
                         }.launchIn(visionManager.context)
@@ -130,10 +140,15 @@ public class VisionClient : AbstractPlugin() {
      * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
      */
     public fun renderVisionIn(element: Element) {
-        val name = resolveName(element) ?: error("The element is not a vision output")
-        logger.info { "Found DF output with name $name" }
         if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
+        val name = resolveName(element) ?: error("The element is not a vision output")
 
+        if (element.attributes[OUTPUT_RENDERED]?.value == "true") {
+            logger.info { "VF output in element $element is already rendered" }
+            return
+        } else {
+            logger.info { "Rendering VF output with name $name" }
+        }
 
         val outputMeta = element.getEmbeddedData(VisionTagConsumer.OUTPUT_META_CLASS)?.let {
             VisionManager.defaultJson.decodeFromString(MetaSerializer, it)
@@ -152,11 +167,11 @@ public class VisionClient : AbstractPlugin() {
             element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
                 val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 
-                val fetchUrl = if (attr.value.isBlank() || attr.value == "auto") {
+                val fetchUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {
-                        pathname += "/vision"
+                        pathname += "/data"
                     }
                 } else {
                     URL(attr.value)
@@ -178,7 +193,14 @@ public class VisionClient : AbstractPlugin() {
             }
             else -> error("No embedded vision data / fetch url for $name")
         }
+        element.setAttribute(OUTPUT_RENDERED, "true")
     }
+
+    override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) mapOf(
+        numberVisionRenderer.name to numberVisionRenderer,
+        textVisionRenderer.name to textVisionRenderer,
+        formVisionRenderer.name to formVisionRenderer
+    ) else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
 
@@ -240,5 +262,5 @@ public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
     val visionClient = context.fetch(VisionClient)
     window.asDynamic()[RENDER_FUNCTION_NAME] = visionClient::renderAllVisionsById
 
-    visionClient.renderAllVisions()
+    //visionClient.renderAllVisions()
 }

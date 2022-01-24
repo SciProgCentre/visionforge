@@ -1,21 +1,24 @@
 package ru.mipt.npm.sat
 
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.html.div
 import kotlinx.html.h1
-import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.html.Page
+import space.kscience.visionforge.html.plus
+import space.kscience.visionforge.server.close
+import space.kscience.visionforge.server.openInBrowser
+import space.kscience.visionforge.server.serve
 import space.kscience.visionforge.solid.*
-import space.kscience.visionforge.three.server.*
+import space.kscience.visionforge.three.threeJsHeader
 import space.kscience.visionforge.visionManager
 import kotlin.random.Random
 
+
 fun main() {
-    val satContext = Global.buildContext ("sat") {
+    val satContext = Context("sat") {
         plugin(Solids)
     }
 
@@ -23,26 +26,23 @@ fun main() {
     val sat = visionOfSatellite(ySegments = 3)
 
     val server = satContext.visionManager.serve {
-        //use client library
-        useThreeJs()
-        //use css
-        useCss("css/styles.css")
-        page {
+        page(header = Page.threeJsHeader + Page.styleSheetHeader("css/styles.css")) {
             div("flex-column") {
                 h1 { +"Satellite detector demo" }
-                vision(sat)
+                vision { sat }
             }
         }
     }
 
-    server.show()
+    server.openInBrowser()
 
+    @OptIn(DelicateCoroutinesApi::class)
     GlobalScope.launch {
         while (isActive) {
             val randomLayer = Random.nextInt(1, 11)
             val randomI = Random.nextInt(1, 4)
             val randomJ = Random.nextInt(1, 4)
-            val target = "layer[$randomLayer].segment[$randomI,$randomJ]".toName()
+            val target = Name.parse("layer[$randomLayer].segment[$randomI,$randomJ]")
             val targetVision = sat[target] as Solid
             targetVision.color("red")
             delay(1000)

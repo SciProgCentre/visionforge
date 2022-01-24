@@ -6,16 +6,18 @@ import kotlinx.serialization.json.Json
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.Solids
 
+private val json = Json {
+    serializersModule = Solids.serializersModuleForSolids
+    prettyPrintIndent = "  "
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    isLenient = true
+    coerceInputValues = true
+    encodeDefaults = true
+}
+
 @ExperimentalSerializationApi
 fun main() {
-    val schema = Json {
-        serializersModule = Solids.serializersModuleForSolids
-        prettyPrintIndent = "  "
-        prettyPrint = true
-        ignoreUnknownKeys = true
-        isLenient = true
-        coerceInputValues = true
-        encodeDefaults = true
-    }.encodeToSchema(SolidGroup.serializer(), generateDefinitions = false)
+    val schema = json.encodeToSchema(SolidGroup.serializer(), generateDefinitions = false)
     println(schema)
 }

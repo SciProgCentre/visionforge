@@ -15,13 +15,24 @@ import kotlin.jvm.Synchronized
 import kotlin.time.Duration
 
 /**
+ * Create a deep copy of given Vision without external connections.
+ */
+private fun Vision.deepCopy(): Vision {
+    //Assuming that unrooted visions are already isolated
+    val manager = this.manager ?: return this
+    //TODO replace by efficient deep copy
+    val json = manager.encodeToJsonElement(this)
+    return manager.decodeFromJson(json)
+}
+
+/**
  * An update for a [Vision] or a [VisionGroup]
  */
 public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
     private var reset: Boolean = false
     private var vision: Vision? = null
-    private val propertyChange = Config()
+    private val propertyChange = MutableMeta()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
@@ -30,17 +41,17 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
         children.getOrPut(visionName) { VisionChangeBuilder() }
 
-    public fun propertyChanged(visionName: Name, propertyName: Name, item: MetaItem?) {
+    public fun propertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         if (visionName == Name.EMPTY) {
             //Write property removal as [Null]
-            propertyChange[propertyName] = (item ?: Null.asMetaItem())
+            propertyChange[propertyName] = (item ?: Meta(Null))
         } else {
             getOrPutChild(visionName).propertyChanged(Name.EMPTY, propertyName, item)
         }
     }
 
     override fun set(name: Name?, child: Vision?) {
-        if(name == null) error("Static children are not allowed in VisionChange")
+        if (name == null) error("Static children are not allowed in VisionChange")
         getOrPutChild(name).apply {
             vision = child
             reset = vision == null
@@ -50,18 +61,12 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
     /**
      * Isolate collected changes by creating detached copies of given visions
      */
-    public fun isolate(manager: VisionManager): VisionChange = VisionChange(
+    public fun deepCopy(): VisionChange = VisionChange(
         reset,
-        vision?.isolate(manager),
+        vision?.deepCopy(),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
-        if (children.isEmpty()) null else children.mapValues { it.value.isolate(manager) }
+        if (children.isEmpty()) null else children.mapValues { it.value.deepCopy() }
     )
-}
-
-private fun Vision.isolate(manager: VisionManager): Vision {
-    //TODO replace by efficient deep copy
-    val json = manager.encodeToJsonElement(this)
-    return manager.decodeFromJson(json)
 }
 
 /**
@@ -78,10 +83,11 @@ public data class VisionChange(
     public val children: Map<Name, VisionChange>? = null,
 )
 
-public inline fun VisionChange(manager: VisionManager, block: VisionChangeBuilder.() -> Unit): VisionChange =
-    VisionChangeBuilder().apply(block).isolate(manager)
+public inline fun VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
+    VisionChangeBuilder().apply(block).deepCopy()
 
 
+@OptIn(DFExperimental::class)
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
@@ -89,8 +95,8 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.onPropertyChange(this) { propertyName ->
-        val newItem = source.ownProperties[propertyName]
+    source.onPropertyChange { propertyName ->
+        val newItem = source.meta[propertyName]
         collector().propertyChanged(name, propertyName, newItem)
     }
 
@@ -102,19 +108,22 @@ private fun CoroutineScope.collectChange(
 
         //Subscribe for structure change
         if (source is MutableVisionGroup) {
-            source.structureChanges.onEach { (token, _, after) ->
+            source.structureChanges.onEach { changedName ->
+                val after = source[changedName]
+                val fullName = name + changedName
                 if (after != null) {
-                    collectChange(name + token, after, collector)
+                    collectChange(fullName, after, collector)
                 }
-                collector()[name + token] = after
+                collector()[fullName] = after
             }.launchIn(this)
         }
     }
 }
 
-@DFExperimental
+/**
+ * Generate a flow of changes of this vision and its children
+ */
 public fun Vision.flowChanges(
-    manager: VisionManager,
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
 
@@ -123,7 +132,7 @@ public fun Vision.flowChanges(
         collectChange(Name.EMPTY, this@flowChanges) { collector }
 
         //Send initial vision state
-        val initialChange = VisionChange(vision = isolate(manager))
+        val initialChange = VisionChange(vision = deepCopy())
         emit(initialChange)
 
         while (currentCoroutineContext().isActive) {
@@ -132,7 +141,7 @@ public fun Vision.flowChanges(
             //Propagate updates only if something is changed
             if (!collector.isEmpty()) {
                 //emit changes
-                emit(collector.isolate(manager))
+                emit(collector.deepCopy())
                 //Reset the collector
                 collector = VisionChangeBuilder()
             }

@@ -1,0 +1,49 @@
+public final class space/kscience/visionforge/gdml/GdmlJVMKt {
+	public static final fun gdml (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/nio/file/Path;Ljava/lang/String;ZLkotlin/jvm/functions/Function1;)V
+	public static synthetic fun gdml$default (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/nio/file/Path;Ljava/lang/String;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class space/kscience/visionforge/gdml/GdmlLoaderKt {
+	public static final fun gdml (Lspace/kscience/visionforge/html/VisionOutput;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun gdml (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/gdml/Gdml;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun gdml$default (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/gdml/Gdml;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun toVision (Lspace/kscience/gdml/Gdml;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static synthetic fun toVision$default (Lspace/kscience/gdml/Gdml;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
+}
+
+public final class space/kscience/visionforge/gdml/GdmlLoaderOptions {
+	public static final field Companion Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Companion;
+	public fun <init> ()V
+	public final fun configure (Lkotlin/jvm/functions/Function4;)V
+	public final fun getAUnit ()Lspace/kscience/gdml/AUnit;
+	public final fun getConfigurePaint ()Lkotlin/jvm/functions/Function3;
+	public final fun getConfigureSolid ()Lkotlin/jvm/functions/Function4;
+	public final fun getLUnit ()Lspace/kscience/gdml/LUnit;
+	public final fun getSolidAction ()Lkotlin/jvm/functions/Function1;
+	public final fun getVolumeAction ()Lkotlin/jvm/functions/Function1;
+	public final fun paint (Lkotlin/jvm/functions/Function3;)V
+	public final fun registerAndUseStyle (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public final fun setAUnit (Lspace/kscience/gdml/AUnit;)V
+	public final fun setLUnit (Lspace/kscience/gdml/LUnit;)V
+	public final fun setSolidAction (Lkotlin/jvm/functions/Function1;)V
+	public final fun setVolumeAction (Lkotlin/jvm/functions/Function1;)V
+	public final fun transparent (Lspace/kscience/visionforge/solid/Solid;)V
+}
+
+public final class space/kscience/visionforge/gdml/GdmlLoaderOptions$Action : java/lang/Enum {
+	public static final field ADD Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+	public static final field PROTOTYPE Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+	public static final field REJECT Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+	public static fun valueOf (Ljava/lang/String;)Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+	public static fun values ()[Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+}
+
+public final class space/kscience/visionforge/gdml/GdmlLoaderOptions$Companion {
+	public final fun randomColor (Lspace/kscience/gdml/GdmlMaterial;)I
+}
+
+public final class space/kscience/visionforge/gdml/MarkLayersKt {
+	public static final fun markLayers (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/util/List;)V
+	public static synthetic fun markLayers$default (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/util/List;ILjava/lang/Object;)V
+}
+

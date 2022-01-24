@@ -12,22 +12,22 @@ import space.kscience.visionforge.react.flexColumn
 import styled.StyledDOMBuilder
 import styled.styledDiv
 
-public external class TabProps : RProps {
+public external interface TabProps : PropsWithChildren {
     public var id: String
     public var title: String?
 }
 
 @JsExport
-public val Tab: FunctionalComponent<TabProps> = functionalComponent { props ->
+public val Tab: FC<TabProps> = fc { props ->
     props.children()
 }
 
-public external class TabPaneProps : RProps {
+public external interface TabPaneProps : PropsWithChildren {
     public var activeTab: String?
 }
 
 @JsExport
-public val TabPane: FunctionalComponent<TabPaneProps> = functionalComponent("TabPane") { props ->
+public val TabPane: FC<TabPaneProps> = fc("TabPane") { props ->
     var activeTab: String? by useState(props.activeTab)
 
     val children: Array<out ReactElement?> = Children.map(props.children) {

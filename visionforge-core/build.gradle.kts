@@ -4,16 +4,12 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 
-kscience{
-    useSerialization()
-}
-
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
                 api("space.kscience:dataforge-context:$dataforgeVersion")
-                api("org.jetbrains.kotlinx:kotlinx-html:${ru.mipt.npm.gradle.KScienceVersions.htmlVersion}")
+                api(npmlibs.kotlinx.html)
                 api("org.jetbrains.kotlin-wrappers:kotlin-css")
             }
         }
@@ -23,4 +19,14 @@ kotlin {
             }
         }
     }
+}
+
+kscience{
+    useSerialization{
+        json()
+    }
+}
+
+readme{
+    maturity = ru.mipt.npm.gradle.Maturity.DEVELOPMENT
 }

@@ -48,7 +48,7 @@ public class FXCompositeFactory(public val plugin: FX3DPlugin) : FX3DFactory<Com
         val firstCSG = first.toCSG()
         val secondCSG = second.toCSG()
         val resultCSG = when (obj.compositeType) {
-            CompositeType.SUM, CompositeType.UNION -> firstCSG.union(secondCSG)
+            CompositeType.GROUP, CompositeType.UNION -> firstCSG.union(secondCSG)
             CompositeType.INTERSECT -> firstCSG.intersect(secondCSG)
             CompositeType.SUBTRACT -> firstCSG.difference(secondCSG)
         }

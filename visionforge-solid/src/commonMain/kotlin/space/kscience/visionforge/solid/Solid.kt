@@ -1,14 +1,21 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.enum
+import space.kscience.dataforge.meta.descriptors.node
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.meta.float
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.asValue
-import space.kscience.visionforge.*
+import space.kscience.dataforge.values.*
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
+import space.kscience.visionforge.hide
+import space.kscience.visionforge.inherited
+import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
 import space.kscience.visionforge.solid.Solid.Companion.IGNORE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.LAYER_KEY
@@ -35,7 +42,7 @@ import kotlin.reflect.KProperty
  */
 public interface Solid : Vision {
 
-    override val descriptor: NodeDescriptor get() = Companion.descriptor
+    override val descriptor: MetaDescriptor get() = Companion.descriptor
 
     public companion object {
         //        val SELECTED_KEY = "selected".asName()
@@ -69,39 +76,36 @@ public interface Solid : Vision {
         public val Y_SCALE_KEY: Name = SCALE_KEY + Y_KEY
         public val Z_SCALE_KEY: Name = SCALE_KEY + Z_KEY
 
-        public val descriptor: NodeDescriptor by lazy {
-            NodeDescriptor {
-                value(VISIBLE_KEY) {
+        public val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
+                value(VISIBLE_KEY, ValueType.BOOLEAN) {
                     inherited = false
-                    type(ValueType.BOOLEAN)
                     default(true)
                 }
 
+                node(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial)
+
                 //TODO replace by descriptor merge
-                value(Vision.STYLE_KEY) {
-                    type(ValueType.STRING)
+                value(Vision.STYLE_KEY, ValueType.STRING) {
                     multiple = true
                     hide()
                 }
 
-                node(POSITION_KEY){
+                node(POSITION_KEY) {
                     hide()
                 }
 
-                node(ROTATION_KEY){
+                node(ROTATION_KEY) {
                     hide()
                 }
 
-                node(SCALE_KEY){
+                node(SCALE_KEY) {
                     hide()
                 }
 
-                value(DETAIL_KEY) {
-                    type(ValueType.NUMBER)
+                value(DETAIL_KEY, ValueType.NUMBER) {
                     hide()
                 }
-
-                item(SolidMaterial.MATERIAL_KEY.toString(), SolidMaterial.descriptor)
 
                 enum(ROTATION_ORDER_KEY, default = RotationOrder.XYZ) {
                     hide()
@@ -115,7 +119,7 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = allProperties().getItem(LAYER_KEY).int ?: 0
+    get() = getPropertyValue(LAYER_KEY, inherit = true)?.int ?: 0
     set(value) {
         setProperty(LAYER_KEY, value)
     }
@@ -135,24 +139,24 @@ public enum class RotationOrder {
  * Rotation order
  */
 public var Solid.rotationOrder: RotationOrder
-    get() = getProperty(Solid.ROTATION_ORDER_KEY).enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setProperty(Solid.ROTATION_ORDER_KEY, value.name.asValue())
+    get() = getPropertyValue(Solid.ROTATION_ORDER_KEY)?.enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = meta.setValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
 public var Solid.detail: Int?
-    get() = getProperty(DETAIL_KEY, false).int
-    set(value) = setProperty(DETAIL_KEY, value?.asValue())
+    get() = getPropertyValue(DETAIL_KEY, false)?.int
+    set(value) = meta.setValue(DETAIL_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
  * Property is not inherited.
  */
 public var Vision.ignore: Boolean?
-    get() = getProperty(IGNORE_KEY, false).boolean
-    set(value) = setProperty(IGNORE_KEY, value?.asValue())
+    get() = getPropertyValue(IGNORE_KEY, false)?.boolean
+    set(value) = meta.setValue(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
@@ -161,7 +165,7 @@ public var Vision.ignore: Boolean?
 internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
     object : ReadWriteProperty<Solid, Number> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
-            return thisRef.getOwnProperty(name)?.number ?: default
+            return thisRef.meta.getMeta(name)?.number ?: default
         }
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Number) {
@@ -172,7 +176,7 @@ internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number
 internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
     object : ReadWriteProperty<Solid, Point3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
-            val item = thisRef.getOwnProperty(name) ?: return null
+            val item = thisRef.meta.getMeta(name) ?: return null
             return object : Point3D {
                 override val x: Float get() = item[X_KEY]?.float ?: default
                 override val y: Float get() = item[Y_KEY]?.float ?: default
@@ -182,7 +186,7 @@ internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
             if (value == null) {
-                thisRef.setProperty(name, null)
+                thisRef.meta.setMeta(name, null)
             } else {
                 thisRef.setProperty(name + X_KEY, value.x)
                 thisRef.setProperty(name + Y_KEY, value.y)
@@ -202,6 +206,13 @@ public var Solid.z: Number by float(Z_POSITION_KEY, 0f)
 public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
 public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
 public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
+
+//public var Solid.quaternion: Quaternion?
+//    get() = meta[Solid::quaternion.name]?.value?.doubleArray?.let { Quaternion(it) }
+//    set(value) {
+//        meta[Solid::quaternion.name] = value?.values?.asValue()
+//    }
+
 
 public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
 public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)

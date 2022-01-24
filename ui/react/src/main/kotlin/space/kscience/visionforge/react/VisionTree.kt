@@ -21,14 +21,14 @@ import styled.css
 import styled.styledDiv
 import styled.styledSpan
 
-public external interface ObjectTreeProps : RProps {
+public external interface ObjectTreeProps : Props {
     public var name: Name
     public var selected: Name?
     public var obj: Vision
     public var clickCallback: (Name) -> Unit
 }
 
-private val TreeLabel = functionalComponent<ObjectTreeProps> { props ->
+private val TreeLabel = fc<ObjectTreeProps> { props ->
     val token = useMemo(props.name) { props.name.lastOrNull()?.toString() ?: "World" }
     styledSpan {
         css {
@@ -83,7 +83,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                 }
                 obj.children.entries
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisionGroup)?.isEmpty ?: true } // ignore empty groups
+                    .sortedBy { (it.value as? VisionGroup)?.isEmpty() ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
                         styledDiv {
                             css {
@@ -107,14 +107,14 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
 }
 
 @JsExport
-public val ObjectTree: FunctionalComponent<ObjectTreeProps> = functionalComponent("ObjectTree") { props ->
+public val ObjectTree: FC<ObjectTreeProps> = fc("ObjectTree") { props ->
     visionTree(props)
 }
 
 public fun RBuilder.visionTree(
     vision: Vision,
     selected: Name? = null,
-    clickCallback: (Name) -> Unit = {}
+    clickCallback: (Name) -> Unit = {},
 ) {
     child(ObjectTree) {
         attrs {

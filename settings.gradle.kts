@@ -1,8 +1,14 @@
+rootProject.name = "visionforge"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("VERSION_CATALOGS")
+
 pluginManagement {
 
-    val toolsVersion = "0.10.0"
+    val toolsVersion: String by extra
 
     repositories {
+        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
         gradlePluginPortal()
@@ -16,8 +22,22 @@ pluginManagement {
     }
 }
 
-rootProject.name = "visionforge"
+dependencyResolutionManagement {
 
+    val toolsVersion: String by extra
+
+    repositories {
+        mavenLocal()
+        maven("https://repo.kotlin.link")
+        mavenCentral()
+    }
+
+    versionCatalogs {
+        create("npmlibs") {
+            from("ru.mipt.npm:version-catalog:$toolsVersion")
+        }
+    }
+}
 
 include(
 //    ":ui",
@@ -31,15 +51,18 @@ include(
     ":visionforge-threejs",
     ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
+    ":cern-root-loader",
     ":visionforge-server",
     ":visionforge-plotly",
+    ":visionforge-tables",
+    ":visionforge-markdown",
     ":demo:solid-showcase",
     ":demo:gdml",
     ":demo:muon-monitor",
     ":demo:sat-demo",
     ":demo:playground",
-    ":demo:jupyter-playground",
     ":demo:plotly-fx",
     ":demo:js-playground",
-    ":jupyter:visionforge-gdml-jupyter"
+    ":jupyter",
+    ":jupyter:visionforge-jupyter-gdml"
 )

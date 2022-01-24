@@ -31,20 +31,16 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
     override fun render(element: Element, vision: Vision, meta: Meta) {
         val plot = (vision as? VisionOfPlotly)?.plot ?: error("VisionOfPlotly expected but ${vision::class} found")
         val config = PlotlyConfig.read(meta)
-        println(plot.config)
-        println(plot.data[0].toMeta())
         element.plot(plot, config)
     }
 
-    override fun content(target: String): Map<Name, Any> {
-        return when (target) {
-            ElementVisionRenderer.TYPE -> mapOf("plotly".asName() to this)
-            else -> super.content(target)
-        }
+    override fun content(target: String): Map<Name, Any> = when (target) {
+        ElementVisionRenderer.TYPE -> mapOf("plotly".asName() to this)
+        else -> super.content(target)
     }
 
     public actual companion object : PluginFactory<PlotlyPlugin> {
-        override val tag: PluginTag = PluginTag("vision.plotly", PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag("vision.plotly.js", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
         override fun invoke(meta: Meta, context: Context): PlotlyPlugin = PlotlyPlugin()
     }

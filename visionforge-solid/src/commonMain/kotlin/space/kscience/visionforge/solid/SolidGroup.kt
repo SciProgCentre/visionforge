@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.descriptors.NodeDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
@@ -40,7 +40,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
         }
 
 
-    override val descriptor: NodeDescriptor get() = Solid.descriptor
+    override val descriptor: MetaDescriptor get() = Solid.descriptor
 
     /**
      * Get a prototype redirecting the request to the parent if prototype is not found.
@@ -60,10 +60,11 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 
     override fun createGroup(): SolidGroup = SolidGroup()
 
-    override fun update(change: VisionChange) {
-        updatePosition(change.properties)
-        super.update(change)
-    }
+//
+//    override fun update(change: VisionChange) {
+//        updatePosition(change.properties)
+//        super.update(change)
+//    }
 
     public companion object {
         public val PROTOTYPES_TOKEN: NameToken = NameToken("@prototypes")
@@ -78,8 +79,8 @@ public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
 @VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(
     name: Name? = null,
-    action: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup().apply(action).also { set(name, it) }
+    builder: SolidGroup.() -> Unit = {},
+): SolidGroup = SolidGroup().apply(builder).also { set(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.

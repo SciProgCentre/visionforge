@@ -3,7 +3,9 @@ plugins {
 }
 
 kscience{
-    useSerialization()
+    useSerialization{
+        json()
+    }
 }
 
 kotlin {
@@ -14,4 +16,8 @@ kotlin {
             }
         }
     }
+}
+
+readme{
+    maturity = ru.mipt.npm.gradle.Maturity.DEVELOPMENT
 }

@@ -13,11 +13,11 @@ import space.kscience.dataforge.values.Value
  * @param value Value after change
  * @param message Message on unsuccessful change
  */
-class ValueCallbackResponse(val success: Boolean, val value: Value, val message: String)
+public class ValueCallbackResponse(public val success: Boolean, public val value: Value, public val message: String)
 
 /**
  * A callback for some visual object trying to change some value
  * @author [Alexander Nozik](mailto:altavir@gmail.com)
  */
-typealias ValueCallback = (Value) -> ValueCallbackResponse
+public typealias ValueCallback = (Value) -> ValueCallbackResponse
 

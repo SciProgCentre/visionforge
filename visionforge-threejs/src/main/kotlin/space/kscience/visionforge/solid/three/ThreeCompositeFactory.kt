@@ -1,7 +1,6 @@
 package space.kscience.visionforge.solid.three
 
 import CSG
-import info.laht.threekt.core.Object3D
 import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.onPropertyChange
@@ -38,17 +37,17 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
 
     override val type: KClass<in Composite> get() = Composite::class
 
-    override fun invoke(three: ThreePlugin, obj: Composite): Object3D {
+    override fun invoke(three: ThreePlugin, obj: Composite): Mesh {
         val first = three.buildObject3D(obj.first) as? Mesh ?: error("First part of composite is not a mesh")
         val second = three.buildObject3D(obj.second) as? Mesh ?: error("Second part of composite is not a mesh")
         return when (obj.compositeType) {
-            CompositeType.SUM, CompositeType.UNION -> CSG.union(first, second)
+            CompositeType.GROUP, CompositeType.UNION -> CSG.union(first, second)
             CompositeType.INTERSECT -> CSG.intersect(first, second)
             CompositeType.SUBTRACT -> CSG.subtract(first, second)
         }.apply {
             updatePosition(obj)
             applyProperties(obj)
-            obj.onPropertyChange(three.updateScope) { name ->
+            obj.onPropertyChange { name ->
                 when {
                     //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
                     name.startsWith(MeshThreeFactory.EDGES_KEY) -> applyEdges(obj)

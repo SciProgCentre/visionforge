@@ -4,7 +4,6 @@ import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
 import org.slf4j.LoggerFactory
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.VisionManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -67,8 +66,8 @@ internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String):
     if (!skip) {
         logger.debug("File $fullPath does not exist or wrong checksum. Writing file")
         Files.createDirectories(fullPath.parent)
-        Files.write(fullPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+        Files.write(fullPath, bytes, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
     }
 
     return if (htmlPath.isAbsolute && fullPath.startsWith(htmlPath.parent)) {
@@ -113,10 +112,9 @@ internal fun fileCssHeader(
 }
 
 /**
- * Make a script header, automatically copying file to appropriate location
+ * Make a script header from a resource file, automatically copying file to appropriate location
  */
-@DFExperimental
-public fun scriptHeader(
+public fun Page.Companion.importScriptHeader(
     scriptResource: String,
     resourceLocation: ResourceLocation,
     htmlPath: Path? = null,

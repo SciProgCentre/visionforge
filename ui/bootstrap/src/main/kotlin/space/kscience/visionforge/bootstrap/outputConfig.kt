@@ -9,11 +9,15 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.*
+import react.FC
+import react.Props
+import react.RBuilder
 import react.dom.attrs
 import react.dom.button
+import react.fc
 import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.react.propertyEditor
@@ -29,8 +33,8 @@ private fun saveData(event: Event, fileName: String, mimeType: String = "text/pl
     fileSaver.saveAs(blob, fileName)
 }
 
-public fun RBuilder.canvasControls(canvasOptions: Canvas3DOptions, vision: Vision?): ReactElement {
-    return child(CanvasControls) {
+public fun RBuilder.canvasControls(canvasOptions: Canvas3DOptions, vision: Vision?) {
+    child(CanvasControls) {
         attrs {
             this.canvasOptions = canvasOptions
             this.vision = vision
@@ -38,24 +42,24 @@ public fun RBuilder.canvasControls(canvasOptions: Canvas3DOptions, vision: Visio
     }
 }
 
-public external interface CanvasControlsProps : RProps {
+public external interface CanvasControlsProps : Props {
     public var canvasOptions: Canvas3DOptions
     public var vision: Vision?
 }
 
-public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+public val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
                 border(1.px, BorderStyle.solid, Color.blue)
                 padding(4.px)
             }
-            props.vision?.manager?.let { manager ->
+            props.vision?.let { vision ->
                 button {
                     +"Export"
                     attrs {
                         onClickFunction = {
-                            val json = manager.encodeToString(props.vision!!)
+                            val json = vision.encodeToString()
                             saveData(it, "object.json", "text/json") {
                                 json
                             }
@@ -65,8 +69,8 @@ public val CanvasControls: FunctionalComponent<CanvasControlsProps> = functional
             }
         }
         propertyEditor(
-            ownProperties = props.canvasOptions,
-            allProperties = props.canvasOptions.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            ownProperties = props.canvasOptions.meta,
+            allProperties = props.canvasOptions.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

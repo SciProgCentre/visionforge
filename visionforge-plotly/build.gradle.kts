@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.mpp")
 }
 
-val plotlyVersion = "0.4.3"
+val plotlyVersion = "0.5.0"
 
 kscience {
     useSerialization()
@@ -10,20 +10,7 @@ kscience {
 
 kotlin {
     js {
-        //binaries.library()
-        binaries.executable()
-        browser {
-            webpackTask {
-                this.outputFileName = "js/visionforge-three.js"
-            }
-        }
-    }
-
-    val jsBrowserDistribution by tasks.getting
-
-    tasks.getByName<ProcessResources>("jvmProcessResources") {
-        dependsOn(jsBrowserDistribution)
-        from(jsBrowserDistribution)
+        binaries.library()
     }
 
     sourceSets {

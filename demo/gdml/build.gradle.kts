@@ -16,7 +16,8 @@ kotlin {
     jvm {
         withJava()
     }
-    js{
+
+    js {
         useCommonJs()
         browser {
             commonWebpackConfig {
@@ -24,6 +25,7 @@ kotlin {
             }
         }
     }
+
     sourceSets {
         commonMain {
             dependencies {
@@ -34,6 +36,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(project(":visionforge-fx"))
+                implementation("ch.qos.logback:logback-classic:1.2.5")
             }
         }
         jsMain {
@@ -53,5 +56,5 @@ application {
 val convertGdmlToJson by tasks.creating(JavaExec::class) {
     group = "application"
     classpath = sourceSets["main"].runtimeClasspath
-    main = "space.kscience.dataforge.vis.spatial.gdml.demo.SaveToJsonKt"
+    mainClass.set("space.kscience.dataforge.vis.spatial.gdml.demo.SaveToJsonKt")
 }

@@ -14,20 +14,18 @@ import space.kscience.visionforge.solid.three.ThreePlugin
 import styled.css
 import styled.styledDiv
 
-public external interface ThreeCanvasProps : RProps {
+public external interface ThreeCanvasProps : Props {
     public var context: Context
     public var options: Canvas3DOptions?
     public var solid: Solid?
     public var selected: Name?
 }
 
-public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functionalComponent(
-    "ThreeCanvasComponent"
-) { props ->
+public val ThreeCanvasComponent: FC<ThreeCanvasProps> = fc("ThreeCanvasComponent") { props ->
     val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    val three: ThreePlugin = useMemo(props.context){ props.context.fetch(ThreePlugin) }
+    val three: ThreePlugin = useMemo(props.context) { props.context.fetch(ThreePlugin) }
 
     useEffect(props.solid, props.options, elementRef) {
         if (canvas == null) {
@@ -50,7 +48,8 @@ public val ThreeCanvasComponent: FunctionalComponent<ThreeCanvasProps> = functio
         css {
             maxWidth = 100.vw
             maxHeight = 100.vh
-            flex(1.0)
+            width = 100.pct
+            height = 100.pct
         }
         ref = elementRef
     }

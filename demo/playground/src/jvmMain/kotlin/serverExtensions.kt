@@ -1,32 +1,26 @@
 package space.kscience.visionforge.examples
 
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.dataforge.context.Global
+import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.ResourceLocation
-import space.kscience.visionforge.html.VisionTagConsumer
-import space.kscience.visionforge.html.page
-import space.kscience.visionforge.html.scriptHeader
+import space.kscience.visionforge.html.importScriptHeader
 import space.kscience.visionforge.makeFile
-import space.kscience.visionforge.three.server.VisionServer
-import space.kscience.visionforge.three.server.useScript
 import java.awt.Desktop
 import java.nio.file.Path
 
-
-public fun VisionServer.usePlayground(): Unit {
-    useScript("js/visionforge-playground.js")
-}
-
-@OptIn(DFExperimental::class)
-public fun Context.makeVisionFile(
+public fun makeVisionFile(
     path: Path? = null,
     title: String = "VisionForge page",
     resourceLocation: ResourceLocation = ResourceLocation.SYSTEM,
     show: Boolean = true,
-    content: VisionTagConsumer<*>.() -> Unit
+    content: HtmlVisionFragment,
 ): Unit {
-    val actualPath = page(title, content = content).makeFile(path) { actualPath ->
-        mapOf("threeJs" to scriptHeader("js/visionforge-playground.js", resourceLocation, actualPath))
+    val actualPath = Page(Global, content = content).makeFile(path) { actualPath ->
+        mapOf(
+            "title" to Page.title(title),
+            "playground" to Page.importScriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
+        )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

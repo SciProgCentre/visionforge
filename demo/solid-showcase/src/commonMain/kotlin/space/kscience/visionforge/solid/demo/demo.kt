@@ -1,14 +1,10 @@
 package space.kscience.visionforge.solid.demo
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
-import space.kscience.dataforge.names.toName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.VisionLayout
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -23,7 +19,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
         "title" put title
     }
     val vision = SolidGroup(block)
-    render(name.toName(), vision)
+    render(Name.parse(name), vision, meta)
 }
 
 val canvasOptions = Canvas3DOptions {
@@ -40,6 +36,7 @@ val canvasOptions = Canvas3DOptions {
     }
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         box(100.0, 100.0, 100.0) {
@@ -77,7 +74,7 @@ fun VisionLayout<Solid>.showcase() {
                 //override color for this cube
                 color(1530)
 
-                launch(Dispatchers.Main) {
+                GlobalScope.launch(Dispatchers.Main) {
                     while (isActive) {
                         delay(500)
                         visible = !(visible ?: false)
@@ -86,7 +83,7 @@ fun VisionLayout<Solid>.showcase() {
             }
         }
 
-        launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.Main) {
             val random = Random(111)
             while (isActive) {
                 delay(1000)
@@ -108,7 +105,7 @@ fun VisionLayout<Solid>.showcase() {
     }
 
     demo("extrude", "extruded shape") {
-        extrude {
+        extruded {
             shape {
                 polygon(8, 50)
             }

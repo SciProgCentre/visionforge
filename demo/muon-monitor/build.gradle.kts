@@ -5,7 +5,7 @@ plugins {
 
 group = "ru.mipt.npm"
 
-val ktorVersion: String = ru.mipt.npm.gradle.KScienceVersions.ktorVersion
+val ktorVersion: String = npmlibs.versions.ktor.get()
 
 kscience {
     useCoroutines()
@@ -16,6 +16,14 @@ kscience {
 kotlin {
     jvm {
         withJava()
+    }
+    js {
+        useCommonJs()
+        browser {
+            commonWebpackConfig {
+                cssSupport.enabled = false
+            }
+        }
     }
 
     afterEvaluate {
@@ -37,17 +45,15 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation("io.ktor:ktor-server-cio:$ktorVersion")
-                implementation("io.ktor:ktor-serialization:$ktorVersion")
+                implementation(npmlibs.ktor.server.cio)
+                implementation(npmlibs.ktor.serialization)
             }
         }
         jsMain {
             dependencies {
-                implementation(project(":ui:bootstrap"))
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation(project(":ui:ring"))
                 implementation(project(":visionforge-threejs"))
-                implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
+                //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
             }
         }
     }
@@ -55,12 +61,6 @@ kotlin {
 
 application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>() {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-Xir-property-lazy-initialization"
-    }
 }
 
 //distributions {

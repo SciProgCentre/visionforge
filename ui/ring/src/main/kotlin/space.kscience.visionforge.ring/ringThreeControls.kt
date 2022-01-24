@@ -9,9 +9,12 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import react.*
+import react.FC
+import react.Props
+import react.RBuilder
 import react.dom.attrs
 import react.dom.button
+import react.fc
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
@@ -35,8 +38,8 @@ internal fun saveData(event: Event, fileName: String, mimeType: String = "text/p
     fileSaver.saveAs(blob, fileName)
 }
 
-internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?): ReactElement {
-    return child(CanvasControls) {
+internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?): Unit {
+    child(CanvasControls) {
         attrs {
             this.options = options
             this.vision = vision
@@ -44,12 +47,12 @@ internal fun RBuilder.canvasControls(options: Canvas3DOptions, vision: Vision?):
     }
 }
 
-internal external interface CanvasControlsProps : RProps {
+internal external interface CanvasControlsProps : Props {
     public var options: Canvas3DOptions
     public var vision: Vision?
 }
 
-internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = functionalComponent("CanvasControls") { props ->
+internal val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {
             css {
@@ -72,8 +75,8 @@ internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = function
             }
         }
         propertyEditor(
-            ownProperties = props.options,
-            allProperties = props.options.withDefault(Canvas3DOptions.descriptor.defaultMeta),
+            ownProperties = props.options.meta,
+            allProperties = props.options.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )
@@ -82,7 +85,7 @@ internal val CanvasControls: FunctionalComponent<CanvasControlsProps> = function
 }
 
 
-public external interface ThreeControlsProps : RProps {
+public external interface ThreeControlsProps : Props {
     public var canvasOptions: Canvas3DOptions
     public var vision: Vision?
     public var selected: Name?
@@ -91,7 +94,7 @@ public external interface ThreeControlsProps : RProps {
 }
 
 @JsExport
-public val ThreeControls: FunctionalComponent<ThreeControlsProps> = functionalComponent { props ->
+public val ThreeControls: FC<ThreeControlsProps> = fc { props ->
     SmartTabs("Tree") {
         props.vision?.let {
             Tab("Tree") {
@@ -119,7 +122,7 @@ public fun RBuilder.ringThreeControls(
     selected: Name?,
     onSelect: (Name?) -> Unit = {},
     additionalTabs: Map<String, RBuilder.() -> Unit>? = null
-): ReactElement = child(ThreeControls) {
+): Unit = child(ThreeControls) {
     attrs {
         this.canvasOptions = canvasOptions
         this.vision = vision

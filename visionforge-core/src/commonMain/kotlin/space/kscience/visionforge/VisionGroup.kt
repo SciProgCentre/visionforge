@@ -1,8 +1,16 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.*
 import space.kscience.dataforge.provider.Provider
+
+@DslMarker
+public annotation class VisionBuilder
 
 public interface VisionContainer<out V : Vision> {
     public operator fun get(name: Name): V?
@@ -55,7 +63,7 @@ public interface VisionGroup : Provider, Vision, VisionContainer<Vision> {
  */
 public operator fun VisionGroup.iterator(): Iterator<Vision> = children.values.iterator()
 
-public val VisionGroup.isEmpty: Boolean get() = this.children.isEmpty()
+public fun VisionGroup.isEmpty(): Boolean = this.children.isEmpty()
 
 public interface VisionContainerBuilder<in V : Vision> {
     //TODO add documentation
@@ -66,21 +74,36 @@ public interface VisionContainerBuilder<in V : Vision> {
  * Mutable version of [VisionGroup]
  */
 public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision> {
+    public fun onStructureChanged(owner: Any?, block: VisionGroup.(Name) -> Unit)
 
-    public data class StructureChange(val token: NameToken, val before: Vision?, val after: Vision?)
-
-    /**
-     * Flow structure changes of this group. Unconsumed changes are discarded
-     */
-    public val structureChanges: Flow<StructureChange>
+    public fun removeStructureListener(owner: Any?)
 }
 
-public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(str.toName())
+
+/**
+ * Flow structure changes of this group. Unconsumed changes are discarded
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+@DFExperimental
+public val MutableVisionGroup.structureChanges: Flow<Name>
+    get() = callbackFlow {
+        meta.onChange(this) { name ->
+            launch {
+                send(name)
+            }
+        }
+        awaitClose {
+            removeStructureListener(this)
+        }
+    }
+
+
+public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
 
 public operator fun <V : Vision> VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit =
     set(token.asName(), child)
 
 public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit =
-    set(key?.toName(), child)
+    set(key?.let(Name::parse), child)
 
 public fun MutableVisionGroup.removeAll(): Unit = children.keys.map { it.asName() }.forEach { this[it] = null }

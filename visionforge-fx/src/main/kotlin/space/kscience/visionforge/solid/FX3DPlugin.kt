@@ -16,6 +16,7 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.misc.Type
+import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.solid.FX3DFactory.Companion.TYPE
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_WIREFRAME_KEY
@@ -23,8 +24,10 @@ import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.reflect.KClass
 
-class FX3DPlugin : AbstractPlugin() {
+public class FX3DPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
+
+    public val solids: Solids by require(Solids)
 
     private val objectFactories = HashMap<KClass<out Solid>, FX3DFactory<*>>()
     private val compositeFactory = FXCompositeFactory(this)
@@ -42,13 +45,14 @@ class FX3DPlugin : AbstractPlugin() {
                 as FX3DFactory<Solid>?
     }
 
-    fun buildNode(obj: Solid): Node {
+    public fun buildNode(obj: Solid): Node {
         val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
             is SolidReferenceGroup -> referenceFactory(obj, binding)
             is SolidGroup -> {
                 Group(obj.children.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {
+                        logger.info { token.toString() }
                         buildNode(it).apply {
                             properties["name"] = token.toString()
                         }
@@ -73,7 +77,7 @@ class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
-                obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY, inherit = true)?.color()
+                obj.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }
@@ -149,7 +153,7 @@ public interface FX3DFactory<in T : Solid> {
     public operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
 
     public companion object {
-        public const val TYPE = "fx3DFactory"
+        public const val TYPE: String = "fx3DFactory"
     }
 }
 

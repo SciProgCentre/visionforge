@@ -1,0 +1,48 @@
+public final class space/kscience/visionforge/demo/MetaEditorDemo : tornadofx/View {
+	public fun <init> ()V
+	public final fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getMeta ()Lspace/kscience/dataforge/meta/ObservableMutableMeta;
+	public synthetic fun getRoot ()Ljavafx/scene/Parent;
+	public fun getRoot ()Ljavafx/scene/control/SplitPane;
+}
+
+public final class space/kscience/visionforge/demo/MetaEditorDemoApp : tornadofx/App {
+	public fun <init> ()V
+}
+
+public final class space/kscience/visionforge/demo/MetaEditorDemoKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/solid/demo/DemoKt {
+	public static final fun demo (Lspace/kscience/visionforge/solid/demo/VisionLayout;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun demo$default (Lspace/kscience/visionforge/solid/demo/VisionLayout;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun getCanvasOptions ()Lspace/kscience/visionforge/solid/specifications/Canvas3DOptions;
+	public static final fun showcase (Lspace/kscience/visionforge/solid/demo/VisionLayout;)V
+	public static final fun showcaseCSG (Lspace/kscience/visionforge/solid/demo/VisionLayout;)V
+}
+
+public final class space/kscience/visionforge/solid/demo/FXDemoApp : tornadofx/App {
+	public fun <init> ()V
+	public final fun getView ()Lspace/kscience/visionforge/solid/demo/FXDemoGrid;
+	public fun start (Ljavafx/stage/Stage;)V
+}
+
+public final class space/kscience/visionforge/solid/demo/FXDemoAppKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/solid/demo/FXDemoGrid : tornadofx/View, space/kscience/visionforge/solid/demo/VisionLayout {
+	public fun <init> ()V
+	public fun getRoot ()Ljavafx/scene/Parent;
+	public synthetic fun render (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;)V
+	public fun render (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/dataforge/meta/Meta;)V
+}
+
+public abstract interface class space/kscience/visionforge/solid/demo/VisionLayout {
+	public abstract fun render (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;)V
+	public static synthetic fun render$default (Lspace/kscience/visionforge/solid/demo/VisionLayout;Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)V
+}
+

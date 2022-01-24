@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.MetaProvider
+import space.kscience.dataforge.meta.float
+import space.kscience.dataforge.meta.get
 import space.kscience.visionforge.solid.Solid.Companion.X_KEY
 import space.kscience.visionforge.solid.Solid.Companion.Y_KEY
 import space.kscience.visionforge.solid.Solid.Companion.Z_KEY
@@ -39,6 +42,7 @@ public interface Point3D {
     }
 }
 
+@Suppress("SERIALIZER_TYPE_INCOMPATIBLE")
 @Serializable(Point3DSerializer::class)
 public interface MutablePoint3D : Point3D {
     override var x: Float
@@ -53,8 +57,7 @@ internal object Point3DSerializer : KSerializer<Point3D> {
 
     override val descriptor: SerialDescriptor = Point3DImpl.serializer().descriptor
 
-
-    override fun deserialize(decoder: Decoder): Point3D = decoder.decodeSerializableValue(Point3DImpl.serializer())
+    override fun deserialize(decoder: Decoder): MutablePoint3D = decoder.decodeSerializableValue(Point3DImpl.serializer())
 
     override fun serialize(encoder: Encoder, value: Point3D) {
         val impl: Point3DImpl = (value as? Point3DImpl) ?: Point3DImpl(value.x, value.y, value.z)
@@ -95,13 +98,13 @@ public fun MutablePoint3D.normalizeInPlace() {
     z /= norm
 }
 
-internal fun ItemProvider.point3D(default: Float = 0f) = object : Point3D {
+internal fun MetaProvider.point3D(default: Float = 0f) = object : Point3D {
     override val x: Float by float(default)
     override val y: Float by float(default)
     override val z: Float by float(default)
 }
 
-public fun Point3D.toMeta(): MetaBuilder = Meta {
+public fun Point3D.toMeta(): Meta = Meta {
     X_KEY put x
     Y_KEY put y
     Z_KEY put z
@@ -114,8 +117,8 @@ internal fun Meta.toVector(default: Float = 0f) = Point3D(
     this[Solid.Z_KEY].float ?: default
 )
 
-internal fun Solid.updatePosition(meta: Meta?) {
-    meta[Solid.POSITION_KEY].node?.toVector()?.let { position = it }
-    meta[Solid.ROTATION_KEY].node?.toVector()?.let { rotation = it }
-    meta[Solid.SCALE_KEY].node?.toVector(1f)?.let { scale = it }
-}
+//internal fun Solid.updatePosition(meta: Meta?) {
+//    meta?.get(Solid.POSITION_KEY)?.toVector()?.let { position = it }
+//    meta?.get(Solid.ROTATION_KEY)?.toVector()?.let { rotation = it }
+//    meta?.get(Solid.SCALE_KEY)?.toVector(1f)?.let { scale = it }
+//}

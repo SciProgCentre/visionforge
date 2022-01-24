@@ -1,41 +1,34 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-
-    //Override kotlin version
-//    val kotlinVersion = "1.5.20-RC"
-//    kotlin("multiplatform") version(kotlinVersion) apply false
-//    kotlin("jvm") version(kotlinVersion) apply false
-//    kotlin("js") version(kotlinVersion) apply false
+    id("org.jetbrains.kotlinx.kover") version "0.5.0-RC"
 }
 
-val dataforgeVersion by extra("0.4.3")
+val dataforgeVersion by extra("0.5.2")
 val fxVersion by extra("11")
 
-allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven("https://repo.kotlin.link")
-        maven("https://maven.jzy3d.org/releases")
-    }
-
+allprojects{
     group = "space.kscience"
-    version = "0.2.0-dev-22"
+    version = "0.2.0"
 }
 
 subprojects {
-    if (name.startsWith("visionforge")) {
-        plugins.apply("maven-publish")
+    if (name.startsWith("visionforge")) apply<MavenPublishPlugin>()
+
+    repositories {
+        maven("https://repo.kotlin.link")
+        mavenCentral()
+        maven("https://maven.jzy3d.org/releases")
     }
 }
 
-ksciencePublish{
+ksciencePublish {
     github("visionforge")
     space()
     sonatype()
 }
 
 apiValidation {
-    validationDisabled = true
     ignoredPackages.add("info.laht.threekt")
 }
+
+readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")

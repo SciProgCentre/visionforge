@@ -15,7 +15,6 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.VisionLayout
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin

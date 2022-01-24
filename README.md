@@ -14,10 +14,7 @@
 * [Features](#features)
 * [About DataForge](#about-dataforge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
-  * [visionforge-core](#visionforge-core)
-  * [visionforge-solid](#visionforge-solid)
-  * [visionforge-gdml](#visionforge-gdml)
-* [Visualization for External Systems](#visualization-for-external-systems)  
+* [Visualization for External Systems](#visualization-for-external-systems)
 * [Demonstrations](#demonstrations)
   * [Simple Example - Solid Showcase](#simple-example---solid-showcase)
   * [Full-Stack Application Example - Muon Monitor](#full-stack-application-example---muon-monitor-visualization)
@@ -26,13 +23,13 @@
 
 ## Introduction
 
-This repository contains a [DataForge](#about-dataforge)\-based framework 
-used for visualization in various scientific applications. 
+This repository contains a [DataForge](#about-dataforge)\-based framework
+used for visualization in various scientific applications.
 
-The main framework's use case for now is 3D visualization for particle physics experiments. 
+The main framework's use case for now is 3D visualization for particle physics experiments.
 Other applications including 2D plots are planned for the future.
 
-The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) 
+The project is developed as a [Kotlin multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
 application, currently targeting browser JavaScript and JVM.
 
 ## Requirements
@@ -57,28 +54,165 @@ Platform uses some of the concepts and modules of DataForge, including: `Meta`, 
 `Provider`, and some others.
 
 To learn more about DataForge, please consult the following URLs:
- * [Kotlin multiplatform implementation of DataForge](https://github.com/mipt-npm/dataforge-core)  
- * [DataForge documentation](http://npm.mipt.ru/dataforge/) 
- * [Original implementation of DataForge](https://bitbucket.org/Altavir/dataforge/src/default/)
+* [Kotlin multiplatform implementation of DataForge](https://github.com/mipt-npm/dataforge-core)
+* [DataForge documentation](http://npm.mipt.ru/dataforge/)
+* [Original implementation of DataForge](https://bitbucket.org/Altavir/dataforge/src/default/)
 
 
 ## Modules contained in this repository
 
-### visionforge-core
+<hr/>
 
-Contains a general hierarchy of classes and interfaces useful for visualization. 
-This module is not specific to 3D-visualization.
+* ### [cern-root-loader](cern-root-loader)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
 
-The `visionforge-core` module also includes configuration editors for JS (in `jsMain`) and JVM (in `jvmMain`).
+* ### [demo](demo)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
 
-**Class diagram:**
+* ### [jupyter](jupyter)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
 
-![](docs/images/class-diag-core.png)
+* ### [ui](ui)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
 
+* ### [visionforge-core](visionforge-core)
+> 
+>
+> **Maturity**: DEVELOPMENT
+<hr/>
 
-### visionforge-solid
+* ### [visionforge-fx](visionforge-fx)
+> 
+>
+> **Maturity**: PROTOTYPE
+<hr/>
 
-Includes common classes and serializers for 3D visualization, as well as Three.js and JavaFX implementations.
+* ### [visionforge-gdml](visionforge-gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-markdown](visionforge-markdown)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-plotly](visionforge-plotly)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-server](visionforge-server)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-solid](visionforge-solid)
+> 
+>
+> **Maturity**: DEVELOPMENT
+<hr/>
+
+* ### [visionforge-tables](visionforge-tables)
+> 
+>
+> **Maturity**: PROTOTYPE
+<hr/>
+
+* ### [visionforge-threejs](visionforge-threejs)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [gdml](demo/gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [js-playground](demo/js-playground)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [muon-monitor](demo/muon-monitor)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [playground](demo/playground)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [plotly-fx](demo/plotly-fx)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [sat-demo](demo/sat-demo)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [solid-showcase](demo/solid-showcase)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-jupyter-gdml](jupyter/visionforge-jupyter-gdml)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [bootstrap](ui/bootstrap)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [react](ui/react)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [ring](ui/ring)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
+* ### [visionforge-threejs-server](visionforge-threejs/visionforge-threejs-server)
+> 
+>
+> **Maturity**: EXPERIMENTAL
+<hr/>
+
 
 **Class diagram:**
 
@@ -87,30 +221,26 @@ Includes common classes and serializers for 3D visualization, as well as Three.j
 ##### Prototypes
 
 One of the important features of the framework is support for 3D object prototypes (sometimes
-also referred to as templates). The idea is that prototype geometry can be rendered once and reused 
+also referred to as templates). The idea is that prototype geometry can be rendered once and reused
 for multiple objects. This helps to significantly decrease memory usage.
 
-The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and 
+The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and
 `SolidReference` class helps to reuse a template object.
 
 ##### Styles
 
-`SolidGroup` has a `styleSheet` property that can optionally define styles at the Group's 
-level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property. 
+`VisionGroup` has a `styleSheet` property that can optionally define styles at the Group's
+level. Styles are applied to child (descendant) objects using `Vision.styles: List<String>` property.
 
+### visionforge-threejs
 
-### visionforge-gdml
-
-GDML bindings for 3D visualization (to be moved to gdml project).
-
-
-## Visualization for External Systems 
+## Visualization for External Systems
 
 The `visionforge` framework can be used to visualize geometry and events from external,
 non-Kotlin based systems, such as ROOT. This will require a plugin to convert data model
 of the external system to that of `visionforge`. Performing such integration is a work
 currently in progress.
- 
+
 
 ## Demonstrations
 
@@ -132,7 +262,7 @@ Some shapes will also periodically change their color and visibility.
 
 ### Full-Stack Application Example - Muon Monitor Visualization
 
-A full-stack application example, showing the 
+A full-stack application example, showing the
 [Muon Monitor](http://npm.mipt.ru/en/projects/physics#mounMonitor) experiment set-up.
 
 [More details](demo/muon-monitor/README.md)
@@ -144,7 +274,7 @@ A full-stack application example, showing the
 
 ### GDML Example
 
-Visualization example for geometry defined as GDML file. 
+Visualization example for geometry defined as GDML file.
 
 [More details](demo/gdml/README.md)
 

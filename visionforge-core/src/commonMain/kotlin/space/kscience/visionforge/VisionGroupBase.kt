@@ -1,13 +1,13 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.names.*
+import kotlin.jvm.Synchronized
 
+private class StructureChangeListener(val owner: Any?, val callback: VisionGroup.(Name) -> Unit)
 
 /**
  * Abstract implementation of mutable group of [Vision]
@@ -17,7 +17,7 @@ import space.kscience.dataforge.names.*
 @Serializable
 @SerialName("vision.group")
 public open class VisionGroupBase(
-    @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
+    @EncodeDefault @SerialName("children") protected val childrenInternal: MutableMap<NameToken, Vision> = LinkedHashMap(),
 ) : VisionBase(), MutableVisionGroup {
 
     /**
@@ -40,16 +40,24 @@ public open class VisionGroupBase(
     }
 
     @Transient
-    private val _structureChanges: MutableSharedFlow<MutableVisionGroup.StructureChange> = MutableSharedFlow()
+    private val structureListeners = HashSet<StructureChangeListener>()
 
-    override val structureChanges: SharedFlow<MutableVisionGroup.StructureChange> get() = _structureChanges
+    @Synchronized
+    override fun onStructureChanged(owner: Any?, block: VisionGroup.(Name) -> Unit) {
+        structureListeners.add(StructureChangeListener(owner, block))
+    }
+
+    @Synchronized
+    override fun removeStructureListener(owner: Any?) {
+        structureListeners.removeAll { it.owner == owner }
+    }
 
     /**
      * Propagate children change event upwards
      */
-    private fun childrenChanged(name: NameToken, before: Vision?, after: Vision?) {
-        launch {
-            _structureChanges.emit(MutableVisionGroup.StructureChange(name, before, after))
+    protected fun childrenChanged(name: Name) {
+        structureListeners.forEach {
+            it.callback(this, name)
         }
     }
 
@@ -69,7 +77,7 @@ public open class VisionGroupBase(
      * Set parent for given child and attach it
      */
     private fun attachChild(token: NameToken, child: Vision?) {
-        val before = children[token]
+        val before = childrenInternal[token]
         when {
             child == null -> {
                 childrenInternal.remove(token)
@@ -83,28 +91,31 @@ public open class VisionGroupBase(
             }
         }
         if (before != child) {
-            childrenChanged(token, before, child)
+            childrenChanged(token.asName())
+            if (child is MutableVisionGroup) {
+                child.onStructureChanged(this) { changedName ->
+                    this@VisionGroupBase.childrenChanged(token + changedName)
+                }
+            }
         }
     }
 
     /**
      * Recursively create a child group
      */
-    private fun createGroups(name: Name): VisionGroupBase {
-        return when {
-            name.isEmpty() -> error("Should be unreachable")
-            name.length == 1 -> {
-                val token = name.tokens.first()
-                when (val current = children[token]) {
-                    null -> createGroup().also { child ->
-                        attachChild(token, child)
-                    }
-                    is VisionGroupBase -> current
-                    else -> error("Can't create group with name $name because it exists and not a group")
+    private fun createGroups(name: Name): VisionGroupBase = when {
+        name.isEmpty() -> error("Should be unreachable")
+        name.length == 1 -> {
+            val token = name.tokens.first()
+            when (val current = children[token]) {
+                null -> createGroup().also { child ->
+                    attachChild(token, child)
                 }
+                is VisionGroupBase -> current
+                else -> error("Can't create group with name $name because it exists and not a group")
             }
-            else -> createGroups(name.tokens.first().asName()).createGroups(name.cutFirst())
         }
+        else -> createGroups(name.tokens.first().asName()).createGroups(name.cutFirst())
     }
 
     /**
@@ -149,8 +160,9 @@ public open class VisionGroupBase(
 internal class RootVisionGroup(override val manager: VisionManager) : VisionGroupBase()
 
 /**
- * Designate this [VisionGroup] as a root group and assign a [VisionManager] as its parent
+ * Designate this [VisionGroup] as a root and assign a [VisionManager] as its parent
  */
-public fun Vision.root(manager: VisionManager){
+public fun Vision.setAsRoot(manager: VisionManager) {
+    if (parent != null) error("Vision $this already has a parent. It could not be set as root")
     parent = RootVisionGroup(manager)
 }
