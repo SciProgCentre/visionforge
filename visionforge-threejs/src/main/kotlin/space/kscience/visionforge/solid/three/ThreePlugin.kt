@@ -1,7 +1,6 @@
 package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.core.Object3D
-import kotlinx.coroutines.CoroutineScope
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
@@ -27,8 +26,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
 
-    //TODO generate a separate supervisor update scope
-    internal val updateScope: CoroutineScope get() = context
+//    internal val updateScope: CoroutineScope get() = context
 
     init {
         //Add specialized factories here
@@ -38,6 +36,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[ConeSegment::class] = ThreeConeFactory
         objectFactories[PolyLine::class] = ThreeLineFactory
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
+        objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
+        objectFactories[PointLightSource::class] = ThreePointLightFactory
     }
 
     @Suppress("UNCHECKED_CAST")

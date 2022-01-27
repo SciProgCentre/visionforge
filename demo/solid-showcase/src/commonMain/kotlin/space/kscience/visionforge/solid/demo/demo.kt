@@ -18,7 +18,11 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
     val meta = Meta {
         "title" put title
     }
-    val vision = SolidGroup(block)
+    val vision = SolidGroup(block).apply {
+        ambientLight{
+            color(Colors.white)
+        }
+    }
     render(Name.parse(name), vision, meta)
 }
 
@@ -39,6 +43,7 @@ val canvasOptions = Canvas3DOptions {
 @OptIn(DelicateCoroutinesApi::class)
 fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
+        ambientLight()
         box(100.0, 100.0, 100.0) {
             z = -110.0
             color("teal")

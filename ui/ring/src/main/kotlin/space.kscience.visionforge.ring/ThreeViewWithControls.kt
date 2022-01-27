@@ -38,6 +38,10 @@ public fun ThreeCanvasWithControlsProps.solid(block: SolidGroup.() -> Unit) {
     }
 }
 
+public fun ThreeCanvasWithControlsProps.options(block: Canvas3DOptions.() -> Unit){
+    options = Canvas3DOptions(block)
+}
+
 public fun ThreeCanvasWithControlsProps.tab(title: String, block: RBuilder.() -> Unit) {
     additionalTabs = (additionalTabs ?: emptyMap()) + (title to block)
 }

@@ -8,12 +8,8 @@ import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.external.controls.TrackballControls
 import info.laht.threekt.geometries.EdgesGeometry
 import info.laht.threekt.helpers.AxesHelper
-import info.laht.threekt.lights.AmbientLight
 import info.laht.threekt.materials.LineBasicMaterial
-import info.laht.threekt.math.Box3
-import info.laht.threekt.math.Plane
-import info.laht.threekt.math.Vector2
-import info.laht.threekt.math.Vector3
+import info.laht.threekt.math.*
 import info.laht.threekt.objects.LineSegments
 import info.laht.threekt.objects.Mesh
 import info.laht.threekt.scenes.Scene
@@ -35,7 +31,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- *
+ * A canvas for three-js rendering
  */
 public class ThreeCanvas(
     public val three: ThreePlugin,
@@ -60,19 +56,19 @@ public class ThreeCanvas(
             add(axesObject)
         }
 
-        //Set up light
-        options.useProperty(Canvas3DOptions::light, this) { lightConfig ->
-            //remove old light if present
-            getObjectByName(LIGHT_NAME)?.let { remove(it) }
-            //add new light
-            val lightObject = buildLight(lightConfig)
-            lightObject.name = LIGHT_NAME
-            add(lightObject)
-        }
+//        //Set up light
+//        options.useProperty(Canvas3DOptions::light, this) { lightConfig ->
+//            //remove old light if present
+//            getObjectByName(LIGHT_NAME)?.let { remove(it) }
+//            //add new light
+//            val lightObject = buildLight(lightConfig)
+//            lightObject.name = LIGHT_NAME
+//            add(lightObject)
+//        }
     }
 
 
-    private fun buildCamera(spec: Camera) = PerspectiveCamera(
+    private fun buildCamera(spec: CameraScheme) = PerspectiveCamera(
         spec.fov,
         1.0,
         spec.nearClip,
@@ -231,9 +227,24 @@ public class ThreeCanvas(
         }
     }
 
-    private fun buildLight(spec: Light?): info.laht.threekt.lights.Light = AmbientLight(0x404040)
+//    private fun buildLight(spec: AmbientLightScheme?): info.laht.threekt.lights.Light = when (spec?.type) {
+//        AmbientLightScheme.Type.POINT -> PointLight().apply {
+//            position.x = spec.position.x ?: 0.0
+//            position.y = spec.position.y ?: 0.0
+//            position.z = spec.position.z ?: 0.0
+//        }
+//        else -> AmbientLight().apply {
+//
+//        }
+//    }.apply {
+//        this.color = spec?.color?.threeColor() ?: Color(0x404040)
+//
+//        spec?.intensity?.coerceIn(0.0, 1.0)?.let {
+//            this.intensity = it
+//        }
+//    }
 
-    private fun addControls(element: Node, controls: Controls) {
+    private fun addControls(element: Node, controls: ControlsScheme) {
         when (controls.meta["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)
@@ -311,7 +322,7 @@ public class ThreeCanvas(
         private const val SELECT_NAME = "@select"
         private const val LIGHT_NAME = "@light"
         private const val AXES_NAME = "@axes"
-        private const val CLIP_HELPER_NAME = "@clipping"
+        //private const val CLIP_HELPER_NAME = "@clipping"
     }
 }
 

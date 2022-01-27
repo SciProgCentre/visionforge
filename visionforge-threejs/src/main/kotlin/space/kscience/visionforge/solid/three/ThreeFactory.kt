@@ -8,7 +8,6 @@ import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.computeProperty
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.three.ThreeFactory.Companion.TYPE
@@ -58,7 +57,7 @@ public fun Object3D.updatePosition(obj: Vision) {
  * Update non-position non-geometry property
  */
 public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
-    console.log("$source updated $propertyName with ${source.computeProperty(propertyName)}")
+    // console.log("$source updated $propertyName with ${source.computeProperty(propertyName)}")
     if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
         updateMaterialProperty(source, propertyName)
     } else if (

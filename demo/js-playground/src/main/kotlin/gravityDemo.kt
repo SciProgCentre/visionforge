@@ -7,6 +7,7 @@ import react.fc
 import space.kscience.dataforge.context.Context
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.markup.VisionOfMarkup
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
@@ -21,10 +22,10 @@ external interface DemoProps : Props {
 }
 
 val GravityDemo = fc<DemoProps> { props ->
-    val velocityTrace = Trace{
+    val velocityTrace = Trace {
         name = "velocity"
     }
-    val energyTrace = Trace{
+    val energyTrace = Trace {
         name = "energy"
     }
     val markup = VisionOfMarkup()
@@ -41,6 +42,11 @@ val GravityDemo = fc<DemoProps> { props ->
                 attrs {
                     context = props.context
                     solid {
+                        pointLight(200, 200, 200, name = "light"){
+                            color(Colors.white)
+                        }
+                        ambientLight()
+
                         sphere(5.0, "ball") {
                             detail = 16
                             color("red")
@@ -91,7 +97,7 @@ val GravityDemo = fc<DemoProps> { props ->
                 height = 50.vh - 50.pt
             }
             plotly {
-                traces(velocityTrace,energyTrace)
+                traces(velocityTrace, energyTrace)
                 layout {
                     xaxis.title = "time"
                 }

@@ -8,37 +8,33 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.hide
 import space.kscience.visionforge.widgetType
 
-public class Clipping : Scheme() {
-    public var x: Double? by double()
-    public var y: Double? by double()
-    public var z: Double? by double()
 
-    public companion object : SchemeSpec<Clipping>(::Clipping) {
-        override val descriptor: MetaDescriptor = MetaDescriptor {
-            value(Clipping::x) {
-                widgetType = "range"
-                attributes["min"] = 0.0
-                attributes["max"] = 1.0
-                attributes["step"] = 0.01
-                default(1.0)
-            }
-            value(Clipping::y) {
-                widgetType = "range"
-                attributes["min"] = 0.0
-                attributes["max"] = 1.0
-                attributes["step"] = 0.01
-                default(1.0)
-            }
-            value(Clipping::z) {
-                widgetType = "range"
-                attributes["min"] = 0.0
-                attributes["max"] = 1.0
-                attributes["step"] = 0.01
-                default(1.0)
-            }
+public object Clipping : SchemeSpec<PointScheme>(::PointScheme) {
+    override val descriptor: MetaDescriptor = MetaDescriptor {
+        value(PointScheme::x) {
+            widgetType = "range"
+            attributes["min"] = 0.0
+            attributes["max"] = 1.0
+            attributes["step"] = 0.01
+            default(1.0)
+        }
+        value(PointScheme::y) {
+            widgetType = "range"
+            attributes["min"] = 0.0
+            attributes["max"] = 1.0
+            attributes["step"] = 0.01
+            default(1.0)
+        }
+        value(PointScheme::z) {
+            widgetType = "range"
+            attributes["min"] = 0.0
+            attributes["max"] = 1.0
+            attributes["step"] = 0.01
+            default(1.0)
         }
     }
 }
+
 
 public class CanvasSize : Scheme() {
     public var minSize: Int by int(400)
@@ -62,16 +58,15 @@ public class CanvasSize : Scheme() {
 }
 
 public class Canvas3DOptions : Scheme() {
-    public var axes: Axes by spec(Axes)
-    public var light: Light by spec(Light)
-    public var camera: Camera by spec(Camera)
-    public var controls: Controls by spec(Controls)
+    public var axes: AxesScheme by spec(AxesScheme)
+    public var camera: CameraScheme by spec(CameraScheme)
+    public var controls: ControlsScheme by spec(ControlsScheme)
 
     public var size: CanvasSize by spec(CanvasSize)
 
     public var layers: List<Number> by numberList(0)
 
-    public var clipping: Clipping by spec(Clipping)
+    public var clipping: PointScheme by spec(Clipping)
 
     public var onSelect: ((Name?) -> Unit)? = null
 
@@ -79,7 +74,7 @@ public class Canvas3DOptions : Scheme() {
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions) {
         override val descriptor: MetaDescriptor by lazy {
             MetaDescriptor {
-                scheme(Canvas3DOptions::axes, Axes)
+                scheme(Canvas3DOptions::axes, AxesScheme)
 
                 value(Canvas3DOptions::layers) {
                     multiple = true
@@ -90,15 +85,11 @@ public class Canvas3DOptions : Scheme() {
 
                 scheme(Canvas3DOptions::clipping, Clipping)
 
-                scheme(Canvas3DOptions::light, Light){
+                scheme(Canvas3DOptions::camera, CameraScheme) {
                     hide()
                 }
 
-                scheme(Canvas3DOptions::camera, Camera) {
-                    hide()
-                }
-
-                scheme(Canvas3DOptions::controls, Controls) {
+                scheme(Canvas3DOptions::controls, ControlsScheme) {
                     hide()
                 }
 

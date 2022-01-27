@@ -59,7 +59,7 @@ box(10, 10, 10, name = "small box"){
    rotation = Point3D(0, 0, 0)
 }
 ```
-![](../docs/images/small-box.png)
+![](../images/small-box.png)
 
 The `big box` will have properties with custom values. 
 ```kotlin
@@ -72,7 +72,7 @@ box(40, 40, 40, name = "big box"){
    rotation = Point3D(60, 80, 0)
 }
 ```
-![](../docs/images/big-rotated-box.png)
+![](../images/big-rotated-box.png)
 If we compare these boxes, we will see all differences. 
 
 Here is the function `main` with both boxes.
@@ -111,8 +111,8 @@ fun main(){
     }
 }
 ```
-![](../docs/images/two-boxes-1.png)
-![](../docs/images/two-boxes-2.png)
+![](../images/two-boxes-1.png)
+![](../images/two-boxes-2.png)
 
 ***There is plenty of other properties, especially those, which you can create by yourself. Here we mention just a small part.***
 
@@ -142,8 +142,8 @@ polyline(Point3D(30, 20, 10), Point3D(30, -100, 30), Point3D(30, -100, 30), Poin
 }
 ```
 
-![](../docs/images/polyline-points.png)
-![](../docs/images/polyline-points-2.png)
+![](../images/polyline-points.png)
+![](../images/polyline-points-2.png)
 
 ### 2) Box
 
@@ -165,7 +165,7 @@ Let's create just usual `box` with equal ribs.
         color("pink")
    }
 ```
-   ![](../docs/images/box.png)
+   ![](../images/box.png)
 
 Now, let's make `box` with bigger `y` value.
    ```kotlin
@@ -175,7 +175,7 @@ Now, let's make `box` with bigger `y` value.
    ```
 As you can see, only the rib of `y-axis` differs from other ribs.
 
-   ![](../docs/images/high-box.png)
+   ![](../images/high-box.png)
 
 For a final trial, let's create a `box` with a bigger `x` value.
    
@@ -189,7 +189,7 @@ For a final trial, let's create a `box` with a bigger `x` value.
    ```
 Predictably, only the `x-axis` rib is bigger than other ribs. 
 
-   ![](../docs/images/wide-box.png)
+   ![](../images/wide-box.png)
    
 ### 3) Sphere
 
@@ -206,7 +206,7 @@ As for `radius`, it has `Float` type, and, as you can guess, it sets the radius 
         color("blue")
    }
    ```
-   ![](../docs/images/sphere.png)
+   ![](../images/sphere.png)
 
 ### 4) Hexagon
 
@@ -220,7 +220,7 @@ It is solid which has six edges. It is set by eight values: `node1`,..., `node8`
 5) Edge with vertices `node1`, `node5`, `node8`, `node4`
 6) Edge with vertices `node8`, `node5`, `node6`, `node7`
 
-![](../docs/images/scheme.png)
+![](../images/scheme.png)
 
 As the hexagon takes in specific points, we understand that this solid cannot be moved, it is fixed in space, and it can't make pivots.
 
@@ -239,7 +239,7 @@ Let's make classic parallelepiped.
         color("green")
    }
 ```
-   ![](../docs/images/classic-hexagon.png)
+   ![](../images/classic-hexagon.png)
 
 Now, let's make a custom hexagon.
 
@@ -258,7 +258,7 @@ hexagon(
     color("brown")
 }
    ```
-   ![](../docs/images/custom-hexagon.png)
+   ![](../images/custom-hexagon.png)
 ### 3) Cone
 It takes in six values: `bottomRadius`, `height`, `upperRadius`, `startAngle`, `angle`, and `name`. 
 
@@ -274,8 +274,8 @@ Let's build a classic cone:
          color("beige")
    }
    ```
-   ![](../docs/images/cone-1.png)
-   ![](../docs/images/cone-2.png)
+   ![](../images/cone-1.png)
+   ![](../images/cone-2.png)
 
 First of all, we have to try to build a frustum cone:
 ```kotlin
@@ -283,7 +283,7 @@ cone(60, 80, name = "cone") {
    color(0u, 40u, 0u)
 }
 ```
-![](../docs/images/frustum-cone.png)
+![](../images/frustum-cone.png)
 
 Now, we need to make a try to build a cone segment:
 
@@ -292,8 +292,8 @@ cone(60, 80, angle = PI, name = "cone") {
    color(0u, 0u, 200u)
 }
 ```
-![](../docs/images/cone-segment-1.png)
-![](../docs/images/cone-segment-2.png)
+![](../images/cone-segment-1.png)
+![](../images/cone-segment-2.png)
 
 Finally, the segment of frustum cone is left for a try:
 ```kotlin
@@ -301,7 +301,7 @@ cone(60, 100, 20, PI*3/4, angle = PI/3, name = "cone") {
    color(190u, 0u, 0u)
 }
 ```
-![](../docs/images/frustum-cone-segment.png)
+![](../images/frustum-cone-segment.png)
 
 ### 4) Cone Surface
 This solid is set by seven values:`bottomOuterRadius`, `bottomInnerRadius`, `height`, `topOuterRadius`, `topInnerRadius`, `startAngle`, and `angle`.
@@ -318,8 +318,8 @@ Let's build usual cone surface with almost all properties set:
         rotation = Point3D(2, 50, -9)
    }
    ```
-![](../docs/images/cone-surface-1.png)
-![](../docs/images/cone-surface-2.png)
+![](../images/cone-surface-1.png)
+![](../images/cone-surface-2.png)
 
 Now, let's create a cone surface and set all it's properties:
 
@@ -329,8 +329,8 @@ coneSurface(30, 25, 10, 10, 8,0f, pi*3/4, name = "cone surface") {
    rotation = Point3D(2, 50, -9)
 }
 ```
-![](../docs/images/cone-surface-fragment.png)
-![](../docs/images/cone-surface-fragment-2.png)
+![](../images/cone-surface-fragment.png)
+![](../images/cone-surface-fragment-2.png)
 
 ### 5) Cylinder
 
@@ -344,8 +344,8 @@ cylinder(40, 100, "cylinder"){
    color("indigo")
 }
 ```
-![](../docs/images/cylinder-1.png)
-![](../docs/images/cylinder-2.png)
+![](../images/cylinder-1.png)
+![](../images/cylinder-2.png)
 ### 6) Tube
 
 `tube` takes in `radius`, `height`, `innerRadius`, `startAngle`, `angle`, and `name`. *All values are familiar from `cone`, and `coneSurface` solids.*
@@ -356,7 +356,7 @@ tube(50, 40, 20, name = "usual tube"){
    opacity = 0.4
 }                    
 ```
-![](../docs/images/tube.png)
+![](../images/tube.png)
 
 This is an example of tube fragment:
 
@@ -365,7 +365,7 @@ tube(50, 40, 20, 0f, PI, name = "fragmented tube"){
    color("white")
 }
 ```
-![](../docs/images/tube-fragment.png)
+![](../images/tube-fragment.png)
 ### 7) Extruded
 
 `extruded` is set by two values: `shape`, and `layer`. 

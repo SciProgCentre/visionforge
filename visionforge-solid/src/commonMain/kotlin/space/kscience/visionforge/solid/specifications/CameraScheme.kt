@@ -8,7 +8,7 @@ import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.int
 import kotlin.math.PI
 
-public class Camera : Scheme() {
+public class CameraScheme : Scheme() {
     public var fov: Int by int(FIELD_OF_VIEW)
 
     //var aspect by double(1.0)
@@ -19,7 +19,7 @@ public class Camera : Scheme() {
     public var azimuth: Double by double(INITIAL_AZIMUTH)
     public var latitude: Double by double(INITIAL_LATITUDE)
 
-    public companion object : SchemeSpec<Camera>(::Camera) {
+    public companion object : SchemeSpec<CameraScheme>(::CameraScheme) {
         public const val INITIAL_DISTANCE: Double = 300.0
         public const val INITIAL_AZIMUTH: Double = 0.0
         public const val INITIAL_LATITUDE: Double = PI / 6
@@ -29,22 +29,22 @@ public class Camera : Scheme() {
 
         override val descriptor: MetaDescriptor by lazy {
             MetaDescriptor {
-                value(Camera::fov) {
+                value(CameraScheme::fov) {
                     default(FIELD_OF_VIEW)
                 }
-                value(Camera::nearClip) {
+                value(CameraScheme::nearClip) {
                     default(NEAR_CLIP)
                 }
-                value(Camera::farClip) {
+                value(CameraScheme::farClip) {
                     default(FAR_CLIP)
                 }
-                value(Camera::distance) {
+                value(CameraScheme::distance) {
                     default(INITIAL_DISTANCE)
                 }
-                value(Camera::azimuth) {
+                value(CameraScheme::azimuth) {
                     default(INITIAL_AZIMUTH)
                 }
-                value(Camera::latitude) {
+                value(CameraScheme::latitude) {
                     default(INITIAL_LATITUDE)
                 }
             }
@@ -52,4 +52,4 @@ public class Camera : Scheme() {
     }
 }
 
-public val Camera.zenith: Double get() = PI / 2 - latitude
+public val CameraScheme.zenith: Double get() = PI / 2 - latitude

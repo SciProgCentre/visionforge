@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.MutableVisionGroup
 import space.kscience.visionforge.get
 import kotlin.test.Test
@@ -53,6 +54,20 @@ class SerializationTest {
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
         assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
+    }
+
+    @Test
+    fun lightSerialization(){
+        val group = SolidGroup {
+            ambientLight {
+                color(Colors.white)
+                intensity = 100.0
+            }
+        }
+        val serialized = Solids.encodeToString(group)
+
+        val reconstructed = Solids.decodeFromString(serialized) as SolidGroup
+        assertEquals(100.0, (reconstructed["@ambientLight"] as AmbientLightSource).intensity.toDouble())
     }
 
 }

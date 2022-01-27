@@ -1,6 +1,5 @@
 import kotlinx.browser.document
 import kotlinx.css.*
-import react.child
 import react.dom.render
 import ringui.SmartTabs
 import ringui.Tab
@@ -8,6 +7,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
@@ -48,7 +48,7 @@ private class JsPlaygroundApp : Application {
                 }
                 SmartTabs("gravity") {
                     Tab("gravity") {
-                        GravityDemo{
+                        GravityDemo {
                             attrs {
                                 this.context = playgroundContext
                             }
@@ -73,6 +73,9 @@ private class JsPlaygroundApp : Application {
                                 attrs {
                                     context = playgroundContext
                                     solid {
+                                        ambientLight {
+                                            color(Colors.white)
+                                        }
                                         repeat(100) {
                                             sphere(5, name = "sphere[$it]") {
                                                 x = random.nextDouble(-300.0, 300.0)

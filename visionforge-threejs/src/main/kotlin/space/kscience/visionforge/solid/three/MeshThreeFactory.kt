@@ -10,6 +10,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.boolean
+import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.setProperty
@@ -75,6 +76,7 @@ public abstract class MeshThreeFactory<in T : Solid>(
     }
 }
 
+@VisionBuilder
 public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
     setProperty(EDGES_ENABLED_KEY, enabled)
     meta.getOrCreate(EDGES_MATERIAL_KEY).updateWith(SolidMaterial, block)

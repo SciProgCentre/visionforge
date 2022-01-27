@@ -17,7 +17,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
-import space.kscience.visionforge.solid.specifications.Camera as CameraSpec
+import space.kscience.visionforge.solid.specifications.CameraScheme as CameraSpec
 
 public class OrbitControls internal constructor(camera: Camera, canvas: SubScene, spec: CameraSpec) {
 

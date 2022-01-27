@@ -39,6 +39,9 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
             subclass(PolyLine.serializer())
             subclass(SolidLabel.serializer())
             subclass(Sphere.serializer())
+
+            subclass(AmbientLightSource.serializer())
+            subclass(PointLightSource.serializer())
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {

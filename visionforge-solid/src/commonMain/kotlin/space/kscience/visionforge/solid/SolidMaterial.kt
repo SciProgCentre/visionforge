@@ -27,7 +27,7 @@ public class SolidMaterial : Scheme() {
      */
     public val specularColor: ColorAccessor = ColorAccessor(meta, SPECULAR_COLOR_KEY)
 
-    public val emissiveColor: ColorAccessor = ColorAccessor(meta, "emissiveColor".asName())
+    public val emissiveColor: ColorAccessor = ColorAccessor(meta, EMISSIVE_COLOR_KEY)
 
     /**
      * Opacity
@@ -43,12 +43,15 @@ public class SolidMaterial : Scheme() {
 
         public val MATERIAL_KEY: Name = "material".asName()
         public val COLOR_KEY: Name = "color".asName()
-        public val MATERIAL_COLOR_KEY: Name = MATERIAL_KEY + COLOR_KEY
+        public val TYPE_KEY: Name = "type".asName()
         public val SPECULAR_COLOR_KEY: Name = "specularColor".asName()
-        public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
+        public val EMISSIVE_COLOR_KEY: Name = "emissiveColor".asName()
         public val OPACITY_KEY: Name = "opacity".asName()
         public val MATERIAL_OPACITY_KEY: Name = MATERIAL_KEY + OPACITY_KEY
         public val WIREFRAME_KEY: Name = "wireframe".asName()
+        public val MATERIAL_COLOR_KEY: Name = MATERIAL_KEY + COLOR_KEY
+        public val MATERIAL_EMISSIVE_COLOR_KEY: Name = MATERIAL_KEY + EMISSIVE_COLOR_KEY
+        public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
         public override val descriptor: MetaDescriptor by lazy {
@@ -56,12 +59,24 @@ public class SolidMaterial : Scheme() {
             MetaDescriptor {
                 inherited = true
 
+                value(TYPE_KEY, ValueType.STRING){
+                    inherited = true
+                    allowedValues = listOf("default".asValue(), "simple".asValue())
+                    default("default")
+                }
+
                 value(COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
                     widgetType = "color"
                 }
 
                 value(SPECULAR_COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
+                    inherited = true
+                    widgetType = "color"
+                    hide()
+                }
+
+                value(EMISSIVE_COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
                     inherited = true
                     widgetType = "color"
                     hide()

@@ -72,9 +72,7 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
 }
 
 @Suppress("FunctionName")
-public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup {
-    return SolidGroup().apply(block)
-}
+public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
 
 @VisionBuilder
 public fun VisionContainerBuilder<Vision>.group(
