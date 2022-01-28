@@ -2,18 +2,48 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.numberProperty
-import space.kscience.visionforge.set
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.node
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.values.ValueType
+import space.kscience.visionforge.*
 
 @Serializable
 public abstract class LightSource : SolidBase() {
-    @Transient
-    public val color: ColorAccessor = ColorAccessor(meta, "color".asName())
+    override val descriptor: MetaDescriptor get() = LightSource.descriptor
+
+    public val color: ColorAccessor by color()
     public var intensity: Number by numberProperty(includeStyles = false) { 1.0 }
+
+    public companion object{
+        public val descriptor: MetaDescriptor by lazy {
+            MetaDescriptor {
+                value(Vision.VISIBLE_KEY, ValueType.BOOLEAN) {
+                    inherited = false
+                    default(true)
+                }
+
+                value(LightSource::color.name, ValueType.STRING, ValueType.NUMBER) {
+                    inherited = false
+                    widgetType = "color"
+                }
+
+                value(LightSource::intensity.name, ValueType.NUMBER) {
+                    inherited = false
+                    default(1.0)
+                }
+
+                value(SolidMaterial.COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
+                    inherited = false
+                    widgetType = "color"
+                }
+
+                node(Solid.POSITION_KEY) {
+                    hide()
+                }
+            }
+        }
+    }
 }
 
 @Serializable

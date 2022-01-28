@@ -19,11 +19,13 @@ import react.useState
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.tab
 import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.edges
 import styled.css
@@ -55,7 +57,9 @@ val MMApp = fc<MMAppProps>("Muon monitor") { props ->
     val root = useMemo(props.model) {
         props.model.root.apply {
             edges()
-            ambientLight()
+            ambientLight{
+                color(Colors.white)
+            }
         }
     }
 

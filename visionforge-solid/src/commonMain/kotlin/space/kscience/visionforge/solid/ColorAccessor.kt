@@ -1,15 +1,18 @@
 package space.kscience.visionforge.solid
 
+import space.kscience.dataforge.meta.Configurable
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionBuilder
+import kotlin.properties.ReadOnlyProperty
 
 @VisionBuilder
 public class ColorAccessor(
     private val provider: MutableValueProvider,
-    private val colorKey: Name
+    private val colorKey: Name,
 ) : MutableValueProvider {
     public var value: Value?
         get() = provider.getValue(colorKey)
@@ -24,8 +27,12 @@ public class ColorAccessor(
     }
 }
 
+public fun Configurable.color(): ReadOnlyProperty<Configurable, ColorAccessor> = ReadOnlyProperty { _, property ->
+    ColorAccessor(meta, property.name.asName())
+}
+
 public var ColorAccessor?.string: String?
-    get() = this?.value?.let { if(it == Null) null else it.string }
+    get() = this?.value?.let { if (it == Null) null else it.string }
     set(value) {
         this?.value = value?.asValue()
     }

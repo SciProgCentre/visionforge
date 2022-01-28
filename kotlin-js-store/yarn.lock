@@ -8244,10 +8244,10 @@ three-csg-ts@3.1.9:
   resolved "https://registry.yarnpkg.com/three-csg-ts/-/three-csg-ts-3.1.9.tgz#1438de3b6747b9b55deb88d9e0acdc6e47681979"
   integrity sha512-Qke0+07AKDfeiRjh46sOF2iiilSMcKnfgHjuArdMB4poZs3X0FQLHGFIEBbGrv3ejrkHASW9o5pLRfFFQhk9hg==
 
-three@0.130.1:
-  version "0.130.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.130.1.tgz#797588b2877ace31603bbbc864eb2e3022f0b3b4"
-  integrity sha512-OSPPKcGvFSiGkG3jFrwwC76PBV/ZSrGxpBbg28bW8s9GU8r/y2spNGtEXHEb/CVqo0Ctf5Lx2rVaxQZB6OasaA==
+three@0.137.4:
+  version "0.137.4"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.137.4.tgz#ec73b6a6c40b733d56544b13d0c3cdb0bce5d0a7"
+  integrity sha512-kUyOZNX+dMbvaS0mGYM1BaXHkHVNQdpryWH8dBg3mn725dJcTo9/5rjyH+OJ8V0r+XbZPz7sncV+c3Gjpc9UBA==
 
 through2@^0.6.3:
   version "0.6.5"

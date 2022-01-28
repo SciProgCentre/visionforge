@@ -8,6 +8,12 @@ import space.kscience.visionforge.removeAll
 import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.*
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.set
+import kotlin.collections.toTypedArray
 import kotlin.math.PI
 
 class Model(val manager: VisionManager) {
@@ -39,7 +45,6 @@ class Model(val manager: VisionManager) {
     val root: SolidGroup = SolidGroup().apply {
         setAsRoot(this@Model.manager)
         material {
-            wireframe
             color("darkgreen")
         }
         rotationX = PI / 2
