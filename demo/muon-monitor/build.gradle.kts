@@ -45,8 +45,8 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation(npmlibs.ktor.server.cio)
-                implementation(npmlibs.ktor.serialization)
+                implementation("io.ktor-server-cio:${npmlibs.versions.ktor}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${npmlibs.versions.ktor}")
             }
         }
         jsMain {

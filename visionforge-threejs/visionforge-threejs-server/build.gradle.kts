@@ -5,7 +5,7 @@ plugins {
 val ktorVersion: String by rootProject.extra
 
 kotlin {
-    js{
+    js(IR){
         browser {
             webpackTask {
                 this.outputFileName = "js/visionforge-three.js"

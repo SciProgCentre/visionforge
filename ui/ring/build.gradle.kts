@@ -5,7 +5,7 @@ plugins {
 val dataforgeVersion: String by rootProject.extra
 
 kotlin{
-    js{
+    js(IR){
         useCommonJs()
         browser {
             commonWebpackConfig {

@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":visionforge-core"))
-    api(npmlibs.ktor.server.cio)
-    api(npmlibs.ktor.html.builder)
-    api(npmlibs.ktor.websockets)
+    api("io.ktor-server-cio:${npmlibs.versions.ktor}")
+    api("io.ktor:ktor-server-html-builder:${npmlibs.versions.ktor}")
+    api("io.ktor:ktor-server-websockets:${npmlibs.versions.ktor}")
 }

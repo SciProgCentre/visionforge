@@ -1,6 +1,6 @@
 plugins {
     id("ru.mipt.npm.gradle.project")
-    id("org.jetbrains.kotlinx.kover") version "0.5.0-RC"
+//    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
 val dataforgeVersion by extra("0.5.2")
