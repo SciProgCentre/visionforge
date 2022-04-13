@@ -1,24 +1,25 @@
 package space.kscience.visionforge.server
 
-import io.ktor.application.*
-import io.ktor.features.CORS
-import io.ktor.features.CallLogging
-import io.ktor.html.respondHtml
 import io.ktor.http.*
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.content.resources
-import io.ktor.http.content.static
-import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.*
+import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import io.ktor.util.getOrFail
-import io.ktor.websocket.WebSockets
-import io.ktor.websocket.webSocket
+import io.ktor.server.html.respondHtml
+import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.static
+import io.ktor.server.plugins.cors.CORS
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.*
+import io.ktor.server.util.getOrFail
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
@@ -130,13 +131,13 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-                    vision.flowChanges(updateInterval.milliseconds).collect { update ->
+                    vision.flowChanges(updateInterval.milliseconds).onEach {  update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update
                         )
                         outgoing.send(Frame.Text(json))
-                    }
+                    }.collect()
                 }
             } catch (t: Throwable) {
                 application.log.info("WebSocket update channel for $name is closed with exception: $t")
@@ -241,21 +242,16 @@ public fun Application.visionServer(
     webServerUrl: Url,
     path: String = DEFAULT_PAGE,
 ): VisionServer {
-    if (featureOrNull(WebSockets) == null) {
-        install(WebSockets)
+    install(WebSockets)
+    install(CORS) {
+        anyHost()
     }
 
-    if (featureOrNull(CORS) == null) {
-        install(CORS) {
-            anyHost()
-        }
-    }
+//    if (pluginOrNull(CallLogging) == null) {
+//        install(CallLogging)
+//    }
 
-    if (featureOrNull(CallLogging) == null) {
-        install(CallLogging)
-    }
-
-    val serverRoute = (featureOrNull(Routing) ?: install(Routing)).createRouteFromPath(path)
+    val serverRoute = install(Routing).createRouteFromPath(path)
 
     serverRoute {
         static {
@@ -263,7 +259,7 @@ public fun Application.visionServer(
         }
     }
 
-    return VisionServer(visionManager, webServerUrl.copy(encodedPath = path), serverRoute)
+    return VisionServer(visionManager, URLBuilder(webServerUrl).apply { encodedPath = path }.build(), serverRoute)
 }
 
 /**

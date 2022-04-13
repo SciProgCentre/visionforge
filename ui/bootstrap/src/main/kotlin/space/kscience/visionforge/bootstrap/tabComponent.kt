@@ -30,7 +30,7 @@ public external interface TabPaneProps : PropsWithChildren {
 public val TabPane: FC<TabPaneProps> = fc("TabPane") { props ->
     var activeTab: String? by useState(props.activeTab)
 
-    val children: Array<out ReactElement?> = Children.map(props.children) {
+    val children: Array<out ReactElement<*>?> = Children.map(props.children) {
         it.asElementOrNull()
     } ?: emptyArray()
 

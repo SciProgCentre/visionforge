@@ -2,10 +2,11 @@
 
 ## [Unreleased]
 ### Added
+- Context receivers flag
 
 ### Changed
 - Naming of Canvas3D options
-- Lights are added to the scene instead of 3D options 
+- Lights are added to the scene instead of 3D options
 
 ### Deprecated
 
