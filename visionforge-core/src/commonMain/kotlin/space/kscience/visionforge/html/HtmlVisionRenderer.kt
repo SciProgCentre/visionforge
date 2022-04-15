@@ -22,7 +22,7 @@ internal const val RENDER_FUNCTION_NAME = "renderAllVisionsById"
 
 /**
  * Render a fragment in the given consumer and return a map of extracted visions
- * @param manager a VisionManager used for serialization
+ * @param context a context used to create a vision fragment
  * @param embedData embed Vision initial state in the HTML
  * @param fetchDataUrl fetch data after first render from given url
  * @param fetchUpdatesUrl receive push updates from the server at given url
