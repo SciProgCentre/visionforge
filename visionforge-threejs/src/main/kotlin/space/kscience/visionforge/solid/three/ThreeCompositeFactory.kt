@@ -38,8 +38,8 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
     override val type: KClass<in Composite> get() = Composite::class
 
     override fun invoke(three: ThreePlugin, obj: Composite): Mesh {
-        val first = three.buildObject3D(obj.first) as? Mesh ?: error("First part of composite is not a mesh")
-        val second = three.buildObject3D(obj.second) as? Mesh ?: error("Second part of composite is not a mesh")
+        val first = three.buildObject3D(obj.first).takeIfMesh() ?: error("First part of composite is not a mesh")
+        val second = three.buildObject3D(obj.second).takeIfMesh() ?: error("Second part of composite is not a mesh")
         return when (obj.compositeType) {
             CompositeType.GROUP, CompositeType.UNION -> CSG.union(first, second)
             CompositeType.INTERSECT -> CSG.intersect(first, second)

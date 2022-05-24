@@ -161,17 +161,14 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {
                 material.asDynamic().color = vision.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.threeColor()
                     ?: ThreeMaterials.DEFAULT_COLOR
-                material.needsUpdate = true
             }
             SolidMaterial.SPECULAR_COLOR_KEY -> {
                 material.asDynamic().specular = vision.computePropertyNode(SolidMaterial.SPECULAR_COLOR_KEY)?.threeColor()
                     ?: ThreeMaterials.DEFAULT_COLOR
-                material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY -> {
                 material.asDynamic().emissive = vision.computePropertyNode(SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY)?.threeColor()
                     ?: ThreeMaterials.BLACK_COLOR
-                material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_OPACITY_KEY -> {
                 val opacity = vision.getPropertyValue(
@@ -180,16 +177,15 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                 )?.double ?: 1.0
                 material.opacity = opacity
                 material.transparent = opacity < 1.0
-                material.needsUpdate = true
             }
             SolidMaterial.MATERIAL_WIREFRAME_KEY -> {
                 material.asDynamic().wireframe = vision.getPropertyValue(
                     SolidMaterial.MATERIAL_WIREFRAME_KEY,
                     inherit = true,
                 )?.boolean ?: false
-                material.needsUpdate = true
             }
             else -> console.warn("Unrecognized material property: $propertyName")
         }
+        material.needsUpdate = true
     }
 }

@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Layers
+import info.laht.threekt.core.Object3D
 import info.laht.threekt.external.controls.OrbitControls
 import info.laht.threekt.materials.Material
 import info.laht.threekt.math.Vector3
@@ -31,4 +32,13 @@ internal fun Any.dispose() {
     }
 }
 
-public fun Layers.check(layer: Int): Boolean = (mask shr(layer) and 0x00000001) > 0
+public fun Layers.check(layer: Int): Boolean = (mask shr (layer) and 0x00000001) > 0
+
+internal fun Object3D.takeIfMesh(): Mesh? {
+    val d = asDynamic()
+    return if(d.isMesh as Boolean){
+        d.unsafeCast<Mesh>()
+    } else {
+        null
+    }
+}
