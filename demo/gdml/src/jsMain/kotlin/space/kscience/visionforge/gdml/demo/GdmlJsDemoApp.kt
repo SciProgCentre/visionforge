@@ -6,7 +6,10 @@ import react.dom.render
 import space.kscience.dataforge.context.Context
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 import styled.injectGlobal
@@ -41,7 +44,11 @@ private class GDMLDemoApp : Application {
 
         render(element) {
             child(GDMLApp) {
-                val vision = GdmlShowCase.cubes().toVision()
+                val vision = GdmlShowCase.cubes().toVision().apply {
+                    ambientLight {
+                        color(Colors.white)
+                    }
+                }
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))
                 attrs {
                     this.context = context

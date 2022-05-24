@@ -17,6 +17,7 @@ import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.markLayers
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
@@ -24,6 +25,8 @@ import space.kscience.visionforge.ring.tab
 import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.invoke
 import styled.css
 import styled.styledDiv
 
@@ -53,6 +56,9 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
                             setAsRoot(visionManager)
                             console.info("Marking layers for file $name")
                             markLayers()
+                            ambientLight {
+                                color(Colors.white)
+                            }
                         }
                     }
                     name.endsWith(".json") -> visionManager.decodeFromString(data)
