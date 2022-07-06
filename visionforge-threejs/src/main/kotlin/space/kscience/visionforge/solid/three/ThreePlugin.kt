@@ -151,7 +151,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     public companion object : PluginFactory<ThreePlugin> {
         override val tag: PluginTag = PluginTag("vision.threejs", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreePlugin> = ThreePlugin::class
-        override fun invoke(meta: Meta, context: Context): ThreePlugin = ThreePlugin()
+
+        override fun build(context: Context, meta: Meta): ThreePlugin = ThreePlugin()
     }
 }
 

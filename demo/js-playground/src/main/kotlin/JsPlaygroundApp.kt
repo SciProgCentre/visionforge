@@ -1,6 +1,6 @@
 import kotlinx.browser.document
 import kotlinx.css.*
-import react.dom.render
+import react.dom.client.createRoot
 import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
@@ -10,6 +10,7 @@ import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.plotly.PlotlyPlugin
+import space.kscience.visionforge.react.render
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.ThreeWithControlsPlugin
 import space.kscience.visionforge.ring.solid
@@ -38,7 +39,7 @@ private class JsPlaygroundApp : Application {
 
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
-        render(element) {
+        createRoot(element).render {
             styledDiv {
                 css {
                     padding(0.pt)

@@ -1,11 +1,12 @@
 package ru.mipt.npm.muon.monitor
 
 import kotlinx.browser.document
-import react.dom.render
+import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 
@@ -21,7 +22,7 @@ private class MMDemoApp : Application {
         val model = Model(visionManager)
 
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
-        render(element) {
+        createRoot(element).render {
             child(MMApp) {
                 attrs {
                     this.model = model

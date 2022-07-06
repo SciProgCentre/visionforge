@@ -17,7 +17,7 @@ internal class VisionOfTableTest {
         val x by ColumnHeader.typed<Value>()
         val y by ColumnHeader.typed<Value>()
 
-        val table = ColumnTable<Value>(100U) {
+        val table = ColumnTable(100) {
             x.fill { it.asValue() }
             y.values = x.values.map { it?.double?.pow(2)?.asValue() }
         }
@@ -27,6 +27,6 @@ internal class VisionOfTableTest {
 
         val rows = vision.rowSequence().toList()
 
-        assertEquals(50, rows[50][x]?.int)
+        assertEquals(50, rows[50][x].int)
     }
 }

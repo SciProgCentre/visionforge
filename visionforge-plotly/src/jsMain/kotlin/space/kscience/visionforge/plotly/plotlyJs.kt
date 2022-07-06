@@ -42,6 +42,8 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
     public actual companion object : PluginFactory<PlotlyPlugin> {
         override val tag: PluginTag = PluginTag("vision.plotly.js", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
-        override fun invoke(meta: Meta, context: Context): PlotlyPlugin = PlotlyPlugin()
+
+        override fun build(context: Context, meta: Meta): PlotlyPlugin = PlotlyPlugin()
+
     }
 }

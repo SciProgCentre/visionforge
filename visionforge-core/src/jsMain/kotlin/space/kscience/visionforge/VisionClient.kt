@@ -203,8 +203,7 @@ public class VisionClient : AbstractPlugin() {
     ) else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
-
-        override fun invoke(meta: Meta, context: Context): VisionClient = VisionClient()
+        override fun build(context: Context, meta: Meta): VisionClient  = VisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
 

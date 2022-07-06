@@ -4,7 +4,7 @@ package space.kscience.visionforge.solid.three
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.TextBufferGeometry
 import info.laht.threekt.objects.Mesh
-import kotlinext.js.jso
+import kotlinx.js.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange

@@ -7,7 +7,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
-import react.dom.render
+import react.dom.client.createRoot
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.ValueRequirement
@@ -235,6 +235,6 @@ public fun Element.configEditor(
     default: Meta = config,
     descriptor: MetaDescriptor? = null,
     key: Any? = null,
-): Unit = render(this) {
+): Unit = createRoot(this).render {
     configEditor(config, default, descriptor, key = key)
 }

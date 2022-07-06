@@ -47,6 +47,8 @@ public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public companion object : PluginFactory<MarkupPlugin> {
         override val tag: PluginTag = PluginTag("vision.markup", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<MarkupPlugin> = MarkupPlugin::class
-        override fun invoke(meta: Meta, context: Context): MarkupPlugin = MarkupPlugin()
+
+        override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()
+
     }
 }

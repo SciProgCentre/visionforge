@@ -9,3 +9,7 @@ dependencies{
 //    implementation(npm("react-select","4.3.0"))
     implementation(project(":visionforge-threejs"))
 }
+
+rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+    versions.webpackCli.version = "4.10.0"
+}

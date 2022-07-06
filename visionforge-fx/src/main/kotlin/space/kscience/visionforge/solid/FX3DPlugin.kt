@@ -138,7 +138,8 @@ public class FX3DPlugin : AbstractPlugin() {
     public companion object : PluginFactory<FX3DPlugin> {
         override val tag: PluginTag = PluginTag("vision.fx3D", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<FX3DPlugin> = FX3DPlugin::class
-        override fun invoke(meta: Meta, context: Context): FX3DPlugin = FX3DPlugin()
+
+        override fun build(context: Context, meta: Meta): FX3DPlugin = FX3DPlugin()
     }
 }
 

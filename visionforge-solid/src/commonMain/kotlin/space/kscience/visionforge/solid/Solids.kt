@@ -24,7 +24,8 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
     public companion object : PluginFactory<Solids> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out Solids> = Solids::class
-        override fun invoke(meta: Meta, context: Context): Solids = Solids(meta)
+
+        override fun build(context: Context, meta: Meta): Solids = Solids(meta)
 
         private fun PolymorphicModuleBuilder<Solid>.solids() {
             subclass(SolidGroup.serializer())

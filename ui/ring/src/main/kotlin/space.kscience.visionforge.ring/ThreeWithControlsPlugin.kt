@@ -2,7 +2,7 @@ package space.kscience.visionforge.ring
 
 import kotlinx.coroutines.async
 import org.w3c.dom.Element
-import react.child
+import react.dom.client.createRoot
 import space.kscience.dataforge.context.AbstractPlugin
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
@@ -12,6 +12,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreePlugin
 import kotlin.reflect.KClass
@@ -25,7 +26,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING * 2 else ElementVisionRenderer.ZERO_RATING
 
     override fun render(element: Element, vision: Vision, meta: Meta) {
-        react.dom.render(element) {
+        createRoot(element).render {
             child(ThreeCanvasWithControls) {
                 attrs {
                     this.context = this@ThreeWithControlsPlugin.context
@@ -45,6 +46,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
     public companion object : PluginFactory<ThreeWithControlsPlugin> {
         override val tag: PluginTag = PluginTag("vision.threejs.withControls", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<ThreeWithControlsPlugin> = ThreeWithControlsPlugin::class
-        override fun invoke(meta: Meta, context: Context): ThreeWithControlsPlugin = ThreeWithControlsPlugin()
+
+        override fun build(context: Context, meta: Meta): ThreeWithControlsPlugin = ThreeWithControlsPlugin()
     }
 }

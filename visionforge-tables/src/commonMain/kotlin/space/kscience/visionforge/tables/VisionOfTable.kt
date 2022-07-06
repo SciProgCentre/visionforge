@@ -86,7 +86,7 @@ public fun Table<Number>.toVision(): VisionOfTable = toVision { (it ?: Double.Na
 @DFExperimental
 public inline fun VisionOutput.table(
     vararg headers: ColumnHeader<Value>,
-    block: MutableRowTable<Value>.() -> Unit,
+    block: RowTableBuilder<Value>.() -> Unit,
 ): VisionOfTable {
     requirePlugin(TableVisionPlugin)
     return RowTable(*headers, block = block).toVision()
@@ -94,8 +94,8 @@ public inline fun VisionOutput.table(
 
 @DFExperimental
 public inline fun VisionOutput.columnTable(
-    columnSize: UInt,
-    block: MutableColumnTable<Value>.() -> Unit,
+    columnSize: Int,
+    block: ColumnTableBuilder<Value>.() -> Unit,
 ): VisionOfTable = ColumnTable(columnSize, block).toVision()
 
 @DFExperimental

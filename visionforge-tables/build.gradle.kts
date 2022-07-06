@@ -2,7 +2,7 @@ plugins {
     id("ru.mipt.npm.gradle.mpp")
 }
 
-val tablesVersion = "0.1.4"
+val tablesVersion = "0.2.0-dev-1"
 
 kscience {
     useSerialization()

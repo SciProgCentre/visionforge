@@ -3,12 +3,12 @@ plugins {
 //    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
-val dataforgeVersion by extra("0.5.2")
+val dataforgeVersion by extra("0.6.0-dev-10")
 val fxVersion by extra("11")
 
 allprojects{
     group = "space.kscience"
-    version = "0.3.0-dev-1"
+    version = "0.3.0-dev-2"
 }
 
 subprojects {
@@ -18,6 +18,12 @@ subprojects {
         maven("https://repo.kotlin.link")
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+        kotlinOptions{
+            freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+        }
     }
 }
 

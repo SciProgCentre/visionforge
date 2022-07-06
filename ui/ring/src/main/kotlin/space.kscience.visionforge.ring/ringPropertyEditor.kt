@@ -2,8 +2,8 @@ package space.kscience.visionforge.ring
 
 import org.w3c.dom.Element
 import react.RBuilder
+import react.dom.client.createRoot
 import react.dom.p
-import react.dom.render
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
@@ -14,6 +14,7 @@ import space.kscience.visionforge.getStyle
 import space.kscience.visionforge.react.flexColumn
 import space.kscience.visionforge.react.metaViewer
 import space.kscience.visionforge.react.propertyEditor
+import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.SolidReference
 import space.kscience.visionforge.styles
 
@@ -72,6 +73,6 @@ public fun RBuilder.ringPropertyEditor(
 public fun Element.ringPropertyEditor(
     item: Vision,
     descriptor: MetaDescriptor? = item.descriptor,
-): Unit = render(this) {
+): Unit = createRoot(this).render {
     ringPropertyEditor(item, descriptor = descriptor)
 }

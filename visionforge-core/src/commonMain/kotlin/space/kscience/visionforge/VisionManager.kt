@@ -63,7 +63,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         public const val VISION_SERIALIZER_MODULE_TARGET: String = "visionSerializerModule"
 
-        override fun invoke(meta: Meta, context: Context): VisionManager = VisionManager(meta)
+        override fun build(context: Context, meta: Meta): VisionManager = VisionManager(meta)
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {

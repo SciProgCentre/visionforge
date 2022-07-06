@@ -7,7 +7,6 @@ import space.kscience.dataforge.context.AbstractPlugin
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
-import space.kscience.dataforge.meta.DynamicMeta
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.toDynamic
 import space.kscience.dataforge.names.Name
@@ -49,15 +48,15 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
                 }
             }.toTypedArray()
 
-            columns = Array(table.headers.size + 1){
-                if(it==0){
+            columns = Array(table.headers.size + 1) {
+                if (it == 0) {
                     jso {
                         field = "@index"
                         title = "#"
                         resizable = false
                     }
                 } else {
-                    val header = table.headers[it-1]
+                    val header = table.headers[it - 1]
                     jso {
                         field = header.name
                         title = header.properties.title ?: header.name
@@ -67,7 +66,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
             }
 
 
-            data = table.rows.mapIndexed { index, row->
+            data = table.rows.mapIndexed { index, row ->
                 val d = row.meta.toDynamic()
                 d["@index"] = index
                 d
@@ -91,6 +90,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
     public companion object : PluginFactory<TableVisionJsPlugin> {
         override val tag: PluginTag = PluginTag("vision.table.js", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<TableVisionJsPlugin> = TableVisionJsPlugin::class
-        override fun invoke(meta: Meta, context: Context): TableVisionJsPlugin = TableVisionJsPlugin()
+
+        override fun build(context: Context, meta: Meta): TableVisionJsPlugin = TableVisionJsPlugin()
     }
 }

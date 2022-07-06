@@ -2,12 +2,13 @@ package space.kscience.visionforge.gdml.demo
 
 import kotlinx.browser.document
 import kotlinx.css.*
-import react.dom.render
+import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
@@ -42,7 +43,7 @@ private class GDMLDemoApp : Application {
 
         val element = document.getElementById("application") ?: error("Element with id 'application' not found on page")
 
-        render(element) {
+        createRoot(element).render {
             child(GDMLApp) {
                 val vision = GdmlShowCase.cubes().toVision().apply {
                     ambientLight {
