@@ -12,7 +12,6 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.set
 import space.kscience.visionforge.visible
 import kotlin.collections.set
 import kotlin.reflect.KClass
@@ -49,10 +48,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public fun buildObject3D(obj: Solid): Object3D = when (obj) {
         is ThreeJsVision -> obj.render(this)
-        is SolidReferenceGroup -> ThreeReferenceFactory(this, obj)
+        is SolidReferenceGroup -> ThreeReferenceFactory.build(this, obj)
         is SolidGroup -> {
             val group = ThreeGroup()
-            obj.children.forEach { (token, child) ->
+            obj.items.forEach { (token, child) ->
                 if (child is Solid && token != SolidGroup.PROTOTYPES_TOKEN && child.ignore != true) {
                     try {
                         val object3D = buildObject3D(child)
@@ -101,13 +100,13 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 }
             }
         }
-        is Composite -> compositeFactory(this, obj)
+        is Composite -> compositeFactory.build(this, obj)
         else -> {
             //find specialized factory for this type if it is present
             val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
             when {
-                factory != null -> factory(this, obj)
-                obj is GeometrySolid -> ThreeShapeFactory(this, obj)
+                factory != null -> factory.build(this, obj)
+                obj is GeometrySolid -> ThreeShapeFactory.build(this, obj)
                 else -> error("Renderer for ${obj::class} not found")
             }
         }

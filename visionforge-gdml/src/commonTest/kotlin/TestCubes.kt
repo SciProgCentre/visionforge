@@ -21,12 +21,12 @@ class TestCubes {
 
     @Test
     fun testCubesDirect() {
-        val vision = cubes.toVision()
+        val vision: SolidGroup = cubes.toVision()
 //        println(Solids.encodeToString(vision))
         val smallBoxPrototype = vision.getPrototype(Name.parse("solids.smallBox")) as? Box
         assertNotNull(smallBoxPrototype)
         assertEquals(30.0, smallBoxPrototype.xSize.toDouble())
-        val smallBoxVision = vision["composite-111.smallBox"]?.unref as? Box
+        val smallBoxVision = vision.children["composite-111.smallBox"]?.unref as? Box
         assertNotNull(smallBoxVision)
         assertEquals(30.0, smallBoxVision.xSize.toDouble())
     }
@@ -55,7 +55,7 @@ class TestCubes {
                 assertNotNull(this.prototype)
             }
             if (this is SolidGroup) {
-                children.forEach {
+                items.forEach {
                     it.value.checkPrototypes()
                 }
             }

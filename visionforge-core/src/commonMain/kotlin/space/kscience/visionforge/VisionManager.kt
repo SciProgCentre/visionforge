@@ -25,13 +25,14 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     /**
      * Combined [SerializersModule] for all registered visions
      */
-    public val serializersModule: SerializersModule
-        get() = SerializersModule {
+    public val serializersModule: SerializersModule by lazy {
+        SerializersModule {
             include(defaultSerialModule)
             context.gather<SerializersModule>(VISION_SERIALIZER_MODULE_TARGET).values.forEach {
                 include(it)
             }
         }
+    }
 
     public val jsonFormat: Json
         get() = Json(defaultJson) {
@@ -67,9 +68,8 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                default { VisionBase.serializer() }
-                subclass(VisionBase.serializer())
-                subclass(VisionGroupBase.serializer())
+                default { VisionGroup.serializer() }
+                subclass(VisionGroup.serializer())
                 subclass(VisionOfNumberField.serializer())
                 subclass(VisionOfTextField.serializer())
                 subclass(VisionOfCheckbox.serializer())
@@ -107,5 +107,17 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
  */
 public val Context.visionManager: VisionManager get() = fetch(VisionManager)
 
-public fun Vision.encodeToString(): String =
-    manager?.encodeToString(this) ?: error("VisionManager not defined in Vision")
+public fun Vision.encodeToString(): String = manager.encodeToString(this)
+
+/**
+ * A root vision attached to [VisionManager]
+ */
+public class RootVision(override val manager: VisionManager) : VisionGroup()
+
+/**
+ * Designate this [Vision] as a root and assign a [VisionManager] as its parent
+ */
+public fun Vision.setAsRoot(manager: VisionManager) {
+    if (parent != null) error("Vision $this already has a parent. It could not be set as root")
+    parent = RootVision(manager)
+}

@@ -11,17 +11,19 @@ import kotlin.reflect.KClass
 public object ThreePointLightFactory : ThreeFactory<PointLightSource> {
     override val type: KClass<in PointLightSource> get() = PointLightSource::class
 
-    override fun invoke(three: ThreePlugin, obj: PointLightSource): PointLight {
+    private val DEFAULT_COLOR = Color(0x404040)
+
+    override fun build(three: ThreePlugin, obj: PointLightSource): PointLight {
         val res = PointLight().apply {
             matrixAutoUpdate = false
-            color = obj.color.threeColor() ?: Color(0x404040)
+            color = obj.color.threeColor() ?: DEFAULT_COLOR
             intensity = obj.intensity.toDouble()
             updatePosition(obj)
         }
 
         obj.onPropertyChange { name ->
             when (name) {
-                LightSource::color.name.asName() -> res.color = obj.color.threeColor() ?: Color(0x404040)
+                LightSource::color.name.asName() -> res.color = obj.color.threeColor() ?: DEFAULT_COLOR
                 LightSource::intensity.name.asName() -> res.intensity = obj.intensity.toDouble()
                 else -> res.updateProperty(obj, name)
             }
@@ -29,4 +31,5 @@ public object ThreePointLightFactory : ThreeFactory<PointLightSource> {
 
         return res
     }
+
 }

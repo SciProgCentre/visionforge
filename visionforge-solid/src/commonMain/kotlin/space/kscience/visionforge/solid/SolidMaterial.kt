@@ -9,6 +9,7 @@ import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.ValueType
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.number
+import space.kscience.dataforge.values.set
 import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
@@ -101,19 +102,19 @@ public class SolidMaterial : Scheme() {
 }
 
 public val Solid.color: ColorAccessor
-    get() = ColorAccessor(computePropertyValues(), MATERIAL_COLOR_KEY)
+    get() = ColorAccessor(getProperty(Name.EMPTY), MATERIAL_COLOR_KEY)
 
 public var Solid.material: SolidMaterial?
-    get() = computePropertyNode(MATERIAL_KEY)?.let { SolidMaterial.read(it) }
-    set(value) = meta.setMeta(MATERIAL_KEY, value?.meta)
+    get() = SolidMaterial.read(getProperty(MATERIAL_KEY))
+    set(value) = setProperty(MATERIAL_KEY, value?.meta)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    meta.getOrCreate(MATERIAL_KEY).updateWith(SolidMaterial, builder)
+    getProperty(MATERIAL_KEY).updateWith(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?
     get() = getPropertyValue(MATERIAL_OPACITY_KEY, inherit = true)?.number
     set(value) {
-        meta.setValue(MATERIAL_OPACITY_KEY, value?.asValue())
+        setPropertyValue(MATERIAL_OPACITY_KEY, value?.asValue())
     }

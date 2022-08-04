@@ -4,13 +4,9 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.configure
-import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionBase
-import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.*
 import kotlin.collections.set
 import kotlin.test.Test
 
@@ -36,7 +32,7 @@ fun FlowContent.renderVisionFragment(
 @DFExperimental
 class HtmlTagTest {
 
-    fun VisionOutput.base(block: VisionBase.() -> Unit) = VisionBase().apply(block)
+    fun VisionOutput.base(block: VisionGroup.() -> Unit) = VisionGroup().apply(block)
 
     val fragment: HtmlVisionFragment = {
         div {
@@ -46,10 +42,8 @@ class HtmlTagTest {
                     "metaProperty" put 87
                 }
                 base {
-                    configure {
-                        set("myProp", 82)
-                        set("otherProp", false)
-                    }
+                    setPropertyValue("myProp", 82)
+                    setPropertyValue("otherProp", false)
                 }
             }
         }
@@ -59,7 +53,7 @@ class HtmlTagTest {
         div {
             h2 { +"Properties" }
             ul {
-                (vision as? VisionBase)?.meta?.items?.forEach {
+                vision.getProperty(Name.EMPTY).items.forEach {
                     li {
                         a { +it.key.toString() }
                         p { +it.value.toString() }

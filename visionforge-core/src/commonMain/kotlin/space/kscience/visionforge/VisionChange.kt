@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.Null
@@ -19,14 +18,13 @@ import kotlin.time.Duration
  */
 private fun Vision.deepCopy(): Vision {
     //Assuming that unrooted visions are already isolated
-    val manager = this.manager ?: return this
     //TODO replace by efficient deep copy
     val json = manager.encodeToJsonElement(this)
     return manager.decodeFromJson(json)
 }
 
 /**
- * An update for a [Vision] or a [VisionGroup]
+ * An update for a [Vision]
  */
 public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 
@@ -87,7 +85,6 @@ public inline fun VisionChange(block: VisionChangeBuilder.() -> Unit): VisionCha
     VisionChangeBuilder().apply(block).deepCopy()
 
 
-@OptIn(DFExperimental::class)
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
@@ -96,28 +93,25 @@ private fun CoroutineScope.collectChange(
 
     //Collect properties change
     source.onPropertyChange { propertyName ->
-        val newItem = source.meta[propertyName]
+        val newItem = source.getProperty(propertyName, false, false, false)
         collector().propertyChanged(name, propertyName, newItem)
     }
 
-    if (source is VisionGroup) {
-        //Subscribe for children changes
-        source.children.forEach { (token, child) ->
-            collectChange(name + token, child, collector)
-        }
-
-        //Subscribe for structure change
-        if (source is MutableVisionGroup) {
-            source.structureChanges.onEach { changedName ->
-                val after = source[changedName]
-                val fullName = name + changedName
-                if (after != null) {
-                    collectChange(fullName, after, collector)
-                }
-                collector()[fullName] = after
-            }.launchIn(this)
-        }
+    val children = source.children
+    //Subscribe for children changes
+    for ((token, child) in children) {
+        collectChange(name + token, child, collector)
     }
+
+    //Subscribe for structure change
+    children.changes.onEach { changedName ->
+        val after = children[changedName]
+        val fullName = name + changedName
+        if (after != null) {
+            collectChange(fullName, after, collector)
+        }
+        collector()[fullName] = after
+    }.launchIn(this)
 }
 
 /**

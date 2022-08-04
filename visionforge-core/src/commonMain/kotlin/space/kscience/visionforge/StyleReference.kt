@@ -9,7 +9,7 @@ import kotlin.properties.ReadOnlyProperty
 /**
  * A reference to a style defined in a specific container
  */
-public class StyleReference(public val owner: VisionGroup, public val name: String)
+public class StyleReference(public val owner: Vision, public val name: String)
 
 private tailrec fun styleIsDefined(vision: Vision, reference: StyleReference): Boolean = when {
     reference.owner === vision -> true
@@ -25,7 +25,7 @@ public fun Vision.useStyle(reference: StyleReference) {
 }
 
 @VisionBuilder
-public fun VisionGroup.style(
+public fun Vision.style(
     styleKey: String? = null,
     builder: MutableMeta.() -> Unit,
 ): ReadOnlyProperty<Any?, StyleReference> = ReadOnlyProperty { _, property ->
@@ -35,7 +35,7 @@ public fun VisionGroup.style(
 }
 
 @VisionBuilder
-public fun <T : Scheme> VisionGroup.style(
+public fun <T : Scheme> Vision.style(
     spec: Specification<T>,
     styleKey: String? = null,
     builder: T.() -> Unit,

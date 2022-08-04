@@ -11,7 +11,6 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.asValue
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.set
-import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.*
@@ -72,7 +71,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
     var value: Int
         get() = meta[VALUE].int ?: 0
         set(value) {
-            setProperty(VALUE, value.asValue())
+            setPropertyValue(VALUE, value.asValue())
         }
 
     companion object {

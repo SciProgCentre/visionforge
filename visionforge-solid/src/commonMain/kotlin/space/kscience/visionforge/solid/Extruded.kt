@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
-import space.kscience.dataforge.meta.configure
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -40,7 +40,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 @SerialName("solid.extrude")
 public class Extruded(
     public val shape: List<Point2D>,
-    public val layers: List<Layer>
+    public val layers: List<Layer>,
 ) : SolidBase(), GeometrySolid, VisionPropertyContainer<Extruded> {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
@@ -67,7 +67,7 @@ public class Extruded(
         for (i in (1 until layers.size)) {
             upperLayer = layers[i]
             for (j in (0 until shape.size - 1)) {
-                //counter clockwise
+                //counterclockwise
                 geometryBuilder.face4(
                     lowerLayer[j],
                     lowerLayer[j + 1],
@@ -99,7 +99,7 @@ public class ExtrudeBuilder(
 
     public var layers: MutableList<Layer> = ArrayList(),
 
-    config: ObservableMutableMeta = MutableMeta()
+    config: ObservableMutableMeta = MutableMeta(),
 ) : SimpleVisionPropertyContainer<Extruded>(config) {
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()
@@ -110,12 +110,12 @@ public class ExtrudeBuilder(
     }
 
     internal fun build(): Extruded = Extruded(shape, layers).apply {
-        configure(this@ExtrudeBuilder.meta)
+        setProperty(Name.EMPTY, getProperty(Name.EMPTY))
     }
 }
 
 @VisionBuilder
 public fun VisionContainerBuilder<Solid>.extruded(
     name: String? = null,
-    action: ExtrudeBuilder.() -> Unit = {}
+    action: ExtrudeBuilder.() -> Unit = {},
 ): Extruded = ExtrudeBuilder().apply(action).build().also { set(name, it) }

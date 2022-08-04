@@ -15,7 +15,7 @@ class PropertyTest {
         val box = Box(10.0f, 10.0f,10.0f)
         box.material {
             //meta["color"] = "pink"
-            color("pink")
+            color.set("pink")
         }
         assertEquals("pink", box.meta["material.color"]?.string)
         assertEquals("pink", box.color.string)
@@ -33,7 +33,7 @@ class PropertyTest {
         }
 
         box.material {
-            color("pink")
+            color.set("pink")
         }
 
         assertEquals("pink", c)
@@ -43,7 +43,7 @@ class PropertyTest {
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            setPropertyNode("test", 22)
+            setPropertyValue("test", 22)
             group {
                 box = box(100, 100, 100)
             }
@@ -54,14 +54,14 @@ class PropertyTest {
     @Test
     fun testStyleProperty() {
         var box: Box? = null
-        val group = SolidGroup().apply {
+        val group = SolidGroup{
             styleSheet {
-                set("testStyle") {
+                update("testStyle") {
                     "test" put 22
                 }
             }
             group {
-                box = box(100, 100, 100).apply {
+                box = box(100, 100, 100) {
                     useStyle("testStyle")
                 }
             }
@@ -74,7 +74,7 @@ class PropertyTest {
         var box: Box? = null
         val group = SolidGroup().apply {
             styleSheet {
-                set("testStyle") {
+                update("testStyle") {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"
                 }
             }
@@ -89,10 +89,10 @@ class PropertyTest {
 
     @Test
     fun testReferenceStyleProperty() {
-        var box: SolidReferenceGroup? = null
+        var box: SolidReference? = null
         val group = SolidGroup{
             styleSheet {
-                set("testStyle") {
+                update("testStyle") {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"
                 }
             }
@@ -105,6 +105,6 @@ class PropertyTest {
                 box = ref("box".asName())
             }
         }
-        assertEquals("#555555", box?.color.string)
+        assertEquals("#555555", box!!.color.string)
     }
 }

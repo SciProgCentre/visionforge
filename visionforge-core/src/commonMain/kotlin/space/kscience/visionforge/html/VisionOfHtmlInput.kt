@@ -5,11 +5,12 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.meta.string
-import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.properties
 
 @Serializable
-public abstract class VisionOfHtmlInput : VisionBase() {
-    public var disabled: Boolean by meta.boolean(false)
+public abstract class VisionOfHtmlInput : VisionGroup() {
+    public var disabled: Boolean by properties().boolean(false)
 }
 
 @Serializable
@@ -18,7 +19,7 @@ public class VisionOfTextField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var text: String? by meta.string()
+    public var text: String? by properties().string()
 }
 
 @Serializable
@@ -27,7 +28,7 @@ public class VisionOfCheckbox(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var checked: Boolean? by meta.boolean()
+    public var checked: Boolean? by properties().boolean()
 }
 
 @Serializable
@@ -36,7 +37,7 @@ public class VisionOfNumberField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var value: Number? by meta.number()
+    public var value: Number? by properties().number()
 }
 
 @Serializable
@@ -48,6 +49,6 @@ public class VisionOfRangeField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var value: Number? by meta.number()
+    public var value: Number? by properties().number()
 }
 

@@ -2,7 +2,6 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.MutableVisionGroup
 import space.kscience.visionforge.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,10 +13,10 @@ import kotlin.test.assertEquals
 fun SolidGroup.refGroup(
     name: String,
     templateName: Name = Name.parse(name),
-    block: MutableVisionGroup.() -> Unit
-): SolidReferenceGroup {
+    block: SolidGroup.() -> Unit
+): SolidReference {
     val group = SolidGroup().apply(block)
-    return newRef(name, group, templateName = templateName)
+    return newRef(name, group, prototypeName = templateName)
 }
 
 
@@ -25,7 +24,7 @@ class SerializationTest {
     @Test
     fun testCubeSerialization() {
         val cube = Box(100f, 100f, 100f).apply {
-            color(222)
+            color.set(222)
             x = 100
             z = -100
         }
@@ -38,7 +37,7 @@ class SerializationTest {
     @Test
     fun testProxySerialization() {
         val cube = Box(100f, 100f, 100f).apply {
-            color(222)
+            color.set(222)
             x = 100
             z = -100
         }
@@ -53,21 +52,21 @@ class SerializationTest {
         val string = Solids.encodeToString(group)
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
-        assertEquals(group["cube"]?.meta, reconstructed["cube"]?.meta)
+        assertEquals(group.children["cube"]?.meta, reconstructed.children["cube"]?.meta)
     }
 
     @Test
     fun lightSerialization(){
         val group = SolidGroup {
             ambientLight {
-                color(Colors.white)
+                color.set(Colors.white)
                 intensity = 100.0
             }
         }
         val serialized = Solids.encodeToString(group)
 
         val reconstructed = Solids.decodeFromString(serialized) as SolidGroup
-        assertEquals(100.0, (reconstructed["@ambientLight"] as AmbientLightSource).intensity.toDouble())
+        assertEquals(100.0, (reconstructed.children["@ambientLight"] as AmbientLightSource).intensity.toDouble())
     }
 
 }

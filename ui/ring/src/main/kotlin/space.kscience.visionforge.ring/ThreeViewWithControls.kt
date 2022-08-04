@@ -108,7 +108,7 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
         selected?.let {
             when {
                 it.isEmpty() -> solid
-                else -> (solid as? VisionGroup)?.get(it)
+                else -> (solid as? SolidGroup)?.get(it)
             }
         }
     }
@@ -165,7 +165,7 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
                         }
                         IslandContent {
                             propertyEditor(
-                                ownProperties = vision.meta,
+                                ownProperties = vision.properties(),
                                 allProperties = vision.computeProperties(),
                                 descriptor = vision.descriptor,
                                 key = selected

@@ -171,7 +171,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                     ?: ThreeMaterials.BLACK_COLOR
             }
             SolidMaterial.MATERIAL_OPACITY_KEY -> {
-                val opacity = vision.getPropertyValue(
+                val opacity = vision.getProperty(
                     SolidMaterial.MATERIAL_OPACITY_KEY,
                     inherit = true,
                 )?.double ?: 1.0
@@ -179,7 +179,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                 material.transparent = opacity < 1.0
             }
             SolidMaterial.MATERIAL_WIREFRAME_KEY -> {
-                material.asDynamic().wireframe = vision.getPropertyValue(
+                material.asDynamic().wireframe = vision.getProperty(
                     SolidMaterial.MATERIAL_WIREFRAME_KEY,
                     inherit = true,
                 )?.boolean ?: false

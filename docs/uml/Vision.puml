@@ -3,7 +3,7 @@
 
 interface Vision{
     val parent: VisionGroup?
-    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
+    fun getProperty(name,inherit,includeStyles,includeDefaults): Value?
 }
 
 interface Solid{
@@ -81,7 +81,7 @@ Solid <--- Composite
 
 interface SolidReference{
     val prototype: Solid
-    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
+    fun getProperty(name,inherit,includeStyles,includeDefaults): Value?
 }
 VisionGroup <---- SolidReference
 SolidReferenceGroup -- SolidReference
@@ -91,7 +91,7 @@ class SolidReferenceGroup{
     var properties: MutableMeta?
     val prototype: Solid
     val children: Map<NameToken, Vision>
-    fun getPropertyValue(name,inherit,includeStyles,includeDefaults): Value?
+    fun getProperty(name,inherit,includeStyles,includeDefaults): Value?
 }
 VisionBase <-- SolidReferenceGroup
 VisionGroup <-- SolidReferenceGroup

@@ -1,12 +1,13 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.Configurable
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.getProperty
 import kotlin.properties.ReadOnlyProperty
 
 @VisionBuilder
@@ -27,8 +28,8 @@ public class ColorAccessor(
     }
 }
 
-public fun Configurable.color(): ReadOnlyProperty<Configurable, ColorAccessor> = ReadOnlyProperty { _, property ->
-    ColorAccessor(meta, property.name.asName())
+public fun Vision.color(): ReadOnlyProperty<Vision, ColorAccessor> = ReadOnlyProperty { _, property ->
+    ColorAccessor(getProperty(Name.EMPTY), property.name.asName())
 }
 
 public var ColorAccessor?.string: String?
@@ -40,21 +41,21 @@ public var ColorAccessor?.string: String?
 /**
  * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
  */
-public operator fun ColorAccessor?.invoke(webColor: String) {
+public fun ColorAccessor?.set(webColor: String) {
     this?.value = webColor.asValue()
 }
 
 /**
  * Set color as RGB integer
  */
-public operator fun ColorAccessor?.invoke(rgb: Int) {
+public fun ColorAccessor?.set(rgb: Int) {
     this?.value = Colors.rgbToString(rgb).asValue()
 }
 
 /**
  * Set color as RGB
  */
-public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
+public fun ColorAccessor?.set(r: UByte, g: UByte, b: UByte) {
     this?.value = Colors.rgbToString(r, g, b).asValue()
 }
 

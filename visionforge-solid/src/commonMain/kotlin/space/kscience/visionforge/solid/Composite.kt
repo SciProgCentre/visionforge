@@ -3,11 +3,8 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.isEmpty
-import space.kscience.dataforge.meta.update
-import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.VisionPropertyContainer
-import space.kscience.visionforge.set
+import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.*
 
 public enum class CompositeType {
     GROUP, // Dumb sum of meshes
@@ -28,16 +25,16 @@ public class Composite(
 public inline fun VisionContainerBuilder<Solid>.composite(
     type: CompositeType,
     name: String? = null,
-    builder: SolidGroup.() -> Unit,
+    @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Composite {
-    val group = SolidGroup().apply(builder)
-    val children = group.children.values.filterIsInstance<Solid>()
-    if (children.size != 2){
+    val group = SolidGroup(builder)
+    val children = group.items.values.toList()
+    if (children.size != 2) {
         error("Composite requires exactly two children, but found ${children.size}")
     }
     val res = Composite(type, children[0], children[1])
 
-    res.meta.update(group.meta)
+    res.setProperty(Name.EMPTY, group.getProperty(Name.EMPTY))
 
     set(name, res)
     return res
@@ -50,34 +47,34 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 public fun SolidGroup.smartComposite(
     type: CompositeType,
     name: String? = null,
-    builder: SolidGroup.() -> Unit,
+    @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
     val group = SolidGroup(builder)
     if (name == null && group.meta.isEmpty()) {
         //append directly to group if no properties are defined
-        group.children.forEach { (_, value) ->
+        group.items.forEach { (_, value) ->
             value.parent = null
-            set(null, value)
+            children.static(value)
         }
         this
     } else {
-        set(name, group)
+        children[name] = group
         group
     }
 } else {
-    composite(type, name, builder)
+    children.composite(type, name, builder)
 }
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.union(
     name: String? = null,
-    builder: SolidGroup.() -> Unit
+    builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.UNION, name, builder = builder)
 
 @VisionBuilder
 public inline fun VisionContainerBuilder<Solid>.subtract(
     name: String? = null,
-    builder: SolidGroup.() -> Unit
+    builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.SUBTRACT, name, builder = builder)
 
 @VisionBuilder

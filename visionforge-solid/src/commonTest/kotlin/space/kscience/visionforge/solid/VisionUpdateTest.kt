@@ -21,24 +21,24 @@ class VisionUpdateTest {
             box(200,200,200, name = "origin")
         }
         val dif = VisionChange{
-            group("top") {
-                color(123)
+            group ("top") {
+                color.set(123)
                 box(100,100,100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
         targetVision.update(dif)
-        assertTrue { targetVision["top"] is SolidGroup }
-        assertEquals("red", (targetVision["origin"] as Solid).color.string) // Should work
-        assertEquals("#00007b", (targetVision["top"] as Solid).color.string) // new item always takes precedence
+        assertTrue { targetVision.children["top"] is SolidGroup }
+        assertEquals("red", (targetVision.children["origin"] as Solid).color.string) // Should work
+        assertEquals("#00007b", (targetVision.children["top"] as Solid).color.string) // new item always takes precedence
     }
 
     @Test
     fun testVisionChangeSerialization(){
         val change = VisionChange{
             group("top") {
-                color(123)
+                color.set(123)
                 box(100,100,100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))

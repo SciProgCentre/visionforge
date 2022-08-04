@@ -30,7 +30,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         }
     }
 
-    override fun invoke(three: ThreePlugin, obj: SolidReferenceGroup): Object3D {
+    override fun build(three: ThreePlugin, obj: SolidReferenceGroup): Object3D {
         val template = obj.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)
@@ -50,7 +50,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
+                val referenceChild = obj.children[childName] ?: error("Reference child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             } else {

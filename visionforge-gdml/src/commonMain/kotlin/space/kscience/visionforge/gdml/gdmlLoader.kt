@@ -30,10 +30,10 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
     private val proto = SolidGroup()
 
     private val solids = proto.group(solidsName) {
-        setPropertyNode("edges.enabled", false)
+        setPropertyValue("edges.enabled", false)
     }
 
-    private val referenceStore = HashMap<Name, MutableList<SolidReferenceGroup>>()
+    private val referenceStore = HashMap<Name, MutableList<SolidReference>>()
 
     fun Solid.configureSolid(root: Gdml, parent: GdmlVolume, solid: GdmlSolid) {
         val material = parent.materialref.resolve(root) ?: GdmlElement(parent.materialref.ref)
@@ -44,7 +44,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         }
     }
 
-    private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReferenceGroup {
+    private fun proxySolid(root: Gdml, group: SolidGroup, solid: GdmlSolid, name: String): SolidReference {
         val templateName = solidsName + name
         if (proto[templateName] == null) {
             solids.addSolid(root, solid, name)
@@ -59,7 +59,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         group: SolidGroup,
         physVolume: GdmlPhysVolume,
         volume: GdmlGroup,
-    ): SolidReferenceGroup {
+    ): SolidReference {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
             proto[templateName] = volume(root, volume)
@@ -321,7 +321,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
             ?: error("Volume with ref ${divisionVolume.volumeref.ref} could not be resolved")
 
         //TODO add divisions
-        set(null, volume(root, volume))
+        children.static(volume(root, volume))
     }
 
     private fun volume(
@@ -355,7 +355,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         final.useStyle(rootStyle)
 
         final.prototypes {
-            proto.children.forEach { (token, item) ->
+            proto.items.forEach { (token, item) ->
                 item.parent = null
                 set(token.asName(), item as? Solid)
             }
@@ -383,9 +383,9 @@ public fun Gdml.toVision(block: GdmlLoaderOptions.() -> Unit = {}): SolidGroup {
  * Append Gdml node to the group
  */
 public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlLoaderOptions.() -> Unit = {}) {
-    val visual = gdml.toVision(transformer)
+    val vision = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
-    set(key, visual)
+    children[key] = vision
 }
 
 @VisionBuilder

@@ -29,7 +29,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
         private fun PolymorphicModuleBuilder<Solid>.solids() {
             subclass(SolidGroup.serializer())
-            subclass(SolidReferenceGroup.serializer())
+            subclass(SolidReference.serializer())
             subclass(Composite.serializer())
             subclass(Box.serializer())
             subclass(GenericHexagon.serializer())
@@ -47,8 +47,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                subclass(VisionBase.serializer())
-                subclass(VisionGroupBase.serializer())
+                subclass(VisionGroup.serializer())
                 solids()
             }
 

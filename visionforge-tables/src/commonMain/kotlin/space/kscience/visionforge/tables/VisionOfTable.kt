@@ -12,8 +12,9 @@ import space.kscience.dataforge.values.Null
 import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
 import space.kscience.tables.*
-import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.properties
 import kotlin.jvm.JvmName
 import kotlin.reflect.typeOf
 
@@ -41,12 +42,13 @@ public val ColumnHeader<Value>.properties: ValueColumnScheme get() = ValueColumn
 @SerialName("vision.table")
 public class VisionOfTable(
     override val headers: List<@Serializable(ColumnHeaderSerializer::class) ColumnHeader<Value>>,
-) : VisionBase(), Rows<Value> {
+) : VisionGroup(), Rows<Value> {
 
     public var data: List<Meta>
         get() = meta.getIndexed("rows").entries.sortedBy { it.key?.toInt() }.map { it.value }
         set(value) {
-            meta["rows"] = value
+            //TODO Make it better
+            properties()["rows"] = value
         }
 
     public val rows: List<MetaRow> get() = data.map(::MetaRow)

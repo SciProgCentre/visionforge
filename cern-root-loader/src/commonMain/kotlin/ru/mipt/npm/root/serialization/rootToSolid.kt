@@ -160,7 +160,7 @@ private fun SolidGroup.volume(volume: TGeoVolume, name: String? = null, cache: B
         name = combinedName,
         obj = group,
         prototypeHolder = rootPrototypes,
-        templateName = volumesName + Name.parse(combinedName ?: "volume[${group.hashCode()}]")
+        prototypeName = volumesName + Name.parse(combinedName ?: "volume[${group.hashCode()}]")
     )
 }
 

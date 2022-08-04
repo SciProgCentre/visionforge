@@ -10,7 +10,6 @@ import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 import styled.injectGlobal

@@ -22,7 +22,7 @@ public interface ThreeFactory<in T : Vision> {
 
     public val type: KClass<in T>
 
-    public operator fun invoke(three: ThreePlugin, obj: T): Object3D
+    public fun build(three: ThreePlugin, obj: T): Object3D
 
     public companion object {
         public const val TYPE: String = "threeFactory"

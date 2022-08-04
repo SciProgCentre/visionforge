@@ -19,7 +19,7 @@ fun main() = makeVisionFile(
         vision {
             solid {
                 ambientLight {
-                    color(Colors.white)
+                    color.set(Colors.white)
                 }
                 repeat(100) {
                     sphere(5, name = "sphere[$it]") {
@@ -27,7 +27,7 @@ fun main() = makeVisionFile(
                         y = random.nextDouble(-300.0, 300.0)
                         z = random.nextDouble(-300.0, 300.0)
                         material {
-                            color(random.nextInt())
+                            color.set(random.nextInt())
                         }
                         detail = 16
                     }

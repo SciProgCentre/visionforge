@@ -4,7 +4,7 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
-import space.kscience.visionforge.computePropertyNode
+import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
 import space.kscience.visionforge.solid.SolidMaterial
@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
-    override fun invoke(three: ThreePlugin, obj: PolyLine): Object3D {
+    override fun build(three: ThreePlugin, obj: PolyLine): Object3D {
         val geometry = BufferGeometry().apply {
             setFromPoints(Array((obj.points.size - 1) * 2) {
                 obj.points[ceil(it / 2.0).toInt()].toVector()
@@ -25,7 +25,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            obj.computePropertyNode(SolidMaterial.MATERIAL_KEY),
+            obj.getProperty(SolidMaterial.MATERIAL_KEY),
             false
         )
 

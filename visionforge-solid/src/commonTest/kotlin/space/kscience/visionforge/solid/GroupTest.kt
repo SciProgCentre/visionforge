@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class GroupTest {
     @Test
     fun testGroupWithComposite() {
-        val group = SolidGroup().apply {
+        val group = SolidGroup{
             union("union") {
                 box(100, 100, 100) {
                     z = 100
@@ -18,7 +18,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 material {
-                    color(Colors.lightgreen)
+                    color.set(Colors.lightgreen)
                     opacity = 0.3f
                 }
             }
@@ -30,7 +30,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = 300
-                color(Colors.red)
+                color.set(Colors.red)
             }
             subtract("subtract") {
                 box(100, 100, 100) {
@@ -40,12 +40,12 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = -300
-                color(Colors.blue)
+                color.set(Colors.blue)
             }
         }
 
-        assertEquals(3, group.children.count())
-        assertEquals(300.0, (group["intersect"] as Solid).y.toDouble())
-        assertEquals(-300.0, (group["subtract"] as Solid).y.toDouble())
+        assertEquals(3, group.items.count())
+        assertEquals(300.0, (group.children["intersect"] as Solid).y.toDouble())
+        assertEquals(-300.0, (group.children["subtract"] as Solid).y.toDouble())
     }
 }

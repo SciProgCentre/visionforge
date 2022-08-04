@@ -59,9 +59,9 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
     val obj = props.obj
 
     //display as node if any child is visible
-    if (obj is VisionGroup) {
+    if (obj is VisionGroup<*>) {
         flexRow {
-            if (obj.children.any { !it.key.body.startsWith("@") }) {
+            if (obj.items.any { !it.key.body.startsWith("@") }) {
                 styledSpan {
                     css {
                         +TreeStyles.treeCaret
@@ -81,9 +81,9 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                 css {
                     +TreeStyles.tree
                 }
-                obj.children.entries
+                obj.items.entries
                     .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisionGroup)?.isEmpty() ?: true } // ignore empty groups
+                    .sortedBy { (it.value as? VisionGroup<*>)?.isEmpty() ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
                         styledDiv {
                             css {
@@ -92,7 +92,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                             child(ObjectTree) {
                                 attrs {
                                     this.name = props.name + childToken
-                                    this.obj = child
+                                    this.obj = child.vision
                                     this.selected = props.selected
                                     this.clickCallback = props.clickCallback
                                 }

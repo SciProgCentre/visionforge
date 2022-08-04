@@ -16,7 +16,7 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.misc.Type
-import space.kscience.visionforge.computePropertyNode
+import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.solid.FX3DFactory.Companion.TYPE
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_WIREFRAME_KEY
@@ -48,9 +48,9 @@ public class FX3DPlugin : AbstractPlugin() {
     public fun buildNode(obj: Solid): Node {
         val binding = VisualObjectFXBinding(this, obj)
         return when (obj) {
-            is SolidReferenceGroup -> referenceFactory(obj, binding)
+            is SolidReference -> referenceFactory(obj, binding)
             is SolidGroup -> {
-                Group(obj.children.mapNotNull { (token, obj) ->
+                Group(obj.items.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {
                         logger.info { token.toString() }
                         buildNode(it).apply {
@@ -77,7 +77,7 @@ public class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
-                obj.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
+                obj.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }

@@ -9,17 +9,18 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.properties
 
 @Serializable
 @SerialName("vision.markup")
 public class VisionOfMarkup(
     public val format: String = COMMONMARK_FORMAT
-) : VisionBase() {
+) : VisionGroup() {
 
     //TODO add templates
 
-    public var content: String? by meta.string(CONTENT_PROPERTY_KEY)
+    public var content: String? by properties().string(CONTENT_PROPERTY_KEY)
 
     public companion object {
         public val CONTENT_PROPERTY_KEY: Name = "content".asName()

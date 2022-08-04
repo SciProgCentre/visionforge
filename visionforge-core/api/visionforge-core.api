@@ -183,7 +183,7 @@ public class space/kscience/visionforge/SimpleVisionPropertyContainer : space/ks
 	public fun <init> (Lspace/kscience/dataforge/meta/ObservableMutableMeta;)V
 	public synthetic fun getMeta ()Lspace/kscience/dataforge/meta/MutableMeta;
 	public fun getMeta ()Lspace/kscience/dataforge/meta/ObservableMutableMeta;
-	public fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
 }
 
 public final class space/kscience/visionforge/StyleReference {
@@ -241,8 +241,8 @@ public abstract interface class space/kscience/visionforge/Vision : space/kscien
 	public fun getManager ()Lspace/kscience/visionforge/VisionManager;
 	public abstract fun getMeta ()Lspace/kscience/dataforge/meta/ObservableMutableMeta;
 	public abstract fun getParent ()Lspace/kscience/visionforge/VisionGroup;
-	public abstract fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
-	public static synthetic fun getPropertyValue$default (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/names/Name;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
+	public abstract fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public static synthetic fun getProperty$default (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/names/Name;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
 	public abstract fun invalidateProperty (Lspace/kscience/dataforge/names/Name;)V
 	public abstract fun setParent (Lspace/kscience/visionforge/VisionGroup;)V
 	public abstract fun update (Lspace/kscience/visionforge/VisionChange;)V
@@ -266,7 +266,7 @@ public class space/kscience/visionforge/VisionBase : space/kscience/visionforge/
 	protected final fun getOrCreateProperties ()Lspace/kscience/dataforge/meta/MutableMeta;
 	public fun getParent ()Lspace/kscience/visionforge/VisionGroup;
 	protected final fun getProperties ()Lspace/kscience/dataforge/meta/MutableMeta;
-	public fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
 	public fun invalidateProperty (Lspace/kscience/dataforge/names/Name;)V
 	public fun setParent (Lspace/kscience/visionforge/VisionGroup;)V
 	protected final fun setProperties (Lspace/kscience/dataforge/meta/MutableMeta;)V
@@ -446,8 +446,8 @@ public final class space/kscience/visionforge/VisionGroupKt {
 
 public final class space/kscience/visionforge/VisionKt {
 	public static final fun getPropertyChanges (Lspace/kscience/visionforge/Vision;)Lkotlinx/coroutines/flow/Flow;
-	public static final fun getPropertyValue (Lspace/kscience/visionforge/Vision;Ljava/lang/String;ZZZ)Lspace/kscience/dataforge/values/Value;
-	public static synthetic fun getPropertyValue$default (Lspace/kscience/visionforge/Vision;Ljava/lang/String;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
+	public static final fun getProperty (Lspace/kscience/visionforge/Vision;Ljava/lang/String;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public static synthetic fun getProperty$default (Lspace/kscience/visionforge/Vision;Ljava/lang/String;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
 	public static final fun getVisible (Lspace/kscience/visionforge/Vision;)Ljava/lang/Boolean;
 	public static final fun onPropertyChange (Lspace/kscience/visionforge/Vision;Lkotlin/jvm/functions/Function2;)V
 	public static final fun setProperty (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/names/Name;Ljava/lang/Object;)V
@@ -499,8 +499,8 @@ public abstract class space/kscience/visionforge/VisionPlugin : space/kscience/d
 
 public abstract interface class space/kscience/visionforge/VisionPropertyContainer {
 	public abstract fun getMeta ()Lspace/kscience/dataforge/meta/MutableMeta;
-	public abstract fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
-	public static synthetic fun getPropertyValue$default (Lspace/kscience/visionforge/VisionPropertyContainer;Lspace/kscience/dataforge/names/Name;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
+	public abstract fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public static synthetic fun getProperty$default (Lspace/kscience/visionforge/VisionPropertyContainer;Lspace/kscience/dataforge/names/Name;ZZZILjava/lang/Object;)Lspace/kscience/dataforge/values/Value;
 }
 
 public final class space/kscience/visionforge/html/HeadersKt {

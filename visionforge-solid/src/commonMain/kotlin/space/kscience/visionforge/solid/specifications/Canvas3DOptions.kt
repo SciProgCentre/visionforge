@@ -5,6 +5,7 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.scheme
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.values.set
 import space.kscience.visionforge.hide
 import space.kscience.visionforge.widgetType
 

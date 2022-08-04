@@ -1,10 +1,14 @@
 package ru.mipt.npm.root
 
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.doubleArray
 import space.kscience.visionforge.isEmpty
+import space.kscience.visionforge.setPropertyValue
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import kotlin.math.*
@@ -20,7 +24,7 @@ private fun degToRad(d: Double) = d * PI / 180.0
 private data class RootToSolidContext(
     val prototypeHolder: PrototypeHolder,
     val currentLayer: Int = 0,
-    val maxLayer: Int = 5
+    val maxLayer: Int = 5,
 )
 
 // converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
@@ -42,14 +46,17 @@ private fun Solid.useMatrix(matrix: DGeoMatrix?) {
         "TGeoIdentity" -> {
             //do nothing
         }
+
         "TGeoTranslation" -> {
             val fTranslation by matrix.meta.doubleArray()
             translate(fTranslation)
         }
+
         "TGeoRotation" -> {
             val fRotationMatrix by matrix.meta.doubleArray()
             rotate(fRotationMatrix)
         }
+
         "TGeoCombiTrans" -> {
             val fTranslation by matrix.meta.doubleArray()
 
@@ -58,6 +65,7 @@ private fun Solid.useMatrix(matrix: DGeoMatrix?) {
                 rotate(it.doubleArray)
             }
         }
+
         "TGeoHMatrix" -> {
             val fTranslation by matrix.meta.doubleArray()
             val fRotationMatrix by matrix.meta.doubleArray()
@@ -73,7 +81,7 @@ private fun SolidGroup.addShape(
     shape: DGeoShape,
     context: RootToSolidContext,
     name: String? = shape.fName.ifEmpty { null },
-    block: Solid.() -> Unit = {}
+    block: Solid.() -> Unit = {},
 ) {
     when (shape.typename) {
         "TGeoCompositeShape" -> {
@@ -94,6 +102,7 @@ private fun SolidGroup.addShape(
                 }
             }.apply(block)
         }
+
         "TGeoXtru" -> {
             val fNvert by shape.meta.int(0)
             val fX by shape.meta.doubleArray()
@@ -121,6 +130,7 @@ private fun SolidGroup.addShape(
                 }
             }.apply(block)
         }
+
         "TGeoTube" -> {
             val fRmax by shape.meta.double(0.0)
             val fDz by shape.meta.double(0.0)
@@ -134,6 +144,7 @@ private fun SolidGroup.addShape(
                 block = block
             )
         }
+
         "TGeoTubeSeg" -> {
             val fRmax by shape.meta.double(0.0)
             val fDz by shape.meta.double(0.0)
@@ -151,6 +162,7 @@ private fun SolidGroup.addShape(
                 block = block
             )
         }
+
         "TGeoPcon" -> {
             val fDphi by shape.meta.double(0.0)
             val fNz by shape.meta.int(2)
@@ -176,6 +188,7 @@ private fun SolidGroup.addShape(
                 TODO()
             }
         }
+
         "TGeoPgon" -> {
             //TODO add a inner polygone layer
             val fDphi by shape.meta.double(0.0)
@@ -206,15 +219,18 @@ private fun SolidGroup.addShape(
                 }
             }.apply(block)
         }
+
         "TGeoShapeAssembly" -> {
             val fVolume by shape.dObject(::DGeoVolume)
             fVolume?.let { volume ->
                 addRootVolume(volume, context, block = block)
             }
         }
+
         "TGeoBBox" -> {
             box(shape.fDX * 2, shape.fDY * 2, shape.fDZ * 2, name = name, block = block)
         }
+
         "TGeoTrap" -> {
             val fTheta by shape.meta.double(0.0)
             val fPhi by shape.meta.double(0.0)
@@ -242,6 +258,7 @@ private fun SolidGroup.addShape(
             val node8 = Point3D(-fTl2, fH2, fDz)
             hexagon(node1, node2, node3, node4, node5, node6, node7, node8, name)
         }
+
         "TGeoScaledShape" -> {
             val fShape by shape.dObject(::DGeoShape)
             val fScale by shape.dObject(::DGeoScale)
@@ -253,6 +270,7 @@ private fun SolidGroup.addShape(
                 }
             }
         }
+
         else -> {
             TODO("A shape with type ${shape.typename} not implemented")
         }
@@ -267,6 +285,7 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
                 val fMatrix by obj.dObject(::DGeoMatrix)
                 this.useMatrix(fMatrix)
             }
+
             "TGeoNodeOffset" -> {
                 val fOffset by obj.meta.double(0.0)
                 x = fOffset
@@ -301,10 +320,10 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
             }
         }
     }
-    return if (group.isEmpty()) {
+    return if (group.children.isEmpty()) {
         null
-    } else if (group.children.size == 1 && group.meta.isEmpty()) {
-        (group.children.values.first() as Solid).apply { parent = null }
+    } else if (group.items.size == 1 && group.meta.isEmpty()) {
+        group.items.values.first().apply { parent = null }
     } else {
         group
     }
@@ -317,7 +336,7 @@ private fun SolidGroup.addRootVolume(
     context: RootToSolidContext,
     name: String? = null,
     cache: Boolean = true,
-    block: Solid.() -> Unit = {}
+    block: Solid.() -> Unit = {},
 ) {
     val combinedName = if (volume.fName.isEmpty()) {
         name
@@ -330,7 +349,7 @@ private fun SolidGroup.addRootVolume(
     if (!cache) {
         val group = buildVolume(volume, context)?.apply {
             volume.fFillColor?.let {
-                meta[MATERIAL_COLOR_KEY] = RootColors[it]
+                setPropertyValue(MATERIAL_COLOR_KEY, RootColors[it])
             }
             block()
         }
@@ -347,7 +366,7 @@ private fun SolidGroup.addRootVolume(
 
         ref(templateName, name).apply {
             volume.fFillColor?.let {
-                meta[MATERIAL_COLOR_KEY] = RootColors[it]
+                setPropertyValue(MATERIAL_COLOR_KEY, RootColors[it])
             }
             block()
         }

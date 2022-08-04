@@ -49,7 +49,7 @@ public fun Vision.propertyValue(
         getPropertyValue(name ?: Name.parse(property.name), inherit, includeStyles, includeDefaults)
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Value?) {
-        meta.setValue(name ?: Name.parse(property.name), value)
+        setPropertyValue(name ?: Name.parse(property.name), value)
     }
 }
 
@@ -69,7 +69,7 @@ public fun <T> Vision.propertyValue(
     ).let(getter)
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        meta.setValue(name ?: Name.parse(property.name), value?.let(setter))
+        setPropertyValue(name ?: Name.parse(property.name), value?.let(setter))
     }
 }
 

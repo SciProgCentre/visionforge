@@ -10,8 +10,8 @@ import react.fc
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.react.visionTree
+import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
@@ -51,7 +51,7 @@ public val ThreeControls: FC<ThreeControlsProps> = fc { props ->
                 val selectedObject: Vision? = when {
                     selected == null -> null
                     selected.isEmpty() -> props.vision
-                    else -> (props.vision as? VisionGroup)?.get(selected)
+                    else -> (props.vision as? SolidGroup)?.get(selected)
                 }
                 if (selectedObject != null) {
                     visionPropertyEditor(selectedObject, key = selected)

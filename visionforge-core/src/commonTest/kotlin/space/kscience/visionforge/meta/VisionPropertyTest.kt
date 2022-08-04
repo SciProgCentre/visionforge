@@ -1,8 +1,16 @@
 package space.kscience.visionforge.meta
 
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Scheme
+import space.kscience.dataforge.meta.SchemeSpec
+import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.updateWith
 import space.kscience.dataforge.values.asValue
-import space.kscience.visionforge.VisionBase
+import space.kscience.dataforge.values.boolean
+import space.kscience.dataforge.values.int
+import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.getProperty
+import space.kscience.visionforge.getPropertyValue
+import space.kscience.visionforge.setPropertyValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -10,22 +18,22 @@ import kotlin.test.assertNotEquals
 class VisionPropertyTest {
     @Test
     fun testPropertyWrite(){
-        val vision = VisionBase()
-        vision.meta["fff"] = 2
-        vision.meta["fff.ddd"] = false
+        val vision = VisionGroup()
+        vision.setPropertyValue("fff", 2)
+        vision.setPropertyValue("fff.ddd", false)
 
-        assertEquals(2, vision.meta["fff"]?.int)
-        assertEquals(false, vision.meta["fff.ddd"]?.boolean)
+        assertEquals(2, vision.getPropertyValue("fff")?.int)
+        assertEquals(false, vision.getPropertyValue("fff.ddd")?.boolean)
     }
 
     @Test
     fun testPropertyEdit(){
-        val vision = VisionBase()
-        vision.meta.getOrCreate("fff.ddd").apply {
+        val vision = VisionGroup()
+        vision.getProperty("fff.ddd").apply {
             value = 2.asValue()
         }
-        assertEquals(2, vision.meta["fff.ddd"]?.int)
-        assertNotEquals(true, vision.meta["fff.ddd"]?.boolean)
+        assertEquals(2, vision.getPropertyValue("fff.ddd")?.int)
+        assertNotEquals(true, vision.getPropertyValue("fff.ddd")?.boolean)
     }
 
     internal class TestScheme: Scheme(){
@@ -35,10 +43,10 @@ class VisionPropertyTest {
 
     @Test
     fun testPropertyUpdate(){
-        val vision = VisionBase()
-        vision.meta.getOrCreate("fff").updateWith(TestScheme){
+        val vision = VisionGroup()
+        vision.getProperty("fff").updateWith(TestScheme){
             ddd = 2
         }
-        assertEquals(2, vision.meta["fff.ddd"]?.int)
+        assertEquals(2, vision.getPropertyValue("fff.ddd")?.int)
     }
 }

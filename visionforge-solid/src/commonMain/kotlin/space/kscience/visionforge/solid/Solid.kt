@@ -6,16 +6,12 @@ import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.float
 import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.*
-import space.kscience.visionforge.Vision
+import space.kscience.visionforge.*
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
-import space.kscience.visionforge.hide
-import space.kscience.visionforge.inherited
-import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
 import space.kscience.visionforge.solid.Solid.Companion.IGNORE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.LAYER_KEY
@@ -38,7 +34,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * Interface for 3-dimensional [Vision]
+ * Interface for a [Vision] representing a 3D object
  */
 public interface Solid : Vision {
 
@@ -121,7 +117,7 @@ public interface Solid : Vision {
 public var Solid.layer: Int
     get() = getPropertyValue(LAYER_KEY, inherit = true)?.int ?: 0
     set(value) {
-        setProperty(LAYER_KEY, value)
+        setPropertyValue(LAYER_KEY, value)
     }
 
 // Common properties
@@ -140,23 +136,23 @@ public enum class RotationOrder {
  */
 public var Solid.rotationOrder: RotationOrder
     get() = getPropertyValue(Solid.ROTATION_ORDER_KEY)?.enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = meta.setValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
+    set(value) = setPropertyValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
 public var Solid.detail: Int?
-    get() = getPropertyValue(DETAIL_KEY, false)?.int
-    set(value) = meta.setValue(DETAIL_KEY, value?.asValue())
+    get() = getPropertyValue(DETAIL_KEY, inherit = false)?.int
+    set(value) = setPropertyValue(DETAIL_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
  * Property is not inherited.
  */
 public var Vision.ignore: Boolean?
-    get() = getPropertyValue(IGNORE_KEY, false)?.boolean
-    set(value) = meta.setValue(IGNORE_KEY, value?.asValue())
+    get() = getPropertyValue(IGNORE_KEY, inherit = false)?.boolean
+    set(value) = setPropertyValue(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
@@ -165,18 +161,18 @@ public var Vision.ignore: Boolean?
 internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
     object : ReadWriteProperty<Solid, Number> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
-            return thisRef.meta.getMeta(name)?.number ?: default
+            return thisRef.getPropertyValue(name)?.number ?: default
         }
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Number) {
-            thisRef.setProperty(name, value)
+            thisRef.setPropertyValue(name, value)
         }
     }
 
 internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
     object : ReadWriteProperty<Solid, Point3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
-            val item = thisRef.meta.getMeta(name) ?: return null
+            val item = thisRef.meta[name] ?: return null
             return object : Point3D {
                 override val x: Float get() = item[X_KEY]?.float ?: default
                 override val y: Float get() = item[Y_KEY]?.float ?: default
@@ -186,11 +182,11 @@ internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
             if (value == null) {
-                thisRef.meta.setMeta(name, null)
+                thisRef.setProperty(name, null)
             } else {
-                thisRef.setProperty(name + X_KEY, value.x)
-                thisRef.setProperty(name + Y_KEY, value.y)
-                thisRef.setProperty(name + Z_KEY, value.z)
+                thisRef.setPropertyValue(name + X_KEY, value.x)
+                thisRef.setPropertyValue(name + Y_KEY, value.y)
+                thisRef.setPropertyValue(name + Z_KEY, value.z)
             }
         }
     }

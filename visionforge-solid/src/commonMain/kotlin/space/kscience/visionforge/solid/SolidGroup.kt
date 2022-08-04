@@ -7,6 +7,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
 
+
 /**
  * A container with prototype support
  */
@@ -23,20 +24,26 @@ public interface PrototypeHolder {
     public fun getPrototype(name: Name): Solid?
 }
 
+
 /**
- * Represents 3-dimensional Visual Group
- * @param prototypes A container for templates visible inside this group
+ * A [Solid] group with additional accessor methods
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
+public class SolidGroup : VisionGroup(), Solid, PrototypeHolder, MutableVisionGroup, VisionContainerBuilder<Solid> {
 
-    override val children: Map<NameToken, Vision> get() = super.childrenInternal.filter { it.key != PROTOTYPES_TOKEN }
+    public val items: Map<NameToken, Solid>
+        get() = children.keys.mapNotNull {
+            val value = children[it] as? Solid ?: return@mapNotNull null
+            it to value
+        }.toMap()
 
-    private var prototypes: MutableVisionGroup?
-        get() = childrenInternal[PROTOTYPES_TOKEN] as? MutableVisionGroup
+    public operator fun get(name: Name): Solid? = children[name] as? Solid
+
+    private var prototypes: SolidGroup?
+        get() = items[PROTOTYPES_TOKEN] as? SolidGroup
         set(value) {
-            set(PROTOTYPES_TOKEN, value)
+            children[PROTOTYPES_TOKEN] = value
         }
 
 
@@ -53,36 +60,38 @@ public class SolidGroup : VisionGroupBase(), Solid, PrototypeHolder {
      * Create or edit prototype node as a group
      */
     override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
-        (prototypes ?: SolidGroup().also {
-            prototypes = it
-        }).run(builder)
+        (prototypes ?: SolidGroup().also { prototypes = it }).children.run(builder)
     }
 
     override fun createGroup(): SolidGroup = SolidGroup()
-
 //
 //    override fun update(change: VisionChange) {
 //        updatePosition(change.properties)
 //        super.update(change)
 //    }
 
+    override fun set(name: Name?, child: Solid?) {
+        children[name] = child
+    }
+
     public companion object {
         public val PROTOTYPES_TOKEN: NameToken = NameToken("@prototypes")
     }
 }
 
-@Suppress("FunctionName")
-public fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
+public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
 
 @VisionBuilder
-public fun VisionContainerBuilder<Vision>.group(
+public fun VisionContainerBuilder<Solid>.group(
     name: Name? = null,
     builder: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup().apply(builder).also { set(name, it) }
+): SolidGroup = SolidGroup(builder).also { set(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
 @VisionBuilder
-public fun VisionContainerBuilder<Vision>.group(name: String, action: SolidGroup.() -> Unit = {}): SolidGroup =
-    SolidGroup().apply(action).also { set(name, it) }
+public fun VisionContainerBuilder<Solid>.group(
+    name: String,
+    action: SolidGroup.() -> Unit = {},
+): SolidGroup = SolidGroup(action).also { set(name, it) }

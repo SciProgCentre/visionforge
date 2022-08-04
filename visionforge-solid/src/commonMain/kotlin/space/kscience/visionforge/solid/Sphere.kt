@@ -21,7 +21,7 @@ public class Sphere(
 ) : SolidBase(), GeometrySolid, VisionPropertyContainer<Sphere> {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
+        fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
             // This transformation matches three.js sphere implementation
             val y = r * cos(theta)
             val z = r * sin(theta) * sin(phi)
@@ -39,10 +39,10 @@ public class Sphere(
             for (j in 0 until segments) {   // phi iteration
                 val phi1 = phiStart + j * phiStep
                 val phi2 = phi1 + phiStep
-                val point1 = point3DfromSphCoord(radius, theta1, phi1)
-                val point2 = point3DfromSphCoord(radius, theta1, phi2)
-                val point3 = point3DfromSphCoord(radius, theta2, phi2)
-                val point4 = point3DfromSphCoord(radius, theta2, phi1)
+                val point1 = point3dFromSphCoord(radius, theta1, phi1)
+                val point2 = point3dFromSphCoord(radius, theta1, phi2)
+                val point3 = point3dFromSphCoord(radius, theta2, phi2)
+                val point4 = point3dFromSphCoord(radius, theta2, phi1)
                 geometryBuilder.apply {
                     // 1-2-3-4 gives the same face but with opposite orientation
                     face4(point1, point4, point3, point2)

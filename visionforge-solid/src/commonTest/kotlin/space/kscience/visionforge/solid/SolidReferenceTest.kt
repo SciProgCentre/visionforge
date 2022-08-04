@@ -15,7 +15,7 @@ class SolidReferenceTest {
             SolidMaterial.MATERIAL_COLOR_KEY put "red"
         }
         newRef("test", Box(100f,100f,100f).apply {
-            color("blue")
+            color.set("blue")
             useStyle(theStyle)
         })
     }
@@ -23,13 +23,13 @@ class SolidReferenceTest {
 
     @Test
     fun testReferenceProperty(){
-        assertEquals("blue", (groupWithReference["test"] as Solid).color.string)
+        assertEquals("blue", (groupWithReference.children["test"] as Solid).color.string)
     }
 
     @Test
     fun testReferenceSerialization(){
         val serialized = Solids.jsonForSolids.encodeToJsonElement(groupWithReference)
         val deserialized = Solids.jsonForSolids.decodeFromJsonElement(SolidGroup.serializer(), serialized)
-        assertEquals("blue", (deserialized["test"] as Solid).color.string)
+        assertEquals("blue", (deserialized.children["test"] as Solid).color.string)
     }
 }

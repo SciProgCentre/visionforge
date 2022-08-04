@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 public object ThreeAmbientLightFactory : ThreeFactory<AmbientLightSource> {
     override val type: KClass<in AmbientLightSource> get() = AmbientLightSource::class
 
-    override fun invoke(three: ThreePlugin, obj: AmbientLightSource): AmbientLight {
+    override fun build(three: ThreePlugin, obj: AmbientLightSource): AmbientLight {
         val res = AmbientLight().apply {
             color = obj.color.threeColor() ?: Color(0x404040)
             intensity = obj.intensity.toDouble()

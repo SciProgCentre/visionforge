@@ -1,7 +1,6 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.getIndexed
-import space.kscience.dataforge.meta.node
 import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.misc.DFExperimental
 import kotlin.test.Test
@@ -12,7 +11,7 @@ class ConvexTest {
     @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {
-        val group = SolidGroup().apply {
+        val group = SolidGroup{
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)
@@ -25,7 +24,7 @@ class ConvexTest {
             }
         }
 
-        val convex = group.children.values.first() as Convex
+        val convex = group.items.values.first() as Convex
 
         val json = Solids.jsonForSolids.encodeToJsonElement(Convex.serializer(), convex)
         val meta = json.toMeta()

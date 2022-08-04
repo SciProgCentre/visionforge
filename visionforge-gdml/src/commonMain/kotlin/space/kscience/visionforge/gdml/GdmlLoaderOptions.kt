@@ -6,7 +6,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.gdml.*
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
-import space.kscience.visionforge.solid.invoke
+import space.kscience.visionforge.solid.set
 import space.kscience.visionforge.useStyle
 import kotlin.random.Random
 
@@ -44,7 +44,7 @@ public class GdmlLoaderOptions {
      * Configure paint for given solid with given [GdmlMaterial]
      */
     public var configurePaint: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit =
-        { material, _ -> color(randomColor(material)) }
+        { material, _ -> color.set(randomColor(material)) }
         private set
 
     public fun paint(block: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit) {

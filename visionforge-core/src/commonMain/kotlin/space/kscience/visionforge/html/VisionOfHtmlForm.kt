@@ -9,13 +9,14 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.node
+import space.kscience.visionforge.properties
 
 @Serializable
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
 ) : VisionOfHtmlInput() {
-    public var values: Meta? by meta.node()
+    public var values: Meta? by properties().node()
 }
 
 public class HtmlFormFragment internal constructor(

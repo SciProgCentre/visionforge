@@ -112,9 +112,9 @@ public fun Point3D.toMeta(): Meta = Meta {
 
 
 internal fun Meta.toVector(default: Float = 0f) = Point3D(
-    this[Solid.X_KEY].float ?: default,
-    this[Solid.Y_KEY].float ?: default,
-    this[Solid.Z_KEY].float ?: default
+    this[X_KEY].float ?: default,
+    this[Y_KEY].float ?: default,
+    this[Z_KEY].float ?: default
 )
 
 //internal fun Solid.updatePosition(meta: Meta?) {

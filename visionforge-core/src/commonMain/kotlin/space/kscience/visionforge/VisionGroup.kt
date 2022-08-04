@@ -1,109 +1,99 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
-import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.names.*
-import space.kscience.dataforge.provider.Provider
-
-@DslMarker
-public annotation class VisionBuilder
-
-public interface VisionContainer<out V : Vision> {
-    public operator fun get(name: Name): V?
-}
-
-/**
- * Represents a group of [Vision] instances
- */
-public interface VisionGroup : Provider, Vision, VisionContainer<Vision> {
-    /**
-     * A map of top level named children
-     */
-    public val children: Map<NameToken, Vision>
-
-    override val defaultTarget: String get() = Vision.TYPE
-
-    /**
-     * A map of direct children for specific target
-     * (currently "visual" or "style")
-     */
-    override fun content(target: String): Map<Name, Any> =
-        when (target) {
-            Vision.TYPE -> children.flatMap { (key, value) ->
-                val res: Map<Name, Any> = if (value is VisionGroup) {
-                    value.content(target).mapKeys { key + it.key }
-                } else {
-                    mapOf(key.asName() to value)
-                }
-                res.entries
-            }.associate { it.toPair() }
-            STYLE_TARGET -> styleSheet.items?.mapKeys { it.key.asName() } ?: emptyMap()
-            else -> emptyMap()
-        }
-
-    public override operator fun get(name: Name): Vision? {
-        return when {
-            name.isEmpty() -> this
-            name.length == 1 -> children[name.tokens.first()]
-            else -> (children[name.tokens.first()] as? VisionGroup)?.get(name.cutFirst())
-        }
-    }
-
-    public companion object {
-        public const val STYLE_TARGET: String = "style"
-    }
-}
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.values.ValueType
+import space.kscience.visionforge.Vision.Companion.STYLE_KEY
+import kotlin.jvm.Synchronized
 
 /**
- * Iterate over children of this group
+ * A full base implementation for a [Vision]
  */
-public operator fun VisionGroup.iterator(): Iterator<Vision> = children.values.iterator()
+@Serializable
+@SerialName("vision.group")
+public open class VisionGroup : AbstractVision(), MutableVisionGroup {
 
-public fun VisionGroup.isEmpty(): Boolean = this.children.isEmpty()
-
-public interface VisionContainerBuilder<in V : Vision> {
-    //TODO add documentation
-    public operator fun set(name: Name?, child: V?)
-}
-
-/**
- * Mutable version of [VisionGroup]
- */
-public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision> {
-    public fun onStructureChanged(owner: Any?, block: VisionGroup.(Name) -> Unit)
-
-    public fun removeStructureListener(owner: Any?)
-}
-
-
-/**
- * Flow structure changes of this group. Unconsumed changes are discarded
- */
-@OptIn(ExperimentalCoroutinesApi::class)
-@DFExperimental
-public val MutableVisionGroup.structureChanges: Flow<Name>
-    get() = callbackFlow {
-        meta.onChange(this) { name ->
-            launch {
-                send(name)
+    override fun update(change: VisionChange) {
+        change.children?.forEach { (name, change) ->
+            when {
+                change.delete -> children.set(name, null)
+                change.vision != null -> children.set(name, change.vision)
+                else -> children[name]?.update(change)
             }
         }
-        awaitClose {
-            removeStructureListener(this)
+        change.properties?.let {
+            updateProperties(it, Name.EMPTY)
         }
     }
 
+    @SerialName("children")
+    protected var _children: MutableVisionChildren? = null
 
-public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
+    @Transient
+    override val children: MutableVisionChildren = object : MutableVisionChildren {
 
-public operator fun <V : Vision> VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit =
-    set(token.asName(), child)
+        @Synchronized
+        fun getOrCreateChildren(): MutableVisionChildren {
+            if (_children == null) {
+                _children = VisionChildrenImpl(emptyMap()).apply {
+                    parent = this@VisionGroup
+                }
+            }
+            return _children!!
+        }
 
-public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit =
-    set(key?.let(Name::parse), child)
+        override val parent: MutableVisionGroup get() = this@VisionGroup
 
-public fun MutableVisionGroup.removeAll(): Unit = children.keys.map { it.asName() }.forEach { this[it] = null }
+        override val keys: Set<NameToken> get() = _children?.keys ?: emptySet()
+        override val changes: Flow<Name> get() = _children?.changes ?: emptyFlow()
+
+        override fun get(token: NameToken): Vision? = _children?.get(token)
+
+        override fun set(token: NameToken, value: Vision?) {
+            getOrCreateChildren()[token] = value
+        }
+
+        override fun set(name: Name?, child: Vision?) {
+            getOrCreateChildren()[name] = child
+        }
+
+        override fun clear() {
+            _children?.clear()
+        }
+    }
+
+    override fun createGroup(): VisionGroup = VisionGroup()
+
+    public companion object {
+        public val descriptor: MetaDescriptor = MetaDescriptor {
+            value(STYLE_KEY, ValueType.STRING) {
+                multiple = true
+            }
+        }
+
+        public fun Vision.updateProperties(item: Meta, at: Name = Name.EMPTY) {
+            setPropertyValue(at, item.value)
+            item.items.forEach { (token, item) ->
+                updateProperties(item, at + token)
+            }
+        }
+
+    }
+}
+
+//fun VisualObject.findStyle(styleName: Name): Meta? {
+//    if (this is VisualGroup) {
+//        val style = resolveStyle(styleName)
+//        if (style != null) return style
+//    }
+//    return parent?.findStyle(styleName)
+//}

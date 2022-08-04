@@ -26,7 +26,6 @@ import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.invoke
 import styled.css
 import styled.styledDiv
 

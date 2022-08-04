@@ -8,7 +8,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.html.respondHtml
 import io.ktor.server.http.content.resources
 import io.ktor.server.http.content.static
-import io.ktor.server.plugins.cors.CORS
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
@@ -18,7 +18,6 @@ import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -8,20 +8,21 @@ import space.kscience.dataforge.names.firstOrNull
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.onPropertyChange
+import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 import kotlin.reflect.KClass
 
-public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<SolidReferenceGroup> {
-    override val type: KClass<in SolidReferenceGroup> get() = SolidReferenceGroup::class
+public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<SolidReference> {
+    override val type: KClass<in SolidReference> get() = SolidReference::class
 
-    override fun invoke(obj: SolidReferenceGroup, binding: VisualObjectFXBinding): Node {
+    override fun invoke(obj: SolidReference, binding: VisualObjectFXBinding): Node {
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
         obj.onPropertyChange { name->
-            if (name.firstOrNull()?.body == SolidReferenceGroup.REFERENCE_CHILD_PROPERTY_PREFIX) {
+            if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val referenceChild = obj[childName] ?: error("Reference child with name '$childName' not found")
+                val referenceChild = obj.children[childName] ?: error("Reference child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             }

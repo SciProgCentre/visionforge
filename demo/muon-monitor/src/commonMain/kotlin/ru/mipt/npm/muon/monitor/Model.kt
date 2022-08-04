@@ -3,24 +3,18 @@ package ru.mipt.npm.muon.monitor
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
+import space.kscience.visionforge.VisionContainerBuilder
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.removeAll
 import space.kscience.visionforge.setAsRoot
-import space.kscience.visionforge.setProperty
 import space.kscience.visionforge.solid.*
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.collections.filter
-import kotlin.collections.forEach
 import kotlin.collections.set
-import kotlin.collections.toTypedArray
 import kotlin.math.PI
 
 class Model(val manager: VisionManager) {
     private val map = HashMap<String, SolidGroup>()
     private val events = HashSet<Event>()
 
-    private fun SolidGroup.pixel(pixel: SC1) {
+    private fun VisionContainerBuilder<Solid>.pixel(pixel: SC1) {
         val group = group(pixel.name) {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
@@ -45,7 +39,7 @@ class Model(val manager: VisionManager) {
     val root: SolidGroup = SolidGroup().apply {
         setAsRoot(this@Model.manager)
         material {
-            color("darkgreen")
+            color.set("darkgreen")
         }
         rotationX = PI / 2
         group("bottom") {
@@ -70,14 +64,14 @@ class Model(val manager: VisionManager) {
 
     private fun highlight(pixel: String) {
         println("highlight $pixel")
-        map[pixel]?.color?.invoke("blue")
+        map[pixel]?.color.set("blue")
     }
 
     fun reset() {
         map.values.forEach {
-            it.setProperty(SolidMaterial.MATERIAL_COLOR_KEY, null)
+            it.setPropertyValue(SolidMaterial.MATERIAL_COLOR_KEY, null)
         }
-        tracks.removeAll()
+        tracks.children.clear()
     }
 
     fun displayEvent(event: Event) {
@@ -89,7 +83,7 @@ class Model(val manager: VisionManager) {
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
                 thickness = 4
-                color("red")
+                color.set("red")
             }
         }
     }
