@@ -6,7 +6,6 @@ import space.kscience.dataforge.values.asValue
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.get
-import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.getPropertyValue
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial

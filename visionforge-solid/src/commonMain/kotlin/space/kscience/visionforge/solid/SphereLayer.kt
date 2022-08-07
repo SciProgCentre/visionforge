@@ -2,8 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
 import space.kscience.visionforge.set
 import kotlin.math.PI
 import kotlin.math.cos
@@ -21,7 +21,7 @@ public class SphereLayer(
     public val phi: Float = PI2,
     public val thetaStart: Float = 0f,
     public val theta: Float = PI.toFloat(),
-) : SolidBase(), GeometrySolid {
+) : SolidBase<SphereLayer>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>): Unit = geometryBuilder.run {
         require(outerRadius > 0) { "Outer radius must be positive" }
@@ -69,7 +69,7 @@ public class SphereLayer(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.sphereLayer(
+public inline fun MutableVisionContainer<Solid>.sphereLayer(
     outerRadius: Number,
     innerRadius: Number,
     phiStart: Number = 0f,

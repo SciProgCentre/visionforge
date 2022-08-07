@@ -16,7 +16,7 @@ public interface PrototypeHolder {
      * Build or update prototype tree
      */
     @VisionBuilder
-    public fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit)
+    public fun prototypes(builder: MutableVisionContainer<Solid>.() -> Unit)
 
     /**
      * Resolve a prototype from this container. Should never return a ref.
@@ -30,7 +30,7 @@ public interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : VisionGroup(), Solid, PrototypeHolder, MutableVisionGroup, VisionContainerBuilder<Solid> {
+public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, MutableVisionGroup, MutableVisionContainer<Solid> {
 
     public val items: Map<NameToken, Solid>
         get() = children.keys.mapNotNull {
@@ -59,7 +59,7 @@ public class SolidGroup : VisionGroup(), Solid, PrototypeHolder, MutableVisionGr
     /**
      * Create or edit prototype node as a group
      */
-    override fun prototypes(builder: VisionContainerBuilder<Solid>.() -> Unit): Unit {
+    override fun prototypes(builder: MutableVisionContainer<Solid>.() -> Unit): Unit {
         (prototypes ?: SolidGroup().also { prototypes = it }).children.run(builder)
     }
 
@@ -82,7 +82,7 @@ public class SolidGroup : VisionGroup(), Solid, PrototypeHolder, MutableVisionGr
 public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
 
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.group(
+public fun MutableVisionContainer<Solid>.group(
     name: Name? = null,
     builder: SolidGroup.() -> Unit = {},
 ): SolidGroup = SolidGroup(builder).also { set(name, it) }
@@ -91,7 +91,7 @@ public fun VisionContainerBuilder<Solid>.group(
  * Define a group with given [name], attach it to this parent and return it.
  */
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.group(
+public fun MutableVisionContainer<Solid>.group(
     name: String,
     action: SolidGroup.() -> Unit = {},
 ): SolidGroup = SolidGroup(action).also { set(name, it) }

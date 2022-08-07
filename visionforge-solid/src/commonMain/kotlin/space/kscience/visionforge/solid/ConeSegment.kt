@@ -2,8 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
 import space.kscience.visionforge.set
 import kotlin.math.cos
 import kotlin.math.sin
@@ -20,7 +20,7 @@ public class ConeSegment(
     public val topRadius: Float,
     public val startAngle: Float = 0f,
     public val angle: Float = PI2
-) : SolidBase(), GeometrySolid {
+) : SolidBase<ConeSegment>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val segments = detail ?: 32
@@ -67,7 +67,7 @@ public class ConeSegment(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.cylinder(
+public inline fun MutableVisionContainer<Solid>.cylinder(
     r: Number,
     height: Number,
     name: String? = null,
@@ -79,7 +79,7 @@ public inline fun VisionContainerBuilder<Solid>.cylinder(
 ).apply(block).also { set(name, it) }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.cone(
+public inline fun MutableVisionContainer<Solid>.cone(
     bottomRadius: Number,
     height: Number,
     upperRadius: Number = 0.0,

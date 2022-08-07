@@ -3,7 +3,7 @@ package ru.mipt.npm.muon.monitor
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
-import space.kscience.visionforge.VisionContainerBuilder
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.*
@@ -14,7 +14,7 @@ class Model(val manager: VisionManager) {
     private val map = HashMap<String, SolidGroup>()
     private val events = HashSet<Event>()
 
-    private fun VisionContainerBuilder<Solid>.pixel(pixel: SC1) {
+    private fun MutableVisionContainer<Solid>.pixel(pixel: SC1) {
         val group = group(pixel.name) {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)

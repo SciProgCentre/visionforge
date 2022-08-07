@@ -10,7 +10,6 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.setPropertyValue
 import space.kscience.visionforge.solid.Solid

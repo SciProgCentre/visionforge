@@ -2,27 +2,19 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.meta.number
 import space.kscience.visionforge.*
 
 @Serializable
 @SerialName("solid.line")
-public class PolyLine(public val points: List<Point3D>) : SolidBase(), VisionPropertyContainer<PolyLine> {
+public class PolyLine(public val points: List<Point3D>) : SolidBase<PolyLine>() {
 
     //var lineType by string()
-    public var thickness: Number by numberProperty(name = SolidMaterial.MATERIAL_KEY + THICKNESS_KEY) { 1.0 }
-
-
-    public companion object {
-        public val THICKNESS_KEY: Name = "thickness".asName()
-    }
-
+    public var thickness: Number by properties[SolidMaterial.MATERIAL_KEY].number { 1.0 }
 }
 
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.polyline(
+public fun MutableVisionContainer<Solid>.polyline(
     vararg points: Point3D,
     name: String? = null,
     action: PolyLine.() -> Unit = {},

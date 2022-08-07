@@ -2,9 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 import kotlin.math.PI
 import kotlin.math.cos
@@ -24,7 +23,7 @@ public class ConeSurface(
     public val topInnerRadius: Float,
     public val startAngle: Float = 0f,
     public val angle: Float = PI2,
-) : SolidBase(), GeometrySolid, VisionPropertyContainer<ConeSurface> {
+) : SolidBase<ConeSurface>(), GeometrySolid {
 
     init {
         require(bottomRadius > 0) { "Cone surface bottom radius must be positive" }
@@ -124,7 +123,7 @@ public class ConeSurface(
 
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.tube(
+public inline fun MutableVisionContainer<Solid>.tube(
     radius: Number,
     height: Number,
     innerRadius: Number,
@@ -143,7 +142,7 @@ public inline fun VisionContainerBuilder<Solid>.tube(
 ).apply(block).also { set(name, it) }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.coneSurface(
+public inline fun MutableVisionContainer<Solid>.coneSurface(
     bottomOuterRadius: Number,
     bottomInnerRadius: Number,
     height: Number,

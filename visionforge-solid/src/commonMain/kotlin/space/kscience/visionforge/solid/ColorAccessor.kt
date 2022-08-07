@@ -7,7 +7,7 @@ import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.getProperty
+import space.kscience.visionforge.root
 import kotlin.properties.ReadOnlyProperty
 
 @VisionBuilder
@@ -29,7 +29,7 @@ public class ColorAccessor(
 }
 
 public fun Vision.color(): ReadOnlyProperty<Vision, ColorAccessor> = ReadOnlyProperty { _, property ->
-    ColorAccessor(getProperty(Name.EMPTY), property.name.asName())
+    ColorAccessor(properties.root(), property.name.asName())
 }
 
 public var ColorAccessor?.string: String?

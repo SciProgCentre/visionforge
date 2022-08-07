@@ -8,45 +8,47 @@ import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.boolean
 import space.kscience.dataforge.values.int
 import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.getProperty
-import space.kscience.visionforge.getPropertyValue
-import space.kscience.visionforge.setPropertyValue
+import space.kscience.visionforge.get
+import space.kscience.visionforge.getValue
+import space.kscience.visionforge.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class VisionPropertyTest {
-    @Test
-    fun testPropertyWrite(){
-        val vision = VisionGroup()
-        vision.setPropertyValue("fff", 2)
-        vision.setPropertyValue("fff.ddd", false)
 
-        assertEquals(2, vision.getPropertyValue("fff")?.int)
-        assertEquals(false, vision.getPropertyValue("fff.ddd")?.boolean)
+private class TestScheme : Scheme() {
+    var ddd by int()
+
+    companion object : SchemeSpec<TestScheme>(::TestScheme)
+}
+
+internal class VisionPropertyTest {
+    @Test
+    fun testPropertyWrite() {
+        val vision = VisionGroup()
+        vision.properties["fff"] = 2
+        vision.properties["fff.ddd"] = false
+
+        assertEquals(2, vision.properties.getValue("fff")?.int)
+        assertEquals(false, vision.properties.getValue("fff.ddd")?.boolean)
     }
 
     @Test
-    fun testPropertyEdit(){
+    fun testPropertyEdit() {
         val vision = VisionGroup()
-        vision.getProperty("fff.ddd").apply {
+        vision.properties["fff.ddd"].apply {
             value = 2.asValue()
         }
-        assertEquals(2, vision.getPropertyValue("fff.ddd")?.int)
-        assertNotEquals(true, vision.getPropertyValue("fff.ddd")?.boolean)
-    }
-
-    internal class TestScheme: Scheme(){
-        var ddd by int()
-        companion object: SchemeSpec<TestScheme>(::TestScheme)
+        assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
+        assertNotEquals(true, vision.properties.getValue("fff.ddd")?.boolean)
     }
 
     @Test
-    fun testPropertyUpdate(){
+    fun testPropertyUpdate() {
         val vision = VisionGroup()
-        vision.getProperty("fff").updateWith(TestScheme){
+        vision.properties["fff"].updateWith(TestScheme) {
             ddd = 2
         }
-        assertEquals(2, vision.getPropertyValue("fff.ddd")?.int)
+        assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
     }
 }

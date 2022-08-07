@@ -30,9 +30,10 @@ fun FlowContent.renderVisionFragment(
 
 
 @DFExperimental
-class HtmlTagTest {
+private fun VisionOutput.base(block: VisionGroup.() -> Unit) = VisionGroup().apply(block)
 
-    fun VisionOutput.base(block: VisionGroup.() -> Unit) = VisionGroup().apply(block)
+@DFExperimental
+class HtmlTagTest {
 
     val fragment: HtmlVisionFragment = {
         div {
@@ -42,8 +43,8 @@ class HtmlTagTest {
                     "metaProperty" put 87
                 }
                 base {
-                    setPropertyValue("myProp", 82)
-                    setPropertyValue("otherProp", false)
+                    properties["myProp"] = 82
+                    properties["otherProp"] = false
                 }
             }
         }
@@ -53,7 +54,7 @@ class HtmlTagTest {
         div {
             h2 { +"Properties" }
             ul {
-                vision.getProperty(Name.EMPTY).items.forEach {
+                vision.properties.raw?.items?.forEach {
                     li {
                         a { +it.key.toString() }
                         p { +it.value.toString() }

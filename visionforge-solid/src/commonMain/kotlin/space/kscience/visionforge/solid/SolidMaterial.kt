@@ -102,19 +102,19 @@ public class SolidMaterial : Scheme() {
 }
 
 public val Solid.color: ColorAccessor
-    get() = ColorAccessor(getProperty(Name.EMPTY), MATERIAL_COLOR_KEY)
+    get() = ColorAccessor(properties.root(), MATERIAL_COLOR_KEY)
 
 public var Solid.material: SolidMaterial?
-    get() = SolidMaterial.read(getProperty(MATERIAL_KEY))
-    set(value) = setProperty(MATERIAL_KEY, value?.meta)
+    get() = SolidMaterial.read(properties[MATERIAL_KEY])
+    set(value) = properties.set(MATERIAL_KEY, value?.meta)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    getProperty(MATERIAL_KEY).updateWith(SolidMaterial, builder)
+    properties[MATERIAL_KEY].updateWith(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?
-    get() = getPropertyValue(MATERIAL_OPACITY_KEY, inherit = true)?.number
+    get() = properties.getValue(MATERIAL_OPACITY_KEY, inherit = true)?.number
     set(value) {
-        setPropertyValue(MATERIAL_OPACITY_KEY, value?.asValue())
+        properties.setValue(MATERIAL_OPACITY_KEY, value?.asValue())
     }

@@ -13,20 +13,33 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
+import kotlin.js.JsName
 import kotlin.jvm.Synchronized
+
+
+public interface VisionGroup : Vision {
+    public val children: VisionChildren
+}
+
+public interface MutableVisionGroup : VisionGroup {
+
+    override val children: MutableVisionChildren
+
+    public fun createGroup(): MutableVisionGroup
+}
+
+public val Vision.children: VisionChildren? get() = (this as? VisionGroup)?.children
 
 /**
  * A full base implementation for a [Vision]
  */
-@Serializable
-@SerialName("vision.group")
-public open class VisionGroup : AbstractVision(), MutableVisionGroup {
+public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.delete -> children.set(name, null)
-                change.vision != null -> children.set(name, change.vision)
+                change.delete -> children[name] = null
+                change.vision != null -> children[name] = change.vision
                 else -> children[name]?.update(change)
             }
         }
@@ -45,13 +58,13 @@ public open class VisionGroup : AbstractVision(), MutableVisionGroup {
         fun getOrCreateChildren(): MutableVisionChildren {
             if (_children == null) {
                 _children = VisionChildrenImpl(emptyMap()).apply {
-                    parent = this@VisionGroup
+                    group = this@AbstractVisionGroup
                 }
             }
             return _children!!
         }
 
-        override val parent: MutableVisionGroup get() = this@VisionGroup
+        override val group: MutableVisionGroup get() = this@AbstractVisionGroup
 
         override val keys: Set<NameToken> get() = _children?.keys ?: emptySet()
         override val changes: Flow<Name> get() = _children?.changes ?: emptyFlow()
@@ -71,7 +84,7 @@ public open class VisionGroup : AbstractVision(), MutableVisionGroup {
         }
     }
 
-    override fun createGroup(): VisionGroup = VisionGroup()
+    abstract override fun createGroup(): AbstractVisionGroup
 
     public companion object {
         public val descriptor: MetaDescriptor = MetaDescriptor {
@@ -80,15 +93,27 @@ public open class VisionGroup : AbstractVision(), MutableVisionGroup {
             }
         }
 
-        public fun Vision.updateProperties(item: Meta, at: Name = Name.EMPTY) {
-            setPropertyValue(at, item.value)
+        public fun Vision.updateProperties(item: Meta, name: Name = Name.EMPTY) {
+            properties.setValue(name, item.value)
             item.items.forEach { (token, item) ->
-                updateProperties(item, at + token)
+                updateProperties(item, name + token)
             }
         }
 
     }
 }
+
+/**
+ * A simple vision group that just holds children. Nothing else.
+ */
+@Serializable
+@SerialName("vision.group")
+public class SimpleVisionGroup : AbstractVisionGroup() {
+    override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
+}
+
+@JsName("createVisionGroup")
+public fun VisionGroup(): VisionGroup = SimpleVisionGroup()
 
 //fun VisualObject.findStyle(styleName: Name): Meta? {
 //    if (this is VisualGroup) {

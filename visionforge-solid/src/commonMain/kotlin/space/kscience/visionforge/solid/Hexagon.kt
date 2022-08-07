@@ -2,8 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
 import space.kscience.visionforge.set
 
 public interface Hexagon : GeometrySolid {
@@ -35,7 +35,7 @@ public class Box(
     public val xSize: Float,
     public val ySize: Float,
     public val zSize: Float,
-) : SolidBase(), Hexagon {
+) : SolidBase<Box>(), Hexagon {
 
     private inline val dx get() = xSize / 2
     private inline val dy get() = ySize / 2
@@ -52,7 +52,7 @@ public class Box(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.box(
+public inline fun MutableVisionContainer<Solid>.box(
     xSize: Number,
     ySize: Number,
     zSize: Number,
@@ -71,10 +71,10 @@ public class GenericHexagon(
     override val node6: Point3D,
     override val node7: Point3D,
     override val node8: Point3D,
-) : SolidBase(), Hexagon
+) : SolidBase<GenericHexagon>(), Hexagon
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.hexagon(
+public inline fun MutableVisionContainer<Solid>.hexagon(
     node1: Point3D,
     node2: Point3D,
     node3: Point3D,

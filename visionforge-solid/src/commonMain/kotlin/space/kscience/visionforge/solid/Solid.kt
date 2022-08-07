@@ -115,9 +115,9 @@ public interface Solid : Vision {
  * Get the layer number this solid belongs to. Return 0 if layer is not defined.
  */
 public var Solid.layer: Int
-    get() = getPropertyValue(LAYER_KEY, inherit = true)?.int ?: 0
+    get() = properties.getValue(LAYER_KEY, inherit = true)?.int ?: 0
     set(value) {
-        setPropertyValue(LAYER_KEY, value)
+        properties.set(LAYER_KEY, value)
     }
 
 // Common properties
@@ -135,24 +135,24 @@ public enum class RotationOrder {
  * Rotation order
  */
 public var Solid.rotationOrder: RotationOrder
-    get() = getPropertyValue(Solid.ROTATION_ORDER_KEY)?.enum<RotationOrder>() ?: RotationOrder.XYZ
-    set(value) = setPropertyValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
+    get() = properties.getValue(Solid.ROTATION_ORDER_KEY)?.enum<RotationOrder>() ?: RotationOrder.XYZ
+    set(value) = properties.setValue(Solid.ROTATION_ORDER_KEY, value.name.asValue())
 
 
 /**
  * Preferred number of polygons for displaying the object. If not defined, uses shape or renderer default. Not inherited
  */
 public var Solid.detail: Int?
-    get() = getPropertyValue(DETAIL_KEY, inherit = false)?.int
-    set(value) = setPropertyValue(DETAIL_KEY, value?.asValue())
+    get() = properties.getValue(DETAIL_KEY, inherit = false)?.int
+    set(value) = properties.setValue(DETAIL_KEY, value?.asValue())
 
 /**
  * If this property is true, the object will be ignored on render.
  * Property is not inherited.
  */
 public var Vision.ignore: Boolean?
-    get() = getPropertyValue(IGNORE_KEY, inherit = false)?.boolean
-    set(value) = setPropertyValue(IGNORE_KEY, value?.asValue())
+    get() = properties.getValue(IGNORE_KEY, inherit = false, includeStyles = false)?.boolean
+    set(value) = properties.setValue(IGNORE_KEY, value?.asValue())
 
 //var VisualObject.selected: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
@@ -161,18 +161,18 @@ public var Vision.ignore: Boolean?
 internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
     object : ReadWriteProperty<Solid, Number> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
-            return thisRef.getPropertyValue(name)?.number ?: default
+            return thisRef.properties.getValue(name)?.number ?: default
         }
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Number) {
-            thisRef.setPropertyValue(name, value)
+            thisRef.properties.setValue(name, value.asValue())
         }
     }
 
 internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
     object : ReadWriteProperty<Solid, Point3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
-            val item = thisRef.meta[name] ?: return null
+            val item = thisRef.properties.raw?.get(name) ?: return null
             return object : Point3D {
                 override val x: Float get() = item[X_KEY]?.float ?: default
                 override val y: Float get() = item[Y_KEY]?.float ?: default
@@ -182,11 +182,11 @@ internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
             if (value == null) {
-                thisRef.setProperty(name, null)
+                thisRef.properties[name] = null
             } else {
-                thisRef.setPropertyValue(name + X_KEY, value.x)
-                thisRef.setPropertyValue(name + Y_KEY, value.y)
-                thisRef.setPropertyValue(name + Z_KEY, value.z)
+                thisRef.properties[name + X_KEY] = value.x
+                thisRef.properties[name + Y_KEY] = value.y
+                thisRef.properties[name + Z_KEY] = value.z
             }
         }
     }

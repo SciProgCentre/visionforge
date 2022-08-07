@@ -26,7 +26,7 @@ private fun Vision.deepCopy(): Vision {
 /**
  * An update for a [Vision]
  */
-public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
+public class VisionChangeBuilder : MutableVisionContainer<Vision> {
 
     private var reset: Boolean = false
     private var vision: Vision? = null
@@ -77,7 +77,7 @@ public class VisionChangeBuilder : VisionContainerBuilder<Vision> {
 public data class VisionChange(
     public val delete: Boolean = false,
     public val vision: Vision? = null,
-    @Serializable(MetaSerializer::class) public val properties: Meta? = null,
+    public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,
 )
 
@@ -93,25 +93,25 @@ private fun CoroutineScope.collectChange(
 
     //Collect properties change
     source.onPropertyChange { propertyName ->
-        val newItem = source.getProperty(propertyName, false, false, false)
+        val newItem = source.properties.raw?.get(propertyName)
         collector().propertyChanged(name, propertyName, newItem)
     }
 
     val children = source.children
     //Subscribe for children changes
-    for ((token, child) in children) {
+    children?.forEach { token, child ->
         collectChange(name + token, child, collector)
     }
 
     //Subscribe for structure change
-    children.changes.onEach { changedName ->
+    children?.changes?.onEach { changedName ->
         val after = children[changedName]
         val fullName = name + changedName
         if (after != null) {
             collectChange(fullName, after, collector)
         }
         collector()[fullName] = after
-    }.launchIn(this)
+    }?.launchIn(this)
 }
 
 /**

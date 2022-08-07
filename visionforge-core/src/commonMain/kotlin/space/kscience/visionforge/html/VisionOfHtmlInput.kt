@@ -5,12 +5,15 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.meta.string
-import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.properties
+import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.*
+
+//TODO replace by something
+internal val Vision.mutableProperties get() = properties[Name.EMPTY, false, false]
 
 @Serializable
-public abstract class VisionOfHtmlInput : VisionGroup() {
-    public var disabled: Boolean by properties().boolean(false)
+public abstract class VisionOfHtmlInput : AbstractVision() {
+    public var disabled: Boolean by mutableProperties.boolean { false }
 }
 
 @Serializable
@@ -19,7 +22,7 @@ public class VisionOfTextField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var text: String? by properties().string()
+    public var text: String? by mutableProperties.string()
 }
 
 @Serializable
@@ -28,7 +31,7 @@ public class VisionOfCheckbox(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var checked: Boolean? by properties().boolean()
+    public var checked: Boolean? by mutableProperties.boolean()
 }
 
 @Serializable
@@ -37,7 +40,7 @@ public class VisionOfNumberField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var value: Number? by properties().number()
+    public var value: Number? by mutableProperties.number()
 }
 
 @Serializable
@@ -49,6 +52,6 @@ public class VisionOfRangeField(
     public val label: String? = null,
     public val name: String? = null,
 ) : VisionOfHtmlInput() {
-    public var value: Number? by properties().number()
+    public var value: Number? by mutableProperties.number()
 }
 

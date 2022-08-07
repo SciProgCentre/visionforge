@@ -9,7 +9,6 @@ import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.getStyle
 import space.kscience.visionforge.styles
 import tornadofx.*

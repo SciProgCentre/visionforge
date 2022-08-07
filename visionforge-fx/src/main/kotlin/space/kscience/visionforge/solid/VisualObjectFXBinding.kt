@@ -7,7 +7,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.onPropertyChange
 import tornadofx.*
 

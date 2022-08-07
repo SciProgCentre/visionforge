@@ -1,9 +1,8 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.int
+import space.kscience.dataforge.values.string
 import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +16,7 @@ class PropertyTest {
             //meta["color"] = "pink"
             color.set("pink")
         }
-        assertEquals("pink", box.meta["material.color"]?.string)
+        assertEquals("pink", box.properties.getValue("material.color")?.string)
         assertEquals("pink", box.color.string)
     }
 
@@ -43,12 +42,12 @@ class PropertyTest {
     fun testInheritedProperty() {
         var box: Box? = null
         val group = SolidGroup().apply {
-            setPropertyValue("test", 22)
+            properties["test"] = 22
             group {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.getPropertyValue("test", inherit = true)?.int)
+        assertEquals(22, box?.properties?.getValue("test", inherit = true)?.int)
     }
 
     @Test
@@ -66,7 +65,7 @@ class PropertyTest {
                 }
             }
         }
-        assertEquals(22, box?.getPropertyValue("test")?.int)
+        assertEquals(22, box?.properties?.getValue("test")?.int)
     }
 
     @Test

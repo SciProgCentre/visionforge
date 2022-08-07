@@ -6,6 +6,7 @@ import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlinx.serialization.serializer
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
@@ -47,12 +48,12 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                subclass(VisionGroup.serializer())
+                subclass(SimpleVisionGroup.serializer())
                 solids()
             }
 
             polymorphic(Solid::class) {
-                default { SolidBase.serializer() }
+                default { SolidBase.serializer(serializer<Solid>()) }
                 solids()
             }
         }

@@ -7,13 +7,12 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
-import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.getProperty
+import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.html.VisionOutput
 
 @Serializable
 @SerialName("vision.plotly")
-public class VisionOfPlotly private constructor() : VisionGroup() {
+public class VisionOfPlotly private constructor() : AbstractVision() {
 
     public constructor(plot: Plot) : this() {
         setProperty(Name.EMPTY, plot.meta)

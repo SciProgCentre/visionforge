@@ -2,9 +2,8 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.VisionPropertyContainer
 import space.kscience.visionforge.set
 import kotlin.math.PI
 import kotlin.math.cos
@@ -17,8 +16,8 @@ public class Sphere(
     public val phiStart: Float = 0f,
     public val phi: Float = PI2,
     public val thetaStart: Float = 0f,
-    public val theta: Float = PI .toFloat(),
-) : SolidBase(), GeometrySolid, VisionPropertyContainer<Sphere> {
+    public val theta: Float = PI.toFloat(),
+) : SolidBase<Sphere>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
@@ -53,7 +52,7 @@ public class Sphere(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.sphere(
+public inline fun MutableVisionContainer<Solid>.sphere(
     radius: Number,
     name: String? = null,
     action: Sphere.() -> Unit = {},

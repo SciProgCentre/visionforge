@@ -68,8 +68,8 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                default { VisionGroup.serializer() }
-                subclass(VisionGroup.serializer())
+                default { SimpleVisionGroup.serializer() }
+                subclass(SimpleVisionGroup.serializer())
                 subclass(VisionOfNumberField.serializer())
                 subclass(VisionOfTextField.serializer())
                 subclass(VisionOfCheckbox.serializer())
@@ -112,7 +112,9 @@ public fun Vision.encodeToString(): String = manager.encodeToString(this)
 /**
  * A root vision attached to [VisionManager]
  */
-public class RootVision(override val manager: VisionManager) : VisionGroup()
+public class RootVision(override val manager: VisionManager) : AbstractVisionGroup() {
+    override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
+}
 
 /**
  * Designate this [Vision] as a root and assign a [VisionManager] as its parent

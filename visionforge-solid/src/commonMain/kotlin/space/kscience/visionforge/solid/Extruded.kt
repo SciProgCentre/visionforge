@@ -3,7 +3,6 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.MutableMeta
-import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import kotlin.math.PI
@@ -41,7 +40,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 public class Extruded(
     public val shape: List<Point2D>,
     public val layers: List<Layer>,
-) : SolidBase(), GeometrySolid, VisionPropertyContainer<Extruded> {
+) : SolidBase<Extruded>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val shape: Shape2D = shape
@@ -96,11 +95,9 @@ public class Extruded(
 
 public class ExtrudeBuilder(
     public var shape: List<Point2D> = emptyList(),
-
     public var layers: MutableList<Layer> = ArrayList(),
-
-    config: ObservableMutableMeta = MutableMeta(),
-) : SimpleVisionPropertyContainer<Extruded>(config) {
+    public val properties: MutableMeta = MutableMeta(),
+) {
     public fun shape(block: Shape2DBuilder.() -> Unit) {
         this.shape = Shape2DBuilder().apply(block).build()
     }
@@ -110,12 +107,12 @@ public class ExtrudeBuilder(
     }
 
     internal fun build(): Extruded = Extruded(shape, layers).apply {
-        setProperty(Name.EMPTY, getProperty(Name.EMPTY))
+        this.properties[Name.EMPTY] = this@ExtrudeBuilder.properties
     }
 }
 
 @VisionBuilder
-public fun VisionContainerBuilder<Solid>.extruded(
+public fun MutableVisionContainer<Solid>.extruded(
     name: String? = null,
     action: ExtrudeBuilder.() -> Unit = {},
 ): Extruded = ExtrudeBuilder().apply(action).build().also { set(name, it) }

@@ -3,7 +3,7 @@ package space.kscience.visionforge.solid.transform
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.getProperty
+import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.*
 
 private operator fun Number.plus(other: Number) = toFloat() + other.toFloat()
@@ -20,7 +20,7 @@ internal fun Solid.updateFrom(other: Solid): Solid {
     scaleX *= other.scaleX
     scaleY *= other.scaleY
     scaleZ *= other.scaleZ
-    setProperty(Name.EMPTY, other.getProperty(Name.EMPTY))
+    properties[Name.EMPTY] = other.properties.root()
     return this
 }
 

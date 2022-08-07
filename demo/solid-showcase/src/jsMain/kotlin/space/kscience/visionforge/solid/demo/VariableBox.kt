@@ -49,7 +49,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
         onPropertyChange { name ->
             when {
                 name == VALUE -> {
-                    val value = meta.get(VALUE).int ?: 0
+                    val value = meta[VALUE].int ?: 0
                     val size = value.toFloat() / 255f * 20f
                     mesh.scale.z = size.toDouble()
                     mesh.position.z = size.toDouble() / 2

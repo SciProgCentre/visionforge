@@ -76,7 +76,7 @@ public fun SolidGroup.markLayers(thresholds: List<Int> = listOf(500, 1000, 20000
 
             node.vision.layer = layerIndex
             remaining -= node.selfCount * (node.children.size + 1)
-            logger?.apply {
+            logger.run {
                 if (node.selfCount > 1) {
                     info { "Prototype with name ${node.name} moved to layer $layerIndex. $remaining nodes remains" }
                 } else {
