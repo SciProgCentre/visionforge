@@ -1,10 +1,7 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
@@ -33,6 +30,7 @@ public val Vision.children: VisionChildren? get() = (this as? VisionGroup)?.chil
 /**
  * A full base implementation for a [Vision]
  */
+@Serializable
 public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     override fun update(change: VisionChange) {
@@ -49,38 +47,26 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
     }
 
     @SerialName("children")
-    protected var _children: MutableVisionChildren? = null
+    protected var _children: MutableMap<NameToken, Vision>? = null
 
-    @Transient
-    override val children: MutableVisionChildren = object : MutableVisionChildren {
 
-        @Synchronized
-        fun getOrCreateChildren(): MutableVisionChildren {
-            if (_children == null) {
-                _children = VisionChildrenImpl(emptyMap()).apply {
-                    group = this@AbstractVisionGroup
+    init {
+        _children?.forEach { it.value.parent = this }
+    }
+
+    override val children: MutableVisionChildren by lazy {
+        object : VisionChildrenImpl(this){
+            override val items: MutableMap<NameToken, Vision>?
+                get() = this@AbstractVisionGroup._children
+
+            @Synchronized
+            override fun buildItems(): MutableMap<NameToken, Vision> {
+                if (_children == null) {
+                    _children = LinkedHashMap()
                 }
+                return _children!!
             }
-            return _children!!
-        }
 
-        override val group: MutableVisionGroup get() = this@AbstractVisionGroup
-
-        override val keys: Set<NameToken> get() = _children?.keys ?: emptySet()
-        override val changes: Flow<Name> get() = _children?.changes ?: emptyFlow()
-
-        override fun get(token: NameToken): Vision? = _children?.get(token)
-
-        override fun set(token: NameToken, value: Vision?) {
-            getOrCreateChildren()[token] = value
-        }
-
-        override fun set(name: Name?, child: Vision?) {
-            getOrCreateChildren()[name] = child
-        }
-
-        override fun clear() {
-            _children?.clear()
         }
     }
 

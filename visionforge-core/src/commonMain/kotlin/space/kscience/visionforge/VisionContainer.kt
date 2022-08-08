@@ -4,12 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.serializer
 import space.kscience.dataforge.names.*
 
 @DslMarker
@@ -60,9 +54,9 @@ public inline fun VisionChildren.forEach(block: (NameToken, Vision) -> Unit) {
     keys.forEach { block(it, get(it)!!) }
 }
 
-@Serializable(VisionChildrenContainerSerializer::class)
 public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<Vision> {
-    public override val group: MutableVisionGroup?
+
+    public override val group: MutableVisionGroup
 
     public operator fun set(token: NameToken, value: Vision?)
 
@@ -83,9 +77,9 @@ public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<
             else -> {
                 val currentParent = get(name.first())
                 if (currentParent != null && currentParent !is MutableVisionGroup) error("Can't assign a child to $currentParent")
-                val parent: MutableVisionGroup = currentParent as? MutableVisionGroup ?: group?.createGroup().also {
+                val parent: MutableVisionGroup = currentParent as? MutableVisionGroup ?: group.createGroup().also {
                     set(name.first(), it)
-                } ?: error("Container owner not set")
+                }
                 parent.children[name.cutFirst()] = child
             }
         }
@@ -113,27 +107,26 @@ public operator fun <V : Vision> MutableVisionContainer<V>.set(
     str: String?, vision: V?,
 ): Unit = set(str?.parseAsName(), vision)
 
-internal class VisionChildrenImpl(
-    items: Map<NameToken, Vision>,
+internal abstract class VisionChildrenImpl(
+    override val group: MutableVisionGroup,
 ) : MutableVisionChildren {
 
-    override var group: MutableVisionGroup? = null
-        internal set
-
-    private val items = LinkedHashMap(items)
     private val updateJobs = HashMap<NameToken, Job>()
 
-    private val scope: CoroutineScope? get() = group?.manager?.context
+    abstract val items: MutableMap<NameToken, Vision>?
+    abstract fun buildItems(): MutableMap<NameToken, Vision>
 
-    override val keys: Set<NameToken> get() = items.keys
+    private val scope: CoroutineScope get() = group.manager.context
 
-    override fun get(token: NameToken): Vision? = items[token]
+    override val keys: Set<NameToken> get() = items?.keys ?: emptySet()
+
+    override fun get(token: NameToken): Vision? = items?.get(token)
 
     private val _changes = MutableSharedFlow<Name>()
     override val changes: SharedFlow<Name> get() = _changes
 
     private fun onChange(name: Name) {
-        scope?.launch {
+        scope.launch {
             _changes.emit(name)
         }
     }
@@ -149,16 +142,16 @@ internal class VisionChildrenImpl(
         }
 
         if (value == null) {
-            items.remove(token)
+            items?.remove(token)
         } else {
-            items[token] = value
+            (items ?: buildItems())[token] = value
             //check if parent already exists and is different from the current one
             if (value.parent != null && value.parent != group) error("Can't reassign parent Vision for $value")
             //set parent
             value.parent = group
             //start update jobs (only if the vision is rooted)
-            scope?.let { scope ->
-                val job = (value.children as? VisionChildrenImpl)?.changes?.onEach {
+            scope.let { scope ->
+                val job = value.children?.changes?.onEach {
                     onChange(token + it)
                 }?.launchIn(scope)
                 if (job != null) {
@@ -171,30 +164,30 @@ internal class VisionChildrenImpl(
     }
 
     override fun clear() {
-        if (items.isNotEmpty()) {
+        if (!items.isNullOrEmpty()) {
             updateJobs.values.forEach {
                 it.cancel()
             }
             updateJobs.clear()
-            items.clear()
+            items?.clear()
             onChange(Name.EMPTY)
         }
     }
 }
-
-internal object VisionChildrenContainerSerializer : KSerializer<MutableVisionChildren> {
-    private val mapSerializer = serializer<Map<NameToken, Vision>>()
-
-    override val descriptor: SerialDescriptor = mapSerializer.descriptor
-
-    override fun deserialize(decoder: Decoder): MutableVisionChildren {
-        val map = decoder.decodeSerializableValue(mapSerializer)
-        return VisionChildrenImpl(map)
-    }
-
-    override fun serialize(encoder: Encoder, value: MutableVisionChildren) {
-        val map = value.keys.associateWith { value[it]!! }
-        encoder.encodeSerializableValue(mapSerializer, map)
-    }
-
-}
+//
+//internal object VisionChildrenContainerSerializer : KSerializer<MutableVisionChildren> {
+//    private val mapSerializer = serializer<Map<NameToken, Vision>>()
+//
+//    override val descriptor: SerialDescriptor = mapSerializer.descriptor
+//
+//    override fun deserialize(decoder: Decoder): MutableVisionChildren {
+//        val map = decoder.decodeSerializableValue(mapSerializer)
+//        return VisionChildrenImpl(map)
+//    }
+//
+//    override fun serialize(encoder: Encoder, value: MutableVisionChildren) {
+//        val map = value.keys.associateWith { value[it]!! }
+//        encoder.encodeSerializableValue(mapSerializer, map)
+//    }
+//
+//}

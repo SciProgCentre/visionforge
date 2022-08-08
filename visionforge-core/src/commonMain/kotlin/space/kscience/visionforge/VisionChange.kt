@@ -16,7 +16,7 @@ import kotlin.time.Duration
 /**
  * Create a deep copy of given Vision without external connections.
  */
-private fun Vision.deepCopy(): Vision {
+private fun Vision.deepCopy(manager: VisionManager): Vision {
     //Assuming that unrooted visions are already isolated
     //TODO replace by efficient deep copy
     val json = manager.encodeToJsonElement(this)
@@ -26,7 +26,7 @@ private fun Vision.deepCopy(): Vision {
 /**
  * An update for a [Vision]
  */
-public class VisionChangeBuilder : MutableVisionContainer<Vision> {
+public class VisionChangeBuilder(private val manager: VisionManager) : MutableVisionContainer<Vision> {
 
     private var reset: Boolean = false
     private var vision: Vision? = null
@@ -37,7 +37,7 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
 
     @Synchronized
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
-        children.getOrPut(visionName) { VisionChangeBuilder() }
+        children.getOrPut(visionName) { VisionChangeBuilder(manager) }
 
     public fun propertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         if (visionName == Name.EMPTY) {
@@ -61,7 +61,7 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
      */
     public fun deepCopy(): VisionChange = VisionChange(
         reset,
-        vision?.deepCopy(),
+        vision?.deepCopy(manager),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
         if (children.isEmpty()) null else children.mapValues { it.value.deepCopy() }
     )
@@ -81,8 +81,8 @@ public data class VisionChange(
     public val children: Map<Name, VisionChange>? = null,
 )
 
-public inline fun VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
-    VisionChangeBuilder().apply(block).deepCopy()
+public inline fun VisionManager.VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
+    VisionChangeBuilder(this).apply(block).deepCopy()
 
 
 private fun CoroutineScope.collectChange(
@@ -119,14 +119,15 @@ private fun CoroutineScope.collectChange(
  */
 public fun Vision.flowChanges(
     collectionDuration: Duration,
+    manager: VisionManager = this.manager,
 ): Flow<VisionChange> = flow {
 
-    var collector = VisionChangeBuilder()
+    var collector = VisionChangeBuilder(manager)
     coroutineScope {
         collectChange(Name.EMPTY, this@flowChanges) { collector }
 
         //Send initial vision state
-        val initialChange = VisionChange(vision = deepCopy())
+        val initialChange = VisionChange(vision = deepCopy(manager))
         emit(initialChange)
 
         while (currentCoroutineContext().isActive) {
@@ -137,7 +138,7 @@ public fun Vision.flowChanges(
                 //emit changes
                 emit(collector.deepCopy())
                 //Reset the collector
-                collector = VisionChangeBuilder()
+                collector = VisionChangeBuilder(manager)
             }
         }
     }

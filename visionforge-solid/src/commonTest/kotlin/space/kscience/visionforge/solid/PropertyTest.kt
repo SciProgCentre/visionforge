@@ -1,5 +1,9 @@
 package space.kscience.visionforge.solid
 
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.values.int
 import space.kscience.dataforge.values.string
@@ -10,8 +14,8 @@ import kotlin.test.assertEquals
 @Suppress("UNUSED_VARIABLE")
 class PropertyTest {
     @Test
-    fun testColor(){
-        val box = Box(10.0f, 10.0f,10.0f)
+    fun testColor() {
+        val box = Box(10.0f, 10.0f, 10.0f)
         box.material {
             //meta["color"] = "pink"
             color.set("pink")
@@ -20,14 +24,17 @@ class PropertyTest {
         assertEquals("pink", box.color.string)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testColorUpdate(){
-        val box = Box(10.0f, 10.0f,10.0f)
+    fun testColorUpdate() = runTest {
+        val box = Box(10.0f, 10.0f, 10.0f)
 
-        var c: String? = null
+        val c = CompletableDeferred<String?>()
+
+
         box.onPropertyChange {
-            if(it == SolidMaterial.MATERIAL_COLOR_KEY){
-                c = box.color.string
+            if (it == SolidMaterial.MATERIAL_COLOR_KEY) {
+                c.complete(box.color.string)
             }
         }
 
@@ -35,7 +42,8 @@ class PropertyTest {
             color.set("pink")
         }
 
-        assertEquals("pink", c)
+        assertEquals("pink", withTimeout(50) { c.await() })
+
     }
 
     @Test
@@ -53,7 +61,7 @@ class PropertyTest {
     @Test
     fun testStyleProperty() {
         var box: Box? = null
-        val group = SolidGroup{
+        val group = SolidGroup {
             styleSheet {
                 update("testStyle") {
                     "test" put 22
@@ -89,7 +97,7 @@ class PropertyTest {
     @Test
     fun testReferenceStyleProperty() {
         var box: SolidReference? = null
-        val group = SolidGroup{
+        val group = SolidGroup {
             styleSheet {
                 update("testStyle") {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"

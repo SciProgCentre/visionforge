@@ -11,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class VisionUpdateTest {
+internal class VisionUpdateTest {
     val solidManager = Global.fetch(Solids)
     val visionManager = solidManager.visionManager
 
@@ -20,7 +20,7 @@ class VisionUpdateTest {
         val targetVision = SolidGroup {
             box(200,200,200, name = "origin")
         }
-        val dif = VisionChange{
+        val dif = visionManager.VisionChange{
             group ("top") {
                 color.set(123)
                 box(100,100,100)
@@ -36,7 +36,7 @@ class VisionUpdateTest {
 
     @Test
     fun testVisionChangeSerialization(){
-        val change = VisionChange{
+        val change = visionManager.VisionChange{
             group("top") {
                 color.set(123)
                 box(100,100,100)

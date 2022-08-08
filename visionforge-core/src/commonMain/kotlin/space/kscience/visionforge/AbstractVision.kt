@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -15,13 +16,14 @@ import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import kotlin.jvm.Synchronized
 
 
+@Serializable
 public abstract class AbstractVision : Vision {
 
     @Transient
     override var parent: Vision? = null
 
     @SerialName("properties")
-    internal var _properties: MutableMeta? = null
+    protected var _properties: MutableMeta? = null
 
     protected open val defaultProperties: Meta? get() = descriptor?.defaultNode
 
@@ -80,7 +82,7 @@ public abstract class AbstractVision : Vision {
         }
 
         @Transient
-        private val _changes = MutableSharedFlow<Name>()
+        private val _changes = MutableSharedFlow<Name>(10)
         override val changes: SharedFlow<Name> get() = _changes
 
         override fun invalidate(propertyName: Name) {

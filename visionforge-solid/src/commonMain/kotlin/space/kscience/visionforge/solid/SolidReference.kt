@@ -60,30 +60,6 @@ public class SolidReference(
             }
         }
 
-//    override fun getPropertyValue(
-//        name: Name,
-//        inherit: Boolean,
-//        includeStyles: Boolean,
-//        includeDefaults: Boolean,
-//    ): Value? {
-//        meta?.getValue(name)?.let { return it }
-//        if (includeStyles) {
-//            getStyleProperty(name)?.value?.let { return it }
-//        }
-//        prototype.getPropertyValue(name, inherit, includeStyles, includeDefaults)?.let { return it }
-//        if (inherit) {
-//            parent?.getPropertyValue(name, inherit, includeStyles, includeDefaults)?.let { return it }
-//        }
-//        return null
-//    }
-//
-//    override fun getProperty(
-//        name: Name,
-//        inherit: Boolean,
-//        includeStyles: Boolean,
-//        includeDefaults: Boolean,
-//    ): MutableMeta = VisionProperties(this, name, descriptor[name], inherit, includeStyles, prototype.meta)
-
     public companion object {
         public const val REFERENCE_CHILD_PROPERTY_PREFIX: String = "@child"
     }
