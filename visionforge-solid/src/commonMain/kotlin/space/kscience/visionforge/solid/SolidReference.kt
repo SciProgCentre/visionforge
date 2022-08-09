@@ -28,7 +28,10 @@ public val Vision.unref: Solid
 @SerialName("solid.ref")
 public class SolidReference(
     @SerialName("prototype") public val prototypeName: Name,
-) : SolidBase<SolidReference>(), VisionGroup {
+) : VisionGroup, Solid {
+
+    @Transient
+    override var parent: Vision? = null
 
     /**
      * The prototype for this reference.
@@ -40,11 +43,30 @@ public class SolidReference(
         (parent as? PrototypeHolder)?.getPrototype(prototypeName)
             ?: error("Prototype with name $prototypeName not found")
     }
-
     override val descriptor: MetaDescriptor get() = prototype.descriptor
 
-    override val defaultProperties: Meta
-        get() = prototype.properties.raw?.withDefault(descriptor.defaultNode) ?: descriptor.defaultNode
+    @SerialName("properties")
+    private var propertiesInternal: MutableMeta? = null
+
+    override val properties: MutableVisionProperties by lazy {
+        object : AbstractVisionProperties(this) {
+            override var properties: MutableMeta?
+                get() = propertiesInternal
+                set(value) {
+                    propertiesInternal = value
+                }
+
+            override val raw: Meta? get() = properties
+
+            override fun get(name: Name, inherit: Boolean, includeStyles: Boolean): MutableMeta {
+                return properties?.getMeta(name) ?: prototype.properties.get(name, inherit, includeStyles)
+            }
+
+            override fun getValue(name: Name, inherit: Boolean, includeStyles: Boolean): Value? {
+                return properties?.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
+            }
+        }
+    }
 
     override val children: VisionChildren
         get() = object : VisionChildren {
@@ -66,7 +88,7 @@ public class SolidReference(
 }
 
 /**
- * @param name A name of reference child relative to prototype root
+ * @param childName A name of reference child relative to prototype root
  */
 internal class SolidReferenceChild(
     val owner: SolidReference,
@@ -83,25 +105,17 @@ internal class SolidReferenceChild(
     @Transient
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
         override val descriptor: MetaDescriptor get() = this@SolidReferenceChild.descriptor
-        override val default: Meta
-            get() = prototype.properties.raw?.withDefault(descriptor.defaultNode) ?: descriptor.defaultNode
 
         override val raw: MutableMeta by lazy { owner.properties[childToken(childName).asName()] }
+
+        override fun get(name: Name, inherit: Boolean, includeStyles: Boolean): MutableMeta =
+            raw.getMeta(name) ?: prototype.properties.get(name, inherit, includeStyles)
 
         override fun getValue(
             name: Name,
             inherit: Boolean,
             includeStyles: Boolean,
-        ): Value? {
-            raw[name]?.value?.let { return it }
-            if (includeStyles) {
-                getStyleProperty(name)?.value?.let { return it }
-            }
-            if (inherit) {
-                parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
-            }
-            return default[name]?.value
-        }
+        ): Value? = raw.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
         override fun set(name: Name, node: Meta?) {
             raw.setMeta(name, node)
@@ -110,6 +124,7 @@ internal class SolidReferenceChild(
         override fun setValue(name: Name, value: Value?) {
             raw.setValue(name, value)
         }
+
         override val changes: Flow<Name> get() = owner.properties.changes.filter { it.startsWith(childToken(childName)) }
 
         override fun invalidate(propertyName: Name) {

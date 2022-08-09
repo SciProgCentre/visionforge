@@ -1,17 +1,20 @@
 package space.kscience.visionforge
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.asMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.parseAsName
-import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.*
 import space.kscience.dataforge.values.Value
 import space.kscience.dataforge.values.asValue
+import kotlin.jvm.Synchronized
 
 public interface VisionProperties {
 
@@ -21,7 +24,6 @@ public interface VisionProperties {
     public val raw: Meta?
 
     public val descriptor: MetaDescriptor?
-    public val default: Meta?
 
     public fun getValue(
         name: Name,
@@ -128,6 +130,83 @@ private class VisionPropertiesItem(
     override fun toString(): String = Meta.toString(this)
     override fun equals(other: Any?): Boolean = Meta.equals(this, other as? Meta)
     override fun hashCode(): Int = Meta.hashCode(this)
+}
+
+public abstract class AbstractVisionProperties(
+    private val vision: Vision,
+) : MutableVisionProperties {
+    override val descriptor: MetaDescriptor? get() = vision.descriptor
+    protected val default: Meta? get() = descriptor?.defaultNode
+
+    protected abstract var properties: MutableMeta?
+
+    override val raw: Meta? get() = properties
+
+    @Synchronized
+    protected fun getOrCreateProperties(): MutableMeta {
+        if (properties == null) {
+            //TODO check performance issues
+            val newProperties = MutableMeta()
+            properties = newProperties
+        }
+        return properties!!
+    }
+
+    override fun getValue(
+        name: Name,
+        inherit: Boolean,
+        includeStyles: Boolean,
+    ): Value? {
+        raw?.get(name)?.value?.let { return it }
+        if (includeStyles) {
+            vision.getStyleProperty(name)?.value?.let { return it }
+        }
+        if (inherit) {
+            vision.parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
+        }
+        return default?.get(name)?.value
+    }
+
+    override fun set(name: Name, node: Meta?) {
+        //TODO check old value?
+        if (name.isEmpty()) {
+            properties = node?.asMutableMeta()
+        } else if (node == null) {
+            properties?.setMeta(name, node)
+        } else {
+            getOrCreateProperties().setMeta(name, node)
+        }
+        invalidate(name)
+    }
+
+    override fun setValue(name: Name, value: Value?) {
+        //TODO check old value?
+        if (value == null) {
+            properties?.getMeta(name)?.value = null
+        } else {
+            getOrCreateProperties().setValue(name, value)
+        }
+        invalidate(name)
+    }
+
+    @Transient
+    private val _changes = MutableSharedFlow<Name>(10)
+    override val changes: SharedFlow<Name> get() = _changes
+
+    override fun invalidate(propertyName: Name) {
+        if (propertyName == Vision.STYLE_KEY) {
+            vision.styles.asSequence()
+                .mapNotNull { vision.getStyle(it) }
+                .flatMap { it.items.asSequence() }
+                .distinctBy { it.key }
+                .forEach {
+                    invalidate(it.key.asName())
+                }
+        }
+        vision.manager.context.launch {
+            _changes.emit(propertyName)
+        }
+    }
 }
 
 public fun VisionProperties.getValue(

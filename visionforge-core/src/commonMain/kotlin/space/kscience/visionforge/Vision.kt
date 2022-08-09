@@ -12,6 +12,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
 import space.kscience.dataforge.values.asValue
 import space.kscience.dataforge.values.boolean
+import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.TYPE
 import kotlin.reflect.KProperty1
 
@@ -37,7 +38,11 @@ public interface Vision : Described {
     /**
      * Update this vision using a dif represented by [VisionChange].
      */
-    public fun update(change: VisionChange)
+    public fun update(change: VisionChange) {
+        change.properties?.let {
+            updateProperties(it, Name.EMPTY)
+        }
+    }
 
     override val descriptor: MetaDescriptor?
 

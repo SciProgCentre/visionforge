@@ -11,7 +11,6 @@ import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 import kotlin.js.JsName
-import kotlin.jvm.Synchronized
 
 
 public interface VisionGroup : Vision {
@@ -47,26 +46,20 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
     }
 
     @SerialName("children")
-    protected var _children: MutableMap<NameToken, Vision>? = null
+    protected var childrenInternal: MutableMap<NameToken, Vision>? = null
 
 
     init {
-        _children?.forEach { it.value.parent = this }
+        childrenInternal?.forEach { it.value.parent = this }
     }
 
     override val children: MutableVisionChildren by lazy {
-        object : VisionChildrenImpl(this){
-            override val items: MutableMap<NameToken, Vision>?
-                get() = this@AbstractVisionGroup._children
-
-            @Synchronized
-            override fun buildItems(): MutableMap<NameToken, Vision> {
-                if (_children == null) {
-                    _children = LinkedHashMap()
+        object : VisionChildrenImpl(this) {
+            override var items: MutableMap<NameToken, Vision>?
+                get() = this@AbstractVisionGroup.childrenInternal
+                set(value) {
+                    this@AbstractVisionGroup.childrenInternal = value
                 }
-                return _children!!
-            }
-
         }
     }
 

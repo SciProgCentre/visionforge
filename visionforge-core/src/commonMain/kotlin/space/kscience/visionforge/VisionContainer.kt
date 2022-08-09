@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import space.kscience.dataforge.names.*
+import kotlin.jvm.Synchronized
 
 @DslMarker
 public annotation class VisionBuilder
@@ -113,8 +114,15 @@ internal abstract class VisionChildrenImpl(
 
     private val updateJobs = HashMap<NameToken, Job>()
 
-    abstract val items: MutableMap<NameToken, Vision>?
-    abstract fun buildItems(): MutableMap<NameToken, Vision>
+    abstract var items: MutableMap<NameToken, Vision>?
+
+    @Synchronized
+    private fun buildItems(): MutableMap<NameToken, Vision> {
+        if (items == null) {
+            items = LinkedHashMap()
+        }
+        return items!!
+    }
 
     private val scope: CoroutineScope get() = group.manager.context
 
