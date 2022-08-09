@@ -10,11 +10,11 @@ import react.FC
 import react.dom.attrs
 import react.fc
 import react.useState
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.descriptors.ValueRequirement
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.values.asValue
 import styled.css
 import styled.styledInput
 

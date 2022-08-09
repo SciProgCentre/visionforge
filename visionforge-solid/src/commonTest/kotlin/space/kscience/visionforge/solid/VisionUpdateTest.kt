@@ -3,8 +3,8 @@ package space.kscience.visionforge.solid
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.asValue
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.get
 import kotlin.test.Test

@@ -1,7 +1,7 @@
 package space.kscience.visionforge.examples
 
 import kotlinx.html.h2
-import space.kscience.dataforge.values.ValueType
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.ScatterMode
 import space.kscience.plotly.models.TextPosition

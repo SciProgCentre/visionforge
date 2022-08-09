@@ -1,8 +1,8 @@
 package space.kscience.visionforge.gdml
 
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.asValue
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.get

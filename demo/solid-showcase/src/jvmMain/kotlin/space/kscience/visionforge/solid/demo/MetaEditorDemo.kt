@@ -2,10 +2,10 @@ package space.kscience.visionforge.demo
 
 import javafx.geometry.Orientation
 import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.editor.FXMetaModel
 import space.kscience.visionforge.editor.MetaViewer
 import space.kscience.visionforge.editor.MutableMetaEditor

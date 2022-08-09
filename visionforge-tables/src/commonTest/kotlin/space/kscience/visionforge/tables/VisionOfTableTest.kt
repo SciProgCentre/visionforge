@@ -1,9 +1,9 @@
 package space.kscience.visionforge.tables
 
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.double
-import space.kscience.dataforge.values.int
+import space.kscience.dataforge.meta.Value
+import space.kscience.dataforge.meta.asValue
+import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.int
 import space.kscience.tables.ColumnHeader
 import space.kscience.tables.ColumnTable
 import space.kscience.tables.get

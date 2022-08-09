@@ -5,14 +5,10 @@ import javafx.beans.binding.BooleanBinding
 import javafx.beans.binding.ListBinding
 import javafx.beans.binding.ObjectBinding
 import javafx.collections.ObservableList
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.ObservableMeta
-import space.kscience.dataforge.meta.boolean
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.*
-import space.kscience.dataforge.values.Value
 import tornadofx.*
 
 /**

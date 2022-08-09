@@ -1,13 +1,13 @@
 package ru.mipt.npm.root
 
 import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.doubleArray
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.doubleArray
 import space.kscience.visionforge.isEmpty
-import space.kscience.visionforge.setPropertyValue
+import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import kotlin.math.*
@@ -321,7 +321,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
     }
     return if (group.children.isEmpty()) {
         null
-    } else if (group.items.size == 1 && group.meta== null) {
+    } else if (group.items.size == 1 && group.properties.raw == null) {
         group.items.values.first().apply { parent = null }
     } else {
         group
@@ -348,7 +348,7 @@ private fun SolidGroup.addRootVolume(
     if (!cache) {
         val group = buildVolume(volume, context)?.apply {
             volume.fFillColor?.let {
-                setPropertyValue(MATERIAL_COLOR_KEY, RootColors[it])
+                properties[MATERIAL_COLOR_KEY] = RootColors[it]
             }
             block()
         }
@@ -365,7 +365,7 @@ private fun SolidGroup.addRootVolume(
 
         ref(templateName, name).apply {
             volume.fFillColor?.let {
-                setPropertyValue(MATERIAL_COLOR_KEY, RootColors[it])
+                properties[MATERIAL_COLOR_KEY] = RootColors[it]
             }
             block()
         }

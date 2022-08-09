@@ -69,7 +69,7 @@ class Model(val manager: VisionManager) {
 
     fun reset() {
         map.values.forEach {
-            it.setPropertyValue(SolidMaterial.MATERIAL_COLOR_KEY, null)
+            it.properties[SolidMaterial.MATERIAL_COLOR_KEY] = null
         }
         tracks.children.clear()
     }

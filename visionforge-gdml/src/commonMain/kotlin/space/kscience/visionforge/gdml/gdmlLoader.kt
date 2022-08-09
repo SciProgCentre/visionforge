@@ -30,7 +30,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
     private val proto = SolidGroup()
 
     private val solids = proto.group(solidsName) {
-        setPropertyValue("edges.enabled", false)
+        properties["edges.enabled"] = false
     }
 
     private val referenceStore = HashMap<Name, MutableList<SolidReference>>()

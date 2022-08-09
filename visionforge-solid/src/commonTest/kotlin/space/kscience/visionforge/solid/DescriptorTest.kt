@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid
 
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import kotlin.test.Test
 import kotlin.test.assertNotNull

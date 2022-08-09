@@ -5,8 +5,8 @@ import javafx.beans.binding.*
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
-import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.get
 import space.kscience.visionforge.onPropertyChange
 import tornadofx.*
 
@@ -35,7 +35,7 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
     public operator fun get(key: Name): ObjectBinding<Meta?> {
         return bindings.getOrPut(key) {
             object : ObjectBinding<Meta?>() {
-                override fun computeValue(): Meta = obj.getProperty(key)
+                override fun computeValue(): Meta = obj.properties[key]
             }
         }
     }
@@ -57,4 +57,5 @@ public fun ObjectBinding<Meta?>.float(default: Float): FloatBinding = floatBindi
 public fun ObjectBinding<Meta?>.int(default: Int): IntegerBinding = integerBinding { it.int ?: default }
 public fun ObjectBinding<Meta?>.long(default: Long): LongBinding = longBinding { it.long ?: default }
 
-public fun <T> ObjectBinding<Meta?>.transform(transform: (Meta) -> T): Binding<T?> = objectBinding { it?.let(transform) }
+public fun <T> ObjectBinding<Meta?>.transform(transform: (Meta) -> T): Binding<T?> =
+    objectBinding { it?.let(transform) }

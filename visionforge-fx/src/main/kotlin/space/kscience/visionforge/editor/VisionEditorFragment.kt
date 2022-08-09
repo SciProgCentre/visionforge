@@ -10,6 +10,7 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.getStyle
+import space.kscience.visionforge.root
 import space.kscience.visionforge.styles
 import tornadofx.*
 
@@ -20,7 +21,7 @@ public class VisionEditorFragment : Fragment() {
     public val descriptorProperty: SimpleObjectProperty<MetaDescriptor> = SimpleObjectProperty<MetaDescriptor>()
 
     private val configProperty: Binding<MutableMeta?> = visionProperty.objectBinding { vision ->
-        vision?.getProperty(Name.EMPTY)
+        vision?.properties?.root()
     }
 
     private val configEditorProperty: Binding<Node?> = configProperty.objectBinding(descriptorProperty) {
@@ -28,7 +29,7 @@ public class VisionEditorFragment : Fragment() {
             val node:FXMetaModel<MutableMeta> = FXMetaModel(
                 meta,
                 vision?.descriptor,
-                vision?.meta,
+                vision?.properties?.root(),
                 Name.EMPTY,
                 "Vision properties"
             )

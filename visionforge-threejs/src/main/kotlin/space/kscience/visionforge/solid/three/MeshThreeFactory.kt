@@ -10,8 +10,9 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.get
 import space.kscience.visionforge.onPropertyChange
-import space.kscience.visionforge.setPropertyValue
+import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.layer
@@ -76,8 +77,8 @@ public abstract class MeshThreeFactory<in T : Solid>(
 
 @VisionBuilder
 public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
-    setPropertyValue(EDGES_ENABLED_KEY, enabled)
-    SolidMaterial.write(getProperty(EDGES_MATERIAL_KEY)).apply(block)
+    properties.set(EDGES_ENABLED_KEY, enabled)
+    SolidMaterial.write(properties[EDGES_MATERIAL_KEY]).apply(block)
 }
 
 internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
@@ -93,9 +94,9 @@ internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
 public fun Mesh.applyEdges(obj: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.getProperty(EDGES_ENABLED_KEY, inherit = true).boolean != false) {
+    if (obj.properties.get(EDGES_ENABLED_KEY, inherit = true).boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.getProperty(EDGES_MATERIAL_KEY), true)
+        val material = ThreeMaterials.getLineMaterial(obj.properties[EDGES_MATERIAL_KEY], true)
         if (edges == null) {
             add(
                 LineSegments(

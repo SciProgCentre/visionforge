@@ -6,7 +6,7 @@ import ru.mipt.npm.root.toSolid
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.solid.Solids
 import java.nio.file.Paths
 import java.util.zip.ZipInputStream

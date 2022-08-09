@@ -8,14 +8,10 @@ package space.kscience.visionforge.editor
 import javafx.collections.FXCollections
 import javafx.scene.control.ComboBox
 import javafx.util.StringConverter
-import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.allowedValues
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.parseValue
-import space.kscience.dataforge.values.string
 import java.util.*
 
 public class ComboBoxValueChooser(public val values: Collection<Value>? = null) : ValueChooserBase<ComboBox<Value>>() {

@@ -1,9 +1,9 @@
 package space.kscience.visionforge.solid
 
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder

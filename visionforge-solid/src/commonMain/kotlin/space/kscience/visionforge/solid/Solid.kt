@@ -1,15 +1,13 @@
 package space.kscience.visionforge.solid
 
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.enum
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
-import space.kscience.dataforge.meta.float
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY

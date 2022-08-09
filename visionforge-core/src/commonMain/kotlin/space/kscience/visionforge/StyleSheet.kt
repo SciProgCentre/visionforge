@@ -5,8 +5,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.stringList
 import kotlin.jvm.JvmInline
 
 /**

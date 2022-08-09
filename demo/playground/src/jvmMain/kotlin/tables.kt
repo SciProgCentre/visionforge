@@ -1,6 +1,6 @@
 package space.kscience.visionforge.examples
 
-import space.kscience.dataforge.values.ValueType
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.tables.ColumnHeader
 import space.kscience.tables.valueRow
 import space.kscience.visionforge.html.ResourceLocation

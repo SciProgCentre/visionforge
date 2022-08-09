@@ -4,14 +4,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.meta.asValue
+import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.Described
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.boolean
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.TYPE
 import kotlin.reflect.KProperty1

@@ -10,9 +10,9 @@ import react.dom.attrs
 import react.dom.option
 import react.dom.select
 import react.fc
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.descriptors.allowedValues
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.meta.string
 
 @JsExport
 public val MultiSelectChooser: FC<ValueChooserProps> = fc("MultiSelectChooser") { props ->

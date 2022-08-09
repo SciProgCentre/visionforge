@@ -8,13 +8,10 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.values.Null
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
 import space.kscience.tables.*
 import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.html.VisionOutput
-import space.kscience.visionforge.properties
+import space.kscience.visionforge.root
 import kotlin.jvm.JvmName
 import kotlin.reflect.typeOf
 
@@ -45,14 +42,14 @@ public class VisionOfTable(
 ) : AbstractVision(), Rows<Value> {
 
     public var data: List<Meta>
-        get() = meta?.getIndexed("rows")?.entries?.sortedBy {
+        get() = properties.root().getIndexed("rows").entries.sortedBy {
             it.key?.toInt()
-        }?.map {
+        }.map {
             it.value
-        } ?: emptyList()
+        }
         set(value) {
             //TODO Make it better
-            properties()["rows"] = value
+            properties.root()["rows"] = value
         }
 
     public val rows: List<MetaRow> get() = data.map(::MetaRow)

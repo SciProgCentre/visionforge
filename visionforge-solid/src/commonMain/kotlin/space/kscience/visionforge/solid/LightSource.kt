@@ -2,11 +2,11 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.number
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.*
 
 @Serializable

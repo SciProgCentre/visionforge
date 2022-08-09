@@ -3,12 +3,12 @@ package space.kscience.visionforge
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.ValueType
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 import kotlin.js.JsName
 

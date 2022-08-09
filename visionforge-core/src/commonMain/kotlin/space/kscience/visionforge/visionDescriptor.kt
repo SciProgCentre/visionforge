@@ -2,8 +2,7 @@ package space.kscience.visionforge
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.*
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.set
+import space.kscience.dataforge.meta.set
 
 private const val INHERITED_DESCRIPTOR_ATTRIBUTE = "inherited"
 private const val STYLE_DESCRIPTOR_ATTRIBUTE = "useStyles"

@@ -5,15 +5,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Transient
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MutableMeta
-import space.kscience.dataforge.meta.asMutableMeta
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.*
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
 import kotlin.jvm.Synchronized
 
 public interface VisionProperties {

@@ -5,7 +5,6 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.doubleArray
 import kotlin.properties.ReadOnlyProperty
 
 public fun MetaProvider.doubleArray(

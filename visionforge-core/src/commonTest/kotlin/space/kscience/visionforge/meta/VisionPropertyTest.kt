@@ -1,12 +1,6 @@
 package space.kscience.visionforge.meta
 
-import space.kscience.dataforge.meta.Scheme
-import space.kscience.dataforge.meta.SchemeSpec
-import space.kscience.dataforge.meta.int
-import space.kscience.dataforge.meta.updateWith
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.boolean
-import space.kscience.dataforge.values.int
+import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.get
 import space.kscience.visionforge.getValue

@@ -3,13 +3,10 @@ package space.kscience.visionforge.solid
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.number
-import space.kscience.dataforge.values.set
 import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY

@@ -3,12 +3,12 @@ package space.kscience.visionforge.solid.demo
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.geometries.BoxGeometry
 import info.laht.threekt.objects.Mesh
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
-import space.kscience.dataforge.values.asValue
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.SolidGroup

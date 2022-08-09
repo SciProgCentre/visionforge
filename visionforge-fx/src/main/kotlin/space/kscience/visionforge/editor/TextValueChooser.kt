@@ -9,11 +9,10 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
-import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.validate
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.*
 import tornadofx.*
 
 public class TextValueChooser : ValueChooserBase<TextField>() {

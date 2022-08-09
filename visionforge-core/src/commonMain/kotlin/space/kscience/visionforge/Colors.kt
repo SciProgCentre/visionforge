@@ -1,11 +1,6 @@
 package space.kscience.visionforge
 
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.number
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.int
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.meta.*
 import kotlin.math.max
 
 /**

@@ -10,11 +10,7 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
-import space.kscience.dataforge.values.*
-import space.kscience.visionforge.Colors
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.computePropertyNode
-import space.kscience.visionforge.getStyleNodes
+import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.ColorAccessor
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.SolidReference
@@ -98,7 +94,8 @@ public object ThreeMaterials {
  * Compute color
  */
 public fun Meta.threeColor(): Color? {
-    val value = getValue(Name.EMPTY)
+    if(isEmpty()) return null
+    val value = value
     return if (isLeaf) {
         when {
             value == null -> null
@@ -132,19 +129,15 @@ private var Material.cached: Boolean
     }
 
 public fun Mesh.updateMaterial(vision: Vision) {
-    val ownMaterialMeta = vision.meta.getMeta(SolidMaterial.MATERIAL_KEY)
+    val ownMaterialMeta = vision.properties.raw?.get(SolidMaterial.MATERIAL_KEY)
     if (ownMaterialMeta == null) {
         if (vision is SolidReference && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()) {
             updateMaterial(vision.prototype)
         } else {
-            material = vision.computePropertyNode(SolidMaterial.MATERIAL_KEY)?.let {
-                ThreeMaterials.cacheMaterial(it)
-            } ?: ThreeMaterials.DEFAULT
+            material = ThreeMaterials.cacheMaterial(vision.properties[SolidMaterial.MATERIAL_KEY])
         }
     } else {
-        material = vision.computePropertyNode(SolidMaterial.MATERIAL_KEY)?.let {
-            ThreeMaterials.buildMaterial(it)
-        } ?: ThreeMaterials.DEFAULT
+        material = ThreeMaterials.buildMaterial(vision.properties[SolidMaterial.MATERIAL_KEY])
     }
 }
 
@@ -159,19 +152,19 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
     } else {
         when (propertyName) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {
-                material.asDynamic().color = vision.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.threeColor()
+                material.asDynamic().color = vision.properties[SolidMaterial.MATERIAL_COLOR_KEY].threeColor()
                     ?: ThreeMaterials.DEFAULT_COLOR
             }
             SolidMaterial.SPECULAR_COLOR_KEY -> {
-                material.asDynamic().specular = vision.computePropertyNode(SolidMaterial.SPECULAR_COLOR_KEY)?.threeColor()
+                material.asDynamic().specular = vision.properties[SolidMaterial.SPECULAR_COLOR_KEY].threeColor()
                     ?: ThreeMaterials.DEFAULT_COLOR
             }
             SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY -> {
-                material.asDynamic().emissive = vision.computePropertyNode(SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY)?.threeColor()
+                material.asDynamic().emissive = vision.properties[SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY].threeColor()
                     ?: ThreeMaterials.BLACK_COLOR
             }
             SolidMaterial.MATERIAL_OPACITY_KEY -> {
-                val opacity = vision.getProperty(
+                val opacity = vision.properties.getValue(
                     SolidMaterial.MATERIAL_OPACITY_KEY,
                     inherit = true,
                 )?.double ?: 1.0
@@ -179,7 +172,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                 material.transparent = opacity < 1.0
             }
             SolidMaterial.MATERIAL_WIREFRAME_KEY -> {
-                material.asDynamic().wireframe = vision.getProperty(
+                material.asDynamic().wireframe = vision.properties.getValue(
                     SolidMaterial.MATERIAL_WIREFRAME_KEY,
                     inherit = true,
                 )?.boolean ?: false

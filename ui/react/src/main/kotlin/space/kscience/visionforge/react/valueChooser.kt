@@ -19,10 +19,6 @@ import react.useState
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.allowedValues
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.int
-import space.kscience.dataforge.values.string
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
 import styled.css

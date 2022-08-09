@@ -7,7 +7,6 @@ import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.*
-import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.*
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX

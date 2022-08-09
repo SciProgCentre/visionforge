@@ -14,7 +14,7 @@ import kotlinx.serialization.modules.subclass
 
 private fun <T> jsonRootDeserializer(
     tSerializer: KSerializer<T>,
-    builder: (JsonElement) -> T
+    builder: (JsonElement) -> T,
 ): DeserializationStrategy<T> = object :
     DeserializationStrategy<T> {
     private val jsonElementSerializer = JsonElement.serializer()
@@ -46,6 +46,7 @@ private object RootDecoder {
         private val refCache: List<RefEntry>,
     ) : KSerializer<T> by tSerializer {
 
+        @OptIn(ExperimentalSerializationApi::class)
         @Suppress("UNCHECKED_CAST")
         override fun deserialize(decoder: Decoder): T {
             val input = decoder as JsonDecoder
@@ -92,7 +93,7 @@ private object RootDecoder {
 
     @OptIn(ExperimentalSerializationApi::class)
     fun unrefSerializersModule(
-        refCache: List<RefEntry>
+        refCache: List<RefEntry>,
     ): SerializersModule = SerializersModule {
 
         contextual(TObjArray::class) {
@@ -197,11 +198,13 @@ private object RootDecoder {
                         fillCache(it)
                     }
                 }
+
                 is JsonArray -> {
                     element.forEach {
                         fillCache(it)
                     }
                 }
+
                 else -> {
                     //ignore primitives
                 }

@@ -4,9 +4,9 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.int
-import space.kscience.dataforge.values.string
 import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

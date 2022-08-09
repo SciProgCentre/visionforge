@@ -9,16 +9,17 @@ import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
 import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.root
 
 @Serializable
 @SerialName("vision.plotly")
 public class VisionOfPlotly private constructor() : AbstractVision() {
 
     public constructor(plot: Plot) : this() {
-        setProperty(Name.EMPTY, plot.meta)
+        properties[Name.EMPTY] = plot.meta
     }
 
-    public val plot: Plot get() = Plot(getProperty(Name.EMPTY).asObservable())
+    public val plot: Plot get() = Plot(properties.root().asObservable())
 }
 
 public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)

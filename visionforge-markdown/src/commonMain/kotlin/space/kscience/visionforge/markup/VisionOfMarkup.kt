@@ -8,19 +8,19 @@ import kotlinx.serialization.modules.subclass
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
+import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.properties
+import space.kscience.visionforge.root
 
 @Serializable
 @SerialName("vision.markup")
 public class VisionOfMarkup(
-    public val format: String = COMMONMARK_FORMAT
-) : VisionGroup() {
+    public val format: String = COMMONMARK_FORMAT,
+) : AbstractVision() {
 
     //TODO add templates
 
-    public var content: String? by properties().string(CONTENT_PROPERTY_KEY)
+    public var content: String? by properties.root().string(CONTENT_PROPERTY_KEY)
 
     public companion object {
         public val CONTENT_PROPERTY_KEY: Name = "content".asName()
