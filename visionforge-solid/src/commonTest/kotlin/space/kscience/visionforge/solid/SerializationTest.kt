@@ -31,7 +31,7 @@ class SerializationTest {
         val string = Solids.encodeToString(cube)
         println(string)
         val newCube = Solids.decodeFromString(string)
-        assertEquals(cube.properties.raw, newCube.properties.raw)
+        assertEquals(cube.properties.own, newCube.properties.own)
     }
 
     @Test
@@ -52,7 +52,7 @@ class SerializationTest {
         val string = Solids.encodeToString(group)
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
-        assertEquals(group.children["cube"]?.properties?.raw, reconstructed.children["cube"]?.properties?.raw)
+        assertEquals(group.children["cube"]?.properties?.own, reconstructed.children["cube"]?.properties?.own)
     }
 
     @Test

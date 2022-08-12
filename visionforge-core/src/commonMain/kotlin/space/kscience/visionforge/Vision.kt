@@ -1,9 +1,9 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.Described
@@ -30,7 +30,7 @@ public interface Vision : Described {
     /**
      * Owner [VisionManager]. Used to define coroutine scope a serialization
      */
-    public val manager: VisionManager get() = parent?.manager ?: Global.visionManager
+    public val manager: VisionManager? get() = parent?.manager
 
 
     public val properties: MutableVisionProperties
@@ -67,13 +67,17 @@ public var Vision.visible: Boolean?
 /**
  * Subscribe on property updates. The subscription is bound to the given scope and canceled when the scope is canceled
  */
-public fun Vision.onPropertyChange(callback: (Name) -> Unit): Job = properties.changes.onEach {
+public fun Vision.onPropertyChange(
+    scope: CoroutineScope? = manager?.context,
+    callback: (Name) -> Unit
+): Job = properties.changes.onEach {
     callback(it)
-}.launchIn(manager.context)
+}.launchIn(scope ?: error("Orphan Vision can't observe properties"))
 
 
 public fun <V : Vision, T> V.useProperty(
     property: KProperty1<V, T>,
+    scope: CoroutineScope? = manager?.context,
     callBack: V.(T) -> Unit,
 ): Job {
     //Pass initial value.
@@ -82,5 +86,5 @@ public fun <V : Vision, T> V.useProperty(
         if (name.startsWith(property.name.asName())) {
             callBack(property.get(this@useProperty))
         }
-    }.launchIn(manager.context)
+    }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
 }

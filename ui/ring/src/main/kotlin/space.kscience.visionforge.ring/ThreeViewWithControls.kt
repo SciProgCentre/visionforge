@@ -9,18 +9,19 @@ import react.dom.div
 import react.dom.span
 import ringui.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
-import space.kscience.visionforge.*
-import space.kscience.visionforge.react.ThreeCanvasComponent
-import space.kscience.visionforge.react.flexColumn
-import space.kscience.visionforge.react.flexRow
-import space.kscience.visionforge.react.propertyEditor
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.react.*
+import space.kscience.visionforge.root
+import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.visionManager
 import styled.css
 import styled.styledDiv
 
@@ -38,7 +39,7 @@ public fun ThreeCanvasWithControlsProps.solid(block: SolidGroup.() -> Unit) {
     }
 }
 
-public fun ThreeCanvasWithControlsProps.options(block: Canvas3DOptions.() -> Unit){
+public fun ThreeCanvasWithControlsProps.options(block: Canvas3DOptions.() -> Unit) {
     options = Canvas3DOptions(block)
 }
 
@@ -81,14 +82,14 @@ public fun RBuilder.nameCrumbs(name: Name?, link: (Name) -> Unit): Unit = styled
 
 @JsExport
 public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("ThreeViewWithControls") { props ->
-    var selected by useState { props.selected }
+    var selected: Name? by useState { props.selected }
     var solid: Solid? by useState(null)
 
     useEffect {
         props.context.launch {
             solid = props.builderOfSolid.await()
             //ensure that the solid is properly rooted
-            if(solid?.parent == null){
+            if (solid?.parent == null) {
                 solid?.setAsRoot(props.context.visionManager)
             }
         }
@@ -164,12 +165,25 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
                             nameCrumbs(selected) { selected = it }
                         }
                         IslandContent {
-                            propertyEditor(
-                                ownProperties = vision.properties(),
-                                allProperties = vision.computeProperties(),
-                                descriptor = vision.descriptor,
-                                key = selected
-                            )
+                            child(PropertyEditor) {
+                                attrs {
+                                    this.key = selected.toString()
+                                    this.meta = vision.properties.root()
+                                    this.updates = vision.properties.changes
+                                    this.descriptor = vision.descriptor
+                                    this.scope = props.context
+                                    this.getPropertyState = { name ->
+                                        if (vision.properties.own?.get(name) != null) {
+                                            EditorPropertyState.Defined
+                                        } else if (vision.properties.root()[name] != null) {
+                                            // TODO differentiate
+                                            EditorPropertyState.Default()
+                                        } else {
+                                            EditorPropertyState.Undefined
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

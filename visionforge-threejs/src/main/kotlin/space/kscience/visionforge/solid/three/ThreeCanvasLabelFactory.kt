@@ -11,7 +11,6 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.MIDDLE
-import space.kscience.visionforge.get
 import space.kscience.visionforge.solid.SolidLabel
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.three.ThreeCanvas.Companion.DO_NOT_HIGHLIGHT_TAG
@@ -27,7 +26,7 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
         context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"
-        context.fillStyle = obj.properties[SolidMaterial.MATERIAL_COLOR_KEY].value ?: "black"
+        context.fillStyle = obj.properties.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).value ?: "black"
         context.textBaseline = CanvasTextBaseline.MIDDLE
         val metrics = context.measureText(obj.text)
         //canvas.width = metrics.width.toInt()

@@ -124,7 +124,7 @@ internal abstract class VisionChildrenImpl(
         return items!!
     }
 
-    private val scope: CoroutineScope get() = group.manager.context
+    private val scope: CoroutineScope? get() = group.manager?.context
 
     override val keys: Set<NameToken> get() = items?.keys ?: emptySet()
 
@@ -134,7 +134,7 @@ internal abstract class VisionChildrenImpl(
     override val changes: SharedFlow<Name> get() = _changes
 
     private fun onChange(name: Name) {
-        scope.launch {
+        scope?.launch {
             _changes.emit(name)
         }
     }
@@ -158,7 +158,7 @@ internal abstract class VisionChildrenImpl(
             //set parent
             value.parent = group
             //start update jobs (only if the vision is rooted)
-            scope.let { scope ->
+            scope?.let { scope ->
                 val job = value.children?.changes?.onEach {
                     onChange(token + it)
                 }?.launchIn(scope)

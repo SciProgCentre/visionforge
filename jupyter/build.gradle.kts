@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
     id("org.jetbrains.kotlin.jupyter.api")
 }
 
@@ -21,5 +21,5 @@ kotlin {
 }
 
 readme {
-    maturity = ru.mipt.npm.gradle.Maturity.EXPERIMENTAL
+    maturity = space.kscience.gradle.Maturity.EXPERIMENTAL
 }

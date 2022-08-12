@@ -170,7 +170,7 @@ internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number
 internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D?> =
     object : ReadWriteProperty<Solid, Point3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
-            val item = thisRef.properties.raw?.get(name) ?: return null
+            val item = thisRef.properties.own?.get(name) ?: return null
             return object : Point3D {
                 override val x: Float get() = item[X_KEY]?.float ?: default
                 override val y: Float get() = item[Y_KEY]?.float ?: default
@@ -180,7 +180,7 @@ internal fun point(name: Name, default: Float): ReadWriteProperty<Solid, Point3D
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
             if (value == null) {
-                thisRef.properties[name] = null
+                thisRef.properties.setProperty(name, null)
             } else {
                 thisRef.properties[name + X_KEY] = value.x
                 thisRef.properties[name + Y_KEY] = value.y

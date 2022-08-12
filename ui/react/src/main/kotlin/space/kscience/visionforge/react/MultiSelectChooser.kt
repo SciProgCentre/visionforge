@@ -25,7 +25,7 @@ public val MultiSelectChooser: FC<ValueChooserProps> = fc("MultiSelectChooser") 
     select {
         attrs {
             multiple = true
-            values = (props.actual.value?.list ?: emptyList()).mapTo(HashSet()) { it.string }
+            values = (props.meta.value?.list ?: emptyList()).mapTo(HashSet()) { it.string }
             onChangeFunction = onChange
         }
         props.descriptor?.allowedValues?.forEach { optionValue ->

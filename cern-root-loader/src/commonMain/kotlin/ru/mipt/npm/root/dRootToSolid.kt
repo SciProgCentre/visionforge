@@ -321,7 +321,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
     }
     return if (group.children.isEmpty()) {
         null
-    } else if (group.items.size == 1 && group.properties.raw == null) {
+    } else if (group.items.size == 1 && group.properties.own == null) {
         group.items.values.first().apply { parent = null }
     } else {
         group

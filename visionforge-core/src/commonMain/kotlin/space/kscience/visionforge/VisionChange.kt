@@ -91,8 +91,8 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.onPropertyChange { propertyName ->
-        val newItem = source.properties.raw?.get(propertyName)
+    source.onPropertyChange(this) { propertyName ->
+        val newItem = source.properties.own?.get(propertyName)
         collector().propertyChanged(name, propertyName, newItem)
     }
 
@@ -118,8 +118,8 @@ private fun CoroutineScope.collectChange(
  */
 public fun Vision.flowChanges(
     collectionDuration: Duration,
-    manager: VisionManager = this.manager,
 ): Flow<VisionChange> = flow {
+    val manager = manager?: error("Orphan vision could not collect changes")
 
     var collector = VisionChangeBuilder(manager)
     coroutineScope {

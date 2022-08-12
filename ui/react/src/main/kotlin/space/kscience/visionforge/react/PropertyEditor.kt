@@ -1,13 +1,18 @@
 package space.kscience.visionforge.react
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
-import react.dom.client.createRoot
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.ValueRequirement
@@ -19,17 +24,30 @@ import styled.styledButton
 import styled.styledDiv
 import styled.styledSpan
 
+/**
+ * The display state of a property
+ */
+public sealed class EditorPropertyState {
+    public object Defined : EditorPropertyState()
+    public class Default(public val source: String = "unknown") : EditorPropertyState()
+
+    public object Undefined : EditorPropertyState()
+
+}
+
+
 public external interface PropertyEditorProps : Props {
 
     /**
      * Root config object - always non-null
      */
-    public var meta: ObservableMutableMeta
+    public var meta: MutableMeta
 
-    /**
-     * Provide default item (greyed out if used)
-     */
-    public var withDefault: MetaProvider
+    public var getPropertyState: (Name) -> EditorPropertyState
+
+    public var scope: CoroutineScope
+
+    public var updates: Flow<Name>
 
     /**
      * Full path to the displayed node in [meta]. Could be empty
@@ -54,7 +72,7 @@ private val PropertyEditorItem: FC<PropertyEditorProps> = fc("PropertyEditorItem
 private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { props.expanded ?: true }
     val descriptor: MetaDescriptor? = useMemo(props.descriptor, props.name) { props.descriptor?.get(props.name) }
-    var ownProperty: ObservableMutableMeta by useState { props.meta.getOrCreate(props.name) }
+    var property: MutableMeta by useState { props.meta.getOrCreate(props.name) }
 
     val keys = useMemo(descriptor) {
         buildSet {
@@ -70,17 +88,18 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     val token = props.name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        ownProperty = props.meta.getOrCreate(props.name)
+        property = props.meta.getOrCreate(props.name)
     }
 
     useEffect(props.meta) {
-        props.meta.onChange(props) { updatedName ->
+        val job = props.updates.onEach { updatedName ->
             if (updatedName == props.name) {
                 update()
             }
-        }
+        }.launchIn(props.scope)
+
         cleanup {
-            props.meta.removeListener(props)
+            job.cancel()
         }
     }
 
@@ -115,7 +134,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         styledSpan {
             css {
                 +TreeStyles.treeLabel
-                if (ownProperty.isEmpty()) {
+                if (property.isEmpty()) {
                     +TreeStyles.treeLabelInactive
                 }
             }
@@ -131,8 +150,8 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 ValueChooser {
                     attrs {
                         this.descriptor = descriptor
-                        this.meta = ownProperty
-                        this.actual = props.withDefault.getMeta(props.name) ?: ownProperty
+                        this.meta = property
+                        this.state = props.getPropertyState(props.name)
                     }
                 }
             }
@@ -156,7 +175,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 +"\u00D7"
                 attrs {
-                    if (ownProperty.isEmpty()) {
+                    if (property.isEmpty()) {
                         disabled = true
                     } else {
                         onClickFunction = removeClick
@@ -179,9 +198,11 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                         attrs {
                             this.key = props.name.toString()
                             this.meta = props.meta
-                            this.withDefault = props.withDefault
                             this.name = props.name + token
                             this.descriptor = props.descriptor
+                            this.scope = props.scope
+                            this.getPropertyState = { props.getPropertyState(props.name + token) }
+                            this.updates = props.updates
                         }
                     }
                     //configEditor(props.root, props.name + token, props.descriptor, props.default)
@@ -197,44 +218,51 @@ public val PropertyEditor: FC<PropertyEditorProps> = fc("PropertyEditor") { prop
         attrs {
             this.key = ""
             this.meta = props.meta
-            this.withDefault = props.withDefault
             this.name = Name.EMPTY
             this.descriptor = props.descriptor
             this.expanded = props.expanded
+            this.scope = props.scope
+            this.getPropertyState = props.getPropertyState
+            this.updates = props.updates
         }
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 public fun RBuilder.propertyEditor(
-    ownProperties: ObservableMutableMeta,
-    allProperties: MetaProvider = ownProperties,
+    scope: CoroutineScope,
+    properties: ObservableMutableMeta,
     descriptor: MetaDescriptor? = null,
     key: Any? = null,
     expanded: Boolean? = null,
 ) {
     child(PropertyEditor) {
         attrs {
-            this.meta = ownProperties
-            this.withDefault = allProperties
+            this.meta = properties
             this.descriptor = descriptor
             this.key = key?.toString() ?: ""
             this.expanded = expanded
+            this.scope = scope
+            this.getPropertyState = { name ->
+                if (properties[name] != null) {
+                    EditorPropertyState.Defined
+                } else if (descriptor?.get(name)?.defaultValue != null) {
+                    EditorPropertyState.Default("descriptor")
+                } else {
+                    EditorPropertyState.Undefined
+                }
+            }
+            this.updates = callbackFlow {
+                properties.onChange(scope) { name ->
+                    scope.launch {
+                        send(name)
+                    }
+                }
+
+                invokeOnClose {
+                    properties.removeListener(scope)
+                }
+            }
         }
     }
-}
-
-public fun RBuilder.configEditor(
-    config: ObservableMutableMeta,
-    default: MetaProvider = config,
-    descriptor: MetaDescriptor? = null,
-    key: Any? = null,
-): Unit = propertyEditor(config, default, descriptor, key = key)
-
-public fun Element.configEditor(
-    config: ObservableMutableMeta,
-    default: Meta = config,
-    descriptor: MetaDescriptor? = null,
-    key: Any? = null,
-): Unit = createRoot(this).render {
-    configEditor(config, default, descriptor, key = key)
 }

@@ -4,7 +4,6 @@ import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Color
 import info.laht.threekt.objects.LineSegments
-import space.kscience.visionforge.get
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
 import space.kscience.visionforge.solid.SolidMaterial
@@ -25,7 +24,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            obj.properties[SolidMaterial.MATERIAL_KEY],
+            obj.properties.getProperty(SolidMaterial.MATERIAL_KEY),
             false
         )
 

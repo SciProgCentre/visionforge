@@ -1,5 +1,7 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,14 +18,14 @@ public interface VisionProperties {
     /**
      * Raw Visions own properties without styles, defaults, etc.
      */
-    public val raw: Meta?
+    public val own: Meta?
 
     public val descriptor: MetaDescriptor?
 
     public fun getValue(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean? = null,
+        includeStyles: Boolean? = null,
     ): Value?
 
     /**
@@ -31,10 +33,10 @@ public interface VisionProperties {
      * @param inherit toggles parent node property lookup. Null means inference from descriptor.
      * @param includeStyles toggles inclusion of properties from styles.
      */
-    public operator fun get(
+    public fun getProperty(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean? = null,
+        includeStyles: Boolean? = null,
     ): Meta
 
     public val changes: Flow<Name>
@@ -48,10 +50,10 @@ public interface VisionProperties {
 
 public interface MutableVisionProperties : VisionProperties {
 
-    override operator fun get(
+    override fun getProperty(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean?,
+        includeStyles: Boolean?,
     ): MutableMeta = VisionPropertiesItem(
         this,
         name,
@@ -60,7 +62,7 @@ public interface MutableVisionProperties : VisionProperties {
     )
 
 
-    public operator fun set(
+    public fun setProperty(
         name: Name,
         node: Meta?,
     )
@@ -84,7 +86,7 @@ private class VisionPropertiesItem(
 
     override val items: Map<NameToken, MutableMeta>
         get() {
-            val metaKeys = properties.raw?.getMeta(nodeName)?.items?.keys ?: emptySet()
+            val metaKeys = properties.own?.getMeta(nodeName)?.items?.keys ?: emptySet()
             val descriptorKeys = descriptor?.children?.map { NameToken(it.key) } ?: emptySet()
             val defaultKeys = default?.get(nodeName)?.items?.keys ?: emptySet()
             val inheritFlag = descriptor?.inherited ?: inherit
@@ -119,7 +121,7 @@ private class VisionPropertiesItem(
     )
 
     override fun setMeta(name: Name, node: Meta?) {
-        properties[nodeName + name] = node
+        properties.setProperty(nodeName + name, node)
     }
 
     override fun toString(): String = Meta.toString(this)
@@ -131,11 +133,10 @@ public abstract class AbstractVisionProperties(
     private val vision: Vision,
 ) : MutableVisionProperties {
     override val descriptor: MetaDescriptor? get() = vision.descriptor
-    protected val default: Meta? get() = descriptor?.defaultNode
 
     protected abstract var properties: MutableMeta?
 
-    override val raw: Meta? get() = properties
+    override val own: Meta? get() = properties
 
     @Synchronized
     protected fun getOrCreateProperties(): MutableMeta {
@@ -149,20 +150,24 @@ public abstract class AbstractVisionProperties(
 
     override fun getValue(
         name: Name,
-        inherit: Boolean,
-        includeStyles: Boolean,
+        inherit: Boolean?,
+        includeStyles: Boolean?,
     ): Value? {
-        raw?.get(name)?.value?.let { return it }
-        if (includeStyles) {
+        val descriptor = descriptor?.get(name)
+        val inheritFlag = inherit ?: descriptor?.inherited ?: false
+        val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
+
+        own?.get(name)?.value?.let { return it }
+        if (stylesFlag) {
             vision.getStyleProperty(name)?.value?.let { return it }
         }
-        if (inherit) {
+        if (inheritFlag) {
             vision.parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
         }
-        return default?.get(name)?.value
+        return descriptor?.defaultValue
     }
 
-    override fun set(name: Name, node: Meta?) {
+    override fun setProperty(name: Name, node: Meta?) {
         //TODO check old value?
         if (name.isEmpty()) {
             properties = node?.asMutableMeta()
@@ -188,6 +193,7 @@ public abstract class AbstractVisionProperties(
     private val _changes = MutableSharedFlow<Name>(10)
     override val changes: SharedFlow<Name> get() = _changes
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun invalidate(propertyName: Name) {
         if (propertyName == Vision.STYLE_KEY) {
             vision.styles.asSequence()
@@ -198,21 +204,10 @@ public abstract class AbstractVisionProperties(
                     invalidate(it.key.asName())
                 }
         }
-        vision.manager.context.launch {
+        (vision.manager?.context ?: GlobalScope).launch {
             _changes.emit(propertyName)
         }
     }
-}
-
-public fun VisionProperties.getValue(
-    name: Name,
-    inherit: Boolean? = null,
-    includeStyles: Boolean? = null,
-): Value? {
-    val descriptor = descriptor?.get(name)
-    val inheritFlag = inherit ?: descriptor?.inherited ?: false
-    val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
-    return getValue(name, inheritFlag, stylesFlag)
 }
 
 public fun VisionProperties.getValue(
@@ -222,61 +217,33 @@ public fun VisionProperties.getValue(
 ): Value? = getValue(name.parseAsName(), inherit, includeStyles)
 
 /**
- * Compute the property based on the provided value descriptor. By default, use Vision own descriptor
- */
-public operator fun VisionProperties.get(
-    name: Name,
-    inherit: Boolean? = null,
-    includeStyles: Boolean? = null,
-): Meta {
-    val descriptor: MetaDescriptor? = descriptor?.get(name)
-    val inheritFlag = inherit ?: descriptor?.inherited ?: false
-    val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
-    return get(name, inheritFlag, stylesFlag)
-}
-
-
-/**
  * Get [Vision] property using key as a String
  */
-public operator fun VisionProperties.get(
+public fun VisionProperties.getProperty(
     name: String,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
-): Meta = get(name.parseAsName(), inherit, includeStyles)
-
-
-/**
- * Compute the property based on the provided value descriptor. By default, use Vision own descriptor
- */
-public operator fun MutableVisionProperties.get(
-    name: Name,
-    inherit: Boolean? = null,
-    includeStyles: Boolean? = null,
-): MutableMeta {
-    val descriptor: MetaDescriptor? = descriptor?.get(name)
-    val inheritFlag = inherit ?: descriptor?.inherited ?: false
-    val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
-    return get(name, inheritFlag, stylesFlag)
-}
+): Meta = getProperty(name.parseAsName(), inherit, includeStyles)
 
 /**
  * The root property node with given inheritance and style flags
+ * @param inherit - inherit properties from the [Vision] parent. If null, infer from descriptor
+ * @param includeStyles - include style information. If null, infer from descriptor
  */
 public fun MutableVisionProperties.root(
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
-): MutableMeta = get(Name.EMPTY, inherit, includeStyles)
+): MutableMeta = getProperty(Name.EMPTY, inherit, includeStyles)
 
 
 /**
  * Get [Vision] property using key as a String
  */
-public operator fun MutableVisionProperties.get(
+public fun MutableVisionProperties.getProperty(
     name: String,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
-): MutableMeta = get(name.parseAsName(), inherit, includeStyles)
+): MutableMeta = getProperty(name.parseAsName(), inherit, includeStyles)
 
 
 public operator fun MutableVisionProperties.set(name: Name, value: Number): Unit =

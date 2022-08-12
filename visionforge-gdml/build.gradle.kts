@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
 kotlin {
@@ -11,6 +11,11 @@ kotlin {
             dependencies {
                 api(projects.visionforgeSolid)
                 api("space.kscience:gdml:0.4.0")
+            }
+        }
+        jvmTest{
+            dependencies{
+                implementation("ch.qos.logback:logback-classic:1.2.11")
             }
         }
     }

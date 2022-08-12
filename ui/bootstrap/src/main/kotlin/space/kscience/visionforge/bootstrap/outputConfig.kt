@@ -1,5 +1,6 @@
 package space.kscience.visionforge.bootstrap
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.css.BorderStyle
 import kotlinx.css.Color
 import kotlinx.css.padding
@@ -15,7 +16,6 @@ import react.RBuilder
 import react.dom.attrs
 import react.dom.button
 import react.fc
-import space.kscience.dataforge.meta.withDefault
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.encodeToString
 import space.kscience.visionforge.react.flexColumn
@@ -69,8 +69,8 @@ public val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { prop
             }
         }
         propertyEditor(
-            ownProperties = props.canvasOptions.meta,
-            allProperties = props.canvasOptions.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
+            scope = props.vision?.manager?.context ?: GlobalScope,
+            properties = props.canvasOptions.meta,
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

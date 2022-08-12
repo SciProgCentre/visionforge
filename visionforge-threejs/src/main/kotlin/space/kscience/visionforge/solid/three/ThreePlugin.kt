@@ -1,6 +1,8 @@
 package space.kscience.visionforge.solid.three
 
 import info.laht.threekt.core.Object3D
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
@@ -9,7 +11,6 @@ import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -48,11 +49,11 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public fun buildObject3D(obj: Solid): Object3D = when (obj) {
         is ThreeJsVision -> obj.render(this)
-        is SolidReferenceGroup -> ThreeReferenceFactory.build(this, obj)
+        is SolidReference -> ThreeReferenceFactory.build(this, obj)
         is SolidGroup -> {
             val group = ThreeGroup()
             obj.items.forEach { (token, child) ->
-                if (child is Solid && token != SolidGroup.PROTOTYPES_TOKEN && child.ignore != true) {
+                if (token != SolidGroup.PROTOTYPES_TOKEN && child.ignore != true) {
                     try {
                         val object3D = buildObject3D(child)
                         group[token] = object3D
@@ -67,7 +68,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 updatePosition(obj)
                 //obj.onChildrenChange()
 
-                obj.onPropertyChange { name ->
+                obj.properties.changes.onEach { name ->
                     if (
                         name.startsWith(Solid.POSITION_KEY) ||
                         name.startsWith(Solid.ROTATION_KEY) ||
@@ -78,10 +79,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     } else if (name == Vision.VISIBLE_KEY) {
                         visible = obj.visible ?: true
                     }
-                }
+                }.launchIn(context)
 
-                obj.onStructureChanged(this){ childName ->
-                    val child = get(childName)
+                obj.children.changes.onEach { childName ->
+                    val child = obj.children[childName]
 
                     //removing old object
                     findChild(childName)?.let { oldChild ->
@@ -97,7 +98,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                             logger.error(ex) { "Failed to render $child" }
                         }
                     }
-                }
+                }.launchIn(context)
             }
         }
         is Composite -> compositeFactory.build(this, obj)

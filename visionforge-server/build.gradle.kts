@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.jvm")
+    id("space.kscience.gradle.jvm")
 }
 
 val ktorVersion = npmlibs.versions.ktor.get()

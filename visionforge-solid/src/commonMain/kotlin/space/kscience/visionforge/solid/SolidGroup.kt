@@ -54,7 +54,7 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
      * If prototype is a ref, then it is unfolded automatically.
      */
     override fun getPrototype(name: Name): Solid? =
-        prototypes?.get(name)?.unref ?: (parent as? PrototypeHolder)?.getPrototype(name)
+        prototypes?.get(name)?.prototype ?: (parent as? PrototypeHolder)?.getPrototype(name)
 
     /**
      * Create or edit prototype node as a group

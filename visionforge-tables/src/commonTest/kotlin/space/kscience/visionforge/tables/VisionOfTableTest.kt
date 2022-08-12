@@ -17,7 +17,7 @@ internal class VisionOfTableTest {
         val x by ColumnHeader.typed<Value>()
         val y by ColumnHeader.typed<Value>()
 
-        val table = ColumnTable(100) {
+        val table = ColumnTable<Value>(100) {
             x.fill { it.asValue() }
             y.values = x.values.map { it?.double?.pow(2)?.asValue() }
         }

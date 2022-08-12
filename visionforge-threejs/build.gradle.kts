@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.js")
+    id("space.kscience.gradle.js")
 }
 
 kotlin{

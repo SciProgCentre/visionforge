@@ -107,7 +107,8 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
  */
 public val Context.visionManager: VisionManager get() = fetch(VisionManager)
 
-public fun Vision.encodeToString(): String = manager.encodeToString(this)
+public fun Vision.encodeToString(): String =
+    manager?.encodeToString(this) ?: error("Orphan vision could not be encoded")
 
 /**
  * A root vision attached to [VisionManager]

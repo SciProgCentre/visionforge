@@ -27,13 +27,13 @@ import styled.styledSelect
 
 public external interface ValueChooserProps : Props {
     public var descriptor: MetaDescriptor?
-    public var meta: ObservableMutableMeta
-    public var actual: Meta
+    public var meta: MutableMeta
+    public var state: EditorPropertyState
 }
 
 @JsExport
 public val StringValueChooser: FC<ValueChooserProps> = fc("StringValueChooser") { props ->
-    var value by useState(props.actual.string ?: "")
+    var value by useState(props.meta.string ?: "")
     val keyDown: (Event) -> Unit = { event ->
         if (event.type == "keydown" && event.asDynamic().key == "Enter") {
             value = (event.target as HTMLInputElement).value
@@ -67,7 +67,7 @@ public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser"
         }
         attrs {
             //this.attributes["indeterminate"] = (props.item == null).toString()
-            checked = props.actual.boolean ?: false
+            checked = props.meta.boolean ?: false
             onChangeFunction = handleChange
         }
     }
@@ -75,7 +75,7 @@ public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser"
 
 @JsExport
 public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") { props ->
-    var innerValue by useState(props.actual.string ?: "")
+    var innerValue by useState(props.meta.string ?: "")
     val keyDown: (Event) -> Unit = { event ->
         if (event.type == "keydown" && event.asDynamic().key == "Enter") {
             innerValue = (event.target as HTMLInputElement).value
@@ -113,7 +113,7 @@ public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") 
 
 @JsExport
 public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { props ->
-    var selected by useState(props.actual.string ?: "")
+    var selected by useState(props.meta.string ?: "")
     val handleChange: (Event) -> Unit = {
         selected = (it.target as HTMLSelectElement).value
         props.meta.value = selected.asValue()
@@ -128,7 +128,7 @@ public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { 
             }
         }
         attrs {
-            this.value = props.actual.string ?: ""
+            this.value = props.meta.string ?: ""
             multiple = false
             onChangeFunction = handleChange
         }
@@ -146,7 +146,7 @@ public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { 
             margin(0.px)
         }
         attrs {
-            this.value = props.actual.value?.let { value ->
+            this.value = props.meta.value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
                 else value.string
             } ?: "#000000"

@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
 kscience{
@@ -20,9 +20,14 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
             }
         }
+        jvmTest{
+            dependencies{
+                implementation("ch.qos.logback:logback-classic:1.2.11")
+            }
+        }
     }
 }
 
 readme{
-    maturity = ru.mipt.npm.gradle.Maturity.DEVELOPMENT
+    maturity = space.kscience.gradle.Maturity.DEVELOPMENT
 }

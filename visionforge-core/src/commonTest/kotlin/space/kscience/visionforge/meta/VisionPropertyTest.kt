@@ -2,7 +2,7 @@ package space.kscience.visionforge.meta
 
 import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.VisionGroup
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getProperty
 import space.kscience.visionforge.getValue
 import space.kscience.visionforge.set
 import kotlin.test.Test
@@ -30,7 +30,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyEdit() {
         val vision = VisionGroup()
-        vision.properties["fff.ddd"].apply {
+        vision.properties.getProperty("fff.ddd").apply {
             value = 2.asValue()
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
@@ -40,7 +40,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyUpdate() {
         val vision = VisionGroup()
-        vision.properties["fff"].updateWith(TestScheme) {
+        vision.properties.getProperty("fff").updateWith(TestScheme) {
             ddd = 2
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)

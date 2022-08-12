@@ -16,9 +16,10 @@ import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD
  * Get a vision prototype if it is a [SolidReference] or vision itself if it is not.
  * Unref is recursive, so it always returns a non-reference.
  */
-public val Vision.unref: Solid
+public val Vision.prototype: Solid
     get() = when (this) {
-        is SolidReference -> prototype.unref
+        is SolidReference -> prototype.prototype
+        is SolidReferenceChild -> prototype.prototype
         is Solid -> this
         else -> error("This Vision is neither Solid nor SolidReference")
     }
@@ -55,13 +56,13 @@ public class SolidReference(
                     propertiesInternal = value
                 }
 
-            override val raw: Meta? get() = properties
+            override val own: Meta? get() = properties
 
-            override fun get(name: Name, inherit: Boolean, includeStyles: Boolean): MutableMeta {
-                return properties?.getMeta(name) ?: prototype.properties.get(name, inherit, includeStyles)
+            override fun getProperty(name: Name, inherit: Boolean?, includeStyles: Boolean?): MutableMeta {
+                return properties?.getMeta(name) ?: prototype.properties.getProperty(name, inherit, includeStyles)
             }
 
-            override fun getValue(name: Name, inherit: Boolean, includeStyles: Boolean): Value? {
+            override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? {
                 return properties?.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
             }
         }
@@ -105,23 +106,23 @@ internal class SolidReferenceChild(
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
         override val descriptor: MetaDescriptor get() = this@SolidReferenceChild.descriptor
 
-        override val raw: MutableMeta by lazy { owner.properties[childToken(childName).asName()] }
+        override val own: MutableMeta by lazy { owner.properties.getProperty(childToken(childName).asName()) }
 
-        override fun get(name: Name, inherit: Boolean, includeStyles: Boolean): MutableMeta =
-            raw.getMeta(name) ?: prototype.properties.get(name, inherit, includeStyles)
+        override fun getProperty(name: Name, inherit: Boolean?, includeStyles: Boolean?): MutableMeta =
+            own.getMeta(name) ?: prototype.properties.getProperty(name, inherit, includeStyles)
 
         override fun getValue(
             name: Name,
-            inherit: Boolean,
-            includeStyles: Boolean,
-        ): Value? = raw.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
+            inherit: Boolean?,
+            includeStyles: Boolean?,
+        ): Value? = own.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
-        override fun set(name: Name, node: Meta?) {
-            raw.setMeta(name, node)
+        override fun setProperty(name: Name, node: Meta?) {
+            own.setMeta(name, node)
         }
 
         override fun setValue(name: Name, value: Value?) {
-            raw.setValue(name, value)
+            own.setValue(name, value)
         }
 
         override val changes: Flow<Name> get() = owner.properties.changes.filter { it.startsWith(childToken(childName)) }

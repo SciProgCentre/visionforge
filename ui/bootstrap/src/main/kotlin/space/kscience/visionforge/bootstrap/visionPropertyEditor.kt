@@ -3,13 +3,16 @@ package space.kscience.visionforge.bootstrap
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.client.createRoot
+import react.key
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.get
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.computeProperties
 import space.kscience.visionforge.getStyle
+import space.kscience.visionforge.react.EditorPropertyState
+import space.kscience.visionforge.react.PropertyEditor
 import space.kscience.visionforge.react.metaViewer
-import space.kscience.visionforge.react.propertyEditor
 import space.kscience.visionforge.react.render
+import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.SolidReference
 import space.kscience.visionforge.styles
 
@@ -20,12 +23,25 @@ public fun RBuilder.visionPropertyEditor(
 ) {
 
     card("Properties") {
-        propertyEditor(
-            ownProperties = vision.meta,
-            allProperties = vision.computeProperties(),
-            descriptor = descriptor,
-            key = key
-        )
+        child(PropertyEditor){
+            attrs{
+                this.key = key?.toString()
+                this.meta = vision.properties.root()
+                this.updates = vision.properties.changes
+                this.descriptor = descriptor
+                this.scope = vision.manager?.context ?: error("Orphan vision could not be observed")
+                this.getPropertyState = {name->
+                    if(vision.properties.own?.get(name)!= null){
+                        EditorPropertyState.Defined
+                    } else if(vision.properties.root()[name] != null){
+                        // TODO differentiate
+                        EditorPropertyState.Default()
+                    } else {
+                        EditorPropertyState.Undefined
+                    }
+                }
+            }
+        }
     }
     val styles = if (vision is SolidReference) {
         (vision.styles + vision.prototype.styles).distinct()

@@ -20,7 +20,7 @@ internal fun Solid.updateFrom(other: Solid): Solid {
     scaleX *= other.scaleX
     scaleY *= other.scaleY
     scaleZ *= other.scaleZ
-    properties[Name.EMPTY] = other.properties.root()
+    properties.setProperty(Name.EMPTY, other.properties.root())
     return this
 }
 

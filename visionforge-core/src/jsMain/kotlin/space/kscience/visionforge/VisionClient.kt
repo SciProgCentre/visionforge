@@ -115,7 +115,7 @@ public class VisionClient : AbstractPlugin() {
 
                     onopen = {
                         feedbackJob = vision.flowChanges(
-                            feedbackAggregationTime.milliseconds
+                            feedbackAggregationTime.milliseconds,
                         ).onEach { change ->
                             send(visionManager.encodeToString(change))
                         }.launchIn(visionManager.context)

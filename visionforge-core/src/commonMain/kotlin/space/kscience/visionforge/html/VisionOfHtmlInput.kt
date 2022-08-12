@@ -9,7 +9,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 
 //TODO replace by something
-internal val Vision.mutableProperties get() = properties[Name.EMPTY, false, false]
+internal val Vision.mutableProperties get() = properties.getProperty(Name.EMPTY, false, false)
 
 @Serializable
 public abstract class VisionOfHtmlInput : AbstractVision() {

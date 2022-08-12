@@ -7,20 +7,21 @@ import space.kscience.dataforge.names.cutFirst
 import space.kscience.dataforge.names.firstOrNull
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Solid
-import space.kscience.visionforge.solid.SolidReferenceGroup
-import space.kscience.visionforge.solid.SolidReferenceGroup.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
+import space.kscience.visionforge.solid.SolidReference
+import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 import kotlin.reflect.KClass
 
-public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
+public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
     private val cache = HashMap<Solid, Object3D>()
 
-    override val type: KClass<SolidReferenceGroup> = SolidReferenceGroup::class
+    override val type: KClass<SolidReference> = SolidReference::class
 
     private fun Object3D.replicate(): Object3D {
         return when (this) {
             is Mesh -> Mesh(geometry, material).also {
                 it.applyMatrix4(matrix)
             }
+
             else -> clone(false)
         }.also { obj: Object3D ->
             obj.name = this.name
@@ -30,7 +31,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         }
     }
 
-    override fun build(three: ThreePlugin, obj: SolidReferenceGroup): Object3D {
+    override fun build(three: ThreePlugin, obj: SolidReference): Object3D {
         val template = obj.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)
@@ -39,18 +40,20 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReferenceGroup> {
         val object3D: Object3D = cachedObject.replicate()
         object3D.updatePosition(obj)
 
-        if(object3D is Mesh){
+        if (object3D is Mesh) {
             //object3D.material = ThreeMaterials.buildMaterial(obj.getProperty(SolidMaterial.MATERIAL_KEY).node!!)
             object3D.applyProperties(obj)
         }
 
         //TODO apply child properties
 
-        obj.onPropertyChange { name->
+        obj.onPropertyChange { name ->
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
+                val childName = name.firstOrNull()?.index?.let(Name::parse)
+                    ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val referenceChild = obj.children[childName] ?: error("Reference child with name '$childName' not found")
+                val referenceChild =
+                    obj.children[childName] ?: error("Reference child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             } else {

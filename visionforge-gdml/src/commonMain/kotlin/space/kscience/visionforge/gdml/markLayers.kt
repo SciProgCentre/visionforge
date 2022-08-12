@@ -1,5 +1,6 @@
 package space.kscience.visionforge.gdml
 
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.info
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.names.Name
@@ -50,7 +51,7 @@ private fun VisionCounterTree.topToBottom(): Sequence<VisionCounterTree> = seque
 }
 
 public fun SolidGroup.markLayers(thresholds: List<Int> = listOf(500, 1000, 20000, 50000)) {
-    val logger = manager.context.logger
+    val logger = manager?.context?.logger ?: Global.logger
     val counterTree = VisionCounterTree(Name.EMPTY, this, hashMapOf())
     val totalCount = counterTree.childrenCount
     if (totalCount > (thresholds.firstOrNull() ?: 0)) {

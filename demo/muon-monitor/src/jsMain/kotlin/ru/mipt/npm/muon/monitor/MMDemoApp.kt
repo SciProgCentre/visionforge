@@ -17,6 +17,7 @@ private class MMDemoApp : Application {
         val context = Context("MM-demo") {
             plugin(ThreePlugin)
         }
+
         val visionManager = context.fetch(VisionManager)
 
         val model = Model(visionManager)

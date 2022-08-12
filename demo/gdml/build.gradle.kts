@@ -1,8 +1,8 @@
-import ru.mipt.npm.gradle.DependencyConfiguration
-import ru.mipt.npm.gradle.FXModule
+import space.kscience.gradle.DependencyConfiguration
+import space.kscience.gradle.FXModule
 
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
     application
 }
 
@@ -36,7 +36,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(project(":visionforge-fx"))
-                implementation("ch.qos.logback:logback-classic:1.2.5")
+                implementation("ch.qos.logback:logback-classic:1.2.11")
             }
         }
         jsMain {

@@ -92,6 +92,7 @@ public class VisionServer internal constructor(
                 header()
             }
             title(title)
+            consumer.header()
         }
         body {
             //Load the fragment and remember all loaded visions

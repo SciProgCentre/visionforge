@@ -107,7 +107,7 @@ public class ExtrudeBuilder(
     }
 
     internal fun build(): Extruded = Extruded(shape, layers).apply {
-        this.properties[Name.EMPTY] = this@ExtrudeBuilder.properties
+        this.properties.setProperty(Name.EMPTY, this@ExtrudeBuilder.properties)
     }
 }
 

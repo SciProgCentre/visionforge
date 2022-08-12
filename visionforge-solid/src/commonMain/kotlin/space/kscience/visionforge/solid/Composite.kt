@@ -33,7 +33,7 @@ public inline fun MutableVisionContainer<Solid>.composite(
     }
     val res = Composite(type, children[0], children[1])
 
-    res.properties[Name.EMPTY] = group.properties.raw
+    res.properties.setProperty(Name.EMPTY, group.properties.own)
 
     set(name, res)
     return res
@@ -49,7 +49,7 @@ public fun SolidGroup.smartComposite(
     @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
     val group = SolidGroup(builder)
-    if (name == null && group.properties.raw == null) {
+    if (name == null && group.properties.own == null) {
         //append directly to group if no properties are defined
         group.items.forEach { (_, value) ->
             value.parent = null

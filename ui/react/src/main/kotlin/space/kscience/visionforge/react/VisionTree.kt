@@ -16,6 +16,7 @@ import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.asSequence
 import space.kscience.visionforge.isEmpty
 import styled.css
 import styled.styledDiv
@@ -59,9 +60,9 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
     val obj = props.obj
 
     //display as node if any child is visible
-    if (obj is VisionGroup<*>) {
+    if (obj is VisionGroup) {
         flexRow {
-            if (obj.items.any { !it.key.body.startsWith("@") }) {
+            if (obj.children.keys.any { !it.body.startsWith("@") }) {
                 styledSpan {
                     css {
                         +TreeStyles.treeCaret
@@ -81,9 +82,9 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                 css {
                     +TreeStyles.tree
                 }
-                obj.items.entries
-                    .filter { !it.key.toString().startsWith("@") } // ignore statics and other hidden children
-                    .sortedBy { (it.value as? VisionGroup<*>)?.isEmpty() ?: true } // ignore empty groups
+                obj.children.asSequence()
+                    .filter { !it.first.toString().startsWith("@") } // ignore statics and other hidden children
+                    .sortedBy { (it.second as? VisionGroup)?.children?.isEmpty() ?: true } // ignore empty groups
                     .forEach { (childToken, child) ->
                         styledDiv {
                             css {
@@ -92,7 +93,7 @@ private fun RBuilder.visionTree(props: ObjectTreeProps): Unit {
                             child(ObjectTree) {
                                 attrs {
                                     this.name = props.name + childToken
-                                    this.obj = child.vision
+                                    this.obj = child
                                     this.selected = props.selected
                                     this.clickCallback = props.clickCallback
                                 }

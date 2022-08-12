@@ -1,5 +1,6 @@
 package space.kscience.visionforge.ring
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.css.BorderStyle
 import kotlinx.css.Color
 import kotlinx.css.padding
@@ -18,7 +19,6 @@ import react.fc
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab
-import space.kscience.dataforge.meta.withDefault
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.encodeToString
@@ -75,8 +75,8 @@ internal val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { pr
             }
         }
         propertyEditor(
-            ownProperties = props.options.meta,
-            allProperties = props.options.meta.withDefault(Canvas3DOptions.descriptor.defaultNode),
+            scope = props.vision?.manager?.context ?: GlobalScope,
+            properties = props.options.meta,
             descriptor = Canvas3DOptions.descriptor,
             expanded = false
         )

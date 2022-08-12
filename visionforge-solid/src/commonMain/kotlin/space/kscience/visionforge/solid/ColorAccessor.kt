@@ -29,7 +29,7 @@ public class ColorAccessor(
 }
 
 public fun Vision.color(): ReadOnlyProperty<Vision, ColorAccessor> = ReadOnlyProperty { _, property ->
-    ColorAccessor(properties.root(), property.name.asName())
+    ColorAccessor(properties.root(true), property.name.asName())
 }
 
 public var ColorAccessor?.string: String?

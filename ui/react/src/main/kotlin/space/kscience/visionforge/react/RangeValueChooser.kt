@@ -20,7 +20,7 @@ import styled.styledInput
 
 @JsExport
 public val RangeValueChooser: FC<ValueChooserProps> = fc("RangeValueChooser") { props ->
-    var innerValue by useState(props.actual.double)
+    var innerValue by useState(props.meta.double)
     var rangeDisabled: Boolean by useState(props.meta.value == null)
 
     val handleDisable: (Event) -> Unit = {

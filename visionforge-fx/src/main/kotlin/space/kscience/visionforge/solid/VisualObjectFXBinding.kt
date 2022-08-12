@@ -6,7 +6,6 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.get
 import space.kscience.visionforge.onPropertyChange
 import tornadofx.*
 
@@ -35,7 +34,7 @@ public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vi
     public operator fun get(key: Name): ObjectBinding<Meta?> {
         return bindings.getOrPut(key) {
             object : ObjectBinding<Meta?>() {
-                override fun computeValue(): Meta = obj.properties[key]
+                override fun computeValue(): Meta = obj.properties.getProperty(key)
             }
         }
     }

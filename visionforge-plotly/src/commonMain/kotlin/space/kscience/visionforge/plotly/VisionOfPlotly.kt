@@ -16,7 +16,7 @@ import space.kscience.visionforge.root
 public class VisionOfPlotly private constructor() : AbstractVision() {
 
     public constructor(plot: Plot) : this() {
-        properties[Name.EMPTY] = plot.meta
+        properties.setProperty(Name.EMPTY, plot.meta)
     }
 
     public val plot: Plot get() = Plot(properties.root().asObservable())
