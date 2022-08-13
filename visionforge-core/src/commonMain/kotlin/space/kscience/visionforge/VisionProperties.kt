@@ -61,23 +61,24 @@ public interface MutableVisionProperties : VisionProperties {
         includeStyles,
     )
 
-
     public fun setProperty(
         name: Name,
         node: Meta?,
+        notify: Boolean = true,
     )
 
     public fun setValue(
         name: Name,
         value: Value?,
+        notify: Boolean = true,
     )
 }
 
-public fun MutableVisionProperties.remove(name: Name){
+public fun MutableVisionProperties.remove(name: Name) {
     setProperty(name, null)
 }
 
-public fun MutableVisionProperties.remove(name: String){
+public fun MutableVisionProperties.remove(name: String) {
     remove(name.parseAsName())
 }
 
@@ -180,7 +181,7 @@ public abstract class AbstractVisionProperties(
         return descriptor?.defaultValue
     }
 
-    override fun setProperty(name: Name, node: Meta?) {
+    override fun setProperty(name: Name, node: Meta?, notify: Boolean) {
         //TODO check old value?
         if (name.isEmpty()) {
             properties = node?.asMutableMeta()
@@ -189,25 +190,42 @@ public abstract class AbstractVisionProperties(
         } else {
             getOrCreateProperties().setMeta(name, node)
         }
-        invalidate(name)
+        if (notify) {
+            invalidate(name)
+        }
     }
 
-    override fun setValue(name: Name, value: Value?) {
+    override fun setValue(name: Name, value: Value?, notify: Boolean) {
         //TODO check old value?
         if (value == null) {
             properties?.getMeta(name)?.value = null
         } else {
             getOrCreateProperties().setValue(name, value)
         }
-        invalidate(name)
+        if (notify) {
+            invalidate(name)
+        }
     }
 
     @Transient
-    private val _changes = MutableSharedFlow<Name>()
-    override val changes: SharedFlow<Name> get() = _changes
+    protected val changesInternal = MutableSharedFlow<Name>()
+    override val changes: SharedFlow<Name> get() = changesInternal
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun invalidate(propertyName: Name) {
+        //send update signal
+        @OptIn(DelicateCoroutinesApi::class)
+        (vision.manager?.context ?: GlobalScope).launch {
+            changesInternal.emit(propertyName)
+        }
+
+        //notify children if there are any
+        if (vision is VisionGroup) {
+            vision.children.values.forEach {
+                it.properties.invalidate(propertyName)
+            }
+        }
+
+        // update styles
         if (propertyName == Vision.STYLE_KEY) {
             vision.styles.asSequence()
                 .mapNotNull { vision.getStyle(it) }
@@ -216,9 +234,6 @@ public abstract class AbstractVisionProperties(
                 .forEach {
                     invalidate(it.key.asName())
                 }
-        }
-        (vision.manager?.context ?: GlobalScope).launch {
-            _changes.emit(propertyName)
         }
     }
 }

@@ -14,15 +14,17 @@ import kotlin.reflect.KClass
 public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<SolidReference> {
     override val type: KClass<in SolidReference> get() = SolidReference::class
 
-    override fun invoke(obj: SolidReference, binding: VisualObjectFXBinding): Node {
+    override fun invoke(obj: SolidReference, binding: VisionFXBinding): Node {
         val prototype = obj.prototype
         val node = plugin.buildNode(prototype)
 
-        obj.onPropertyChange { name->
+        obj.onPropertyChange { name ->
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
+                val childName = name.firstOrNull()?.index?.let(Name::parse)
+                    ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val referenceChild = obj.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
+                val referenceChild =
+                    obj.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             }

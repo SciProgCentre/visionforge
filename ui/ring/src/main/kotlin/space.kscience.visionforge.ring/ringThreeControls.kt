@@ -1,5 +1,6 @@
 package space.kscience.visionforge.ring
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.css.BorderStyle
 import kotlinx.css.Color
@@ -52,6 +53,7 @@ internal external interface CanvasControlsProps : Props {
     public var vision: Vision?
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 internal val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {

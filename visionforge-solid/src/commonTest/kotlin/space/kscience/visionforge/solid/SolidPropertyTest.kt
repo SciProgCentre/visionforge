@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
@@ -10,8 +11,9 @@ import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("UNUSED_VARIABLE")
-class PropertyTest {
+class SolidPropertyTest {
     @Test
     fun testColor() {
         val box = Box(10.0f, 10.0f, 10.0f)
@@ -23,7 +25,6 @@ class PropertyTest {
         assertEquals("pink", box.color.string)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testColorUpdate() = runTest(dispatchTimeoutMs = 200) {
         val box = Box(10.0f, 10.0f, 10.0f)
@@ -31,11 +32,12 @@ class PropertyTest {
         val c = CompletableDeferred<String?>()
 
 
-        val subscription = box.onPropertyChange(this) {
-            if (it == SolidMaterial.MATERIAL_COLOR_KEY) {
+        val subscription = box.onPropertyChange(this) { key ->
+            if (key == SolidMaterial.MATERIAL_COLOR_KEY) {
                 c.complete(box.color.string)
             }
         }
+        delay(5)
 
         box.material {
             color.set("pink")

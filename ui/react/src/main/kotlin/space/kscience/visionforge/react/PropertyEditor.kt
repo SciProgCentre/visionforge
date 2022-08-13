@@ -74,6 +74,8 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     val descriptor: MetaDescriptor? = useMemo(props.descriptor, props.name) { props.descriptor?.get(props.name) }
     var property: MutableMeta by useState { props.meta.getOrCreate(props.name) }
 
+    val defined  = props.getPropertyState(props.name) == EditorPropertyState.Defined
+
     val keys = useMemo(descriptor) {
         buildSet {
             descriptor?.children?.filterNot {
@@ -134,7 +136,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         styledSpan {
             css {
                 +TreeStyles.treeLabel
-                if (property.isEmpty()) {
+                if (!defined) {
                     +TreeStyles.treeLabelInactive
                 }
             }
@@ -175,7 +177,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 +"\u00D7"
                 attrs {
-                    if (property.isEmpty()) {
+                    if (!defined) {
                         disabled = true
                     } else {
                         onClickFunction = removeClick

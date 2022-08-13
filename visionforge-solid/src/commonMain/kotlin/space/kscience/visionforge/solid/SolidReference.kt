@@ -1,6 +1,9 @@
 package space.kscience.visionforge.solid
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -65,6 +68,25 @@ public class SolidReference(
             override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? {
                 return properties?.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
             }
+
+            override fun invalidate(propertyName: Name) {
+                //send update signal
+                @OptIn(DelicateCoroutinesApi::class)
+                (manager?.context ?: GlobalScope).launch {
+                    changesInternal.emit(propertyName)
+                }
+
+                // update styles
+                if (propertyName == Vision.STYLE_KEY) {
+                    styles.asSequence()
+                        .mapNotNull { getStyle(it) }
+                        .flatMap { it.items.asSequence() }
+                        .distinctBy { it.key }
+                        .forEach {
+                            invalidate(it.key.asName())
+                        }
+                }
+            }
         }
     }
 
@@ -117,11 +139,11 @@ internal class SolidReferenceChild(
             includeStyles: Boolean?,
         ): Value? = own.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
-        override fun setProperty(name: Name, node: Meta?) {
+        override fun setProperty(name: Name, node: Meta?, notify: Boolean) {
             own.setMeta(name, node)
         }
 
-        override fun setValue(name: Name, value: Value?) {
+        override fun setValue(name: Name, value: Value?, notify: Boolean) {
             own.setValue(name, value)
         }
 

@@ -45,7 +45,7 @@ public class FX3DPlugin : AbstractPlugin() {
     }
 
     public fun buildNode(obj: Solid): Node {
-        val binding = VisualObjectFXBinding(this, obj)
+        val binding = VisionFXBinding(this, obj)
         return when (obj) {
             is SolidReference -> referenceFactory(obj, binding)
             is SolidGroup -> {
@@ -150,7 +150,7 @@ public interface FX3DFactory<in T : Solid> {
 
     public val type: KClass<in T>
 
-    public operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
+    public operator fun invoke(obj: T, binding: VisionFXBinding): Node
 
     public companion object {
         public const val TYPE: String = "fx3DFactory"

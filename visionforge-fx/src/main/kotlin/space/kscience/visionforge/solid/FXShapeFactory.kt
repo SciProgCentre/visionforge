@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 public object FXShapeFactory : FX3DFactory<GeometrySolid> {
     override val type: KClass<in GeometrySolid> get() = GeometrySolid::class
 
-    override fun invoke(obj: GeometrySolid, binding: VisualObjectFXBinding): MeshView {
+    override fun invoke(obj: GeometrySolid, binding: VisionFXBinding): MeshView {
         val mesh = FXGeometryBuilder().apply { obj.toGeometry(this) }.build()
         return MeshView(mesh)
     }

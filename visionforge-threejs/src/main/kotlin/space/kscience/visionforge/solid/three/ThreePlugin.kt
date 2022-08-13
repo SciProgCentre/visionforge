@@ -11,6 +11,7 @@ import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -68,7 +69,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 updatePosition(obj)
                 //obj.onChildrenChange()
 
-                obj.properties.changes.onEach { name ->
+                obj.onPropertyChange(context) { name ->
                     if (
                         name.startsWith(Solid.POSITION_KEY) ||
                         name.startsWith(Solid.ROTATION_KEY) ||
@@ -79,7 +80,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     } else if (name == Vision.VISIBLE_KEY) {
                         visible = obj.visible ?: true
                     }
-                }.launchIn(context)
+                }
 
                 obj.children.changes.onEach { childName ->
                     val child = obj.children.getChild(childName)
@@ -101,6 +102,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 }.launchIn(context)
             }
         }
+
         is Composite -> compositeFactory.build(this, obj)
         else -> {
             //find specialized factory for this type if it is present
@@ -179,6 +181,7 @@ internal fun Object3D.getOrCreateGroup(name: Name): Object3D {
                 this.add(group)
             }
         }
+
         else -> getOrCreateGroup(name.tokens.first().asName()).getOrCreateGroup(name.cutFirst())
     }
 }

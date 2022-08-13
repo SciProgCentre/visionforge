@@ -37,7 +37,7 @@ public fun Vision.useProperty(
     includeStyles: Boolean? = null,
     scope: CoroutineScope? = manager?.context,
     callBack: (Meta) -> Unit,
-): Job = useProperty(propertyName.parseAsName(),inherit, includeStyles, scope, callBack)
+): Job = useProperty(propertyName.parseAsName(), inherit, includeStyles, scope, callBack)
 
 public fun <V : Vision, T> V.useProperty(
     property: KProperty1<V, T>,

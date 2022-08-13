@@ -30,7 +30,7 @@ public class GdmlLoaderOptions {
         styleCache.getOrPut(Name.parse(name)) {
             Meta(builder)
         }
-        useStyle(name)
+        useStyle(name, false)
     }
 
     public fun Solid.transparent() {

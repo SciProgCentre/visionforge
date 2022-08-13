@@ -43,7 +43,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
         }
 
         //add listener to object properties
-        obj.onPropertyChange { name ->
+        obj.onPropertyChange { name->
             when {
                 name.startsWith(Solid.GEOMETRY_KEY) -> {
                     val oldGeometry = mesh.geometry

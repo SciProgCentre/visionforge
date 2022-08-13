@@ -83,10 +83,12 @@ public var Vision.styles: List<String>
 public val Vision.styleSheet: StyleSheet get() = StyleSheet(this)
 
 /**
- * Add style name to the list of styles to be resolved later. The style with given name does not necessary exist at the moment.
+ * Add style name to the list of styles to be resolved later.
+ * The style with given name does not necessary exist at the moment.
  */
-public fun Vision.useStyle(name: String) {
-    styles = (properties.own?.get(Vision.STYLE_KEY)?.stringList ?: emptyList()) + name
+public fun Vision.useStyle(name: String, notify: Boolean = true) {
+    val newStyle = properties.own?.get(Vision.STYLE_KEY)?.value?.list?.plus(name.asValue()) ?: listOf(name.asValue())
+    properties.setValue(Vision.STYLE_KEY, newStyle.asValue(), notify)
 }
 
 

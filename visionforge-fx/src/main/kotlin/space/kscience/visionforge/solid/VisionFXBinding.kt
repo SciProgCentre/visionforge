@@ -12,7 +12,7 @@ import tornadofx.*
 /**
  * A caching binding collection for [Vision] properties
  */
-public class VisualObjectFXBinding(public val fx: FX3DPlugin, public val obj: Vision) {
+public class VisionFXBinding(public val fx: FX3DPlugin, public val obj: Vision) {
     private val bindings = HashMap<Name, ObjectBinding<Meta?>>()
 
     init {

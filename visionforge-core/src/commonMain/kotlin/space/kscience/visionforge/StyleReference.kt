@@ -18,10 +18,10 @@ private tailrec fun styleIsDefined(vision: Vision, reference: StyleReference): B
 }
 
 @VisionBuilder
-public fun Vision.useStyle(reference: StyleReference) {
+public fun Vision.useStyle(reference: StyleReference, notify: Boolean = true) {
     //check that style is defined in a parent
     //check(styleIsDefined(this, reference)) { "Style reference does not belong to a Vision parent" }
-    useStyle(reference.name)
+    useStyle(reference.name, notify)
 }
 
 @VisionBuilder

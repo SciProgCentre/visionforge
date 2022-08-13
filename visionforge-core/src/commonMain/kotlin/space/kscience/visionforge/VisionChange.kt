@@ -119,7 +119,7 @@ private fun CoroutineScope.collectChange(
 public fun Vision.flowChanges(
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
-    val manager = manager?: error("Orphan vision could not collect changes")
+    val manager = manager ?: error("Orphan vision could not collect changes")
 
     var collector = VisionChangeBuilder(manager)
     coroutineScope {

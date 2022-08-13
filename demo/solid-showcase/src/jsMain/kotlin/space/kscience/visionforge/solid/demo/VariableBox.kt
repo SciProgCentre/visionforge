@@ -59,6 +59,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
                     material.color.setRGB(r.toFloat() / 256, g.toFloat() / 256, b.toFloat() / 256)
                     mesh.updateMatrix()
                 }
+
                 name.startsWith(ThreeMeshFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
                 else -> mesh.updateProperty(this@VariableBox, name)
             }

@@ -86,7 +86,9 @@ public abstract class VisionTagConsumer<R>(
     ): T = div {
         id = resolveId(name)
         classes = setOf(OUTPUT_CLASS)
-        vision.setAsRoot(manager)
+        if (vision.parent == null) {
+            vision.setAsRoot(manager)
+        }
         attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
         if (!outputMeta.isEmpty()) {
             //Hard-code output configuration

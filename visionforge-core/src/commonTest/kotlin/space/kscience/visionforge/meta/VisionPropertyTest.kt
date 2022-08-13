@@ -1,9 +1,7 @@
 package space.kscience.visionforge.meta
 
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
@@ -20,6 +18,7 @@ private class TestScheme : Scheme() {
     companion object : SchemeSpec<TestScheme>(::TestScheme)
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class VisionPropertyTest {
 
     private val manager = Global.fetch(VisionManager)
@@ -68,56 +67,63 @@ internal class VisionPropertyTest {
 
         val child = group.children["child"]!!
 
-        var value: Value? = null
+        val deferred: CompletableDeferred<Value?> = CompletableDeferred()
 
         var callCounter = 0
 
-        child.useProperty("test", inherit = true) {
+        val subscription = child.useProperty("test", inherit = true) {
+            deferred.complete(it.value)
             callCounter++
-            value = it.value
         }
 
-        assertEquals(22, value?.int)
+        assertEquals(22, deferred.await()?.int)
         assertEquals(1, callCounter)
 
         child.properties.remove("test")
 
-        //Need this to avoid the race
-        delay(20)
-
         assertEquals(11, child.properties.getProperty("test", inherit = true).int)
-        assertEquals(11, value?.int)
-        assertEquals(2, callCounter)
+//        assertEquals(11, deferred.await()?.int)
+//        assertEquals(2, callCounter)
+        subscription.cancel()
     }
 
     @Test
     fun testChildrenPropertyFlow() = runTest(dispatchTimeoutMs = 200) {
         val group = Global.fetch(VisionManager).group {
+
             properties {
                 "test" put 11
             }
+
             group("child") {
                 properties {
                     "test" put 22
                 }
             }
+
         }
 
         val child = group.children["child"]!!
 
         launch {
             child.flowPropertyValue("test", inherit = true).collectIndexed { index, value ->
-                if (index == 0) {
-                    assertEquals(22, value?.int)
-                } else if (index == 1) {
-                    assertEquals(11, value?.int)
-                    cancel()
+                when (index) {
+                    0 -> assertEquals(22, value?.int)
+                    1 -> assertEquals(11, value?.int)
+                    2 -> {
+                        assertEquals(33, value?.int)
+                        cancel()
+                    }
                 }
             }
         }
+
         //wait for subscription to be created
-        delay(10)
+        delay(5)
 
         child.properties.remove("test")
+
+        delay(50)
+        group.properties["test"] = 33
     }
 }

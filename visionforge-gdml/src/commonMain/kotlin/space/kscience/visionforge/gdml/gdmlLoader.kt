@@ -352,7 +352,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         val rootStyle by final.style("gdml") {
             Solid.ROTATION_ORDER_KEY put RotationOrder.ZXY
         }
-        final.useStyle(rootStyle)
+        final.useStyle(rootStyle, false)
 
         final.prototypes {
             proto.items.forEach { (token, item) ->
