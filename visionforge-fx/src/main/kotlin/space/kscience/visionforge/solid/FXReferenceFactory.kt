@@ -22,7 +22,7 @@ public class FXReferenceFactory(public val plugin: FX3DPlugin) : FX3DFactory<Sol
             if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
                 val childName = name.firstOrNull()?.index?.let(Name::parse) ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
-                val referenceChild = obj.children[childName] ?: error("Reference child with name '$childName' not found")
+                val referenceChild = obj.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
                 val child = node.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             }

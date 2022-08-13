@@ -5,7 +5,7 @@ import info.laht.threekt.geometries.SphereGeometry
 import space.kscience.visionforge.solid.Sphere
 import space.kscience.visionforge.solid.detail
 
-public object ThreeSphereFactory : MeshThreeFactory<Sphere>(Sphere::class) {
+public object ThreeSphereFactory : ThreeMeshFactory<Sphere>(Sphere::class) {
     override fun buildGeometry(obj: Sphere): BufferGeometry {
         return obj.detail?.let {detail ->
             SphereGeometry(

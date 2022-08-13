@@ -16,6 +16,7 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.Solid
+import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
 
@@ -26,6 +27,8 @@ class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 
     private val three = Global.fetch(ThreePlugin)
+
+    override val solids: Solids get() = three.solids
 
     init {
         element.clear()

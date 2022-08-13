@@ -11,10 +11,8 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.TYPE
-import kotlin.reflect.KProperty1
 
 /**
  * A root type for display hierarchy
@@ -73,18 +71,3 @@ public fun Vision.onPropertyChange(
 ): Job = properties.changes.onEach {
     callback(it)
 }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
-
-
-public fun <V : Vision, T> V.useProperty(
-    property: KProperty1<V, T>,
-    scope: CoroutineScope? = manager?.context,
-    callBack: V.(T) -> Unit,
-): Job {
-    //Pass initial value.
-    callBack(property.get(this))
-    return properties.changes.onEach { name ->
-        if (name.startsWith(property.name.asName())) {
-            callBack(property.get(this@useProperty))
-        }
-    }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
-}

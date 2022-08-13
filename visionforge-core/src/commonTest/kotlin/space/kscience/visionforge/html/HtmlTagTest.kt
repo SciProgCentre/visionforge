@@ -30,7 +30,7 @@ fun FlowContent.renderVisionFragment(
 
 
 @DFExperimental
-private fun VisionOutput.base(block: VisionGroup.() -> Unit) = VisionGroup().apply(block)
+private fun VisionOutput.base(block: VisionGroup.() -> Unit) = context.visionManager.group().apply(block)
 
 @DFExperimental
 class HtmlTagTest {

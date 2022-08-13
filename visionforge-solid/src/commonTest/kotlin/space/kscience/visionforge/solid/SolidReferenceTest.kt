@@ -3,7 +3,7 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.json.encodeToJsonElement
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.get
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import space.kscience.visionforge.style
 import space.kscience.visionforge.useStyle
 import kotlin.test.Test
@@ -24,7 +24,7 @@ class SolidReferenceTest {
 
     @Test
     fun testReferenceProperty(){
-        assertEquals("blue", (groupWithReference.children["test"] as Solid).color.string)
+        assertEquals("blue", (groupWithReference.children.getChild("test") as Solid).color.string)
     }
 
     @Test
@@ -32,6 +32,6 @@ class SolidReferenceTest {
         val serialized = Solids.jsonForSolids.encodeToJsonElement(groupWithReference)
         val deserialized = Solids.jsonForSolids.decodeFromJsonElement(SolidGroup.serializer(), serialized)
         assertEquals(groupWithReference.items["test"]?.color.string, deserialized.items["test"]?.color.string)
-        assertEquals("blue", (deserialized.children["test"] as Solid).color.string)
+        assertEquals("blue", (deserialized.children.getChild("test") as Solid).color.string)
     }
 }

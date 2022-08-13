@@ -62,7 +62,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
     ): SolidReference {
         val templateName = volumesName + volume.name.asName()
         if (proto[templateName] == null) {
-            proto[templateName] = volume(root, volume)
+            proto.setChild(templateName, volume(root, volume))
         }
         val ref = group.ref(templateName, physVolume.name).withPosition(root, physVolume)
         referenceStore.getOrPut(templateName) { ArrayList() }.add(ref)
@@ -302,7 +302,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         when (settings.volumeAction(volume)) {
             GdmlLoaderOptions.Action.ADD -> {
                 val group: SolidGroup = volume(root, volume)
-                this[physVolume.name] = group.withPosition(root, physVolume)
+                this.setChild(physVolume.name, group.withPosition(root, physVolume))
             }
             GdmlLoaderOptions.Action.PROTOTYPE -> {
                 proxyVolume(root, this, physVolume, volume)
@@ -357,7 +357,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
         final.prototypes {
             proto.items.forEach { (token, item) ->
                 item.parent = null
-                set(token.asName(), item as? Solid)
+                setChild(token.asName(), item as? Solid)
             }
         }
         settings.styleCache.forEach {
@@ -385,7 +385,7 @@ public fun Gdml.toVision(block: GdmlLoaderOptions.() -> Unit = {}): SolidGroup {
 public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlLoaderOptions.() -> Unit = {}) {
     val vision = gdml.toVision(transformer)
     //println(Visual3DPlugin.json.stringify(VisualGroup3D.serializer(), visual))
-    children[key] = vision
+    children.setChild(key, vision)
 }
 
 @VisionBuilder

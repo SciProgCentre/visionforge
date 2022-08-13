@@ -10,7 +10,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
-import kotlin.js.JsName
 
 
 public interface VisionGroup : Vision {
@@ -35,9 +34,9 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.delete -> children[name] = null
-                change.vision != null -> children[name] = change.vision
-                else -> children[name]?.update(change)
+                change.delete -> children.setChild(name, null)
+                change.vision != null -> children.setChild(name, change.vision)
+                else -> children.getChild(name)?.update(change)
             }
         }
         change.properties?.let {
@@ -87,12 +86,28 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
  */
 @Serializable
 @SerialName("vision.group")
-public class SimpleVisionGroup : AbstractVisionGroup() {
+public class SimpleVisionGroup : AbstractVisionGroup(), MutableVisionContainer<Vision> {
     override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
+
+    override fun setChild(name: Name?, child: Vision?) {
+        children.setChild(name, child)
+    }
 }
 
-@JsName("createVisionGroup")
-public fun VisionGroup(): VisionGroup = SimpleVisionGroup()
+@VisionBuilder
+public fun MutableVisionContainer<Vision>.group(
+    name: Name? = null,
+    builder: SimpleVisionGroup.() -> Unit = {},
+): SimpleVisionGroup = SimpleVisionGroup().apply(builder).also { setChild(name, it) }
+
+/**
+ * Define a group with given [name], attach it to this parent and return it.
+ */
+@VisionBuilder
+public fun MutableVisionContainer<Vision>.group(
+    name: String,
+    builder: SimpleVisionGroup.() -> Unit = {},
+): SimpleVisionGroup = SimpleVisionGroup().apply(builder).also { setChild(name, it) }
 
 //fun VisualObject.findStyle(styleName: Name): Meta? {
 //    if (this is VisualGroup) {

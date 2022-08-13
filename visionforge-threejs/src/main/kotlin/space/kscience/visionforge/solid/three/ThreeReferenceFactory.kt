@@ -53,7 +53,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
                     ?: error("Wrong syntax for reference child property: '$name'")
                 val propertyName = name.cutFirst()
                 val referenceChild =
-                    obj.children[childName] ?: error("Reference child with name '$childName' not found")
+                    obj.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
                 val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
                 child.updateProperty(referenceChild, propertyName)
             } else {

@@ -73,6 +73,19 @@ public interface MutableVisionProperties : VisionProperties {
     )
 }
 
+public fun MutableVisionProperties.remove(name: Name){
+    setProperty(name, null)
+}
+
+public fun MutableVisionProperties.remove(name: String){
+    remove(name.parseAsName())
+}
+
+@VisionBuilder
+public operator fun MutableVisionProperties.invoke(block: MutableMeta.() -> Unit) {
+    root(inherit = false, includeStyles = false).apply(block)
+}
+
 private class VisionPropertiesItem(
     val properties: MutableVisionProperties,
     val nodeName: Name,
@@ -190,7 +203,7 @@ public abstract class AbstractVisionProperties(
     }
 
     @Transient
-    private val _changes = MutableSharedFlow<Name>(10)
+    private val _changes = MutableSharedFlow<Name>()
     override val changes: SharedFlow<Name> get() = _changes
 
     @OptIn(DelicateCoroutinesApi::class)

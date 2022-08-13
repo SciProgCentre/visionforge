@@ -4,14 +4,8 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.SolidReference
-import kotlin.collections.HashMap
-import kotlin.collections.Map
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.filter
-import kotlin.collections.filterIsInstance
-import kotlin.collections.fold
-import kotlin.collections.forEach
 import kotlin.collections.set
 
 @DFExperimental
@@ -33,7 +27,7 @@ internal object UnRef : VisualTreeTransform<SolidGroup>() {
 
     private fun SolidGroup.unref(name: Name) {
         (this as? SolidGroup)?.prototypes{
-            set(name, null)
+            setChild(name, null)
         }
         items.filter { (it.value as? SolidReference)?.prototypeName == name }.forEach { (key, value) ->
             val reference = value as SolidReference

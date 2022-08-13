@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.set
+import space.kscience.visionforge.setChild
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -139,7 +139,7 @@ public inline fun MutableVisionContainer<Solid>.tube(
     topInnerRadius = innerRadius.toFloat(),
     startAngle = startAngle.toFloat(),
     angle = angle.toFloat()
-).apply(block).also { set(name, it) }
+).apply(block).also { setChild(name, it) }
 
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.coneSurface(
@@ -160,4 +160,4 @@ public inline fun MutableVisionContainer<Solid>.coneSurface(
     topInnerRadius = topInnerRadius.toFloat(),
     startAngle = startAngle.toFloat(),
     angle = angle.toFloat()
-).apply(block).also { set(name, it) }
+).apply(block).also { setChild(name, it) }

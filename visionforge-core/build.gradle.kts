@@ -13,6 +13,11 @@ kotlin {
                 api("org.jetbrains.kotlin-wrappers:kotlin-css")
             }
         }
+        commonTest{
+            dependencies{
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${space.kscience.gradle.KScienceVersions.coroutinesVersion}")
+            }
+        }
         jsMain {
             dependencies {
                 api("org.jetbrains.kotlin-wrappers:kotlin-extensions")

@@ -5,6 +5,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -22,6 +23,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
         ambientLight{
             color.set(Colors.white)
         }
+        setAsRoot(solids.visionManager)
     }
     render(Name.parse(name), vision, meta)
 }

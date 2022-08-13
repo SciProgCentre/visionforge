@@ -4,7 +4,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.*
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.visionManager
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class TestCubes {
         val smallBoxPrototype = vision.getPrototype(Name.parse("solids.smallBox")) as? Box
         assertNotNull(smallBoxPrototype)
         assertEquals(30.0, smallBoxPrototype.xSize.toDouble())
-        val smallBoxVision = vision.children["composite-111.smallBox"]?.prototype as? Box
+        val smallBoxVision = vision.children.getChild("composite-111.smallBox")?.prototype as? Box
         assertNotNull(smallBoxVision)
         assertEquals(30.0, smallBoxVision.xSize.toDouble())
     }

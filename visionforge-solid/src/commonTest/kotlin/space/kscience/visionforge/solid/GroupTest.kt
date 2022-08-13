@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,7 +45,7 @@ class GroupTest {
         }
 
         assertEquals(3, group.items.count())
-        assertEquals(300.0, (group.children["intersect"] as Solid).y.toDouble())
-        assertEquals(-300.0, (group.children["subtract"] as Solid).y.toDouble())
+        assertEquals(300.0, (group.children.getChild("intersect") as Solid).y.toDouble())
+        assertEquals(-300.0, (group.children.getChild("subtract") as Solid).y.toDouble())
     }
 }

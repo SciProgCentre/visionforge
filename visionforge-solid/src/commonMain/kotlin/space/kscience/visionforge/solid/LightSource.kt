@@ -55,7 +55,7 @@ public class AmbientLightSource : LightSource()
 public fun MutableVisionContainer<Solid>.ambientLight(
     name: String? = "@ambientLight",
     block: AmbientLightSource.() -> Unit = {},
-): AmbientLightSource = AmbientLightSource().apply(block).also { set(name, it) }
+): AmbientLightSource = AmbientLightSource().apply(block).also { setChild(name, it) }
 
 @Serializable
 @SerialName("solid.light.point")
@@ -71,5 +71,5 @@ public fun MutableVisionContainer<Solid>.pointLight(
     block: PointLightSource.() -> Unit = {},
 ): PointLightSource = PointLightSource().apply(block).also {
     it.position = Point3D(x, y, z)
-    set(name, it)
+    setChild(name, it)
 }

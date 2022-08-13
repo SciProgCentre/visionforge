@@ -35,7 +35,7 @@ public inline fun MutableVisionContainer<Solid>.composite(
 
     res.properties.setProperty(Name.EMPTY, group.properties.own)
 
-    set(name, res)
+    setChild(name, res)
     return res
 }
 
@@ -57,7 +57,7 @@ public fun SolidGroup.smartComposite(
         }
         this
     } else {
-        children[name] = group
+        children.setChild(name, group)
         group
     }
 } else {

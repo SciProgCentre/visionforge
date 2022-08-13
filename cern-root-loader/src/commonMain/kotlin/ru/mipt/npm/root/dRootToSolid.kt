@@ -352,14 +352,14 @@ private fun SolidGroup.addRootVolume(
             }
             block()
         }
-        set(combinedName?.let { Name.parse(it) }, group)
+        setChild(combinedName?.let { Name.parse(it) }, group)
     } else {
         val templateName = volumesName + volume.name
         val existing = getPrototype(templateName)
         if (existing == null) {
             context.prototypeHolder.prototypes {
                 val group = buildVolume(volume, context)
-                set(templateName, group)
+                setChild(templateName, group)
             }
         }
 

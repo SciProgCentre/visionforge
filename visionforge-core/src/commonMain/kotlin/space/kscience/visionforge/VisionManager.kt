@@ -19,7 +19,7 @@ import space.kscience.visionforge.html.VisionOfNumberField
 import space.kscience.visionforge.html.VisionOfTextField
 import kotlin.reflect.KClass
 
-public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
+public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionContainer<Vision> {
     override val tag: PluginTag get() = Companion.tag
 
     /**
@@ -57,6 +57,10 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
 
     public fun encodeToMeta(vision: Vision, descriptor: MetaDescriptor? = null): Meta =
         encodeToJsonElement(vision).toMeta(descriptor)
+
+    override fun setChild(name: Name?, child: Vision?) {
+        child?.setAsRoot(this)
+    }
 
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)

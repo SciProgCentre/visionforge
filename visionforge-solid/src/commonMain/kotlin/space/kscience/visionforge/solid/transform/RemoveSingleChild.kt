@@ -39,7 +39,7 @@ internal object RemoveSingleChild : VisualTreeTransform<SolidGroup>() {
                     val child: Solid = parent.items.values.first()
                     val newParent = child.updateFrom(parent)
                     newParent.parent = null
-                    children[childName.asName()] = newParent
+                    children.setChild(childName.asName(), newParent)
                 }
             }
         }

@@ -115,4 +115,4 @@ public class ExtrudeBuilder(
 public fun MutableVisionContainer<Solid>.extruded(
     name: String? = null,
     action: ExtrudeBuilder.() -> Unit = {},
-): Extruded = ExtrudeBuilder().apply(action).build().also { set(name, it) }
+): Extruded = ExtrudeBuilder().apply(action).build().also { setChild(name, it) }

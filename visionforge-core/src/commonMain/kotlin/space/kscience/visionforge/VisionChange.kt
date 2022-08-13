@@ -47,7 +47,7 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
         }
     }
 
-    override fun set(name: Name?, child: Vision?) {
+    override fun setChild(name: Name?, child: Vision?) {
         if (name == null) error("Static children are not allowed in VisionChange")
         getOrPutChild(name).apply {
             vision = child
@@ -109,7 +109,7 @@ private fun CoroutineScope.collectChange(
         if (after != null) {
             collectChange(fullName, after, collector)
         }
-        collector()[fullName] = after
+        collector().setChild(fullName, after)
     }?.launchIn(this)
 }
 

@@ -50,7 +50,7 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
             obj.onPropertyChange { name ->
                 when {
                     //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
-                    name.startsWith(MeshThreeFactory.EDGES_KEY) -> applyEdges(obj)
+                    name.startsWith(ThreeMeshFactory.EDGES_KEY) -> applyEdges(obj)
                     else -> updateProperty(obj, name)
                 }
             }

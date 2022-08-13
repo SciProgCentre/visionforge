@@ -38,7 +38,7 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
             it to value
         }.toMap()
 
-    public operator fun get(name: Name): Solid? = children[name] as? Solid
+    public operator fun get(name: Name): Solid? = children.getChild(name) as? Solid
 
     private var prototypes: SolidGroup?
         get() = items[PROTOTYPES_TOKEN] as? SolidGroup
@@ -70,8 +70,8 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
 //        super.update(change)
 //    }
 
-    override fun set(name: Name?, child: Solid?) {
-        children[name] = child
+    override fun setChild(name: Name?, child: Solid?) {
+        children.setChild(name, child)
     }
 
     public companion object {
@@ -85,7 +85,7 @@ public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGr
 public fun MutableVisionContainer<Solid>.group(
     name: Name? = null,
     builder: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup(builder).also { set(name, it) }
+): SolidGroup = SolidGroup(builder).also { setChild(name, it) }
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
@@ -94,4 +94,4 @@ public fun MutableVisionContainer<Solid>.group(
 public fun MutableVisionContainer<Solid>.group(
     name: String,
     action: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup(action).also { set(name, it) }
+): SolidGroup = SolidGroup(action).also { setChild(name, it) }

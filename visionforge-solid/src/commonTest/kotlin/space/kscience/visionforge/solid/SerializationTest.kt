@@ -2,7 +2,7 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -52,7 +52,7 @@ class SerializationTest {
         val string = Solids.encodeToString(group)
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
-        assertEquals(group.children["cube"]?.properties?.own, reconstructed.children["cube"]?.properties?.own)
+        assertEquals(group.children.getChild("cube")?.properties?.own, reconstructed.children.getChild("cube")?.properties?.own)
     }
 
     @Test
@@ -66,7 +66,7 @@ class SerializationTest {
         val serialized = Solids.encodeToString(group)
 
         val reconstructed = Solids.decodeFromString(serialized) as SolidGroup
-        assertEquals(100.0, (reconstructed.children["@ambientLight"] as AmbientLightSource).intensity.toDouble())
+        assertEquals(100.0, (reconstructed.children.getChild("@ambientLight") as AmbientLightSource).intensity.toDouble())
     }
 
 }

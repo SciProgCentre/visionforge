@@ -6,7 +6,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.VisionChange
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -29,9 +29,9 @@ internal class VisionUpdateTest {
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
         targetVision.update(dif)
-        assertTrue { targetVision.children["top"] is SolidGroup }
-        assertEquals("red", (targetVision.children["origin"] as Solid).color.string) // Should work
-        assertEquals("#00007b", (targetVision.children["top"] as Solid).color.string) // new item always takes precedence
+        assertTrue { targetVision.children.getChild("top") is SolidGroup }
+        assertEquals("red", (targetVision.children.getChild("origin") as Solid).color.string) // Should work
+        assertEquals("#00007b", (targetVision.children.getChild("top") as Solid).color.string) // new item always takes precedence
     }
 
     @Test

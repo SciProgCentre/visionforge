@@ -5,7 +5,7 @@ import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.material
@@ -18,7 +18,7 @@ class GDMLVisionTest {
 
     @Test
     fun testCubesStyles(){
-        val segment = cubes.children["composite-000.segment-0"] as Solid
+        val segment = cubes.children.getChild("composite-000.segment-0") as Solid
         println(segment.properties.getValue(Vision.STYLE_KEY))
 //        println(segment.computePropertyNode(SolidMaterial.MATERIAL_KEY))
 //        println(segment.computeProperty(SolidMaterial.MATERIAL_COLOR_KEY))

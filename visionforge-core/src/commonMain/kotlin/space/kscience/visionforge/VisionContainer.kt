@@ -11,12 +11,12 @@ import kotlin.jvm.Synchronized
 public annotation class VisionBuilder
 
 public interface VisionContainer<out V : Vision> {
-    public operator fun get(name: Name): V?
+    public fun getChild(name: Name): V?
 }
 
 public interface MutableVisionContainer<in V : Vision> {
     //TODO add documentation
-    public operator fun set(name: Name?, child: V?)
+    public fun setChild(name: Name?, child: V?)
 }
 
 /**
@@ -33,10 +33,10 @@ public interface VisionChildren : VisionContainer<Vision> {
 
     public operator fun get(token: NameToken): Vision?
 
-    override fun get(name: Name): Vision? = when (name.length) {
+    override fun getChild(name: Name): Vision? = when (name.length) {
         0 -> group
         1 -> get(name.first())
-        else -> get(name.first())?.children?.get(name.cutFirst())
+        else -> get(name.first())?.children?.getChild(name.cutFirst())
     }
 
     public companion object {
@@ -48,6 +48,10 @@ public interface VisionChildren : VisionContainer<Vision> {
         }
     }
 }
+
+public operator fun VisionChildren.get(name: Name): Vision? = getChild(name)
+public operator fun VisionChildren.get(name: String): Vision? = getChild(name)
+
 
 public fun VisionChildren.isEmpty(): Boolean = keys.isEmpty()
 
@@ -61,7 +65,7 @@ public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<
 
     public operator fun set(token: NameToken, value: Vision?)
 
-    override fun set(name: Name?, child: Vision?) {
+    override fun setChild(name: Name?, child: Vision?) {
         when {
             name == null -> {
                 if (child != null) {
@@ -81,13 +85,22 @@ public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<
                 val parent: MutableVisionGroup = currentParent as? MutableVisionGroup ?: group.createGroup().also {
                     set(name.first(), it)
                 }
-                parent.children[name.cutFirst()] = child
+                parent.children.setChild(name.cutFirst(), child)
             }
         }
     }
 
     public fun clear()
 }
+
+public operator fun MutableVisionChildren.set(name: Name?, vision: Vision?) {
+    setChild(name, vision)
+}
+
+public operator fun MutableVisionChildren.set(name: String?, vision: Vision?) {
+    setChild(name, vision)
+}
+
 
 /**
  * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
@@ -102,11 +115,11 @@ public fun VisionChildren.asSequence(): Sequence<Pair<NameToken, Vision>> = sequ
 
 public operator fun VisionChildren.iterator(): Iterator<Pair<NameToken, Vision>> = asSequence().iterator()
 
-public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
+public fun <V : Vision> VisionContainer<V>.getChild(str: String): V? = getChild(Name.parse(str))
 
-public operator fun <V : Vision> MutableVisionContainer<V>.set(
+public fun <V : Vision> MutableVisionContainer<V>.setChild(
     str: String?, vision: V?,
-): Unit = set(str?.parseAsName(), vision)
+): Unit = setChild(str?.parseAsName(), vision)
 
 internal abstract class VisionChildrenImpl(
     override val group: MutableVisionGroup,

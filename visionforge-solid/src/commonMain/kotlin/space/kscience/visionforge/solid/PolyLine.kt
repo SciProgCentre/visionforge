@@ -18,4 +18,4 @@ public fun MutableVisionContainer<Solid>.polyline(
     vararg points: Point3D,
     name: String? = null,
     action: PolyLine.() -> Unit = {},
-): PolyLine = PolyLine(points.toList()).apply(action).also { set(name, it) }
+): PolyLine = PolyLine(points.toList()).apply(action).also { setChild(name, it) }

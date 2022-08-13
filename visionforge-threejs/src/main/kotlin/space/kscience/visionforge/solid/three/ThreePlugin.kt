@@ -82,7 +82,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 }.launchIn(context)
 
                 obj.children.changes.onEach { childName ->
-                    val child = obj.children[childName]
+                    val child = obj.children.getChild(childName)
 
                     //removing old object
                     findChild(childName)?.let { oldChild ->

@@ -3,7 +3,7 @@ package space.kscience.visionforge.solid
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -25,8 +25,8 @@ class SolidPluginTest {
         val reconstructed = visionManager.decodeFromMeta(meta) as SolidGroup
 
         assertEquals(
-            visionManager.encodeToJsonElement(vision.children["aBox"]!!),
-            visionManager.encodeToJsonElement(reconstructed.children["aBox"]!!)
+            visionManager.encodeToJsonElement(vision.children.getChild("aBox")!!),
+            visionManager.encodeToJsonElement(reconstructed.children.getChild("aBox")!!)
         )
     }
 }

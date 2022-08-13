@@ -97,7 +97,7 @@ internal class SolidReferenceChild(
 ) : Solid, VisionGroup {
 
     val prototype: Solid
-        get() = owner.prototype.children?.get(childName) as? Solid
+        get() = owner.prototype.children?.getChild(childName) as? Solid
             ?: error("Prototype with name $childName not found")
 
     override val descriptor: MetaDescriptor get() = prototype.descriptor
@@ -137,7 +137,7 @@ internal class SolidReferenceChild(
             when {
                 change.delete -> error("Deleting children inside ref is not allowed.")
                 change.vision != null -> error("Updating content of the ref is not allowed")
-                else -> children[name]?.update(change)
+                else -> children.getChild(name)?.update(change)
             }
         }
         change.properties?.let {
@@ -176,7 +176,7 @@ internal class SolidReferenceChild(
 public fun MutableVisionContainer<Solid>.ref(
     templateName: Name,
     name: String? = null,
-): SolidReference = SolidReference(templateName).also { set(name, it) }
+): SolidReference = SolidReference(templateName).also { setChild(name, it) }
 
 public fun MutableVisionContainer<Solid>.ref(
     templateName: String,
@@ -195,7 +195,7 @@ public fun SolidGroup.newRef(
     val existing = prototypeHolder.getPrototype(prototypeName)
     if (existing == null) {
         prototypeHolder.prototypes {
-            set(prototypeName, obj)
+            setChild(prototypeName, obj)
         }
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")

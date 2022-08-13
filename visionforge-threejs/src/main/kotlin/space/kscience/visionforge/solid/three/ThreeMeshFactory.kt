@@ -15,14 +15,14 @@ import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.layer
-import space.kscience.visionforge.solid.three.MeshThreeFactory.Companion.EDGES_ENABLED_KEY
-import space.kscience.visionforge.solid.three.MeshThreeFactory.Companion.EDGES_MATERIAL_KEY
+import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_ENABLED_KEY
+import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_MATERIAL_KEY
 import kotlin.reflect.KClass
 
 /**
  * Basic geometry-based factory
  */
-public abstract class MeshThreeFactory<in T : Solid>(
+public abstract class ThreeMeshFactory<in T : Solid>(
     override val type: KClass<in T>,
 ) : ThreeFactory<T> {
     /**
