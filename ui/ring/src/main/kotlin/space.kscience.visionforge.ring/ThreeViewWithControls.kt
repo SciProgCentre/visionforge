@@ -5,7 +5,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.css.*
 import react.*
+import react.dom.b
 import react.dom.div
+import react.dom.p
 import react.dom.span
 import ringui.*
 import space.kscience.dataforge.context.Context
@@ -14,14 +16,11 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.length
-import space.kscience.visionforge.Vision
+import space.kscience.visionforge.*
 import space.kscience.visionforge.react.*
-import space.kscience.visionforge.root
-import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.visionManager
 import styled.css
 import styled.styledDiv
 
@@ -183,6 +182,10 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
                                         }
                                     }
                                 }
+                            }
+                            p {
+                                b { +"Styles: " }
+                                +vision.styles.joinToString(separator = ", ")
                             }
                         }
                     }

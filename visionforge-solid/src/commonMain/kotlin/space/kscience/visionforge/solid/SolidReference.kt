@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
@@ -59,15 +60,40 @@ public class SolidReference(
                     propertiesInternal = value
                 }
 
-            override val own: Meta? get() = properties
-
-            override fun getProperty(name: Name, inherit: Boolean?, includeStyles: Boolean?): MutableMeta {
-                return properties?.getMeta(name) ?: prototype.properties.getProperty(name, inherit, includeStyles)
-            }
-
             override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? {
-                return properties?.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
+                if(name == Vision.STYLE_KEY){
+                    return buildList {
+                        properties?.getValue(Vision.STYLE_KEY)?.list?.forEach {
+                            add(it)
+                        }
+                        prototype.styles.forEach {
+                            add(it.asValue())
+                        }
+                    }.distinct().asValue()
+                }
+                properties?.getValue(name)?.let { return it }
+
+                val descriptor = descriptor?.get(name)
+                val inheritFlag = inherit ?: descriptor?.inherited ?: false
+                val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
+
+                if (stylesFlag) {
+                    getStyleProperty(name)?.value?.let { return it }
+                }
+
+                if (inheritFlag) {
+                    parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
+                }
+
+                prototype.properties.getValue(name, inheritFlag, stylesFlag)?.let { return it }
+
+                if(inheritFlag){
+                    parent?.properties?.getValue(name, inheritFlag, includeStyles)?.let { return it }
+                }
+
+                return null
             }
+
 
             override fun invalidate(propertyName: Name) {
                 //send update signal
@@ -129,9 +155,6 @@ internal class SolidReferenceChild(
         override val descriptor: MetaDescriptor get() = this@SolidReferenceChild.descriptor
 
         override val own: MutableMeta by lazy { owner.properties.getProperty(childToken(childName).asName()) }
-
-        override fun getProperty(name: Name, inherit: Boolean?, includeStyles: Boolean?): MutableMeta =
-            own.getMeta(name) ?: prototype.properties.getProperty(name, inherit, includeStyles)
 
         override fun getValue(
             name: Name,

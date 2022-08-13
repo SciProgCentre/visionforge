@@ -67,11 +67,7 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
  * List of names of styles applied to this object. Order matters. Not inherited.
  */
 public var Vision.styles: List<String>
-    get() = properties.getValue(
-        Vision.STYLE_KEY,
-        inherit = true,
-        includeStyles = false,
-    )?.stringList ?: emptyList()
+    get() = properties.getValue(Vision.STYLE_KEY, inherit = false, includeStyles = false)?.stringList ?: emptyList()
     set(value) {
         properties.setValue(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
     }

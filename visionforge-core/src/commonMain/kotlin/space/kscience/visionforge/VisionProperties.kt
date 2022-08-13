@@ -167,16 +167,18 @@ public abstract class AbstractVisionProperties(
         inherit: Boolean?,
         includeStyles: Boolean?,
     ): Value? {
+        own?.get(name)?.value?.let { return it }
+
         val descriptor = descriptor?.get(name)
-        val inheritFlag = inherit ?: descriptor?.inherited ?: false
         val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
 
-        own?.get(name)?.value?.let { return it }
         if (stylesFlag) {
             vision.getStyleProperty(name)?.value?.let { return it }
         }
+
+        val inheritFlag = inherit ?: descriptor?.inherited ?: false
         if (inheritFlag) {
-            vision.parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
+            vision.parent?.properties?.getValue(name, inheritFlag, stylesFlag)?.let { return it }
         }
         return descriptor?.defaultValue
     }
@@ -208,7 +210,7 @@ public abstract class AbstractVisionProperties(
     }
 
     @Transient
-    protected val changesInternal = MutableSharedFlow<Name>()
+    protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow<Name>()
     override val changes: SharedFlow<Name> get() = changesInternal
 
     override fun invalidate(propertyName: Name) {
