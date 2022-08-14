@@ -3,7 +3,6 @@ package space.kscience.visionforge.solid.three
 import info.laht.threekt.core.BufferGeometry
 import info.laht.threekt.core.Object3D
 import info.laht.threekt.math.Euler
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
@@ -50,7 +49,7 @@ public fun Object3D.updatePosition(vision: Vision) {
 //            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
 //        }
 
-        setRotationFromEuler( Euler(vision.rotationX, vision.rotationY, vision.rotationZ, vision.rotationOrder.name))
+        setRotationFromEuler(Euler(vision.rotationX, vision.rotationY, vision.rotationZ, vision.rotationOrder.name))
 
         scale.set(vision.scaleX, vision.scaleY, vision.scaleZ)
         updateMatrix()
@@ -62,7 +61,7 @@ public fun Object3D.updatePosition(vision: Vision) {
  */
 public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
     // console.log("$source updated $propertyName with ${source.computeProperty(propertyName)}")
-    if (this is Mesh && propertyName.startsWith(MATERIAL_KEY)) {
+    if (isMesh(this) && propertyName.startsWith(MATERIAL_KEY)) {
         updateMaterialProperty(source, propertyName)
     } else if (
         propertyName.startsWith(Solid.POSITION_KEY)

@@ -17,6 +17,7 @@ import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_ENABLED_KEY
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_MATERIAL_KEY
+import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_OBJECT_NAME
 import kotlin.reflect.KClass
 
 /**
@@ -66,6 +67,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
 
     public companion object {
         public val EDGES_KEY: Name = "edges".asName()
+        internal const val EDGES_OBJECT_NAME: String = "@edges"
 
         //public val WIREFRAME_KEY: Name = "wireframe".asName()
         public val ENABLED_KEY: Name = "enabled".asName()
@@ -93,7 +95,7 @@ internal fun Mesh.applyProperties(vision: Solid): Mesh = apply {
 }
 
 public fun Mesh.applyEdges(vision: Solid) {
-    val edges = children.find { it.name == "@edges" } as? LineSegments
+    val edges = children.find { it.name == EDGES_OBJECT_NAME } as? LineSegments
     //inherited edges definition, enabled by default
     if (vision.properties.getValue(EDGES_ENABLED_KEY, inherit = true)?.boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
@@ -104,7 +106,7 @@ public fun Mesh.applyEdges(vision: Solid) {
                     EdgesGeometry(bufferGeometry),
                     material
                 ).apply {
-                    name = "@edges"
+                    name = EDGES_OBJECT_NAME
                 }
             )
         } else {

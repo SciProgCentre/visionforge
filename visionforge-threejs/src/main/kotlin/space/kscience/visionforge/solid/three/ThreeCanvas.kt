@@ -212,7 +212,7 @@ public class ThreeCanvas(
     }
 
     //find first non-static parent in this object ancestry
-    private fun Object3D?.upTrace(): Object3D? = if (this?.name?.startsWith("@") == true) parent else this
+    private tailrec fun Object3D.upTrace(): Object3D? = if (!name.startsWith("@")) this else parent?.upTrace()
 
     private fun pick(): Object3D? {
         // update the picking ray with the camera and mouse position
@@ -222,8 +222,8 @@ public class ThreeCanvas(
         return root?.let { root ->
             val intersects = raycaster.intersectObject(root, true)
             //skip invisible objects
-            val obj = intersects.map { it.`object` }.firstOrNull { it.visible }
-            obj.upTrace()
+            val obj: Object3D? = intersects.map { it.`object` }.firstOrNull { it.visible }
+            obj?.upTrace()
         }
     }
 
@@ -280,20 +280,22 @@ public class ThreeCanvas(
         edgesName: String,
         material: LineBasicMaterial = SELECTED_MATERIAL,
     ) {
+
         if (userData[DO_NOT_HIGHLIGHT_TAG] == true) {
             return
         }
-        if (this is Mesh) {
-            val edges = getObjectByName(edgesName) ?: LineSegments(
+
+        if (isMesh(this)) {
+            val highlightMesh = getObjectByName(edgesName) ?: LineSegments(
                 EdgesGeometry(geometry),
                 material
             ).also {
                 it.name = edgesName
                 add(it)
             }
-            edges.visible = highlight
+            highlightMesh.visible = highlight
         } else {
-            children.filter { it.name != edgesName }.forEach {
+            children.filter { !it.name.startsWith("@") && it.name != edgesName }.forEach {
                 it.toggleHighlight(highlight, edgesName, material)
             }
         }

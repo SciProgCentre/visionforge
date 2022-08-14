@@ -39,13 +39,13 @@ public object ThreeMaterials {
 
     public val SELECTED_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(Colors.ivory)
-        linewidth = 8.0
+        linewidth = 2.0
         cached = true
     }
 
     public val HIGHLIGHT_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(Colors.blue)
-        linewidth = 8.0
+        linewidth = 2.0
         cached = true
     }
 

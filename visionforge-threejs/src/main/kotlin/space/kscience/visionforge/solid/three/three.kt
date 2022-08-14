@@ -11,6 +11,7 @@ import info.laht.threekt.textures.Texture
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.float
 import space.kscience.dataforge.meta.get
+import kotlin.contracts.contract
 import kotlin.math.PI
 
 public val Meta.vector: Vector3 get() = Vector3(this["x"].float ?: 0f, this["y"].float ?: 0f, this["z"].float ?: 0f)
@@ -33,6 +34,14 @@ internal fun Any.dispose() {
 }
 
 public fun Layers.check(layer: Int): Boolean = (mask shr (layer) and 0x00000001) > 0
+
+
+internal fun isMesh(object3D: Object3D): Boolean{
+    contract {
+        returns(true) implies (object3D is Mesh)
+    }
+    return object3D.asDynamic().isMesh as? Boolean ?: false
+}
 
 internal fun Object3D.takeIfMesh(): Mesh? {
     val d = asDynamic()

@@ -17,11 +17,10 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
     override val type: KClass<SolidReference> = SolidReference::class
 
     private fun Object3D.replicate(): Object3D {
-        return when (this) {
-            is Mesh -> Mesh(geometry, material).also {
+        return when {
+            isMesh(this) -> Mesh(geometry, material).also {
                 it.applyMatrix4(matrix)
             }
-
             else -> clone(false)
         }.also { obj: Object3D ->
             obj.name = this.name
@@ -40,7 +39,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
         val object3D: Object3D = cachedObject.replicate()
         object3D.updatePosition(vision)
 
-        if (object3D is Mesh) {
+        if (isMesh(object3D)) {
             //object3D.material = ThreeMaterials.buildMaterial(obj.getProperty(SolidMaterial.MATERIAL_KEY).node!!)
             object3D.applyProperties(vision)
         }

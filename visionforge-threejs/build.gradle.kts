@@ -10,6 +10,6 @@ kotlin{
 
 dependencies {
     api(project(":visionforge-solid"))
-    implementation(npm("three", "0.137.5"))
+    implementation(npm("three", "0.143.0"))
     implementation(npm("three-csg-ts", "3.1.10"))
 }
