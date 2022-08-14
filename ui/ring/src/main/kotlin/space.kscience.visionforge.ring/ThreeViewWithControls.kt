@@ -10,7 +10,6 @@ import react.dom.div
 import react.dom.p
 import react.dom.span
 import ringui.*
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
@@ -20,21 +19,25 @@ import space.kscience.visionforge.*
 import space.kscience.visionforge.react.*
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.solid.solidGroup
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
 
 public external interface ThreeCanvasWithControlsProps : Props {
-    public var context: Context
+    public var solids: Solids
     public var builderOfSolid: Deferred<Solid?>
     public var selected: Name?
     public var options: Canvas3DOptions?
     public var additionalTabs: Map<String, RBuilder.() -> Unit>?
 }
 
+private val ThreeCanvasWithControlsProps.context get() = solids.context
+
 public fun ThreeCanvasWithControlsProps.solid(block: SolidGroup.() -> Unit) {
     builderOfSolid = context.async {
-        SolidGroup(block)
+        solids.solidGroup(null, block)
     }
 }
 

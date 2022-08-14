@@ -8,6 +8,7 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 
@@ -95,19 +96,19 @@ public class SimpleVisionGroup : AbstractVisionGroup(), MutableVisionContainer<V
 }
 
 @VisionBuilder
-public fun MutableVisionContainer<Vision>.group(
+public inline fun MutableVisionContainer<Vision>.group(
     name: Name? = null,
     builder: SimpleVisionGroup.() -> Unit = {},
-): SimpleVisionGroup = SimpleVisionGroup().apply(builder).also { setChild(name, it) }
+): SimpleVisionGroup = SimpleVisionGroup().also { setChild(name, it) }.apply(builder)
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
 @VisionBuilder
-public fun MutableVisionContainer<Vision>.group(
+public inline fun MutableVisionContainer<Vision>.group(
     name: String,
     builder: SimpleVisionGroup.() -> Unit = {},
-): SimpleVisionGroup = SimpleVisionGroup().apply(builder).also { setChild(name, it) }
+): SimpleVisionGroup = group(name.parseAsName(), builder)
 
 //fun VisualObject.findStyle(styleName: Name): Meta? {
 //    if (this is VisualGroup) {

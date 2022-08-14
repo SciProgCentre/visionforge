@@ -29,7 +29,7 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
      */
     private val proto = SolidGroup()
 
-    private val solids = proto.group(solidsName) {
+    private val solids = proto.solidGroup(solidsName) {
         properties["edges.enabled"] = false
     }
 

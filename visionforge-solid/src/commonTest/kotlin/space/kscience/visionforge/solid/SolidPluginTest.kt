@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SolidPluginTest {
-    val vision = SolidGroup {
+    val vision = Solids.solidGroup {
         box(100, 100, 100, name = "aBox")
 
         sphere(100, name = "aSphere") {

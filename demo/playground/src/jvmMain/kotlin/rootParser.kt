@@ -1,8 +1,8 @@
 package space.kscience.visionforge.examples
 
 import ru.mipt.npm.root.DGeoManager
+import ru.mipt.npm.root.rootGeo
 import ru.mipt.npm.root.serialization.TGeoManager
-import ru.mipt.npm.root.toSolid
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
@@ -34,7 +34,7 @@ fun main() {
         println(it)
     }
 
-    val solid = geo.toSolid()
+    val solid = Solids.rootGeo(geo)
 
     Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))
     //println(Solids.encodeToString(solid))

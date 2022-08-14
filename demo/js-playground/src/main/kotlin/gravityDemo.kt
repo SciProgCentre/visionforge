@@ -4,7 +4,6 @@ import kotlinx.coroutines.launch
 import kotlinx.css.*
 import react.Props
 import react.fc
-import space.kscience.dataforge.context.Context
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.Colors
@@ -18,7 +17,7 @@ import styled.styledDiv
 import kotlin.math.sqrt
 
 external interface DemoProps : Props {
-    var context: Context
+    var solids: Solids
 }
 
 val GravityDemo = fc<DemoProps> { props ->
@@ -40,7 +39,7 @@ val GravityDemo = fc<DemoProps> { props ->
             }
             child(ThreeCanvasWithControls) {
                 attrs {
-                    context = props.context
+                    solids = props.solids
                     solid {
                         pointLight(200, 200, 200, name = "light"){
                             color.set(Colors.white)
@@ -52,7 +51,7 @@ val GravityDemo = fc<DemoProps> { props ->
                             color.set("red")
                             val h = 100.0
                             y = h
-                            context.launch {
+                            solids.context.launch {
                                 val g = 10.0
                                 val dt = 0.1
                                 var time = 0.0

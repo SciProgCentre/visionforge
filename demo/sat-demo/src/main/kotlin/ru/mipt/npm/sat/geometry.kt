@@ -6,7 +6,7 @@ import space.kscience.visionforge.style
 import space.kscience.visionforge.useStyle
 import kotlin.math.PI
 
-internal fun visionOfSatellite(
+internal fun Solids.visionOfSatellite(
     layers: Int = 10,
     layerHeight: Number = 10,
     xSegments: Int = 3,
@@ -14,7 +14,7 @@ internal fun visionOfSatellite(
     xSegmentSize: Number = 30,
     ySegmentSize: Number = xSegmentSize,
     fiberDiameter: Number = 1.0,
-): SolidGroup = SolidGroup {
+): SolidGroup = solidGroup {
     color.set("darkgreen")
     val transparent by style {
         this[SolidMaterial.MATERIAL_OPACITY_KEY] = 0.3
@@ -31,7 +31,7 @@ internal fun visionOfSatellite(
     val totalXSize = xSegments * xSegmentSize.toDouble()
     val totalYSize = ySegments * ySegmentSize.toDouble()
     for (layer in 1..layers) {
-        group("layer[$layer]") {
+        solidGroup("layer[$layer]") {
             for (i in 1..xSegments) {
                 for (j in 1..ySegments) {
                     box(xSegmentSize, ySegmentSize, layerHeight, name = "segment[$i,$j]") {
@@ -42,7 +42,7 @@ internal fun visionOfSatellite(
                     }
                 }
             }
-            group("fibers") {
+            solidGroup("fibers") {
                 for (i in 1..xSegments) {
                     cylinder(fiberDiameter, totalYSize) {
                         useStyle(red)

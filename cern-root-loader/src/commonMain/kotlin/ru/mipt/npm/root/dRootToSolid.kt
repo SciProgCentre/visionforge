@@ -6,6 +6,7 @@ import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
 import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.*
@@ -262,7 +263,7 @@ private fun SolidGroup.addShape(
             val fShape by shape.dObject(::DGeoShape)
             val fScale by shape.dObject(::DGeoScale)
             fShape?.let { scaledShape ->
-                group(name?.let { Name.parse(it) }) {
+                solidGroup(name?.let { Name.parse(it) }) {
                     scale = Point3D(fScale?.x ?: 1.0, fScale?.y ?: 1.0, fScale?.z ?: 1.0)
                     addShape(scaledShape, context)
                     apply(block)
@@ -294,7 +295,7 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
 }
 
 private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid? {
-    val group = SolidGroup {
+    val group = SolidGroup().apply {
         //set current layer
         layer = context.currentLayer
         val nodes = volume.fNodes
@@ -372,9 +373,9 @@ private fun SolidGroup.addRootVolume(
     }
 }
 
-public fun DGeoManager.toSolid(): SolidGroup = SolidGroup {
+public fun MutableVisionContainer<Solid>.rootGeo(dGeoManager: DGeoManager): SolidGroup = solidGroup {
     val context = RootToSolidContext(this)
-    fNodes.forEach { node ->
+    dGeoManager.fNodes.forEach { node ->
         addRootNode(node, context)
     }
 }

@@ -29,7 +29,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
         createRoot(element).render {
             child(ThreeCanvasWithControls) {
                 attrs {
-                    this.context = this@ThreeWithControlsPlugin.context
+                    this.solids = three.solids
                     this.builderOfSolid = context.async { vision as Solid}
                 }
             }

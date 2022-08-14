@@ -10,21 +10,33 @@ import kotlinx.serialization.serializer
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
+import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
 import kotlin.reflect.KClass
 
 
-public class Solids(meta: Meta) : VisionPlugin(meta) {
+public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Solid> {
     override val tag: PluginTag get() = Companion.tag
 
     override val visionSerializersModule: SerializersModule get() = serializersModuleForSolids
 
-    public companion object : PluginFactory<Solids> {
+    override fun setChild(name: Name?, child: Solid?) {
+        child?.setAsRoot(visionManager)
+    }
+
+    public companion object : PluginFactory<Solids>, MutableVisionContainer<Solid> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
         override val type: KClass<out Solids> = Solids::class
+
+        public val default: Solids by lazy {
+            Context("@Solids"){
+                plugin(Solids)
+            }.fetch(Solids)
+        }
 
         override fun build(context: Context, meta: Meta): Solids = Solids(meta)
 
@@ -68,6 +80,10 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
         public fun decodeFromString(str: String): Solid =
             jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
+
+        override fun setChild(name: Name?, child: Solid?) {
+            default.setChild(name, child)
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import react.dom.client.createRoot
 import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
@@ -51,7 +52,7 @@ private class JsPlaygroundApp : Application {
                     Tab("gravity") {
                         GravityDemo {
                             attrs {
-                                this.context = playgroundContext
+                                this.solids = playgroundContext.fetch(Solids)
                             }
                         }
                     }
@@ -72,7 +73,7 @@ private class JsPlaygroundApp : Application {
                             child(ThreeCanvasWithControls) {
                                 val random = Random(112233)
                                 attrs {
-                                    context = playgroundContext
+                                    solids = playgroundContext.fetch(Solids)
                                     solid {
                                         ambientLight {
                                             color.set(Colors.white)

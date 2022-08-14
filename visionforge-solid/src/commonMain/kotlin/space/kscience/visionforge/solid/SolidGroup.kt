@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
 
 
@@ -30,7 +31,8 @@ public interface PrototypeHolder {
  */
 @Serializable
 @SerialName("group.solid")
-public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, MutableVisionGroup, MutableVisionContainer<Solid> {
+public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, MutableVisionGroup,
+    MutableVisionContainer<Solid> {
 
     public val items: Map<NameToken, Solid>
         get() = children.keys.mapNotNull {
@@ -79,19 +81,18 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
     }
 }
 
-public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)
-
 @VisionBuilder
-public fun MutableVisionContainer<Solid>.group(
+public inline fun MutableVisionContainer<Solid>.solidGroup(
     name: Name? = null,
     builder: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup(builder).also { setChild(name, it) }
+): SolidGroup = SolidGroup().also { setChild(name, it) }.apply(builder)
+//root first, update later
 
 /**
  * Define a group with given [name], attach it to this parent and return it.
  */
 @VisionBuilder
-public fun MutableVisionContainer<Solid>.group(
+public inline fun MutableVisionContainer<Solid>.solidGroup(
     name: String,
     action: SolidGroup.() -> Unit = {},
-): SolidGroup = SolidGroup(action).also { setChild(name, it) }
+): SolidGroup = solidGroup(name.parseAsName(), action)

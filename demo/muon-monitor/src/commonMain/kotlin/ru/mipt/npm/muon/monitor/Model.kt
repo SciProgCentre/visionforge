@@ -15,7 +15,7 @@ class Model(val manager: VisionManager) {
     private val events = HashSet<Event>()
 
     private fun MutableVisionContainer<Solid>.pixel(pixel: SC1) {
-        val group = group(pixel.name) {
+        val group = solidGroup(pixel.name) {
             position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
             label(pixel.name) {
@@ -27,7 +27,7 @@ class Model(val manager: VisionManager) {
     }
 
     private fun SolidGroup.detector(detector: SC16) {
-        group(detector.name) {
+        solidGroup(detector.name) {
             detector.pixels.forEach {
                 pixel(it)
             }
@@ -42,24 +42,24 @@ class Model(val manager: VisionManager) {
             color.set("darkgreen")
         }
         rotationX = PI / 2
-        group("bottom") {
+        solidGroup("bottom") {
             Monitor.detectors.filter { it.center.z == LOWER_LAYER_Z }.forEach {
                 detector(it)
             }
         }
 
-        group("middle") {
+        solidGroup("middle") {
             Monitor.detectors.filter { it.center.z == CENTRAL_LAYER_Z }.forEach {
                 detector(it)
             }
         }
 
-        group("top") {
+        solidGroup("top") {
             Monitor.detectors.filter { it.center.z == UPPER_LAYER_Z }.forEach {
                 detector(it)
             }
         }
-        tracks = group("tracks")
+        tracks = solidGroup("tracks")
     }
 
     private fun highlight(pixel: String) {

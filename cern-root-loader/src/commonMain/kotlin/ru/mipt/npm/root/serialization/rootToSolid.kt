@@ -3,6 +3,7 @@ package ru.mipt.npm.root.serialization
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -132,7 +133,7 @@ private fun buildGroup(volume: TGeoVolume): SolidGroup {
     return if (volume is TGeoVolumeAssemblyRef) {
         buildGroup(volume.value)
     } else {
-        SolidGroup {
+        SolidGroup().apply {
             volume.fShape?.let { addShape(it) }
             volume.fNodes?.let {
                 it.arr.forEach { obj ->
@@ -180,8 +181,8 @@ private fun SolidGroup.volume(volume: TGeoVolume, name: String? = null, cache: B
 //    }
 
 
-public fun TGeoManager.toSolid(): SolidGroup = SolidGroup {
-    fNodes.arr.forEach {
+public fun MutableVisionContainer<Solid>.rootGeo(tGeoManager: TGeoManager): SolidGroup = solidGroup {
+    tGeoManager.fNodes.arr.forEach {
         node(it)
     }
 }

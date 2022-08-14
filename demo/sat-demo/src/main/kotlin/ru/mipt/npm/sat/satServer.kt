@@ -5,6 +5,8 @@ import kotlinx.coroutines.*
 import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.plus
@@ -17,13 +19,16 @@ import space.kscience.visionforge.visionManager
 import kotlin.random.Random
 
 
+@OptIn(DFExperimental::class)
 fun main() {
     val satContext = Context("sat") {
         plugin(Solids)
     }
 
+    val solids = satContext.fetch(Solids)
+
     //Create a geometry
-    val sat = visionOfSatellite(ySegments = 3)
+    val sat = solids.visionOfSatellite(ySegments = 3)
 
     val server = satContext.visionManager.serve {
         page(header = Page.threeJsHeader + Page.styleSheetHeader("css/styles.css")) {

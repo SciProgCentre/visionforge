@@ -52,7 +52,7 @@ class SolidPropertyTest {
         var box: Box? = null
         val group = SolidGroup().apply {
             properties["test"] = 22
-            group {
+            solidGroup {
                 box = box(100, 100, 100)
             }
         }
@@ -62,13 +62,13 @@ class SolidPropertyTest {
     @Test
     fun testStyleProperty() {
         var box: Box? = null
-        val group = SolidGroup {
+        val group = Solids.solidGroup {
             styleSheet {
                 update("testStyle") {
                     "test" put 22
                 }
             }
-            group {
+            solidGroup {
                 box = box(100, 100, 100) {
                     useStyle("testStyle")
                 }
@@ -86,7 +86,7 @@ class SolidPropertyTest {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"
                 }
             }
-            group {
+            solidGroup {
                 box = box(100, 100, 100) {
                     useStyle("testStyle")
                 }
@@ -98,7 +98,7 @@ class SolidPropertyTest {
     @Test
     fun testReferenceStyleProperty() {
         var box: SolidReference? = null
-        val group = SolidGroup {
+        val group = Solids.solidGroup {
             styleSheet {
                 update("testStyle") {
                     SolidMaterial.MATERIAL_COLOR_KEY put "#555555"
@@ -109,7 +109,7 @@ class SolidPropertyTest {
                     styles = listOf("testStyle")
                 }
             }
-            group {
+            solidGroup {
                 box = ref("box".asName())
             }
         }

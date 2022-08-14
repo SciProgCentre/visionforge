@@ -11,7 +11,7 @@ class ConvexTest {
     @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {
-        val group = SolidGroup{
+        val group = Solids.solidGroup {
             convex {
                 point(50, 50, -50)
                 point(50, -50, -50)

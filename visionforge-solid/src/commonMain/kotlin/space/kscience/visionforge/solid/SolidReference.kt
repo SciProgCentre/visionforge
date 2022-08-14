@@ -71,24 +71,30 @@ public class SolidReference(
                         }
                     }.distinct().asValue()
                 }
+                //1. resolve own properties
                 properties?.getValue(name)?.let { return it }
 
                 val descriptor = descriptor?.get(name)
                 val inheritFlag = inherit ?: descriptor?.inherited ?: false
                 val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
 
-                if (stylesFlag) {
-                    getStyleProperty(name)?.value?.let { return it }
-                }
-
-                if (inheritFlag) {
-                    parent?.properties?.getValue(name, inherit, includeStyles)?.let { return it }
-                }
-
+                //2. Resolve prototype onw properties
                 prototype.properties.getValue(name, inheritFlag, stylesFlag)?.let { return it }
 
+                if (stylesFlag) {
+                    //3. own styles
+                    own?.getValue(Vision.STYLE_KEY)?.list?.forEach { styleName ->
+                        getStyle(styleName.string)?.getValue(name)?.let { return it }
+                    }
+                    //4. prototype styles
+                    prototype.getStyleProperty(name)?.value?.let { return it }
+                }
+
                 if(inheritFlag){
+                    //5. own inheritance
                     parent?.properties?.getValue(name, inheritFlag, includeStyles)?.let { return it }
+                    //6. prototype inheritance
+                    prototype.parent?.properties?.getValue(name, inheritFlag, includeStyles)?.let { return it }
                 }
 
                 return null

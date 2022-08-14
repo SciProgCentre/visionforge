@@ -10,10 +10,7 @@ import org.w3c.files.get
 import react.Props
 import react.dom.h2
 import react.fc
-import react.useMemo
 import react.useState
-import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.Gdml
 import space.kscience.gdml.decodeFromString
@@ -31,14 +28,13 @@ import styled.css
 import styled.styledDiv
 
 external interface GDMLAppProps : Props {
-    var context: Context
+    var solids: Solids
     var vision: Solid?
     var selected: Name?
 }
 
 @JsExport
 val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
-    val visionManager = useMemo(props.context) { props.context.fetch(Solids).visionManager }
     var deferredVision: Deferred<Solid?> by useState {
         CompletableDeferred(props.vision)
     }
@@ -53,7 +49,7 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
                     name.endsWith(".gdml") || name.endsWith(".xml") -> {
                         val gdml = Gdml.decodeFromString(data)
                         gdml.toVision().apply {
-                            setAsRoot(visionManager)
+                            setAsRoot(props.solids.visionManager)
                             console.info("Marking layers for file $name")
                             markLayers()
                             ambientLight {
@@ -61,7 +57,7 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
                             }
                         }
                     }
-                    name.endsWith(".json") -> visionManager.decodeFromString(data)
+                    name.endsWith(".json") -> props.solids.visionManager.decodeFromString(data)
                     else -> {
                         window.alert("File extension is not recognized: $name")
                         error("File extension is not recognized: $name")
@@ -82,7 +78,7 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
         }
         child(ThreeCanvasWithControls) {
             attrs {
-                this.context = props.context
+                this.solids = props.solids
                 this.builderOfSolid = deferredVision
                 this.selected = props.selected
                 tab("Load") {

@@ -26,7 +26,7 @@ public inline fun MutableVisionContainer<Solid>.composite(
     name: String? = null,
     @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Composite {
-    val group = SolidGroup(builder)
+    val group = SolidGroup().apply(builder)
     val children = group.items.values.toList()
     if (children.size != 2) {
         error("Composite requires exactly two children, but found ${children.size}")
@@ -48,7 +48,7 @@ public fun SolidGroup.smartComposite(
     name: String? = null,
     @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
-    val group = SolidGroup(builder)
+    val group = SolidGroup().apply(builder)
     if (name == null && group.properties.own == null) {
         //append directly to group if no properties are defined
         group.items.forEach { (_, value) ->

@@ -5,7 +5,6 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -19,11 +18,11 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
     val meta = Meta {
         "title" put title
     }
-    val vision = SolidGroup(block).apply {
+    val vision = solids.solidGroup {
+        block()
         ambientLight{
             color.set(Colors.white)
         }
-        setAsRoot(solids.visionManager)
     }
     render(Name.parse(name), vision, meta)
 }
@@ -69,7 +68,7 @@ fun VisionLayout<Solid>.showcase() {
     }
 
     demo("dynamic", "Dynamic properties") {
-        val group = group {
+        val group = solidGroup {
             box(100, 100, 100) {
                 z = 110.0
                 opacity = 0.5
@@ -101,7 +100,7 @@ fun VisionLayout<Solid>.showcase() {
 
     demo("rotation", "Rotations") {
         box(100, 100, 100)
-        group {
+        solidGroup {
             x = 200
             rotationY = PI / 4
             box(100, 100, 100) {

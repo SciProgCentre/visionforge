@@ -41,7 +41,7 @@ class SerializationTest {
             x = 100
             z = -100
         }
-        val group = SolidGroup {
+        val group = Solids.solidGroup {
             newRef("cube", cube)
             refGroup("pg", Name.parse("pg.content")) {
                 sphere(50) {
@@ -57,7 +57,7 @@ class SerializationTest {
 
     @Test
     fun lightSerialization(){
-        val group = SolidGroup {
+        val group = Solids.solidGroup {
             ambientLight {
                 color.set(Colors.white)
                 intensity = 100.0

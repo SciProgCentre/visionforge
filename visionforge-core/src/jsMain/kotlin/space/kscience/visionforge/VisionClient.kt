@@ -65,6 +65,7 @@ public class VisionClient : AbstractPlugin() {
 
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
+            vision.setAsRoot(visionManager)
             val renderer = findRendererFor(vision)
                 ?: error("Could not find renderer for ${visionManager.encodeToString(vision)}")
             renderer.render(element, vision, outputMeta)

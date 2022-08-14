@@ -49,7 +49,7 @@ fun main() {
             }
 
             vision("form") { form }
-            form.onPropertyChange { _, _ ->
+            form.onPropertyChange {
                 println(this)
             }
         }
