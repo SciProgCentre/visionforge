@@ -186,7 +186,7 @@ internal class SolidReferenceChild(
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.delete -> error("Deleting children inside ref is not allowed.")
+                change.vision == NullVision -> error("Deleting children inside ref is not allowed.")
                 change.vision != null -> error("Updating content of the ref is not allowed")
                 else -> children.getChild(name)?.update(change)
             }

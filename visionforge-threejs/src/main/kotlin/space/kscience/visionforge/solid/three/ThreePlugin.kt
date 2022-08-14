@@ -11,7 +11,7 @@ import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.onPropertyChange
+import space.kscience.visionforge.VisionChildren
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
@@ -48,69 +48,75 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
-    public fun buildObject3D(obj: Solid): Object3D = when (obj) {
-        is ThreeJsVision -> obj.render(this)
-        is SolidReference -> ThreeReferenceFactory.build(this, obj)
+    public fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
+        is ThreeJsVision -> vision.render(this)
+        is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
         is SolidGroup -> {
             val group = ThreeGroup()
-            obj.items.forEach { (token, child) ->
+            vision.items.forEach { (token, child) ->
                 if (token != SolidGroup.PROTOTYPES_TOKEN && child.ignore != true) {
                     try {
-                        val object3D = buildObject3D(child)
+                        val object3D = buildObject3D(
+                            child,
+                            if (token.body == VisionChildren.STATIC_TOKEN_BODY) false else observe
+                        )
+                        // disable tracking changes for statics
                         group[token] = object3D
                     } catch (ex: Throwable) {
                         logger.error(ex) { "Failed to render $child" }
-                        ex.printStackTrace()
                     }
                 }
             }
 
             group.apply {
-                updatePosition(obj)
+                updatePosition(vision)
                 //obj.onChildrenChange()
-
-                obj.onPropertyChange(context) { name ->
-                    if (
-                        name.startsWith(Solid.POSITION_KEY) ||
-                        name.startsWith(Solid.ROTATION_KEY) ||
-                        name.startsWith(Solid.SCALE_KEY)
-                    ) {
-                        //update position of mesh using this object
-                        updatePosition(obj)
-                    } else if (name == Vision.VISIBLE_KEY) {
-                        visible = obj.visible ?: true
-                    }
-                }
-
-                obj.children.changes.onEach { childName ->
-                    val child = obj.children.getChild(childName)
-
-                    //removing old object
-                    findChild(childName)?.let { oldChild ->
-                        oldChild.parent?.remove(oldChild)
-                    }
-
-                    //adding new object
-                    if (child != null && child is Solid) {
-                        try {
-                            val object3D = buildObject3D(child)
-                            set(childName, object3D)
-                        } catch (ex: Throwable) {
-                            logger.error(ex) { "Failed to render $child" }
+                if (observe) {
+                    vision.properties.changes.onEach { name ->
+                        if (
+                            name.startsWith(Solid.POSITION_KEY) ||
+                            name.startsWith(Solid.ROTATION_KEY) ||
+                            name.startsWith(Solid.SCALE_KEY)
+                        ) {
+                            //update position of mesh using this object
+                            updatePosition(vision)
+                        } else if (name == Vision.VISIBLE_KEY) {
+                            visible = vision.visible ?: true
                         }
-                    }
-                }.launchIn(context)
+                    }.launchIn(context)
+
+                    vision.children.changes.onEach { childName ->
+                        if(childName.isEmpty()) return@onEach
+
+                        val child = vision.children.getChild(childName)
+
+                        //removing old object
+                        findChild(childName)?.let { oldChild ->
+                            oldChild.parent?.remove(oldChild)
+                        }
+
+                        //adding new object
+                        if (child != null && child is Solid) {
+                            try {
+                                val object3D = buildObject3D(child)
+                                set(childName, object3D)
+                            } catch (ex: Throwable) {
+                                logger.error(ex) { "Failed to render $child" }
+                            }
+                        }
+                    }.launchIn(context)
+                }
             }
         }
 
-        is Composite -> compositeFactory.build(this, obj)
+        is Composite -> compositeFactory.build(this, vision, observe)
         else -> {
             //find specialized factory for this type if it is present
-            val factory: ThreeFactory<Solid>? = findObjectFactory(obj::class)
+            val factory: ThreeFactory<Solid>? = findObjectFactory(vision::class)
             when {
-                factory != null -> factory.build(this, obj)
-                obj is GeometrySolid -> ThreeShapeFactory.build(this, obj)
-                else -> error("Renderer for ${obj::class} not found")
+                factory != null -> factory.build(this, vision, observe)
+                vision is GeometrySolid -> ThreeShapeFactory.build(this, vision, observe)
+                else -> error("Renderer for ${vision::class} not found")
             }
         }
     }

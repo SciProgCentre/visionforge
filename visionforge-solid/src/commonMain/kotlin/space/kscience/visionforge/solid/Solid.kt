@@ -115,7 +115,7 @@ public interface Solid : Vision {
 public var Solid.layer: Int
     get() = properties.getValue(LAYER_KEY, inherit = true)?.int ?: 0
     set(value) {
-        properties.set(LAYER_KEY, value)
+        properties[LAYER_KEY] = value
     }
 
 // Common properties

@@ -49,7 +49,7 @@ public object ThreeMaterials {
         cached = true
     }
 
-    private val lineMaterialCache = HashMap<Meta, LineBasicMaterial>()
+    private val lineMaterialCache = HashMap<Int, LineBasicMaterial>()
 
     private fun buildLineMaterial(meta: Meta): LineBasicMaterial = LineBasicMaterial().apply {
         color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_LINE_COLOR
@@ -61,13 +61,11 @@ public object ThreeMaterials {
     public fun getLineMaterial(meta: Meta?, cache: Boolean): LineBasicMaterial {
         if (meta == null) return DEFAULT_LINE
         return if (cache) {
-            lineMaterialCache.getOrPut(meta) { buildLineMaterial(meta) }
+            lineMaterialCache.getOrPut(meta.hashCode()) { buildLineMaterial(meta) }
         } else {
             buildLineMaterial(meta)
         }
     }
-
-    private val materialCache = HashMap<Meta, Material>()
 
     internal fun buildMaterial(meta: Meta): Material = when (meta[SolidMaterial.TYPE_KEY]?.string) {
         "simple" -> MeshBasicMaterial().apply {
@@ -85,7 +83,9 @@ public object ThreeMaterials {
         needsUpdate = true
     }
 
-    internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta) {
+    private val materialCache = HashMap<Int, Material>()
+
+    internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta.hashCode()) {
         buildMaterial(meta).apply {
             cached = true
         }
@@ -130,11 +130,11 @@ private var Material.cached: Boolean
         userData["cached"] = value
     }
 
-public fun Mesh.updateMaterial(vision: Vision) {
+public fun Mesh.createMaterial(vision: Vision) {
     val ownMaterialMeta = vision.properties.own?.get(SolidMaterial.MATERIAL_KEY)
     if (ownMaterialMeta == null) {
         if (vision is SolidReference && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()) {
-            updateMaterial(vision.prototype)
+            createMaterial(vision.prototype)
         } else {
             material = ThreeMaterials.cacheMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY))
         }
@@ -150,7 +150,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
         || propertyName == SolidMaterial.MATERIAL_KEY + SolidMaterial.TYPE_KEY
     ) {
         //generate a new material since cached material should not be changed
-        updateMaterial(vision)
+        createMaterial(vision)
     } else {
         when (propertyName) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {

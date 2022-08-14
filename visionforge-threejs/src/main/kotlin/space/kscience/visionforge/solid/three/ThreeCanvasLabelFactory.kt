@@ -22,17 +22,17 @@ import kotlin.reflect.KClass
 public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
-    override fun build(three: ThreePlugin, obj: SolidLabel): Object3D {
+    override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
-        context.font = "Bold ${obj.fontSize}pt ${obj.fontFamily}"
-        context.fillStyle = obj.properties.getValue(SolidMaterial.MATERIAL_COLOR_KEY, false, true)?.value ?: "black"
+        context.font = "Bold ${vision.fontSize}pt ${vision.fontFamily}"
+        context.fillStyle = vision.properties.getValue(SolidMaterial.MATERIAL_COLOR_KEY, false, true)?.value ?: "black"
         context.textBaseline = CanvasTextBaseline.MIDDLE
-        val metrics = context.measureText(obj.text)
+        val metrics = context.measureText(vision.text)
         //canvas.width = metrics.width.toInt()
 
 
-        context.fillText(obj.text, (canvas.width - metrics.width) / 2, 0.5 * canvas.height)
+        context.fillText(vision.text, (canvas.width - metrics.width) / 2, 0.5 * canvas.height)
 
 
         // canvas contents will be used for a texture
@@ -50,7 +50,7 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
             material
         )
 
-        mesh.updatePosition(obj)
+        mesh.updatePosition(vision)
 
         mesh.userData[DO_NOT_HIGHLIGHT_TAG] = true
         return mesh

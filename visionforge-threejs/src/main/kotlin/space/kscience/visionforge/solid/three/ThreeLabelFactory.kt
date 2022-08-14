@@ -17,19 +17,21 @@ import kotlin.reflect.KClass
 public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
-    override fun build(three: ThreePlugin, obj: SolidLabel): Object3D {
-        val textGeo = TextBufferGeometry(obj.text, jso {
-            font = obj.fontFamily
+    override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
+        val textGeo = TextBufferGeometry(vision.text, jso {
+            font = vision.fontFamily
             size = 20
             height = 1
             curveSegments = 1
         })
         return Mesh(textGeo, ThreeMaterials.DEFAULT).apply {
-            updateMaterial(obj)
-            updatePosition(obj)
-            obj.onPropertyChange {
-                //TODO
-                three.logger.warn { "Label parameter change not implemented" }
+            createMaterial(vision)
+            updatePosition(vision)
+            if(observe) {
+                vision.onPropertyChange(three.context) {
+                    //TODO
+                    three.logger.warn { "Label parameter change not implemented" }
+                }
             }
         }
     }

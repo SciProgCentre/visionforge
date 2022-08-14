@@ -91,7 +91,6 @@ private object RootDecoder {
 
     private fun <T> KSerializer<T>.unref(refCache: List<RefEntry>): KSerializer<T> = RootUnrefSerializer(this, refCache)
 
-    @OptIn(ExperimentalSerializationApi::class)
     fun unrefSerializersModule(
         refCache: List<RefEntry>,
     ): SerializersModule = SerializersModule {

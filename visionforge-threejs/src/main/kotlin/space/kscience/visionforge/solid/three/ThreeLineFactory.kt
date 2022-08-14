@@ -16,27 +16,29 @@ import kotlin.reflect.KClass
 public object ThreeLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<PolyLine> get() = PolyLine::class
 
-    override fun build(three: ThreePlugin, obj: PolyLine): Object3D {
+    override fun build(three: ThreePlugin, vision: PolyLine, observe: Boolean): Object3D {
         val geometry = BufferGeometry().apply {
-            setFromPoints(Array((obj.points.size - 1) * 2) {
-                obj.points[ceil(it / 2.0).toInt()].toVector()
+            setFromPoints(Array((vision.points.size - 1) * 2) {
+                vision.points[ceil(it / 2.0).toInt()].toVector()
             })
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            obj.properties.getProperty(SolidMaterial.MATERIAL_KEY),
+            vision.properties.getProperty(SolidMaterial.MATERIAL_KEY),
             false
         )
 
-        material.linewidth = obj.thickness.toDouble()
-        material.color = obj.color.string?.let { Color(it) } ?: DEFAULT_LINE_COLOR
+        material.linewidth = vision.thickness.toDouble()
+        material.color = vision.color.string?.let { Color(it) } ?: DEFAULT_LINE_COLOR
 
         return LineSegments(geometry, material).apply {
-            updatePosition(obj)
+            updatePosition(vision)
             //layers.enable(obj.layer)
             //add listener to object properties
-            obj.onPropertyChange { propertyName ->
-                updateProperty(obj, propertyName)
+            if(observe) {
+                vision.onPropertyChange(three.context) { propertyName ->
+                    updateProperty(vision, propertyName)
+                }
             }
         }
     }

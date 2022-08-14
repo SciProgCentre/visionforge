@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import kotlin.jvm.Synchronized
@@ -16,6 +17,8 @@ import kotlin.time.Duration
  * Create a deep copy of given Vision without external connections.
  */
 private fun Vision.deepCopy(manager: VisionManager): Vision {
+    if(this is NullVision) return NullVision
+
     //Assuming that unrooted visions are already isolated
     //TODO replace by efficient deep copy
     val json = manager.encodeToJsonElement(this)
@@ -23,11 +26,28 @@ private fun Vision.deepCopy(manager: VisionManager): Vision {
 }
 
 /**
+ * A vision used only in change propagation and showing that the target should be removed
+ */
+@Serializable
+public object NullVision : Vision {
+    override var parent: Vision?
+        get() = null
+        set(_) {
+            error("Can't set parent for null vision")
+        }
+
+    override val properties: MutableVisionProperties get() = error("Can't get properties of `NullVision`")
+
+    override val descriptor: MetaDescriptor? = null
+
+}
+
+
+/**
  * An update for a [Vision]
  */
 public class VisionChangeBuilder(private val manager: VisionManager) : MutableVisionContainer<Vision> {
 
-    private var reset: Boolean = false
     private var vision: Vision? = null
     private val propertyChange = MutableMeta()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
@@ -50,8 +70,7 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
     override fun setChild(name: Name?, child: Vision?) {
         if (name == null) error("Static children are not allowed in VisionChange")
         getOrPutChild(name).apply {
-            vision = child
-            reset = vision == null
+            vision = child ?: NullVision
         }
     }
 
@@ -59,7 +78,6 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
      * Isolate collected changes by creating detached copies of given visions
      */
     public fun deepCopy(): VisionChange = VisionChange(
-        reset,
         vision?.deepCopy(manager),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
         if (children.isEmpty()) null else children.mapValues { it.value.deepCopy() }
@@ -67,14 +85,12 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
 }
 
 /**
- * @param delete flag showing that this vision child should be removed
- * @param vision a new value for vision content
+ * @param vision a new value for vision content. If the Vision is to be removed should be [NullVision]
  * @param properties updated properties
  * @param children a map of children changed in ths [VisionChange]. If a child to be removed, set [delete] flag to true.
  */
 @Serializable
 public data class VisionChange(
-    public val delete: Boolean = false,
     public val vision: Vision? = null,
     public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,

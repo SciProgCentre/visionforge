@@ -40,5 +40,5 @@ kotlin {
 }
 
 application {
-    mainClassName = "space.kscience.visionforge.solid.demo.FXDemoAppKt"
+    mainClass.set("space.kscience.visionforge.solid.demo.FXDemoAppKt")
 }

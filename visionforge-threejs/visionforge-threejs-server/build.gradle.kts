@@ -1,28 +1,17 @@
 plugins {
     id("space.kscience.gradle.mpp")
- }
+}
 
 val ktorVersion: String by rootProject.extra
 
 kotlin {
-    js(IR){
+    js(IR) {
         browser {
             webpackTask {
                 this.outputFileName = "js/visionforge-three.js"
             }
         }
         binaries.executable()
-    }
-
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            afterEvaluate {
-                from(jsBrowserDistribution)
-            }
-        }
     }
 
     sourceSets {
@@ -41,5 +30,23 @@ kotlin {
                 api(project(":visionforge-threejs"))
             }
         }
+    }
+}
+
+
+val jsBrowserDistribution by tasks.getting
+val jsBrowserDevelopmentExecutableDistribution by tasks.getting
+
+val devMode = rootProject.findProperty("visionforge.development") as? Boolean
+    ?: rootProject.version.toString().contains("dev")
+
+tasks.getByName<ProcessResources>("jvmProcessResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    if (devMode) {
+        dependsOn(jsBrowserDevelopmentExecutableDistribution)
+        from(jsBrowserDevelopmentExecutableDistribution)
+    } else {
+        dependsOn(jsBrowserDistribution)
+        from(jsBrowserDistribution)
     }
 }

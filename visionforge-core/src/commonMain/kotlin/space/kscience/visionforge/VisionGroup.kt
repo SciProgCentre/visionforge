@@ -35,7 +35,7 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
-                change.delete -> children.setChild(name, null)
+                change.vision == NullVision -> children.setChild(name, null)
                 change.vision != null -> children.setChild(name, change.vision)
                 else -> children.getChild(name)?.update(change)
             }

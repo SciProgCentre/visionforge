@@ -20,7 +20,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
     }
     val vision = solids.solidGroup {
         block()
-        ambientLight{
+        ambientLight {
             color.set(Colors.white)
         }
     }

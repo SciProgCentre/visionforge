@@ -21,18 +21,10 @@ kotlin {
         useCommonJs()
         browser {
             commonWebpackConfig {
-                cssSupport.enabled = false
+                cssSupport {
+                    enabled = false
+                }
             }
-        }
-    }
-
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            from(jsBrowserDistribution)
         }
     }
 
@@ -63,6 +55,23 @@ kotlin {
 
 application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
+}
+
+val jsBrowserDistribution by tasks.getting
+val jsBrowserDevelopmentExecutableDistribution by tasks.getting
+
+val devMode = rootProject.findProperty("visionforge.development") as? Boolean
+    ?: rootProject.version.toString().contains("dev")
+
+tasks.getByName<ProcessResources>("jvmProcessResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    if (devMode) {
+        dependsOn(jsBrowserDevelopmentExecutableDistribution)
+        from(jsBrowserDevelopmentExecutableDistribution)
+    } else {
+        dependsOn(jsBrowserDistribution)
+        from(jsBrowserDistribution)
+    }
 }
 
 //distributions {

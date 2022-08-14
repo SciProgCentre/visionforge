@@ -31,33 +31,35 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
         }
     }
 
-    override fun build(three: ThreePlugin, obj: SolidReference): Object3D {
-        val template = obj.prototype
+    override fun build(three: ThreePlugin, vision: SolidReference, observe: Boolean): Object3D {
+        val template = vision.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)
         }
 
         val object3D: Object3D = cachedObject.replicate()
-        object3D.updatePosition(obj)
+        object3D.updatePosition(vision)
 
         if (object3D is Mesh) {
             //object3D.material = ThreeMaterials.buildMaterial(obj.getProperty(SolidMaterial.MATERIAL_KEY).node!!)
-            object3D.applyProperties(obj)
+            object3D.applyProperties(vision)
         }
 
         //TODO apply child properties
 
-        obj.onPropertyChange { name ->
-            if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
-                val childName = name.firstOrNull()?.index?.let(Name::parse)
-                    ?: error("Wrong syntax for reference child property: '$name'")
-                val propertyName = name.cutFirst()
-                val referenceChild =
-                    obj.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
-                val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
-                child.updateProperty(referenceChild, propertyName)
-            } else {
-                object3D.updateProperty(obj, name)
+        if (observe) {
+            vision.onPropertyChange(three.context) { name ->
+                if (name.firstOrNull()?.body == REFERENCE_CHILD_PROPERTY_PREFIX) {
+                    val childName = name.firstOrNull()?.index?.let(Name::parse)
+                        ?: error("Wrong syntax for reference child property: '$name'")
+                    val propertyName = name.cutFirst()
+                    val referenceChild =
+                        vision.children.getChild(childName) ?: error("Reference child with name '$childName' not found")
+                    val child = object3D.findChild(childName) ?: error("Object child with name '$childName' not found")
+                    child.updateProperty(referenceChild, propertyName)
+                } else {
+                    object3D.updateProperty(vision, name)
+                }
             }
         }
 

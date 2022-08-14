@@ -37,21 +37,25 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
 
     override val type: KClass<in Composite> get() = Composite::class
 
-    override fun build(three: ThreePlugin, obj: Composite): Mesh {
-        val first = three.buildObject3D(obj.first).takeIfMesh() ?: error("First part of composite is not a mesh")
-        val second = three.buildObject3D(obj.second).takeIfMesh() ?: error("Second part of composite is not a mesh")
-        return when (obj.compositeType) {
+    override fun build(three: ThreePlugin, vision: Composite, observe: Boolean): Mesh {
+        val first =
+            three.buildObject3D(vision.first, observe).takeIfMesh() ?: error("First part of composite is not a mesh")
+        val second =
+            three.buildObject3D(vision.second, observe).takeIfMesh() ?: error("Second part of composite is not a mesh")
+        return when (vision.compositeType) {
             CompositeType.GROUP, CompositeType.UNION -> CSG.union(first, second)
             CompositeType.INTERSECT -> CSG.intersect(first, second)
             CompositeType.SUBTRACT -> CSG.subtract(first, second)
         }.apply {
-            updatePosition(obj)
-            applyProperties(obj)
-            obj.onPropertyChange { name ->
-                when {
-                    //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
-                    name.startsWith(ThreeMeshFactory.EDGES_KEY) -> applyEdges(obj)
-                    else -> updateProperty(obj, name)
+            updatePosition(vision)
+            applyProperties(vision)
+            if (observe) {
+                vision.onPropertyChange { name ->
+                    when {
+                        //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
+                        name.startsWith(ThreeMeshFactory.EDGES_KEY) -> applyEdges(vision)
+                        else -> updateProperty(vision, name)
+                    }
                 }
             }
         }

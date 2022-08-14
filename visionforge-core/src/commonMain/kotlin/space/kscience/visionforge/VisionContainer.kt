@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import space.kscience.dataforge.names.*
+import space.kscience.visionforge.VisionChildren.Companion.STATIC_TOKEN_BODY
 import kotlin.jvm.Synchronized
 
 @DslMarker
@@ -40,6 +41,8 @@ public interface VisionChildren : VisionContainer<Vision> {
     }
 
     public companion object {
+        public const val STATIC_TOKEN_BODY: String = "@static"
+
         public fun empty(owner: Vision): VisionChildren = object : VisionChildren {
             override val group: Vision get() = owner
             override val keys: Set<NameToken> get() = emptySet()
@@ -105,8 +108,8 @@ public operator fun MutableVisionChildren.set(name: String?, vision: Vision?) {
 /**
  * Add a static child. Statics could not be found by name, removed or replaced. Changing statics also do not trigger events.
  */
-public fun MutableVisionChildren.static(child: Vision): Unit {
-    set(NameToken("@static", index = child.hashCode().toString()), child)
+public fun MutableVisionChildren.static(child: Vision) {
+    set(NameToken(STATIC_TOKEN_BODY, index = child.hashCode().toString()), child)
 }
 
 public fun VisionChildren.asSequence(): Sequence<Pair<NameToken, Vision>> = sequence {
@@ -185,14 +188,14 @@ internal abstract class VisionChildrenImpl(
     }
 
     override fun clear() {
-        if (!items.isNullOrEmpty()) {
-            updateJobs.values.forEach {
-                it.cancel()
-            }
-            updateJobs.clear()
-            items?.clear()
-            onChange(Name.EMPTY)
-        }
+        items?.forEach { set(it.key, null) }
+//        if (!items.isNullOrEmpty()) {
+//            updateJobs.values.forEach {
+//                it.cancel()
+//            }
+//            updateJobs.clear()
+//            items?.clear()
+//        }
     }
 }
 //

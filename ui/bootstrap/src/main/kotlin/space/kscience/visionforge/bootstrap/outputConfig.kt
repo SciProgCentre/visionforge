@@ -1,5 +1,6 @@
 package space.kscience.visionforge.bootstrap
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.css.BorderStyle
 import kotlinx.css.Color
@@ -47,6 +48,7 @@ public external interface CanvasControlsProps : Props {
     public var vision: Vision?
 }
 
+
 public val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { props ->
     flexColumn {
         flexRow {
@@ -68,6 +70,7 @@ public val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { prop
                 }
             }
         }
+        @OptIn(DelicateCoroutinesApi::class)
         propertyEditor(
             scope = props.vision?.manager?.context ?: GlobalScope,
             properties = props.canvasOptions.meta,

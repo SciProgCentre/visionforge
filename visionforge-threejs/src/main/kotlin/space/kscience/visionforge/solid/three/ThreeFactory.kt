@@ -22,7 +22,11 @@ public interface ThreeFactory<in T : Vision> {
 
     public val type: KClass<in T>
 
-    public fun build(three: ThreePlugin, obj: T): Object3D
+    /**
+     * Build an [Object3D] from [vision].
+     * @param observe if false, does not observe the changes in [vision] after render (useful for statics).
+     */
+    public fun build(three: ThreePlugin, vision: T, observe: Boolean = true): Object3D
 
     public companion object {
         public const val TYPE: String = "threeFactory"
@@ -32,10 +36,10 @@ public interface ThreeFactory<in T : Vision> {
 /**
  * Update position, rotation and visibility
  */
-public fun Object3D.updatePosition(obj: Vision) {
-    visible = obj.visible ?: true
-    if (obj is Solid) {
-        position.set(obj.x, obj.y, obj.z)
+public fun Object3D.updatePosition(vision: Vision) {
+    visible = vision.visible ?: true
+    if (vision is Solid) {
+        position.set(vision.x, vision.y, vision.z)
 
 //        val quaternion = obj.quaternion
 //
@@ -46,9 +50,9 @@ public fun Object3D.updatePosition(obj: Vision) {
 //            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
 //        }
 
-        setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
+        setRotationFromEuler( Euler(vision.rotationX, vision.rotationY, vision.rotationZ, vision.rotationOrder.name))
 
-        scale.set(obj.scaleX, obj.scaleY, obj.scaleZ)
+        scale.set(vision.scaleX, vision.scaleY, vision.scaleZ)
         updateMatrix()
     }
 }

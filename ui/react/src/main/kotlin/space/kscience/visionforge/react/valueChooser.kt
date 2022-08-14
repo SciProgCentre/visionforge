@@ -1,5 +1,6 @@
 package space.kscience.visionforge.react
 
+import info.laht.threekt.math.Color
 import kotlinx.css.margin
 import kotlinx.css.pct
 import kotlinx.css.px
@@ -149,7 +150,7 @@ public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { 
         attrs {
             this.value = props.value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                else value.string
+                else "#" + Color(value.string).getHexString()
             } ?: "#000000"
             onChangeFunction = handleChange
         }

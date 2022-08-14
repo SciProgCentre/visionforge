@@ -30,32 +30,34 @@ public abstract class ThreeMeshFactory<in T : Solid>(
      */
     public abstract fun buildGeometry(obj: T): BufferGeometry
 
-    override fun build(three: ThreePlugin, obj: T): Mesh {
-        val geometry = buildGeometry(obj)
+    override fun build(three: ThreePlugin, vision: T, observe: Boolean): Mesh {
+        val geometry = buildGeometry(vision)
 
         //val meshMeta: Meta = obj.properties[Material3D.MATERIAL_KEY]?.node ?: Meta.empty
 
         val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {
             matrixAutoUpdate = false
             //set position for mesh
-            updatePosition(obj)
-            applyProperties(obj)
+            updatePosition(vision)
+            applyProperties(vision)
         }
 
-        //add listener to object properties
-        obj.onPropertyChange { name->
-            when {
-                name.startsWith(Solid.GEOMETRY_KEY) -> {
-                    val oldGeometry = mesh.geometry
-                    val newGeometry = buildGeometry(obj)
-                    oldGeometry.attributes = newGeometry.attributes
-                    //mesh.applyWireFrame(obj)
-                    mesh.applyEdges(obj)
-                    newGeometry.dispose()
+        if(observe) {
+            //add listener to object properties
+            vision.onPropertyChange(three.context) { name ->
+                when {
+                    name.startsWith(Solid.GEOMETRY_KEY) -> {
+                        val oldGeometry = mesh.geometry
+                        val newGeometry = buildGeometry(vision)
+                        oldGeometry.attributes = newGeometry.attributes
+                        //mesh.applyWireFrame(obj)
+                        mesh.applyEdges(vision)
+                        newGeometry.dispose()
+                    }
+                    //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
+                    name.startsWith(EDGES_KEY) -> mesh.applyEdges(vision)
+                    else -> mesh.updateProperty(vision, name)
                 }
-                //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
-                name.startsWith(EDGES_KEY) -> mesh.applyEdges(obj)
-                else -> mesh.updateProperty(obj, name)
             }
         }
 
@@ -76,26 +78,26 @@ public abstract class ThreeMeshFactory<in T : Solid>(
 
 @VisionBuilder
 public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
-    properties.set(EDGES_ENABLED_KEY, enabled)
+    properties[EDGES_ENABLED_KEY] = enabled
     SolidMaterial.write(properties.getProperty(EDGES_MATERIAL_KEY)).apply(block)
 }
 
-internal fun Mesh.applyProperties(obj: Solid): Mesh = apply {
-    updateMaterial(obj)
-    applyEdges(obj)
+internal fun Mesh.applyProperties(vision: Solid): Mesh = apply {
+    createMaterial(vision)
+    applyEdges(vision)
     //applyWireFrame(obj)
-    layers.set(obj.layer)
+    layers.set(vision.layer)
     children.forEach {
-        it.layers.set(obj.layer)
+        it.layers.set(vision.layer)
     }
 }
 
-public fun Mesh.applyEdges(obj: Solid) {
+public fun Mesh.applyEdges(vision: Solid) {
     val edges = children.find { it.name == "@edges" } as? LineSegments
     //inherited edges definition, enabled by default
-    if (obj.properties.getProperty(EDGES_ENABLED_KEY, inherit = true).boolean != false) {
+    if (vision.properties.getValue(EDGES_ENABLED_KEY, inherit = true)?.boolean != false) {
         val bufferGeometry = geometry as? BufferGeometry ?: return
-        val material = ThreeMaterials.getLineMaterial(obj.properties.getProperty(EDGES_MATERIAL_KEY), true)
+        val material = ThreeMaterials.getLineMaterial(vision.properties.getProperty(EDGES_MATERIAL_KEY), true)
         if (edges == null) {
             add(
                 LineSegments(

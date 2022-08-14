@@ -13,19 +13,21 @@ public object ThreePointLightFactory : ThreeFactory<PointLightSource> {
 
     private val DEFAULT_COLOR = Color(0x404040)
 
-    override fun build(three: ThreePlugin, obj: PointLightSource): PointLight {
+    override fun build(three: ThreePlugin, vision: PointLightSource, observe: Boolean): PointLight {
         val res = PointLight().apply {
             matrixAutoUpdate = false
-            color = obj.color.threeColor() ?: DEFAULT_COLOR
-            intensity = obj.intensity.toDouble()
-            updatePosition(obj)
+            color = vision.color.threeColor() ?: DEFAULT_COLOR
+            intensity = vision.intensity.toDouble()
+            updatePosition(vision)
         }
 
-        obj.onPropertyChange { name ->
-            when (name) {
-                LightSource::color.name.asName() -> res.color = obj.color.threeColor() ?: DEFAULT_COLOR
-                LightSource::intensity.name.asName() -> res.intensity = obj.intensity.toDouble()
-                else -> res.updateProperty(obj, name)
+        if(observe) {
+            vision.onPropertyChange(three.context) { name ->
+                when (name) {
+                    LightSource::color.name.asName() -> res.color = vision.color.threeColor() ?: DEFAULT_COLOR
+                    LightSource::intensity.name.asName() -> res.intensity = vision.intensity.toDouble()
+                    else -> res.updateProperty(vision, name)
+                }
             }
         }
 
