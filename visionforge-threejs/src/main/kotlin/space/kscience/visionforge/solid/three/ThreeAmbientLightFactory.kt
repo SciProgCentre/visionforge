@@ -1,8 +1,8 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.lights.AmbientLight
-import info.laht.threekt.math.Color
 import space.kscience.visionforge.solid.AmbientLightSource
+import three.lights.AmbientLight
+import three.math.Color
 import kotlin.reflect.KClass
 
 public object ThreeAmbientLightFactory : ThreeFactory<AmbientLightSource> {

@@ -1,9 +1,9 @@
 package space.kscience.visionforge.solid.three
 
 
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.TextBufferGeometry
-import info.laht.threekt.objects.Mesh
+import three.core.Object3D
+import three.geometries.TextBufferGeometry
+import three.objects.Mesh
 import kotlinx.js.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn

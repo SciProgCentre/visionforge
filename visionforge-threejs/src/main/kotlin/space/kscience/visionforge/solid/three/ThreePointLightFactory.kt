@@ -1,11 +1,11 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.lights.PointLight
-import info.laht.threekt.math.Color
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.LightSource
 import space.kscience.visionforge.solid.PointLightSource
+import three.lights.PointLight
+import three.math.Color
 import kotlin.reflect.KClass
 
 public object ThreePointLightFactory : ThreeFactory<PointLightSource> {

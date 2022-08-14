@@ -1,11 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.materials.LineBasicMaterial
-import info.laht.threekt.materials.Material
-import info.laht.threekt.materials.MeshBasicMaterial
-import info.laht.threekt.materials.MeshStandardMaterial
-import info.laht.threekt.math.Color
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -16,6 +10,12 @@ import space.kscience.visionforge.getStyleNodes
 import space.kscience.visionforge.solid.ColorAccessor
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.SolidReference
+import three.materials.LineBasicMaterial
+import three.materials.Material
+import three.materials.MeshBasicMaterial
+import three.materials.MeshStandardMaterial
+import three.math.Color
+import three.objects.Mesh
 
 
 public object ThreeMaterials {
@@ -34,18 +34,6 @@ public object ThreeMaterials {
 
     public val DEFAULT_LINE: LineBasicMaterial = LineBasicMaterial().apply {
         color.set(DEFAULT_LINE_COLOR)
-        cached = true
-    }
-
-    public val SELECTED_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
-        color.set(Colors.ivory)
-        linewidth = 2.0
-        cached = true
-    }
-
-    public val HIGHLIGHT_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
-        color.set(Colors.blue)
-        linewidth = 2.0
         cached = true
     }
 
@@ -124,7 +112,7 @@ public fun ColorAccessor.threeColor(): Color? {
     }
 }
 
-private var Material.cached: Boolean
+internal var Material.cached: Boolean
     get() = userData["cached"] == true
     set(value) {
         userData["cached"] = value

@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.external.geometries.ConvexBufferGeometry
 import space.kscience.visionforge.solid.Convex
+import three.external.geometries.ConvexBufferGeometry
 
 public object ThreeConvexFactory : ThreeMeshFactory<Convex>(Convex::class) {
     override fun buildGeometry(obj: Convex): ConvexBufferGeometry {

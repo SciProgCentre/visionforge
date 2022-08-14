@@ -1,8 +1,8 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.geometries.BoxGeometry
 import space.kscience.visionforge.solid.Box
 import space.kscience.visionforge.solid.detail
+import three.geometries.BoxGeometry
 
 public object ThreeBoxFactory : ThreeMeshFactory<Box>(Box::class) {
     override fun buildGeometry(obj: Box): BoxGeometry =

@@ -1,9 +1,9 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.geometries.CylinderGeometry
 import space.kscience.visionforge.solid.ConeSegment
 import space.kscience.visionforge.solid.detail
+import three.core.BufferGeometry
+import three.geometries.CylinderGeometry
 import kotlin.math.PI
 import kotlin.math.pow
 

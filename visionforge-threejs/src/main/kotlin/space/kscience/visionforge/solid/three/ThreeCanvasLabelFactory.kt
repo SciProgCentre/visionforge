@@ -1,11 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.DoubleSide
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.PlaneGeometry
-import info.laht.threekt.materials.MeshBasicMaterial
-import info.laht.threekt.objects.Mesh
-import info.laht.threekt.textures.Texture
 import kotlinx.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.CanvasTextBaseline
@@ -14,6 +8,12 @@ import org.w3c.dom.MIDDLE
 import space.kscience.visionforge.solid.SolidLabel
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.three.ThreeCanvas.Companion.DO_NOT_HIGHLIGHT_TAG
+import three.DoubleSide
+import three.core.Object3D
+import three.geometries.PlaneGeometry
+import three.materials.MeshBasicMaterial
+import three.objects.Mesh
+import three.textures.Texture
 import kotlin.reflect.KClass
 
 /**

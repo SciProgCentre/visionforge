@@ -1,8 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.math.Euler
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
@@ -11,6 +8,9 @@ import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.three.ThreeFactory.Companion.TYPE
 import space.kscience.visionforge.visible
+import three.core.BufferGeometry
+import three.core.Object3D
+import three.math.Euler
 import kotlin.reflect.KClass
 
 /**

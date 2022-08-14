@@ -1,9 +1,9 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.geometries.SphereGeometry
 import space.kscience.visionforge.solid.Sphere
 import space.kscience.visionforge.solid.detail
+import three.core.BufferGeometry
+import three.geometries.SphereGeometry
 
 public object ThreeSphereFactory : ThreeMeshFactory<Sphere>(Sphere::class) {
     override fun buildGeometry(obj: Sphere): BufferGeometry {

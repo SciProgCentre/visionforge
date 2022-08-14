@@ -1,16 +1,16 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Layers
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.external.controls.OrbitControls
-import info.laht.threekt.materials.Material
-import info.laht.threekt.math.Vector3
-import info.laht.threekt.objects.Mesh
-import info.laht.threekt.textures.Texture
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.float
 import space.kscience.dataforge.meta.get
+import three.core.BufferGeometry
+import three.core.Layers
+import three.core.Object3D
+import three.external.controls.OrbitControls
+import three.materials.Material
+import three.math.Vector3
+import three.objects.Mesh
+import three.textures.Texture
 import kotlin.contracts.contract
 import kotlin.math.PI
 

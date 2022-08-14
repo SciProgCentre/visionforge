@@ -1,6 +1,6 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.Object3D
+import three.core.Object3D
 import space.kscience.visionforge.solid.SolidBase
 
 /**

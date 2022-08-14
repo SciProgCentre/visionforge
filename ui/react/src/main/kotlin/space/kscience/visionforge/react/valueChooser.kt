@@ -1,6 +1,5 @@
 package space.kscience.visionforge.react
 
-import info.laht.threekt.math.Color
 import kotlinx.css.margin
 import kotlinx.css.pct
 import kotlinx.css.px
@@ -25,6 +24,7 @@ import space.kscience.visionforge.widgetType
 import styled.css
 import styled.styledInput
 import styled.styledSelect
+import three.math.Color
 
 public external interface ValueChooserProps : Props {
     public var descriptor: MetaDescriptor?

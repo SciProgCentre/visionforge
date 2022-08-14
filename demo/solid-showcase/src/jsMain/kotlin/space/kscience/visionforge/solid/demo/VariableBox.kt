@@ -1,8 +1,5 @@
 package space.kscience.visionforge.solid.demo
 
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.BoxGeometry
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
@@ -13,6 +10,9 @@ import space.kscience.visionforge.setChild
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.*
+import three.core.Object3D
+import three.geometries.BoxGeometry
+import three.objects.Mesh
 import kotlin.math.max
 
 internal fun SolidGroup.varBox(

@@ -10,7 +10,11 @@ import space.kscience.visionforge.*
 public class PolyLine(public val points: List<Point3D>) : SolidBase<PolyLine>() {
 
     //var lineType by string()
-    public var thickness: Number by properties.getProperty(SolidMaterial.MATERIAL_KEY).number { 1.0 }
+    public var thickness: Number by properties.root(inherit = false, includeStyles = true).number { DEFAULT_THICKNESS }
+
+    public companion object {
+        public const val DEFAULT_THICKNESS: Double = 1.0
+    }
 }
 
 @VisionBuilder

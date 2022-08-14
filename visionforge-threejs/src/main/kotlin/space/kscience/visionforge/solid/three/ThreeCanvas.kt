@@ -1,18 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.WebGLRenderer
-import info.laht.threekt.cameras.PerspectiveCamera
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.core.Raycaster
-import info.laht.threekt.external.controls.OrbitControls
-import info.laht.threekt.external.controls.TrackballControls
-import info.laht.threekt.geometries.EdgesGeometry
-import info.laht.threekt.helpers.AxesHelper
-import info.laht.threekt.materials.LineBasicMaterial
-import info.laht.threekt.math.*
-import info.laht.threekt.objects.LineSegments
-import info.laht.threekt.objects.Mesh
-import info.laht.threekt.scenes.Scene
 import kotlinx.browser.window
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
@@ -25,8 +12,19 @@ import space.kscience.dataforge.names.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.*
-import space.kscience.visionforge.solid.three.ThreeMaterials.HIGHLIGHT_MATERIAL
-import space.kscience.visionforge.solid.three.ThreeMaterials.SELECTED_MATERIAL
+import three.WebGLRenderer
+import three.cameras.PerspectiveCamera
+import three.core.Object3D
+import three.core.Raycaster
+import three.external.controls.OrbitControls
+import three.external.controls.TrackballControls
+import three.geometries.EdgesGeometry
+import three.helpers.AxesHelper
+import three.math.*
+import three.meshline.MeshLine
+import three.meshline.MeshLineMaterial
+import three.objects.Mesh
+import three.scenes.Scene
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -278,7 +276,7 @@ public class ThreeCanvas(
     private fun Object3D.toggleHighlight(
         highlight: Boolean,
         edgesName: String,
-        material: LineBasicMaterial = SELECTED_MATERIAL,
+        material: MeshLineMaterial,
     ) {
 
         if (userData[DO_NOT_HIGHLIGHT_TAG] == true) {
@@ -286,8 +284,8 @@ public class ThreeCanvas(
         }
 
         if (isMesh(this)) {
-            val highlightMesh = getObjectByName(edgesName) ?: LineSegments(
-                EdgesGeometry(geometry),
+            val highlightMesh = getObjectByName(edgesName) ?: Mesh(
+                MeshLine(EdgesGeometry(geometry)),
                 material
             ).also {
                 it.name = edgesName
@@ -319,6 +317,19 @@ public class ThreeCanvas(
     }
 
     public companion object {
+        public val SELECTED_MATERIAL: MeshLineMaterial = MeshLineMaterial().apply {
+            color.set(Colors.ivory)
+            linewidth = 2.0
+            cached = true
+        }
+
+        public val HIGHLIGHT_MATERIAL: MeshLineMaterial = MeshLineMaterial().apply {
+            color.set(Colors.blue)
+            linewidth = 2.0
+            cached = true
+        }
+
+
         public const val DO_NOT_HIGHLIGHT_TAG: String = "doNotHighlight"
         private const val HIGHLIGHT_NAME = "@highlight"
         private const val SELECT_NAME = "@select"

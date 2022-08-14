@@ -1,7 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.cutFirst
 import space.kscience.dataforge.names.firstOrNull
@@ -9,6 +7,8 @@ import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidReference
 import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
+import three.core.Object3D
+import three.objects.Mesh
 import kotlin.reflect.KClass
 
 public object ThreeReferenceFactory : ThreeFactory<SolidReference> {

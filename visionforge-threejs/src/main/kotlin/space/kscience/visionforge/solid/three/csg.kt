@@ -10,10 +10,10 @@
 @file:JsModule("three-csg-ts")
 @file:JsNonModule
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.math.Matrix4
-import info.laht.threekt.math.Vector3
-import info.laht.threekt.objects.Mesh
+import three.core.BufferGeometry
+import three.math.Matrix4
+import three.math.Vector3
+import three.objects.Mesh
 
 public external class CSG {
     public fun clone(): CSG

@@ -1,9 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.geometries.EdgesGeometry
-import info.laht.threekt.objects.LineSegments
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
@@ -18,6 +14,10 @@ import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_ENABLED_KEY
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_MATERIAL_KEY
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_OBJECT_NAME
+import three.core.BufferGeometry
+import three.geometries.EdgesGeometry
+import three.objects.LineSegments
+import three.objects.Mesh
 import kotlin.reflect.KClass
 
 /**

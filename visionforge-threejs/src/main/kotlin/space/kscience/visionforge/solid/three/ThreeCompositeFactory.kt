@@ -1,11 +1,11 @@
 package space.kscience.visionforge.solid.three
 
 import CSG
-import info.laht.threekt.objects.Mesh
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Composite
 import space.kscience.visionforge.solid.CompositeType
+import three.objects.Mesh
 import kotlin.reflect.KClass
 
 /**

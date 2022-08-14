@@ -1,8 +1,8 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.BufferGeometry
-import info.laht.threekt.core.Float32BufferAttribute
-import info.laht.threekt.math.Vector3
+import three.core.BufferGeometry
+import three.core.Float32BufferAttribute
+import three.math.Vector3
 import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.solid.GeometryBuilder
 import space.kscience.visionforge.solid.Point3D

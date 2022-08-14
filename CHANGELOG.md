@@ -3,10 +3,15 @@
 ## [Unreleased]
 ### Added
 - Context receivers flag
+- MeshLine for thick lines
 
 ### Changed
-- Naming of Canvas3D options
-- Lights are added to the scene instead of 3D options
+- Visions **must** be rooted in order to subscribe to updates.
+- Visions use flows instead of direct subscriptions.
+- Radical change of inner workings of vision children and properties.
+- Three package changed to `three`.
+- Naming of Canvas3D options.
+- Lights are added to the scene instead of 3D options.
 
 ### Deprecated
 

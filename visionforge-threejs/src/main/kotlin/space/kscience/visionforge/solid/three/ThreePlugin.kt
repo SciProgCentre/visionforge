@@ -1,6 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import info.laht.threekt.core.Object3D
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.Element
@@ -15,9 +14,10 @@ import space.kscience.visionforge.VisionChildren
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.visible
+import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
-import info.laht.threekt.objects.Group as ThreeGroup
+import three.objects.Group as ThreeGroup
 
 public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
@@ -35,7 +35,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[Convex::class] = ThreeConvexFactory
         objectFactories[Sphere::class] = ThreeSphereFactory
         objectFactories[ConeSegment::class] = ThreeConeFactory
-        objectFactories[PolyLine::class] = ThreeLineFactory
+        objectFactories[PolyLine::class] = ThreeSmartLineFactory
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
         objectFactories[PointLightSource::class] = ThreePointLightFactory
@@ -182,7 +182,7 @@ internal fun Object3D.getOrCreateGroup(name: Name): Object3D {
         name.isEmpty() -> this
         name.length == 1 -> {
             val token = name.tokens.first()
-            children.find { it.name == token.toString() } ?: info.laht.threekt.objects.Group().also { group ->
+            children.find { it.name == token.toString() } ?: ThreeGroup().also { group ->
                 group.name = token.toString()
                 this.add(group)
             }
