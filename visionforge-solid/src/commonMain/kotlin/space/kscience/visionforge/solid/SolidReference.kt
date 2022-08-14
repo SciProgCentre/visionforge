@@ -79,7 +79,7 @@ public class SolidReference(
                 val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
 
                 //2. Resolve prototype onw properties
-                prototype.properties.getValue(name, inheritFlag, stylesFlag)?.let { return it }
+                prototype.properties.own?.getValue(name)?.let { return it }
 
                 if (stylesFlag) {
                     //3. own styles
@@ -97,7 +97,7 @@ public class SolidReference(
                     prototype.parent?.properties?.getValue(name, inheritFlag, includeStyles)?.let { return it }
                 }
 
-                return null
+                return descriptor?.defaultValue
             }
 
 
