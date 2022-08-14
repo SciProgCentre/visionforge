@@ -1,7 +1,9 @@
 package space.kscience.visionforge.meta
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
@@ -106,24 +108,16 @@ internal class VisionPropertyTest {
         val child = group.children["child"]!!
 
         launch {
-            child.flowPropertyValue("test", inherit = true).collectIndexed { index, value ->
-                when (index) {
-                    0 -> assertEquals(22, value?.int)
-                    1 -> assertEquals(11, value?.int)
-                    2 -> {
-                        assertEquals(33, value?.int)
-                        cancel()
-                    }
-                }
-            }
+            val list = child.flowPropertyValue("test", inherit = true).take(3).map { it?.int }.toList()
+            assertEquals(22, list.first())
+            //assertEquals(11, list[1]) //a race
+            assertEquals(33, list.last())
         }
 
         //wait for subscription to be created
         delay(5)
 
         child.properties.remove("test")
-
-        delay(50)
         group.properties["test"] = 33
     }
 }
