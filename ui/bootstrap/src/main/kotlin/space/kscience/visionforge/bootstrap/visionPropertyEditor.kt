@@ -5,7 +5,7 @@ import react.RBuilder
 import react.dom.client.createRoot
 import react.key
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.isEmpty
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.getStyle
 import space.kscience.visionforge.react.EditorPropertyState
@@ -23,17 +23,18 @@ public fun RBuilder.visionPropertyEditor(
 ) {
 
     card("Properties") {
-        child(PropertyEditor){
-            attrs{
+        child(PropertyEditor) {
+            attrs {
                 this.key = key?.toString()
                 this.meta = vision.properties.root()
                 this.updates = vision.properties.changes
                 this.descriptor = descriptor
                 this.scope = vision.manager?.context ?: error("Orphan vision could not be observed")
-                this.getPropertyState = {name->
-                    if(vision.properties.own?.get(name)!= null){
+                this.getPropertyState = { name ->
+                    val ownMeta = vision.properties.own?.getMeta(name)
+                    if (ownMeta != null && !ownMeta.isEmpty()) {
                         EditorPropertyState.Defined
-                    } else if(vision.properties.root()[name] != null){
+                    } else if (vision.properties.root().getValue(name) != null) {
                         // TODO differentiate
                         EditorPropertyState.Default()
                     } else {

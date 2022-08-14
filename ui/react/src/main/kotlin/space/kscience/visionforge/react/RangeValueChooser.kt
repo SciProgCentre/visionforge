@@ -20,22 +20,24 @@ import styled.styledInput
 
 @JsExport
 public val RangeValueChooser: FC<ValueChooserProps> = fc("RangeValueChooser") { props ->
-    var innerValue by useState(props.meta.double)
-    var rangeDisabled: Boolean by useState(props.meta.value == null)
+    var innerValue by useState(props.value?.double)
+    var rangeDisabled: Boolean by useState(props.state != EditorPropertyState.Defined)
 
     val handleDisable: (Event) -> Unit = {
         val checkBoxValue = (it.target as HTMLInputElement).checked
         rangeDisabled = !checkBoxValue
-        props.meta.value = if (!checkBoxValue) {
-            null
-        } else {
-            innerValue?.asValue()
-        }
+        props.onValueChange(
+            if (!checkBoxValue) {
+                null
+            } else {
+                innerValue?.asValue()
+            }
+        )
     }
 
     val handleChange: (Event) -> Unit = {
         val newValue = (it.target as HTMLInputElement).value
-        props.meta.value = newValue.toDoubleOrNull()?.asValue()
+        props.onValueChange(newValue.toDoubleOrNull()?.asValue())
         innerValue = newValue.toDoubleOrNull()
     }
 

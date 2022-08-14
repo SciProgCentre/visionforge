@@ -27,17 +27,18 @@ import styled.styledSelect
 
 public external interface ValueChooserProps : Props {
     public var descriptor: MetaDescriptor?
-    public var meta: MutableMeta
     public var state: EditorPropertyState
+    public var value: Value?
+    public var onValueChange: (Value?) -> Unit
 }
 
 @JsExport
 public val StringValueChooser: FC<ValueChooserProps> = fc("StringValueChooser") { props ->
-    var value by useState(props.meta.string ?: "")
+    var value by useState(props.value?.string ?: "")
     val keyDown: (Event) -> Unit = { event ->
         if (event.type == "keydown" && event.asDynamic().key == "Enter") {
             value = (event.target as HTMLInputElement).value
-            props.meta.value = value.asValue()
+            props.onValueChange(value.asValue())
         }
     }
     val handleChange: (Event) -> Unit = {
@@ -59,7 +60,7 @@ public val StringValueChooser: FC<ValueChooserProps> = fc("StringValueChooser") 
 public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser") { props ->
     val handleChange: (Event) -> Unit = {
         val newValue = (it.target as HTMLInputElement).checked
-        props.meta.value = newValue.asValue()
+        props.onValueChange(newValue.asValue())
     }
     styledInput(type = InputType.checkBox) {
         css {
@@ -67,7 +68,7 @@ public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser"
         }
         attrs {
             //this.attributes["indeterminate"] = (props.item == null).toString()
-            checked = props.meta.boolean ?: false
+            checked = props.value?.boolean ?: false
             onChangeFunction = handleChange
         }
     }
@@ -75,7 +76,7 @@ public val BooleanValueChooser: FC<ValueChooserProps> = fc("BooleanValueChooser"
 
 @JsExport
 public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") { props ->
-    var innerValue by useState(props.meta.string ?: "")
+    var innerValue by useState(props.value?.string ?: "")
     val keyDown: (Event) -> Unit = { event ->
         if (event.type == "keydown" && event.asDynamic().key == "Enter") {
             innerValue = (event.target as HTMLInputElement).value
@@ -83,7 +84,7 @@ public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") 
             if (number == null) {
                 console.error("The input value $innerValue is not a number")
             } else {
-                props.meta.value = number.asValue()
+                props.onValueChange(number.asValue())
             }
         }
     }
@@ -113,10 +114,10 @@ public val NumberValueChooser: FC<ValueChooserProps> = fc("NumberValueChooser") 
 
 @JsExport
 public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { props ->
-    var selected by useState(props.meta.string ?: "")
+    var selected by useState(props.value?.string ?: "")
     val handleChange: (Event) -> Unit = {
         selected = (it.target as HTMLSelectElement).value
-        props.meta.value = selected.asValue()
+        props.onValueChange(selected.asValue())
     }
     styledSelect {
         css {
@@ -128,7 +129,7 @@ public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { 
             }
         }
         attrs {
-            this.value = props.meta.string ?: ""
+            this.value = props.value?.string ?: ""
             multiple = false
             onChangeFunction = handleChange
         }
@@ -138,7 +139,7 @@ public val ComboValueChooser: FC<ValueChooserProps> = fc("ComboValueChooser") { 
 @JsExport
 public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { props ->
     val handleChange: (Event) -> Unit = {
-        props.meta.value = (it.target as HTMLInputElement).value.asValue()
+        props.onValueChange((it.target as HTMLInputElement).value.asValue())
     }
     styledInput(type = InputType.color) {
         css {
@@ -146,7 +147,7 @@ public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { 
             margin(0.px)
         }
         attrs {
-            this.value = props.meta.value?.let { value ->
+            this.value = props.value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
                 else value.string
             } ?: "#000000"

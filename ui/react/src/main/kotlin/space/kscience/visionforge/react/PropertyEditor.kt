@@ -73,8 +73,8 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
     var expanded: Boolean by useState { props.expanded ?: true }
     val descriptor: MetaDescriptor? = useMemo(props.descriptor, props.name) { props.descriptor?.get(props.name) }
     var property: MutableMeta by useState { props.meta.getOrCreate(props.name) }
+    var editorPropertyState: EditorPropertyState by useState { props.getPropertyState(props.name) }
 
-    val defined  = props.getPropertyState(props.name) == EditorPropertyState.Defined
 
     val keys = useMemo(descriptor) {
         buildSet {
@@ -91,6 +91,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
 
     fun update() {
         property = props.meta.getOrCreate(props.name)
+        editorPropertyState = props.getPropertyState(props.name)
     }
 
     useEffect(props.meta) {
@@ -136,7 +137,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
         styledSpan {
             css {
                 +TreeStyles.treeLabel
-                if (!defined) {
+                if (editorPropertyState != EditorPropertyState.Defined) {
                     +TreeStyles.treeLabelInactive
                 }
             }
@@ -152,8 +153,12 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 ValueChooser {
                     attrs {
                         this.descriptor = descriptor
-                        this.meta = property
-                        this.state = props.getPropertyState(props.name)
+                        this.state = editorPropertyState
+                        this.value = property.value
+                        this.onValueChange = {
+                            property.value = it
+                            editorPropertyState = props.getPropertyState(props.name)
+                        }
                     }
                 }
             }
@@ -177,7 +182,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 +"\u00D7"
                 attrs {
-                    if (!defined) {
+                    if (editorPropertyState!= EditorPropertyState.Defined) {
                         disabled = true
                     } else {
                         onClickFunction = removeClick

@@ -183,9 +183,11 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
                                     }
                                 }
                             }
-                            p {
-                                b { +"Styles: " }
-                                +vision.styles.joinToString(separator = ", ")
+                            vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
+                                p {
+                                    b { +"Styles: " }
+                                    +styles.joinToString(separator = ", ")
+                                }
                             }
                         }
                     }

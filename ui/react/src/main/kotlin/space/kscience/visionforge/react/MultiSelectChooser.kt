@@ -19,13 +19,13 @@ public val MultiSelectChooser: FC<ValueChooserProps> = fc("MultiSelectChooser") 
     val onChange: (Event) -> Unit = { event: Event ->
         val newSelected = (event.target as HTMLSelectElement).selectedOptions.asList()
             .map { (it as HTMLOptionElement).value.asValue() }
-        props.meta.value = newSelected.asValue()
+        props.onValueChange(newSelected.asValue())
     }
 
     select {
         attrs {
             multiple = true
-            values = (props.meta.value?.list ?: emptyList()).mapTo(HashSet()) { it.string }
+            values = (props.value?.list ?: emptyList()).mapTo(HashSet()) { it.string }
             onChangeFunction = onChange
         }
         props.descriptor?.allowedValues?.forEach { optionValue ->

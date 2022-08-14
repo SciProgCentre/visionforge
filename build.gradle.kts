@@ -38,3 +38,8 @@ apiValidation {
 }
 
 readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")
+
+
+//rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+//    versions.webpackCli.version = "4.10.0"
+//}
