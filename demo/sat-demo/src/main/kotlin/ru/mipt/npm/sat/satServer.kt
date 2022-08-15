@@ -8,6 +8,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.plus
 import space.kscience.visionforge.server.close
@@ -28,7 +29,11 @@ fun main() {
     val solids = satContext.fetch(Solids)
 
     //Create a geometry
-    val sat = solids.visionOfSatellite(ySegments = 3)
+    val sat = solids.visionOfSatellite(ySegments = 3).apply {
+        ambientLight {
+            color.set(Colors.white)
+        }
+    }
 
     val server = satContext.visionManager.serve {
         page(header = Page.threeJsHeader + Page.styleSheetHeader("css/styles.css")) {

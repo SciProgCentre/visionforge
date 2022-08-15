@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.plus
 import kotlin.jvm.Synchronized
 import kotlin.time.Duration
@@ -17,7 +18,7 @@ import kotlin.time.Duration
  * Create a deep copy of given Vision without external connections.
  */
 private fun Vision.deepCopy(manager: VisionManager): Vision {
-    if(this is NullVision) return NullVision
+    if (this is NullVision) return NullVision
 
     //Assuming that unrooted visions are already isolated
     //TODO replace by efficient deep copy
@@ -49,7 +50,7 @@ public object NullVision : Vision {
 public class VisionChangeBuilder(private val manager: VisionManager) : MutableVisionContainer<Vision> {
 
     private var vision: Vision? = null
-    private val propertyChange = MutableMeta()
+    private var propertyChange = MutableMeta()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
@@ -61,7 +62,11 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
     public fun propertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         if (visionName == Name.EMPTY) {
             //Write property removal as [Null]
-            propertyChange[propertyName] = (item ?: Meta(Null))
+            if (propertyName.isEmpty()) {
+                propertyChange = item?.toMutableMeta() ?: MutableMeta()
+            } else {
+                propertyChange[propertyName] = (item ?: Meta(Null))
+            }
         } else {
             getOrPutChild(visionName).propertyChanged(Name.EMPTY, propertyName, item)
         }
