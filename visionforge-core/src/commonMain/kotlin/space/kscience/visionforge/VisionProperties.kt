@@ -143,8 +143,11 @@ private class VisionPropertiesItem(
     override fun hashCode(): Int = Meta.hashCode(this)
 }
 
+/**
+ * A base implementation of [MutableVisionProperties]
+ */
 public abstract class AbstractVisionProperties(
-    private val vision: Vision,
+    public val vision: Vision,
 ) : MutableVisionProperties {
     override val descriptor: MetaDescriptor? get() = vision.descriptor
 

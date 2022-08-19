@@ -20,9 +20,12 @@ import three.external.controls.OrbitControls
 import three.external.controls.TrackballControls
 import three.geometries.EdgesGeometry
 import three.helpers.AxesHelper
+import three.materials.Material
 import three.math.*
 import three.meshline.MeshLine
 import three.meshline.MeshLineMaterial
+import three.meshline.isMeshLineMaterial
+import three.objects.LineSegments
 import three.objects.Mesh
 import three.scenes.Scene
 import kotlin.math.cos
@@ -276,7 +279,7 @@ public class ThreeCanvas(
     private fun Object3D.toggleHighlight(
         highlight: Boolean,
         edgesName: String,
-        material: MeshLineMaterial,
+        material: Material,
     ) {
 
         if (userData[DO_NOT_HIGHLIGHT_TAG] == true) {
@@ -284,16 +287,21 @@ public class ThreeCanvas(
         }
 
         if (isMesh(this)) {
-            val highlightMesh = getObjectByName(edgesName) ?: Mesh(
-                MeshLine(EdgesGeometry(geometry)),
-                material
-            ).also {
+            val highlightMesh = getObjectByName(edgesName) ?: if (isMeshLineMaterial(material)) {
+                Mesh(
+                    MeshLine(EdgesGeometry(geometry)),
+                    material
+                )
+            } else {
+                LineSegments(EdgesGeometry(geometry), material)
+            }.also {
                 it.name = edgesName
                 add(it)
             }
             highlightMesh.visible = highlight
         } else {
-            children.filter { !it.name.startsWith("@") && it.name != edgesName }.forEach {
+            //ignore service objects if they are not statics
+            children.filter { it.name.startsWith("@static") || !it.name.startsWith("@") }.forEach {
                 it.toggleHighlight(highlight, edgesName, material)
             }
         }
@@ -319,15 +327,25 @@ public class ThreeCanvas(
     public companion object {
         public val SELECTED_MATERIAL: MeshLineMaterial = MeshLineMaterial().apply {
             color.set(Colors.ivory)
-            linewidth = 2.0
+            thickness = 2f
             cached = true
         }
 
         public val HIGHLIGHT_MATERIAL: MeshLineMaterial = MeshLineMaterial().apply {
             color.set(Colors.blue)
-            linewidth = 2.0
+            thickness = 2f
             cached = true
         }
+//
+//        public val SELECTED_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
+//            color.set(Colors.ivory)
+//            cached = true
+//        }
+//
+//        public val HIGHLIGHT_MATERIAL: LineBasicMaterial = LineBasicMaterial().apply {
+//            color.set(Colors.blue)
+//            cached = true
+//        }
 
 
         public const val DO_NOT_HIGHLIGHT_TAG: String = "doNotHighlight"

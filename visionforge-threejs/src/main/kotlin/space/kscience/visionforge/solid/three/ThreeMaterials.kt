@@ -60,6 +60,7 @@ public object ThreeMaterials {
             color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
             wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
         }
+
         else -> MeshStandardMaterial().apply {
             color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
             emissive = meta[SolidMaterial.EMISSIVE_COLOR_KEY]?.threeColor() ?: DEFAULT_EMISSIVE_COLOR
@@ -71,10 +72,18 @@ public object ThreeMaterials {
         needsUpdate = true
     }
 
-    private val materialCache = HashMap<Int, Material>()
+//    private val materialCache = HashMap<Int, Material>()
+//
+//    internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta.hashCode()) {
+//        buildMaterial(meta).apply {
+//            cached = true
+//        }
+//    }
 
-    internal fun cacheMaterial(meta: Meta): Material = materialCache.getOrPut(meta.hashCode()) {
-        buildMaterial(meta).apply {
+    private val visionMaterialCache = HashMap<Vision, Material>()
+
+    internal fun cacheMaterial(vision: Vision): Material = visionMaterialCache.getOrPut(vision) {
+        buildMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY)).apply {
             cached = true
         }
     }
@@ -84,7 +93,7 @@ public object ThreeMaterials {
  * Compute color
  */
 public fun Meta.threeColor(): Color? {
-    if(isEmpty()) return null
+    if (isEmpty()) return null
     val value = value
     return if (isLeaf) {
         when {
@@ -118,13 +127,19 @@ internal var Material.cached: Boolean
         userData["cached"] = value
     }
 
-public fun Mesh.createMaterial(vision: Vision) {
-    val ownMaterialMeta = vision.properties.own?.get(SolidMaterial.MATERIAL_KEY)
-    if (ownMaterialMeta == null) {
-        if (vision is SolidReference && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()) {
-            createMaterial(vision.prototype)
+public fun Mesh.setMaterial(vision: Vision) {
+    if (
+        vision.properties.own?.get(SolidMaterial.MATERIAL_KEY) == null
+        && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()
+    ) {
+        //if this is a reference, use material of the prototype
+        if (vision is SolidReference) {
+            ThreeMaterials.cacheMaterial(vision.prototype)
         } else {
-            material = ThreeMaterials.cacheMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY))
+            material = vision.parent?.let { parent ->
+                //TODO cache parent material
+                ThreeMaterials.buildMaterial(parent.properties.getProperty(SolidMaterial.MATERIAL_KEY))
+            } ?: ThreeMaterials.cacheMaterial(vision)
         }
     } else {
         material = ThreeMaterials.buildMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY))
@@ -138,22 +153,27 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
         || propertyName == SolidMaterial.MATERIAL_KEY + SolidMaterial.TYPE_KEY
     ) {
         //generate a new material since cached material should not be changed
-        createMaterial(vision)
+        setMaterial(vision)
     } else {
         when (propertyName) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {
-                material.asDynamic().color = vision.properties.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).threeColor()
-                    ?: ThreeMaterials.DEFAULT_COLOR
+                material.asDynamic().color =
+                    vision.properties.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).threeColor()
+                        ?: ThreeMaterials.DEFAULT_COLOR
             }
+
             SolidMaterial.SPECULAR_COLOR_KEY -> {
-                material.asDynamic().specular = vision.properties.getProperty(SolidMaterial.SPECULAR_COLOR_KEY).threeColor()
-                    ?: ThreeMaterials.DEFAULT_COLOR
+                material.asDynamic().specular =
+                    vision.properties.getProperty(SolidMaterial.SPECULAR_COLOR_KEY).threeColor()
+                        ?: ThreeMaterials.DEFAULT_COLOR
             }
+
             SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY -> {
                 material.asDynamic().emissive = vision.properties.getProperty(SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY)
                     .threeColor()
                     ?: ThreeMaterials.BLACK_COLOR
             }
+
             SolidMaterial.MATERIAL_OPACITY_KEY -> {
                 val opacity = vision.properties.getValue(
                     SolidMaterial.MATERIAL_OPACITY_KEY,
@@ -162,12 +182,14 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                 material.opacity = opacity
                 material.transparent = opacity < 1.0
             }
+
             SolidMaterial.MATERIAL_WIREFRAME_KEY -> {
                 material.asDynamic().wireframe = vision.properties.getValue(
                     SolidMaterial.MATERIAL_WIREFRAME_KEY,
                     inherit = true,
                 )?.boolean ?: false
             }
+
             else -> console.warn("Unrecognized material property: $propertyName")
         }
         material.needsUpdate = true

@@ -85,7 +85,7 @@ public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit 
 }
 
 internal fun Mesh.applyProperties(vision: Solid): Mesh = apply {
-    createMaterial(vision)
+    setMaterial(vision)
     applyEdges(vision)
     //applyWireFrame(obj)
     layers.set(vision.layer)

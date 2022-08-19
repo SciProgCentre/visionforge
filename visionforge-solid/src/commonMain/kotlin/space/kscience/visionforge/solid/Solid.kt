@@ -58,6 +58,8 @@ public interface Solid : Vision {
 
         public val ROTATION_KEY: Name = "rotation".asName()
 
+        public val QUATERNION_KEY: Name = "quaternion".asName()
+
         public val X_ROTATION_KEY: Name = ROTATION_KEY + X_KEY
         public val Y_ROTATION_KEY: Name = ROTATION_KEY + Y_KEY
         public val Z_ROTATION_KEY: Name = ROTATION_KEY + Z_KEY

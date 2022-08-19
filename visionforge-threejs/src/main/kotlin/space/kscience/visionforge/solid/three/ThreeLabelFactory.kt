@@ -1,14 +1,14 @@
 package space.kscience.visionforge.solid.three
 
 
-import three.core.Object3D
-import three.geometries.TextBufferGeometry
-import three.objects.Mesh
 import kotlinx.js.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.SolidLabel
+import three.core.Object3D
+import three.geometries.TextBufferGeometry
+import three.objects.Mesh
 import kotlin.reflect.KClass
 
 /**
@@ -25,7 +25,7 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
             curveSegments = 1
         })
         return Mesh(textGeo, ThreeMaterials.DEFAULT).apply {
-            createMaterial(vision)
+            setMaterial(vision)
             updatePosition(vision)
             if(observe) {
                 vision.onPropertyChange(three.context) {
