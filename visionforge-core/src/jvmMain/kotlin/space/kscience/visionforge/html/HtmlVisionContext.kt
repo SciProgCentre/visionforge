@@ -34,11 +34,11 @@ public interface HtmlVisionContext : ContextAware {
 
 public typealias HtmlVisionContextFragment = context(HtmlVisionContext) TagConsumer<*>.() -> Unit
 
-context(HtmlVisionContext)
-        public fun HtmlVisionContextFragment(content: TagConsumer<*>.() -> Unit): HtmlVisionFragment = content
+context(HtmlVisionContext) public fun HtmlVisionFragment(
+    content: TagConsumer<*>.() -> Unit
+): HtmlVisionFragment = content
 
-context(HtmlVisionContext)
-        private fun <T> TagConsumer<T>.vision(
+context(HtmlVisionContext) private fun <T> TagConsumer<T>.vision(
     visionManager: VisionManager,
     name: Name,
     vision: Vision,

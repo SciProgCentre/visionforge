@@ -14,6 +14,7 @@ internal fun Solid.updateFrom(other: Solid): Solid {
     x += other.x
     y += other.y
     z += other.y
+    if(quaternion != null || other.quaternion != null) TODO("Quaternion support not implemented")
     rotationX += other.rotationX
     rotationY += other.rotationY
     rotationZ += other.rotationZ

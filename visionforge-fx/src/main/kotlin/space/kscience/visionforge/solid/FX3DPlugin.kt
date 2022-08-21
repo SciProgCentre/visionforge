@@ -97,6 +97,8 @@ public class FX3DPlugin : AbstractPlugin() {
             scaleYProperty().bind(binding[Solid.Y_SCALE_KEY].float(obj.scaleY.toFloat()))
             scaleZProperty().bind(binding[Solid.Z_SCALE_KEY].float(obj.scaleZ.toFloat()))
 
+            if(obj.quaternion!= null) TODO("Quaternion support not implemented")
+
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
                 angleProperty().bind(binding[Solid.X_ROTATION_KEY].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
             }

@@ -11,6 +11,7 @@ import space.kscience.visionforge.visible
 import three.core.BufferGeometry
 import three.core.Object3D
 import three.math.Euler
+import three.math.Quaternion
 import kotlin.reflect.KClass
 
 /**
@@ -48,8 +49,20 @@ public fun Object3D.updatePosition(vision: Vision) {
 //        } else {
 //            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
 //        }
+        val quaternion = vision.quaternion
 
-        setRotationFromEuler(Euler(vision.rotationX, vision.rotationY, vision.rotationZ, vision.rotationOrder.name))
+        if (quaternion != null) {
+            setRotationFromQuaternion(
+                Quaternion(
+                    quaternion.second.x,
+                    quaternion.second.y,
+                    quaternion.second.z,
+                    quaternion.first
+                )
+            )
+        } else {
+            setRotationFromEuler(Euler(vision.rotationX, vision.rotationY, vision.rotationZ, vision.rotationOrder.name))
+        }
 
         scale.set(vision.scaleX, vision.scaleY, vision.scaleZ)
         updateMatrix()

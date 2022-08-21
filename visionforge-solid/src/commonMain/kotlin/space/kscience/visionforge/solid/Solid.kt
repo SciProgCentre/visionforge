@@ -203,6 +203,26 @@ public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
 public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
 public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 
+public var Solid.quaternion: Pair<Float, Point3D>?
+    get() = properties.getValue(Solid.QUATERNION_KEY)?.list?.let {
+        require(it.size == 4) { "Quaternion must be a number array of 4 elements" }
+        it[0].float to Point3D(it[1].float, it[2].float, it[3].float)
+    }
+    set(value) {
+        properties.setValue(
+            Solid.QUATERNION_KEY,
+            value?.let {
+                ListValue(
+                    value.first,
+                    value.second.x,
+                    value.second.y,
+                    value.second.z
+                )
+            }
+        )
+    }
+
+
 //public var Solid.quaternion: Quaternion?
 //    get() = meta[Solid::quaternion.name]?.value?.doubleArray?.let { Quaternion(it) }
 //    set(value) {
