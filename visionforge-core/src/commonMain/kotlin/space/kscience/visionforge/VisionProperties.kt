@@ -165,6 +165,8 @@ public abstract class AbstractVisionProperties(
         return properties!!
     }
 
+    private val descriptorCache = HashMap<Name, MetaDescriptor?>()
+
     override fun getValue(
         name: Name,
         inherit: Boolean?,
@@ -172,7 +174,7 @@ public abstract class AbstractVisionProperties(
     ): Value? {
         own?.get(name)?.value?.let { return it }
 
-        val descriptor = descriptor?.get(name)
+        val descriptor = descriptor?.let { descriptor -> descriptorCache.getOrPut(name) { descriptor[name] } }
         val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
 
         if (stylesFlag) {

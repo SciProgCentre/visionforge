@@ -16,17 +16,18 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
 
     override val type: KClass<SolidReference> = SolidReference::class
 
-    private fun Object3D.replicate(): Object3D {
-        return when {
-            isMesh(this) -> Mesh(geometry, material).also {
-                it.applyMatrix4(matrix)
-            }
-            else -> clone(false)
-        }.also { obj: Object3D ->
-            obj.name = this.name
-            children.forEach { child: Object3D ->
-                obj.add(child.replicate())
-            }
+    private fun Object3D.replicate(): Object3D = when {
+        isMesh(this) -> Mesh(geometry, material).also {
+            //clone geometry
+            it.material.cached = true
+            it.applyMatrix4(matrix)
+        }
+
+        else -> clone(false)
+    }.also { obj: Object3D ->
+        obj.name = this.name
+        children.forEach { child: Object3D ->
+            obj.add(child.replicate())
         }
     }
 

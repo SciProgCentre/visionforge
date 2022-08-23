@@ -93,22 +93,17 @@ public object ThreeMaterials {
  * Compute color
  */
 public fun Meta.threeColor(): Color? {
-    if (isEmpty()) return null
-    val value = value
-    return if (isLeaf) {
-        when {
-            value == null -> null
+    value?.let { value ->
+        return when {
             value === Null -> null
             value.type == ValueType.NUMBER -> Color(value.int)
             else -> Color(value.string)
         }
-    } else {
-        Color(
-            getValue(Colors.RED_KEY.asName())?.int ?: 0,
-            getValue(Colors.GREEN_KEY.asName())?.int ?: 0,
-            getValue(Colors.BLUE_KEY.asName())?.int ?: 0
-        )
     }
+    val red = getValue(Colors.RED_KEY.asName())?.int
+    val green = getValue(Colors.GREEN_KEY.asName())?.int
+    val blue = getValue(Colors.BLUE_KEY.asName())?.int
+    return if (red == null && green == null && blue == null) null else Color(red ?: 0, green ?: 0, blue ?: 0)
 }
 
 public fun ColorAccessor.threeColor(): Color? {

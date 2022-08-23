@@ -82,7 +82,6 @@ class Model(val manager: VisionManager) {
         }
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
-                thickness = 4
                 color.set("red")
             }
         }

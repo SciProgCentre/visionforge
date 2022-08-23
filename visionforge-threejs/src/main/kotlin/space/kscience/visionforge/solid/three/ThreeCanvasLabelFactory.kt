@@ -24,15 +24,19 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
 
     override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
-        val context = canvas.getContext("2d") as CanvasRenderingContext2D
-        context.font = "Bold ${vision.fontSize}pt ${vision.fontFamily}"
-        context.fillStyle = vision.properties.getValue(SolidMaterial.MATERIAL_COLOR_KEY, false, true)?.value ?: "black"
-        context.textBaseline = CanvasTextBaseline.MIDDLE
-        val metrics = context.measureText(vision.text)
-        //canvas.width = metrics.width.toInt()
-
-
-        context.fillText(vision.text, (canvas.width - metrics.width) / 2, 0.5 * canvas.height)
+        canvas.getContext("2d").apply {
+            this as CanvasRenderingContext2D
+            font = "Bold ${vision.fontSize}pt ${vision.fontFamily}"
+            fillStyle = vision.properties.getValue(
+                SolidMaterial.MATERIAL_COLOR_KEY,
+                inherit = false,
+                includeStyles = true
+            )?.value ?: "black"
+            textBaseline = CanvasTextBaseline.MIDDLE
+            val metrics = measureText(vision.text)
+            //canvas.width = metrics.width.toInt()
+            fillText(vision.text, (canvas.width - metrics.width) / 2, 0.5 * canvas.height)
+        }
 
 
         // canvas contents will be used for a texture

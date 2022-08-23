@@ -3,7 +3,7 @@ plugins {
 //    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
-val dataforgeVersion by extra("0.6.0-dev-13")
+val dataforgeVersion by extra("0.6.0-dev-15")
 val fxVersion by extra("11")
 
 allprojects{
@@ -15,6 +15,7 @@ subprojects {
     if (name.startsWith("visionforge")) apply<MavenPublishPlugin>()
 
     repositories {
+        mavenLocal()
         maven("https://repo.kotlin.link")
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
