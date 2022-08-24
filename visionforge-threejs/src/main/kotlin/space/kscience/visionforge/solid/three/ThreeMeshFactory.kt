@@ -1,18 +1,13 @@
 package space.kscience.visionforge.solid.three
 
 import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.startsWith
-import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.onPropertyChange
-import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.Solid
-import space.kscience.visionforge.solid.SolidMaterial
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_ENABLED_KEY
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_KEY
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_MATERIAL_KEY
 import space.kscience.visionforge.solid.layer
-import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_ENABLED_KEY
-import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_MATERIAL_KEY
 import space.kscience.visionforge.solid.three.ThreeMeshFactory.Companion.EDGES_OBJECT_NAME
 import three.core.BufferGeometry
 import three.geometries.EdgesGeometry
@@ -43,7 +38,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
             applyProperties(vision)
         }
 
-        if(observe) {
+        if (observe) {
             //add listener to object properties
             vision.onPropertyChange(three.context) { name ->
                 when {
@@ -66,22 +61,13 @@ public abstract class ThreeMeshFactory<in T : Solid>(
     }
 
     public companion object {
-        public val EDGES_KEY: Name = "edges".asName()
         internal const val EDGES_OBJECT_NAME: String = "@edges"
 
         //public val WIREFRAME_KEY: Name = "wireframe".asName()
-        public val ENABLED_KEY: Name = "enabled".asName()
-        public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
-        public val EDGES_MATERIAL_KEY: Name = EDGES_KEY + SolidMaterial.MATERIAL_KEY
+
         //public val WIREFRAME_ENABLED_KEY: Name = WIREFRAME_KEY + ENABLED_KEY
         //public val WIREFRAME_MATERIAL_KEY: Name = WIREFRAME_KEY + SolidMaterial.MATERIAL_KEY
     }
-}
-
-@VisionBuilder
-public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
-    properties[EDGES_ENABLED_KEY] = enabled
-    SolidMaterial.write(properties.getProperty(EDGES_MATERIAL_KEY)).apply(block)
 }
 
 internal fun Mesh.applyProperties(vision: Solid): Mesh = apply {
@@ -97,13 +83,12 @@ internal fun Mesh.applyProperties(vision: Solid): Mesh = apply {
 public fun Mesh.applyEdges(vision: Solid) {
     val edges = children.find { it.name == EDGES_OBJECT_NAME } as? LineSegments
     //inherited edges definition, enabled by default
-    if (vision.properties.getValue(EDGES_ENABLED_KEY, inherit = true)?.boolean != false) {
-        val bufferGeometry = geometry as? BufferGeometry ?: return
+    if (vision.properties.getValue(EDGES_ENABLED_KEY, inherit = false)?.boolean != false) {
         val material = ThreeMaterials.getLineMaterial(vision.properties.getProperty(EDGES_MATERIAL_KEY), true)
         if (edges == null) {
             add(
                 LineSegments(
-                    EdgesGeometry(bufferGeometry),
+                    EdgesGeometry(geometry),
                     material
                 ).apply {
                     name = EDGES_OBJECT_NAME

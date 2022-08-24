@@ -5,6 +5,7 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.Composite
 import space.kscience.visionforge.solid.CompositeType
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_KEY
 import three.objects.Mesh
 import kotlin.reflect.KClass
 
@@ -38,10 +39,10 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
     override val type: KClass<in Composite> get() = Composite::class
 
     override fun build(three: ThreePlugin, vision: Composite, observe: Boolean): Mesh {
-        val first =
-            three.buildObject3D(vision.first, observe).takeIfMesh() ?: error("First part of composite is not a mesh")
-        val second =
-            three.buildObject3D(vision.second, observe).takeIfMesh() ?: error("Second part of composite is not a mesh")
+        val first = three.buildObject3D(vision.first, observe).takeIfMesh()
+            ?: error("First part of composite is not a mesh")
+        val second = three.buildObject3D(vision.second, observe).takeIfMesh()
+            ?: error("Second part of composite is not a mesh")
         return when (vision.compositeType) {
             CompositeType.GROUP, CompositeType.UNION -> CSG.union(first, second)
             CompositeType.INTERSECT -> CSG.intersect(first, second)
@@ -49,11 +50,12 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
         }.apply {
             updatePosition(vision)
             applyProperties(vision)
+
             if (observe) {
                 vision.onPropertyChange { name ->
                     when {
                         //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
-                        name.startsWith(ThreeMeshFactory.EDGES_KEY) -> applyEdges(vision)
+                        name.startsWith(EDGES_KEY) -> applyEdges(vision)
                         else -> updateProperty(vision, name)
                     }
                 }

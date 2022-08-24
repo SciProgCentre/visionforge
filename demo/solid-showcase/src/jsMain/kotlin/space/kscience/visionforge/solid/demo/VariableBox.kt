@@ -8,6 +8,7 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.setChild
 import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_KEY
 import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.*
 import three.core.Object3D
@@ -60,7 +61,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
                     mesh.updateMatrix()
                 }
 
-                name.startsWith(ThreeMeshFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
+                name.startsWith(EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
         }

@@ -52,6 +52,11 @@ public class SolidMaterial : Scheme() {
         public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
+        public val EDGES_KEY: Name = "edges".asName()
+        public val ENABLED_KEY: Name = "enabled".asName()
+        public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
+        public val EDGES_MATERIAL_KEY: Name = EDGES_KEY + MATERIAL_KEY
+
         public override val descriptor: MetaDescriptor by lazy {
             //must be lazy to avoid initialization bug
             MetaDescriptor {
@@ -115,3 +120,10 @@ public var Solid.opacity: Number?
     set(value) {
         properties.setValue(MATERIAL_OPACITY_KEY, value?.asValue())
     }
+
+
+@VisionBuilder
+public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
+    properties[SolidMaterial.EDGES_ENABLED_KEY] = enabled
+    SolidMaterial.write(properties.getProperty(SolidMaterial.EDGES_MATERIAL_KEY)).apply(block)
+}
