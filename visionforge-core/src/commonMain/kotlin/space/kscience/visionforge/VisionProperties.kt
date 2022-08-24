@@ -298,4 +298,3 @@ public operator fun MutableVisionProperties.set(name: Name, value: String): Unit
 
 public operator fun MutableVisionProperties.set(name: String, value: String): Unit =
     set(name.parseAsName(), value)
-
