@@ -4,9 +4,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.names.Name
 import space.kscience.gdml.*
-import space.kscience.visionforge.solid.Solid
-import space.kscience.visionforge.solid.SolidMaterial
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.useStyle
 import kotlin.random.Random
 
@@ -70,7 +68,7 @@ public class GdmlLoaderOptions {
         }
         private set
 
-    public fun configure(block: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit) {
+    public fun solids(block: Solid.(parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial) -> Unit) {
         val oldConfigure = configureSolid
         configureSolid = { parent: GdmlVolume, solid: GdmlSolid, material: GdmlMaterial ->
             oldConfigure(parent, solid, material)
@@ -78,6 +76,8 @@ public class GdmlLoaderOptions {
         }
     }
 
+
+    public var light: LightSource? = AmbientLightSource()
 
     public companion object {
         private val random: Random = Random(222)

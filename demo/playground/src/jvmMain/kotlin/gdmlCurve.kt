@@ -223,7 +223,7 @@ fun main() = makeVisionFile(Path.of("curves.html"), resourceLocation = ResourceL
                     }
                 }
             }.toVision {
-                configure { _, solid, _ ->
+                solids { _, solid, _ ->
                     //disable visibility for the world box
                     if(solid.name == "world"){
                         visible = false

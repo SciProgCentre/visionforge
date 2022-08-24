@@ -7,16 +7,20 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.number
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
 
 @Serializable
 public abstract class LightSource : SolidBase<LightSource>() {
     override val descriptor: MetaDescriptor get() = LightSource.descriptor
 
-    public val color: ColorAccessor by color()
-    public var intensity: Number by properties.root(includeStyles = false).number { 1.0 }
+    public val color: ColorAccessor by color(SolidMaterial.COLOR_KEY)
+    public var intensity: Number by properties.root(includeStyles = false).number(INTENSITY_KEY) { 1.0 }
 
-    public companion object{
+    public companion object {
+        public val INTENSITY_KEY: Name = "intensity".asName()
+
         public val descriptor: MetaDescriptor by lazy {
             MetaDescriptor {
                 value(Vision.VISIBLE_KEY, ValueType.BOOLEAN) {
@@ -27,16 +31,12 @@ public abstract class LightSource : SolidBase<LightSource>() {
                 value(LightSource::color.name, ValueType.STRING, ValueType.NUMBER) {
                     inherited = false
                     widgetType = "color"
+                    default(Colors.white)
                 }
 
                 value(LightSource::intensity.name, ValueType.NUMBER) {
                     inherited = false
                     default(1.0)
-                }
-
-                value(SolidMaterial.COLOR_KEY, ValueType.STRING, ValueType.NUMBER) {
-                    inherited = false
-                    widgetType = "color"
                 }
 
                 node(Solid.POSITION_KEY) {
