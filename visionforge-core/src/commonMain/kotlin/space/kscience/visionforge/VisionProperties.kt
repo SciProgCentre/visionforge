@@ -189,7 +189,9 @@ public abstract class AbstractVisionProperties(
     }
 
     override fun setProperty(name: Name, node: Meta?, notify: Boolean) {
-        //TODO check old value?
+        //ignore if the value is the same as existing
+        if (own?.getMeta(name) == node) return
+
         if (name.isEmpty()) {
             properties = node?.asMutableMeta()
         } else if (node == null) {
@@ -203,7 +205,9 @@ public abstract class AbstractVisionProperties(
     }
 
     override fun setValue(name: Name, value: Value?, notify: Boolean) {
-        //TODO check old value?
+        //ignore if the value is the same as existing
+        if (own?.getValue(name) == value) return
+
         if (value == null) {
             properties?.getMeta(name)?.value = null
         } else {

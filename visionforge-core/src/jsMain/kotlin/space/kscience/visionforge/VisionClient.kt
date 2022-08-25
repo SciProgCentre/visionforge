@@ -3,8 +3,8 @@ package space.kscience.visionforge
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -63,6 +63,17 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
+
+    private val changeCollector = VisionChangeBuilder()
+
+    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
+        changeCollector.propertyChanged(visionName, propertyName, item)
+    }
+
+    public fun visionChanged(name: Name?, child: Vision?) {
+        changeCollector.setChild(name, child)
+    }
+
     private fun renderVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
         if (vision != null) {
             vision.setAsRoot(visionManager)
@@ -115,12 +126,13 @@ public class VisionClient : AbstractPlugin() {
                     val feedbackAggregationTime = meta["aggregationTime"]?.int ?: 300
 
                     onopen = {
-                        feedbackJob = vision.flowChanges(
-                            feedbackAggregationTime.milliseconds,
-                        ).onEach { change ->
-                            send(visionManager.encodeToString(change))
-                        }.launchIn(visionManager.context)
-
+                        feedbackJob = visionManager.context.launch {
+                            delay(feedbackAggregationTime.milliseconds)
+                            if (!changeCollector.isEmpty()) {
+                                send(visionManager.encodeToString(changeCollector.deepCopy(visionManager)))
+                                changeCollector.reset()
+                            }
+                        }
                         console.info("WebSocket update channel established for output '$name'")
                     }
 
@@ -165,6 +177,7 @@ public class VisionClient : AbstractPlugin() {
                 logger.info { "Found embedded vision for output with name $name" }
                 renderVision(name, element, embeddedVision, outputMeta)
             }
+
             element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
                 val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 
@@ -192,6 +205,7 @@ public class VisionClient : AbstractPlugin() {
                     }
                 }
             }
+
             else -> error("No embedded vision data / fetch url for $name")
         }
         element.setAttribute(OUTPUT_RENDERED, "true")
@@ -204,7 +218,7 @@ public class VisionClient : AbstractPlugin() {
     ) else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
-        override fun build(context: Context, meta: Meta): VisionClient  = VisionClient()
+        override fun build(context: Context, meta: Meta): VisionClient = VisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
 

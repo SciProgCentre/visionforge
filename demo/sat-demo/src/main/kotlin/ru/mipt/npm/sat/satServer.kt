@@ -6,6 +6,7 @@ import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.meta.Null
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
@@ -56,7 +57,8 @@ fun main() {
             val targetVision = sat[target] as Solid
             targetVision.color.set("red")
             delay(1000)
-            targetVision.color.clear()
+            //use to ensure that color is cleared
+            targetVision.color.value = Null
             delay(500)
         }
     }

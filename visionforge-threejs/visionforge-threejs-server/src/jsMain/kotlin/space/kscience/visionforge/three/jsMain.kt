@@ -6,6 +6,8 @@ import space.kscience.visionforge.solid.three.ThreePlugin
 
 
 @DFExperimental
-public fun main(): Unit = runVisionClient {
-    plugin(ThreePlugin)
+public fun main(): Unit {
+    runVisionClient {
+        plugin(ThreePlugin)
+    }
 }

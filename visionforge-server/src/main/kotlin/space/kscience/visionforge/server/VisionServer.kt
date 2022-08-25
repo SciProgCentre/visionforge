@@ -122,8 +122,10 @@ public class VisionServer internal constructor(
 
             launch {
                 incoming.consumeEach {
+                    val data = it.data.decodeToString()
+                    application.log.debug("Received update: \n$data")
                     val change = visionManager.jsonFormat.decodeFromString(
-                        VisionChange.serializer(), it.data.decodeToString()
+                        VisionChange.serializer(),data
                     )
                     vision.update(change)
                 }
@@ -136,6 +138,7 @@ public class VisionServer internal constructor(
                             VisionChange.serializer(),
                             update
                         )
+                        application.log.debug("Sending update: \n$json")
                         outgoing.send(Frame.Text(json))
                     }.collect()
                 }

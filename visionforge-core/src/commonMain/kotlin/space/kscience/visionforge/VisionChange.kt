@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -47,7 +49,7 @@ public object NullVision : Vision {
 /**
  * An update for a [Vision]
  */
-public class VisionChangeBuilder(private val manager: VisionManager) : MutableVisionContainer<Vision> {
+public class VisionChangeBuilder : MutableVisionContainer<Vision> {
 
     private var vision: Vision? = null
     private var propertyChange = MutableMeta()
@@ -57,7 +59,14 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
 
     @Synchronized
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
-        children.getOrPut(visionName) { VisionChangeBuilder(manager) }
+        children.getOrPut(visionName) { VisionChangeBuilder() }
+
+    @Synchronized
+    internal fun reset() {
+        vision = null
+        propertyChange = MutableMeta()
+        children.clear()
+    }
 
     public fun propertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         if (visionName == Name.EMPTY) {
@@ -82,10 +91,10 @@ public class VisionChangeBuilder(private val manager: VisionManager) : MutableVi
     /**
      * Isolate collected changes by creating detached copies of given visions
      */
-    public fun deepCopy(): VisionChange = VisionChange(
-        vision?.deepCopy(manager),
+    public fun deepCopy(visionManager: VisionManager): VisionChange = VisionChange(
+        vision?.deepCopy(visionManager),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
-        if (children.isEmpty()) null else children.mapValues { it.value.deepCopy() }
+        if (children.isEmpty()) null else children.mapValues { it.value.deepCopy(visionManager) }
     )
 }
 
@@ -102,12 +111,13 @@ public data class VisionChange(
 )
 
 public inline fun VisionManager.VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
-    VisionChangeBuilder(this).apply(block).deepCopy()
+    VisionChangeBuilder().apply(block).deepCopy(this)
 
 
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
+    mutex: Mutex,
     collector: () -> VisionChangeBuilder,
 ) {
 
@@ -120,7 +130,7 @@ private fun CoroutineScope.collectChange(
     val children = source.children
     //Subscribe for children changes
     children?.forEach { token, child ->
-        collectChange(name + token, child, collector)
+        collectChange(name + token, child, mutex, collector)
     }
 
     //Subscribe for structure change
@@ -128,9 +138,11 @@ private fun CoroutineScope.collectChange(
         val after = children[changedName]
         val fullName = name + changedName
         if (after != null) {
-            collectChange(fullName, after, collector)
+            collectChange(fullName, after, mutex, collector)
         }
-        collector().setChild(fullName, after)
+        mutex.withLock {
+            collector().setChild(fullName, after)
+        }
     }?.launchIn(this)
 }
 
@@ -141,24 +153,26 @@ public fun Vision.flowChanges(
     collectionDuration: Duration,
 ): Flow<VisionChange> = flow {
     val manager = manager ?: error("Orphan vision could not collect changes")
-
-    var collector = VisionChangeBuilder(manager)
     coroutineScope {
-        collectChange(Name.EMPTY, this@flowChanges) { collector }
+        val collector = VisionChangeBuilder()
+        val mutex = Mutex()
+        collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
 
         //Send initial vision state
         val initialChange = VisionChange(vision = deepCopy(manager))
         emit(initialChange)
 
-        while (currentCoroutineContext().isActive) {
+        while (true) {
             //Wait for changes to accumulate
             delay(collectionDuration)
             //Propagate updates only if something is changed
             if (!collector.isEmpty()) {
                 //emit changes
-                emit(collector.deepCopy())
+                emit(collector.deepCopy(manager))
                 //Reset the collector
-                collector = VisionChangeBuilder(manager)
+                mutex.withLock {
+                    collector.reset()
+                }
             }
         }
     }
