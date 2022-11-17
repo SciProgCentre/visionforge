@@ -16,7 +16,7 @@ import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FOR
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
 import kotlin.reflect.KClass
 
-public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
+public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public val visionClient: VisionClient by require(VisionClient)
     override val tag: PluginTag get() = Companion.tag
     override val visionSerializersModule: SerializersModule get() = markupSerializersModule

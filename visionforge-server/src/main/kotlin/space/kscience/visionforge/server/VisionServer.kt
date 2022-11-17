@@ -1,7 +1,10 @@
 package space.kscience.visionforge.server
 
 import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
@@ -24,7 +27,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionChange
@@ -32,12 +34,30 @@ import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.flowChanges
 import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.server.VisionServer.Companion.DEFAULT_PAGE
 import java.awt.Desktop
 import java.net.URI
 import kotlin.time.Duration.Companion.milliseconds
 
+
+public enum class DataServeMode {
+    /**
+     * Embed the initial state of the vision inside its html tag.
+     */
+    EMBED,
+
+    /**
+     * Fetch data on vision load. Do not embed data.
+     */
+    FETCH,
+
+    /**
+     * Connect to server to get pushes. The address of the server is embedded in the tag.
+     */
+    UPDATE
+}
 
 /**
  * A ktor plugin container with given [routing]
@@ -63,25 +83,20 @@ public class VisionServer internal constructor(
      */
     public var cacheFragments: Boolean by meta.boolean(true)
 
-    /**
-     * Embed the initial state of the vision inside its html tag. Default: `true`
-     */
-    public var dataEmbed: Boolean by meta.boolean(true, Name.parse("data.embed"))
+    public var dataMode: DataServeMode by meta.enum(DataServeMode.UPDATE)
+
+    private val serverHeaders: MutableMap<String, HtmlFragment> = mutableMapOf()
 
     /**
-     * Fetch data on vision load. Overrides embedded data. Default: `false`
+     * Set up a default header that is automatically added to all pages on this server
      */
-    public var dataFetch: Boolean by meta.boolean(false, Name.parse("data.fetch"))
-
-    /**
-     * Connect to server to get pushes. The address of the server is embedded in the tag. Default: `true`
-     */
-    public var dataUpdate: Boolean by meta.boolean(true, Name.parse("data.update"))
+    public fun header(key: String, block: HtmlFragment) {
+        serverHeaders[key] = block
+    }
 
     private fun HTML.visionPage(
-        title: String,
         pagePath: String,
-        header: HtmlFragment,
+        headers: Map<String, HtmlFragment>,
         visionFragment: HtmlVisionFragment,
     ): Map<Name, Vision> {
         var visionMap: Map<Name, Vision>? = null
@@ -89,17 +104,18 @@ public class VisionServer internal constructor(
         head {
             meta {
                 charset = "utf-8"
-                header()
             }
-            title(title)
-            consumer.header()
+            (serverHeaders + headers).values.forEach {
+                consumer.it()
+            }
         }
         body {
             //Load the fragment and remember all loaded visions
             visionMap = visionFragment(
                 context = visionManager.context,
-                embedData = true,
-                fetchUpdatesUrl = "$serverUrl$pagePath/ws",
+                embedData = dataMode == DataServeMode.EMBED,
+                fetchDataUrl = if (dataMode != DataServeMode.EMBED) "$serverUrl$pagePath/data" else null,
+                fetchUpdatesUrl = if (dataMode == DataServeMode.UPDATE) "$serverUrl$pagePath/ws" else null,
                 fragment = visionFragment
             )
         }
@@ -110,7 +126,6 @@ public class VisionServer internal constructor(
     /**
      * Server a map of visions without providing explicit html page for them
      */
-    @OptIn(DFExperimental::class)
     private fun serveVisions(route: Route, visions: Map<Name, Vision>): Unit = route {
         application.log.info("Serving visions $visions at $route")
 
@@ -125,7 +140,7 @@ public class VisionServer internal constructor(
                     val data = it.data.decodeToString()
                     application.log.debug("Received update: \n$data")
                     val change = visionManager.jsonFormat.decodeFromString(
-                        VisionChange.serializer(),data
+                        VisionChange.serializer(), data
                     )
                     vision.update(change)
                 }
@@ -133,7 +148,7 @@ public class VisionServer internal constructor(
 
             try {
                 withContext(visionManager.context.coroutineContext) {
-                    vision.flowChanges(updateInterval.milliseconds).onEach {  update ->
+                    vision.flowChanges(updateInterval.milliseconds).onEach { update ->
                         val json = visionManager.jsonFormat.encodeToString(
                             VisionChange.serializer(),
                             update
@@ -191,12 +206,11 @@ public class VisionServer internal constructor(
     }.finalize()
 
     /**
-     * Serve a page, potentially containing any number of visions at a given [pagePath] with given [headers].
+     * Serve a page, potentially containing any number of visions at a given [route] with given [header].
      */
     public fun page(
-        pagePath: String = DEFAULT_PAGE,
-        title: String = "VisionForge server page '$pagePath'",
-        header: HtmlFragment = {},
+        route: String = DEFAULT_PAGE,
+        headers: Map<String, HtmlFragment>,
         visionFragment: HtmlVisionFragment,
     ) {
         val visions = HashMap<Name, Vision>()
@@ -204,13 +218,13 @@ public class VisionServer internal constructor(
         val cachedHtml: String? = if (cacheFragments) {
             //Create and cache page html and map of visions
             createHTML(true).html {
-                visions.putAll(visionPage(title, pagePath, header, visionFragment))
+                visions.putAll(visionPage(route, headers, visionFragment))
             }
         } else {
             null
         }
 
-        root.route(pagePath) {
+        root.route(route) {
             serveVisions(this, visions)
             //filled pages
             get {
@@ -218,7 +232,7 @@ public class VisionServer internal constructor(
                     //re-create html and vision list on each call
                     call.respondHtml {
                         visions.clear()
-                        visions.putAll(visionPage(title, pagePath, header, visionFragment))
+                        visions.putAll(visionPage(route, headers, visionFragment))
                     }
                 } else {
                     //Use cached html
@@ -226,8 +240,22 @@ public class VisionServer internal constructor(
                 }
             }
         }
+    }
 
+    public fun page(
+        vararg headers: HtmlFragment,
+        route: String = DEFAULT_PAGE,
+        title: String = "VisionForge server page '$route'",
+        visionFragment: HtmlVisionFragment,
+    ) {
+        page(route, mapOf("title" to VisionPage.title(title)) + headers.associateBy { it.hashCode().toString() }, visionFragment)
+    }
 
+    /**
+     * Render given [VisionPage] at server
+     */
+    public fun page(route: String, page: VisionPage) {
+        page(route = route, headers = page.pageHeaders, visionFragment = page.content)
     }
 
     public companion object {

@@ -7,7 +7,7 @@ import kotlinx.css.cursor
 import kotlinx.css.properties.TextDecorationLine
 import kotlinx.css.properties.textDecoration
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.events.Event
+import kotlinx.html.org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import space.kscience.dataforge.names.Name

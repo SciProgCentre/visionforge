@@ -4,7 +4,6 @@ import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.client.createRoot
 import react.dom.p
-import react.key
 import ringui.Island
 import ringui.SmartTabs
 import ringui.Tab

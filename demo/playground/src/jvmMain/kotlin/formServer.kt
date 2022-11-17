@@ -4,7 +4,7 @@ import kotlinx.html.*
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.html.Page
+import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.formFragment
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.server.close
@@ -15,7 +15,7 @@ fun main() {
     val visionManager = Global.fetch(VisionManager)
 
     val server = visionManager.serve {
-        page(header = Page.scriptHeader("js/visionforge-playground.js")) {
+        page(VisionPage.scriptHeader("js/visionforge-playground.js")) {
             val form = formFragment("form") {
                 label {
                     htmlFor = "fname"

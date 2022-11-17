@@ -3,7 +3,6 @@ package space.kscience.visionforge.bootstrap
 import org.w3c.dom.Element
 import react.RBuilder
 import react.dom.client.createRoot
-import react.key
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.isEmpty
 import space.kscience.visionforge.Vision

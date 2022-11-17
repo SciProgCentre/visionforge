@@ -7,9 +7,9 @@ import kotlinx.css.width
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
+import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
-import org.w3c.dom.events.Event
 import react.FC
 import react.Props
 import react.dom.attrs

@@ -49,7 +49,7 @@ public abstract class JupyterPluginBase(final override val context: Context) : J
 
         }
 
-        render<Page> { page ->
+        render<VisionPage> { page ->
             HTML(page.render(createHTML()), true)
         }
 

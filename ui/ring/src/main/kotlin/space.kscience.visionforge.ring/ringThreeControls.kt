@@ -8,7 +8,7 @@ import kotlinx.css.padding
 import kotlinx.css.properties.border
 import kotlinx.css.px
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.events.Event
+import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import react.FC

@@ -2,8 +2,8 @@ package space.kscience.visionforge.examples
 
 import space.kscience.dataforge.context.Global
 import space.kscience.visionforge.html.HtmlVisionFragment
-import space.kscience.visionforge.html.Page
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.importScriptHeader
 import space.kscience.visionforge.makeFile
 import java.awt.Desktop
@@ -16,10 +16,10 @@ public fun makeVisionFile(
     show: Boolean = true,
     content: HtmlVisionFragment,
 ): Unit {
-    val actualPath = Page(Global, content = content).makeFile(path) { actualPath ->
+    val actualPath = VisionPage(Global, content = content).makeFile(path) { actualPath ->
         mapOf(
-            "title" to Page.title(title),
-            "playground" to Page.importScriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
+            "title" to VisionPage.title(title),
+            "playground" to VisionPage.importScriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
         )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

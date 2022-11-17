@@ -114,7 +114,7 @@ internal fun fileCssHeader(
 /**
  * Make a script header from a resource file, automatically copying file to appropriate location
  */
-public fun Page.Companion.importScriptHeader(
+public fun VisionPage.Companion.importScriptHeader(
     scriptResource: String,
     resourceLocation: ResourceLocation,
     htmlPath: Path? = null,

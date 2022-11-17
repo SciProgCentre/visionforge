@@ -3,7 +3,7 @@ package space.kscience.visionforge
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.HtmlFragment
-import space.kscience.visionforge.html.Page
+import space.kscience.visionforge.html.VisionPage
 import java.awt.Desktop
 import java.nio.file.Files
 import java.nio.file.Path
@@ -54,8 +54,11 @@ import java.nio.file.Path
 //    }
 //}
 
+/**
+ * Export a [VisionPage] to a file
+ */
 @DFExperimental
-public fun Page.makeFile(
+public fun VisionPage.makeFile(
     path: Path?,
     defaultHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
 ): Path {
@@ -64,7 +67,7 @@ public fun Page.makeFile(
     } ?: Files.createTempFile("tempPlot", ".html")
 
     val actualDefaultHeaders = defaultHeaders?.invoke(actualFile)
-    val actualPage = if (actualDefaultHeaders == null) this else copy(headers = actualDefaultHeaders + headers)
+    val actualPage = if (actualDefaultHeaders == null) this else copy(pageHeaders = actualDefaultHeaders + pageHeaders)
 
     val htmlString = actualPage.render(createHTML())
 
@@ -73,7 +76,7 @@ public fun Page.makeFile(
 }
 
 @DFExperimental
-public fun Page.show(path: Path? = null) {
+public fun VisionPage.show(path: Path? = null) {
     val actualPath = makeFile(path)
     Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

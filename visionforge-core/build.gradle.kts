@@ -9,7 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 api("space.kscience:dataforge-context:$dataforgeVersion")
-                api(npmlibs.kotlinx.html)
+                api("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
                 api("org.jetbrains.kotlin-wrappers:kotlin-css")
             }
         }

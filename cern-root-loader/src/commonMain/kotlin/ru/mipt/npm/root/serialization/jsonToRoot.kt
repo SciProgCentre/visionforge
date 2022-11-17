@@ -218,6 +218,7 @@ private object RootDecoder {
 
         var value: Any? = null
 
+        @Suppress("UNCHECKED_CAST")
         fun <T> getOrPutValue(builder: (JsonElement) -> T): T {
             if (value == null) {
                 value = builder(element)

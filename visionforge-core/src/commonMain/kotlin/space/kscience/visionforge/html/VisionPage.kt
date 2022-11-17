@@ -3,9 +3,14 @@ package space.kscience.visionforge.html
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 
-public data class Page(
+/**
+ * A structure representing a single page with Visions to be rendered.
+ *
+ * @param pageHeaders static headers for this page.
+ */
+public data class VisionPage(
     public val context: Context,
-    public val headers: Map<String, HtmlFragment> = emptyMap(),
+    public val pageHeaders: Map<String, HtmlFragment> = emptyMap(),
     public val content: HtmlVisionFragment,
 ) {
     public fun <R> render(root: TagConsumer<R>): R = root.apply {
@@ -13,7 +18,7 @@ public data class Page(
             meta {
                 charset = "utf-8"
             }
-            headers.values.forEach {
+            pageHeaders.values.forEach {
                 fragment(it)
             }
         }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
-import org.w3c.dom.events.Event
+import kotlinx.html.org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import space.kscience.dataforge.meta.*

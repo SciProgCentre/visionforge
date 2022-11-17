@@ -6,6 +6,7 @@
 - MeshLine for thick lines
 
 ### Changed
+- API update for server and pages
 - Edges moved to solids module for easier construction
 - Visions **must** be rooted in order to subscribe to updates.
 - Visions use flows instead of direct subscriptions.

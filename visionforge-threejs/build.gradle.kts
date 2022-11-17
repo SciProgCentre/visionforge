@@ -3,6 +3,7 @@ plugins {
 }
 
 kotlin{
+    explicitApi = org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Disabled
     js{
         binaries.library()
     }

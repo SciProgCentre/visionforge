@@ -8,7 +8,7 @@ import java.awt.Desktop
 import java.nio.file.Path
 
 
-public val Page.Companion.threeJsHeader: HtmlFragment get() = scriptHeader("js/visionforge-three.js")
+public val VisionPage.Companion.threeJsHeader: HtmlFragment get() = scriptHeader("js/visionforge-three.js")
 
 
 @DFExperimental
@@ -19,10 +19,10 @@ public fun makeThreeJsFile(
     show: Boolean = true,
     content: HtmlVisionFragment,
 ): Unit {
-    val actualPath = Page(Global, content = content).makeFile(path) { actualPath ->
+    val actualPath = VisionPage(Global, content = content).makeFile(path) { actualPath ->
         mapOf(
-            "title" to Page.title(title),
-            "threeJs" to Page.importScriptHeader("js/visionforge-three.js", resourceLocation, actualPath)
+            "title" to VisionPage.title(title),
+            "threeJs" to VisionPage.importScriptHeader("js/visionforge-three.js", resourceLocation, actualPath)
         )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

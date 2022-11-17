@@ -118,14 +118,14 @@ private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,
     mutex: Mutex,
-    collector: () -> VisionChangeBuilder,
+    collector: VisionChangeBuilder,
 ) {
 
     //Collect properties change
-    source.onPropertyChange(this) { propertyName ->
+    source.properties.changes.onEach { propertyName ->
         val newItem = source.properties.own?.get(propertyName)
-        collector().propertyChanged(name, propertyName, newItem)
-    }
+        collector.propertyChanged(name, propertyName, newItem)
+    }.launchIn(this)
 
     val children = source.children
     //Subscribe for children changes
@@ -141,7 +141,7 @@ private fun CoroutineScope.collectChange(
             collectChange(fullName, after, mutex, collector)
         }
         mutex.withLock {
-            collector().setChild(fullName, after)
+            collector.setChild(fullName, after)
         }
     }?.launchIn(this)
 }
@@ -156,7 +156,7 @@ public fun Vision.flowChanges(
     coroutineScope {
         val collector = VisionChangeBuilder()
         val mutex = Mutex()
-        collectChange(Name.EMPTY, this@flowChanges, mutex) { collector }
+        collectChange(Name.EMPTY, this@flowChanges, mutex, collector)
 
         //Send initial vision state
         val initialChange = VisionChange(vision = deepCopy(manager))
@@ -167,10 +167,10 @@ public fun Vision.flowChanges(
             delay(collectionDuration)
             //Propagate updates only if something is changed
             if (!collector.isEmpty()) {
-                //emit changes
-                emit(collector.deepCopy(manager))
-                //Reset the collector
                 mutex.withLock {
+                    //emit changes
+                    emit(collector.deepCopy(manager))
+                    //Reset the collector
                     collector.reset()
                 }
             }

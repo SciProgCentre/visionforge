@@ -1,3 +1,7 @@
+import space.kscience.gradle.isInDevelopment
+import space.kscience.gradle.useApache2Licence
+import space.kscience.gradle.useSPCTeam
+
 plugins {
     id("space.kscience.gradle.project")
 //    id("org.jetbrains.kotlinx.kover") version "0.5.0"
@@ -6,9 +10,9 @@ plugins {
 val dataforgeVersion by extra("0.6.0-dev-15")
 val fxVersion by extra("11")
 
-allprojects{
+allprojects {
     group = "space.kscience"
-    version = "0.3.0-dev-2"
+    version = "0.3.0-dev-3"
 }
 
 subprojects {
@@ -21,16 +25,26 @@ subprojects {
         maven("https://maven.jzy3d.org/releases")
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
-        kotlinOptions{
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
         }
     }
 }
 
 ksciencePublish {
-    github("visionforge")
-    space()
+    pom("https://github.com/SciProgCentre/visionforge") {
+        useApache2Licence()
+        useSPCTeam()
+    }
+    github(githubProject = "visionforge", githubOrg = "SciProgCentre")
+    space(
+        if (isInDevelopment) {
+            "https://maven.pkg.jetbrains.space/spc/p/sci/dev"
+        } else {
+            "https://maven.pkg.jetbrains.space/spc/p/sci/maven"
+        }
+    )
     sonatype()
 }
 
@@ -39,8 +53,3 @@ apiValidation {
 }
 
 readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")
-
-
-//rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-//    versions.webpackCli.version = "4.10.0"
-//}

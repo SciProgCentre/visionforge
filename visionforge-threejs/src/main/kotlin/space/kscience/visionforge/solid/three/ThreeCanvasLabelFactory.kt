@@ -24,6 +24,9 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
 
     override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
+        canvas.width = 200
+        canvas.height = 200
+
         canvas.getContext("2d").apply {
             this as CanvasRenderingContext2D
             font = "Bold ${vision.fontSize}pt ${vision.fontFamily}"
@@ -43,15 +46,13 @@ public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
         val texture = Texture(canvas)
         texture.needsUpdate = true
 
-        val material = MeshBasicMaterial().apply {
-            map = texture
-            side = DoubleSide
-            transparent = true
-        }
-
         val mesh = Mesh(
             PlaneGeometry(canvas.width, canvas.height),
-            material
+            MeshBasicMaterial().apply {
+                map = texture
+                side = DoubleSide
+                transparent = true
+            }
         )
 
         mesh.updatePosition(vision)
