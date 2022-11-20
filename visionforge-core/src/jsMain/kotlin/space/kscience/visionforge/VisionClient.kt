@@ -13,7 +13,6 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.html.RENDER_FUNCTION_NAME
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
@@ -46,18 +45,16 @@ public class VisionClient : AbstractPlugin() {
         return attribute?.value
     }
 
-    private fun getRenderers() = context.gather<ElementVisionRenderer>(ElementVisionRenderer.TYPE).values
+    private val renderers by lazy { context.gather<ElementVisionRenderer>(ElementVisionRenderer.TYPE).values }
 
-    private fun findRendererFor(vision: Vision): ElementVisionRenderer? {
-        return getRenderers().mapNotNull {
-            val rating = it.rateVision(vision)
-            if (rating > 0) {
-                rating to it
-            } else {
-                null
-            }
-        }.maxByOrNull { it.first }?.second
-    }
+    private fun findRendererFor(vision: Vision): ElementVisionRenderer? = renderers.mapNotNull {
+        val rating = it.rateVision(vision)
+        if (rating > 0) {
+            rating to it
+        } else {
+            null
+        }
+    }.maxByOrNull { it.first }?.second
 
     private fun Element.getEmbeddedData(className: String): String? = getElementsByClassName(className)[0]?.innerHTML
 
@@ -78,7 +75,7 @@ public class VisionClient : AbstractPlugin() {
         if (vision != null) {
             vision.setAsRoot(visionManager)
             val renderer = findRendererFor(vision)
-                ?: error("Could not find renderer for ${visionManager.encodeToString(vision)}")
+                ?: error("Could not find renderer for ${vision::class}")
             renderer.render(element, vision, outputMeta)
 
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
@@ -228,7 +225,7 @@ public class VisionClient : AbstractPlugin() {
 
 
 private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
-    if (document.readyState == DocumentReadyState.COMPLETE) {
+    if (document.body != null) {
         block(document)
     } else {
         document.addEventListener("DOMContentLoaded", { block(document) })
@@ -267,14 +264,29 @@ public fun VisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
     renderAllVisionsIn(element)
 }
 
+public class VisionClientApplication(public val context: Context) : Application {
+    private val client = context.fetch(VisionClient)
+
+    override fun start(document: Document, state: Map<String, Any>) {
+        console.info("Starting Vision Client")
+        val element = document.body ?: error("Document does not have a body")
+        client.renderAllVisionsIn(element)
+    }
+}
+
+
 /**
  * Create a vision client context and render all visions on the page.
  */
 public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
     console.info("Starting VisionForge context")
-    val context = Context("VisionForge", contextBuilder)
-    val visionClient = context.fetch(VisionClient)
-    window.asDynamic()[RENDER_FUNCTION_NAME] = visionClient::renderAllVisionsById
 
-    //visionClient.renderAllVisions()
+    val context = Context("VisionForge") {
+        plugin(VisionClient)
+        contextBuilder()
+    }
+
+    startApplication {
+        VisionClientApplication(context)
+    }
 }

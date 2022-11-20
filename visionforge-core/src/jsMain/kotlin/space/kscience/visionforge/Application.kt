@@ -2,7 +2,7 @@ package space.kscience.visionforge
 
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.dom.hasClass
+import org.w3c.dom.Document
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -36,7 +36,7 @@ public interface Application: CoroutineScope {
      * Starting point for an application.
      * @param state Initial state between Hot Module Replacement (HMR).
      */
-    public fun start(state: Map<String, Any>)
+    public fun start(document: Document, state: Map<String, Any>)
 
     /**
      * Ending point for an application.
@@ -46,17 +46,13 @@ public interface Application: CoroutineScope {
 }
 
 public fun startApplication(builder: () -> Application) {
-    fun start(state: dynamic): Application? {
-        return if (document.body?.hasClass("application") == true) {
-            val application = builder()
+    fun start(document: Document, state: dynamic): Application{
+        val application = builder()
 
-            @Suppress("UnsafeCastFromDynamic")
-            application.start(state?.appState ?: emptyMap())
+        @Suppress("UnsafeCastFromDynamic")
+        application.start(document, state?.appState ?: emptyMap())
 
-            application
-        } else {
-            null
-        }
+        return application
     }
 
     var application: Application? = null
@@ -73,9 +69,9 @@ public fun startApplication(builder: () -> Application) {
     }
 
     if (document.body != null) {
-        application = start(state)
+        application = start(document, state)
     } else {
         application = null
-        document.addEventListener("DOMContentLoaded", { application = start(state) })
+        document.addEventListener("DOMContentLoaded", { application = start(document, state) })
     }
 }

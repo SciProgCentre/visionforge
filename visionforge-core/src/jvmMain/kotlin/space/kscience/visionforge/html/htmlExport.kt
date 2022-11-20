@@ -1,9 +1,14 @@
 package space.kscience.visionforge
 
+import kotlinx.html.body
+import kotlinx.html.head
+import kotlinx.html.meta
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.VisionPage
+import space.kscience.visionforge.html.fragment
+import space.kscience.visionforge.html.visionFragment
 import java.awt.Desktop
 import java.nio.file.Files
 import java.nio.file.Path
@@ -56,20 +61,34 @@ import java.nio.file.Path
 
 /**
  * Export a [VisionPage] to a file
+ *
+ * @param fileHeaders additional file-system specific headers.
  */
 @DFExperimental
 public fun VisionPage.makeFile(
     path: Path?,
-    defaultHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
+    fileHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
 ): Path {
     val actualFile = path?.let {
         Path.of(System.getProperty("user.home")).resolve(path)
     } ?: Files.createTempFile("tempPlot", ".html")
 
-    val actualDefaultHeaders = defaultHeaders?.invoke(actualFile)
-    val actualPage = if (actualDefaultHeaders == null) this else copy(pageHeaders = actualDefaultHeaders + pageHeaders)
+    val actualDefaultHeaders = fileHeaders?.invoke(actualFile)
+    val actualHeaders = if (actualDefaultHeaders == null) pageHeaders else actualDefaultHeaders + pageHeaders
 
-    val htmlString = actualPage.render(createHTML())
+    val htmlString = createHTML().apply {
+        head {
+            meta {
+                charset = "utf-8"
+            }
+            actualHeaders.values.forEach {
+                fragment(it)
+            }
+        }
+        body {
+            visionFragment(context, fragment = content)
+        }
+    }.finalize()
 
     Files.writeString(actualFile, htmlString)
     return actualFile

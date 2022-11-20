@@ -6,13 +6,13 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.plotly.Plot
 import space.kscience.visionforge.gdml.toVision
-import space.kscience.visionforge.jupyter.JupyterPluginBase
+import space.kscience.visionforge.jupyter.VFIntegrationBase
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.Solids
 
 @DFExperimental
-internal class VisionForgePlayGroundForJupyter : JupyterPluginBase(
+internal class VisionForgePlayGroundForJupyter : VFIntegrationBase(
     Context("VisionForge") {
         plugin(Solids)
         plugin(PlotlyPlugin)

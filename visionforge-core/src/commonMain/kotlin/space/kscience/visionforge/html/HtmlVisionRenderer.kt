@@ -8,16 +8,11 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
-import kotlin.random.Random
-import kotlin.random.nextUInt
 
 public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
 
 @DFExperimental
 public fun HtmlVisionFragment(content: VisionTagConsumer<*>.() -> Unit): HtmlVisionFragment = content
-
-
-internal const val RENDER_FUNCTION_NAME = "renderAllVisionsById"
 
 
 /**
@@ -35,7 +30,6 @@ public fun TagConsumer<*>.visionFragment(
     fetchDataUrl: String? = null,
     fetchUpdatesUrl: String? = null,
     idPrefix: String? = null,
-    renderScript: Boolean = true,
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
@@ -63,19 +57,9 @@ public fun TagConsumer<*>.visionFragment(
             }
         }
     }
-    if (renderScript) {
-        val id = "fragment[${fragment.hashCode()}/${Random.nextUInt()}]"
-        div {
-            this.id = id
-            fragment(consumer)
-        }
-        script {
-            type = "text/javascript"
-            unsafe { +"window.${RENDER_FUNCTION_NAME}(\"$id\");" }
-        }
-    } else {
-        fragment(consumer)
-    }
+
+    fragment(consumer)
+
     return visionMap
 }
 
@@ -83,16 +67,14 @@ public fun FlowContent.visionFragment(
     context: Context = Global,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
-    fetchUpdatesUrl: String? = null,
+    flowDataUrl: String? = null,
     idPrefix: String? = null,
-    renderScript: Boolean = true,
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> = consumer.visionFragment(
     context,
     embedData,
     fetchDataUrl,
-    fetchUpdatesUrl,
+    flowDataUrl,
     idPrefix,
-    renderScript,
     fragment
 )

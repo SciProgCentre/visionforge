@@ -11,7 +11,6 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.server.DataServeMode
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.serve
@@ -37,7 +36,6 @@ fun main() {
     }
 
     val server = satContext.visionManager.serve {
-        dataMode = DataServeMode.UPDATE
         page(VisionPage.threeJsHeader, VisionPage.styleSheetHeader("css/styles.css")) {
             div("flex-column") {
                 h1 { +"Satellite detector demo" }

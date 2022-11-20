@@ -13,20 +13,6 @@ public data class VisionPage(
     public val pageHeaders: Map<String, HtmlFragment> = emptyMap(),
     public val content: HtmlVisionFragment,
 ) {
-    public fun <R> render(root: TagConsumer<R>): R = root.apply {
-        head {
-            meta {
-                charset = "utf-8"
-            }
-            pageHeaders.values.forEach {
-                fragment(it)
-            }
-        }
-        body {
-            visionFragment(context, fragment = content)
-        }
-    }.finalize()
-
     public companion object{
         /**
          * Use a script with given [src] as a global header for all pages.

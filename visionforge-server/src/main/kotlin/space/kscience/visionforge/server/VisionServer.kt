@@ -115,7 +115,7 @@ public class VisionServer internal constructor(
                 context = visionManager.context,
                 embedData = dataMode == DataServeMode.EMBED,
                 fetchDataUrl = if (dataMode != DataServeMode.EMBED) "$serverUrl$pagePath/data" else null,
-                fetchUpdatesUrl = if (dataMode == DataServeMode.UPDATE) "$serverUrl$pagePath/ws" else null,
+                flowDataUrl = if (dataMode == DataServeMode.UPDATE) "$serverUrl$pagePath/ws" else null,
                 fragment = visionFragment
             )
         }
@@ -192,18 +192,19 @@ public class VisionServer internal constructor(
      * Compile a fragment to string and serve visions from it
      */
     public fun serveVisionsFromFragment(
+        consumer: TagConsumer<*>,
         route: String,
         fragment: HtmlVisionFragment,
-    ): String = createHTML().apply {
-        val visions = visionFragment(
+    ): Unit {
+        val visions = consumer.visionFragment(
             visionManager.context,
             embedData = true,
             fetchUpdatesUrl = "$serverUrl$route/ws",
-            renderScript = true,
             fragment = fragment
         )
+
         serveVisions(route, visions)
-    }.finalize()
+    }
 
     /**
      * Serve a page, potentially containing any number of visions at a given [route] with given [header].
@@ -248,7 +249,11 @@ public class VisionServer internal constructor(
         title: String = "VisionForge server page '$route'",
         visionFragment: HtmlVisionFragment,
     ) {
-        page(route, mapOf("title" to VisionPage.title(title)) + headers.associateBy { it.hashCode().toString() }, visionFragment)
+        page(
+            route,
+            mapOf("title" to VisionPage.title(title)) + headers.associateBy { it.hashCode().toString() },
+            visionFragment
+        )
     }
 
     /**

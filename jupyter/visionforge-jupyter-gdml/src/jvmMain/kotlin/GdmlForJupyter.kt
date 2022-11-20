@@ -5,11 +5,11 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.visionforge.gdml.toVision
-import space.kscience.visionforge.jupyter.JupyterPluginBase
+import space.kscience.visionforge.jupyter.VFIntegrationBase
 import space.kscience.visionforge.solid.Solids
 
 @DFExperimental
-internal class GdmlForJupyter : JupyterPluginBase(
+internal class GdmlForJupyter : VFIntegrationBase(
     Context("GDML") {
         plugin(Solids)
     }

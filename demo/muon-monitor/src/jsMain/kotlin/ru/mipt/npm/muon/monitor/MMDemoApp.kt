@@ -1,6 +1,6 @@
 package ru.mipt.npm.muon.monitor
 
-import kotlinx.browser.document
+import org.w3c.dom.Document
 import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
@@ -13,7 +13,7 @@ import space.kscience.visionforge.startApplication
 
 private class MMDemoApp : Application {
 
-    override fun start(state: Map<String, Any>) {
+    override fun start(document: Document, state: Map<String, Any>) {
 
         val context = Context("MM-demo") {
             plugin(ThreePlugin)
