@@ -9,3 +9,4 @@ data/
 !gradle-wrapper.jar
 
 /kotlin-js-store/yarn.lock
+.
