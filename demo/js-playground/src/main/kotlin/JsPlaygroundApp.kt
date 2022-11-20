@@ -1,5 +1,5 @@
-import kotlinx.browser.document
 import kotlinx.css.*
+import org.w3c.dom.Document
 import react.dom.client.createRoot
 import ringui.SmartTabs
 import ringui.Tab
@@ -30,7 +30,7 @@ fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number?
 
 private class JsPlaygroundApp : Application {
 
-    override fun start(state: Map<String, Any>) {
+    override fun start(document: Document, state: Map<String, Any>) {
 
         val playgroundContext = Context {
             plugin(ThreeWithControlsPlugin)

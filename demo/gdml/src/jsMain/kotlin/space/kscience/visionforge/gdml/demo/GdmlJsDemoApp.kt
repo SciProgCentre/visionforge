@@ -1,7 +1,7 @@
 package space.kscience.visionforge.gdml.demo
 
-import kotlinx.browser.document
 import kotlinx.css.*
+import org.w3c.dom.Document
 import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
@@ -20,7 +20,7 @@ import styled.injectGlobal
 
 private class GDMLDemoApp : Application {
 
-    override fun start(state: Map<String, Any>) {
+    override fun start(document: Document, state: Map<String, Any>) {
         val context = Context("gdml-demo"){
             plugin(ThreePlugin)
         }
