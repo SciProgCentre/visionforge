@@ -148,9 +148,12 @@ private fun CoroutineScope.collectChange(
 
 /**
  * Generate a flow of changes of this vision and its children
+ *
+ * @param sendInitial if true, send the initial vision state as first change
  */
 public fun Vision.flowChanges(
     collectionDuration: Duration,
+    sendInitial: Boolean = false
 ): Flow<VisionChange> = flow {
     val manager = manager ?: error("Orphan vision could not collect changes")
     coroutineScope {
@@ -158,9 +161,11 @@ public fun Vision.flowChanges(
         val mutex = Mutex()
         collectChange(Name.EMPTY, this@flowChanges, mutex, collector)
 
-        //Send initial vision state
-        val initialChange = VisionChange(vision = deepCopy(manager))
-        emit(initialChange)
+        if(sendInitial) {
+            //Send initial vision state
+            val initialChange = VisionChange(vision = deepCopy(manager))
+            emit(initialChange)
+        }
 
         while (true) {
             //Wait for changes to accumulate
