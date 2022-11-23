@@ -24,7 +24,7 @@ public interface MutableVisionContainer<in V : Vision> {
  * A serializable representation of [Vision] children container
  */
 public interface VisionChildren : VisionContainer<Vision> {
-    public val group: Vision?
+    public val parent: Vision?
 
     public val keys: Set<NameToken>
 
@@ -35,7 +35,7 @@ public interface VisionChildren : VisionContainer<Vision> {
     public operator fun get(token: NameToken): Vision?
 
     override fun getChild(name: Name): Vision? = when (name.length) {
-        0 -> group
+        0 -> parent
         1 -> get(name.first())
         else -> get(name.first())?.children?.getChild(name.cutFirst())
     }
@@ -44,7 +44,7 @@ public interface VisionChildren : VisionContainer<Vision> {
         public const val STATIC_TOKEN_BODY: String = "@static"
 
         public fun empty(owner: Vision): VisionChildren = object : VisionChildren {
-            override val group: Vision get() = owner
+            override val parent: Vision get() = owner
             override val keys: Set<NameToken> get() = emptySet()
             override val changes: Flow<Name> get() = emptyFlow()
             override fun get(token: NameToken): Vision? = null
@@ -64,7 +64,7 @@ public inline fun VisionChildren.forEach(block: (NameToken, Vision) -> Unit) {
 
 public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<Vision> {
 
-    public override val group: MutableVisionGroup
+    public override val parent: MutableVisionGroup
 
     public operator fun set(token: NameToken, value: Vision?)
 
@@ -85,7 +85,7 @@ public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<
             else -> {
                 val currentParent = get(name.first())
                 if (currentParent != null && currentParent !is MutableVisionGroup) error("Can't assign a child to $currentParent")
-                val parent: MutableVisionGroup = currentParent as? MutableVisionGroup ?: group.createGroup().also {
+                val parent: MutableVisionGroup = currentParent as? MutableVisionGroup ?: parent.createGroup().also {
                     set(name.first(), it)
                 }
                 parent.children.setChild(name.cutFirst(), child)
@@ -125,7 +125,7 @@ public fun <V : Vision> MutableVisionContainer<V>.setChild(
 ): Unit = setChild(str?.parseAsName(), vision)
 
 internal abstract class VisionChildrenImpl(
-    override val group: MutableVisionGroup,
+    override val parent: MutableVisionGroup,
 ) : MutableVisionChildren {
 
     private val updateJobs = HashMap<NameToken, Job>()
@@ -140,7 +140,7 @@ internal abstract class VisionChildrenImpl(
         return items!!
     }
 
-    private val scope: CoroutineScope? get() = group.manager?.context
+    private val scope: CoroutineScope? get() = parent.manager?.context
 
     override val keys: Set<NameToken> get() = items?.keys ?: emptySet()
 
@@ -170,9 +170,9 @@ internal abstract class VisionChildrenImpl(
         } else {
             (items ?: buildItems())[token] = value
             //check if parent already exists and is different from the current one
-            if (value.parent != null && value.parent != group) error("Can't reassign parent Vision for $value")
+            if (value.parent != null && value.parent != parent) error("Can't reassign parent Vision for $value")
             //set parent
-            value.parent = group
+            value.parent = parent
             //start update jobs (only if the vision is rooted)
             scope?.let { scope ->
                 val job = value.children?.changes?.onEach {

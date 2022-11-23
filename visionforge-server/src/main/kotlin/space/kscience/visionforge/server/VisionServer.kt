@@ -1,10 +1,7 @@
 package space.kscience.visionforge.server
 
 import io.ktor.http.*
-import io.ktor.server.application.Application
-import io.ktor.server.application.call
-import io.ktor.server.application.install
-import io.ktor.server.application.log
+import io.ktor.server.application.*
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
@@ -18,6 +15,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.getOrFail
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.webSocket
+import io.ktor.util.pipeline.Pipeline
 import io.ktor.websocket.Frame
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
@@ -270,6 +268,11 @@ public class VisionServer internal constructor(
     }
 }
 
+public fun <P : Pipeline<*, ApplicationCall>, B : Any, F : Any> P.require(
+    plugin: Plugin<P, B, F>,
+    configure: B.() -> Unit = {},
+): F = pluginOrNull(plugin) ?: install(plugin, configure)
+
 /**
  * Attach VisionForge server application to given server
  */
@@ -278,8 +281,8 @@ public fun Application.visionServer(
     webServerUrl: Url,
     path: String = DEFAULT_PAGE,
 ): VisionServer {
-    install(WebSockets)
-    install(CORS) {
+    require(WebSockets)
+    require(CORS) {
         anyHost()
     }
 
@@ -287,7 +290,7 @@ public fun Application.visionServer(
 //        install(CallLogging)
 //    }
 
-    val serverRoute = install(Routing).createRouteFromPath(path)
+    val serverRoute = require(Routing).createRouteFromPath(path)
 
     serverRoute {
         static {

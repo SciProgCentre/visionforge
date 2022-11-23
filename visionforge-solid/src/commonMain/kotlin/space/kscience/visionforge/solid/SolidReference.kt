@@ -124,7 +124,7 @@ public class SolidReference(
 
     override val children: VisionChildren
         get() = object : VisionChildren {
-            override val group: Vision get() = this@SolidReference
+            override val parent: Vision get() = this@SolidReference
 
             override val keys: Set<NameToken> get() = prototype.children?.keys ?: emptySet()
 
@@ -198,7 +198,7 @@ internal class SolidReferenceChild(
 
 
     override val children: VisionChildren = object : VisionChildren {
-        override val group: Vision get() = this@SolidReferenceChild
+        override val parent: Vision get() = this@SolidReferenceChild
 
         override val keys: Set<NameToken> get() = prototype.children?.keys ?: emptySet()
 
