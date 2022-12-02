@@ -4,6 +4,7 @@ import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.*
 import space.kscience.visionforge.makeFile
+import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Path
 
@@ -19,7 +20,7 @@ public fun makeThreeJsFile(
     show: Boolean = true,
     content: HtmlVisionFragment,
 ): Unit {
-    val actualPath = VisionPage(Global, content = content).makeFile(path) { actualPath ->
+    val actualPath = VisionPage(Global.visionManager, content = content).makeFile(path) { actualPath ->
         mapOf(
             "title" to VisionPage.title(title),
             "threeJs" to VisionPage.importScriptHeader("js/visionforge-three.js", resourceLocation, actualPath)

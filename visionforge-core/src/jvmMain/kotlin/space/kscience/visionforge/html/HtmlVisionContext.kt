@@ -5,13 +5,13 @@ import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.isEmpty
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.html.VisionTagConsumer.Companion.DEFAULT_VISION_NAME
 import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.visionManager
 
@@ -34,11 +34,13 @@ public interface HtmlVisionContext : ContextAware {
 
 public typealias HtmlVisionContextFragment = context(HtmlVisionContext) TagConsumer<*>.() -> Unit
 
-context(HtmlVisionContext) public fun HtmlVisionFragment(
-    content: TagConsumer<*>.() -> Unit
+context(HtmlVisionContext)
+public fun HtmlVisionFragment(
+    content: TagConsumer<*>.() -> Unit,
 ): HtmlVisionFragment = content
 
-context(HtmlVisionContext) private fun <T> TagConsumer<T>.vision(
+context(HtmlVisionContext)
+private fun <T> TagConsumer<T>.vision(
     visionManager: VisionManager,
     name: Name,
     vision: Vision,
@@ -61,7 +63,7 @@ context(HtmlVisionContext) private fun <T> TagConsumer<T>.vision(
 }
 
 context(HtmlVisionContext)
-        private fun <T> TagConsumer<T>.vision(
+private fun <T> TagConsumer<T>.vision(
     name: Name,
     vision: Vision,
     outputMeta: Meta = Meta.EMPTY,
@@ -71,26 +73,23 @@ context(HtmlVisionContext)
  * Insert a vision in this HTML.
  */
 context(HtmlVisionContext)
-        @DFExperimental
-        @VisionDSL
-        public fun <T> TagConsumer<T>.vision(
+@VisionDSL
+public fun <T> TagConsumer<T>.vision(
     name: Name? = null,
     visionProvider: VisionOutput.() -> Vision,
 ): T {
-    val output = VisionOutput(context, name)
+    val actualName = name ?: NameToken(DEFAULT_VISION_NAME, visionProvider.hashCode().toUInt().toString()).asName()
+    val output = VisionOutput(context, actualName)
     val vision = output.visionProvider()
-    val actualName =
-        name ?: NameToken(VisionTagConsumer.DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
-    return vision(output.buildVisionManager(), actualName, vision, output.meta)
+    return vision(output.visionManager, actualName, vision, output.meta)
 }
 
 /**
  * Insert a vision in this HTML.
  */
 context(HtmlVisionContext)
-        @DFExperimental
-        @VisionDSL
-        public fun <T> TagConsumer<T>.vision(
+@VisionDSL
+public fun <T> TagConsumer<T>.vision(
     name: String?,
     visionProvider: VisionOutput.() -> Vision,
 ): T = vision(name?.parseAsName(), visionProvider)

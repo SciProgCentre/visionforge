@@ -6,6 +6,7 @@ import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.importScriptHeader
 import space.kscience.visionforge.makeFile
+import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Path
 
@@ -16,7 +17,7 @@ public fun makeVisionFile(
     show: Boolean = true,
     content: HtmlVisionFragment,
 ): Unit {
-    val actualPath = VisionPage(Global, content = content).makeFile(path) { actualPath ->
+    val actualPath = VisionPage(Global.visionManager, content = content).makeFile(path) { actualPath ->
         mapOf(
             "title" to VisionPage.title(title),
             "playground" to VisionPage.importScriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),

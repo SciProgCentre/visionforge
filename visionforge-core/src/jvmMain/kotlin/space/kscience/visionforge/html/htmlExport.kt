@@ -4,6 +4,7 @@ import kotlinx.html.body
 import kotlinx.html.head
 import kotlinx.html.meta
 import kotlinx.html.stream.createHTML
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.VisionPage
@@ -86,7 +87,7 @@ public fun VisionPage.makeFile(
             }
         }
         body {
-            visionFragment(context, fragment = content)
+            visionFragment(Global, fragment = content)
         }
     }.finalize()
 

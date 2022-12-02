@@ -2,10 +2,11 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 
@@ -14,31 +15,48 @@ public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
 @DFExperimental
 public fun HtmlVisionFragment(content: VisionTagConsumer<*>.() -> Unit): HtmlVisionFragment = content
 
+public typealias VisionCollector = MutableMap<Name, Pair<VisionOutput, Vision>>
+
 
 /**
  * Render a fragment in the given consumer and return a map of extracted visions
  * @param context a context used to create a vision fragment
  * @param embedData embed Vision initial state in the HTML
  * @param fetchDataUrl fetch data after first render from given url
- * @param fetchUpdatesUrl receive push updates from the server at given url
+ * @param updatesUrl receive push updates from the server at given url
  * @param idPrefix a prefix to be used before vision ids
- * @param renderScript if true add rendering script after the fragment
  */
 public fun TagConsumer<*>.visionFragment(
-    context: Context = Global,
+    context: Context,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
-    fetchUpdatesUrl: String? = null,
+    updatesUrl: String? = null,
     idPrefix: String? = null,
+    collector: VisionCollector = mutableMapOf(),
     fragment: HtmlVisionFragment,
-): Map<Name, Vision> {
-    val visionMap = HashMap<Name, Vision>()
+) {
     val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, context, idPrefix) {
+
+        override fun <T> TagConsumer<T>.vision(name: Name?, buildOutput: VisionOutput.() -> Vision): T {
+            //Avoid re-creating cached visions
+            val actualName = name ?: NameToken(
+                DEFAULT_VISION_NAME,
+                buildOutput.hashCode().toUInt().toString()
+            ).asName()
+
+            val (output, vision) = collector.getOrPut(actualName) {
+                val output = VisionOutput(context, actualName)
+                val vision = output.buildOutput()
+                output to vision
+            }
+
+            return addVision(actualName, output.visionManager, vision, output.meta)
+        }
+
         override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
-            visionMap[name] = vision
             // Toggle update mode
 
-            fetchUpdatesUrl?.let {
+            updatesUrl?.let {
                 attributes[OUTPUT_CONNECT_ATTRIBUTE] = it
             }
 
@@ -59,22 +77,22 @@ public fun TagConsumer<*>.visionFragment(
     }
 
     fragment(consumer)
-
-    return visionMap
 }
 
 public fun FlowContent.visionFragment(
-    context: Context = Global,
+    context: Context,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
-    flowDataUrl: String? = null,
+    updatesUrl: String? = null,
     idPrefix: String? = null,
+    visionCache: VisionCollector = mutableMapOf(),
     fragment: HtmlVisionFragment,
-): Map<Name, Vision> = consumer.visionFragment(
+): Unit = consumer.visionFragment(
     context,
     embedData,
     fetchDataUrl,
-    flowDataUrl,
+    updatesUrl,
     idPrefix,
-    fragment
+    visionCache,
+    fragment = fragment
 )

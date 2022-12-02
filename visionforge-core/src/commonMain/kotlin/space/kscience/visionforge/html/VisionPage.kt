@@ -1,7 +1,7 @@
 package space.kscience.visionforge.html
 
 import kotlinx.html.*
-import space.kscience.dataforge.context.Context
+import space.kscience.visionforge.VisionManager
 
 /**
  * A structure representing a single page with Visions to be rendered.
@@ -9,7 +9,7 @@ import space.kscience.dataforge.context.Context
  * @param pageHeaders static headers for this page.
  */
 public data class VisionPage(
-    public val context: Context,
+    public val visionManager: VisionManager,
     public val pageHeaders: Map<String, HtmlFragment> = emptyMap(),
     public val content: HtmlVisionFragment,
 ) {

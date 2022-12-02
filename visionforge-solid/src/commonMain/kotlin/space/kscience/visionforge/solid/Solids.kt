@@ -33,7 +33,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
         override val type: KClass<out Solids> = Solids::class
 
         public val default: Solids by lazy {
-            Context("@Solids"){
+            Context("@Solids") {
                 plugin(Solids)
             }.fetch(Solids)
         }

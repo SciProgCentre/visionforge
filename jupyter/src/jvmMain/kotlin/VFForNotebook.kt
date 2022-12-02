@@ -1,6 +1,14 @@
 package space.kscience.visionforge.jupyter
 
+import io.ktor.http.URLProtocol
+import io.ktor.server.application.install
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.route
+import io.ktor.server.util.url
+import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
@@ -13,11 +21,14 @@ import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
+import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.HtmlFormFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.VisionCollector
 import space.kscience.visionforge.html.visionFragment
-import space.kscience.visionforge.server.VisionServer
-import space.kscience.visionforge.server.serve
+import space.kscience.visionforge.server.VisionRouteConfiguration
+import space.kscience.visionforge.server.require
+import space.kscience.visionforge.server.serveVisionData
 import space.kscience.visionforge.visionManager
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
@@ -34,10 +45,14 @@ internal fun TagConsumer<*>.renderScriptForId(id: String) {
  * A handler class that includes a server and common utilities
  */
 public class VFForNotebook(override val context: Context) : ContextAware, CoroutineScope {
+
+    public val visionManager: VisionManager = context.visionManager
+
+    private val configuration = VisionRouteConfiguration(visionManager)
+
     private var counter = 0
 
     private var engine: ApplicationEngine? = null
-    private var server: VisionServer? = null
 
     public var isolateFragments: Boolean = false
 
@@ -47,16 +62,15 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
         isolateFragments = true
     }
 
-    public fun isServerRunning(): Boolean = server != null
+    public fun isServerRunning(): Boolean = engine != null
 
     public fun html(block: TagConsumer<*>.() -> Unit): MimeTypedResult = HTML(createHTML().apply(block).finalize())
 
     public fun startServer(
         host: String = context.properties["visionforge.host"].string ?: "localhost",
-        port: Int = context.properties["visionforge.port"].int ?: VisionServer.DEFAULT_PORT,
-        configuration: VisionServer.() -> Unit = {},
+        port: Int = context.properties["visionforge.port"].int ?: VisionRouteConfiguration.DEFAULT_PORT,
     ): MimeTypedResult = html {
-        if (server != null) {
+        if (engine != null) {
             p {
                 style = "color: red;"
                 +"Stopping current VisionForge server"
@@ -64,10 +78,9 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
         }
 
         engine?.stop(1000, 2000)
-        engine = context.visionManager.serve(host, port) {
-            configuration()
-            server = this
-        }.start()
+        engine = context.embeddedServer(CIO, port, host) {
+            install(WebSockets)
+        }.start(false)
 
         p {
             style = "color: blue;"
@@ -80,20 +93,46 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
             logger.info { "Stopping VisionForge server" }
             stop(1000, 2000)
             engine = null
-            server = null
         }
     }
 
     private fun produceHtmlString(
         fragment: HtmlVisionFragment,
     ): String = createHTML().apply {
-        val server = server
         val id = "fragment[${fragment.hashCode()}/${Random.nextUInt()}]"
         div {
             this.id = id
-            if (server != null) {
+            val engine = engine
+            if (engine != null) {
                 //if server exist, serve dynamically
-                server.serveVisionsFromFragment(consumer, "content-${counter++}", fragment)
+                //server.serveVisionsFromFragment(consumer, "content-${counter++}", fragment)
+                val cellRoute = "content-${counter++}"
+
+                val collector: VisionCollector = mutableMapOf()
+
+                val url = engine.environment.connectors.first().let {
+                    url{
+                        protocol = URLProtocol.WS
+                        host = it.host
+                        port = it.port
+                        pathSegments = listOf(cellRoute, "ws")
+                    }
+                }
+
+                visionFragment(
+                    context,
+                    embedData = true,
+                    updatesUrl = url,
+                    collector = collector,
+                    fragment = fragment
+                )
+
+                engine.application.require(Routing) {
+                    route(cellRoute) {
+                        serveVisionData(TODO(), collector)
+                    }
+                }
+
             } else {
                 //if not, use static rendering
                 visionFragment(context, fragment = fragment)
