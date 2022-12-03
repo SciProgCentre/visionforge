@@ -16,42 +16,46 @@ import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionOfNumberField
 import space.kscience.visionforge.html.VisionOfTextField
 
-public val textVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfTextField> { vision, _ ->
-    val name = vision.name ?: "input[${vision.hashCode().toUInt()}]"
+internal fun textVisionRenderer(
+    client: VisionClient,
+): ElementVisionRenderer = ElementVisionRenderer<VisionOfTextField> { name, vision, _ ->
+    val fieldName = vision.name ?: "input[${vision.hashCode().toUInt()}]"
     vision.label?.let {
         label {
-            htmlFor = name
+            htmlFor = fieldName
             +it
         }
     }
     input {
         type = InputType.text
-        this.name = name
+        this.name = fieldName
         vision.useProperty(VisionOfTextField::text) {
             value = it ?: ""
         }
         onChangeFunction = {
-            vision.text = value
+//            client.visionPropertyChanged(name, VisionOfTextField::text.name.pa, value)
         }
     }
 }
 
-public val numberVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfNumberField> { vision, _ ->
-    val name = vision.name ?: "input[${vision.hashCode().toUInt()}]"
+internal fun numberVisionRenderer(
+    client: VisionClient,
+): ElementVisionRenderer = ElementVisionRenderer<VisionOfNumberField> { name, vision, _ ->
+    val fieldName = vision.name ?: "input[${vision.hashCode().toUInt()}]"
     vision.label?.let {
         label {
-            htmlFor = name
+            htmlFor = fieldName
             +it
         }
     }
     input {
         type = InputType.text
-        this.name = name
+        this.name = fieldName
         vision.useProperty(VisionOfNumberField::value) {
             value = it?.toDouble() ?: 0.0
         }
         onChangeFunction = {
-            vision.value = value.toDoubleOrNull()
+//            vision.value = value.toDoubleOrNull()
         }
     }
 }
@@ -61,7 +65,8 @@ internal fun FormData.toMeta(): Meta {
     //val res = js("Object.fromEntries(formData);")
     val `object` = js("{}")
     //language=JavaScript
-    js("""
+    js(
+        """
     formData.forEach(function(value, key){
         // Reflect.has in favor of: object.hasOwnProperty(key)
         if(!Reflect.has(object, key)){
@@ -73,11 +78,14 @@ internal fun FormData.toMeta(): Meta {
         }
         object[key].push(value);
     }); 
-    """)
+    """
+    )
     return DynamicMeta(`object`)
 }
 
-public val formVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlForm> { vision, _ ->
+internal fun formVisionRenderer(
+    client: VisionClient,
+): ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlForm> { name, vision, _ ->
 
     val form = document.getElementById(vision.formId) as? HTMLFormElement
         ?: error("An element with id = '${vision.formId} is not a form")
@@ -95,7 +103,7 @@ public val formVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<Vis
         event.preventDefault()
         val formData = FormData(form).toMeta()
         //console.log(formData.toString())
-        vision.values = formData
+        //vision.values = formData
         false
     }
 }

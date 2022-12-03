@@ -13,6 +13,7 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
@@ -67,17 +68,29 @@ public class VisionClient : AbstractPlugin() {
         changeCollector.propertyChanged(visionName, propertyName, item)
     }
 
+    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Boolean) {
+        visionPropertyChanged(visionName, propertyName, Meta(item))
+    }
+
+    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: String) {
+        visionPropertyChanged(visionName, propertyName, Meta(item))
+    }
+
+    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Number) {
+        visionPropertyChanged(visionName, propertyName, Meta(item))
+    }
+
     public fun visionChanged(name: Name?, child: Vision?) {
         changeCollector.setChild(name, child)
     }
 
-    private fun renderVision(element: Element, vision: Vision, outputMeta: Meta) {
+    private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
         vision.setAsRoot(visionManager)
         val renderer = findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
-        renderer.render(element, vision, outputMeta)
+        renderer.render(element, name, vision, outputMeta)
     }
 
-    private fun updateVision(name: String, element: Element, vision: Vision?, outputMeta: Meta) {
+    private fun updateVision(element: Element, name: Name, vision: Vision?, outputMeta: Meta) {
         element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
             val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                 val endpoint = resolveEndpoint(element)
@@ -89,7 +102,7 @@ public class VisionClient : AbstractPlugin() {
                 URL(attr.value)
             }.apply {
                 protocol = "ws"
-                searchParams.append("name", name)
+                searchParams.append("name", name.toString())
             }
 
             logger.info { "Updating vision data from $wsUrl" }
@@ -106,7 +119,7 @@ public class VisionClient : AbstractPlugin() {
 
                         // If change contains root vision replacement, do it
                         change.vision?.let { vision ->
-                            renderVision(element, vision, outputMeta)
+                            renderVision(element, name, vision, outputMeta)
                         }
 
                         logger.debug { "Got update $change for output with name $name" }
@@ -152,7 +165,7 @@ public class VisionClient : AbstractPlugin() {
      */
     public fun renderVisionIn(element: Element) {
         if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
-        val name = resolveName(element) ?: error("The element is not a vision output")
+        val name = resolveName(element)?.parseAsName() ?: error("The element is not a vision output")
 
         if (element.attributes[OUTPUT_RENDERED]?.value == "true") {
             logger.info { "VF output in element $element is already rendered" }
@@ -179,7 +192,7 @@ public class VisionClient : AbstractPlugin() {
                 } else {
                     URL(attr.value)
                 }.apply {
-                    searchParams.append("name", name)
+                    searchParams.append("name", name.toString())
                 }
 
                 logger.info { "Fetching vision data from $fetchUrl" }
@@ -187,8 +200,8 @@ public class VisionClient : AbstractPlugin() {
                     if (response.ok) {
                         response.text().then { text ->
                             val vision = visionManager.decodeFromString(text)
-                            renderVision(element, vision, outputMeta)
-                            updateVision(name, element, vision, outputMeta)
+                            renderVision(element, name, vision, outputMeta)
+                            updateVision(element, name, vision, outputMeta)
                         }
                     } else {
                         logger.error { "Failed to fetch initial vision state from $fetchUrl" }
@@ -203,13 +216,13 @@ public class VisionClient : AbstractPlugin() {
                     visionManager.decodeFromString(it)
                 }
                 logger.info { "Found embedded vision for output with name $name" }
-                renderVision(element, embeddedVision, outputMeta)
-                updateVision(name, element, embeddedVision, outputMeta)
+                renderVision(element, name, embeddedVision, outputMeta)
+                updateVision(element, name, embeddedVision, outputMeta)
             }
 
             //Try to load vision via websocket
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE] != null -> {
-                updateVision(name, element, null, outputMeta)
+                updateVision(element, name, null, outputMeta)
             }
 
             else -> error("No embedded vision data / fetch url for $name")
@@ -217,11 +230,13 @@ public class VisionClient : AbstractPlugin() {
         element.setAttribute(OUTPUT_RENDERED, "true")
     }
 
-    override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) mapOf(
-        numberVisionRenderer.name to numberVisionRenderer,
-        textVisionRenderer.name to textVisionRenderer,
-        formVisionRenderer.name to formVisionRenderer
-    ) else super.content(target)
+    override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) {
+        listOf(
+            numberVisionRenderer(this),
+            textVisionRenderer(this),
+            formVisionRenderer(this)
+        ).toMap()
+    } else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
         override fun build(context: Context, meta: Meta): VisionClient = VisionClient()

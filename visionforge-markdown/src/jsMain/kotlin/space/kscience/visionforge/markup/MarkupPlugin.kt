@@ -11,6 +11,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FORMAT
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
@@ -26,7 +27,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         require(vision is VisionOfMarkup) { "The vision is not a markup vision" }
         val div = document.createElement("div")
         val flavour = when (vision.format) {
