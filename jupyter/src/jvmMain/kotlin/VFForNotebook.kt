@@ -4,9 +4,8 @@ import io.ktor.http.URLProtocol
 import io.ktor.server.application.install
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.EngineConnectorConfig
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.routing.Routing
-import io.ktor.server.routing.route
 import io.ktor.server.util.url
 import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +25,8 @@ import space.kscience.visionforge.html.HtmlFormFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.VisionCollector
 import space.kscience.visionforge.html.visionFragment
-import space.kscience.visionforge.server.VisionRouteConfiguration
-import space.kscience.visionforge.server.require
+import space.kscience.visionforge.server.EngineConnectorConfig
+import space.kscience.visionforge.server.VisionRoute
 import space.kscience.visionforge.server.serveVisionData
 import space.kscience.visionforge.visionManager
 import kotlin.coroutines.CoroutineContext
@@ -48,8 +47,6 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
 
     public val visionManager: VisionManager = context.visionManager
 
-    private val configuration = VisionRouteConfiguration(visionManager)
-
     private var counter = 0
 
     private var engine: ApplicationEngine? = null
@@ -68,7 +65,7 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
 
     public fun startServer(
         host: String = context.properties["visionforge.host"].string ?: "localhost",
-        port: Int = context.properties["visionforge.port"].int ?: VisionRouteConfiguration.DEFAULT_PORT,
+        port: Int = context.properties["visionforge.port"].int ?: VisionRoute.DEFAULT_PORT,
     ): MimeTypedResult = html {
         if (engine != null) {
             p {
@@ -76,6 +73,8 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
                 +"Stopping current VisionForge server"
             }
         }
+
+        val connector: EngineConnectorConfig = EngineConnectorConfig(host, port)
 
         engine?.stop(1000, 2000)
         engine = context.embeddedServer(CIO, port, host) {
@@ -111,13 +110,15 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
                 val collector: VisionCollector = mutableMapOf()
 
                 val url = engine.environment.connectors.first().let {
-                    url{
+                    url {
                         protocol = URLProtocol.WS
                         host = it.host
                         port = it.port
                         pathSegments = listOf(cellRoute, "ws")
                     }
                 }
+
+                engine.application.serveVisionData(VisionRoute(cellRoute, visionManager), collector)
 
                 visionFragment(
                     context,
@@ -126,13 +127,6 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
                     collector = collector,
                     fragment = fragment
                 )
-
-                engine.application.require(Routing) {
-                    route(cellRoute) {
-                        serveVisionData(TODO(), collector)
-                    }
-                }
-
             } else {
                 //if not, use static rendering
                 visionFragment(context, fragment = fragment)

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
+import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.*
@@ -30,32 +31,31 @@ import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.flowChanges
 import space.kscience.visionforge.html.*
-import java.awt.Desktop
-import java.net.URI
 import kotlin.time.Duration.Companion.milliseconds
 
 
-public enum class DataServeMode {
-    /**
-     * Embed the initial state of the vision inside its html tag.
-     */
-    EMBED,
-
-    /**
-     * Fetch data on vision load. Do not embed data.
-     */
-    FETCH,
-
-    /**
-     * Connect to server to get pushes. The address of the server is embedded in the tag.
-     */
-    UPDATE
-}
-
-public class VisionRouteConfiguration(
+public class VisionRoute(
+    public val route: String,
     public val visionManager: VisionManager,
     override val meta: ObservableMutableMeta = MutableMeta(),
 ) : Configurable, ContextAware {
+
+    public enum class Mode {
+        /**
+         * Embed the initial state of the vision inside its html tag.
+         */
+        EMBED,
+
+        /**
+         * Fetch data on vision load. Do not embed data.
+         */
+        FETCH,
+
+        /**
+         * Connect to server to get pushes. The address of the server is embedded in the tag.
+         */
+        UPDATE
+    }
 
     override val context: Context get() = visionManager.context
 
@@ -64,7 +64,7 @@ public class VisionRouteConfiguration(
      */
     public var updateInterval: Long by meta.long(300, key = UPDATE_INTERVAL_KEY)
 
-    public var dataMode: DataServeMode by meta.enum(DataServeMode.UPDATE)
+    public var dataMode: Mode by meta.enum(Mode.UPDATE)
 
     public companion object {
         public const val DEFAULT_PORT: Int = 7777
@@ -78,65 +78,74 @@ public class VisionRouteConfiguration(
  * Serve visions in a given [route] without providing a page template.
  * [visions] could be changed during the service.
  */
-public fun Route.serveVisionData(
-    configuration: VisionRouteConfiguration,
+public fun Application.serveVisionData(
+    configuration: VisionRoute,
     resolveVision: (Name) -> Vision?,
 ) {
-    application.log.info("Serving visions at ${this@serveVisionData}")
-
-    //Update websocket
-    webSocket("ws") {
-        val name: String = call.request.queryParameters.getOrFail("name")
-        application.log.debug("Opened server socket for $name")
-        val vision: Vision = resolveVision(Name.parse(name)) ?: error("Plot with id='$name' not registered")
-
-        launch {
-            incoming.consumeEach {
-                val data = it.data.decodeToString()
-                application.log.debug("Received update: \n$data")
-                val change = configuration.visionManager.jsonFormat.decodeFromString(
-                    VisionChange.serializer(), data
-                )
-                vision.update(change)
+    require(WebSockets)
+    routing {
+        route(configuration.route) {
+            install(CORS) {
+                anyHost()
             }
-        }
+            application.log.info("Serving visions at ${configuration.route}")
 
-        try {
-            withContext(configuration.context.coroutineContext) {
-                vision.flowChanges(configuration.updateInterval.milliseconds).onEach { update ->
-                    val json = configuration.visionManager.jsonFormat.encodeToString(
-                        VisionChange.serializer(),
-                        update
+            //Update websocket
+            webSocket("ws") {
+                val name: String = call.request.queryParameters.getOrFail("name")
+                application.log.debug("Opened server socket for $name")
+                val vision: Vision = resolveVision(Name.parse(name)) ?: error("Plot with id='$name' not registered")
+
+                launch {
+                    incoming.consumeEach {
+                        val data = it.data.decodeToString()
+                        application.log.debug("Received update: \n$data")
+                        val change = configuration.visionManager.jsonFormat.decodeFromString(
+                            VisionChange.serializer(), data
+                        )
+                        vision.update(change)
+                    }
+                }
+
+                try {
+                    withContext(configuration.context.coroutineContext) {
+                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { update ->
+                            val json = configuration.visionManager.jsonFormat.encodeToString(
+                                VisionChange.serializer(),
+                                update
+                            )
+                            application.log.debug("Sending update: \n$json")
+                            outgoing.send(Frame.Text(json))
+                        }.collect()
+                    }
+                } catch (t: Throwable) {
+                    this.application.log.info("WebSocket update channel for $name is closed with exception: $t")
+                }
+            }
+            //Plots in their json representation
+            get("data") {
+                val name: String = call.request.queryParameters.getOrFail("name")
+
+                val vision: Vision? = resolveVision(Name.parse(name))
+                if (vision == null) {
+                    call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
+                } else {
+                    call.respondText(
+                        configuration.visionManager.encodeToString(vision),
+                        contentType = ContentType.Application.Json,
+                        status = HttpStatusCode.OK
                     )
-                    application.log.debug("Sending update: \n$json")
-                    outgoing.send(Frame.Text(json))
-                }.collect()
+                }
             }
-        } catch (t: Throwable) {
-            this.application.log.info("WebSocket update channel for $name is closed with exception: $t")
-        }
-    }
-    //Plots in their json representation
-    get("data") {
-        val name: String = call.request.queryParameters.getOrFail("name")
-
-        val vision: Vision? = resolveVision(Name.parse(name))
-        if (vision == null) {
-            call.respond(HttpStatusCode.NotFound, "Vision with name '$name' not found")
-        } else {
-            call.respondText(
-                configuration.visionManager.encodeToString(vision),
-                contentType = ContentType.Application.Json,
-                status = HttpStatusCode.OK
-            )
         }
     }
 }
 
-public fun Route.serveVisionData(
-    configuration: VisionRouteConfiguration,
+public fun Application.serveVisionData(
+    configuration: VisionRoute,
     cache: VisionCollector,
 ): Unit = serveVisionData(configuration) { cache[it]?.second }
+
 //
 ///**
 // * Compile a fragment to string and serve visions from it
@@ -161,91 +170,85 @@ public fun Route.serveVisionData(
 /**
  * Serve a page, potentially containing any number of visions at a given [route] with given [header].
  */
-public fun Route.visionPage(
-    configuration: VisionRouteConfiguration,
+public fun Application.visionPage(
+    route: String,
+    configuration: VisionRoute,
+    connector: EngineConnectorConfig,
     headers: Collection<HtmlFragment>,
     visionFragment: HtmlVisionFragment,
 ) {
-    application.require(WebSockets)
-    require(CORS) {
-        anyHost()
-    }
+    require(WebSockets)
 
-    val visionCache: VisionCollector = mutableMapOf()
-    serveVisionData(configuration, visionCache)
+    val collector: VisionCollector = mutableMapOf()
 
-    //filled pages
-    get {
-        //re-create html and vision list on each call
-        call.respondHtml {
-            val callbackUrl = call.url()
-            head {
-                meta {
-                    charset = "utf-8"
-                }
-                headers.forEach { header ->
-                    consumer.header()
-                }
+    val html = createHTML().apply {
+        head {
+            meta {
+                charset = "utf-8"
             }
-            body {
-                //Load the fragment and remember all loaded visions
-                visionFragment(
-                    context = configuration.context,
-                    embedData = configuration.dataMode == DataServeMode.EMBED,
-                    fetchDataUrl = if (configuration.dataMode != DataServeMode.EMBED) {
-                        URLBuilder(callbackUrl).apply {
-                            pathSegments = pathSegments + "data"
-                        }.buildString()
-                    } else null,
-                    updatesUrl = if (configuration.dataMode == DataServeMode.UPDATE) {
-                        URLBuilder(callbackUrl).apply {
-                            protocol = URLProtocol.WS
-                            pathSegments = pathSegments + "ws"
-                        }.buildString()
-                    } else null,
-                    visionCache = visionCache,
-                    fragment = visionFragment
-                )
+            headers.forEach { header ->
+                consumer.header()
             }
         }
+        body {
+            //Load the fragment and remember all loaded visions
+            visionFragment(
+                context = configuration.context,
+                embedData = configuration.dataMode == VisionRoute.Mode.EMBED,
+                fetchDataUrl = if (configuration.dataMode != VisionRoute.Mode.EMBED) {
+                    url {
+                        host = connector.host
+                        port = connector.port
+                        path(route, "data")
+                    }
+                } else null,
+                updatesUrl = if (configuration.dataMode == VisionRoute.Mode.UPDATE) {
+                    url {
+                        protocol = URLProtocol.WS
+                        host = connector.host
+                        port = connector.port
+                        path(route, "ws")
+                    }
+                } else null,
+                visionCache = collector,
+                fragment = visionFragment
+            )
+        }
+    }.finalize()
 
+    //serve data
+    serveVisionData(configuration, collector)
+
+    //filled pages
+    routing {
+        get(route) {
+            call.respondText(html, ContentType.Text.Html)
+        }
     }
 }
 
-public fun Route.visionPage(
+public fun Application.visionPage(
+    connector: EngineConnectorConfig,
     visionManager: VisionManager,
     vararg headers: HtmlFragment,
-    configurationBuilder: VisionRouteConfiguration.() -> Unit = {},
+    route: String = "/",
+    configurationBuilder: VisionRoute.() -> Unit = {},
     visionFragment: HtmlVisionFragment,
 ) {
-    val configuration = VisionRouteConfiguration(visionManager).apply(configurationBuilder)
-    visionPage(configuration, listOf(*headers), visionFragment)
+    val configuration = VisionRoute(route, visionManager).apply(configurationBuilder)
+    visionPage(route, configuration, connector, listOf(*headers), visionFragment)
 }
 
 /**
  * Render given [VisionPage] at server
  */
-public fun Route.visionPage(page: VisionPage, configurationBuilder: VisionRouteConfiguration.() -> Unit = {}) {
-    val configuration = VisionRouteConfiguration(page.visionManager).apply(configurationBuilder)
-    visionPage(configuration, page.pageHeaders.values, visionFragment = page.content)
+public fun Application.visionPage(
+    connector: EngineConnectorConfig,
+    page: VisionPage,
+    route: String = "/",
+    configurationBuilder: VisionRoute.() -> Unit = {},
+) {
+    val configuration = VisionRoute(route, page.visionManager).apply(configurationBuilder)
+    visionPage(route, configuration, connector, page.pageHeaders.values, visionFragment = page.content)
 }
 
-public fun <P : Pipeline<*, ApplicationCall>, B : Any, F : Any> P.require(
-    plugin: Plugin<P, B, F>,
-    configure: B.() -> Unit = {},
-): F = pluginOrNull(plugin) ?: install(plugin, configure)
-
-
-/**
- * Connect to a given Ktor server using browser
- */
-public fun ApplicationEngine.openInBrowser() {
-    val connector = environment.connectors.first()
-    val uri = URI("http", null, connector.host, connector.port, null, null, null)
-    Desktop.getDesktop().browse(uri)
-}
-
-/**
- * Stop the server with default timeouts
- */
-public fun ApplicationEngine.close(): Unit = stop(1000, 5000)

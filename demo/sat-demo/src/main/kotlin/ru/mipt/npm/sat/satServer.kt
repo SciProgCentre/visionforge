@@ -15,6 +15,7 @@ import space.kscience.dataforge.meta.Null
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.VisionPage
+import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage
@@ -36,21 +37,26 @@ fun main() {
             color.set(Colors.white)
         }
     }
+    val connector = EngineConnectorConfig("localhost", 7777)
 
-    val server = embeddedServer(CIO,7777, "localhost") {
+    val server = embeddedServer(CIO, connector.port, connector.host) {
         routing {
-
             static {
                 resources()
             }
+        }
 
-            visionPage(solids.visionManager, VisionPage.threeJsHeader, VisionPage.styleSheetHeader("css/styles.css")) {
-                div("flex-column") {
-                    h1 { +"Satellite detector demo" }
-                    vision { sat }
-                }
+        visionPage(
+            connector,
+            solids.visionManager, VisionPage.threeJsHeader,
+            VisionPage.styleSheetHeader("css/styles.css")
+        ) {
+            div("flex-column") {
+                h1 { +"Satellite detector demo" }
+                vision { sat }
             }
         }
+
     }.start(false)
 
     server.openInBrowser()
