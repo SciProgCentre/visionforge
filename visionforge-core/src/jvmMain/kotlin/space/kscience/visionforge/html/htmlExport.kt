@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.html.body
 import kotlinx.html.head
@@ -6,10 +6,7 @@ import kotlinx.html.meta
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.html.HtmlFragment
-import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.html.fragment
-import space.kscience.visionforge.html.visionFragment
+import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Files
 import java.nio.file.Path
@@ -87,7 +84,7 @@ public fun VisionPage.makeFile(
             }
         }
         body {
-            visionFragment(Global, fragment = content)
+            visionFragment(Global.visionManager, fragment = content)
         }
     }.finalize()
 

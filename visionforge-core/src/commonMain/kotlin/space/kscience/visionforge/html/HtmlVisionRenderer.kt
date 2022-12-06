@@ -1,7 +1,6 @@
 package space.kscience.visionforge.html
 
 import kotlinx.html.*
-import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
@@ -15,8 +14,6 @@ public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
 @DFExperimental
 public fun HtmlVisionFragment(content: VisionTagConsumer<*>.() -> Unit): HtmlVisionFragment = content
 
-public typealias VisionCollector = MutableMap<Name, Pair<VisionOutput, Vision>>
-
 
 /**
  * Render a fragment in the given consumer and return a map of extracted visions
@@ -27,15 +24,18 @@ public typealias VisionCollector = MutableMap<Name, Pair<VisionOutput, Vision>>
  * @param idPrefix a prefix to be used before vision ids
  */
 public fun TagConsumer<*>.visionFragment(
-    context: Context,
+    visionManager: VisionManager,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
     updatesUrl: String? = null,
     idPrefix: String? = null,
-    collector: VisionCollector = mutableMapOf(),
+    onVisionRendered: (Name, Vision) -> Unit = { _, _ -> },
     fragment: HtmlVisionFragment,
 ) {
-    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, context, idPrefix) {
+
+    val collector: MutableMap<Name, Pair<VisionOutput, Vision>> = mutableMapOf()
+
+    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, visionManager, idPrefix) {
 
         override fun <T> TagConsumer<T>.vision(name: Name?, buildOutput: VisionOutput.() -> Vision): T {
             //Avoid re-creating cached visions
@@ -47,6 +47,7 @@ public fun TagConsumer<*>.visionFragment(
             val (output, vision) = collector.getOrPut(actualName) {
                 val output = VisionOutput(context, actualName)
                 val vision = output.buildOutput()
+                onVisionRendered(actualName, vision)
                 output to vision
             }
 
@@ -54,8 +55,15 @@ public fun TagConsumer<*>.visionFragment(
         }
 
         override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
-            // Toggle update mode
 
+            val (_, actualVision) = collector.getOrPut(name) {
+                val output = VisionOutput(context, name)
+                onVisionRendered(name, vision)
+                output to vision
+            }
+
+
+            // Toggle update mode
             updatesUrl?.let {
                 attributes[OUTPUT_CONNECT_ATTRIBUTE] = it
             }
@@ -69,7 +77,7 @@ public fun TagConsumer<*>.visionFragment(
                     type = "text/json"
                     attributes["class"] = OUTPUT_DATA_CLASS
                     unsafe {
-                        +"\n${manager.encodeToString(vision)}\n"
+                        +"\n${manager.encodeToString(actualVision)}\n"
                     }
                 }
             }
@@ -80,19 +88,20 @@ public fun TagConsumer<*>.visionFragment(
 }
 
 public fun FlowContent.visionFragment(
-    context: Context,
+    visionManager: VisionManager,
     embedData: Boolean = true,
     fetchDataUrl: String? = null,
     updatesUrl: String? = null,
+    onVisionRendered: (Name, Vision) -> Unit = { _, _ -> },
     idPrefix: String? = null,
-    visionCache: VisionCollector = mutableMapOf(),
+
     fragment: HtmlVisionFragment,
 ): Unit = consumer.visionFragment(
-    context,
-    embedData,
-    fetchDataUrl,
-    updatesUrl,
-    idPrefix,
-    visionCache,
+    visionManager = visionManager,
+    embedData = embedData,
+    fetchDataUrl = fetchDataUrl,
+    updatesUrl = updatesUrl,
+    idPrefix = idPrefix,
+    onVisionRendered = onVisionRendered,
     fragment = fragment
 )

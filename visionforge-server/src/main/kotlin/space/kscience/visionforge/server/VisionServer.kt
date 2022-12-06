@@ -15,7 +15,6 @@ import io.ktor.server.util.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -97,8 +96,8 @@ public fun Application.serveVisionData(
                 val vision: Vision = resolveVision(Name.parse(name)) ?: error("Plot with id='$name' not registered")
 
                 launch {
-                    incoming.consumeEach {
-                        val data = it.data.decodeToString()
+                    for(frame in incoming) {
+                        val data = frame.data.decodeToString()
                         application.log.debug("Received update: \n$data")
                         val change = configuration.visionManager.jsonFormat.decodeFromString(
                             VisionChange.serializer(), data
@@ -143,8 +142,8 @@ public fun Application.serveVisionData(
 
 public fun Application.serveVisionData(
     configuration: VisionRoute,
-    cache: VisionCollector,
-): Unit = serveVisionData(configuration) { cache[it]?.second }
+    data: Map<Name, Vision>,
+): Unit = serveVisionData(configuration) { data[it] }
 
 //
 ///**
@@ -179,7 +178,7 @@ public fun Application.visionPage(
 ) {
     require(WebSockets)
 
-    val collector: VisionCollector = mutableMapOf()
+    val collector: MutableMap<Name, Vision> = mutableMapOf()
 
     val html = createHTML().apply {
         head {
@@ -193,7 +192,7 @@ public fun Application.visionPage(
         body {
             //Load the fragment and remember all loaded visions
             visionFragment(
-                context = configuration.context,
+                visionManager = configuration.visionManager,
                 embedData = configuration.dataMode == VisionRoute.Mode.EMBED,
                 fetchDataUrl = if (configuration.dataMode != VisionRoute.Mode.EMBED) {
                     url {
@@ -210,7 +209,7 @@ public fun Application.visionPage(
                         path(route, "ws")
                     }
                 } else null,
-                visionCache = collector,
+                onVisionRendered = { name, vision -> collector[name] = vision },
                 fragment = visionFragment
             )
         }

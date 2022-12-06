@@ -1,11 +1,7 @@
 package space.kscience.visionforge.examples
 
 import space.kscience.dataforge.context.Global
-import space.kscience.visionforge.html.HtmlVisionFragment
-import space.kscience.visionforge.html.ResourceLocation
-import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.html.importScriptHeader
-import space.kscience.visionforge.makeFile
+import space.kscience.visionforge.html.*
 import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Path

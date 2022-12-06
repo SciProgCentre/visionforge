@@ -20,10 +20,10 @@ import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.html.HtmlFormFragment
 import space.kscience.visionforge.html.HtmlVisionFragment
-import space.kscience.visionforge.html.VisionCollector
 import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.VisionRoute
@@ -107,7 +107,7 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
                 //server.serveVisionsFromFragment(consumer, "content-${counter++}", fragment)
                 val cellRoute = "content-${counter++}"
 
-                val collector: VisionCollector = mutableMapOf()
+                val collector: MutableMap<Name, Vision> = mutableMapOf()
 
                 val url = engine.environment.connectors.first().let {
                     url {
@@ -121,15 +121,15 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
                 engine.application.serveVisionData(VisionRoute(cellRoute, visionManager), collector)
 
                 visionFragment(
-                    context,
+                    visionManager,
                     embedData = true,
                     updatesUrl = url,
-                    collector = collector,
+                    onVisionRendered = { name, vision -> collector[name] = vision },
                     fragment = fragment
                 )
             } else {
                 //if not, use static rendering
-                visionFragment(context, fragment = fragment)
+                visionFragment(visionManager, fragment = fragment)
             }
         }
         renderScriptForId(id)

@@ -4,6 +4,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
@@ -68,18 +69,6 @@ public class VisionClient : AbstractPlugin() {
         changeCollector.propertyChanged(visionName, propertyName, item)
     }
 
-    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Boolean) {
-        visionPropertyChanged(visionName, propertyName, Meta(item))
-    }
-
-    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: String) {
-        visionPropertyChanged(visionName, propertyName, Meta(item))
-    }
-
-    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Number) {
-        visionPropertyChanged(visionName, propertyName, Meta(item))
-    }
-
     public fun visionChanged(name: Name?, child: Vision?) {
         changeCollector.setChild(name, child)
     }
@@ -139,10 +128,12 @@ public class VisionClient : AbstractPlugin() {
 
                 onopen = {
                     feedbackJob = visionManager.context.launch {
-                        delay(feedbackAggregationTime.milliseconds)
-                        if (!changeCollector.isEmpty()) {
-                            send(visionManager.encodeToString(changeCollector.deepCopy(visionManager)))
-                            changeCollector.reset()
+                        while (isActive) {
+                            delay(feedbackAggregationTime.milliseconds)
+                            if (!changeCollector.isEmpty()) {
+                                send(visionManager.encodeToString(changeCollector.deepCopy(visionManager)))
+                                changeCollector.reset()
+                            }
                         }
                     }
                     logger.info { "WebSocket update channel established for output '$name'" }
@@ -247,6 +238,21 @@ public class VisionClient : AbstractPlugin() {
     }
 }
 
+public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {
+    visionPropertyChanged(visionName, propertyName.parseAsName(true), item)
+}
+
+public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Number) {
+    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+}
+
+public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: String) {
+    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+}
+
+public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Boolean) {
+    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+}
 
 private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
     if (document.body != null) {

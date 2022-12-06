@@ -2,6 +2,7 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
@@ -56,9 +57,11 @@ public class VisionOutput @PublishedApi internal constructor(public val context:
 @VisionDSL
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
-    public val context: Context,
+    public val visionManager: VisionManager,
     private val idPrefix: String? = null,
-) : TagConsumer<R> by root {
+) : TagConsumer<R> by root, ContextAware {
+
+    override val context: Context get() = visionManager.context
 
     public open fun resolveId(name: Name): String = (idPrefix ?: "output") + "[$name]"
 

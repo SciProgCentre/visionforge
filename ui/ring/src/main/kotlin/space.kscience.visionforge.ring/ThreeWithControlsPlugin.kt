@@ -25,7 +25,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING * 2 else ElementVisionRenderer.ZERO_RATING
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         createRoot(element).render {
             child(ThreeCanvasWithControls) {
                 attrs {

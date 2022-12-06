@@ -18,7 +18,7 @@ fun FlowContent.renderVisionFragment(
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(consumer, Global, idPrefix) {
+    val consumer = object : VisionTagConsumer<Any?>(consumer, Global.visionManager, idPrefix) {
         override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             renderer(name, vision, outputMeta)

@@ -7,12 +7,13 @@ import space.kscience.gdml.Gdml
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.jupyter.VFIntegrationBase
 import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.visionManager
 
 @DFExperimental
 internal class GdmlForJupyter : VFIntegrationBase(
     Context("GDML") {
         plugin(Solids)
-    }
+    }.visionManager
 ) {
 
     override fun Builder.afterLoaded() {

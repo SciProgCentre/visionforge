@@ -9,6 +9,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.*
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -17,9 +18,12 @@ import kotlin.random.nextUInt
  * A base class for different Jupyter VF integrations
  */
 @DFExperimental
-public abstract class VFIntegrationBase(final override val context: Context) : JupyterIntegration(), ContextAware {
+public abstract class VFIntegrationBase(
+    public val visionManager: VisionManager,
+) : JupyterIntegration(), ContextAware {
 
-    protected val handler: VFForNotebook = VFForNotebook(context)
+    override val context: Context get() = visionManager.context
+    protected val handler: VFForNotebook = VFForNotebook(visionManager.context)
 
     protected abstract fun Builder.afterLoaded()
 
@@ -67,7 +71,7 @@ public abstract class VFIntegrationBase(final override val context: Context) : J
                     val id = "fragment[${page.hashCode()}/${Random.nextUInt()}]"
                     div {
                         this.id = id
-                        visionFragment(context, fragment = page.content)
+                        visionFragment(visionManager, fragment = page.content)
                     }
                     renderScriptForId(id)
                 }

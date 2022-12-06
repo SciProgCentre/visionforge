@@ -28,7 +28,7 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         val plot = (vision as? VisionOfPlotly)?.plot ?: error("VisionOfPlotly expected but ${vision::class} found")
         val config = PlotlyConfig.read(meta)
         element.plot(plot, config)

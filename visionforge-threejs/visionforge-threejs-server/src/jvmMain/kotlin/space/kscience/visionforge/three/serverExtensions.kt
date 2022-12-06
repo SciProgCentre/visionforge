@@ -3,7 +3,6 @@ package space.kscience.visionforge.three
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.*
-import space.kscience.visionforge.makeFile
 import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Path

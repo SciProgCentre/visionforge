@@ -8,8 +8,9 @@ import kotlinx.html.*
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.html.formFragment
+import space.kscience.visionforge.html.bindForm
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.close
@@ -28,8 +29,18 @@ fun main() {
             resources()
         }
 
-        visionPage(connector, visionManager, VisionPage.scriptHeader("js/visionforge-playground.js")) {
-            val form = formFragment("form") {
+        val form = VisionOfHtmlForm("form").apply {
+            onPropertyChange(visionManager.context) {
+                println(this)
+            }
+        }
+
+        visionPage(
+            connector,
+            visionManager,
+            VisionPage.scriptHeader("js/visionforge-playground.js"),
+        ) {
+            bindForm(form) {
                 label {
                     htmlFor = "fname"
                     +"First name:"
@@ -61,10 +72,7 @@ fun main() {
                 }
             }
 
-            vision("form") { form }
-            form.onPropertyChange {
-                println(this)
-            }
+            vision(form)
         }
 
     }.start(false)

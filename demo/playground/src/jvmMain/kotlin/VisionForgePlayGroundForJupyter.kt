@@ -10,13 +10,14 @@ import space.kscience.visionforge.jupyter.VFIntegrationBase
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.visionManager
 
 @DFExperimental
 internal class VisionForgePlayGroundForJupyter : VFIntegrationBase(
     Context("VisionForge") {
         plugin(Solids)
         plugin(PlotlyPlugin)
-    }
+    }.visionManager
 ) {
 
     override fun Builder.afterLoaded() {

@@ -9,8 +9,11 @@ import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.get
 import org.w3c.xhr.FormData
+import space.kscience.dataforge.context.debug
+import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.DynamicMeta
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.toMap
 import space.kscience.dataforge.meta.valueSequence
 import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionOfNumberField
@@ -33,7 +36,7 @@ internal fun textVisionRenderer(
             value = it ?: ""
         }
         onChangeFunction = {
-//            client.visionPropertyChanged(name, VisionOfTextField::text.name.pa, value)
+            client.visionPropertyChanged(name, VisionOfTextField::text.name, value)
         }
     }
 }
@@ -55,7 +58,7 @@ internal fun numberVisionRenderer(
             value = it?.toDouble() ?: 0.0
         }
         onChangeFunction = {
-//            vision.value = value.toDoubleOrNull()
+            client.visionPropertyChanged(name, VisionOfNumberField::value.name, value)
         }
     }
 }
@@ -90,9 +93,10 @@ internal fun formVisionRenderer(
     val form = document.getElementById(vision.formId) as? HTMLFormElement
         ?: error("An element with id = '${vision.formId} is not a form")
 
-    console.info("Adding hooks to form '$form'")
+    client.logger.debug{"Adding hooks to form with id = '$vision.formId'"}
 
     vision.useProperty(VisionOfHtmlForm::values) { values ->
+        client.logger.debug{"Updating form '${vision.formId}' with values $values"}
         val inputs = form.getElementsByTagName("input")
         values?.valueSequence()?.forEach { (token, value) ->
             (inputs[token.toString()] as? HTMLInputElement)?.value = value.toString()
@@ -102,8 +106,8 @@ internal fun formVisionRenderer(
     form.onsubmit = { event ->
         event.preventDefault()
         val formData = FormData(form).toMeta()
-        //console.log(formData.toString())
-        //vision.values = formData
+        client.visionPropertyChanged(name, VisionOfHtmlForm::values.name, formData)
+        console.info("Sent: ${formData.toMap()}")
         false
     }
 }

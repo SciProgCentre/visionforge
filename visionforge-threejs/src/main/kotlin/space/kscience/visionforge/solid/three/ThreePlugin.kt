@@ -86,7 +86,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                     }.launchIn(context)
 
                     vision.children.changes.onEach { childName ->
-                        if(childName.isEmpty()) return@onEach
+                        if (childName.isEmpty()) return@onEach
 
                         val child = vision.children.getChild(childName)
 
@@ -147,7 +147,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         render(vision)
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         renderSolid(
             element,
             vision as? Solid ?: error("Solid expected but ${vision::class} found"),

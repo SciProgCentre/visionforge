@@ -35,7 +35,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         val table: VisionOfTable = (vision as? VisionOfTable)
             ?: error("VisionOfTable expected but ${vision::class} found")
 
