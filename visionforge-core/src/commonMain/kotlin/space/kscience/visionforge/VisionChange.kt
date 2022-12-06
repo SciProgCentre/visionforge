@@ -55,6 +55,8 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
     private var propertyChange = MutableMeta()
     private val children: HashMap<Name, VisionChangeBuilder> = HashMap()
 
+    public operator fun get(name: Name): VisionChangeBuilder? = children[name]
+
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
 
     @Synchronized
@@ -153,7 +155,7 @@ private fun CoroutineScope.collectChange(
  */
 public fun Vision.flowChanges(
     collectionDuration: Duration,
-    sendInitial: Boolean = false
+    sendInitial: Boolean = false,
 ): Flow<VisionChange> = flow {
     val manager = manager ?: error("Orphan vision could not collect changes")
     coroutineScope {
@@ -161,7 +163,7 @@ public fun Vision.flowChanges(
         val mutex = Mutex()
         collectChange(Name.EMPTY, this@flowChanges, mutex, collector)
 
-        if(sendInitial) {
+        if (sendInitial) {
             //Send initial vision state
             val initialChange = VisionChange(vision = deepCopy(manager))
             emit(initialChange)

@@ -93,12 +93,12 @@ public fun Application.serveVisionData(
             webSocket("ws") {
                 val name: String = call.request.queryParameters.getOrFail("name")
                 application.log.debug("Opened server socket for $name")
-                val vision: Vision = resolveVision(Name.parse(name)) ?: error("Plot with id='$name' not registered")
+                val vision: Vision = resolveVision(Name.parse(name)) ?: error("Vision with id='$name' not registered")
 
                 launch {
                     for(frame in incoming) {
                         val data = frame.data.decodeToString()
-                        application.log.debug("Received update: \n$data")
+                        application.log.debug("Received update for $name: \n$data")
                         val change = configuration.visionManager.jsonFormat.decodeFromString(
                             VisionChange.serializer(), data
                         )
@@ -113,7 +113,7 @@ public fun Application.serveVisionData(
                                 VisionChange.serializer(),
                                 update
                             )
-                            application.log.debug("Sending update: \n$json")
+                            application.log.debug("Sending update for $name: \n$json")
                             outgoing.send(Frame.Text(json))
                         }.collect()
                     }
@@ -144,27 +144,6 @@ public fun Application.serveVisionData(
     configuration: VisionRoute,
     data: Map<Name, Vision>,
 ): Unit = serveVisionData(configuration) { data[it] }
-
-//
-///**
-// * Compile a fragment to string and serve visions from it
-// */
-//public fun Route.serveVisionsFromFragment(
-//    consumer: TagConsumer<*>,
-//    sererPageUrl: Url,
-//    visionManager: VisionManager,
-//    fragment: HtmlVisionFragment,
-//): Unit {
-//    val visions = consumer.visionFragment(
-//        visionManager.context,
-//        embedData = true,
-//        fetchUpdatesUrl = "$serverUrl$route/ws",
-//        fragment = fragment
-//    )
-//
-//    serveVisionData(visionManager, visions)
-//}
-
 
 /**
  * Serve a page, potentially containing any number of visions at a given [route] with given [header].

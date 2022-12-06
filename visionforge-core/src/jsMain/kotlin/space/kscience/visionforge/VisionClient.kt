@@ -69,9 +69,9 @@ public class VisionClient : AbstractPlugin() {
         changeCollector.propertyChanged(visionName, propertyName, item)
     }
 
-    public fun visionChanged(name: Name?, child: Vision?) {
-        changeCollector.setChild(name, child)
-    }
+//    public fun visionChanged(name: Name?, child: Vision?) {
+//        changeCollector.setChild(name, child)
+//    }
 
     private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
         vision.setAsRoot(visionManager)
@@ -79,7 +79,7 @@ public class VisionClient : AbstractPlugin() {
         renderer.render(element, name, vision, outputMeta)
     }
 
-    private fun updateVision(element: Element, name: Name, vision: Vision?, outputMeta: Meta) {
+    private fun startVisionUpdate(element: Element, name: Name, vision: Vision?, outputMeta: Meta) {
         element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
             val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                 val endpoint = resolveEndpoint(element)
@@ -130,9 +130,10 @@ public class VisionClient : AbstractPlugin() {
                     feedbackJob = visionManager.context.launch {
                         while (isActive) {
                             delay(feedbackAggregationTime.milliseconds)
-                            if (!changeCollector.isEmpty()) {
-                                send(visionManager.encodeToString(changeCollector.deepCopy(visionManager)))
-                                changeCollector.reset()
+                            val change = changeCollector[name] ?: continue
+                            if (!change.isEmpty()) {
+                                send(visionManager.encodeToString(change.deepCopy(visionManager)))
+                                change.reset()
                             }
                         }
                     }
@@ -192,7 +193,7 @@ public class VisionClient : AbstractPlugin() {
                         response.text().then { text ->
                             val vision = visionManager.decodeFromString(text)
                             renderVision(element, name, vision, outputMeta)
-                            updateVision(element, name, vision, outputMeta)
+                            startVisionUpdate(element, name, vision, outputMeta)
                         }
                     } else {
                         logger.error { "Failed to fetch initial vision state from $fetchUrl" }
@@ -208,12 +209,12 @@ public class VisionClient : AbstractPlugin() {
                 }
                 logger.info { "Found embedded vision for output with name $name" }
                 renderVision(element, name, embeddedVision, outputMeta)
-                updateVision(element, name, embeddedVision, outputMeta)
+                startVisionUpdate(element, name, embeddedVision, outputMeta)
             }
 
             //Try to load vision via websocket
             element.attributes[OUTPUT_CONNECT_ATTRIBUTE] != null -> {
-                updateVision(element, name, null, outputMeta)
+                startVisionUpdate(element, name, null, outputMeta)
             }
 
             else -> error("No embedded vision data / fetch url for $name")

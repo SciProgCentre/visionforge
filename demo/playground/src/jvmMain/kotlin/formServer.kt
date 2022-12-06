@@ -31,7 +31,7 @@ fun main() {
 
         val form = VisionOfHtmlForm("form").apply {
             onPropertyChange(visionManager.context) {
-                println(this)
+                println(values)
             }
         }
 
@@ -71,7 +71,7 @@ fun main() {
                     value = "Submit"
                 }
             }
-
+            println(form.values)
             vision(form)
         }
 
