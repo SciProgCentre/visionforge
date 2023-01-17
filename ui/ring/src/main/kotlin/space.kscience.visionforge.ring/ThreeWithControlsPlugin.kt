@@ -2,7 +2,6 @@ package space.kscience.visionforge.ring
 
 import kotlinx.coroutines.async
 import org.w3c.dom.Element
-import react.dom.client.createRoot
 import space.kscience.dataforge.context.AbstractPlugin
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
@@ -26,7 +25,7 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING * 2 else ElementVisionRenderer.ZERO_RATING
 
     override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
-        createRoot(element).render {
+        space.kscience.visionforge.react.createRoot(element).render {
             child(ThreeCanvasWithControls) {
                 attrs {
                     this.solids = three.solids

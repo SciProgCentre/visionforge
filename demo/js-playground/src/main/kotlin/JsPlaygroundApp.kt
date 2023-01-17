@@ -1,6 +1,5 @@
 import kotlinx.css.*
 import org.w3c.dom.Document
-import react.dom.client.createRoot
 import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
@@ -11,6 +10,7 @@ import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.plotly.PlotlyPlugin
+import space.kscience.visionforge.react.createRoot
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.ThreeWithControlsPlugin

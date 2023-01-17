@@ -1,11 +1,11 @@
 package ru.mipt.npm.muon.monitor
 
 import org.w3c.dom.Document
-import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.react.createRoot
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.three.ThreePlugin

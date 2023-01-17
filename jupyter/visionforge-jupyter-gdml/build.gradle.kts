@@ -14,7 +14,9 @@ kotlin {
             }
             commonWebpackConfig {
                 sourceMaps = false
-                cssSupport.enabled = false
+                cssSupport{
+                    enabled.set(false)
+                }
             }
         }
         binaries.executable()

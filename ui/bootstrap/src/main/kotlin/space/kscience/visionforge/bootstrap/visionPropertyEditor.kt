@@ -2,7 +2,6 @@ package space.kscience.visionforge.bootstrap
 
 import org.w3c.dom.Element
 import react.RBuilder
-import react.dom.client.createRoot
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.isEmpty
 import space.kscience.visionforge.Vision
@@ -67,6 +66,6 @@ public fun RBuilder.visionPropertyEditor(
 public fun Element.visionPropertyEditor(
     item: Vision,
     descriptor: MetaDescriptor? = item.descriptor,
-): Unit = createRoot(this).render {
+): Unit = space.kscience.visionforge.react.createRoot(this).render {
     visionPropertyEditor(item, descriptor = descriptor)
 }

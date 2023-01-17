@@ -2,13 +2,13 @@ package space.kscience.visionforge.gdml.demo
 
 import kotlinx.css.*
 import org.w3c.dom.Document
-import react.dom.client.createRoot
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.fetch
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.react.createRoot
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight

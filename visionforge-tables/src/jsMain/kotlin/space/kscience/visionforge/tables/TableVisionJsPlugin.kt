@@ -1,6 +1,6 @@
 package space.kscience.visionforge.tables
 
-import kotlinx.js.jso
+import js.core.jso
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.AbstractPlugin

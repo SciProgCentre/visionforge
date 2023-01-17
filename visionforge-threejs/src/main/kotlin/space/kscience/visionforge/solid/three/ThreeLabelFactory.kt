@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 
-import kotlinx.js.jso
+import js.core.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange

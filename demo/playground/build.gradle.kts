@@ -16,11 +16,13 @@ kotlin {
         useCommonJs()
         browser {
             webpackTask {
-                this.outputFileName = "js/visionforge-playground.js"
+                outputFileName = "js/visionforge-playground.js"
             }
             commonWebpackConfig {
                 sourceMaps = true
-                cssSupport.enabled = false
+                cssSupport{
+                    enabled.set(false)
+                }
             }
         }
         binaries.executable()

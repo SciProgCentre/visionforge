@@ -2,7 +2,6 @@ package space.kscience.visionforge.ring
 
 import org.w3c.dom.Element
 import react.RBuilder
-import react.dom.client.createRoot
 import react.dom.p
 import ringui.Island
 import ringui.SmartTabs

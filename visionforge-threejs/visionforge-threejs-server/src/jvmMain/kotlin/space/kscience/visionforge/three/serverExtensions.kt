@@ -10,7 +10,6 @@ import java.nio.file.Path
 
 public val VisionPage.Companion.threeJsHeader: HtmlFragment get() = scriptHeader("js/visionforge-three.js")
 
-
 @DFExperimental
 public fun makeThreeJsFile(
     path: Path? = null,
@@ -22,7 +21,11 @@ public fun makeThreeJsFile(
     val actualPath = VisionPage(Global.visionManager, content = content).makeFile(path) { actualPath ->
         mapOf(
             "title" to VisionPage.title(title),
-            "threeJs" to VisionPage.importScriptHeader("js/visionforge-three.js", resourceLocation, actualPath)
+            "threeJs" to VisionPage.importScriptHeader(
+                "js/visionforge-three.js",
+                resourceLocation,
+                actualPath,
+            )
         )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

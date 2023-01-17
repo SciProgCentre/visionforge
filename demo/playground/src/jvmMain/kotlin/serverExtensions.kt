@@ -16,7 +16,11 @@ public fun makeVisionFile(
     val actualPath = VisionPage(Global.visionManager, content = content).makeFile(path) { actualPath ->
         mapOf(
             "title" to VisionPage.title(title),
-            "playground" to VisionPage.importScriptHeader("js/visionforge-playground.js", resourceLocation, actualPath),
+            "playground" to VisionPage.importScriptHeader(
+                "js/visionforge-playground.js",
+                resourceLocation,
+                actualPath
+            ),
         )
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

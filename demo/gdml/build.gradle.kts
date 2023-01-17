@@ -21,7 +21,9 @@ kotlin {
         useCommonJs()
         browser {
             commonWebpackConfig {
-                cssSupport.enabled = false
+                cssSupport{
+                    enabled.set(false)
+                }
             }
         }
     }
