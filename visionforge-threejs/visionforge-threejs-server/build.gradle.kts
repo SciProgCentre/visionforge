@@ -10,6 +10,11 @@ kotlin {
             webpackTask {
                 this.outputFileName = "js/visionforge-three.js"
             }
+            commonWebpackConfig {
+                cssSupport{
+                    enabled.set(false)
+                }
+            }
         }
         binaries.executable()
     }
@@ -17,17 +22,18 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":visionforge-solid"))
+                api(projects.visionforgeSolid)
             }
         }
         jvmMain {
             dependencies {
-                api(project(":visionforge-server"))
+                api(projects.visionforgeServer)
             }
         }
         jsMain {
             dependencies {
-                api(project(":visionforge-threejs"))
+                api(projects.visionforgeThreejs)
+                api(projects.ui.ring)
             }
         }
     }
