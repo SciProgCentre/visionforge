@@ -3,7 +3,7 @@ package space.kscience.visionforge.gdml.demo
 import kotlinx.css.*
 import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
@@ -54,7 +54,7 @@ private class GDMLDemoApp : Application {
                 }
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))
                 attrs {
-                    this.solids = context.fetch(Solids)
+                    this.solids = context.request(Solids)
                     this.vision = vision
                 }
             }

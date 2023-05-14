@@ -21,7 +21,6 @@ import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOI
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_RENDERED
-import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -227,15 +226,13 @@ public class VisionClient : AbstractPlugin() {
             numberVisionRenderer(this),
             textVisionRenderer(this),
             formVisionRenderer(this)
-        ).toMap()
+        ).associateByName()
     } else super.content(target)
 
     public companion object : PluginFactory<VisionClient> {
         override fun build(context: Context, meta: Meta): VisionClient = VisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
-
-        override val type: KClass<out VisionClient> = VisionClient::class
     }
 }
 
@@ -296,7 +293,7 @@ public fun VisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
 }
 
 public class VisionClientApplication(public val context: Context) : Application {
-    private val client = context.fetch(VisionClient)
+    private val client = context.request(VisionClient)
 
     override fun start(document: Document, state: Map<String, Any>) {
         context.logger.info {

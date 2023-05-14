@@ -1,12 +1,15 @@
 package space.kscience.visionforge.meta
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.*
 import kotlin.test.Test
@@ -23,7 +26,7 @@ private class TestScheme : Scheme() {
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class VisionPropertyTest {
 
-    private val manager = Global.fetch(VisionManager)
+    private val manager = Global.request(VisionManager)
 
     @Test
     fun testPropertyWrite() {
@@ -56,7 +59,7 @@ internal class VisionPropertyTest {
 
     @Test
     fun testChildrenPropertyPropagation() = runTest(dispatchTimeoutMs = 200) {
-        val group = Global.fetch(VisionManager).group {
+        val group = Global.request(VisionManager).group {
             properties {
                 "test" put 11
             }
@@ -91,7 +94,7 @@ internal class VisionPropertyTest {
 
     @Test
     fun testChildrenPropertyFlow() = runTest(dispatchTimeoutMs = 200) {
-        val group = Global.fetch(VisionManager).group {
+        val group = Global.request(VisionManager).group {
 
             properties {
                 "test" put 11

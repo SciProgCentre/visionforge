@@ -4,56 +4,32 @@ plugins {
 
 description = "Jupyter api artifact for GDML rendering"
 
-kotlin {
-    explicitApi = null
-    js {
-        useCommonJs()
-        browser {
-            webpackTask {
-                this.outputFileName = "js/gdml-jupyter.js"
-            }
-            commonWebpackConfig {
-                sourceMaps = false
-                cssSupport{
-                    enabled.set(false)
-                }
-            }
-        }
-        binaries.executable()
-    }
-
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            from(jsBrowserDistribution)
-        }
-    }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(projects.visionforgeSolid)
-                implementation(projects.jupyter)
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation(projects.visionforgeGdml)
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation(projects.visionforgeThreejs)
-                implementation(projects.ui.ring)
-            }
-        }
-
-    }
-}
-
 kscience {
+    fullStack("js/gdml-jupyter.js",
+        jsConfig = { useCommonJs() }
+    ) {
+        commonWebpackConfig {
+            sourceMaps = false
+            cssSupport {
+                enabled.set(false)
+            }
+        }
+    }
+
+    dependencies{
+        implementation(projects.visionforgeSolid)
+        implementation(projects.jupyter)
+    }
+
+    dependencies(jvmMain){
+        implementation(projects.visionforgeGdml)
+    }
+
+    dependencies(jsMain){
+        implementation(projects.visionforgeThreejs)
+        implementation(projects.ui.ring)
+    }
+    
     jupyterLibrary("space.kscience.visionforge.gdml.jupyter.GdmlForJupyter")
 }
 

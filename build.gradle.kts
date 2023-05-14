@@ -7,7 +7,7 @@ plugins {
 //    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
-val dataforgeVersion by extra("0.6.0-dev-15")
+val dataforgeVersion by extra("0.6.1")
 val fxVersion by extra("11")
 
 allprojects {

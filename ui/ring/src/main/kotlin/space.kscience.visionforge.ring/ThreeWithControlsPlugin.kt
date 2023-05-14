@@ -14,7 +14,6 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.three.ThreePlugin
-import kotlin.reflect.KClass
 
 public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
     public val three: ThreePlugin by require(ThreePlugin)
@@ -44,7 +43,6 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public companion object : PluginFactory<ThreeWithControlsPlugin> {
         override val tag: PluginTag = PluginTag("vision.threejs.withControls", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<ThreeWithControlsPlugin> = ThreeWithControlsPlugin::class
 
         override fun build(context: Context, meta: Meta): ThreeWithControlsPlugin = ThreeWithControlsPlugin()
     }

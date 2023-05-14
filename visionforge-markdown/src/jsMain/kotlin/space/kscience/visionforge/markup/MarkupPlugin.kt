@@ -15,7 +15,6 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FORMAT
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
-import kotlin.reflect.KClass
 
 public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public val visionClient: VisionClient by require(VisionClient)
@@ -47,7 +46,6 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
 
     public companion object : PluginFactory<MarkupPlugin> {
         override val tag: PluginTag = PluginTag("vision.markup", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<MarkupPlugin> = MarkupPlugin::class
 
         override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()
 

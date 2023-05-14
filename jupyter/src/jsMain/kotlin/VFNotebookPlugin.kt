@@ -11,7 +11,6 @@ import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.renderAllVisions
 import space.kscience.visionforge.renderAllVisionsById
 import space.kscience.visionforge.renderAllVisionsIn
-import kotlin.reflect.KClass
 
 @JsExport
 public class VFNotebookPlugin : AbstractPlugin() {
@@ -44,8 +43,6 @@ public class VFNotebookPlugin : AbstractPlugin() {
         override fun build(context: Context, meta: Meta): VFNotebookPlugin = VFNotebookPlugin()
 
         override val tag: PluginTag = PluginTag(name = "vision.notebook", group = PluginTag.DATAFORGE_GROUP)
-
-        override val type: KClass<out VFNotebookPlugin> = VFNotebookPlugin::class
     }
 
 }

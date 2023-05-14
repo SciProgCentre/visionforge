@@ -6,7 +6,6 @@ import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.VisionPlugin
-import kotlin.reflect.KClass
 
 public actual class PlotlyPlugin : VisionPlugin() {
 
@@ -16,7 +15,6 @@ public actual class PlotlyPlugin : VisionPlugin() {
 
     public actual companion object : PluginFactory<PlotlyPlugin> {
         override val tag: PluginTag = PluginTag("vision.plotly", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<PlotlyPlugin> = PlotlyPlugin::class
 
         override fun build(context: Context, meta: Meta): PlotlyPlugin = PlotlyPlugin()
 

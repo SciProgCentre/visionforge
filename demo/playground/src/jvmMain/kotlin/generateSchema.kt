@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import space.kscience.visionforge.solid.SolidGroup
 import space.kscience.visionforge.solid.Solids
 
+@OptIn(ExperimentalSerializationApi::class)
 private val json = Json {
     serializersModule = Solids.serializersModuleForSolids
     prettyPrintIndent = "  "

@@ -6,7 +6,7 @@ import space.kscience.visionforge.runVisionClient
 
 @DFExperimental
 @JsExport
-fun main(): Unit = runVisionClient {
+public fun main(): Unit = runVisionClient {
     plugin(ThreeWithControlsPlugin)
 }
 

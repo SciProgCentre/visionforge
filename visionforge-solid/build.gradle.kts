@@ -1,35 +1,24 @@
-import space.kscience.gradle.KScienceVersions
-
 plugins {
     id("space.kscience.gradle.mpp")
 }
 
-kscience{
-    useSerialization{
+kscience {
+    jvm()
+    js()
+    useSerialization {
         json()
     }
-}
-
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":visionforge-core"))
-            }
-        }
-        commonTest{
-            dependencies{
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${KScienceVersions.coroutinesVersion}")
-            }
-        }
-        jvmTest{
-            dependencies{
-                implementation("ch.qos.logback:logback-classic:1.2.11")
-            }
-        }
+    dependencies {
+        api(projects.visionforgeCore)
+    }
+    testDependencies {
+        implementation(spclibs.kotlinx.coroutines.test)
+    }
+    dependencies(jvmTest) {
+        implementation(spclibs.logback.classic)
     }
 }
 
-readme{
+readme {
     maturity = space.kscience.gradle.Maturity.DEVELOPMENT
 }

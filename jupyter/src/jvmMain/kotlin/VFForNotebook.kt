@@ -4,7 +4,6 @@ import io.ktor.http.URLProtocol
 import io.ktor.server.application.install
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
-import io.ktor.server.engine.EngineConnectorConfig
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.util.url
 import io.ktor.server.websocket.WebSockets
@@ -25,7 +24,6 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.visionFragment
-import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.VisionRoute
 import space.kscience.visionforge.server.serveVisionData
 import space.kscience.visionforge.visionManager
@@ -74,7 +72,7 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
             }
         }
 
-        val connector: EngineConnectorConfig = EngineConnectorConfig(host, port)
+        //val connector: EngineConnectorConfig = EngineConnectorConfig(host, port)
 
         engine?.stop(1000, 2000)
         engine = context.embeddedServer(CIO, port, host) {

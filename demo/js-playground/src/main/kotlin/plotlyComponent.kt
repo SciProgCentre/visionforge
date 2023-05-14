@@ -20,9 +20,9 @@ val Plotly = fc<PlotlyProps>("Plotly") { props ->
     useEffect(props.plot, elementRef) {
         val element = elementRef.current as? HTMLElement ?: error("Plotly element not found")
         props.plot?.let {
-            element.plot(it, PlotlyConfig {
+            element.plot(PlotlyConfig {
                 responsive = true
-            })
+            }, it)
         }
     }
 

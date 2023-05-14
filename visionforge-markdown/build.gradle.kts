@@ -5,20 +5,13 @@ plugins {
 val markdownVersion = "0.2.4"
 
 kscience {
-    useSerialization()
-}
-
-kotlin {
+    jvm()
     js {
         binaries.library()
     }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":visionforge-core"))
-                api("org.jetbrains:markdown:$markdownVersion")
-            }
-        }
+    dependencies {
+        api(project(":visionforge-core"))
+        api("org.jetbrains:markdown:$markdownVersion")
     }
+    useSerialization()
 }

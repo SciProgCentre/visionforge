@@ -17,7 +17,6 @@ import space.kscience.visionforge.html.VisionOfCheckbox
 import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionOfNumberField
 import space.kscience.visionforge.html.VisionOfTextField
-import kotlin.reflect.KClass
 
 public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionContainer<Vision> {
     override val tag: PluginTag get() = Companion.tag
@@ -64,7 +63,6 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
 
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out VisionManager> = VisionManager::class
 
         public const val VISION_SERIALIZER_MODULE_TARGET: String = "visionSerializerModule"
 
@@ -110,7 +108,7 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
 /**
  * Fetch a [VisionManager] from this plugin or create a child plugin with a [VisionManager]
  */
-public val Context.visionManager: VisionManager get() = fetch(VisionManager)
+public val Context.visionManager: VisionManager get() = request(VisionManager )
 
 public fun Vision.encodeToString(): String =
     manager?.encodeToString(this) ?: error("Orphan vision could not be encoded")

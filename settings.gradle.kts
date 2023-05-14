@@ -34,7 +34,7 @@ dependencyResolutionManagement {
     }
 
     versionCatalogs {
-        create("npmlibs") {
+        create("spclibs") {
             from("space.kscience:version-catalog:$toolsVersion")
         }
     }
@@ -48,7 +48,7 @@ include(
     ":ui:bootstrap",
     ":visionforge-core",
     ":visionforge-solid",
-    ":visionforge-fx",
+//    ":visionforge-fx",
     ":visionforge-threejs",
     ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
@@ -62,7 +62,7 @@ include(
     ":demo:muon-monitor",
     ":demo:sat-demo",
     ":demo:playground",
-    ":demo:plotly-fx",
+//    ":demo:plotly-fx",
     ":demo:js-playground",
     ":jupyter",
     ":jupyter:visionforge-jupyter-gdml"

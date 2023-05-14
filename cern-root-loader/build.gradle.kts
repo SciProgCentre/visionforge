@@ -3,17 +3,12 @@ plugins {
 }
 
 kscience{
+    jvm()
+    js()
+    dependencies {
+        api(projects.visionforgeSolid)
+    }
     useSerialization {
         json()
-    }
-}
-
-kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(project(":visionforge-solid"))
-            }
-        }
     }
 }

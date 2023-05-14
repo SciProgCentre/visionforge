@@ -5,7 +5,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -25,7 +25,7 @@ public val ThreeCanvasComponent: FC<ThreeCanvasProps> = fc("ThreeCanvasComponent
     val elementRef = useRef<Element>(null)
     var canvas by useState<ThreeCanvas?>(null)
 
-    val three: ThreePlugin = useMemo(props.context) { props.context.fetch(ThreePlugin) }
+    val three: ThreePlugin = useMemo(props.context) { props.context.request(ThreePlugin) }
 
     useEffect(props.solid, props.options, elementRef) {
         if (canvas == null) {

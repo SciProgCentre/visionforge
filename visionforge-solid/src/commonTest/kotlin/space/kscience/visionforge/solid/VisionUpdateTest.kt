@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.names.asName
@@ -12,18 +12,18 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class VisionUpdateTest {
-    val solidManager = Global.fetch(Solids)
+    val solidManager = Global.request(Solids)
     val visionManager = solidManager.visionManager
 
     @Test
-    fun testVisionUpdate(){
+    fun testVisionUpdate() {
         val targetVision = Solids.solidGroup {
-            box(200,200,200, name = "origin")
+            box(200, 200, 200, name = "origin")
         }
-        val dif = visionManager.VisionChange{
-            solidGroup ("top") {
+        val dif = visionManager.VisionChange {
+            solidGroup("top") {
                 color.set(123)
-                box(100,100,100)
+                box(100, 100, 100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
@@ -31,15 +31,18 @@ internal class VisionUpdateTest {
         targetVision.update(dif)
         assertTrue { targetVision.children.getChild("top") is SolidGroup }
         assertEquals("red", (targetVision.children.getChild("origin") as Solid).color.string) // Should work
-        assertEquals("#00007b", (targetVision.children.getChild("top") as Solid).color.string) // new item always takes precedence
+        assertEquals(
+            "#00007b",
+            (targetVision.children.getChild("top") as Solid).color.string
+        ) // new item always takes precedence
     }
 
     @Test
-    fun testVisionChangeSerialization(){
-        val change = visionManager.VisionChange{
+    fun testVisionChangeSerialization() {
+        val change = visionManager.VisionChange {
             solidGroup("top") {
                 color.set(123)
-                box(100,100,100)
+                box(100, 100, 100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
@@ -47,6 +50,6 @@ internal class VisionUpdateTest {
         val serialized = visionManager.jsonFormat.encodeToString(VisionChange.serializer(), change)
         println(serialized)
         val reconstructed = visionManager.jsonFormat.decodeFromString(VisionChange.serializer(), serialized)
-        assertEquals(change.properties,reconstructed.properties)
+        assertEquals(change.properties, reconstructed.properties)
     }
 }

@@ -3,7 +3,7 @@ import org.w3c.dom.Document
 import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
@@ -52,7 +52,7 @@ private class JsPlaygroundApp : Application {
                     Tab("gravity") {
                         GravityDemo {
                             attrs {
-                                this.solids = playgroundContext.fetch(Solids)
+                                this.solids = playgroundContext.request(Solids)
                             }
                         }
                     }
@@ -73,7 +73,7 @@ private class JsPlaygroundApp : Application {
                             child(ThreeCanvasWithControls) {
                                 val random = Random(112233)
                                 attrs {
-                                    solids = playgroundContext.fetch(Solids)
+                                    solids = playgroundContext.request(Solids)
                                     solid {
                                         ambientLight {
                                             color.set(Colors.white)

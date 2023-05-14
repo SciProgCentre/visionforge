@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.Null
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
@@ -29,7 +29,7 @@ fun main() {
         plugin(Solids)
     }
 
-    val solids = satContext.fetch(Solids)
+    val solids = satContext.request(Solids)
 
     //Create a geometry
     val sat = solids.visionOfSatellite(ySegments = 3).apply {

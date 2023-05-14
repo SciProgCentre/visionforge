@@ -2,7 +2,7 @@ package ru.mipt.npm.muon.monitor
 
 import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.react.createRoot
@@ -19,7 +19,7 @@ private class MMDemoApp : Application {
             plugin(ThreePlugin)
         }
 
-        val visionManager = context.fetch(VisionManager)
+        val visionManager = context.request(VisionManager)
 
         val model = Model(visionManager)
 
@@ -28,7 +28,7 @@ private class MMDemoApp : Application {
             child(MMApp) {
                 attrs {
                     this.model = model
-                    this.solids = context.fetch(Solids)
+                    this.solids = context.request(Solids)
                 }
             }
         }

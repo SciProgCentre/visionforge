@@ -2,21 +2,16 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-kotlin {
-    js(IR){
+kscience {
+    jvm()
+    js {
         binaries.library()
     }
-    sourceSets {
-        commonMain{
-            dependencies {
-                api(projects.visionforgeSolid)
-                api("space.kscience:gdml:0.4.0")
-            }
-        }
-        jvmTest{
-            dependencies{
-                implementation("ch.qos.logback:logback-classic:1.2.11")
-            }
-        }
+    dependencies {
+        api(projects.visionforgeSolid)
+        api("space.kscience:gdml:0.4.0")
+    }
+    dependencies(jvmTest) {
+        implementation("ch.qos.logback:logback-classic:1.2.11")
     }
 }

@@ -16,7 +16,6 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionClient
 import tabulator.Tabulator
 import tabulator.TabulatorFull
-import kotlin.reflect.KClass
 
 public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
     public val visionClient: VisionClient by require(VisionClient)
@@ -89,7 +88,6 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public companion object : PluginFactory<TableVisionJsPlugin> {
         override val tag: PluginTag = PluginTag("vision.table.js", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<TableVisionJsPlugin> = TableVisionJsPlugin::class
 
         override fun build(context: Context, meta: Meta): TableVisionJsPlugin = TableVisionJsPlugin()
     }

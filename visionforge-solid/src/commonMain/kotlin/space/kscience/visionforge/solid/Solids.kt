@@ -10,13 +10,12 @@ import kotlinx.serialization.serializer
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
-import kotlin.reflect.KClass
 
 
 public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Solid> {
@@ -30,12 +29,11 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
 
     public companion object : PluginFactory<Solids>, MutableVisionContainer<Solid> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out Solids> = Solids::class
 
         public val default: Solids by lazy {
             Context("@Solids") {
                 plugin(Solids)
-            }.fetch(Solids)
+            }.request(Solids)
         }
 
         override fun build(context: Context, meta: Meta): Solids = Solids(meta)

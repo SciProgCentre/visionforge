@@ -6,7 +6,7 @@ import io.ktor.server.http.content.resources
 import io.ktor.server.routing.routing
 import kotlinx.html.*
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionPage
@@ -18,7 +18,7 @@ import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage
 
 fun main() {
-    val visionManager = Global.fetch(VisionManager)
+    val visionManager = Global.request(VisionManager)
 
 
     val connector = EngineConnectorConfig("localhost", 7777)
