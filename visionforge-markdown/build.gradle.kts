@@ -2,7 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val markdownVersion = "0.2.4"
+val markdownVersion = "0.4.1"
 
 kscience {
     jvm()

@@ -6,7 +6,10 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.parseAsName
-import space.kscience.visionforge.*
+import space.kscience.visionforge.AbstractVisionGroup
+import space.kscience.visionforge.MutableVisionContainer
+import space.kscience.visionforge.MutableVisionGroup
+import space.kscience.visionforge.VisionBuilder
 
 
 /**
@@ -53,7 +56,7 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
 
     /**
      * Get a prototype redirecting the request to the parent if prototype is not found.
-     * If prototype is a ref, then it is unfolded automatically.
+     * If a prototype is a ref, then it is unfolded automatically.
      */
     override fun getPrototype(name: Name): Solid? =
         prototypes?.get(name)?.prototype ?: (parent as? PrototypeHolder)?.getPrototype(name)

@@ -13,7 +13,6 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.plus
-import kotlin.jvm.Synchronized
 import kotlin.time.Duration
 
 /**
@@ -59,11 +58,11 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
 
     public fun isEmpty(): Boolean = propertyChange.isEmpty() && propertyChange.isEmpty() && children.isEmpty()
 
-    @Synchronized
+    @JvmSynchronized
     private fun getOrPutChild(visionName: Name): VisionChangeBuilder =
         children.getOrPut(visionName) { VisionChangeBuilder() }
 
-    @Synchronized
+    @JvmSynchronized
     internal fun reset() {
         vision = null
         propertyChange = MutableMeta()

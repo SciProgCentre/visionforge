@@ -5,6 +5,7 @@ plugins {
 kscience {
     jvm()
     js()
+    native()
     useSerialization {
         json()
     }

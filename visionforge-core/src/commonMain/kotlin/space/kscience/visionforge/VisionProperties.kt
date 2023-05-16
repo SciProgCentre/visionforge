@@ -11,7 +11,6 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.names.*
-import kotlin.jvm.Synchronized
 
 public interface VisionProperties {
 
@@ -155,7 +154,7 @@ public abstract class AbstractVisionProperties(
 
     override val own: Meta? get() = properties
 
-    @Synchronized
+    @JvmSynchronized
     protected fun getOrCreateProperties(): MutableMeta {
         if (properties == null) {
             //TODO check performance issues

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import space.kscience.gradle.isInDevelopment
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
@@ -28,6 +29,12 @@ subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xcontext-receivers"
+        }
+    }
+
+    tasks.withType<KotlinJsCompile>{
+        kotlinOptions{
+            useEsClasses = true
         }
     }
 }

@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 
 @DFExperimental
 class SolidReferenceTest {
-    val groupWithReference = Solids.solidGroup {
+    val groupWithReference = testSolids.solidGroup {
         val theStyle by style {
             SolidMaterial.MATERIAL_COLOR_KEY put "red"
         }

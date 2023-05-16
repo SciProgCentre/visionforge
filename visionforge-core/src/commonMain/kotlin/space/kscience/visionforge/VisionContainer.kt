@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.VisionChildren.Companion.STATIC_TOKEN_BODY
-import kotlin.jvm.Synchronized
 
 @DslMarker
 public annotation class VisionBuilder
@@ -132,7 +131,7 @@ internal abstract class VisionChildrenImpl(
 
     abstract var items: MutableMap<NameToken, Vision>?
 
-    @Synchronized
+    @JvmSynchronized
     private fun buildItems(): MutableMap<NameToken, Vision> {
         if (items == null) {
             items = LinkedHashMap()

@@ -67,9 +67,7 @@ public fun VisionPage.makeFile(
     path: Path?,
     fileHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
 ): Path {
-    val actualFile = path?.let {
-        Path.of(System.getProperty("user.home")).resolve(path)
-    } ?: Files.createTempFile("tempPlot", ".html")
+    val actualFile = path ?: Files.createTempFile("tempPlot", ".html")
 
     val actualDefaultHeaders = fileHeaders?.invoke(actualFile)
     val actualHeaders = if (actualDefaultHeaders == null) pageHeaders else actualDefaultHeaders + pageHeaders

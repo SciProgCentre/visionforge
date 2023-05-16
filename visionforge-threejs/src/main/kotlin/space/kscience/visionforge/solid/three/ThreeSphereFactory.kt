@@ -7,7 +7,7 @@ import three.geometries.SphereGeometry
 
 public object ThreeSphereFactory : ThreeMeshFactory<Sphere>(Sphere::class) {
     override fun buildGeometry(obj: Sphere): BufferGeometry {
-        return obj.detail?.let {detail ->
+        return obj.detail?.let { detail ->
             SphereGeometry(
                 radius = obj.radius,
                 phiStart = obj.phiStart,
@@ -17,7 +17,7 @@ public object ThreeSphereFactory : ThreeMeshFactory<Sphere>(Sphere::class) {
                 widthSegments = detail,
                 heightSegments = detail
             )
-        }?: SphereGeometry(
+        } ?: SphereGeometry(
             radius = obj.radius,
             phiStart = obj.phiStart,
             phiLength = obj.phi,

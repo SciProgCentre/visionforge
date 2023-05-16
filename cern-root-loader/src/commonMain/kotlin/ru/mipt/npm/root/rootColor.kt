@@ -1,7 +1,7 @@
 package ru.mipt.npm.root
 
 public object RootColors {
-    private val colorMap = Array<String>(924) { "white" }
+    private val colorMap = MutableList(924) { "white" }
 
     //colorMap[110] = "white"
 

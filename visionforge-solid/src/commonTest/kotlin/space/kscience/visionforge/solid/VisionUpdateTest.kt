@@ -17,7 +17,7 @@ internal class VisionUpdateTest {
 
     @Test
     fun testVisionUpdate() {
-        val targetVision = Solids.solidGroup {
+        val targetVision = testSolids.solidGroup {
             box(200, 200, 200, name = "origin")
         }
         val dif = visionManager.VisionChange {

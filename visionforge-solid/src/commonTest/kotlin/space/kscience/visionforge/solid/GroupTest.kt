@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class GroupTest {
     @Test
     fun testGroupWithComposite() {
-        val group = Solids.solidGroup{
+        val group = testSolids.solidGroup{
             union("union") {
                 box(100, 100, 100) {
                     z = 100

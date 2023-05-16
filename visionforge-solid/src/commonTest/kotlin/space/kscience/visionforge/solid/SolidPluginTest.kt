@@ -7,8 +7,10 @@ import space.kscience.visionforge.getChild
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+internal val testSolids = Global.request(Solids)
+
 class SolidPluginTest {
-    val vision = Solids.solidGroup {
+    val vision = testSolids.solidGroup {
         box(100, 100, 100, name = "aBox")
 
         sphere(100, name = "aSphere") {

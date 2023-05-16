@@ -1,10 +1,8 @@
 package ru.mipt.npm.root
 
-import space.kscience.dataforge.meta.double
-import space.kscience.dataforge.meta.doubleArray
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
@@ -25,6 +23,8 @@ private data class RootToSolidContext(
     val prototypeHolder: PrototypeHolder,
     val currentLayer: Int = 0,
     val maxLayer: Int = 5,
+    val ignoreRootColors: Boolean = false,
+    val colorCache: MutableMap<Meta, String> = mutableMapOf(),
 )
 
 // converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
@@ -300,7 +300,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
         layer = context.currentLayer
         val nodes = volume.fNodes
 
-        if (nodes.isEmpty() || context.currentLayer >= context.maxLayer) {
+        if (volume.typename != "TGeoVolumeAssembly" && (nodes.isEmpty() || context.currentLayer >= context.maxLayer)) {
             //TODO add smart filter
             volume.fShape?.let { shape ->
                 addShape(shape, context)
@@ -326,6 +326,16 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
         group.items.values.first().apply { parent = null }
     } else {
         group
+    }.apply {
+        volume.fMedium?.let { medium ->
+            color.set(context.colorCache.getOrPut(medium.meta) { RootColors[11 + context.colorCache.size] })
+        }
+
+        if (!context.ignoreRootColors) {
+            volume.fFillColor?.let {
+                properties[MATERIAL_COLOR_KEY] = RootColors[it]
+            }
+        }
     }
 }
 
@@ -338,6 +348,7 @@ private fun SolidGroup.addRootVolume(
     cache: Boolean = true,
     block: Solid.() -> Unit = {},
 ) {
+
     val combinedName = if (volume.fName.isEmpty()) {
         name
     } else if (name == null) {
@@ -347,12 +358,7 @@ private fun SolidGroup.addRootVolume(
     }
 
     if (!cache) {
-        val group = buildVolume(volume, context)?.apply {
-            volume.fFillColor?.let {
-                properties[MATERIAL_COLOR_KEY] = RootColors[it]
-            }
-            block()
-        }
+        val group = buildVolume(volume, context)?.apply(block)
         setChild(combinedName?.let { Name.parse(it) }, group)
     } else {
         val templateName = volumesName + volume.name
@@ -364,17 +370,17 @@ private fun SolidGroup.addRootVolume(
             }
         }
 
-        ref(templateName, name).apply {
-            volume.fFillColor?.let {
-                properties[MATERIAL_COLOR_KEY] = RootColors[it]
-            }
-            block()
-        }
+        ref(templateName, name).apply(block)
     }
 }
 
-public fun MutableVisionContainer<Solid>.rootGeo(dGeoManager: DGeoManager): SolidGroup = solidGroup {
-    val context = RootToSolidContext(this)
+public fun MutableVisionContainer<Solid>.rootGeo(
+    dGeoManager: DGeoManager,
+    name: String? = null,
+    maxLayer: Int = 5,
+    ignoreRootColors: Boolean = false,
+): SolidGroup = solidGroup(name = name?.parseAsName()) {
+    val context = RootToSolidContext(this, maxLayer = maxLayer, ignoreRootColors = ignoreRootColors)
     dGeoManager.fNodes.forEach { node ->
         addRootNode(node, context)
     }

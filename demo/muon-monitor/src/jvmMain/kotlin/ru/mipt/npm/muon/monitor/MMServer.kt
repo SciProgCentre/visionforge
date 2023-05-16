@@ -23,7 +23,7 @@ import ru.mipt.npm.muon.monitor.sim.Cos2TrackGenerator
 import ru.mipt.npm.muon.monitor.sim.simulateOne
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.Global
-import space.kscience.dataforge.context.fetch
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.solid.Solids
 import java.awt.Desktop
@@ -36,7 +36,7 @@ private val generator = Cos2TrackGenerator(JDKRandomGenerator(223))
 fun Application.module(context: Context = Global) {
     val currentDir = File(".").absoluteFile
     environment.log.info("Current directory: $currentDir")
-    val solidManager = context.fetch(Solids)
+    val solidManager = context.request(Solids)
 
     install(ContentNegotiation) {
         json()

@@ -7,9 +7,14 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
 import space.kscience.dataforge.meta.string
+import space.kscience.visionforge.Colors
+import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
-import java.nio.file.Paths
+import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.solid
 import java.util.zip.ZipInputStream
+import kotlin.io.path.Path
 import kotlin.io.path.writeText
 
 
@@ -34,73 +39,17 @@ fun main() {
         println(it)
     }
 
-    val solid = Solids.rootGeo(geo)
-
-    Paths.get("BM@N.vf.json").writeText(Solids.encodeToString(solid))
-    //println(Solids.encodeToString(solid))
-
-    makeVisionFile {
+    makeVisionFile(path = Path("data/output.html"), resourceLocation = ResourceLocation.EMBED) {
         vision("canvas") {
             requirePlugin(Solids)
-            solid
+            solid {
+                ambientLight {
+                    color.set(Colors.white)
+                }
+                rootGeo(geo,"BM@N", maxLayer = 3, ignoreRootColors = true).also {
+                    Path("data/BM@N.vf.json").writeText(Solids.encodeToString(it))
+                }
+            }
         }
     }
 }
-
-
-/*            SolidGroup {
-                set(
-                    "Coil",
-                    solid.getPrototype("Coil".asName())!!.apply {
-                        parent = null
-                    }
-                )
-               *//* group("Shade") {
-                    y = 200
-                    color("red")
-                    coneSurface(
-                        bottomOuterRadius = 135,
-                        bottomInnerRadius = 25,
-                        height = 50,
-                        topOuterRadius = 135,
-                        topInnerRadius = 25,
-                        angle = 1.5707964
-                    ) {
-                        position = Point3D(79.6, 0, -122.1)
-                        rotation = Point3D(-1.5707964, 0, 0)
-                    }
-                    coneSurface(
-                        bottomOuterRadius = 135,
-                        bottomInnerRadius = 25,
-                        height = 50,
-                        topOuterRadius = 135,
-                        topInnerRadius = 25,
-                        angle = 1.5707964
-                    ) {
-                        position = Point3D(-79.6, 0, -122.1)
-                        rotation = Point3D(1.5707964, 0, -3.1415927)
-                    }
-                    coneSurface(
-                        bottomOuterRadius = 135,
-                        bottomInnerRadius = 25,
-                        height = 50,
-                        topOuterRadius = 135,
-                        topInnerRadius = 25,
-                        angle = 1.5707964
-                    ) {
-                        position = Point3D(79.6, 0, 122.1)
-                        rotation = Point3D(1.5707964, 0, 0)
-                    }
-                    coneSurface(
-                        bottomOuterRadius = 135,
-                        bottomInnerRadius = 25,
-                        height = 50,
-                        topOuterRadius = 135,
-                        topInnerRadius = 25,
-                        angle = 1.5707964
-                    ) {
-                        position = Point3D(-79.6, 0, 122.1)
-                        rotation = Point3D(-1.5707964, 0, -3.1415927)
-                    }
-                }*//*
-            }*/

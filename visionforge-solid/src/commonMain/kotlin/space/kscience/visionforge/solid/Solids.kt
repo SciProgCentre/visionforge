@@ -10,7 +10,6 @@ import kotlinx.serialization.serializer
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
-import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
@@ -27,14 +26,8 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
         child?.setAsRoot(visionManager)
     }
 
-    public companion object : PluginFactory<Solids>, MutableVisionContainer<Solid> {
+    public companion object : PluginFactory<Solids> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
-
-        public val default: Solids by lazy {
-            Context("@Solids") {
-                plugin(Solids)
-            }.request(Solids)
-        }
 
         override fun build(context: Context, meta: Meta): Solids = Solids(meta)
 
@@ -79,9 +72,9 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
         public fun decodeFromString(str: String): Solid =
             jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
 
-        override fun setChild(name: Name?, child: Solid?) {
-            default.setChild(name, child)
-        }
+//        override fun setChild(name: Name?, child: Solid?) {
+//            default.setChild(name, child)
+//        }
     }
 }
 
