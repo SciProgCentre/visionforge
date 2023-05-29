@@ -10,7 +10,7 @@ kscience {
         binaries.library()
     }
     dependencies {
-        api(project(":visionforge-core"))
+        api(projects.visionforgeCore)
         api("space.kscience:plotlykt-core:${plotlyVersion}")
     }
     useSerialization()

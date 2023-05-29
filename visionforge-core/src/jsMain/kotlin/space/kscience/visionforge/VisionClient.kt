@@ -6,6 +6,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -29,8 +31,6 @@ import kotlin.time.Duration.Companion.milliseconds
 public class VisionClient : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
     private val visionManager: VisionManager by require(VisionManager)
-
-    //private val visionMap = HashMap<Element, Vision>()
 
     /**
      * Up-going tree traversal in search for endpoint attribute. If element is null, return window URL
@@ -61,11 +61,19 @@ public class VisionClient : AbstractPlugin() {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
+    private val mutex = Mutex()
 
     private val changeCollector = VisionChangeBuilder()
 
+    /**
+     * Communicate vision property changed from rendering engine to model
+     */
     public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
-        changeCollector.propertyChanged(visionName, propertyName, item)
+        context.launch {
+            mutex.withLock {
+                changeCollector.propertyChanged(visionName, propertyName, item)
+            }
+        }
     }
 
 //    public fun visionChanged(name: Name?, child: Vision?) {
@@ -131,8 +139,10 @@ public class VisionClient : AbstractPlugin() {
                             delay(feedbackAggregationTime.milliseconds)
                             val change = changeCollector[name] ?: continue
                             if (!change.isEmpty()) {
-                                send(visionManager.encodeToString(change.deepCopy(visionManager)))
-                                change.reset()
+                                mutex.withLock {
+                                    send(change.toJsonString(visionManager))
+                                    change.reset()
+                                }
                             }
                         }
                     }
@@ -232,7 +242,7 @@ public class VisionClient : AbstractPlugin() {
     public companion object : PluginFactory<VisionClient> {
         override fun build(context: Context, meta: Meta): VisionClient = VisionClient()
 
-        override val tag: PluginTag = PluginTag(name = "vision.client", group = PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag(name = "vision.client.js", group = PluginTag.DATAFORGE_GROUP)
     }
 }
 

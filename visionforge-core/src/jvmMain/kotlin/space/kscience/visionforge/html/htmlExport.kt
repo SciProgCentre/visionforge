@@ -60,7 +60,7 @@ import java.nio.file.Path
 /**
  * Export a [VisionPage] to a file
  *
- * @param fileHeaders additional file-system specific headers.
+ * @param fileHeaders additional file system specific headers.
  */
 @DFExperimental
 public fun VisionPage.makeFile(

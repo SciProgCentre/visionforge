@@ -41,7 +41,6 @@ public object NullVision : Vision {
     override val properties: MutableVisionProperties get() = error("Can't get properties of `NullVision`")
 
     override val descriptor: MetaDescriptor? = null
-
 }
 
 
@@ -89,6 +88,12 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
         }
     }
 
+    private fun build(visionManager: VisionManager): VisionChange = VisionChange(
+        vision,
+        if (propertyChange.isEmpty()) null else propertyChange,
+        if (children.isEmpty()) null else children.mapValues { it.value.build(visionManager) }
+    )
+
     /**
      * Isolate collected changes by creating detached copies of given visions
      */
@@ -96,6 +101,13 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
         vision?.deepCopy(visionManager),
         if (propertyChange.isEmpty()) null else propertyChange.seal(),
         if (children.isEmpty()) null else children.mapValues { it.value.deepCopy(visionManager) }
+    )
+
+    /**
+     * Transform current change directly to Json string without protective copy
+     */
+    public fun toJsonString(visionManager: VisionManager): String = visionManager.encodeToString(
+        build(visionManager)
     )
 }
 
@@ -115,6 +127,9 @@ public inline fun VisionManager.VisionChange(block: VisionChangeBuilder.() -> Un
     VisionChangeBuilder().apply(block).deepCopy(this)
 
 
+/**
+ * Collect changes that are made to [source] to [collector] using [mutex] as a synchronization lock.
+ */
 private fun CoroutineScope.collectChange(
     name: Name,
     source: Vision,

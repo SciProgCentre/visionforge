@@ -1,7 +1,6 @@
 rootProject.name = "visionforge"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
 
@@ -46,6 +45,7 @@ include(
     ":ui:ring",
 //    ":ui:material",
     ":ui:bootstrap",
+//    ":ui:compose",
     ":visionforge-core",
     ":visionforge-solid",
 //    ":visionforge-fx",

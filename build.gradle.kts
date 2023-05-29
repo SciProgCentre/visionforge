@@ -13,7 +13,7 @@ val fxVersion by extra("11")
 
 allprojects {
     group = "space.kscience"
-    version = "0.3.0-dev-7"
+    version = "0.3.0-dev-8"
 }
 
 subprojects {
@@ -24,6 +24,7 @@ subprojects {
         maven("https://repo.kotlin.link")
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

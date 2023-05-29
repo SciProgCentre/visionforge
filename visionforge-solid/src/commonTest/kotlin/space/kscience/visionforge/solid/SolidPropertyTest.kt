@@ -10,6 +10,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("UNUSED_VARIABLE")
@@ -26,7 +27,7 @@ class SolidPropertyTest {
     }
 
     @Test
-    fun testColorUpdate() = runTest(dispatchTimeoutMs = 200) {
+    fun testColorUpdate() = runTest(timeout = 200.milliseconds) {
         val box = Box(10.0f, 10.0f, 10.0f)
 
         val c = CompletableDeferred<String?>()

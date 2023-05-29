@@ -15,6 +15,7 @@ import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 
 private class TestScheme : Scheme() {
@@ -58,7 +59,7 @@ internal class VisionPropertyTest {
     }
 
     @Test
-    fun testChildrenPropertyPropagation() = runTest(dispatchTimeoutMs = 200) {
+    fun testChildrenPropertyPropagation() = runTest(timeout = 200.milliseconds) {
         val group = Global.request(VisionManager).group {
             properties {
                 "test" put 11
