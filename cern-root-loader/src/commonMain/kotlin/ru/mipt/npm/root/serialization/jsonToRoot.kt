@@ -118,7 +118,7 @@ private object RootDecoder {
             subclass(TGeoCompositeShape.serializer().unref(refCache))
             subclass(TGeoShapeAssembly.serializer().unref(refCache))
 
-            default {
+            defaultDeserializer {
                 if (it == null) {
                     TGeoShape.serializer().unref(refCache)
                 } else {
@@ -136,7 +136,7 @@ private object RootDecoder {
 
 
             val unrefed = TGeoMatrix.serializer().unref(refCache)
-            default {
+            defaultDeserializer {
                 if (it == null) {
                     unrefed
                 } else {
@@ -149,7 +149,7 @@ private object RootDecoder {
             subclass(TGeoVolumeAssembly.serializer().unref(refCache))
 
             val unrefed = TGeoVolume.serializer().unref(refCache)
-            default {
+            defaultDeserializer {
                 if (it == null) {
                     unrefed
                 } else {
@@ -163,7 +163,7 @@ private object RootDecoder {
             subclass(TGeoNodeOffset.serializer().unref(refCache))
 
             val unrefed = TGeoNode.serializer().unref(refCache)
-            default {
+            defaultDeserializer {
                 if (it == null) {
                     unrefed
                 } else {

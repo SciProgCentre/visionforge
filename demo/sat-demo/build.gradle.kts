@@ -8,7 +8,6 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
-    application()
     dependencies{
         implementation(projects.visionforgeThreejs.visionforgeThreejsServer)
         implementation("ch.qos.logback:logback-classic:1.4.5")

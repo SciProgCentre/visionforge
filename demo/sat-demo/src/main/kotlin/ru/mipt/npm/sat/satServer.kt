@@ -3,8 +3,7 @@ package ru.mipt.npm.sat
 
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.*
 import kotlinx.html.div
@@ -41,9 +40,7 @@ fun main() {
 
     val server = embeddedServer(CIO, connector.port, connector.host) {
         routing {
-            static {
-                resources()
-            }
+            staticResources("", null, null)
         }
 
         visionPage(

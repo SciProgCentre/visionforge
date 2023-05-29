@@ -7,6 +7,7 @@ kscience {
     js {
         useCommonJs()
         browser {
+            binaries.executable()
             commonWebpackConfig {
                 cssSupport {
                     enabled.set(false)
@@ -27,7 +28,6 @@ kscience {
         implementation(projects.visionforgeThreejs)
         implementation(npm("react-file-drop", "3.0.6"))
     }
-    application()
 }
 
 //kotlin {

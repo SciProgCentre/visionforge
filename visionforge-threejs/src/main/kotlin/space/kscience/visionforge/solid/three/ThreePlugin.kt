@@ -111,7 +111,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
         is Composite -> compositeFactory.build(this, vision, observe)
         else -> {
-            //find specialized factory for this type if it is present
+            //find a specialized factory for this type if it is present
             val factory: ThreeFactory<Solid>? = findObjectFactory(vision::class)
             when {
                 factory != null -> factory.build(this, vision, observe)

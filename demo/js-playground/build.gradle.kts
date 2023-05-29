@@ -4,13 +4,13 @@ plugins {
 
 kscience{
     useCoroutines()
-    application()
 }
 
 kotlin{
     js(IR){
         useCommonJs()
         browser {
+            binaries.executable()
             commonWebpackConfig {
                 cssSupport{
                     enabled.set(false)

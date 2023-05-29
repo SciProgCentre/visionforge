@@ -1,11 +1,11 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    `maven-publish`
     application
 }
 
 kscience {
     useCoroutines()
-    application()
     jvm {
         withJava()
     }
@@ -22,4 +22,8 @@ kscience {
 
 application {
     mainClass.set("space.kscience.visionforge.solid.demo.FXDemoAppKt")
+}
+
+kotlin{
+    explicitApi = null
 }

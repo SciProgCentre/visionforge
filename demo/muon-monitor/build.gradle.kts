@@ -38,7 +38,6 @@ kscience {
         implementation(project(":visionforge-threejs"))
         //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
     }
-    application()
 }
 
 application {

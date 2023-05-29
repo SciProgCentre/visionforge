@@ -70,7 +70,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                default { SimpleVisionGroup.serializer() }
+                defaultDeserializer { SimpleVisionGroup.serializer() }
                 subclass(NullVision.serializer())
                 subclass(SimpleVisionGroup.serializer())
                 subclass(VisionOfNumberField.serializer())

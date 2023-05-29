@@ -44,7 +44,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         element.append(div)
     }
 
-    public companion object : PluginFactory<MarkupPlugin> {
+    public actual companion object : PluginFactory<MarkupPlugin> {
         override val tag: PluginTag = PluginTag("vision.markup", PluginTag.DATAFORGE_GROUP)
 
         override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()

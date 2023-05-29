@@ -10,6 +10,8 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.root
 
 @Serializable
@@ -38,4 +40,16 @@ internal val markupSerializersModule = SerializersModule {
     polymorphic(Vision::class) {
         subclass(VisionOfMarkup.serializer())
     }
+}
+
+/**
+ * Embed a dynamic markdown block in a vision
+ */
+@VisionBuilder
+public inline fun VisionOutput.markdown(
+    format: String = VisionOfMarkup.COMMONMARK_FORMAT,
+    block: VisionOfMarkup.() -> Unit,
+): VisionOfMarkup {
+    requirePlugin(MarkupPlugin)
+    return VisionOfMarkup(format).apply(block)
 }

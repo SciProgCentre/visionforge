@@ -4,26 +4,24 @@ plugins {
 
 val dataforgeVersion: String by rootProject.extra
 
-kscience{
+kscience {
     jvm()
     js()
     native()
+    useCoroutines()
     dependencies {
         api("space.kscience:dataforge-context:$dataforgeVersion")
         api(spclibs.kotlinx.html)
 //        api("org.jetbrains.kotlin-wrappers:kotlin-css")
     }
-    testDependencies {
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${space.kscience.gradle.KScienceVersions.coroutinesVersion}")
-    }
-    dependencies(jsMain){
+    jsMain {
         api("org.jetbrains.kotlin-wrappers:kotlin-extensions")
     }
-    useSerialization{
+    useSerialization {
         json()
     }
 }
 
-readme{
+readme {
     maturity = space.kscience.gradle.Maturity.DEVELOPMENT
 }

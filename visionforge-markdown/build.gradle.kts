@@ -10,8 +10,9 @@ kscience {
         binaries.library()
     }
     dependencies {
-        api(project(":visionforge-core"))
+        api(projects.visionforgeCore)
         api("org.jetbrains:markdown:$markdownVersion")
+        api("org.jetbrains:annotations:24.0.0")
     }
     useSerialization()
 }

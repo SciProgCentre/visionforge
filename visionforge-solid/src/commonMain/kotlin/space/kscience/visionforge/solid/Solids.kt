@@ -44,6 +44,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
             subclass(PolyLine.serializer())
             subclass(SolidLabel.serializer())
             subclass(Sphere.serializer())
+            subclass(SphereLayer.serializer())
 
             subclass(AmbientLightSource.serializer())
             subclass(PointLightSource.serializer())
@@ -56,7 +57,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
             }
 
             polymorphic(Solid::class) {
-                default { SolidBase.serializer(serializer<Solid>()) }
+                defaultDeserializer { SolidBase.serializer(serializer<Solid>()) }
                 solids()
             }
         }

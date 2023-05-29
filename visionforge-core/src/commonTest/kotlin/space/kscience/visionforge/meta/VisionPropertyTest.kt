@@ -94,7 +94,7 @@ internal class VisionPropertyTest {
     }
 
     @Test
-    fun testChildrenPropertyFlow() = runTest(dispatchTimeoutMs = 200) {
+    fun testChildrenPropertyFlow() = runTest(timeout = 200.milliseconds) {
         val group = Global.request(VisionManager).group {
 
             properties {

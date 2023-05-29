@@ -38,10 +38,8 @@ public class ConeSurface(
         require(segments >= 4) { "The number of segments in tube is too small" }
         val angleStep = angle / (segments - 1)
 
-        fun shape(r: Float, z: Float): List<Point3D> {
-            return (0 until segments).map { i ->
-                Point3D(r * cos(startAngle + angleStep * i), r * sin(startAngle + angleStep * i), z)
-            }
+        fun shape(r: Float, z: Float): List<Point3D> = (0 until segments).map { i ->
+            Point3D(r * cos(startAngle + angleStep * i), r * sin(startAngle + angleStep * i), z)
         }
 
         geometryBuilder.apply {
@@ -50,7 +48,7 @@ public class ConeSurface(
             val bottomOuterPoints = shape(bottomRadius, -height / 2)
             val topOuterPoints = shape(topRadius, height / 2)
             //outer face
-            (1 until segments).forEach {
+            for (it in 1 until segments) {
                 face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], topOuterPoints[it], topOuterPoints[it - 1])
             }
 

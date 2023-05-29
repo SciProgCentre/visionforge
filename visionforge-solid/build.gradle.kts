@@ -9,11 +9,9 @@ kscience {
     useSerialization {
         json()
     }
+    useCoroutines()
     dependencies {
         api(projects.visionforgeCore)
-    }
-    testDependencies {
-        implementation(spclibs.kotlinx.coroutines.test)
     }
     dependencies(jvmTest) {
         implementation(spclibs.logback.classic)

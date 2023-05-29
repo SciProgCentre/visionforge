@@ -16,6 +16,7 @@ import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
 import space.kscience.visionforge.MutableVisionProperties
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.html.VisionOutput
 
 @Serializable
@@ -82,7 +83,10 @@ public class VisionOfPlotly private constructor(
 
 public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)
 
-@DFExperimental
+/**
+ * Embed a dynamic plotly plot in a vision
+ */
+@VisionBuilder
 public inline fun VisionOutput.plotly(
     block: Plot.() -> Unit,
 ): VisionOfPlotly {

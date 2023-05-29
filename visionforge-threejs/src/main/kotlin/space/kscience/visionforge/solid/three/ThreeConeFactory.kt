@@ -18,16 +18,16 @@ public object ThreeConeFactory : ThreeMeshFactory<ConeSegment>(ConeSegment::clas
                 radialSegments = segments,
                 heightSegments = segments,
                 openEnded = false,
-                thetaStart = obj.startAngle,
-                thetaLength = obj.angle
+                thetaStart = obj.phiStart,
+                thetaLength = obj.phi
             )
         } ?: CylinderGeometry(
             radiusTop = obj.topRadius,
             radiusBottom = obj.bottomRadius,
             height = obj.height,
             openEnded = false,
-            thetaStart = obj.startAngle,
-            thetaLength = obj.angle
+            thetaStart = obj.phiStart,
+            thetaLength = obj.phi
         )
         return cylinder.rotateX(PI/2)
     }

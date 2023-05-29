@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("jupyter.api")
     id("com.github.johnrengelman.shadow") version "7.1.2"
+//    application
 }
 
 repositories {
@@ -29,6 +30,7 @@ kotlin {
     }
 
     jvm {
+//        withJava()
         compilations.all {
             kotlinOptions {
                 jvmTarget = "11"
@@ -89,3 +91,7 @@ val processJupyterApiResources by tasks.getting(org.jetbrains.kotlinx.jupyter.ap
 }
 
 tasks.findByName("shadowJar")?.dependsOn(processJupyterApiResources)
+
+//application{
+//    mainClass.set("space.kscience.visionforge.examples.ShapesKt")
+//}
