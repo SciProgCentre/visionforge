@@ -21,8 +21,8 @@ public class ConeSurface(
     public val height: Float,
     public val topRadius: Float,
     public val topInnerRadius: Float,
-    public val startAngle: Float = 0f,
-    public val angle: Float = PI2,
+    public val phiStart: Float = 0f,
+    public val phi: Float = PI2,
 ) : SolidBase<ConeSurface>(), GeometrySolid {
 
     init {
@@ -30,16 +30,16 @@ public class ConeSurface(
         require(height > 0) { "Cone surface height must be positive" }
         require(bottomInnerRadius >= 0) { "Cone surface bottom inner radius must be non-negative" }
         //require(startAngle >= 0)
-        require(angle in (0f..(PI2)))
+        require(phi in (0f..(PI2)))
     }
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         val segments = detail ?: 32
         require(segments >= 4) { "The number of segments in tube is too small" }
-        val angleStep = angle / (segments - 1)
+        val angleStep = phi / (segments - 1)
 
         fun shape(r: Float, z: Float): List<Point3D> = (0 until segments).map { i ->
-            Point3D(r * cos(startAngle + angleStep * i), r * sin(startAngle + angleStep * i), z)
+            Point3D(r * cos(phiStart + angleStep * i), r * sin(phiStart + angleStep * i), z)
         }
 
         geometryBuilder.apply {
@@ -52,17 +52,17 @@ public class ConeSurface(
                 face4(bottomOuterPoints[it - 1], bottomOuterPoints[it], topOuterPoints[it], topOuterPoints[it - 1])
             }
 
-            if (angle == PI2) {
+            if (phi == PI2) {
                 face4(bottomOuterPoints.last(), bottomOuterPoints[0], topOuterPoints[0], topOuterPoints.last())
             }
             if (bottomInnerRadius == 0f) {
-                val zeroBottom = Point3D(0f, 0f, 0f)
-                val zeroTop = Point3D(0f, 0f, height)
+                val zeroBottom = Point3D(0f, 0f, -height / 2)
+                val zeroTop = Point3D(0f, 0f, height / 2)
                 (1 until segments).forEach {
                     face(bottomOuterPoints[it - 1], zeroBottom, bottomOuterPoints[it])
                     face(topOuterPoints[it - 1], topOuterPoints[it], zeroTop)
                 }
-                if (angle == PI2) {
+                if (phi == PI2) {
                     face(bottomOuterPoints.last(), zeroBottom, bottomOuterPoints[0])
                     face(topOuterPoints.last(), topOuterPoints[0], zeroTop)
                 } else {
@@ -96,7 +96,7 @@ public class ConeSurface(
                         topOuterPoints[it]
                     )
                 }
-                if (angle == PI2) {
+                if (phi == PI2) {
                     face4(bottomInnerPoints[0], bottomInnerPoints.last(), topInnerPoints.last(), topInnerPoints[0])
                     face4(
                         bottomInnerPoints.last(),
@@ -135,8 +135,8 @@ public inline fun MutableVisionContainer<Solid>.tube(
     height = height.toFloat(),
     topRadius = radius.toFloat(),
     topInnerRadius = innerRadius.toFloat(),
-    startAngle = startAngle.toFloat(),
-    angle = angle.toFloat()
+    phiStart = startAngle.toFloat(),
+    phi = angle.toFloat()
 ).apply(block).also { setChild(name, it) }
 
 @VisionBuilder
@@ -156,6 +156,6 @@ public inline fun MutableVisionContainer<Solid>.coneSurface(
     height = height.toFloat(),
     topRadius = topOuterRadius.toFloat(),
     topInnerRadius = topInnerRadius.toFloat(),
-    startAngle = startAngle.toFloat(),
-    angle = angle.toFloat()
+    phiStart = startAngle.toFloat(),
+    phi = angle.toFloat()
 ).apply(block).also { setChild(name, it) }

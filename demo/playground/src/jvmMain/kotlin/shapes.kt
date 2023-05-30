@@ -1,10 +1,10 @@
 package space.kscience.visionforge.examples
 
-import kotlin.math.PI
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.*
+import kotlin.math.PI
 
-fun main() = makeVisionFile{
+fun main() = makeVisionFile {
     vision("canvas") {
         solid {
             ambientLight()
@@ -30,9 +30,9 @@ fun main() = makeVisionFile{
             }
 
 
-            tube(30,20, 20){
+            cylinder(30,20, name = "cylinder"){
                 detail = 31
-                y = - 220
+                y = -220
             }
         }
     }
