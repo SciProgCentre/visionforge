@@ -85,5 +85,9 @@ public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: So
     options?.let {
         meta = options.meta
     }
-    return SolidGroup().apply(block)
+    return SolidGroup().apply(block).apply {
+        if (children.values.none { it is LightSource }) {
+            ambientLight()
+        }
+    }
 }

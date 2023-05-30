@@ -176,11 +176,13 @@ public class VisionClient : AbstractPlugin() {
         }
 
         val outputMeta = element.getEmbeddedData(VisionTagConsumer.OUTPUT_META_CLASS)?.let {
-            VisionManager.defaultJson.decodeFromString(MetaSerializer, it)
+            VisionManager.defaultJson.decodeFromString(MetaSerializer, it).also {
+                logger.info { "Output meta for $name: $it" }
+            }
         } ?: Meta.EMPTY
 
         when {
-            // fetch data if path is provided
+            // fetch data if the path is provided
             element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
                 val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 

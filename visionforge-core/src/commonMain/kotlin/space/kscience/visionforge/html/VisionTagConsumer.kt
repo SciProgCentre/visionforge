@@ -26,7 +26,7 @@ public annotation class VisionDSL
  * A placeholder object to attach inline vision builders.
  */
 @VisionDSL
-public class VisionOutput @PublishedApi internal constructor(public val context: Context, public val name: Name) {
+public class VisionOutput @PublishedApi internal constructor(override val context: Context, public val name: Name): ContextAware {
     public var meta: Meta = Meta.EMPTY
 
     private val requirements: MutableSet<PluginFactory<*>> = HashSet()
@@ -95,9 +95,10 @@ public abstract class VisionTagConsumer<R>(
         if (!outputMeta.isEmpty()) {
             //Hard-code output configuration
             script {
+                type = "text/json"
                 attributes["class"] = OUTPUT_META_CLASS
                 unsafe {
-                    +manager.jsonFormat.encodeToString(MetaSerializer, outputMeta)
+                    +("\n" + manager.jsonFormat.encodeToString(MetaSerializer, outputMeta) + "\n")
                 }
             }
         }

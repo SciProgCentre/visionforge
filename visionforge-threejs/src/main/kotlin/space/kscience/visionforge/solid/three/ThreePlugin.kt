@@ -124,7 +124,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public fun getOrCreateCanvas(
         element: Element,
-        options: Canvas3DOptions = Canvas3DOptions(),
+        options: Canvas3DOptions,
     ): ThreeCanvas = canvasCache.getOrPut(element) {
         ThreeCanvas(this, element, options)
     }
@@ -142,7 +142,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     internal fun renderSolid(
         element: Element,
         vision: Solid,
-        options: Canvas3DOptions = Canvas3DOptions(),
+        options: Canvas3DOptions,
     ): ThreeCanvas = getOrCreateCanvas(element, options).apply {
         render(vision)
     }
@@ -166,7 +166,7 @@ public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
     optionsBuilder: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = renderSolid(element, obj).apply {
+): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(optionsBuilder)).apply {
     options.apply(optionsBuilder)
 }
 
