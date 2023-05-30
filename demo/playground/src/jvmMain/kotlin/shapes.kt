@@ -33,6 +33,7 @@ fun main() = makeVisionFile {
             cylinder(30,20, name = "cylinder"){
                 detail = 31
                 y = -220
+                z = 15
             }
         }
     }

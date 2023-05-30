@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
-import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.*
@@ -96,7 +95,7 @@ public fun Application.serveVisionData(
                 val vision: Vision = resolveVision(Name.parse(name)) ?: error("Vision with id='$name' not registered")
 
                 launch {
-                    for(frame in incoming) {
+                    for (frame in incoming) {
                         val data = frame.data.decodeToString()
                         application.log.debug("Received update for $name: \n$data")
                         val change = configuration.visionManager.jsonFormat.decodeFromString(
@@ -151,48 +150,13 @@ public fun Application.serveVisionData(
 public fun Application.visionPage(
     route: String,
     configuration: VisionRoute,
-    connector: EngineConnectorConfig,
     headers: Collection<HtmlFragment>,
+    connector: EngineConnectorConfig? = null,
     visionFragment: HtmlVisionFragment,
 ) {
     require(WebSockets)
 
     val collector: MutableMap<Name, Vision> = mutableMapOf()
-
-    val html = createHTML().apply {
-        head {
-            meta {
-                charset = "utf-8"
-            }
-            headers.forEach { header ->
-                consumer.header()
-            }
-        }
-        body {
-            //Load the fragment and remember all loaded visions
-            visionFragment(
-                visionManager = configuration.visionManager,
-                embedData = configuration.dataMode == VisionRoute.Mode.EMBED,
-                fetchDataUrl = if (configuration.dataMode != VisionRoute.Mode.EMBED) {
-                    url {
-                        host = connector.host
-                        port = connector.port
-                        path(route, "data")
-                    }
-                } else null,
-                updatesUrl = if (configuration.dataMode == VisionRoute.Mode.UPDATE) {
-                    url {
-                        protocol = URLProtocol.WS
-                        host = connector.host
-                        port = connector.port
-                        path(route, "ws")
-                    }
-                } else null,
-                onVisionRendered = { name, vision -> collector[name] = vision },
-                fragment = visionFragment
-            )
-        }
-    }.finalize()
 
     //serve data
     serveVisionData(configuration, collector)
@@ -200,33 +164,68 @@ public fun Application.visionPage(
     //filled pages
     routing {
         get(route) {
-            call.respondText(html, ContentType.Text.Html)
+            val host = connector?.host ?: call.request.host()
+            val port = connector?.port ?: call.request.port()
+            call.respondHtml {
+                head {
+                    meta {
+                        charset = "utf-8"
+                    }
+                    headers.forEach { header ->
+                        consumer.header()
+                    }
+                }
+                body {
+                    //Load the fragment and remember all loaded visions
+                    visionFragment(
+                        visionManager = configuration.visionManager,
+                        embedData = configuration.dataMode == VisionRoute.Mode.EMBED,
+                        fetchDataUrl = if (configuration.dataMode != VisionRoute.Mode.EMBED) {
+                            url {
+                                this.host = host
+                                this.port = port
+                                path(route, "data")
+                            }
+                        } else null,
+                        updatesUrl = if (configuration.dataMode == VisionRoute.Mode.UPDATE) {
+                            url {
+                                protocol = URLProtocol.WS
+                                this.host = host
+                                this.port = port
+                                path(route, "ws")
+                            }
+                        } else null,
+                        onVisionRendered = { name, vision -> collector[name] = vision },
+                        fragment = visionFragment
+                    )
+                }
+            }
         }
     }
 }
 
 public fun Application.visionPage(
-    connector: EngineConnectorConfig,
     visionManager: VisionManager,
     vararg headers: HtmlFragment,
     route: String = "/",
+    connector: EngineConnectorConfig? = null,
     configurationBuilder: VisionRoute.() -> Unit = {},
     visionFragment: HtmlVisionFragment,
 ) {
     val configuration = VisionRoute(route, visionManager).apply(configurationBuilder)
-    visionPage(route, configuration, connector, listOf(*headers), visionFragment)
+    visionPage(route, configuration, listOf(*headers), connector, visionFragment)
 }
 
 /**
  * Render given [VisionPage] at server
  */
 public fun Application.visionPage(
-    connector: EngineConnectorConfig,
     page: VisionPage,
     route: String = "/",
+    connector: EngineConnectorConfig? = null,
     configurationBuilder: VisionRoute.() -> Unit = {},
 ) {
     val configuration = VisionRoute(route, page.visionManager).apply(configurationBuilder)
-    visionPage(route, configuration, connector, page.pageHeaders.values, visionFragment = page.content)
+    visionPage(route, configuration, page.pageHeaders.values, connector, visionFragment = page.content)
 }
 

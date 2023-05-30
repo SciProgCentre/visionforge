@@ -34,7 +34,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[Box::class] = ThreeBoxFactory
         objectFactories[Convex::class] = ThreeConvexFactory
         objectFactories[Sphere::class] = ThreeSphereFactory
-//        objectFactories[ConeSegment::class] = ThreeConeFactory
         objectFactories[PolyLine::class] = ThreeSmartLineFactory
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
@@ -143,7 +142,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     internal fun renderSolid(
         element: Element,
         vision: Solid,
-    ): ThreeCanvas = getOrCreateCanvas(element).apply {
+        options: Canvas3DOptions = Canvas3DOptions(),
+    ): ThreeCanvas = getOrCreateCanvas(element, options).apply {
         render(vision)
     }
 
@@ -151,9 +151,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         renderSolid(
             element,
             vision as? Solid ?: error("Solid expected but ${vision::class} found"),
-        ).apply {
-            options.meta.update(meta)
-        }
+            Canvas3DOptions.read(meta)
+        )
     }
 
     public companion object : PluginFactory<ThreePlugin> {

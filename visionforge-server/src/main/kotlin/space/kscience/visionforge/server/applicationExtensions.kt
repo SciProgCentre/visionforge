@@ -22,7 +22,8 @@ public fun <P : Pipeline<*, ApplicationCall>, B : Any, F : Any> P.require(
  */
 public fun ApplicationEngine.openInBrowser() {
     val connector = environment.connectors.first()
-    val uri = URI("http", null, connector.host, connector.port, null, null, null)
+    val host = if (connector.host == "0.0.0.0") "127.0.0.1" else connector.host
+    val uri = URI("http", null, host, connector.port, null, null, null)
     Desktop.getDesktop().browse(uri)
 }
 

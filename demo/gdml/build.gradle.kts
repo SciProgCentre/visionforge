@@ -30,6 +30,10 @@ kscience {
     }
 }
 
+kotlin {
+    explicitApi = null
+}
+
 //kotlin {
 //
 //    sourceSets {

@@ -2,7 +2,7 @@ package space.kscience.visionforge.examples
 
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.resources
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.routing.routing
 import kotlinx.html.*
 import space.kscience.dataforge.context.Global
@@ -12,21 +12,18 @@ import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.bindForm
 import space.kscience.visionforge.onPropertyChange
-import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage
 
+@Suppress("ExtractKtorModule")
 fun main() {
     val visionManager = Global.request(VisionManager)
 
-
-    val connector = EngineConnectorConfig("localhost", 7777)
-
-    val server = embeddedServer(CIO, connector.port, connector.host) {
+    val server = embeddedServer(CIO) {
 
         routing {
-            resources()
+            staticResources("/", null)
         }
 
         val form = VisionOfHtmlForm("form").apply {
@@ -36,7 +33,6 @@ fun main() {
         }
 
         visionPage(
-            connector,
             visionManager,
             VisionPage.scriptHeader("js/visionforge-playground.js"),
         ) {

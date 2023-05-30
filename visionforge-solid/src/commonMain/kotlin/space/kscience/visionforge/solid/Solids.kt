@@ -11,10 +11,10 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 
 
 public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Solid> {
@@ -80,8 +80,10 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
 }
 
 @VisionBuilder
-@DFExperimental
-public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup {
+public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: SolidGroup.() -> Unit): SolidGroup {
     requirePlugin(Solids)
+    options?.let {
+        meta = options.meta
+    }
     return SolidGroup().apply(block)
 }

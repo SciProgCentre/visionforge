@@ -14,7 +14,6 @@ import space.kscience.dataforge.meta.Null
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.server.EngineConnectorConfig
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage
@@ -23,6 +22,7 @@ import space.kscience.visionforge.three.threeJsHeader
 import kotlin.random.Random
 
 
+@Suppress("ExtractKtorModule")
 fun main() {
     val satContext = Context("sat") {
         plugin(Solids)
@@ -36,15 +36,12 @@ fun main() {
             color.set(Colors.white)
         }
     }
-    val connector = EngineConnectorConfig("localhost", 7777)
-
-    val server = embeddedServer(CIO, connector.port, connector.host) {
+    val server = embeddedServer(CIO, port = 7777) {
         routing {
             staticResources("", null, null)
         }
 
         visionPage(
-            connector,
             solids.visionManager, VisionPage.threeJsHeader,
             VisionPage.styleSheetHeader("css/styles.css")
         ) {
