@@ -14,7 +14,7 @@ public actual class MarkupPlugin : VisionPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
     public actual companion object : PluginFactory<MarkupPlugin> {
-        override val tag: PluginTag = PluginTag("vision.markup", PluginTag.DATAFORGE_GROUP)
+        override val tag: PluginTag = PluginTag("vision.markup.jvm", PluginTag.DATAFORGE_GROUP)
 
         override fun build(context: Context, meta: Meta): MarkupPlugin = MarkupPlugin()
 

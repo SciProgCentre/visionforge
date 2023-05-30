@@ -13,20 +13,20 @@ import kotlin.reflect.KProperty1
 
 
 /**
- * Call [callBack] on initial value of the property and then on all subsequent values after change
+ * Call [callback] on initial value of the property and then on all subsequent values after change
  */
 public fun Vision.useProperty(
     propertyName: Name,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
     scope: CoroutineScope? = manager?.context,
-    callBack: (Meta) -> Unit,
+    callback: (Meta) -> Unit,
 ): Job {
     //Pass initial value.
-    callBack(properties.getProperty(propertyName, inherit, includeStyles))
+    callback(properties.getProperty(propertyName, inherit, includeStyles))
     return properties.changes.onEach { name ->
         if (name.startsWith(propertyName)) {
-            callBack(properties.getProperty(propertyName, inherit, includeStyles))
+            callback(properties.getProperty(propertyName, inherit, includeStyles))
         }
     }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
 }
@@ -36,19 +36,19 @@ public fun Vision.useProperty(
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
     scope: CoroutineScope? = manager?.context,
-    callBack: (Meta) -> Unit,
-): Job = useProperty(propertyName.parseAsName(), inherit, includeStyles, scope, callBack)
+    callback: (Meta) -> Unit,
+): Job = useProperty(propertyName.parseAsName(), inherit, includeStyles, scope, callback)
 
 public fun <V : Vision, T> V.useProperty(
     property: KProperty1<V, T>,
     scope: CoroutineScope? = manager?.context,
-    callBack: V.(T) -> Unit,
+    callback: V.(T) -> Unit,
 ): Job {
     //Pass initial value.
-    callBack(property.get(this))
+    callback(property.get(this))
     return properties.changes.onEach { name ->
         if (name.startsWith(property.name.asName())) {
-            callBack(property.get(this@useProperty))
+            callback(property.get(this@useProperty))
         }
     }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
 }
