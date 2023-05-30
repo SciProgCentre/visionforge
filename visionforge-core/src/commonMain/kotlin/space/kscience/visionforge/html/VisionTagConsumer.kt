@@ -92,6 +92,7 @@ public abstract class VisionTagConsumer<R>(
             vision.setAsRoot(manager)
         }
         attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
+        renderVision(manager, name, vision, outputMeta)
         if (!outputMeta.isEmpty()) {
             //Hard-code output configuration
             script {
@@ -102,7 +103,6 @@ public abstract class VisionTagConsumer<R>(
                 }
             }
         }
-        renderVision(manager, name, vision, outputMeta)
     }
 
     /**

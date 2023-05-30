@@ -14,6 +14,7 @@ import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
+import space.kscience.plotly.PlotlyConfig
 import space.kscience.visionforge.MutableVisionProperties
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
@@ -88,8 +89,10 @@ public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)
  */
 @VisionBuilder
 public inline fun VisionOutput.plotly(
+    config: PlotlyConfig = PlotlyConfig(),
     block: Plot.() -> Unit,
 ): VisionOfPlotly {
     requirePlugin(PlotlyPlugin)
+    meta = config.meta
     return VisionOfPlotly(Plotly.plot(block))
 }
