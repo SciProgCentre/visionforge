@@ -9,7 +9,7 @@ kscience {
     }
     dependencies {
         api(projects.visionforgeSolid)
-        api("space.kscience:gdml:0.4.0")
+        api("space.kscience:gdml:0.5.0")
     }
     dependencies(jvmTest) {
         implementation(spclibs.logback.classic)

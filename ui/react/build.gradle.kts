@@ -1,11 +1,16 @@
 plugins {
-    id("space.kscience.gradle.js")
+    id("space.kscience.gradle.mpp")
 }
 
-dependencies{
-    api(project(":visionforge-solid"))
-    api("org.jetbrains.kotlin-wrappers:kotlin-styled")
-    api("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
+kscience {
+    js()
+    jsMain {
+        dependencies {
+            api(projects.visionforgeSolid)
+            api("org.jetbrains.kotlin-wrappers:kotlin-styled")
+            api("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
 //    implementation(npm("react-select","4.3.0"))
-    implementation(project(":visionforge-threejs"))
+            implementation(projects.visionforgeThreejs)
+        }
+    }
 }

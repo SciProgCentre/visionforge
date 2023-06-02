@@ -1,13 +1,13 @@
 package space.kscience.visionforge.solid.three
 
-import three.core.BufferGeometry
-import three.core.Float32BufferAttribute
-import three.math.Vector3
 import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.solid.GeometryBuilder
 import space.kscience.visionforge.solid.Point3D
 import space.kscience.visionforge.solid.cross
 import space.kscience.visionforge.solid.minus
+import three.core.BufferGeometry
+import three.core.Float32BufferAttribute
+import three.math.Vector3
 
 internal fun Point3D.toVector() = Vector3(x, y, z)
 

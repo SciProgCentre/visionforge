@@ -13,10 +13,13 @@ import kotlinx.html.js.onClickFunction
 import kotlinx.html.org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.ValueRequirement
 import space.kscience.dataforge.meta.descriptors.get
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.remove
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.hidden
 import styled.css

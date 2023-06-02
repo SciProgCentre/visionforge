@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
-import three.core.Object3D
 import space.kscience.visionforge.solid.SolidBase
+import three.core.Object3D
 
 /**
  * A custom visual object that has its own Three.js renderer

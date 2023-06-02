@@ -1,15 +1,15 @@
 package space.kscience.visionforge.solid.three
 
-import three.core.BufferGeometry
-import three.core.Object3D
-import three.math.Color
-import three.objects.LineSegments
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.PolyLine
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.color
 import space.kscience.visionforge.solid.string
 import space.kscience.visionforge.solid.three.ThreeMaterials.DEFAULT_LINE_COLOR
+import three.core.BufferGeometry
+import three.core.Object3D
+import three.math.Color
+import three.objects.LineSegments
 import kotlin.math.ceil
 import kotlin.reflect.KClass
 

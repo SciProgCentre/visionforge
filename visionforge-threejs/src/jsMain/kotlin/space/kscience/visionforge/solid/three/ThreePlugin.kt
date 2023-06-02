@@ -6,7 +6,6 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
