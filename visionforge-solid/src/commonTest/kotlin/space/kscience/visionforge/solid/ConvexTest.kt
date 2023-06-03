@@ -2,13 +2,10 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.getIndexed
 import space.kscience.dataforge.meta.toMeta
-import space.kscience.dataforge.misc.DFExperimental
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConvexTest {
-    @OptIn(DFExperimental::class)
-    @Suppress("UNUSED_VARIABLE")
     @Test
     fun testConvexBuilder() {
         val group = testSolids.solidGroup {

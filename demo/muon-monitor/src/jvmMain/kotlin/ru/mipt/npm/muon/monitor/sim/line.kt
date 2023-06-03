@@ -5,7 +5,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Plane
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.GEOMETRY_TOLERANCE
-import space.kscience.visionforge.solid.Point3D
+import space.kscience.visionforge.solid.Float32Vector3D
 
 /**
  * Created by darksnake on 11-May-16.
@@ -50,12 +50,12 @@ fun makeTrack(x: Double, y: Double, theta: Double, phi: Double): Line {
     )
 }
 
-fun Vector3D.toPoint() = Point3D(x, y, z)
+fun Vector3D.toKMathVector() = Float32Vector3D(x, y, z)
 
-fun Line.toPoints(): List<Point3D> {
+fun Line.toKMathVectors(): List<Float32Vector3D> {
     val basePoint = basePlane.intersection(this)
     val bottom = basePoint.subtract(2000.0, direction)
     val top = basePoint.add(2000.0, direction)
-    return listOf(bottom.toPoint(), top.toPoint())
+    return listOf(bottom.toKMathVector(), top.toKMathVector())
 }
 

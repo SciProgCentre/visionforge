@@ -7,14 +7,14 @@ import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.setChild
 
 public interface Hexagon : GeometrySolid {
-    public val node1: Point3D
-    public val node2: Point3D
-    public val node3: Point3D
-    public val node4: Point3D
-    public val node5: Point3D
-    public val node6: Point3D
-    public val node7: Point3D
-    public val node8: Point3D
+    public val node1: Float32Vector3D
+    public val node2: Float32Vector3D
+    public val node3: Float32Vector3D
+    public val node4: Float32Vector3D
+    public val node5: Float32Vector3D
+    public val node6: Float32Vector3D
+    public val node7: Float32Vector3D
+    public val node8: Float32Vector3D
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
         geometryBuilder.face4(node1, node4, node3, node2)
@@ -41,14 +41,14 @@ public class Box(
     private inline val dy get() = ySize / 2
     private inline val dz get() = zSize / 2
 
-    override val node1: Point3D get() = Point3D(-dx, -dy, -dz)
-    override val node2: Point3D get() = Point3D(dx, -dy, -dz)
-    override val node3: Point3D get() = Point3D(dx, dy, -dz)
-    override val node4: Point3D get() = Point3D(-dx, dy, -dz)
-    override val node5: Point3D get() = Point3D(-dx, -dy, dz)
-    override val node6: Point3D get() = Point3D(dx, -dy, dz)
-    override val node7: Point3D get() = Point3D(dx, dy, dz)
-    override val node8: Point3D get() = Point3D(-dx, dy, dz)
+    override val node1: Float32Vector3D get() = Float32Vector3D(-dx, -dy, -dz)
+    override val node2: Float32Vector3D get() = Float32Vector3D(dx, -dy, -dz)
+    override val node3: Float32Vector3D get() = Float32Vector3D(dx, dy, -dz)
+    override val node4: Float32Vector3D get() = Float32Vector3D(-dx, dy, -dz)
+    override val node5: Float32Vector3D get() = Float32Vector3D(-dx, -dy, dz)
+    override val node6: Float32Vector3D get() = Float32Vector3D(dx, -dy, dz)
+    override val node7: Float32Vector3D get() = Float32Vector3D(dx, dy, dz)
+    override val node8: Float32Vector3D get() = Float32Vector3D(-dx, dy, dz)
 }
 
 @VisionBuilder
@@ -63,26 +63,26 @@ public inline fun MutableVisionContainer<Solid>.box(
 @Serializable
 @SerialName("solid.hexagon")
 public class GenericHexagon(
-    override val node1: Point3D,
-    override val node2: Point3D,
-    override val node3: Point3D,
-    override val node4: Point3D,
-    override val node5: Point3D,
-    override val node6: Point3D,
-    override val node7: Point3D,
-    override val node8: Point3D,
+    override val node1: Float32Vector3D,
+    override val node2: Float32Vector3D,
+    override val node3: Float32Vector3D,
+    override val node4: Float32Vector3D,
+    override val node5: Float32Vector3D,
+    override val node6: Float32Vector3D,
+    override val node7: Float32Vector3D,
+    override val node8: Float32Vector3D,
 ) : SolidBase<GenericHexagon>(), Hexagon
 
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.hexagon(
-    node1: Point3D,
-    node2: Point3D,
-    node3: Point3D,
-    node4: Point3D,
-    node5: Point3D,
-    node6: Point3D,
-    node7: Point3D,
-    node8: Point3D,
+    node1: Float32Vector3D,
+    node2: Float32Vector3D,
+    node3: Float32Vector3D,
+    node4: Float32Vector3D,
+    node5: Float32Vector3D,
+    node6: Float32Vector3D,
+    node7: Float32Vector3D,
+    node8: Float32Vector3D,
     name: String? = null,
     action: Hexagon.() -> Unit = {},
 ): Hexagon = GenericHexagon(node1, node2, node3, node4, node5, node6, node7, node8).apply(action).also { setChild(name, it) }

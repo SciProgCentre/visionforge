@@ -7,7 +7,7 @@ import space.kscience.visionforge.setChild
 
 @Serializable
 @SerialName("solid.convex")
-public class Convex(public val points: List<Point3D>) : SolidBase<Convex>()
+public class Convex(public val points: List<Float32Vector3D>) : SolidBase<Convex>()
 
 public inline fun MutableVisionContainer<Solid>.convex(
     name: String? = null,
@@ -15,10 +15,10 @@ public inline fun MutableVisionContainer<Solid>.convex(
 ): Convex = ConvexBuilder().apply(action).build().also { setChild(name, it) }
 
 public class ConvexBuilder {
-    private val points = ArrayList<Point3D>()
+    private val points = ArrayList<Float32Vector3D>()
 
     public fun point(x: Number, y: Number, z: Number) {
-        points.add(Point3D(x, y, z))
+        points.add(Float32Vector3D(x, y, z))
     }
 
     public fun build(): Convex {

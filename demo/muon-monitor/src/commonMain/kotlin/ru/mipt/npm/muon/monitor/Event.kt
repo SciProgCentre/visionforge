@@ -1,9 +1,9 @@
 package ru.mipt.npm.muon.monitor
 
 import kotlinx.serialization.Serializable
-import space.kscience.visionforge.solid.Point3D
+import space.kscience.visionforge.solid.Float32Vector3D
 
-typealias Track = List<Point3D>
+typealias Track = List<Float32Vector3D>
 
 /**
  *

@@ -8,6 +8,7 @@ import kotlin.test.Test
 
 class TestServerExtensions {
 
+    @Suppress("UNUSED_VARIABLE")
     @Test
     fun testServerHeader(){
         val string = createHTML().apply {

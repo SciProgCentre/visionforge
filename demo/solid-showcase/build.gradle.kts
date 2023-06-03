@@ -19,6 +19,8 @@ kscience {
     }
 }
 
+kotlin.explicitApi = null
+
 application {
     mainClass.set("space.kscience.visionforge.solid.demo.FXDemoAppKt")
 }

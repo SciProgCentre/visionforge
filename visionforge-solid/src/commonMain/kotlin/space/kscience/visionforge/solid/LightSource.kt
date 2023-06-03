@@ -70,6 +70,6 @@ public fun MutableVisionContainer<Solid>.pointLight(
     name: String? = null,
     block: PointLightSource.() -> Unit = {},
 ): PointLightSource = PointLightSource().apply(block).also {
-    it.position = Point3D(x, y, z)
+    it.position = Float32Vector3D(x, y, z)
     setChild(name, it)
 }

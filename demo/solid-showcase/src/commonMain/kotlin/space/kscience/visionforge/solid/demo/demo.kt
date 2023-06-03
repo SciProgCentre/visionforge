@@ -130,7 +130,10 @@ fun VisionLayout<Solid>.showcase() {
             color.set(Colors.blue)
         }
         repeat(20) {
-            polyline(Point3D(100, 100, 100), Point3D(-100, -100, -100)) {
+            polyline(
+                Float32Vector3D(100, 100, 100),
+                Float32Vector3D(-100, -100, -100)
+            ) {
                 thickness = 3.0
                 rotationX = it * PI2 / 20
                 color.set(Colors.green)

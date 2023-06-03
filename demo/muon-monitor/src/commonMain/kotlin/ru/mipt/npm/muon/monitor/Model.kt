@@ -16,7 +16,7 @@ class Model(val manager: VisionManager) {
 
     private fun MutableVisionContainer<Solid>.pixel(pixel: SC1) {
         val group = solidGroup(pixel.name) {
-            position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
+            position = Float32Vector3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
             label(pixel.name) {
                 z = -Monitor.PIXEL_Z_SIZE / 2 - 5

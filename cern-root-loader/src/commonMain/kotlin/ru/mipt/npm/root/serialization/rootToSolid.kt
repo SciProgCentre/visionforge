@@ -25,12 +25,12 @@ private fun Solid.rotate(rot: DoubleArray) {
     val xAngle = atan2(-rot[5], rot[8])
     val yAngle = atan2(rot[2], sqrt(1.0 - rot[2].pow(2)))
     val zAngle = atan2(-rot[1], rot[0])
-    rotation = Point3D(xAngle, yAngle, zAngle)
+    rotation = Float32Vector3D(xAngle, yAngle, zAngle)
 }
 
 private fun Solid.translate(trans: DoubleArray) {
     val (x, y, z) = trans
-    position = Point3D(x, y, z)
+    position = Float32Vector3D(x, y, z)
 }
 
 private fun Solid.useMatrix(matrix: TGeoMatrix?) {
@@ -52,7 +52,7 @@ private fun Solid.useMatrix(matrix: TGeoMatrix?) {
             translate(matrix.fTranslation)
             rotate(matrix.fRotationMatrix)
             val (xScale, yScale, zScale) = matrix.fScale
-            scale = Point3D(xScale, yScale, zScale)
+            scale = Float32Vector3D(xScale, yScale, zScale)
         }
     }
 }

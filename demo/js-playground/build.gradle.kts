@@ -7,6 +7,7 @@ kscience{
 }
 
 kotlin{
+    explicitApi = null
     js(IR){
         useCommonJs()
         browser {

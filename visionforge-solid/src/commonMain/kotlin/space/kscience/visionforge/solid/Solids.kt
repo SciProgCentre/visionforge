@@ -51,6 +51,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
+
             polymorphic(Vision::class) {
                 subclass(SimpleVisionGroup.serializer())
                 solids()
