@@ -49,15 +49,15 @@ public fun Object3D.updatePosition(vision: Vision) {
 //        } else {
 //            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
 //        }
-        val quaternion = vision.quaternion
+        val quaternion = vision.quaternionValue
 
         if (quaternion != null) {
             setRotationFromQuaternion(
                 Quaternion(
-                    quaternion.second.x,
-                    quaternion.second.y,
-                    quaternion.second.z,
-                    quaternion.first
+                    quaternion.x,
+                    quaternion.y,
+                    quaternion.z,
+                    quaternion.w
                 )
             )
         } else {

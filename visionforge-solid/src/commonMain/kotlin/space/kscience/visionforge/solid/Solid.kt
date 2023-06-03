@@ -8,6 +8,10 @@ import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.geometry.RotationOrder
+import space.kscience.kmath.geometry.fromEuler
+import space.kscience.kmath.geometry.radians
 import space.kscience.visionforge.*
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
@@ -122,15 +126,6 @@ public var Solid.layer: Int
 
 // Common properties
 
-public enum class RotationOrder {
-    XYZ,
-    YZX,
-    ZXY,
-    XZY,
-    YXZ,
-    ZYX
-}
-
 /**
  * Rotation order
  */
@@ -211,23 +206,40 @@ public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
 public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
 public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 
-public var Solid.quaternion: Pair<Float, Float32Vector3D>?
+/**
+ * Raw quaternion value defined in properties
+ */
+public var Solid.quaternionValue: Quaternion?
     get() = properties.getValue(Solid.QUATERNION_KEY)?.list?.let {
         require(it.size == 4) { "Quaternion must be a number array of 4 elements" }
-        it[0].float to Float32Vector3D(it[1].float, it[2].float, it[3].float)
+        Quaternion(it[0].float, it[1].float, it[2].float, it[3].float)
     }
     set(value) {
         properties.setValue(
             Solid.QUATERNION_KEY,
             value?.let {
                 ListValue(
-                    value.first,
-                    value.second.x,
-                    value.second.y,
-                    value.second.z
+                    value.w,
+                    value.x,
+                    value.y,
+                    value.z
                 )
             }
         )
+    }
+
+/**
+ * Quaternion value including information from euler angles
+ */
+public var Solid.quaternion: Quaternion
+    get() = quaternionValue ?: Quaternion.fromEuler(
+        rotationX.radians,
+        rotationY.radians,
+        rotationZ.radians,
+        rotationOrder
+    )
+    set(value) {
+        quaternionValue = value
     }
 
 

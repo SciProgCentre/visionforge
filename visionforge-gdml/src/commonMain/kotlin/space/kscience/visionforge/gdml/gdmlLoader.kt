@@ -6,6 +6,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 
 import space.kscience.gdml.*
+import space.kscience.kmath.geometry.RotationOrder
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.solid.*

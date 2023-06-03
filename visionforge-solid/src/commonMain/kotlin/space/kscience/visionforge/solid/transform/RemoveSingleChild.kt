@@ -3,6 +3,7 @@ package space.kscience.visionforge.solid.transform
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
+import space.kscience.kmath.complex.QuaternionField
 import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.*
 
@@ -14,10 +15,7 @@ internal fun Solid.updateFrom(other: Solid): Solid {
     x += other.x
     y += other.y
     z += other.y
-    if(quaternion != null || other.quaternion != null) TODO("Quaternion support not implemented")
-    rotationX += other.rotationX
-    rotationY += other.rotationY
-    rotationZ += other.rotationZ
+    quaternion = with(QuaternionField) { other.quaternion * quaternion }
     scaleX *= other.scaleX
     scaleY *= other.scaleY
     scaleZ *= other.scaleZ
