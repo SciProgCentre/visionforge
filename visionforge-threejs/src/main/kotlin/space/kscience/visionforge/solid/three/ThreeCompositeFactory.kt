@@ -38,7 +38,7 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
 
     override val type: KClass<in Composite> get() = Composite::class
 
-    override fun build(three: ThreePlugin, vision: Composite, observe: Boolean): Mesh {
+    override suspend fun build(three: ThreePlugin, vision: Composite, observe: Boolean): Mesh {
         val first = three.buildObject3D(vision.first, observe).takeIfMesh()
             ?: error("First part of composite is not a mesh")
         val second = three.buildObject3D(vision.second, observe).takeIfMesh()

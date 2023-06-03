@@ -26,7 +26,7 @@ public interface ThreeFactory<in T : Vision> {
      * Build an [Object3D] from [vision].
      * @param observe if false, does not observe the changes in [vision] after render (useful for statics).
      */
-    public fun build(three: ThreePlugin, vision: T, observe: Boolean = true): Object3D
+    public suspend fun build(three: ThreePlugin, vision: T, observe: Boolean = true): Object3D
 
     public companion object {
         public const val TYPE: String = "threeFactory"
@@ -41,14 +41,6 @@ public fun Object3D.updatePosition(vision: Vision) {
     if (vision is Solid) {
         position.set(vision.x, vision.y, vision.z)
 
-//        val quaternion = obj.quaternion
-//
-//        if (quaternion != null) {
-//            val (x, y, z, w) = quaternion
-//            setRotationFromQuaternion(Quaternion(x, y, z, w))
-//        } else {
-//            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
-//        }
         val quaternion = vision.quaternionValue
 
         if (quaternion != null) {

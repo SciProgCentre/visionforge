@@ -31,7 +31,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
         }
     }
 
-    override fun build(three: ThreePlugin, vision: SolidReference, observe: Boolean): Object3D {
+    override suspend fun build(three: ThreePlugin, vision: SolidReference, observe: Boolean): Object3D {
         val template = vision.prototype
         val cachedObject = cache.getOrPut(template) {
             three.buildObject3D(template)

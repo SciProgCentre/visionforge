@@ -6,7 +6,6 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.update
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
@@ -47,7 +46,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
-    public fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
+    public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
         is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
         is SolidGroup -> {

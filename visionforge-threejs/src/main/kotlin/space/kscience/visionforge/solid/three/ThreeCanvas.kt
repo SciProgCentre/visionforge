@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 import kotlinx.browser.window
+import kotlinx.coroutines.launch
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.Node
@@ -264,11 +265,12 @@ public class ThreeCanvas(
             scene.findChild("@root".asName())?.let { scene.remove(it) }
             root?.dispose()
         }
-
-        val object3D = three.buildObject3D(vision)
-        object3D.name = "@root"
-        scene.add(object3D)
-        root = object3D
+        three.context.launch {
+            val object3D = three.buildObject3D(vision)
+            object3D.name = "@root"
+            scene.add(object3D)
+            root = object3D
+        }
     }
 
     private var selected: Object3D? = null

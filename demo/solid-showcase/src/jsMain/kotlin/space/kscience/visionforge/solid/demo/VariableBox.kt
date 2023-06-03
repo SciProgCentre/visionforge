@@ -25,7 +25,7 @@ internal fun SolidGroup.varBox(
 
 internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision() {
 
-    override fun render(three: ThreePlugin): Object3D {
+    override suspend fun render(three: ThreePlugin): Object3D {
         val geometry = BoxGeometry(xSize, ySize, 1)
 
         val material = ThreeMaterials.DEFAULT.clone()

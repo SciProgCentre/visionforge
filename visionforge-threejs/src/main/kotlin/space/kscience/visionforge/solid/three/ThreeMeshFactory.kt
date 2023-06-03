@@ -26,7 +26,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
      */
     public abstract fun buildGeometry(obj: T): BufferGeometry
 
-    override fun build(three: ThreePlugin, vision: T, observe: Boolean): Mesh {
+    override suspend fun build(three: ThreePlugin, vision: T, observe: Boolean): Mesh {
         val geometry = buildGeometry(vision)
 
         val mesh = Mesh(geometry, ThreeMaterials.DEFAULT).apply {

@@ -12,12 +12,8 @@ import three.math.Vector3
 import three.objects.Mesh
 import three.textures.Texture
 import kotlin.contracts.contract
-import kotlin.math.PI
 
 public val Meta.vector: Vector3 get() = Vector3(this["x"].float ?: 0f, this["y"].float ?: 0f, this["z"].float ?: 0f)
-
-
-internal fun Double.toRadians() = this * PI / 180
 
 
 internal fun Any.dispose() {

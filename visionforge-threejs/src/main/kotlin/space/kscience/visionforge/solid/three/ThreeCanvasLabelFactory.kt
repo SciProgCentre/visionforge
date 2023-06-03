@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
 public object ThreeCanvasLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
-    override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
+    override suspend fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         canvas.width = 200
         canvas.height = 200

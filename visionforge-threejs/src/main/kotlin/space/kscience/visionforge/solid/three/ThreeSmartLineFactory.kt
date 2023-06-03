@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 public object ThreeSmartLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<in PolyLine> get() = PolyLine::class
 
-    override fun build(three: ThreePlugin, vision: PolyLine, observe: Boolean): Object3D {
+    override suspend fun build(three: ThreePlugin, vision: PolyLine, observe: Boolean): Object3D {
         return if (vision.thickness == 1.0) {
             ThreeLineFactory.build(three, vision, observe)
         } else {

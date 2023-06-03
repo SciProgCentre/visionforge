@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 public object ThreeMeshLineFactory : ThreeFactory<PolyLine> {
     override val type: KClass<in PolyLine> get() = PolyLine::class
 
-    override fun build(three: ThreePlugin, vision: PolyLine, observe: Boolean): Object3D {
+    override suspend fun build(three: ThreePlugin, vision: PolyLine, observe: Boolean): Object3D {
         val geometry = MeshLine(
             Array((vision.points.size - 1) * 2) {
                 vision.points[ceil(it / 2.0).toInt()].toVector()
