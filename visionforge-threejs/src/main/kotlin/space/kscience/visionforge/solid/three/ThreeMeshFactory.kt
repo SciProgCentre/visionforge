@@ -21,10 +21,11 @@ import kotlin.reflect.KClass
 public abstract class ThreeMeshFactory<in T : Solid>(
     override val type: KClass<in T>,
 ) : ThreeFactory<T> {
+
     /**
      * Build a geometry for an object
      */
-    public abstract fun buildGeometry(obj: T): BufferGeometry
+    public abstract suspend fun buildGeometry(obj: T): BufferGeometry
 
     override suspend fun build(three: ThreePlugin, vision: T, observe: Boolean): Mesh {
         val geometry = buildGeometry(vision)

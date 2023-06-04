@@ -6,7 +6,7 @@ import three.core.BufferGeometry
 import three.geometries.SphereGeometry
 
 public object ThreeSphereFactory : ThreeMeshFactory<Sphere>(Sphere::class) {
-    override fun buildGeometry(obj: Sphere): BufferGeometry {
+    override suspend fun buildGeometry(obj: Sphere): BufferGeometry {
         return obj.detail?.let { detail ->
             SphereGeometry(
                 radius = obj.radius,

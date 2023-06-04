@@ -150,6 +150,10 @@ fun VisionLayout<Solid>.showcase() {
             z = 26
         }
     }
+
+    demo("STL", "STL loaded from URL"){
+        stl("https://ozeki.hu/attachments/116/Menger_sponge_sample.stl")
+    }
 }
 
 fun VisionLayout<Solid>.showcaseCSG() {

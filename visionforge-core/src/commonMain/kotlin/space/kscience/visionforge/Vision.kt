@@ -67,7 +67,7 @@ public var Vision.visible: Boolean?
  */
 public fun Vision.onPropertyChange(
     scope: CoroutineScope? = manager?.context,
-    callback: (Name) -> Unit
+    callback: suspend (Name) -> Unit
 ): Job = properties.changes.onEach {
     callback(it)
 }.launchIn(scope ?: error("Orphan Vision can't observe properties"))

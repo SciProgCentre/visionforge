@@ -37,6 +37,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
         objectFactories[PointLightSource::class] = ThreePointLightFactory
+        objectFactories[StlVision::class] = ThreeStlFactory
     }
 
     @Suppress("UNCHECKED_CAST")

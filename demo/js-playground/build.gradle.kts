@@ -8,7 +8,7 @@ kscience{
 
 kotlin{
     explicitApi = null
-    js(IR){
+    js{
         useCommonJs()
         browser {
             binaries.executable()

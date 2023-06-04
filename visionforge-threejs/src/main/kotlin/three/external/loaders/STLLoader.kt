@@ -22,16 +22,18 @@
  * THE SOFTWARE.
  */
 
-@file:JsModule("three")
+@file:JsModule("three/examples/jsm/loaders/STLLoader.js")
 @file:JsNonModule
 
 package three.external.loaders
 
+import org.khronos.webgl.ArrayBuffer
 import org.w3c.xhr.XMLHttpRequest
 import three.core.BufferGeometry
-import three.core.Object3D
 
 external class STLLoader {
+
+    var requestHeader: List<String>
 
     fun load(
         url: String,
@@ -40,7 +42,10 @@ external class STLLoader {
         onError: () -> Unit = definedExternally
     )
 
-    fun parse(data: String): Object3D
-    fun parse(data: ByteArray): Object3D
+    fun parse(data: String): BufferGeometry
+
+    fun parse(data: ByteArray): BufferGeometry
+
+    fun parse(data: ArrayBuffer): BufferGeometry
 
 }

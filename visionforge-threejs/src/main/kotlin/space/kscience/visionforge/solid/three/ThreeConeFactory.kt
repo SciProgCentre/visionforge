@@ -8,7 +8,7 @@ import kotlin.math.PI
 import kotlin.math.pow
 
 public object ThreeConeFactory : ThreeMeshFactory<ConeSegment>(ConeSegment::class) {
-    override fun buildGeometry(obj: ConeSegment): BufferGeometry {
+    override suspend fun buildGeometry(obj: ConeSegment): BufferGeometry {
         val cylinder =  obj.detail?.let {
             val segments = it.toDouble().pow(0.5).toInt()
             CylinderGeometry(

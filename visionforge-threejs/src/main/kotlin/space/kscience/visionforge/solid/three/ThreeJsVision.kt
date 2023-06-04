@@ -1,6 +1,5 @@
 package space.kscience.visionforge.solid.three
 
-import org.w3c.dom.url.URL
 import space.kscience.visionforge.solid.SolidBase
 import three.core.Object3D
 
@@ -9,16 +8,4 @@ import three.core.Object3D
  */
 public abstract class ThreeJsVision : SolidBase<ThreeJsVision>() {
     public abstract suspend fun render(three: ThreePlugin): Object3D
-}
-
-public class ThreeStlVision(val url: URL): ThreeJsVision(){
-    override suspend fun render(three: ThreePlugin): Object3D {
-//        suspendCoroutine {
-//
-//        }
-//        STLLoader()
-
-        TODO()
-    }
-
 }
