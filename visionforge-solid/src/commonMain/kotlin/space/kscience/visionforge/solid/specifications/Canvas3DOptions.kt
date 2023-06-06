@@ -59,6 +59,7 @@ public class CanvasSize : Scheme() {
 }
 
 public class Canvas3DOptions : Scheme() {
+    @Suppress("DEPRECATION")
     public var axes: AxesScheme by spec(AxesScheme)
     public var camera: CameraScheme by spec(CameraScheme)
     public var controls: ControlsScheme by spec(ControlsScheme)
@@ -75,6 +76,7 @@ public class Canvas3DOptions : Scheme() {
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions) {
         override val descriptor: MetaDescriptor by lazy {
             MetaDescriptor {
+                @Suppress("DEPRECATION")
                 scheme(Canvas3DOptions::axes, AxesScheme)
 
                 value(Canvas3DOptions::layers) {

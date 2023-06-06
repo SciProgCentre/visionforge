@@ -37,7 +37,7 @@ public interface ThreeFactory<in T : Vision> {
  * Update position, rotation and visibility
  */
 public fun Object3D.updatePosition(vision: Vision) {
-    visible = vision.visible ?: true
+//    visible = vision.visible ?: true
     if (vision is Solid) {
         position.set(vision.x, vision.y, vision.z)
 

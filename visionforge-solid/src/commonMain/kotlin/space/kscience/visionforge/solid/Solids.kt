@@ -48,6 +48,8 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
 
             subclass(AmbientLightSource.serializer())
             subclass(PointLightSource.serializer())
+
+            subclass(AxesSolid.serializer())
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {

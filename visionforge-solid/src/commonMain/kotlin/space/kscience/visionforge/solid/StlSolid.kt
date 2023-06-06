@@ -7,19 +7,19 @@ import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.setChild
 
 
-public sealed class StlVision: SolidBase<StlVision>()
+public sealed class StlSolid: SolidBase<StlSolid>()
 
 @Serializable
 @SerialName("solid.stl.url")
-public class StlUrlVision(public val url: String) : StlVision()
+public class StlUrlSolid(public val url: String) : StlSolid()
 
 @Serializable
 @SerialName("solid.stl.binary")
-public class StlBinaryVision(public val data: ByteArray) : StlVision()
+public class StlBinarySolid(public val data: ByteArray) : StlSolid()
 
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.stl(
     url: String,
     name: String? = null,
-    action: StlVision.() -> Unit = {},
-): StlVision = StlUrlVision(url).apply(action).also { setChild(name, it) }
+    action: StlSolid.() -> Unit = {},
+): StlSolid = StlUrlSolid(url).apply(action).also { setChild(name, it) }
