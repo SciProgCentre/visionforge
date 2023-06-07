@@ -9,6 +9,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.complex.QuaternionField
 import space.kscience.kmath.geometry.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
@@ -245,6 +246,6 @@ public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)
 /**
  * Add rotation with given [angle] relative to given [axis]
  */
-public fun Solid.rotate(angle: Angle, axis: DoubleVector3D) {
-    quaternion = Quaternion.fromRotation(angle, axis)
+public fun Solid.rotate(angle: Angle, axis: DoubleVector3D) = with(QuaternionField) {
+    quaternion = Quaternion.fromRotation(angle, axis)*quaternion
 }
