@@ -60,8 +60,6 @@ public interface Solid : Vision {
 
         public val ROTATION_KEY: Name = "rotation".asName()
 
-        public val QUATERNION_KEY: Name = "quaternion".asName()
-
         public val X_ROTATION_KEY: Name = ROTATION_KEY + X_KEY
         public val Y_ROTATION_KEY: Name = ROTATION_KEY + Y_KEY
         public val Z_ROTATION_KEY: Name = ROTATION_KEY + Z_KEY
@@ -208,13 +206,13 @@ public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
  * Raw quaternion value defined in properties
  */
 public var Solid.quaternionValue: Quaternion?
-    get() = properties.getValue(Solid.QUATERNION_KEY)?.list?.let {
+    get() = properties.getValue(ROTATION_KEY)?.list?.let {
         require(it.size == 4) { "Quaternion must be a number array of 4 elements" }
         Quaternion(it[0].float, it[1].float, it[2].float, it[3].float)
     }
     set(value) {
         properties.setValue(
-            Solid.QUATERNION_KEY,
+            ROTATION_KEY,
             value?.let {
                 ListValue(
                     value.w,
