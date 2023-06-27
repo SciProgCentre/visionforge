@@ -2,6 +2,8 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
+group = "demo"
+
 kscience {
     jvm()
     js {

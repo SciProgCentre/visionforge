@@ -10,7 +10,7 @@ kscience {
             api("org.jetbrains.kotlin-wrappers:kotlin-styled")
             api("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
 //    implementation(npm("react-select","4.3.0"))
-            implementation(projects.visionforgeThreejs)
+            api(projects.visionforgeThreejs)
         }
     }
 }
