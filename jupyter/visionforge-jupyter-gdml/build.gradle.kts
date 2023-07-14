@@ -16,16 +16,16 @@ kscience {
         }
     }
 
-    dependencies{
+    commonMain{
         implementation(projects.visionforgeSolid)
         implementation(projects.jupyter)
     }
 
-    dependencies(jvmMain){
+    jvmMain{
         implementation(projects.visionforgeGdml)
     }
 
-    dependencies(jsMain){
+    jsMain{
         implementation(projects.visionforgeThreejs)
         implementation(projects.ui.ring)
     }

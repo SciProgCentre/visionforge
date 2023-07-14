@@ -11,7 +11,7 @@ kscience {
     dependencies {
         api(projects.visionforgeCore)
     }
-    dependencies(jvmMain){
+    jvmMain {
         api(projects.visionforgeServer)
     }
 }
