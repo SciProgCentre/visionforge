@@ -26,7 +26,7 @@ public data class VisionPage(
         }
 
         /**
-         * Use css with given stylesheet link as a global header for all pages.
+         * Use css with the given stylesheet link as a global header for all pages.
          */
         public fun styleSheetHeader(href: String, block: LINK.() -> Unit = {}): HtmlFragment = {
             link {

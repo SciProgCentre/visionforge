@@ -18,12 +18,12 @@ import kotlin.random.nextUInt
  * A base class for different Jupyter VF integrations
  */
 @DFExperimental
-public abstract class VFIntegrationBase(
+public abstract class VisionForgeIntegration(
     public val visionManager: VisionManager,
 ) : JupyterIntegration(), ContextAware {
 
     override val context: Context get() = visionManager.context
-    protected val handler: VFForNotebook = VFForNotebook(visionManager.context)
+    protected val handler: VisionForge = VisionForge(visionManager)
 
     protected abstract fun Builder.afterLoaded()
 
@@ -33,13 +33,15 @@ public abstract class VFIntegrationBase(
             declare("VisionForge" to handler, "vf" to handler)
         }
 
+
         onShutdown {
             handler.stopServer()
         }
 
         import(
             "kotlinx.html.*",
-            "space.kscience.visionforge.html.*"
+            "space.kscience.visionforge.html.*",
+            "space.kscience.visionforge.jupyter.*"
         )
 
         render<HtmlFragment> { fragment ->
@@ -54,7 +56,6 @@ public abstract class VFIntegrationBase(
             handler.produceHtml {
                 vision(vision)
             }
-
         }
 
         render<VisionPage> { page ->
@@ -94,3 +95,11 @@ public abstract class VFIntegrationBase(
         afterLoaded()
     }
 }
+
+/**
+ * Create a standalone page in the notebook
+ */
+public fun VisionForge.page(
+    pageHeaders: Map<String, HtmlFragment> = emptyMap(),
+    content: HtmlVisionFragment
+): VisionPage = VisionPage(visionManager, pageHeaders, content)

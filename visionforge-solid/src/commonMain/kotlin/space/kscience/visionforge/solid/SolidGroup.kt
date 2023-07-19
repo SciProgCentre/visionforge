@@ -99,3 +99,8 @@ public inline fun MutableVisionContainer<Solid>.solidGroup(
     name: String,
     action: SolidGroup.() -> Unit = {},
 ): SolidGroup = solidGroup(name.parseAsName(), action)
+
+/**
+ * Create a [SolidGroup] using given configuration [block]
+ */
+public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)

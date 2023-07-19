@@ -13,7 +13,7 @@ import space.kscience.visionforge.renderAllVisionsById
 import space.kscience.visionforge.renderAllVisionsIn
 
 @JsExport
-public class VFNotebookPlugin : AbstractPlugin() {
+public class VFNotebookClient : AbstractPlugin() {
     private val client by require(VisionClient)
 
     public fun renderAllVisionsIn(element: Element) {
@@ -39,8 +39,8 @@ public class VFNotebookPlugin : AbstractPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
     @Suppress("NON_EXPORTABLE_TYPE")
-    public companion object : PluginFactory<VFNotebookPlugin> {
-        override fun build(context: Context, meta: Meta): VFNotebookPlugin = VFNotebookPlugin()
+    public companion object : PluginFactory<VFNotebookClient> {
+        override fun build(context: Context, meta: Meta): VFNotebookClient = VFNotebookClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.notebook", group = PluginTag.DATAFORGE_GROUP)
     }

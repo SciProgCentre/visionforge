@@ -64,6 +64,6 @@ include(
     ":demo:playground",
 //    ":demo:plotly-fx",
     ":demo:js-playground",
-    ":jupyter",
-    ":jupyter:visionforge-jupyter-gdml"
+    ":visionforge-jupyter",
+    ":visionforge-jupyter:visionforge-jupyter-common"
 )

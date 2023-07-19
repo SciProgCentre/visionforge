@@ -16,9 +16,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.info
 import space.kscience.dataforge.context.logger
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.int
-import space.kscience.dataforge.meta.string
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
@@ -26,7 +24,6 @@ import space.kscience.visionforge.html.HtmlVisionFragment
 import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.server.VisionRoute
 import space.kscience.visionforge.server.serveVisionData
-import space.kscience.visionforge.visionManager
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -41,9 +38,14 @@ internal fun TagConsumer<*>.renderScriptForId(id: String) {
 /**
  * A handler class that includes a server and common utilities
  */
-public class VFForNotebook(override val context: Context) : ContextAware, CoroutineScope {
+public class VisionForge(
+    public val visionManager: VisionManager,
+    meta: Meta = Meta.EMPTY,
+) : ContextAware, CoroutineScope {
 
-    public val visionManager: VisionManager = context.visionManager
+    override val context: Context get() = visionManager.context
+
+    public val configuration: ObservableMutableMeta = meta.toMutableMeta()
 
     private var counter = 0
 
@@ -61,9 +63,11 @@ public class VFForNotebook(override val context: Context) : ContextAware, Corout
 
     public fun html(block: TagConsumer<*>.() -> Unit): MimeTypedResult = HTML(createHTML().apply(block).finalize())
 
+    public fun getProperty(name: String): TypedMeta<*>? = configuration[name] ?: context.properties[name]
+
     public fun startServer(
-        host: String = context.properties["visionforge.host"].string ?: "localhost",
-        port: Int = context.properties["visionforge.port"].int ?: VisionRoute.DEFAULT_PORT,
+        host: String = getProperty("visionforge.host").string ?: "localhost",
+        port: Int = getProperty("visionforge.port").int ?: VisionRoute.DEFAULT_PORT,
     ): MimeTypedResult = html {
         if (engine != null) {
             p {

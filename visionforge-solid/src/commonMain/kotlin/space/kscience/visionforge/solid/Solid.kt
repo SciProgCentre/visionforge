@@ -246,6 +246,6 @@ public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)
 /**
  * Add rotation with given [angle] relative to given [axis]
  */
-public fun Solid.rotate(angle: Angle, axis: DoubleVector3D) = with(QuaternionField) {
+public fun Solid.rotate(angle: Angle, axis: DoubleVector3D): Unit = with(QuaternionField) {
     quaternion = Quaternion.fromRotation(angle, axis)*quaternion
 }

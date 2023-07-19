@@ -5,6 +5,7 @@ plugins {
 description = "Common visionforge jupyter module"
 
 kscience {
+    useKtor()
     jvm()
     js()
     jupyterLibrary()
@@ -12,6 +13,7 @@ kscience {
         api(projects.visionforgeCore)
     }
     dependencies(jvmMain){
+        api("io.ktor:ktor-server-cio")
         api(projects.visionforgeServer)
     }
 }

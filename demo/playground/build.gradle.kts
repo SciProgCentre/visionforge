@@ -47,12 +47,11 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(projects.visionforgeSolid)
-                implementation(projects.visionforgeGdml)
                 implementation(projects.visionforgePlotly)
                 implementation(projects.visionforgeMarkdown)
                 implementation(projects.visionforgeTables)
                 implementation(projects.cernRootLoader)
-                implementation(projects.jupyter)
+                implementation(projects.visionforgeJupyter.visionforgeJupyterCommon)
             }
         }
 
@@ -66,6 +65,8 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
+                implementation("io.ktor:ktor-server-cio:${spclibs.versions.ktor.get()}")
+                implementation(projects.visionforgeGdml)
                 implementation(projects.visionforgeServer)
                 implementation(spclibs.logback.classic)
                 implementation("com.github.Ricky12Awesome:json-schema-serialization:0.6.6")
