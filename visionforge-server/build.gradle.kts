@@ -9,7 +9,7 @@ kscience{
         api("io.ktor:ktor-server-host-common")
         api("io.ktor:ktor-server-html-builder")
         api("io.ktor:ktor-server-websockets")
-        implementation("io.ktor:ktor-server-cors")
+        api("io.ktor:ktor-server-cors")
     }
 }
 

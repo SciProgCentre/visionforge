@@ -18,15 +18,15 @@ kscience {
     }
 
     dependencies {
-        implementation(projects.visionforgeSolid)
-        implementation(projects.visionforgePlotly)
-        implementation(projects.visionforgeTables)
-        implementation(projects.visionforgeMarkdown)
-        implementation(projects.visionforgeJupyter)
+        api(projects.visionforgeSolid)
+        api(projects.visionforgePlotly)
+        api(projects.visionforgeTables)
+        api(projects.visionforgeMarkdown)
+        api(projects.visionforgeJupyter)
     }
 
     jvmMain {
-        implementation(projects.visionforgeGdml)
+        api(projects.visionforgeGdml)
     }
 
     jsMain {
