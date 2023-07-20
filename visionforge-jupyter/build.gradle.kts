@@ -13,7 +13,9 @@ kscience {
         api(projects.visionforgeCore)
     }
     dependencies(jvmMain){
-        api("io.ktor:ktor-server-cio")
+        api("io.ktor:ktor-server-cio-jvm")
+        api("io.ktor:ktor-server-websockets-jvm")
+        api("io.ktor:ktor-server-cors-jvm")
         api(projects.visionforgeServer)
     }
 }
