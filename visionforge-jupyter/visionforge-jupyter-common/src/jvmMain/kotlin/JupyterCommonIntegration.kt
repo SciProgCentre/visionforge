@@ -33,6 +33,9 @@ public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionMan
             "space.kscience.visionforge.solid.*",
             "space.kscience.tables.*",
             "space.kscience.dataforge.meta.*",
+            "space.kscience.plotly.*",
+            "space.kscience.plotly.models.*",
+            "space.kscience.visionforge.plotly.plotly"
         )
 
         render<Gdml> { gdmlModel ->
