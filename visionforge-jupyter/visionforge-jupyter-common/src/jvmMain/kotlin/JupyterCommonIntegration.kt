@@ -24,7 +24,7 @@ import space.kscience.visionforge.visionManager
 @DFExperimental
 public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionManager) {
 
-    override fun Builder.afterLoaded() {
+    override fun Builder.afterLoaded(vf: VisionForge) {
 
         resources {
             js("visionforge-common") {
@@ -43,19 +43,19 @@ public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionMan
         )
 
         render<Gdml> { gdmlModel ->
-            handler.produceHtml {
+            vf.produceHtml {
                 vision { gdmlModel.toVision() }
             }
         }
 
         render<Table<*>> { table ->
-            handler.produceHtml {
+            vf.produceHtml {
                 vision { table.toVision() }
             }
         }
 
         render<Plot> { plot ->
-            handler.produceHtml {
+            vf.produceHtml {
                 vision { plot.asVision() }
             }
         }

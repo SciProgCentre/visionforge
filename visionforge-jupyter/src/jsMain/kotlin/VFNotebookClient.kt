@@ -31,9 +31,10 @@ public class VFNotebookClient : AbstractPlugin() {
 
 
     init {
+        console.info("Loading VisionForge global hooks")
         //register VisionForge in the browser window
-        window.asDynamic().vf = this
-        window.asDynamic().VisionForge = this
+        window.parent.asDynamic().vf = this
+        window.parent.asDynamic().VisionForge = this
     }
 
     @Suppress("NON_EXPORTABLE_TYPE")

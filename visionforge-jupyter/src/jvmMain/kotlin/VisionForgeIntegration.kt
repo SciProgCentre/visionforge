@@ -1,6 +1,7 @@
 package space.kscience.visionforge.jupyter
 
 import kotlinx.html.*
+import org.jetbrains.kotlinx.jupyter.api.KotlinKernelHost
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.api.declare
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
@@ -22,20 +23,30 @@ public abstract class VisionForgeIntegration(
 ) : JupyterIntegration(), ContextAware {
 
     override val context: Context get() = visionManager.context
-    protected val handler: VisionForge = VisionForge(visionManager)
 
-    protected abstract fun Builder.afterLoaded()
+    protected abstract fun Builder.afterLoaded(vf: VisionForge)
 
     final override fun Builder.onLoaded() {
 
+        val vf: VisionForge = VisionForge(visionManager, notebook)
+
         onLoaded {
-            declare("VisionForge" to handler, "vf" to handler)
-            handler.startServer(this)
+            val kernel: KotlinKernelHost = this
+            declare("VisionForge" to vf, "vf" to vf)
+            vf.startServer(kernel)
+            vf.configuration.onChange(this) { name ->
+                if (name.toString() == "visionforge.port") {
+                    kernel.displayHtml {
+                        p { +"Property 'visionforge.port' changed. Restarting server" }
+                    }
+                    vf.startServer(kernel)
+                }
+            }
         }
 
 
         onShutdown {
-            handler.stopServer(this)
+            vf.stopServer(this)
         }
 
         import(
@@ -53,7 +64,7 @@ public abstract class VisionForgeIntegration(
 //        }
 
         render<Vision> { vision ->
-            handler.produceHtml {
+            vf.produceHtml {
                 vision(vision)
             }
         }
@@ -74,16 +85,16 @@ public abstract class VisionForgeIntegration(
                         this.id = id
                         visionFragment(visionManager, fragment = page.content)
                     }
-                    with(handler) {
-                        renderScriptForId(id, true)
+                    with(vf) {
+                        renderScriptForId(id)
                     }
                 }
             }
         }
 
         render<HtmlFormFragment> { fragment ->
-            handler.produceHtml {
-                if (!handler.isServerRunning()) {
+            vf.produceHtml {
+                if (!vf.isServerRunning()) {
                     p {
                         style = "color: red;"
                         +"The server is not running. Forms are not interactive. Start server with `VisionForge.startServer()."
@@ -94,7 +105,7 @@ public abstract class VisionForgeIntegration(
             }
         }
 
-        afterLoaded()
+        afterLoaded(vf)
     }
 }
 

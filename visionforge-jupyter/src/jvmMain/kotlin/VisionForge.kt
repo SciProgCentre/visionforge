@@ -10,9 +10,7 @@ import io.ktor.server.websocket.WebSockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.KotlinKernelHost
-import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
+import org.jetbrains.kotlinx.jupyter.api.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.info
@@ -21,7 +19,8 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.html.*
+import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.server.VisionRoute
 import space.kscience.visionforge.server.serveVisionData
 import kotlin.coroutines.CoroutineContext
@@ -50,6 +49,7 @@ public enum class VisionForgeCompatibility {
 @Suppress("ExtractKtorModule")
 public class VisionForge(
     public val visionManager: VisionManager,
+    public val notebook: Notebook,
     meta: Meta = Meta.EMPTY,
 ) : ContextAware, CoroutineScope {
 
@@ -60,8 +60,6 @@ public class VisionForge(
     private var counter = 0
 
     private var engine: ApplicationEngine? = null
-
-    public var notebookMode: VisionForgeCompatibility = VisionForgeCompatibility.IDEA
 
     override val coroutineContext: CoroutineContext get() = context.coroutineContext
 
@@ -75,19 +73,19 @@ public class VisionForge(
         host: String = getProperty("visionforge.host").string ?: "localhost",
         port: Int = getProperty("visionforge.port").int ?: VisionRoute.DEFAULT_PORT,
     ) {
-        if (engine != null) {
+        engine?.let {
             kernel.displayHtml {
                 p {
                     style = "color: red;"
                     +"Stopping current VisionForge server"
                 }
             }
-
+            it.stop(1000, 2000)
         }
 
         //val connector: EngineConnectorConfig = EngineConnectorConfig(host, port)
 
-        engine?.stop(1000, 2000)
+
         engine = context.embeddedServer(CIO, port, host) {
             install(WebSockets)
         }.start(false)
@@ -115,16 +113,11 @@ public class VisionForge(
         }
     }
 
-    internal fun TagConsumer<*>.renderScriptForId(id: String, iframeIsolation: Boolean = false) {
+    internal fun TagConsumer<*>.renderScriptForId(id: String) {
         script {
             type = "text/javascript"
-            if (iframeIsolation) {
-                //language=JavaScript
-                unsafe { +"parent.VisionForge.renderAllVisionsById(document, \"$id\");" }
-            } else {
-                //language=JavaScript
-                unsafe { +"VisionForge.renderAllVisionsById(document, \"$id\");" }
-            }
+            //language=JavaScript
+            unsafe { +"parent.VisionForge.renderAllVisionsById(document, \"$id\");" }
         }
     }
 
@@ -133,8 +126,10 @@ public class VisionForge(
         isolated: Boolean? = null,
         fragment: HtmlVisionFragment,
     ): MimeTypedResult {
-        val iframeIsolation = isolated
-            ?: (notebookMode == VisionForgeCompatibility.JUPYTER || notebookMode == VisionForgeCompatibility.DATALORE)
+        val iframeIsolation = isolated ?: when (notebook.jupyterClientType) {
+            JupyterClientType.DATALORE, JupyterClientType.JUPYTER_NOTEBOOK -> true
+            else -> false
+        }
         return HTML(
             iframeIsolation
         ) {
@@ -172,7 +167,7 @@ public class VisionForge(
                     visionFragment(visionManager, fragment = fragment)
                 }
             }
-            renderScriptForId(id, iframeIsolation = iframeIsolation)
+            renderScriptForId(id)
         }
     }
 
