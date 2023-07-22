@@ -78,7 +78,7 @@ public fun VisionPage.makeFile(
                 charset = "utf-8"
             }
             actualHeaders.values.forEach {
-                fragment(it)
+                appendFragment(it)
             }
         }
         body {

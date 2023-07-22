@@ -51,7 +51,7 @@ kotlin {
                 implementation(projects.visionforgeMarkdown)
                 implementation(projects.visionforgeTables)
                 implementation(projects.cernRootLoader)
-                implementation(projects.visionforgeJupyter.visionforgeJupyterCommon)
+                api(projects.visionforgeJupyter.visionforgeJupyterCommon)
             }
         }
 

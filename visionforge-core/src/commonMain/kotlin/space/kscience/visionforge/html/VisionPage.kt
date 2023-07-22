@@ -17,7 +17,7 @@ public data class VisionPage(
         /**
          * Use a script with given [src] as a global header for all pages.
          */
-        public fun scriptHeader(src: String, block: SCRIPT.() -> Unit = {}): HtmlFragment = {
+        public fun scriptHeader(src: String, block: SCRIPT.() -> Unit = {}): HtmlFragment = HtmlFragment{
             script {
                 type = "text/javascript"
                 this.src = src
@@ -28,7 +28,7 @@ public data class VisionPage(
         /**
          * Use css with the given stylesheet link as a global header for all pages.
          */
-        public fun styleSheetHeader(href: String, block: LINK.() -> Unit = {}): HtmlFragment = {
+        public fun styleSheetHeader(href: String, block: LINK.() -> Unit = {}): HtmlFragment = HtmlFragment{
             link {
                 rel = "stylesheet"
                 this.href = href
@@ -36,7 +36,7 @@ public data class VisionPage(
             }
         }
 
-        public fun title(title:String): HtmlFragment = {
+        public fun title(title:String): HtmlFragment = HtmlFragment{
             title(title)
         }
     }

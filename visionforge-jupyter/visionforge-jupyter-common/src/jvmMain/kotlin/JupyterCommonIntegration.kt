@@ -6,8 +6,12 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.plotly.Plot
+import space.kscience.plotly.PlotlyPage
+import space.kscience.plotly.StaticPlotlyRenderer
 import space.kscience.tables.*
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.html.HtmlFragment
+import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.plotly.asVision
@@ -23,7 +27,7 @@ public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionMan
     override fun Builder.afterLoaded() {
 
         resources {
-            js("three") {
+            js("visionforge-common") {
                 classPath("js/visionforge-jupyter-common.js")
             }
         }
@@ -53,6 +57,24 @@ public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionMan
         render<Plot> { plot ->
             handler.produceHtml {
                 vision { plot.asVision() }
+            }
+        }
+
+
+        render<PlotlyPage> { plotlyPage ->
+            val headers = plotlyPage.headers.associate { plotlyFragment ->
+                plotlyFragment.hashCode().toString(16) to HtmlFragment {
+                    plotlyFragment.visit(this)
+                }
+
+            }
+            VisionPage(visionManager, headers) {
+                div{
+                    p { +"Plotly page renderer is not recommended in VisionForge, use `vf.page{}`" }
+                }
+                div {
+                    plotlyPage.fragment.render.invoke(this, StaticPlotlyRenderer)
+                }
             }
         }
     }

@@ -24,7 +24,7 @@ fun FlowContent.renderVisionFragment(
             renderer(name, vision, outputMeta)
         }
     }
-    fragment(consumer)
+    fragment.appendTo(consumer)
     return visionMap
 }
 
@@ -35,7 +35,7 @@ private fun VisionOutput.base(block: VisionGroup.() -> Unit) = context.visionMan
 @DFExperimental
 class HtmlTagTest {
 
-    val fragment: HtmlVisionFragment = {
+    val fragment = HtmlVisionFragment{
         div {
             h1 { +"Head" }
             vision("ddd") {

@@ -1,6 +1,7 @@
 package space.kscience.visionforge.jupyter
 
 import kotlinx.browser.window
+import org.w3c.dom.Document
 import org.w3c.dom.Element
 import space.kscience.dataforge.context.AbstractPlugin
 import space.kscience.dataforge.context.Context
@@ -20,8 +21,8 @@ public class VFNotebookClient : AbstractPlugin() {
         client.renderAllVisionsIn(element)
     }
 
-    public fun renderAllVisionsById(id: String) {
-        client.renderAllVisionsById(id)
+    public fun renderAllVisionsById(document: Document, id: String) {
+        client.renderAllVisionsById(document, id)
     }
 
     public fun renderAllVisions() {

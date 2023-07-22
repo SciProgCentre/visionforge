@@ -286,8 +286,8 @@ public fun VisionClient.renderAllVisionsIn(element: Element) {
 /**
  * Render all visions in an element with a given [id]
  */
-public fun VisionClient.renderAllVisionsById(id: String): Unit = whenDocumentLoaded {
-    val element = getElementById(id)
+public fun VisionClient.renderAllVisionsById(document: Document, id: String): Unit {
+    val element = document.getElementById(id)
     if (element != null) {
         renderAllVisionsIn(element)
     } else {

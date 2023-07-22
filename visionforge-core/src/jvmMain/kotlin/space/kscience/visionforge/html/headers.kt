@@ -91,14 +91,14 @@ internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String, 
  */
 internal fun fileScriptHeader(
     path: Path,
-): HtmlFragment = {
+): HtmlFragment = HtmlFragment{
     script {
         type = "text/javascript"
         src = path.toString()
     }
 }
 
-internal fun embedScriptHeader(resource: String, classLoader: ClassLoader): HtmlFragment = {
+internal fun embedScriptHeader(resource: String, classLoader: ClassLoader): HtmlFragment = HtmlFragment{
     script {
         type = "text/javascript"
         unsafe {
@@ -113,7 +113,7 @@ internal fun fileCssHeader(
     cssPath: Path,
     resource: String,
     classLoader: ClassLoader,
-): HtmlFragment = {
+): HtmlFragment = HtmlFragment{
     val relativePath = checkOrStoreFile(basePath, cssPath, resource, classLoader)
     link {
         rel = "stylesheet"

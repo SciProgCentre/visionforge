@@ -1,8 +1,7 @@
 package space.kscience.visionforge.jupyter
 
 import kotlinx.html.*
-import kotlinx.html.stream.createHTML
-import org.jetbrains.kotlinx.jupyter.api.HTML
+import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.api.declare
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import space.kscience.dataforge.context.Context
@@ -31,11 +30,12 @@ public abstract class VisionForgeIntegration(
 
         onLoaded {
             declare("VisionForge" to handler, "vf" to handler)
+            handler.startServer(this)
         }
 
 
         onShutdown {
-            handler.stopServer()
+            handler.stopServer(this)
         }
 
         import(
@@ -43,14 +43,14 @@ public abstract class VisionForgeIntegration(
             "space.kscience.visionforge.html.*",
             "space.kscience.visionforge.jupyter.*"
         )
-
-        render<HtmlFragment> { fragment ->
-            handler.produceHtml(fragment = fragment)
-        }
-
-        render<HtmlVisionFragment> { fragment ->
-            handler.produceHtml(fragment = fragment)
-        }
+//
+//        render<HtmlFragment> { fragment ->
+//            HTML(fragment.renderToString())
+//        }
+//
+//        render<HtmlVisionFragment> { fragment ->
+//            handler.produceHtml(fragment = fragment)
+//        }
 
         render<Vision> { vision ->
             handler.produceHtml {
@@ -59,13 +59,13 @@ public abstract class VisionForgeIntegration(
         }
 
         render<VisionPage> { page ->
-            HTML(createHTML().apply {
+            HTML(true) {
                 head {
                     meta {
                         charset = "utf-8"
                     }
                     page.pageHeaders.values.forEach {
-                        fragment(it)
+                        appendFragment(it)
                     }
                 }
                 body {
@@ -74,9 +74,11 @@ public abstract class VisionForgeIntegration(
                         this.id = id
                         visionFragment(visionManager, fragment = page.content)
                     }
-                    renderScriptForId(id)
+                    with(handler) {
+                        renderScriptForId(id, true)
+                    }
                 }
-            }.finalize(), true)
+            }
         }
 
         render<HtmlFormFragment> { fragment ->
@@ -87,7 +89,7 @@ public abstract class VisionForgeIntegration(
                         +"The server is not running. Forms are not interactive. Start server with `VisionForge.startServer()."
                     }
                 }
-                fragment(fragment.formBody)
+                appendFragment(fragment.formBody)
                 vision(fragment.vision)
             }
         }
@@ -96,10 +98,25 @@ public abstract class VisionForgeIntegration(
     }
 }
 
+
+/**
+ * Create a fragment without a head to be embedded in the page
+ */
+@Suppress("UnusedReceiverParameter")
+public fun VisionForge.html(body: TagConsumer<*>.() -> Unit): MimeTypedResult = HTML(false, body)
+
+
+/**
+ * Create a fragment without a head to be embedded in the page
+ */
+public fun VisionForge.fragment(body: VisionTagConsumer<*>.() -> Unit): MimeTypedResult = produceHtml(false, body)
+
+
 /**
  * Create a standalone page in the notebook
  */
 public fun VisionForge.page(
     pageHeaders: Map<String, HtmlFragment> = emptyMap(),
-    content: HtmlVisionFragment
-): VisionPage = VisionPage(visionManager, pageHeaders, content)
+    body: VisionTagConsumer<*>.() -> Unit,
+): VisionPage = VisionPage(visionManager, pageHeaders, body)
+

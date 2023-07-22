@@ -2,7 +2,6 @@ package space.kscience.visionforge.react
 
 import kotlinx.css.*
 import org.w3c.dom.Element
-import org.w3c.dom.HTMLElement
 import react.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
@@ -29,7 +28,7 @@ public val ThreeCanvasComponent: FC<ThreeCanvasProps> = fc("ThreeCanvasComponent
 
     useEffect(props.solid, props.options, elementRef) {
         if (canvas == null) {
-            val element = elementRef.current as? HTMLElement ?: error("Canvas element not found")
+            val element = elementRef.current ?: error("Canvas element not found")
             canvas = ThreeCanvas(three, element, props.options ?: Canvas3DOptions())
         }
     }
