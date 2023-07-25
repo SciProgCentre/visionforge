@@ -22,7 +22,7 @@ internal class VisionUpdateTest {
         }
         val dif = visionManager.VisionChange {
             solidGroup("top") {
-                color.set(123)
+                color(123)
                 box(100, 100, 100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
@@ -41,7 +41,7 @@ internal class VisionUpdateTest {
     fun testVisionChangeSerialization() {
         val change = visionManager.VisionChange {
             solidGroup("top") {
-                color.set(123)
+                color(123)
                 box(100, 100, 100)
             }
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))

@@ -20,7 +20,7 @@ class SolidPropertyTest {
         val box = Box(10.0f, 10.0f, 10.0f)
         box.material {
             //meta["color"] = "pink"
-            color.set("pink")
+            color("pink")
         }
         assertEquals("pink", box.properties.getValue("material.color")?.string)
         assertEquals("pink", box.color.string)
@@ -41,7 +41,7 @@ class SolidPropertyTest {
         delay(5)
 
         box.material {
-            color.set("pink")
+            color("pink")
         }
 
         assertEquals("pink", c.await())

@@ -11,7 +11,7 @@ import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.solid
 import java.util.zip.ZipInputStream
 import kotlin.io.path.Path
@@ -44,7 +44,7 @@ fun main() {
             requirePlugin(Solids)
             solid {
                 ambientLight {
-                    color.set(Colors.white)
+                    color(Colors.white)
                 }
                 rootGeo(geo,"BM@N", maxLayer = 3, ignoreRootColors = true).also {
                     Path("data/BM@N.vf.json").writeText(Solids.encodeToString(it))

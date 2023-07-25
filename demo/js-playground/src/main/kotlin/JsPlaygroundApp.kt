@@ -76,7 +76,7 @@ private class JsPlaygroundApp : Application {
                                     solids = playgroundContext.request(Solids)
                                     solid {
                                         ambientLight {
-                                            color.set(Colors.white)
+                                            color(Colors.white)
                                         }
                                         repeat(100) {
                                             sphere(5, name = "sphere[$it]") {
@@ -84,7 +84,7 @@ private class JsPlaygroundApp : Application {
                                                 y = random.nextDouble(-300.0, 300.0)
                                                 z = random.nextDouble(-300.0, 300.0)
                                                 material {
-                                                    color.set(random.nextInt())
+                                                    color(random.nextInt())
                                                 }
                                                 detail = 16
                                             }

@@ -39,7 +39,7 @@ class Model(val manager: VisionManager) {
     val root: SolidGroup = SolidGroup().apply {
         setAsRoot(this@Model.manager)
         material {
-            color.set("darkgreen")
+            color("darkgreen")
         }
         rotationX = PI / 2
         solidGroup("bottom") {
@@ -64,7 +64,7 @@ class Model(val manager: VisionManager) {
 
     private fun highlight(pixel: String) {
         println("highlight $pixel")
-        map[pixel]?.color.set("blue")
+        map[pixel]?.color("blue")
     }
 
     fun reset() {
@@ -82,7 +82,7 @@ class Model(val manager: VisionManager) {
         }
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
-                color.set("red")
+                color("red")
             }
         }
     }

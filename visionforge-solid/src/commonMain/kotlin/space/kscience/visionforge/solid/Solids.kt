@@ -94,3 +94,7 @@ public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: So
         }
     }
 }
+
+@VisionBuilder
+public inline fun VisionOutput.solid(options: Canvas3DOptions.() -> Unit, block: SolidGroup.() -> Unit): SolidGroup =
+    solid(Canvas3DOptions(options), block)

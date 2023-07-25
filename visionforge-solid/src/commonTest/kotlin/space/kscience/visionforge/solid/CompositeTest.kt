@@ -18,7 +18,7 @@ class CompositeTest {
                     detail = 32
                 }
                 material {
-                    color.set("pink")
+                    color("pink")
                 }
             }
         }

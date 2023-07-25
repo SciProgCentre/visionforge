@@ -24,7 +24,7 @@ class SerializationTest {
     @Test
     fun testCubeSerialization() {
         val cube = Box(100f, 100f, 100f).apply {
-            color.set(222)
+            color(222)
             x = 100
             z = -100
         }
@@ -37,7 +37,7 @@ class SerializationTest {
     @Test
     fun testProxySerialization() {
         val cube = Box(100f, 100f, 100f).apply {
-            color.set(222)
+            color(222)
             x = 100
             z = -100
         }
@@ -59,7 +59,7 @@ class SerializationTest {
     fun lightSerialization(){
         val group = testSolids.solidGroup {
             ambientLight {
-                color.set(Colors.white)
+                color(Colors.white)
                 intensity = 100.0
             }
         }

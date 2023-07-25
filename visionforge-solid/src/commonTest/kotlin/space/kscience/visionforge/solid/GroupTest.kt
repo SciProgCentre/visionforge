@@ -18,7 +18,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 material {
-                    color.set(Colors.lightgreen)
+                    color(Colors.lightgreen)
                     opacity = 0.3f
                 }
             }
@@ -30,7 +30,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = 300
-                color.set(Colors.red)
+                color(Colors.red)
             }
             subtract("subtract") {
                 box(100, 100, 100) {
@@ -40,7 +40,7 @@ class GroupTest {
                 }
                 box(100, 100, 100)
                 y = -300
-                color.set(Colors.blue)
+                color(Colors.blue)
             }
         }
 

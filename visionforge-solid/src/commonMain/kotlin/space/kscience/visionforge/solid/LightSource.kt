@@ -15,7 +15,7 @@ import space.kscience.visionforge.*
 public abstract class LightSource : SolidBase<LightSource>() {
     override val descriptor: MetaDescriptor get() = LightSource.descriptor
 
-    public val color: ColorAccessor by color(SolidMaterial.COLOR_KEY)
+    public val color: ColorAccessor by colorProperty(SolidMaterial.COLOR_KEY)
     public var intensity: Number by properties.root(includeStyles = false).number(INTENSITY_KEY) { 1.0 }
 
     public companion object {

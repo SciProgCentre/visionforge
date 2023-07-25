@@ -43,6 +43,9 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
             it to value
         }.toMap()
 
+    /**
+     * Get a child solid with given relative [name] if it exists
+     */
     public operator fun get(name: Name): Solid? = children.getChild(name) as? Solid
 
     private var prototypes: SolidGroup?
@@ -83,6 +86,8 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
         public val PROTOTYPES_TOKEN: NameToken = NameToken("@prototypes")
     }
 }
+
+public operator fun SolidGroup.get(name:String): Solid? = get(name.parseAsName())
 
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.solidGroup(

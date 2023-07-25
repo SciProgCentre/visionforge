@@ -23,7 +23,7 @@ import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import styled.css
 import styled.styledDiv
 
@@ -53,7 +53,7 @@ val GDMLApp = fc<GDMLAppProps>("GDMLApp") { props ->
                             console.info("Marking layers for file $name")
                             markLayers()
                             ambientLight {
-                                color.set(Colors.white)
+                                color(Colors.white)
                             }
                         }
                     }

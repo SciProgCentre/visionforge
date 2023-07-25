@@ -328,7 +328,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
         group
     }.apply {
         volume.fMedium?.let { medium ->
-            color.set(context.colorCache.getOrPut(medium.meta) { RootColors[11 + context.colorCache.size] })
+            color(context.colorCache.getOrPut(medium.meta) { RootColors[11 + context.colorCache.size] })
         }
 
         if (!context.ignoreRootColors) {

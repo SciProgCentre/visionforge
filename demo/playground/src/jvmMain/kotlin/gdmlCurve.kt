@@ -7,7 +7,7 @@ import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.color
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.visible
 import java.nio.file.Path
 
@@ -229,7 +229,7 @@ fun main() = makeVisionFile(Path.of("curves.html"), resourceLocation = ResourceL
                         visible = false
                     }
                     if(solid.name.startsWith("gas")){
-                        color.set("green")
+                        color("green")
                     } else {
                         //make all solids semi-transparent
                         transparent()

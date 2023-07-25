@@ -33,7 +33,7 @@ fun main() {
     //Create a geometry
     val sat = solids.visionOfSatellite(ySegments = 3).apply {
         ambientLight {
-            color.set(Colors.white)
+            color(Colors.white)
         }
     }
     val server = embeddedServer(CIO, port = 7777) {
@@ -63,7 +63,7 @@ fun main() {
             val randomJ = Random.nextInt(1, 4)
             val target = Name.parse("layer[$randomLayer].segment[$randomI,$randomJ]")
             val targetVision = sat[target] as Solid
-            targetVision.color.set("red")
+            targetVision.color("red")
             delay(1000)
             //use to ensure that color is cleared
             targetVision.color.value = Null
