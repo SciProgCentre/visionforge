@@ -209,9 +209,9 @@ private fun SolidGroup.addShape(
                 require(fNz > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = fRmax[0]
                 shape {
-                    (0..fNedges).forEach {
-                        val phi = deltaphi * fNedges * it + startphi
-                        (baseRadius * cos(phi) to baseRadius * sin(phi))
+                    (0..<fNedges).forEach {
+                        val phi = deltaphi / fNedges * it + startphi
+                        point(baseRadius * cos(phi), baseRadius * sin(phi))
                     }
                 }
                 (0 until fNz).forEach { index ->

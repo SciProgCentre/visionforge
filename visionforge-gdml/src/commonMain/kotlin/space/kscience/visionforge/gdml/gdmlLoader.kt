@@ -207,9 +207,9 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
                 require(solid.planes.size > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = solid.planes.first().rmax * lScale
                 shape {
-                    (0..solid.numsides).forEach {
+                    (0..<solid.numsides).forEach {
                         val phi = solid.deltaphi * aScale / solid.numsides * it + solid.startphi * aScale
-                        (baseRadius * cos(phi) to baseRadius * sin(phi))
+                        point(baseRadius * cos(phi), baseRadius * sin(phi))
                     }
                 }
                 solid.planes.forEach { plane ->

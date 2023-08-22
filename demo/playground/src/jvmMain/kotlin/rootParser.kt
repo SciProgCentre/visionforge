@@ -46,7 +46,7 @@ fun main() {
                 ambientLight {
                     color(Colors.white)
                 }
-                rootGeo(geo,"BM@N", maxLayer = 3, ignoreRootColors = true).also {
+                rootGeo(geo,"BM@N", ignoreRootColors = true).also {
                     Path("data/BM@N.vf.json").writeText(Solids.encodeToString(it))
                 }
             }

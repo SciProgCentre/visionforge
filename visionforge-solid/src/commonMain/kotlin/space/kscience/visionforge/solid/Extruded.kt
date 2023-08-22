@@ -23,8 +23,6 @@ public class Shape2DBuilder(private val points: ArrayList<Float32Vector2D> = Arr
         points.add(Float32Vector2D(x, y))
     }
 
-    public infix fun Number.to(y: Number): Unit = point(this, y)
-
     public fun build(): Shape2D = points
 }
 
