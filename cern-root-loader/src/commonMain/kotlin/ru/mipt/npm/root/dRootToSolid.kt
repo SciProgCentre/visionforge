@@ -4,6 +4,7 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.withIndex
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
 import space.kscience.visionforge.set
@@ -223,7 +224,7 @@ private fun SolidGroup.addShape(
         "TGeoShapeAssembly" -> {
             val fVolume by shape.dObject(::DGeoVolume)
             fVolume?.let { volume ->
-                addRootVolume(volume, context, block = block)
+                addRootVolume(volume, context, name = volume.fName.ifEmpty { null }, block = block)
             }
         }
 
@@ -348,29 +349,29 @@ private fun SolidGroup.addRootVolume(
     cache: Boolean = true,
     block: Solid.() -> Unit = {},
 ) {
-
-    val combinedName = if (volume.fName.isEmpty()) {
-        name
-    } else if (name == null) {
-        volume.fName
-    } else {
-        "${name}_${volume.fName}"
+    val combinedName = name?.parseAsName()?.let {
+        // this fix is required to work around malformed root files with duplicated node names
+        if (get(it) != null) {
+            it.withIndex(volume.hashCode().toString(16))
+        } else {
+            it
+        }
     }
 
     if (!cache) {
-        val group = buildVolume(volume, context)?.apply(block)
-        setChild(combinedName?.let { Name.parse(it) }, group)
+        val group = buildVolume(volume, context)?.apply(block) ?: return
+        setChild(combinedName, group)
     } else {
         val templateName = volumesName + volume.name
-        val existing = getPrototype(templateName)
+        val existing = context.prototypeHolder.getPrototype(templateName)
         if (existing == null) {
             context.prototypeHolder.prototypes {
-                val group = buildVolume(volume, context)
+                val group = buildVolume(volume, context) ?: return@prototypes
                 setChild(templateName, group)
             }
         }
 
-        ref(templateName, name).apply(block)
+        ref(templateName, combinedName).apply(block)
     }
 }
 

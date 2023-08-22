@@ -17,7 +17,7 @@ import space.kscience.visionforge.VisionBuilder
  */
 public interface PrototypeHolder {
     /**
-     * Build or update prototype tree
+     * Build or update the prototype tree
      */
     @VisionBuilder
     public fun prototypes(builder: MutableVisionContainer<Solid>.() -> Unit)

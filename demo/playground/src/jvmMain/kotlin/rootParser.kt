@@ -26,7 +26,7 @@ private fun Meta.countTypes(): Sequence<String> = sequence {
 }
 
 fun main() {
-    val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/BM@N_geometry.zip")!!).use {
+    val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/geometry_run_7-2076.zip")!!).use {
         it.nextEntry
         it.readAllBytes().decodeToString()
     }
