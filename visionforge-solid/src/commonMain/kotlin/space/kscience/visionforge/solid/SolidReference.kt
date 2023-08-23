@@ -233,13 +233,8 @@ public fun MutableVisionContainer<Solid>.ref(
 
 public fun MutableVisionContainer<Solid>.ref(
     templateName: Name,
-    name: String? = null,
-): SolidReference = ref(templateName, name?.parseAsName())
-
-public fun MutableVisionContainer<Solid>.ref(
-    templateName: String,
-    name: String? = null,
-): SolidReference = ref(Name.parse(templateName), name)
+    name: String,
+): SolidReference = ref(templateName, name.parseAsName())
 
 /**
  * Add new [SolidReference] wrapping given object and automatically adding it to the prototypes.
@@ -258,7 +253,7 @@ public fun SolidGroup.newRef(
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }
-    return children.ref(prototypeName, name)
+    return children.ref(prototypeName, name?.parseAsName())
 }
 
 
