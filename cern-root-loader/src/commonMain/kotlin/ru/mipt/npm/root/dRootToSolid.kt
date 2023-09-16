@@ -5,12 +5,17 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
 import space.kscience.dataforge.names.withIndex
+import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.geometry.fromRotationMatrix
+import space.kscience.kmath.linear.VirtualMatrix
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
 import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 private val volumesName = Name.EMPTY //"volumes".asName()
 
@@ -28,12 +33,10 @@ private data class RootToSolidContext(
     val colorCache: MutableMap<Meta, String> = mutableMapOf(),
 )
 
-// converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
+// apply rotation from a matrix
 private fun Solid.rotate(rot: DoubleArray) {
-    val xAngle = atan2(-rot[5], rot[8])
-    val yAngle = atan2(rot[2], sqrt(1.0 - rot[2].pow(2)))
-    val zAngle = atan2(-rot[1], rot[0])
-    rotation = Float32Vector3D(xAngle, yAngle, zAngle)
+    val matrix = VirtualMatrix(3, 3) { i, j -> rot[i * 3 + j] }
+    quaternion = Quaternion.fromRotationMatrix(matrix)
 }
 
 private fun Solid.translate(trans: DoubleArray) {

@@ -206,7 +206,7 @@ public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 /**
  * Raw quaternion value defined in properties
  */
-public var Solid.quaternionValue: Quaternion?
+public var Solid.quaternionOrNull: Quaternion?
     get() = properties.getValue(ROTATION_KEY)?.list?.let {
         require(it.size == 4) { "Quaternion must be a number array of 4 elements" }
         Quaternion(it[0].float, it[1].float, it[2].float, it[3].float)
@@ -229,14 +229,14 @@ public var Solid.quaternionValue: Quaternion?
  * Quaternion value including information from euler angles
  */
 public var Solid.quaternion: Quaternion
-    get() = quaternionValue ?: Quaternion.fromEuler(
+    get() = quaternionOrNull ?: Quaternion.fromEuler(
         rotationX.radians,
         rotationY.radians,
         rotationZ.radians,
         rotationOrder
     )
     set(value) {
-        quaternionValue = value
+        quaternionOrNull = value
     }
 
 public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)

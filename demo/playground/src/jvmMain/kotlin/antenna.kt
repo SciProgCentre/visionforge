@@ -15,13 +15,13 @@ import kotlin.math.sin
 
 fun main() = serve {
 
-    val azimuth = 60.degrees
-    val inclination = 15.degrees
+//    val azimuth = 60.degrees
+//    val inclination = 15.degrees
 
-    val direction = with(QuaternionField) {
-        Quaternion.fromRotation(-azimuth, Euclidean3DSpace.zAxis) *
-                Quaternion.fromRotation(Angle.piDiv2 - inclination, Euclidean3DSpace.yAxis)
-    }
+//    val direction = with(QuaternionField) {
+//        Quaternion.fromRotation(-azimuth, Euclidean3DSpace.zAxis) *
+//                Quaternion.fromRotation(Angle.piDiv2 - inclination, Euclidean3DSpace.yAxis)
+//    }
 
     //val direction2 = Quaternion.fromEuler(Angle.zero, Angle.piDiv2 - inclination, -azimuth, RotationOrder.ZYX)
 
@@ -43,7 +43,7 @@ fun main() = serve {
                 solidGroup("frame") {
                     z = 60
 
-                    val antenna = solidGroup("antenna") {
+                    solidGroup("antenna") {
                         axes(200)
                         tube(40, 10, 30)
                         sphereLayer(100, 95, theta = PI / 6) {

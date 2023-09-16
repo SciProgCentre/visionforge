@@ -41,7 +41,7 @@ public fun Object3D.updatePosition(vision: Vision) {
     if (vision is Solid) {
         position.set(vision.x, vision.y, vision.z)
 
-        val quaternion = vision.quaternionValue
+        val quaternion = vision.quaternionOrNull
 
         if (quaternion != null) {
             setRotationFromQuaternion(
