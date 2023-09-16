@@ -3,7 +3,7 @@ package space.kscience.visionforge.react
 import kotlinx.css.Align
 import kotlinx.css.alignItems
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.org.w3c.dom.events.Event
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.a
 import react.dom.attrs

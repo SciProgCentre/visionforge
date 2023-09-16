@@ -1,19 +1,19 @@
 plugins {
-    id("space.kscience.gradle.js")
+    id("space.kscience.gradle.mpp")
 }
 
-kscience{
+kscience {
     useCoroutines()
 }
 
-kotlin{
+kotlin {
     explicitApi = null
-    js{
+    js {
         useCommonJs()
         browser {
             binaries.executable()
             commonWebpackConfig {
-                cssSupport{
+                cssSupport {
                     enabled.set(false)
                 }
             }
@@ -21,11 +21,15 @@ kotlin{
     }
 }
 
+kscience {
 
-dependencies{
-    implementation(projects.visionforge.visionforgeGdml)
-    implementation(projects.visionforge.visionforgePlotly)
-    implementation(projects.visionforge.visionforgeMarkdown)
-    implementation(projects.visionforge.visionforgeThreejs)
-    implementation(projects.ui.ring)
+    dependencies {
+        implementation(projects.visionforge.visionforgeGdml)
+        implementation(projects.visionforge.visionforgePlotly)
+        implementation(projects.visionforge.visionforgeMarkdown)
+        implementation(projects.visionforge.visionforgeThreejs)
+    }
+    jsMain {
+        implementation(projects.ui.ring)
+    }
 }

@@ -1,10 +1,10 @@
 package space.kscience.visionforge.react
 
 import kotlinx.html.js.onChangeFunction
-import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.HTMLSelectElement
 import org.w3c.dom.asList
+import org.w3c.dom.events.Event
 import react.FC
 import react.dom.attrs
 import react.dom.option

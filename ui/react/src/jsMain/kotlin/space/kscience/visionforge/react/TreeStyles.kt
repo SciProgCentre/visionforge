@@ -52,10 +52,10 @@ public object TreeStyles : StyleSheet("treeStyles", true) {
     }
 
     public val treeLabel:RuleSet by css {
-        border = "none"
-        padding(left = 4.pt, right = 4.pt, top = 0.pt, bottom = 0.pt)
+        border = Border.none
+        padding = Padding(left = 4.pt, right = 4.pt, top = 0.pt, bottom = 0.pt)
         textAlign = TextAlign.left
-        flex(1.0)
+        flex = Flex(1.0)
     }
 
     public val treeLabelInactive: RuleSet by css {

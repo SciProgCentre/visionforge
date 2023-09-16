@@ -1,15 +1,12 @@
 package space.kscience.visionforge.react
 
-import kotlinx.css.margin
-import kotlinx.css.pct
-import kotlinx.css.px
-import kotlinx.css.width
+import kotlinx.css.*
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onKeyDownFunction
-import kotlinx.html.org.w3c.dom.events.Event
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLSelectElement
+import org.w3c.dom.events.Event
 import react.FC
 import react.Props
 import react.dom.attrs
@@ -145,7 +142,7 @@ public val ColorValueChooser: FC<ValueChooserProps> = fc("ColorValueChooser") { 
     styledInput(type = InputType.color) {
         css {
             width = 100.pct
-            margin(0.px)
+            margin = Margin(0.px)
         }
         attrs {
             this.value = props.value?.let { value ->

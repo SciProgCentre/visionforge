@@ -1,13 +1,10 @@
 package space.kscience.visionforge.react
 
-import kotlinx.css.Color
-import kotlinx.css.Cursor
-import kotlinx.css.color
-import kotlinx.css.cursor
+import kotlinx.css.*
+import kotlinx.css.properties.TextDecoration
 import kotlinx.css.properties.TextDecorationLine
-import kotlinx.css.properties.textDecoration
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.org.w3c.dom.events.Event
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import space.kscience.dataforge.names.Name
@@ -37,7 +34,7 @@ private val TreeLabel = fc<ObjectTreeProps> { props ->
             color = Color("#069")
             cursor = Cursor.pointer
             hover {
-                textDecoration(TextDecorationLine.underline)
+                textDecoration = TextDecoration(setOf(TextDecorationLine.underline))
             }
             if (props.name == props.selected) {
                 +TreeStyles.treeLabelSelected

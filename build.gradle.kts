@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
-import space.kscience.gradle.isInDevelopment
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
 
@@ -45,14 +44,7 @@ ksciencePublish {
         useApache2Licence()
         useSPCTeam()
     }
-    github(githubProject = "visionforge", githubOrg = "SciProgCentre")
-    space(
-        if (isInDevelopment) {
-            "https://maven.pkg.jetbrains.space/spc/p/sci/dev"
-        } else {
-            "https://maven.pkg.jetbrains.space/spc/p/sci/maven"
-        }
-    )
+    repository("spc","https://maven.sciprog.center/kscience")
     sonatype()
 }
 

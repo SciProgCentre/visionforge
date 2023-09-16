@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.css.*
 import kotlinx.css.properties.TextDecoration
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.org.w3c.dom.events.Event
+import org.w3c.dom.events.Event
 import react.*
 import react.dom.attrs
 import space.kscience.dataforge.meta.MutableMeta
@@ -151,7 +151,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 css {
                     //+TreeStyles.resizeableInput
                     width = 160.px
-                    margin(1.px, 5.px)
+                    margin = Margin(1.px, 5.px)
                 }
                 ValueChooser {
                     attrs {
@@ -170,7 +170,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 css {
                     width = 24.px
                     alignSelf = Align.stretch
-                    margin(1.px, 5.px)
+                    margin = Margin(1.px, 5.px)
                     backgroundColor = Color.white
                     borderStyle = BorderStyle.solid
                     borderRadius = 2.px

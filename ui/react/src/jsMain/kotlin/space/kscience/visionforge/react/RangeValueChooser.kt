@@ -4,8 +4,9 @@ import kotlinx.css.pct
 import kotlinx.css.width
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
-import kotlinx.html.org.w3c.dom.events.Event
+import kotlinx.html.js.onInputFunction
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.Event
 import react.FC
 import react.dom.attrs
 import react.fc
@@ -58,8 +59,8 @@ public val RangeValueChooser: FC<ValueChooserProps> = fc("RangeValueChooser") { 
             attrs {
                 disabled = rangeDisabled
                 value = innerValue?.toString() ?: ""
-                onChangeFunction = handleChange
-                consumer.onTagEvent(this, "input", handleChange)
+//                onChangeFunction = handleChange
+                onInputFunction = handleChange
                 val minValue = props.descriptor?.attributes?.get("min").string
                 minValue?.let {
                     min = it
