@@ -4,22 +4,24 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.*
+import space.kscience.kmath.geometry.component1
+import space.kscience.kmath.geometry.component2
+import space.kscience.visionforge.MutableVisionContainer
+import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.setChild
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 
-public typealias Shape2D = List<Point2D>
+public typealias Shape2D = List<Float32Vector2D>
 
 @Serializable
-public class Shape2DBuilder(private val points: ArrayList<Point2D> = ArrayList()) {
+public class Shape2DBuilder(private val points: ArrayList<Float32Vector2D> = ArrayList()) {
 
     public fun point(x: Number, y: Number) {
-        points.add(Point2D(x, y))
+        points.add(Float32Vector2D(x, y))
     }
-
-    public infix fun Number.to(y: Number): Unit = point(this, y)
 
     public fun build(): Shape2D = points
 }
@@ -38,7 +40,7 @@ public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Flo
 @Serializable
 @SerialName("solid.extrude")
 public class Extruded(
-    public val shape: List<Point2D>,
+    public val shape: List<Float32Vector2D>,
     public val layers: List<Layer>,
 ) : SolidBase<Extruded>(), GeometrySolid {
 
@@ -50,18 +52,18 @@ public class Extruded(
         /**
          * Expand the shape for specific layers
          */
-        val layers: List<List<Point3D>> = layers.map { layer ->
+        val layers: List<List<Float32Vector3D>> = layers.map { layer ->
             shape.map { (x, y) ->
                 val newX = layer.x + x * layer.scale
                 val newY = layer.y + y * layer.scale
-                Point3D(newX, newY, layer.z)
+                Float32Vector3D(newX, newY, layer.z)
             }
         }
 
         if (layers.size < 2) error("Extruded shape requires more than one layer")
 
         var lowerLayer = layers.first()
-        var upperLayer: List<Point3D>
+        var upperLayer: List<Float32Vector3D>
 
         for (i in (1 until layers.size)) {
             upperLayer = layers[i]
@@ -94,7 +96,7 @@ public class Extruded(
 }
 
 public class ExtrudeBuilder(
-    public var shape: List<Point2D> = emptyList(),
+    public var shape: List<Float32Vector2D> = emptyList(),
     public var layers: MutableList<Layer> = ArrayList(),
     public val properties: MutableMeta = MutableMeta(),
 ) {

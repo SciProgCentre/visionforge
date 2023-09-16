@@ -2,7 +2,6 @@ package space.kscience.visionforge.server
 
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
@@ -58,7 +57,7 @@ public class VisionRoute(
     override val context: Context get() = visionManager.context
 
     /**
-     * Update minimal interval between updates in milliseconds (if there are no updates, push will not happen
+     * Update the minimal interval between updates in milliseconds (if there are no updates, push will not happen
      */
     public var updateInterval: Long by meta.long(300, key = UPDATE_INTERVAL_KEY)
 
@@ -171,8 +170,8 @@ public fun Application.visionPage(
                     meta {
                         charset = "utf-8"
                     }
-                    headers.forEach { header ->
-                        consumer.header()
+                    headers.forEach { headerContent ->
+                        headerContent.appendTo(consumer)
                     }
                 }
                 body {

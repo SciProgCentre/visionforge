@@ -10,8 +10,7 @@ import io.ktor.server.application.install
 import io.ktor.server.application.log
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.resources
-import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -53,9 +52,7 @@ fun Application.module(context: Context = Global) {
                 status = HttpStatusCode.OK
             )
         }
-        static("/") {
-            resources()
-        }
+        staticResources("/", null)
     }
     try {
         Desktop.getDesktop().browse(URI("http://localhost:8080/index.html"))

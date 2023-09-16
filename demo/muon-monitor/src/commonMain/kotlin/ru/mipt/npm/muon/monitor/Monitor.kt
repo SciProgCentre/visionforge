@@ -2,21 +2,21 @@ package ru.mipt.npm.muon.monitor
 
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_XY_SIZE
 import ru.mipt.npm.muon.monitor.Monitor.PIXEL_Z_SIZE
-import space.kscience.visionforge.solid.Point3D
-import space.kscience.visionforge.solid.plus
+import space.kscience.visionforge.solid.Float32Euclidean3DSpace
+import space.kscience.visionforge.solid.Float32Vector3D
 
 /**
  * A single pixel
  */
 class SC1(
     val name: String,
-    val center: Point3D,
+    val center: Float32Vector3D,
     val xSize: Float = PIXEL_XY_SIZE, val ySize: Float = PIXEL_XY_SIZE, val zSize: Float = PIXEL_Z_SIZE,
 )
 
 class SC16(
     val name: String,
-    val center: Point3D,
+    val center: Float32Vector3D,
 ) {
 
     /**
@@ -109,9 +109,9 @@ class SC16(
 
                 else -> throw Error()
             }
-            val offset = Point3D(-y, x, 0)//rotateDetector(Point3D(x, y, 0.0));
+            val offset = Float32Vector3D(-y, x, 0)//rotateDetector(Point3D(x, y, 0.0));
             val pixelName = "${name}_${index}"
-            SC1(pixelName, offset + center)
+            SC1(pixelName, with(Float32Euclidean3DSpace) { offset + center })
         }
     }
 }
@@ -154,7 +154,7 @@ object Monitor {
                     val x = split[4].toDouble() - 500
                     val y = split[5].toDouble() - 500
                     val z = 180 - split[6].toDouble()
-                    SC16(detectorName, Point3D(x, y, z))
+                    SC16(detectorName, Float32Vector3D(x, y, z))
                 } else {
                     null
                 }

@@ -26,7 +26,7 @@ public interface ThreeFactory<in T : Vision> {
      * Build an [Object3D] from [vision].
      * @param observe if false, does not observe the changes in [vision] after render (useful for statics).
      */
-    public fun build(three: ThreePlugin, vision: T, observe: Boolean = true): Object3D
+    public suspend fun build(three: ThreePlugin, vision: T, observe: Boolean = true): Object3D
 
     public companion object {
         public const val TYPE: String = "threeFactory"
@@ -37,27 +37,19 @@ public interface ThreeFactory<in T : Vision> {
  * Update position, rotation and visibility
  */
 public fun Object3D.updatePosition(vision: Vision) {
-    visible = vision.visible ?: true
+//    visible = vision.visible ?: true
     if (vision is Solid) {
         position.set(vision.x, vision.y, vision.z)
 
-//        val quaternion = obj.quaternion
-//
-//        if (quaternion != null) {
-//            val (x, y, z, w) = quaternion
-//            setRotationFromQuaternion(Quaternion(x, y, z, w))
-//        } else {
-//            setRotationFromEuler( Euler(obj.rotationX, obj.rotationY, obj.rotationZ, obj.rotationOrder.name))
-//        }
-        val quaternion = vision.quaternion
+        val quaternion = vision.quaternionOrNull
 
         if (quaternion != null) {
             setRotationFromQuaternion(
                 Quaternion(
-                    quaternion.second.x,
-                    quaternion.second.y,
-                    quaternion.second.z,
-                    quaternion.first
+                    quaternion.x,
+                    quaternion.y,
+                    quaternion.z,
+                    quaternion.w
                 )
             )
         } else {
@@ -92,7 +84,7 @@ public fun Object3D.updateProperty(source: Vision, propertyName: Name) {
  * Generic factory for elements which provide inside geometry builder
  */
 public object ThreeShapeFactory : ThreeMeshFactory<GeometrySolid>(GeometrySolid::class) {
-    override fun buildGeometry(obj: GeometrySolid): BufferGeometry = ThreeGeometryBuilder().apply {
+    override suspend fun buildGeometry(obj: GeometrySolid): BufferGeometry = ThreeGeometryBuilder().apply {
         obj.toGeometry(this)
     }.build()
 }

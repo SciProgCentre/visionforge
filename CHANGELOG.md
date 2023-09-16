@@ -6,6 +6,7 @@
 - MeshLine for thick lines
 
 ### Changed
+- Color accessor property is now `colorProperty`. Color uses `invoke` instead of `set`
 - API update for server and pages
 - Edges moved to solids module for easier construction
 - Visions **must** be rooted in order to subscribe to updates.
@@ -20,6 +21,7 @@
 ### Removed
 
 ### Fixed
+- Jupyter integration for IDEA and Jupyter lab.
 
 ### Security
 

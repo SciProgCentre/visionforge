@@ -13,7 +13,7 @@ public object ThreePointLightFactory : ThreeFactory<PointLightSource> {
 
     private val DEFAULT_COLOR = Color(0x404040)
 
-    override fun build(three: ThreePlugin, vision: PointLightSource, observe: Boolean): PointLight {
+    override suspend fun build(three: ThreePlugin, vision: PointLightSource, observe: Boolean): PointLight {
         val res = PointLight().apply {
             matrixAutoUpdate = false
             color = vision.color.threeColor() ?: DEFAULT_COLOR

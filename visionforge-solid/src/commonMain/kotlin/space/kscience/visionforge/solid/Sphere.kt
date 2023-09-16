@@ -20,12 +20,12 @@ public class Sphere(
 ) : SolidBase<Sphere>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
+        fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Float32Vector3D {
             // This transformation matches three.js sphere implementation
             val y = r * cos(theta)
             val z = r * sin(theta) * sin(phi)
             val x = -r * sin(theta) * cos(phi)
-            return Point3D(x, y, z)
+            return Float32Vector3D(x, y, z)
         }
 
         val segments = this.detail ?: 32

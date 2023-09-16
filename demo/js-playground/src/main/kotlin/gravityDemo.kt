@@ -42,13 +42,13 @@ val GravityDemo = fc<DemoProps> { props ->
                     solids = props.solids
                     solid {
                         pointLight(200, 200, 200, name = "light"){
-                            color.set(Colors.white)
+                            color(Colors.white)
                         }
                         ambientLight()
 
                         sphere(5.0, "ball") {
                             detail = 16
-                            color.set("red")
+                            color("red")
                             val h = 100.0
                             y = h
                             solids.context.launch {

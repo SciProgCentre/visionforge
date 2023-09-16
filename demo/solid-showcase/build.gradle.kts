@@ -1,14 +1,14 @@
 plugins {
     id("space.kscience.gradle.mpp")
-    application
+//    application
 }
 
 kscience {
     useCoroutines()
-    jvm {
-        withJava()
+    jvm()
+    js{
+        binaries.executable()
     }
-    js()
     dependencies {
         implementation(projects.visionforgeSolid)
         implementation(projects.visionforgeGdml)
@@ -19,6 +19,8 @@ kscience {
     }
 }
 
-application {
-    mainClass.set("space.kscience.visionforge.solid.demo.FXDemoAppKt")
-}
+kotlin.explicitApi = null
+
+//application {
+//    mainClass.set("space.kscience.visionforge.solid.demo.FXDemoAppKt")
+//}

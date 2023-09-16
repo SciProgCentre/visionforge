@@ -6,6 +6,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 
 import space.kscience.gdml.*
+import space.kscience.kmath.geometry.RotationOrder
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.solid.*
@@ -206,9 +207,9 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
                 require(solid.planes.size > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = solid.planes.first().rmax * lScale
                 shape {
-                    (0..solid.numsides).forEach {
+                    (0..<solid.numsides).forEach {
                         val phi = solid.deltaphi * aScale / solid.numsides * it + solid.startphi * aScale
-                        (baseRadius * cos(phi) to baseRadius * sin(phi))
+                        point(baseRadius * cos(phi), baseRadius * sin(phi))
                     }
                 }
                 solid.planes.forEach { plane ->
@@ -248,14 +249,14 @@ private class GdmlLoader(val settings: GdmlLoaderOptions) {
                 val dyBottom = solid.y1.toDouble() / 2
                 val dyTop = solid.y2.toDouble() / 2
                 val dz = solid.z.toDouble() / 2
-                val node1 = Point3D(-dxBottom, -dyBottom, -dz)
-                val node2 = Point3D(dxBottom, -dyBottom, -dz)
-                val node3 = Point3D(dxBottom, dyBottom, -dz)
-                val node4 = Point3D(-dxBottom, dyBottom, -dz)
-                val node5 = Point3D(-dxTop, -dyTop, dz)
-                val node6 = Point3D(dxTop, -dyTop, dz)
-                val node7 = Point3D(dxTop, dyTop, dz)
-                val node8 = Point3D(-dxTop, dyTop, dz)
+                val node1 = Float32Vector3D(-dxBottom, -dyBottom, -dz)
+                val node2 = Float32Vector3D(dxBottom, -dyBottom, -dz)
+                val node3 = Float32Vector3D(dxBottom, dyBottom, -dz)
+                val node4 = Float32Vector3D(-dxBottom, dyBottom, -dz)
+                val node5 = Float32Vector3D(-dxTop, -dyTop, dz)
+                val node6 = Float32Vector3D(dxTop, -dyTop, dz)
+                val node7 = Float32Vector3D(dxTop, dyTop, dz)
+                val node8 = Float32Vector3D(-dxTop, dyTop, dz)
                 hexagon(node1, node2, node3, node4, node5, node6, node7, node8, name)
             }
 

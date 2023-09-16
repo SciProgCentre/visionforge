@@ -7,11 +7,13 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.double
 
+@Deprecated("Use separate axes object instead")
 public class AxesScheme : Scheme() {
     public var visible: Boolean by boolean(false)
     public var size: Double by double(AXIS_SIZE)
     public var width: Double by double(AXIS_WIDTH)
 
+    @Suppress("DEPRECATION")
     public companion object : SchemeSpec<AxesScheme>(::AxesScheme) {
         public const val AXIS_SIZE: Double = 1000.0
         public const val AXIS_WIDTH: Double = 3.0

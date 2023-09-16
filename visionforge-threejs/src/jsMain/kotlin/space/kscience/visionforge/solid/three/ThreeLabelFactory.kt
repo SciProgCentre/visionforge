@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
-    override fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
+    override suspend fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
         val textGeo = TextBufferGeometry(vision.text, jso {
             font = vision.fontFamily
             size = 20

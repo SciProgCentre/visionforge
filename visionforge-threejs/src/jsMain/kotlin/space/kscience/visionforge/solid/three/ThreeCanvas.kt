@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 import kotlinx.browser.window
+import kotlinx.coroutines.launch
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.Node
@@ -56,16 +57,6 @@ public class ThreeCanvas(
             axesObject.name = AXES_NAME
             add(axesObject)
         }
-
-//        //Set up light
-//        options.useProperty(Canvas3DOptions::light, this) { lightConfig ->
-//            //remove old light if present
-//            getObjectByName(LIGHT_NAME)?.let { remove(it) }
-//            //add new light
-//            val lightObject = buildLight(lightConfig)
-//            lightObject.name = LIGHT_NAME
-//            add(lightObject)
-//        }
     }
 
 
@@ -109,7 +100,7 @@ public class ThreeCanvas(
     }
 
     /**
-     * Force camera aspect ration and renderer size recalculation
+     * Force camera aspect ratio and renderer size recalculation
      */
     private fun updateSize() {
         val width = element.clientWidth
@@ -201,7 +192,7 @@ public class ThreeCanvas(
     }
 
     /**
-     * Resolve full name of the object relative to the global root
+     * Resolve the full name of the object relative to the global root
      */
     private fun Object3D.fullName(): Name {
         if (root == null) error("Can't resolve element name without the root")
@@ -212,7 +203,7 @@ public class ThreeCanvas(
         }
     }
 
-    //find first non-static parent in this object ancestry
+    //find the first non-static parent in this object ancestry
     private tailrec fun Object3D.upTrace(): Object3D? = if (!name.startsWith("@")) this else parent?.upTrace()
 
     private fun pick(): Object3D? {
@@ -264,11 +255,13 @@ public class ThreeCanvas(
             scene.findChild("@root".asName())?.let { scene.remove(it) }
             root?.dispose()
         }
+        three.context.launch {
+            val object3D = three.buildObject3D(vision)
 
-        val object3D = three.buildObject3D(vision)
-        object3D.name = "@root"
-        scene.add(object3D)
-        root = object3D
+            object3D.name = "@root"
+            scene.add(object3D)
+            root = object3D
+        }
     }
 
     private var selected: Object3D? = null

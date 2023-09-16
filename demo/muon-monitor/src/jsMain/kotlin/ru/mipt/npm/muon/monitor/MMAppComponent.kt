@@ -26,7 +26,7 @@ import space.kscience.visionforge.ring.tab
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.edges
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import styled.css
 import styled.styledDiv
@@ -58,7 +58,7 @@ val MMApp = fc<MMAppProps>("Muon monitor") { props ->
         props.model.root.apply {
             edges()
             ambientLight{
-                color.set(Colors.white)
+                color(Colors.white)
             }
         }
     }

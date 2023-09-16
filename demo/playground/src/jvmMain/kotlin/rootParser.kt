@@ -11,7 +11,7 @@ import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.solid
 import java.util.zip.ZipInputStream
 import kotlin.io.path.Path
@@ -26,7 +26,7 @@ private fun Meta.countTypes(): Sequence<String> = sequence {
 }
 
 fun main() {
-    val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/BM@N_geometry.zip")!!).use {
+    val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/geometry_run_7-2076.zip")!!).use {
         it.nextEntry
         it.readAllBytes().decodeToString()
     }
@@ -44,9 +44,9 @@ fun main() {
             requirePlugin(Solids)
             solid {
                 ambientLight {
-                    color.set(Colors.white)
+                    color(Colors.white)
                 }
-                rootGeo(geo,"BM@N", maxLayer = 3, ignoreRootColors = true).also {
+                rootGeo(geo,"BM@N", ignoreRootColors = true).also {
                     Path("data/BM@N.vf.json").writeText(Solids.encodeToString(it))
                 }
             }

@@ -4,12 +4,18 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
+import space.kscience.dataforge.names.withIndex
+import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.geometry.fromRotationMatrix
+import space.kscience.kmath.linear.VirtualMatrix
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
 import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 private val volumesName = Name.EMPTY //"volumes".asName()
 
@@ -27,17 +33,15 @@ private data class RootToSolidContext(
     val colorCache: MutableMap<Meta, String> = mutableMapOf(),
 )
 
-// converting to XYZ to Tait–Bryan angles according to https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
+// apply rotation from a matrix
 private fun Solid.rotate(rot: DoubleArray) {
-    val xAngle = atan2(-rot[5], rot[8])
-    val yAngle = atan2(rot[2], sqrt(1.0 - rot[2].pow(2)))
-    val zAngle = atan2(-rot[1], rot[0])
-    rotation = Point3D(xAngle, yAngle, zAngle)
+    val matrix = VirtualMatrix(3, 3) { i, j -> rot[i * 3 + j] }
+    quaternion = Quaternion.fromRotationMatrix(matrix)
 }
 
 private fun Solid.translate(trans: DoubleArray) {
     val (x, y, z) = trans
-    position = Point3D(x, y, z)
+    position = Float32Vector3D(x, y, z)
 }
 
 private fun Solid.useMatrix(matrix: DGeoMatrix?) {
@@ -72,7 +76,7 @@ private fun Solid.useMatrix(matrix: DGeoMatrix?) {
             val fScale by matrix.meta.doubleArray()
             translate(fTranslation)
             rotate(fRotationMatrix)
-            scale = Point3D(fScale[0], fScale[1], fScale[2])
+            scale = Float32Vector3D(fScale[0], fScale[1], fScale[2])
         }
     }
 }
@@ -208,9 +212,9 @@ private fun SolidGroup.addShape(
                 require(fNz > 1) { "The polyhedron geometry requires at least two planes" }
                 val baseRadius = fRmax[0]
                 shape {
-                    (0..fNedges).forEach {
-                        val phi = deltaphi * fNedges * it + startphi
-                        (baseRadius * cos(phi) to baseRadius * sin(phi))
+                    (0..<fNedges).forEach {
+                        val phi = deltaphi / fNedges * it + startphi
+                        point(baseRadius * cos(phi), baseRadius * sin(phi))
                     }
                 }
                 (0 until fNz).forEach { index ->
@@ -223,7 +227,7 @@ private fun SolidGroup.addShape(
         "TGeoShapeAssembly" -> {
             val fVolume by shape.dObject(::DGeoVolume)
             fVolume?.let { volume ->
-                addRootVolume(volume, context, block = block)
+                addRootVolume(volume, context, name = volume.fName.ifEmpty { null }, block = block)
             }
         }
 
@@ -248,14 +252,14 @@ private fun SolidGroup.addShape(
 
             val fDz by shape.meta.double(0.0)
             //TODO check proper node order
-            val node1 = Point3D(-fBl1, -fH1, -fDz)
-            val node2 = Point3D(fBl1, -fH1, -fDz)
-            val node3 = Point3D(fTl1, fH1, -fDz)
-            val node4 = Point3D(-fTl1, fH1, -fDz)
-            val node5 = Point3D(-fBl2, -fH2, fDz)
-            val node6 = Point3D(fBl2, -fH2, fDz)
-            val node7 = Point3D(fTl2, fH2, fDz)
-            val node8 = Point3D(-fTl2, fH2, fDz)
+            val node1 = Float32Vector3D(-fBl1, -fH1, -fDz)
+            val node2 = Float32Vector3D(fBl1, -fH1, -fDz)
+            val node3 = Float32Vector3D(fTl1, fH1, -fDz)
+            val node4 = Float32Vector3D(-fTl1, fH1, -fDz)
+            val node5 = Float32Vector3D(-fBl2, -fH2, fDz)
+            val node6 = Float32Vector3D(fBl2, -fH2, fDz)
+            val node7 = Float32Vector3D(fTl2, fH2, fDz)
+            val node8 = Float32Vector3D(-fTl2, fH2, fDz)
             hexagon(node1, node2, node3, node4, node5, node6, node7, node8, name)
         }
 
@@ -264,7 +268,7 @@ private fun SolidGroup.addShape(
             val fScale by shape.dObject(::DGeoScale)
             fShape?.let { scaledShape ->
                 solidGroup(name?.let { Name.parse(it) }) {
-                    scale = Point3D(fScale?.x ?: 1.0, fScale?.y ?: 1.0, fScale?.z ?: 1.0)
+                    scale = Float32Vector3D(fScale?.x ?: 1.0, fScale?.y ?: 1.0, fScale?.z ?: 1.0)
                     addShape(scaledShape, context)
                     apply(block)
                 }
@@ -328,7 +332,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
         group
     }.apply {
         volume.fMedium?.let { medium ->
-            color.set(context.colorCache.getOrPut(medium.meta) { RootColors[11 + context.colorCache.size] })
+            color(context.colorCache.getOrPut(medium.meta) { RootColors[11 + context.colorCache.size] })
         }
 
         if (!context.ignoreRootColors) {
@@ -348,29 +352,29 @@ private fun SolidGroup.addRootVolume(
     cache: Boolean = true,
     block: Solid.() -> Unit = {},
 ) {
-
-    val combinedName = if (volume.fName.isEmpty()) {
-        name
-    } else if (name == null) {
-        volume.fName
-    } else {
-        "${name}_${volume.fName}"
+    val combinedName = name?.parseAsName()?.let {
+        // this fix is required to work around malformed root files with duplicated node names
+        if (get(it) != null) {
+            it.withIndex(volume.hashCode().toString(16))
+        } else {
+            it
+        }
     }
 
     if (!cache) {
-        val group = buildVolume(volume, context)?.apply(block)
-        setChild(combinedName?.let { Name.parse(it) }, group)
+        val group = buildVolume(volume, context)?.apply(block) ?: return
+        setChild(combinedName, group)
     } else {
         val templateName = volumesName + volume.name
-        val existing = getPrototype(templateName)
+        val existing = context.prototypeHolder.getPrototype(templateName)
         if (existing == null) {
             context.prototypeHolder.prototypes {
-                val group = buildVolume(volume, context)
+                val group = buildVolume(volume, context) ?: return@prototypes
                 setChild(templateName, group)
             }
         }
 
-        ref(templateName, name).apply(block)
+        ref(templateName, combinedName).apply(block)
     }
 }
 

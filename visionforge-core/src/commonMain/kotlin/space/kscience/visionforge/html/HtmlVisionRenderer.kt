@@ -2,18 +2,17 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 
-public typealias HtmlVisionFragment = VisionTagConsumer<*>.() -> Unit
+public fun interface HtmlVisionFragment{
+    public fun VisionTagConsumer<*>.append()
+}
 
-@DFExperimental
-public fun HtmlVisionFragment(content: VisionTagConsumer<*>.() -> Unit): HtmlVisionFragment = content
-
+public fun HtmlVisionFragment.appendTo(consumer: VisionTagConsumer<*>): Unit = consumer.append()
 
 /**
  * Render a fragment in the given consumer and return a map of extracted visions
@@ -84,7 +83,7 @@ public fun TagConsumer<*>.visionFragment(
         }
     }
 
-    fragment(consumer)
+    fragment.appendTo(consumer)
 }
 
 public fun FlowContent.visionFragment(

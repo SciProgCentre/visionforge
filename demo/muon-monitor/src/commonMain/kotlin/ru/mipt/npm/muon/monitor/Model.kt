@@ -16,7 +16,7 @@ class Model(val manager: VisionManager) {
 
     private fun MutableVisionContainer<Solid>.pixel(pixel: SC1) {
         val group = solidGroup(pixel.name) {
-            position = Point3D(pixel.center.x, pixel.center.y, pixel.center.z)
+            position = Float32Vector3D(pixel.center.x, pixel.center.y, pixel.center.z)
             box(pixel.xSize, pixel.ySize, pixel.zSize)
             label(pixel.name) {
                 z = -Monitor.PIXEL_Z_SIZE / 2 - 5
@@ -39,7 +39,7 @@ class Model(val manager: VisionManager) {
     val root: SolidGroup = SolidGroup().apply {
         setAsRoot(this@Model.manager)
         material {
-            color.set("darkgreen")
+            color("darkgreen")
         }
         rotationX = PI / 2
         solidGroup("bottom") {
@@ -64,7 +64,7 @@ class Model(val manager: VisionManager) {
 
     private fun highlight(pixel: String) {
         println("highlight $pixel")
-        map[pixel]?.color.set("blue")
+        map[pixel]?.color("blue")
     }
 
     fun reset() {
@@ -82,7 +82,7 @@ class Model(val manager: VisionManager) {
         }
         event.track?.let {
             tracks.polyline(*it.toTypedArray(), name = "track[${event.id}]") {
-                color.set("red")
+                color("red")
             }
         }
     }

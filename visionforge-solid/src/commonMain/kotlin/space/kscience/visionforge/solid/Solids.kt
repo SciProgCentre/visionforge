@@ -48,9 +48,12 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
 
             subclass(AmbientLightSource.serializer())
             subclass(PointLightSource.serializer())
+
+            subclass(AxesSolid.serializer())
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
+
             polymorphic(Vision::class) {
                 subclass(SimpleVisionGroup.serializer())
                 solids()
@@ -91,3 +94,7 @@ public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: So
         }
     }
 }
+
+@VisionBuilder
+public inline fun VisionOutput.solid(options: Canvas3DOptions.() -> Unit, block: SolidGroup.() -> Unit): SolidGroup =
+    solid(Canvas3DOptions(options), block)

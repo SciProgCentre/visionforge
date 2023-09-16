@@ -10,23 +10,23 @@ fun main() = makeVisionFile {
             ambientLight()
             box(100.0, 100.0, 100.0) {
                 z = -110.0
-                color.set("teal")
+                color("teal")
             }
             sphere(50.0) {
                 x = 110
                 detail = 16
-                color.set("red")
+                color("red")
             }
             tube(50, height = 10, innerRadius = 25, angle = PI) {
                 y = 110
                 detail = 16
                 rotationX = PI / 4
-                color.set("blue")
+                color("blue")
             }
             sphereLayer(50, 40, theta = PI / 2) {
                 rotationX = -PI * 3 / 4
                 z = 110
-                color.set(Colors.pink)
+                color(Colors.pink)
             }
 
 

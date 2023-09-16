@@ -42,7 +42,7 @@ public class GdmlLoaderOptions {
      * Configure paint for given solid with given [GdmlMaterial]
      */
     public var configurePaint: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit =
-        { material, _ -> color.set(randomColor(material)) }
+        { material, _ -> color(randomColor(material)) }
         private set
 
     public fun paint(block: SolidMaterial.(material: GdmlMaterial, solid: GdmlSolid) -> Unit) {

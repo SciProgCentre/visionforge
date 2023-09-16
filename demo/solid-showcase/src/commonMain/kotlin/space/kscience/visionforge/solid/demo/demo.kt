@@ -4,6 +4,8 @@ import kotlinx.coroutines.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
+import space.kscience.kmath.geometry.Euclidean3DSpace
+import space.kscience.kmath.geometry.radians
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -21,7 +23,7 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
     val vision = solids.solidGroup {
         block()
         ambientLight {
-            color.set(Colors.white)
+            color(Colors.white)
         }
     }
     render(Name.parse(name), vision, meta)
@@ -47,23 +49,23 @@ fun VisionLayout<Solid>.showcase() {
         ambientLight()
         box(100.0, 100.0, 100.0) {
             z = -110.0
-            color.set("teal")
+            color("teal")
         }
         sphere(50.0) {
             x = 110
             detail = 16
-            color.set("red")
+            color("red")
         }
         tube(50, height = 10, innerRadius = 25, angle = PI) {
             y = 110
             detail = 16
             rotationX = PI / 4
-            color.set("blue")
+            color("blue")
         }
         sphereLayer(50, 40, theta = PI / 2) {
             rotationX = -PI * 3 / 4
             z = 110
-            color.set(Colors.pink)
+            color(Colors.pink)
         }
     }
 
@@ -78,7 +80,7 @@ fun VisionLayout<Solid>.showcase() {
                 visible = false
                 x = 110.0
                 //override color for this cube
-                color.set(1530)
+                color(1530)
 
                 GlobalScope.launch(Dispatchers.Main) {
                     while (isActive) {
@@ -93,7 +95,7 @@ fun VisionLayout<Solid>.showcase() {
             val random = Random(111)
             while (isActive) {
                 delay(1000)
-                group.color.set(random.nextInt(0, Int.MAX_VALUE))
+                group.color(random.nextInt(0, Int.MAX_VALUE))
             }
         }
     }
@@ -103,9 +105,16 @@ fun VisionLayout<Solid>.showcase() {
         solidGroup {
             x = 200
             rotationY = PI / 4
+            axes(200)
             box(100, 100, 100) {
-                rotationZ = PI / 4
-                color.set(Colors.red)
+                rotate((PI / 4).radians, Euclidean3DSpace.zAxis)
+                GlobalScope.launch(Dispatchers.Main) {
+                    while (isActive) {
+                        delay(100)
+                        rotate((PI/20).radians,Euclidean3DSpace.yAxis)
+                    }
+                }
+                color(Colors.red)
             }
         }
     }
@@ -118,7 +127,7 @@ fun VisionLayout<Solid>.showcase() {
             for (i in 0..100) {
                 layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
             }
-            color.set(Colors.teal)
+            color(Colors.teal)
             rotationX = -PI / 2
         }
     }
@@ -127,13 +136,16 @@ fun VisionLayout<Solid>.showcase() {
         sphere(100) {
             detail = 32
             opacity = 0.4
-            color.set(Colors.blue)
+            color(Colors.blue)
         }
         repeat(20) {
-            polyline(Point3D(100, 100, 100), Point3D(-100, -100, -100)) {
+            polyline(
+                Float32Vector3D(100, 100, 100),
+                Float32Vector3D(-100, -100, -100)
+            ) {
                 thickness = 3.0
                 rotationX = it * PI2 / 20
-                color.set(Colors.green)
+                color(Colors.green)
                 //rotationY = it * PI2 / 20
             }
         }
@@ -146,6 +158,10 @@ fun VisionLayout<Solid>.showcase() {
         label("Hello, world!", fontSize = 12) {
             z = 26
         }
+    }
+
+    demo("STL", "STL loaded from URL") {
+        stl("https://ozeki.hu/attachments/116/Menger_sponge_sample.stl")
     }
 }
 
@@ -160,7 +176,7 @@ fun VisionLayout<Solid>.showcaseCSG() {
                 detail = 32
             }
             material {
-                color.set(Colors.pink)
+                color(Colors.pink)
             }
         }
         composite(CompositeType.UNION) {
@@ -170,7 +186,7 @@ fun VisionLayout<Solid>.showcaseCSG() {
             sphere(50) {
                 detail = 32
             }
-            color.set("lightgreen")
+            color("lightgreen")
             opacity = 0.7
         }
         composite(CompositeType.SUBTRACT) {
@@ -181,7 +197,7 @@ fun VisionLayout<Solid>.showcaseCSG() {
             sphere(50) {
                 detail = 32
             }
-            color.set("teal")
+            color("teal")
             opacity = 0.7
         }
     }
@@ -192,7 +208,7 @@ fun VisionLayout<Solid>.showcaseCSG() {
                 detail = 32
             }
             box(100, 100, 100)
-            color.set("red")
+            color("red")
             opacity = 0.5
         }
     }

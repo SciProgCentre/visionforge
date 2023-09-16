@@ -12,7 +12,7 @@ import space.kscience.visionforge.react.createRoot
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
-import space.kscience.visionforge.solid.set
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 import styled.injectGlobal
@@ -49,7 +49,7 @@ private class GDMLDemoApp : Application {
             child(GDMLApp) {
                 val vision = GdmlShowCase.cubes().toVision().apply {
                     ambientLight {
-                        color.set(Colors.white)
+                        color(Colors.white)
                     }
                 }
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))

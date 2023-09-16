@@ -43,7 +43,7 @@ fun readEffs(): Map<String, Double> {
 
 
 fun buildEventByTrack(index: Int, track: Line, hitResolver: (Line) -> Collection<SC1> = defaultHitResolver): Event {
-    return Event(index, track.toPoints(), hitResolver(track).map { it.name })
+    return Event(index, track.toKMathVectors(), hitResolver(track).map { it.name })
 }
 
 val defaultHitResolver: (Line) -> Collection<SC1> = { track: Line ->

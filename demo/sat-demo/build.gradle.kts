@@ -8,13 +8,15 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
+    useKtor()
     dependencies{
+        implementation("io.ktor:ktor-server-cio")
         implementation(projects.visionforgeThreejs.visionforgeThreejsServer)
-        implementation("ch.qos.logback:logback-classic:1.4.5")
+        implementation(spclibs.logback.classic)
     }
 }
 
-group = "ru.mipt.npm"
+group = "center.sciprog"
 
 application {
     mainClass.set("ru.mipt.npm.sat.SatServerKt")

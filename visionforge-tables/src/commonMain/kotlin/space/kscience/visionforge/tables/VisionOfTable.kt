@@ -86,6 +86,11 @@ public fun Table<String>.toVision(): VisionOfTable = toVision { (it ?: "").asVal
 @JvmName("numberTableToVision")
 public fun Table<Number>.toVision(): VisionOfTable = toVision { (it ?: Double.NaN).asValue() }
 
+@JvmName("anyTableToVision")
+public fun Table<Any?>.toVision(): VisionOfTable = toVision {
+    (it as? Number)?.asValue() ?: it?.toString()?.asValue() ?: Null
+}
+
 @DFExperimental
 public inline fun VisionOutput.table(
     vararg headers: ColumnHeader<Value>,

@@ -40,6 +40,8 @@ kscience {
     }
 }
 
+kotlin.explicitApi = null
+
 application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }

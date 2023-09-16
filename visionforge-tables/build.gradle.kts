@@ -9,9 +9,9 @@ kscience {
     js {
         useCommonJs()
         binaries.library()
-        browser{
-            commonWebpackConfig{
-                cssSupport{
+        browser {
+            commonWebpackConfig {
+                cssSupport {
                     enabled.set(true)
                 }
             }
@@ -21,13 +21,13 @@ kscience {
         api(projects.visionforgeCore)
         api("space.kscience:tables-kt:${tablesVersion}")
     }
-    dependencies(jsMain){
-        implementation(npm("tabulator-tables", "5.0.1"))
-        implementation(npm("@types/tabulator-tables", "5.0.1"))
+    dependencies(jsMain) {
+        implementation(npm("tabulator-tables", "5.4.4"))
+        implementation(npm("@types/tabulator-tables", "5.4.8"))
     }
     useSerialization()
 }
 
-readme{
+readme {
     maturity = space.kscience.gradle.Maturity.PROTOTYPE
 }

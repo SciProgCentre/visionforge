@@ -37,6 +37,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
         objectFactories[PointLightSource::class] = ThreePointLightFactory
+        objectFactories[StlSolid::class] = ThreeStlFactory
+        objectFactories[AxesSolid::class] = ThreeAxesFactory
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -46,7 +48,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
-    public fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
+    public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
         is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
         is SolidGroup -> {

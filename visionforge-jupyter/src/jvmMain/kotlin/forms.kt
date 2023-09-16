@@ -11,11 +11,14 @@ import space.kscience.visionforge.html.VisionOfHtmlForm
 public class HtmlFormFragment internal constructor(
     public val vision: VisionOfHtmlForm,
     public val formBody: HtmlFragment,
-){
+) {
     public val values: Meta? get() = vision.values
     public operator fun get(valueName: String): Meta? = values?.get(valueName)
 }
 
+/**
+ * Top level function to create a form
+ */
 public fun HtmlFormFragment(id: String? = null, builder: FORM.() -> Unit): HtmlFormFragment {
     val realId = id ?: "form[${builder.hashCode().toUInt()}]"
     return HtmlFormFragment(VisionOfHtmlForm(realId)) {
@@ -25,3 +28,7 @@ public fun HtmlFormFragment(id: String? = null, builder: FORM.() -> Unit): HtmlF
         }
     }
 }
+
+
+public fun VisionForge.form(id: String? = null, builder: FORM.() -> Unit): HtmlFormFragment =
+    HtmlFormFragment(id, builder)

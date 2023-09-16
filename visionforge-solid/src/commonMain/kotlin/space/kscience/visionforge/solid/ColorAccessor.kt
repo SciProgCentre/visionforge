@@ -28,7 +28,7 @@ public class ColorAccessor(
     }
 }
 
-public fun Vision.color(
+public fun Vision.colorProperty(
     propertyName: Name? = null,
 ): ReadOnlyProperty<Vision, ColorAccessor> = ReadOnlyProperty { _, property ->
     ColorAccessor(properties.root(true), propertyName ?: property.name.asName())
@@ -43,21 +43,21 @@ public var ColorAccessor?.string: String?
 /**
  * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
  */
-public fun ColorAccessor?.set(webColor: String) {
+public operator fun ColorAccessor?.invoke(webColor: String) {
     this?.value = webColor.asValue()
 }
 
 /**
  * Set color as RGB integer
  */
-public fun ColorAccessor?.set(rgb: Int) {
+public operator fun ColorAccessor?.invoke(rgb: Int) {
     this?.value = Colors.rgbToString(rgb).asValue()
 }
 
 /**
  * Set color as RGB
  */
-public fun ColorAccessor?.set(r: UByte, g: UByte, b: UByte) {
+public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
     this?.value = Colors.rgbToString(r, g, b).asValue()
 }
 

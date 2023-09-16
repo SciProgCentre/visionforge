@@ -17,7 +17,7 @@ import space.kscience.visionforge.VisionBuilder
  */
 public interface PrototypeHolder {
     /**
-     * Build or update prototype tree
+     * Build or update the prototype tree
      */
     @VisionBuilder
     public fun prototypes(builder: MutableVisionContainer<Solid>.() -> Unit)
@@ -43,6 +43,9 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
             it to value
         }.toMap()
 
+    /**
+     * Get a child solid with given relative [name] if it exists
+     */
     public operator fun get(name: Name): Solid? = children.getChild(name) as? Solid
 
     private var prototypes: SolidGroup?
@@ -84,6 +87,8 @@ public class SolidGroup : AbstractVisionGroup(), Solid, PrototypeHolder, Mutable
     }
 }
 
+public operator fun SolidGroup.get(name:String): Solid? = get(name.parseAsName())
+
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.solidGroup(
     name: Name? = null,
@@ -99,3 +104,8 @@ public inline fun MutableVisionContainer<Solid>.solidGroup(
     name: String,
     action: SolidGroup.() -> Unit = {},
 ): SolidGroup = solidGroup(name.parseAsName(), action)
+
+/**
+ * Create a [SolidGroup] using given configuration [block]
+ */
+public inline fun SolidGroup(block: SolidGroup.() -> Unit): SolidGroup = SolidGroup().apply(block)

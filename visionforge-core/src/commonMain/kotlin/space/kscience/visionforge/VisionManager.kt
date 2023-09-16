@@ -35,7 +35,6 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
 
     public val jsonFormat: Json
         get() = Json(defaultJson) {
-            encodeDefaults = false
             serializersModule = this@VisionManager.serializersModule
         }
 
@@ -85,7 +84,6 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
             serializersModule = defaultSerialModule
             prettyPrint = true
             useArrayPolymorphism = false
-            encodeDefaults = false
             ignoreUnknownKeys = true
             explicitNulls = false
         }

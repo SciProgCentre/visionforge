@@ -8,6 +8,9 @@ import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.complex.QuaternionField
+import space.kscience.kmath.geometry.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
@@ -57,8 +60,6 @@ public interface Solid : Vision {
         public val Z_POSITION_KEY: Name = POSITION_KEY + Z_KEY
 
         public val ROTATION_KEY: Name = "rotation".asName()
-
-        public val QUATERNION_KEY: Name = "quaternion".asName()
 
         public val X_ROTATION_KEY: Name = ROTATION_KEY + X_KEY
         public val Y_ROTATION_KEY: Name = ROTATION_KEY + Y_KEY
@@ -122,15 +123,6 @@ public var Solid.layer: Int
 
 // Common properties
 
-public enum class RotationOrder {
-    XYZ,
-    YZX,
-    ZXY,
-    XZY,
-    YXZ,
-    ZYX
-}
-
 /**
  * Rotation order
  */
@@ -174,18 +166,21 @@ internal fun point(
     defaultX: Float,
     defaultY: Float = defaultX,
     defaultZ: Float = defaultX,
-): ReadWriteProperty<Solid, Point3D?> =
-    object : ReadWriteProperty<Solid, Point3D?> {
-        override fun getValue(thisRef: Solid, property: KProperty<*>): Point3D? {
+): ReadWriteProperty<Solid, Float32Vector3D?> =
+    object : ReadWriteProperty<Solid, Float32Vector3D?> {
+        override fun getValue(thisRef: Solid, property: KProperty<*>): Float32Vector3D? {
             val item = thisRef.properties.own?.get(name) ?: return null
-            return object : Point3D {
+            //using dynamic property accessor because values could change
+            return object : Float32Vector3D {
                 override val x: Float get() = item[X_KEY]?.float ?: defaultX
                 override val y: Float get() = item[Y_KEY]?.float ?: defaultY
                 override val z: Float get() = item[Z_KEY]?.float ?: defaultZ
+
+                override fun toString(): String = item.toString()
             }
         }
 
-        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Point3D?) {
+        override fun setValue(thisRef: Solid, property: KProperty<*>, value: Float32Vector3D?) {
             if (value == null) {
                 thisRef.properties.setProperty(name, null)
             } else {
@@ -196,9 +191,9 @@ internal fun point(
         }
     }
 
-public var Solid.position: Point3D? by point(POSITION_KEY, 0f)
-public var Solid.rotation: Point3D? by point(ROTATION_KEY, 0f)
-public var Solid.scale: Point3D? by point(SCALE_KEY, 1f)
+public var Solid.position: Float32Vector3D? by point(POSITION_KEY, 0f)
+public var Solid.rotation: Float32Vector3D? by point(ROTATION_KEY, 0f)
+public var Solid.scale: Float32Vector3D? by point(SCALE_KEY, 1f)
 
 public var Solid.x: Number by float(X_POSITION_KEY, 0f)
 public var Solid.y: Number by float(Y_POSITION_KEY, 0f)
@@ -208,33 +203,49 @@ public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
 public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
 public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
 
-public var Solid.quaternion: Pair<Float, Point3D>?
-    get() = properties.getValue(Solid.QUATERNION_KEY)?.list?.let {
+/**
+ * Raw quaternion value defined in properties
+ */
+public var Solid.quaternionOrNull: Quaternion?
+    get() = properties.getValue(ROTATION_KEY)?.list?.let {
         require(it.size == 4) { "Quaternion must be a number array of 4 elements" }
-        it[0].float to Point3D(it[1].float, it[2].float, it[3].float)
+        Quaternion(it[0].float, it[1].float, it[2].float, it[3].float)
     }
     set(value) {
         properties.setValue(
-            Solid.QUATERNION_KEY,
+            ROTATION_KEY,
             value?.let {
                 ListValue(
-                    value.first,
-                    value.second.x,
-                    value.second.y,
-                    value.second.z
+                    value.w,
+                    value.x,
+                    value.y,
+                    value.z
                 )
             }
         )
     }
 
-
-//public var Solid.quaternion: Quaternion?
-//    get() = meta[Solid::quaternion.name]?.value?.doubleArray?.let { Quaternion(it) }
-//    set(value) {
-//        meta[Solid::quaternion.name] = value?.values?.asValue()
-//    }
-
+/**
+ * Quaternion value including information from euler angles
+ */
+public var Solid.quaternion: Quaternion
+    get() = quaternionOrNull ?: Quaternion.fromEuler(
+        rotationX.radians,
+        rotationY.radians,
+        rotationZ.radians,
+        rotationOrder
+    )
+    set(value) {
+        quaternionOrNull = value
+    }
 
 public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
 public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)
 public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)
+
+/**
+ * Add rotation with given [angle] relative to given [axis]
+ */
+public fun Solid.rotate(angle: Angle, axis: DoubleVector3D): Unit = with(QuaternionField) {
+    quaternion = Quaternion.fromRotation(angle, axis)*quaternion
+}

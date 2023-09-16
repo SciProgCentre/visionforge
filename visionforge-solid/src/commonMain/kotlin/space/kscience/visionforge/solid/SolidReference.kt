@@ -2,7 +2,9 @@ package space.kscience.visionforge.solid
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -61,7 +63,7 @@ public class SolidReference(
                 }
 
             override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? {
-                if(name == Vision.STYLE_KEY){
+                if (name == Vision.STYLE_KEY) {
                     return buildList {
                         properties?.getValue(Vision.STYLE_KEY)?.list?.forEach {
                             add(it)
@@ -90,7 +92,7 @@ public class SolidReference(
                     prototype.getStyleProperty(name)?.value?.let { return it }
                 }
 
-                if(inheritFlag){
+                if (inheritFlag) {
                     //5. own inheritance
                     parent?.properties?.getValue(name, inheritFlag, includeStyles)?.let { return it }
                     //6. prototype inheritance
@@ -226,13 +228,13 @@ internal class SolidReferenceChild(
  */
 public fun MutableVisionContainer<Solid>.ref(
     templateName: Name,
-    name: String? = null,
+    name: Name? = null,
 ): SolidReference = SolidReference(templateName).also { setChild(name, it) }
 
 public fun MutableVisionContainer<Solid>.ref(
-    templateName: String,
-    name: String? = null,
-): SolidReference = ref(Name.parse(templateName), name)
+    templateName: Name,
+    name: String,
+): SolidReference = ref(templateName, name.parseAsName())
 
 /**
  * Add new [SolidReference] wrapping given object and automatically adding it to the prototypes.
@@ -251,7 +253,7 @@ public fun SolidGroup.newRef(
     } else if (existing != obj) {
         error("Can't add different prototype on top of existing one")
     }
-    return children.ref(prototypeName, name)
+    return children.ref(prototypeName, name?.parseAsName())
 }
 
 
