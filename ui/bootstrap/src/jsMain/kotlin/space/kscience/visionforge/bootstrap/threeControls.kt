@@ -1,7 +1,6 @@
 package space.kscience.visionforge.bootstrap
 
 import kotlinx.css.*
-import kotlinx.css.properties.border
 import react.FC
 import react.PropsWithChildren
 import react.RBuilder
@@ -33,13 +32,13 @@ public val ThreeControls: FC<ThreeControlsProps> = fc { props ->
         }
         tab("Tree") {
             css {
-                border(1.px, BorderStyle.solid, Color.lightGray)
-                padding(10.px)
+                border = Border(1.px, BorderStyle.solid, Color.lightGray)
+                padding = Padding(10.px)
             }
             h2 { +"Object tree" }
             styledDiv {
                 css {
-                    flex(1.0, 1.0, FlexBasis.inherit)
+                    flex = Flex(1.0, 1.0, FlexBasis.inherit)
                 }
                 props.vision?.let {
                     visionTree(it, props.selected, props.onSelect)

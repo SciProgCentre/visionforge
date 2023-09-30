@@ -43,8 +43,8 @@ private class JsPlaygroundApp : Application {
         createRoot(element).render {
             styledDiv {
                 css {
-                    padding(0.pt)
-                    margin(0.pt)
+                    padding = Padding(0.pt)
+                    margin = Margin(0.pt)
                     height = 100.vh
                     width = 100.vw
                 }

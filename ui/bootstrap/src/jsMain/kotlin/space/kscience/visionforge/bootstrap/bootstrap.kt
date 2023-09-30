@@ -1,8 +1,8 @@
 package space.kscience.visionforge.bootstrap
 
 public fun useBootstrap(){
-    kotlinext.js.require("bootstrap/dist/css/bootstrap.min.css")
-    kotlinext.js.require("bootstrap")
+    kotlinext.js.require<dynamic>("bootstrap/dist/css/bootstrap.min.css")
+    kotlinext.js.require<dynamic>("bootstrap")
 }
 
 //public inline fun TagConsumer<HTMLElement>.card(title: String, crossinline block: TagConsumer<HTMLElement>.() -> Unit) {

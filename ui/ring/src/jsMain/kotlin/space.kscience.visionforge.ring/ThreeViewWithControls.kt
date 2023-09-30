@@ -130,7 +130,7 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
             css {
                 height = 100.pct
                 minWidth = 600.px
-                flex(10.0, 1.0, FlexBasis("600px"))
+                flex = Flex(10.0, 1.0, FlexBasis("600px"))
                 position = Position.relative
             }
 
@@ -199,11 +199,11 @@ public val ThreeCanvasWithControls: FC<ThreeCanvasWithControlsProps> = fc("Three
         }
         flexColumn {
             css {
-                padding(4.px)
+                padding = Padding(4.px)
                 minWidth = 400.px
                 height = 100.pct
                 overflowY = Overflow.auto
-                flex(1.0, 10.0, FlexBasis("300px"))
+                flex = Flex(1.0, 10.0, FlexBasis("300px"))
             }
             ringThreeControls(options, solid, selected, onSelect, additionalTabs = props.additionalTabs)
         }

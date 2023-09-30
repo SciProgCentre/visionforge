@@ -1,5 +1,4 @@
 import kotlinx.css.*
-import kotlinx.css.properties.border
 import kotlinx.dom.clear
 import kotlinx.html.dom.append
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
@@ -45,10 +44,10 @@ val Markup = fc<MarkupProps>("Markup") { props ->
         css {
             width = 100.pct
             height = 100.pct
-            border(2.pt, BorderStyle.solid, Color.blue)
-            padding(left = 8.pt)
+            border= Border(2.pt, BorderStyle.solid, Color.blue)
+            padding = Padding(left = 8.pt)
             backgroundColor = Color.white
-            flex(1.0)
+            flex = Flex(1.0)
             zIndex = 10000
         }
         ref = elementRef

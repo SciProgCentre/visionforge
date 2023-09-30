@@ -2,11 +2,7 @@ package space.kscience.visionforge.ring
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.css.BorderStyle
-import kotlinx.css.Color
-import kotlinx.css.padding
-import kotlinx.css.properties.border
-import kotlinx.css.px
+import kotlinx.css.*
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import org.w3c.files.Blob
@@ -34,7 +30,7 @@ internal fun saveData(event: Event, fileName: String, mimeType: String = "text/p
     event.stopPropagation();
     event.preventDefault();
 
-    val fileSaver = kotlinext.js.require("file-saver")
+    val fileSaver = kotlinext.js.require<dynamic>("file-saver")
     val blob = Blob(arrayOf(dataBuilder()), BlobPropertyBag("$mimeType;charset=utf-8"))
     fileSaver.saveAs(blob, fileName)
 }
@@ -58,8 +54,8 @@ internal val CanvasControls: FC<CanvasControlsProps> = fc("CanvasControls") { pr
     flexColumn {
         flexRow {
             css {
-                border(1.px, BorderStyle.solid, Color.blue)
-                padding(4.px)
+                border = Border(1.px, BorderStyle.solid, Color.blue)
+                padding = Padding(4.px)
             }
             props.vision?.let { vision ->
                 button {

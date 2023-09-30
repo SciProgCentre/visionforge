@@ -1,5 +1,4 @@
 import kotlinx.css.*
-import kotlinx.css.properties.border
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import react.*
@@ -30,8 +29,8 @@ val Plotly = fc<PlotlyProps>("Plotly") { props ->
         css {
             width = 100.pct
             height = 100.pct
-            border(2.pt, BorderStyle.solid, Color.blue)
-            flex(1.0)
+            border = Border(2.pt, BorderStyle.solid, Color.blue)
+            flex = Flex(1.0)
         }
         ref = elementRef
     }
