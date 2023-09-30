@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import space.kscience.visionforge.solid.Float32Vector3D
 
 
 @Serializable
@@ -15,6 +16,8 @@ public data class FairTrackParam(
     val fTy: Double,
     val fQp: Double,
 )
+
+public fun FairTrackParam.toVector(): Float32Vector3D = Float32Vector3D(fX,fY,fZ)
 
 @Serializable
 public data class CbmStsTrack(
