@@ -34,20 +34,27 @@ public fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
     }
 }
 
+/**
+ * A layer for extruded shape
+ */
 @Serializable
 public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
+/**
+ * An extruded shape with the same number of points on each layer.
+ */
 @Serializable
 @SerialName("solid.extrude")
 public class Extruded(
-    public val shape: List<Float32Vector2D>,
+    public val shape: Shape2D,
     public val layers: List<Layer>,
 ) : SolidBase<Extruded>(), GeometrySolid {
 
-    override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        val shape: Shape2D = shape
+    init {
+        require(shape.size > 2) { "Extruded shape requires more than 2 points per layer" }
+    }
 
-        if (shape.size < 3) error("Extruded shape requires more than 2 points per layer")
+    override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
 
         /**
          * Expand the shape for specific layers
@@ -90,31 +97,31 @@ public class Extruded(
         geometryBuilder.cap(layers.last())
     }
 
+    public class Builder(
+        public var shape: List<Float32Vector2D> = emptyList(),
+        public var layers: MutableList<Layer> = ArrayList(),
+        public val properties: MutableMeta = MutableMeta(),
+    ) {
+        public fun shape(block: Shape2DBuilder.() -> Unit) {
+            this.shape = Shape2DBuilder().apply(block).build()
+        }
+
+        public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
+            layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
+        }
+
+        internal fun build(): Extruded = Extruded(shape, layers).apply {
+            this.properties.setProperty(Name.EMPTY, this@Builder.properties)
+        }
+    }
+
     public companion object {
         public const val TYPE: String = "solid.extruded"
-    }
-}
-
-public class ExtrudeBuilder(
-    public var shape: List<Float32Vector2D> = emptyList(),
-    public var layers: MutableList<Layer> = ArrayList(),
-    public val properties: MutableMeta = MutableMeta(),
-) {
-    public fun shape(block: Shape2DBuilder.() -> Unit) {
-        this.shape = Shape2DBuilder().apply(block).build()
-    }
-
-    public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
-        layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
-    }
-
-    internal fun build(): Extruded = Extruded(shape, layers).apply {
-        this.properties.setProperty(Name.EMPTY, this@ExtrudeBuilder.properties)
     }
 }
 
 @VisionBuilder
 public fun MutableVisionContainer<Solid>.extruded(
     name: String? = null,
-    action: ExtrudeBuilder.() -> Unit = {},
-): Extruded = ExtrudeBuilder().apply(action).build().also { setChild(name, it) }
+    action: Extruded.Builder.() -> Unit = {},
+): Extruded = Extruded.Builder().apply(action).build().also { setChild(name, it) }

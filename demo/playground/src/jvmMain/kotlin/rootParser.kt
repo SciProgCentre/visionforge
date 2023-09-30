@@ -1,5 +1,6 @@
 package space.kscience.visionforge.examples
 
+import ru.mipt.npm.root.BMN
 import ru.mipt.npm.root.DGeoManager
 import ru.mipt.npm.root.rootGeo
 import ru.mipt.npm.root.serialization.TGeoManager
@@ -38,6 +39,8 @@ fun main() {
     sizes.forEach {
         println(it)
     }
+
+    val events = BMN.readEventJson(TGeoManager::class.java.getResourceAsStream("/root/event_0.json")!!.bufferedReader().readText())
 
     makeVisionFile(path = Path("data/output.html"), resourceLocation = ResourceLocation.EMBED) {
         vision("canvas") {

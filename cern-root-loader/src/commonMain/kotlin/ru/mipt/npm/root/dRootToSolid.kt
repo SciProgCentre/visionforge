@@ -113,8 +113,8 @@ private fun SolidGroup.addShape(
             val fScale by shape.meta.doubleArray()
 
             extruded(name = name) {
-                (0 until fNvert).forEach { index ->
-                    shape {
+                shape {
+                    (0 until fNvert).forEach { index ->
                         point(fX[index], fY[index])
                     }
                 }
@@ -181,10 +181,9 @@ private fun SolidGroup.addShape(
                     name = name,
                 ) {
                     z = (fZ[1] + fZ[0]) / 2
-
                 }.apply(block)
             } else {
-                TODO()
+                TODO("Polycone is not implemented")
             }
         }
 
