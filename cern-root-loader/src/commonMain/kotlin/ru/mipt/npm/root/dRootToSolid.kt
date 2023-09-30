@@ -1,6 +1,8 @@
 package ru.mipt.npm.root
 
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
@@ -44,39 +46,32 @@ private fun Solid.translate(trans: DoubleArray) {
     position = Float32Vector3D(x, y, z)
 }
 
-private fun Solid.useMatrix(matrix: DGeoMatrix?) {
-    if (matrix == null) return
-    when (matrix.typename) {
-        "TGeoIdentity" -> {
-            //do nothing
+private fun Solid.scale(s: DoubleArray) {
+    scale = Float32Vector3D(s[0], s[1], s[2])
+}
+
+private fun Solid.useMatrix(matrix: DGeoMatrix?): Unit {
+    when (matrix) {
+        null -> {}
+        is DGeoIdentity -> {}
+        is DGeoTranslation -> translate(matrix.fTranslation)
+        is DGeoRotation -> rotate(matrix.fRotationMatrix)
+        is DGeoScale -> scale(matrix.fScale)
+        is DGeoGenTrans -> {
+            translate(matrix.fTranslation)
+            matrix.fRotation?.fRotationMatrix?.let { rotate(it) }
+            scale(matrix.fScale)
         }
 
-        "TGeoTranslation" -> {
-            val fTranslation by matrix.meta.doubleArray()
-            translate(fTranslation)
+        is DGeoCombiTrans -> {
+            translate(matrix.fTranslation)
+            matrix.fRotation?.fRotationMatrix?.let { rotate(it) }
         }
 
-        "TGeoRotation" -> {
-            val fRotationMatrix by matrix.meta.doubleArray()
-            rotate(fRotationMatrix)
-        }
-
-        "TGeoCombiTrans" -> {
-            val fTranslation by matrix.meta.doubleArray()
-
-            translate(fTranslation)
-            matrix.meta["fRotation.fRotationMatrix"]?.value?.let {
-                rotate(it.doubleArray)
-            }
-        }
-
-        "TGeoHMatrix" -> {
-            val fTranslation by matrix.meta.doubleArray()
-            val fRotationMatrix by matrix.meta.doubleArray()
-            val fScale by matrix.meta.doubleArray()
-            translate(fTranslation)
-            rotate(fRotationMatrix)
-            scale = Float32Vector3D(fScale[0], fScale[1], fScale[2])
+        is DGeoHMatrix -> {
+            translate(matrix.fTranslation)
+            matrix.fRotation?.fRotationMatrix?.let { rotate(it) }
+            scale(matrix.fScale)
         }
     }
 }
@@ -99,10 +94,10 @@ private fun SolidGroup.addShape(
             }
             smartComposite(compositeType, name = name) {
                 addShape(node.fLeft!!, context, null) {
-                    this.useMatrix(node.fLeftMat)
+                    useMatrix(node.fLeftMat)
                 }
                 addShape(node.fRight!!, context, null) {
-                    this.useMatrix(node.fRightMat)
+                    useMatrix(node.fRightMat)
                 }
             }.apply(block)
         }
@@ -286,7 +281,7 @@ private fun SolidGroup.addRootNode(obj: DGeoNode, context: RootToSolidContext) {
     addRootVolume(volume, context, obj.fName) {
         when (obj.typename) {
             "TGeoNodeMatrix" -> {
-                val fMatrix by obj.dObject(::DGeoMatrix)
+                val fMatrix by obj.dObject(::dGeoMatrix)
                 this.useMatrix(fMatrix)
             }
 
