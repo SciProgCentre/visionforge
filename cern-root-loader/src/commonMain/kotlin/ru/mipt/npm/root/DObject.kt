@@ -42,7 +42,7 @@ public open class DObject(public val meta: Meta, public val refCache: DObjectCac
     }
 
     internal fun <T : DObject> tObjectArray(
-        builder: (Meta, DObjectCache) -> T
+        builder: (Meta, DObjectCache) -> T,
     ): ReadOnlyProperty<Any?, List<T>> = ReadOnlyProperty { _, property ->
         meta.getIndexed(Name.of(property.name, "arr")).values.mapNotNull {
             resolve(builder, it)
@@ -51,9 +51,9 @@ public open class DObject(public val meta: Meta, public val refCache: DObjectCac
 
     internal fun <T : DObject> dObject(
         builder: (Meta, DObjectCache) -> T,
-        key: Name? = null
+        key: Name? = null,
     ): ReadOnlyProperty<Any?, T?> = ReadOnlyProperty { _, property ->
-        meta[key ?: property.name.asName()]?.let { resolve(builder, it) }
+        meta[key ?: property.name.asName()]?.takeIf { it.value != Null }?.let { resolve(builder, it) }
     }
 }
 
@@ -62,8 +62,7 @@ public open class DNamed(meta: Meta, refCache: DObjectCache) : DObject(meta, ref
     public val fTitle: String by meta.string("")
 }
 
-public class DGeoMaterial(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
-}
+public class DGeoMaterial(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache)
 
 public class DGeoMedium(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
     public val fMaterial: DGeoMaterial? by dObject(::DGeoMaterial)
@@ -90,27 +89,69 @@ public class DGeoNode(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCach
     public val fVolume: DGeoVolume? by dObject(::DGeoVolume)
 }
 
-public open class DGeoMatrix(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache)
+public sealed class DGeoMatrix(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache)
 
-public open class DGeoScale(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+public class DGeoIdentity(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache)
+
+public class DGeoScale(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
     public val fScale: DoubleArray by meta.doubleArray(1.0, 1.0, 1.0)
     public val x: Double get() = fScale[0]
     public val y: Double get() = fScale[1]
     public val z: Double get() = fScale[2]
 }
 
+public class DGeoRotation(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+    public val fRotationMatrix: DoubleArray by meta.doubleArray()
+}
+
+public class DGeoTranslation(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+    public val fTranslation: DoubleArray by meta.doubleArray()
+}
+
+public open class DGeoCombiTrans(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+    public val fRotation: DGeoRotation? by dObject(::DGeoRotation)
+    public val fTranslation: DoubleArray by meta.doubleArray()
+}
+
+public class DGeoGenTrans(meta: Meta, refCache: DObjectCache) : DGeoCombiTrans(meta, refCache) {
+    public val fScale: DoubleArray by meta.doubleArray()
+}
+
+public class DGeoHMatrix(meta: Meta, refCache: DObjectCache) : DGeoMatrix(meta, refCache) {
+    public val fRotation: DGeoRotation? by dObject(::DGeoRotation)
+    public val fTranslation: DoubleArray by meta.doubleArray()
+    public val fScale: DoubleArray by meta.doubleArray()
+}
+
+/**
+ * Create a specialized version of [DGeoMatrix]
+ */
+internal fun dGeoMatrix(
+    meta: Meta,
+    refCache: DObjectCache,
+): DGeoMatrix = when (val typename = meta["_typename"].string) {
+    null -> error("Type name is undefined")
+    "TGeoIdentity" -> DGeoIdentity(meta, refCache)
+    "TGeoScale" -> DGeoScale(meta, refCache)
+    "TGeoRotation" -> DGeoRotation(meta, refCache)
+    "TGeoTranslation" -> DGeoTranslation(meta, refCache)
+    "TGeoCombiTrans" -> DGeoCombiTrans(meta, refCache)
+    "TGeoGenTrans" -> DGeoGenTrans(meta, refCache)
+    "TGeoHMatrix" -> DGeoHMatrix(meta, refCache)
+    else -> error("$typename is not a member of TGeoMatrix")
+}
 
 public class DGeoBoolNode(meta: Meta, refCache: DObjectCache) : DObject(meta, refCache) {
     public val fLeft: DGeoShape? by dObject(::DGeoShape)
-    public val fLeftMat: DGeoMatrix? by dObject(::DGeoMatrix)
+    public val fLeftMat: DGeoMatrix? by dObject(::dGeoMatrix)
 
     public val fRight: DGeoShape? by dObject(::DGeoShape)
-    public val fRightMat: DGeoMatrix? by dObject(::DGeoMatrix)
+    public val fRightMat: DGeoMatrix? by dObject(::dGeoMatrix)
 }
 
 
 public class DGeoManager(meta: Meta, refCache: DObjectCache) : DNamed(meta, refCache) {
-    public val fMatrices: List<DGeoMatrix> by tObjectArray(::DGeoMatrix)
+    public val fMatrices: List<DGeoMatrix> by tObjectArray(::dGeoMatrix)
 
     public val fShapes: List<DGeoShape> by tObjectArray(::DGeoShape)
 

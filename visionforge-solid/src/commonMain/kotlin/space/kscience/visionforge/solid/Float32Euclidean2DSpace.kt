@@ -15,7 +15,6 @@ import kotlin.math.sqrt
 @Serializable(Float32Euclidean2DSpace.VectorSerializer::class)
 public interface Float32Vector2D: Vector2D<Float>
 
-
 public object Float32Euclidean2DSpace :
     GeometrySpace<Float32Vector2D>,
     ScaleOperations<Float32Vector2D> {
