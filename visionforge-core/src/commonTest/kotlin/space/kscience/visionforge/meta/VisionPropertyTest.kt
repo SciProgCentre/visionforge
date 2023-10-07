@@ -42,7 +42,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyEdit() {
         val vision = manager.group()
-        vision.properties.getProperty("fff.ddd").apply {
+        vision.properties.getMeta("fff.ddd").apply {
             value = 2.asValue()
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
@@ -52,7 +52,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyUpdate() {
         val vision = manager.group()
-        vision.properties.getProperty("fff").updateWith(TestScheme) {
+        vision.properties.getMeta("fff").updateWith(TestScheme) {
             ddd = 2
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
@@ -87,7 +87,7 @@ internal class VisionPropertyTest {
 
         child.properties.remove("test")
 
-        assertEquals(11, child.properties.getProperty("test", inherit = true).int)
+        assertEquals(11, child.properties.getMeta("test", inherit = true).int)
 //        assertEquals(11, deferred.await()?.int)
 //        assertEquals(2, callCounter)
         subscription.cancel()

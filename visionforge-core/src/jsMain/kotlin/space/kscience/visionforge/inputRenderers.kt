@@ -36,7 +36,7 @@ internal fun textVisionRenderer(
             value = it ?: ""
         }
         onChangeFunction = {
-            client.visionPropertyChanged(name, VisionOfTextField::text.name, value)
+            client.notifyPropertyChanged(name, VisionOfTextField::text.name, value)
         }
     }
 }
@@ -58,7 +58,7 @@ internal fun numberVisionRenderer(
             value = it?.toDouble() ?: 0.0
         }
         onChangeFunction = {
-            client.visionPropertyChanged(name, VisionOfNumberField::value.name, value)
+            client.notifyPropertyChanged(name, VisionOfNumberField::value.name, value)
         }
     }
 }
@@ -106,7 +106,7 @@ internal fun formVisionRenderer(
     form.onsubmit = { event ->
         event.preventDefault()
         val formData = FormData(form).toMeta()
-        client.visionPropertyChanged(name, VisionOfHtmlForm::values.name, formData)
+        client.notifyPropertyChanged(name, VisionOfHtmlForm::values.name, formData)
         console.info("Sent: ${formData.toMap()}")
         false
     }

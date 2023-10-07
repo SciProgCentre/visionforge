@@ -1,15 +1,15 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.plus
@@ -25,22 +25,6 @@ private fun Vision.deepCopy(manager: VisionManager): Vision {
     //TODO replace by efficient deep copy
     val json = manager.encodeToJsonElement(this)
     return manager.decodeFromJson(json)
-}
-
-/**
- * A vision used only in change propagation and showing that the target should be removed
- */
-@Serializable
-public object NullVision : Vision {
-    override var parent: Vision?
-        get() = null
-        set(_) {
-            error("Can't set parent for null vision")
-        }
-
-    override val properties: MutableVisionProperties get() = error("Can't get properties of `NullVision`")
-
-    override val descriptor: MetaDescriptor? = null
 }
 
 
@@ -110,18 +94,6 @@ public class VisionChangeBuilder : MutableVisionContainer<Vision> {
         build(visionManager)
     )
 }
-
-/**
- * @param vision a new value for vision content. If the Vision is to be removed should be [NullVision]
- * @param properties updated properties
- * @param children a map of children changed in ths [VisionChange]. If a child to be removed, set [delete] flag to true.
- */
-@Serializable
-public data class VisionChange(
-    public val vision: Vision? = null,
-    public val properties: Meta? = null,
-    public val children: Map<Name, VisionChange>? = null,
-)
 
 public inline fun VisionManager.VisionChange(block: VisionChangeBuilder.() -> Unit): VisionChange =
     VisionChangeBuilder().apply(block).deepCopy(this)

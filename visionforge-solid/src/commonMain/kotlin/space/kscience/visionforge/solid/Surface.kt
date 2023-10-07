@@ -20,9 +20,9 @@ private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float32): Float32 {
  */
 @Serializable
 @SerialName("solid.surface")
-public class LayersSurface(
+public class Surface(
     public val layers: List<Layer>,
-) : SolidBase<Extruded>(), GeometrySolid {
+) : SolidBase<Surface>(), GeometrySolid {
 
     @Serializable
     public data class Layer(val z: Float32, val outer: Shape2D, val inner: Shape2D?) {

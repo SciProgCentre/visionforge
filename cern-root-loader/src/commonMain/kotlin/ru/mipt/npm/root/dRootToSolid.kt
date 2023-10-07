@@ -3,6 +3,7 @@ package ru.mipt.npm.root
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
@@ -12,7 +13,6 @@ import space.kscience.kmath.geometry.fromRotationMatrix
 import space.kscience.kmath.linear.VirtualMatrix
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.isEmpty
-import space.kscience.visionforge.set
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_KEY
 import kotlin.math.PI

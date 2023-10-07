@@ -4,6 +4,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -11,10 +12,7 @@ import kotlinx.coroutines.sync.withLock
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaSerializer
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.int
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
@@ -68,7 +66,7 @@ public class VisionClient : AbstractPlugin() {
     /**
      * Communicate vision property changed from rendering engine to model
      */
-    public fun visionPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
+    public fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         context.launch {
             mutex.withLock {
                 changeCollector.propertyChanged(visionName, propertyName, item)
@@ -76,9 +74,17 @@ public class VisionClient : AbstractPlugin() {
         }
     }
 
-//    public fun visionChanged(name: Name?, child: Vision?) {
-//        changeCollector.setChild(name, child)
-//    }
+    private val eventCollector by lazy {
+        MutableSharedFlow<VisionEvent>(meta["feedback.eventCache"].int ?: 100)
+    }
+
+
+    /**
+     * Send a custom feedback event
+     */
+    public suspend fun sendEvent(event: VisionEvent) {
+        eventCollector.emit(event)
+    }
 
     private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
         vision.setAsRoot(visionManager)
@@ -103,7 +109,7 @@ public class VisionClient : AbstractPlugin() {
 
             logger.info { "Updating vision data from $wsUrl" }
 
-            //Individual websocket for this element
+            //Individual websocket for this vision
             WebSocket(wsUrl.toString()).apply {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
@@ -131,7 +137,7 @@ public class VisionClient : AbstractPlugin() {
                 var feedbackJob: Job? = null
 
                 //Feedback changes aggregation time in milliseconds
-                val feedbackAggregationTime = meta["aggregationTime"]?.int ?: 300
+                val feedbackAggregationTime = meta["feedback.aggregationTime"]?.int ?: 300
 
                 onopen = {
                     feedbackJob = visionManager.context.launch {
@@ -144,18 +150,24 @@ public class VisionClient : AbstractPlugin() {
                                     change.reset()
                                 }
                             }
+//                            // take channel for given vision name
+//                            eventCollector[name]?.let { channel ->
+//                                for (e in channel) {
+//                                    send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), e))
+//                                }
+//                            }
                         }
                     }
-                    logger.info { "WebSocket update channel established for output '$name'" }
+                    logger.info { "WebSocket feedback channel established for output '$name'" }
                 }
 
                 onclose = {
                     feedbackJob?.cancel()
-                    logger.info { "WebSocket update channel closed for output '$name'" }
+                    logger.info { "WebSocket feedback channel closed for output '$name'" }
                 }
                 onerror = {
                     feedbackJob?.cancel()
-                    logger.error { "WebSocket update channel error for output '$name'" }
+                    logger.error { "WebSocket feedback channel error for output '$name'" }
                 }
             }
         }
@@ -248,20 +260,26 @@ public class VisionClient : AbstractPlugin() {
     }
 }
 
-public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {
-    visionPropertyChanged(visionName, propertyName.parseAsName(true), item)
+public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {
+    notifyPropertyChanged(visionName, propertyName.parseAsName(true), item)
 }
 
-public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Number) {
-    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Number) {
+    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
 }
 
-public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: String) {
-    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: String) {
+    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
 }
 
-public fun VisionClient.visionPropertyChanged(visionName: Name, propertyName: String, item: Boolean) {
-    visionPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Boolean) {
+    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
+}
+
+public fun VisionClient.sendEvent(visionName: Name, event: MetaRepr): Unit {
+    context.launch {
+        sendEvent(VisionMetaEvent(visionName, event.toMeta()))
+    }
 }
 
 private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {

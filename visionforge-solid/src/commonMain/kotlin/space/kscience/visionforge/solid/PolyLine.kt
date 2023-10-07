@@ -13,7 +13,10 @@ import space.kscience.visionforge.setChild
 public class PolyLine(public val points: List<Float32Vector3D>) : SolidBase<PolyLine>() {
 
     //var lineType by string()
-    public var thickness: Number by properties.root(inherit = false, includeStyles = true).number { DEFAULT_THICKNESS }
+    public var thickness: Number by properties.root(
+        inherit = false,
+        includeStyles = true
+    ).number { DEFAULT_THICKNESS }
 
     public companion object {
         public const val DEFAULT_THICKNESS: Double = 1.0

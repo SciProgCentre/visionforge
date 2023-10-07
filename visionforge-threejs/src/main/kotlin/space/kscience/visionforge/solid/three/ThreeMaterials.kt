@@ -83,7 +83,7 @@ public object ThreeMaterials {
     private val visionMaterialCache = HashMap<Vision, Material>()
 
     internal fun cacheMaterial(vision: Vision): Material = visionMaterialCache.getOrPut(vision) {
-        buildMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY)).apply {
+        buildMaterial(vision.properties.getMeta(SolidMaterial.MATERIAL_KEY)).apply {
             cached = true
         }
     }
@@ -133,11 +133,11 @@ public fun Mesh.setMaterial(vision: Vision) {
         } else {
             material = vision.parent?.let { parent ->
                 //TODO cache parent material
-                ThreeMaterials.buildMaterial(parent.properties.getProperty(SolidMaterial.MATERIAL_KEY))
+                ThreeMaterials.buildMaterial(parent.properties.getMeta(SolidMaterial.MATERIAL_KEY))
             } ?: ThreeMaterials.cacheMaterial(vision)
         }
     } else {
-        material = ThreeMaterials.buildMaterial(vision.properties.getProperty(SolidMaterial.MATERIAL_KEY))
+        material = ThreeMaterials.buildMaterial(vision.properties.getMeta(SolidMaterial.MATERIAL_KEY))
     }
 }
 
@@ -153,18 +153,18 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
         when (propertyName) {
             SolidMaterial.MATERIAL_COLOR_KEY -> {
                 material.asDynamic().color =
-                    vision.properties.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).threeColor()
+                    vision.properties.getMeta(SolidMaterial.MATERIAL_COLOR_KEY).threeColor()
                         ?: ThreeMaterials.DEFAULT_COLOR
             }
 
             SolidMaterial.SPECULAR_COLOR_KEY -> {
                 material.asDynamic().specular =
-                    vision.properties.getProperty(SolidMaterial.SPECULAR_COLOR_KEY).threeColor()
+                    vision.properties.getMeta(SolidMaterial.SPECULAR_COLOR_KEY).threeColor()
                         ?: ThreeMaterials.DEFAULT_COLOR
             }
 
             SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY -> {
-                material.asDynamic().emissive = vision.properties.getProperty(SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY)
+                material.asDynamic().emissive = vision.properties.getMeta(SolidMaterial.MATERIAL_EMISSIVE_COLOR_KEY)
                     .threeColor()
                     ?: ThreeMaterials.BLACK_COLOR
             }

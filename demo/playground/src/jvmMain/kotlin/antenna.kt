@@ -75,7 +75,7 @@ fun main() = serve {
             val incRot = Quaternion.fromRotation(30.degrees, Euclidean3DSpace.zAxis)
 
 
-            val rotationJob = context.launch {
+            context.launch {
                 var time: Long = 0L
                 while (isActive) {
                     with(QuaternionField) {

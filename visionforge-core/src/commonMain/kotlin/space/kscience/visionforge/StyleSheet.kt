@@ -13,7 +13,7 @@ import kotlin.jvm.JvmInline
 @JvmInline
 public value class StyleSheet(private val owner: Vision) {
 
-    private val styleNode: Meta get() = owner.properties.getProperty(STYLESHEET_KEY)
+    private val styleNode: Meta get() = owner.properties.getMeta(STYLESHEET_KEY)
 
     public val items: Map<NameToken, Meta> get() = styleNode.items
 
@@ -23,7 +23,7 @@ public value class StyleSheet(private val owner: Vision) {
      * Define a style without notifying owner
      */
     public fun define(key: String, style: Meta?) {
-        owner.properties.setProperty(STYLESHEET_KEY + key, style)
+        owner.properties.setMeta(STYLESHEET_KEY + key, style)
     }
 
     /**
