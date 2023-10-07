@@ -188,7 +188,7 @@ private fun SolidGroup.addShape(
         }
 
         "TGeoPgon" -> {
-            //TODO add a inner polygone layer
+
             val fDphi by shape.meta.double(0.0)
             val fNz by shape.meta.int(2)
             val fPhi1 by shape.meta.double(360.0)
@@ -201,19 +201,26 @@ private fun SolidGroup.addShape(
             val startphi = degToRad(fPhi1)
             val deltaphi = degToRad(fDphi)
 
-            extruded(name) {
+            fun Shape2DBuilder.pGon(radius: Double){
+                (0..<fNedges).forEach {
+                    val phi = deltaphi / fNedges * it + startphi
+                    point(radius * cos(phi), radius * sin(phi))
+                }
+            }
+
+            surface(name) {
                 //getting the radius of first
                 require(fNz > 1) { "The polyhedron geometry requires at least two planes" }
-                val baseRadius = fRmax[0]
-                shape {
-                    (0..<fNedges).forEach {
-                        val phi = deltaphi / fNedges * it + startphi
-                        point(baseRadius * cos(phi), baseRadius * sin(phi))
-                    }
-                }
-                (0 until fNz).forEach { index ->
-                    //scaling all radii relative to first layer radius
-                    layer(fZ[index], scale = fRmax[index] / baseRadius)
+                for (index in 0 until fNz){
+                    layer(
+                        fZ[index],
+                        innerBuilder = {
+                            pGon(fRmin[index])
+                        },
+                        outerBuilder = {
+                            pGon(fRmax[index])
+                        }
+                    )
                 }
             }.apply(block)
         }

@@ -14,6 +14,7 @@ fun main() = makeVisionFile {
                     polygon(8, 100)
                 }
                 layer(-30)
+                layer(0, x = 10, y = 10)
                 layer(30)
             }
         }
