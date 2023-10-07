@@ -41,6 +41,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
             subclass(ConeSurface.serializer())
             subclass(Convex.serializer())
             subclass(Extruded.serializer())
+            subclass(Surface.serializer())
             subclass(PolyLine.serializer())
             subclass(SolidLabel.serializer())
             subclass(Sphere.serializer())

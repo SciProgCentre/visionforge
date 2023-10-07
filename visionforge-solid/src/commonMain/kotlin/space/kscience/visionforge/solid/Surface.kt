@@ -2,9 +2,14 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.names.Name
 import space.kscience.kmath.geometry.component1
 import space.kscience.kmath.geometry.component2
 import space.kscience.kmath.structures.Float32
+import space.kscience.visionforge.MutableVisionContainer
+import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.setChild
 
 
 private inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float32): Float32 {
@@ -58,7 +63,7 @@ public class Surface(
             //outer and inner
             for (i in 0 until layers.size - 1) {
                 val bottom = layers[i]
-                val top = layers[i+1]
+                val top = layers[i + 1]
 
                 //creating shape in x-y plane with z = 0
                 val bottomOuterPoints = bottom.outerPoints()
@@ -130,7 +135,39 @@ public class Surface(
         }
     }
 
+    public class Builder(
+        public var layers: MutableList<Layer> = ArrayList(),
+        public val properties: MutableMeta = MutableMeta(),
+    ) {
+
+        public fun layer(
+            z: Number,
+            innerBuilder: (Shape2DBuilder.() -> Unit)? = null,
+            outerBuilder: Shape2DBuilder.() -> Unit,
+        ) {
+            layers.add(
+                Layer(
+                    z.toFloat(),
+                    outer = Shape2DBuilder().apply(outerBuilder).build(),
+                    inner = innerBuilder?.let { Shape2DBuilder().apply(innerBuilder).build() }
+                )
+            )
+        }
+
+        internal fun build(): Surface = Surface(layers).apply {
+            properties.setMeta(Name.EMPTY, this@Builder.properties)
+        }
+    }
+
+
     public companion object {
         public const val TYPE: String = "solid.surface"
     }
 }
+
+
+@VisionBuilder
+public fun MutableVisionContainer<Solid>.surface(
+    name: String? = null,
+    action: Surface.Builder.() -> Unit = {},
+): Surface = Surface.Builder().apply(action).build().also { setChild(name, it) }

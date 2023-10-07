@@ -1,16 +1,19 @@
 package space.kscience.visionforge.examples
 
-//fun main() = makeVisionFile {
-//    vision("canvas") {
-//        solid {
-//            ambientLight()
-//            surface("surface") {
-//                shape{
-//                    polygon(8, 100)
-//                    layer(-30)
-//                    layer(30)
-//                }
-//            }
-//        }
-//    }
-//}
+import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.polygon
+import space.kscience.visionforge.solid.solid
+import space.kscience.visionforge.solid.surface
+
+fun main() = makeVisionFile {
+    vision("canvas") {
+        solid {
+            ambientLight()
+            surface("surface") {
+                layer(0, {polygon(8,10)}, {polygon(8,20)})
+                layer(10, {polygon(8,10)}, {polygon(8,30)})
+
+            }
+        }
+    }
+}
