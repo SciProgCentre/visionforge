@@ -269,6 +269,44 @@ private fun SolidGroup.addShape(
             }
         }
 
+        "TGeoCone" -> {
+            val fDz by shape.meta.double(0.0)
+            val fRmin1 by shape.meta.double(0.0)
+            val fRmax1 by shape.meta.double(0.0)
+            val fRmin2 by shape.meta.double(0.0)
+            val fRmax2 by shape.meta.double(0.0)
+
+            coneSurface(
+                bottomOuterRadius = fRmax1,
+                bottomInnerRadius = fRmin1,
+                height = fDz * 2.0,
+                topOuterRadius = fRmax2,
+                topInnerRadius = fRmin2,
+                name = name,
+            )
+        }
+
+        "TGeoCtub" -> {
+            val fRmin by shape.meta.double(0.0)
+            val fRmax by shape.meta.double(0.0)
+            val fDz by shape.meta.double(0.0)
+            val fPhi1 by shape.meta.double(0.0)
+            val fPhi2 by shape.meta.double(PI2.toDouble())
+            val fNlow by shape.meta.doubleArray()
+            val fNhigh by shape.meta.doubleArray()
+
+            cutTube(
+                outerRadius = fRmax,
+                innerRadius = fRmin,
+                height = fDz * 2.0,
+                startAngle = degToRad(fPhi1),
+                angle = degToRad(fPhi2 - fPhi1),
+                topNormal = Float32Vector3D(fNhigh[0], fNhigh[1], fNhigh[2]),
+                bottomNormal = Float32Vector3D(fNlow[0], fNlow[1], fNlow[2]),
+                name = name,
+            )
+        }
+
         else -> {
             TODO("A shape with type ${shape.typename} not implemented")
         }
