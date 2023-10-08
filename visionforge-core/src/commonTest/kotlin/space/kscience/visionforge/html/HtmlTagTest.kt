@@ -4,6 +4,7 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*

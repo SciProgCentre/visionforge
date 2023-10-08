@@ -10,7 +10,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
@@ -34,7 +33,7 @@ public class VisionOfPlotly private constructor(
 
     @Transient
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
-        override fun setProperty(name: Name, node: Meta?, notify: Boolean) {
+        override fun setMeta(name: Name, node: Meta?, notify: Boolean) {
             meta.setMeta(name, node)
         }
 
@@ -46,7 +45,7 @@ public class VisionOfPlotly private constructor(
 
         override val descriptor: MetaDescriptor? get() = this@VisionOfPlotly.descriptor
 
-        override fun getProperty(
+        override fun getMeta(
             name: Name,
             inherit: Boolean?,
             includeStyles: Boolean?,

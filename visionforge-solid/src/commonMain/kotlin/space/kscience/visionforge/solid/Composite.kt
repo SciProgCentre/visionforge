@@ -3,7 +3,10 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.*
+import space.kscience.visionforge.MutableVisionContainer
+import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.setChild
+import space.kscience.visionforge.static
 
 public enum class CompositeType {
     GROUP, // Dumb sum of meshes
@@ -33,7 +36,7 @@ public inline fun MutableVisionContainer<Solid>.composite(
     }
     val res = Composite(type, children[0], children[1])
 
-    res.properties.setProperty(Name.EMPTY, group.properties.own)
+    res.properties.setMeta(Name.EMPTY, group.properties.own)
 
     setChild(name, res)
     return res

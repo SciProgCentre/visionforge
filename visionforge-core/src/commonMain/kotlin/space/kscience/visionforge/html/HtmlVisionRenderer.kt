@@ -93,7 +93,6 @@ public fun FlowContent.visionFragment(
     updatesUrl: String? = null,
     onVisionRendered: (Name, Vision) -> Unit = { _, _ -> },
     idPrefix: String? = null,
-
     fragment: HtmlVisionFragment,
 ): Unit = consumer.visionFragment(
     visionManager = visionManager,

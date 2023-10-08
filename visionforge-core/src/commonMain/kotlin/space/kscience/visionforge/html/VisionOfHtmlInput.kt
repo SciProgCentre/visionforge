@@ -6,10 +6,11 @@ import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.*
+import space.kscience.visionforge.AbstractVision
+import space.kscience.visionforge.Vision
 
 //TODO replace by something
-internal val Vision.mutableProperties get() = properties.getProperty(Name.EMPTY, false, false)
+internal val Vision.mutableProperties get() = properties.getMeta(Name.EMPTY, false, false)
 
 @Serializable
 public abstract class VisionOfHtmlInput : AbstractVision() {

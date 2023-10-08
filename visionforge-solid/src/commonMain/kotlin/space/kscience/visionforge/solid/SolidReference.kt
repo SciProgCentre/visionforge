@@ -14,7 +14,6 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
-import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD_PROPERTY_PREFIX
 
 
@@ -162,7 +161,7 @@ internal class SolidReferenceChild(
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
         override val descriptor: MetaDescriptor get() = this@SolidReferenceChild.descriptor
 
-        override val own: MutableMeta by lazy { owner.properties.getProperty(childToken(childName).asName()) }
+        override val own: MutableMeta by lazy { owner.properties.getMeta(childToken(childName).asName()) }
 
         override fun getValue(
             name: Name,
@@ -170,7 +169,7 @@ internal class SolidReferenceChild(
             includeStyles: Boolean?,
         ): Value? = own.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
-        override fun setProperty(name: Name, node: Meta?, notify: Boolean) {
+        override fun setMeta(name: Name, node: Meta?, notify: Boolean) {
             own.setMeta(name, node)
         }
 
@@ -184,20 +183,6 @@ internal class SolidReferenceChild(
             owner.properties.invalidate(childPropertyName(childName, propertyName))
         }
     }
-
-    override fun update(change: VisionChange) {
-        change.children?.forEach { (name, change) ->
-            when {
-                change.vision == NullVision -> error("Deleting children inside ref is not allowed.")
-                change.vision != null -> error("Updating content of the ref is not allowed")
-                else -> children.getChild(name)?.update(change)
-            }
-        }
-        change.properties?.let {
-            updateProperties(it, Name.EMPTY)
-        }
-    }
-
 
     override val children: VisionChildren = object : VisionChildren {
         override val parent: Vision get() = this@SolidReferenceChild

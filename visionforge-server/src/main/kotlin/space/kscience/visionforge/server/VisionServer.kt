@@ -23,10 +23,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionChange
-import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.flowChanges
+import space.kscience.visionforge.*
 import space.kscience.visionforge.html.*
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -77,6 +74,11 @@ public class VisionRoute(
  */
 public fun Application.serveVisionData(
     configuration: VisionRoute,
+    onEvent: suspend Vision.(VisionEvent) -> Unit = { event ->
+        if (event is VisionChange) {
+            update(event)
+        }
+    },
     resolveVision: (Name) -> Vision?,
 ) {
     require(WebSockets)
@@ -96,11 +98,11 @@ public fun Application.serveVisionData(
                 launch {
                     for (frame in incoming) {
                         val data = frame.data.decodeToString()
-                        application.log.debug("Received update for $name: \n$data")
-                        val change = configuration.visionManager.jsonFormat.decodeFromString(
-                            VisionChange.serializer(), data
+                        application.log.debug("Received event for $name: \n$data")
+                        val event = configuration.visionManager.jsonFormat.decodeFromString(
+                            VisionEvent.serializer(), data
                         )
-                        vision.update(change)
+                        vision.onEvent(event)
                     }
                 }
 
