@@ -132,6 +132,20 @@ public class CutTube(
 }
 
 
+/**
+ * Create a cut tube - a hollow cylinder (or a segment) cut with two planes. The axis of the cylinder
+ * is the Z axis. Each section is define by a center and a normal vector. The centers of the two sections
+ * are the points (0, 0, height / 2) and (0, 0, -height / 2).
+ *
+ * @param outerRadius outer radius of the tube
+ * @param innerRadius inner radius if the tube
+ * @param height height (length) of the tube. Essentially this is the length of the Z axis segment,
+ *  contained between the top and bottom sections of the tube
+ * @param startAngle start angle of the segment (if this is a segment)
+ * @param angle angular magnitude of the segment
+ * @param topNormal normal vector of the top section
+ * @param bottomNormal normal vector of the bottom section
+ */
 @VisionBuilder
 public inline fun MutableVisionContainer<Solid>.cutTube(
     outerRadius: Number,
