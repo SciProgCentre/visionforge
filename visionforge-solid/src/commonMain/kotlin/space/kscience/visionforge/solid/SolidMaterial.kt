@@ -107,12 +107,12 @@ public val Solid.color: ColorAccessor
     get() = ColorAccessor(properties.root(true), MATERIAL_COLOR_KEY)
 
 public var Solid.material: SolidMaterial?
-    get() = SolidMaterial.read(properties.getProperty(MATERIAL_KEY))
-    set(value) = properties.setProperty(MATERIAL_KEY, value?.meta)
+    get() = SolidMaterial.read(properties.getMeta(MATERIAL_KEY))
+    set(value) = properties.setMeta(MATERIAL_KEY, value?.meta)
 
 @VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
-    properties.getProperty(MATERIAL_KEY).updateWith(SolidMaterial, builder)
+    properties.getMeta(MATERIAL_KEY).updateWith(SolidMaterial, builder)
 }
 
 public var Solid.opacity: Number?
@@ -125,5 +125,5 @@ public var Solid.opacity: Number?
 @VisionBuilder
 public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
     properties[SolidMaterial.EDGES_ENABLED_KEY] = enabled
-    SolidMaterial.write(properties.getProperty(SolidMaterial.EDGES_MATERIAL_KEY)).apply(block)
+    SolidMaterial.write(properties.getMeta(SolidMaterial.EDGES_MATERIAL_KEY)).apply(block)
 }

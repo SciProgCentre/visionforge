@@ -4,6 +4,7 @@
 ### Added
 - Context receivers flag
 - MeshLine for thick lines
+- Custom client-side events and thier processing in VisionServer
 
 ### Changed
 - Color accessor property is now `colorProperty`. Color uses `invoke` instead of `set`

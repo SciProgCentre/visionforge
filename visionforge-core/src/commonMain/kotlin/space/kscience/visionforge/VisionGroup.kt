@@ -10,11 +10,25 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
+import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 
 
 public interface VisionGroup : Vision {
     public val children: VisionChildren
+
+    override fun update(change: VisionChange) {
+        change.children?.forEach { (name, change) ->
+            if (change.vision != null || change.vision == NullVision) {
+                error("VisionGroup is read-only")
+            } else {
+                children.getChild(name)?.update(change)
+            }
+        }
+        change.properties?.let {
+            updateProperties(it, Name.EMPTY)
+        }
+    }
 }
 
 public interface MutableVisionGroup : VisionGroup {
@@ -22,15 +36,6 @@ public interface MutableVisionGroup : VisionGroup {
     override val children: MutableVisionChildren
 
     public fun createGroup(): MutableVisionGroup
-}
-
-public val Vision.children: VisionChildren? get() = (this as? VisionGroup)?.children
-
-/**
- * A full base implementation for a [Vision]
- */
-@Serializable
-public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
@@ -44,6 +49,15 @@ public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup
             updateProperties(it, Name.EMPTY)
         }
     }
+}
+
+public val Vision.children: VisionChildren? get() = (this as? VisionGroup)?.children
+
+/**
+ * A full base implementation for a [Vision]
+ */
+@Serializable
+public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
 
     @SerialName("children")
     protected var childrenInternal: MutableMap<NameToken, Vision>? = null

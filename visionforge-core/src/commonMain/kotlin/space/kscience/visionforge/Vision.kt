@@ -37,6 +37,9 @@ public interface Vision : Described {
      * Update this vision using a dif represented by [VisionChange].
      */
     public fun update(change: VisionChange) {
+        if (change.children?.isNotEmpty() == true) {
+            error("Vision is not a group")
+        }
         change.properties?.let {
             updateProperties(it, Name.EMPTY)
         }
@@ -67,7 +70,7 @@ public var Vision.visible: Boolean?
  */
 public fun Vision.onPropertyChange(
     scope: CoroutineScope? = manager?.context,
-    callback: suspend (Name) -> Unit
+    callback: suspend (Name) -> Unit,
 ): Job = properties.changes.onEach {
     callback(it)
 }.launchIn(scope ?: error("Orphan Vision can't observe properties"))

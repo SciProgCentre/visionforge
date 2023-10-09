@@ -11,8 +11,10 @@ import space.kscience.dataforge.names.plus
 import space.kscience.kmath.complex.Quaternion
 import space.kscience.kmath.complex.QuaternionField
 import space.kscience.kmath.geometry.*
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
 import space.kscience.visionforge.Vision.Companion.VISIBLE_KEY
+import space.kscience.visionforge.hide
+import space.kscience.visionforge.inherited
 import space.kscience.visionforge.solid.Solid.Companion.DETAIL_KEY
 import space.kscience.visionforge.solid.Solid.Companion.IGNORE_KEY
 import space.kscience.visionforge.solid.Solid.Companion.LAYER_KEY
@@ -182,7 +184,7 @@ internal fun point(
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Float32Vector3D?) {
             if (value == null) {
-                thisRef.properties.setProperty(name, null)
+                thisRef.properties.setMeta(name, null)
             } else {
                 thisRef.properties[name + X_KEY] = value.x
                 thisRef.properties[name + Y_KEY] = value.y

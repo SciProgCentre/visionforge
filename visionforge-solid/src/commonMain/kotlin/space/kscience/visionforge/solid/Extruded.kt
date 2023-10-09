@@ -9,36 +9,7 @@ import space.kscience.kmath.geometry.component2
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.setChild
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
-
-public typealias Shape2D = List<Float32Vector2D>
-
-@Serializable
-public class Shape2DBuilder(private val points: ArrayList<Float32Vector2D> = ArrayList()) {
-
-    public fun point(x: Number, y: Number) {
-        points.add(Float32Vector2D(x, y))
-    }
-
-    public fun build(): Shape2D = points
-}
-
-public fun Shape2DBuilder.polygon(vertices: Int, radius: Number) {
-    require(vertices > 2) { "Polygon must have more than 2 vertices" }
-    val angle = 2 * PI / vertices
-    for (i in 0 until vertices) {
-        point(radius.toDouble() * cos(angle * i), radius.toDouble() * sin(angle * i))
-    }
-}
-
-/**
- * A layer for extruded shape
- */
-@Serializable
-public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
 /**
  * An extruded shape with the same number of points on each layer.
@@ -49,6 +20,12 @@ public class Extruded(
     public val shape: Shape2D,
     public val layers: List<Layer>,
 ) : SolidBase<Extruded>(), GeometrySolid {
+
+    /**
+     * A layer for extruded shape
+     */
+    @Serializable
+    public data class Layer(var x: Float, var y: Float, var z: Float, var scale: Float)
 
     init {
         require(shape.size > 2) { "Extruded shape requires more than 2 points per layer" }
@@ -72,6 +49,8 @@ public class Extruded(
         var lowerLayer = layers.first()
         var upperLayer: List<Float32Vector3D>
 
+        geometryBuilder.cap(layers.first().reversed())
+
         for (i in (1 until layers.size)) {
             upperLayer = layers[i]
             for (j in (0 until shape.size - 1)) {
@@ -93,7 +72,7 @@ public class Extruded(
             )
             lowerLayer = upperLayer
         }
-        geometryBuilder.cap(layers.first().reversed())
+
         geometryBuilder.cap(layers.last())
     }
 
@@ -102,16 +81,18 @@ public class Extruded(
         public var layers: MutableList<Layer> = ArrayList(),
         public val properties: MutableMeta = MutableMeta(),
     ) {
+        @VisionBuilder
         public fun shape(block: Shape2DBuilder.() -> Unit) {
             this.shape = Shape2DBuilder().apply(block).build()
         }
 
+        @VisionBuilder
         public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
             layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
         }
 
         internal fun build(): Extruded = Extruded(shape, layers).apply {
-            this.properties.setProperty(Name.EMPTY, this@Builder.properties)
+            this.properties.setMeta(Name.EMPTY, this@Builder.properties)
         }
     }
 

@@ -3,7 +3,7 @@ package space.kscience.visionforge
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 
 

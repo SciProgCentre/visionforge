@@ -76,7 +76,7 @@ public fun Mesh.applyEdges(vision: Solid) {
     val edges = children.find { it.name == EDGES_OBJECT_NAME } as? LineSegments
     //inherited edges definition, enabled by default
     if (vision.properties.getValue(EDGES_ENABLED_KEY, inherit = false)?.boolean != false) {
-        val material = ThreeMaterials.getLineMaterial(vision.properties.getProperty(EDGES_MATERIAL_KEY), true)
+        val material = ThreeMaterials.getLineMaterial(vision.properties.getMeta(EDGES_MATERIAL_KEY), true)
         if (edges == null) {
             add(
                 LineSegments(
