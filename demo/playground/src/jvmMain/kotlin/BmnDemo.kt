@@ -14,6 +14,7 @@ import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.*
 import java.util.zip.ZipInputStream
 import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 
 
@@ -25,6 +26,8 @@ private fun Meta.countTypes(): Sequence<String> = sequence {
 }
 
 fun main() {
+    Path("data").createDirectories()
+
     val string = ZipInputStream(TGeoManager::class.java.getResourceAsStream("/root/geometry_run_7-2076.zip")!!).use {
         it.nextEntry
         it.readAllBytes().decodeToString()
