@@ -46,6 +46,7 @@ public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Sol
             subclass(SolidLabel.serializer())
             subclass(Sphere.serializer())
             subclass(SphereLayer.serializer())
+            subclass(CutTube.serializer())
 
             subclass(AmbientLightSource.serializer())
             subclass(PointLightSource.serializer())
