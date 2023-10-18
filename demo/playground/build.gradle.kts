@@ -17,7 +17,7 @@ kotlin {
         useCommonJs()
         browser {
             webpackTask {
-                outputFileName = "js/visionforge-playground.js"
+                mainOutputFileName.set("js/visionforge-playground.js")
             }
             commonWebpackConfig {
                 sourceMaps = true

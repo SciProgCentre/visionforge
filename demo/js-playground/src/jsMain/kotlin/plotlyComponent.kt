@@ -1,0 +1,43 @@
+import kotlinx.css.*
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
+import react.*
+import space.kscience.plotly.Plot
+import space.kscience.plotly.PlotlyConfig
+import space.kscience.plotly.plot
+import styled.css
+import styled.styledDiv
+
+external interface PlotlyProps : Props {
+    var plot: Plot?
+}
+
+
+val Plotly = fc<PlotlyProps>("Plotly") { props ->
+    val elementRef = useRef<Element>(null)
+
+    useEffect(props.plot, elementRef) {
+        val element = elementRef.current as? HTMLElement ?: error("Plotly element not found")
+        props.plot?.let {
+            element.plot(PlotlyConfig {
+                responsive = true
+            }, it)
+        }
+    }
+
+    styledDiv {
+        css {
+            width = 100.pct
+            height = 100.pct
+            border = Border(2.pt, BorderStyle.solid, Color.blue)
+            flex = Flex(1.0)
+        }
+        ref = elementRef
+    }
+}
+
+fun RBuilder.plotly(plotbuilder: Plot.() -> Unit) = Plotly {
+    attrs {
+        this.plot = Plot().apply(plotbuilder)
+    }
+}

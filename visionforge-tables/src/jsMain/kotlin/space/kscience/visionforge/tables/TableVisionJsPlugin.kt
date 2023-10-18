@@ -25,8 +25,8 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
 
     override fun attach(context: Context) {
         super.attach(context)
-        kotlinext.js.require("tabulator-tables/dist/css/tabulator.min.css")
-        kotlinext.js.require("tabulator-tables/src/js/modules/ResizeColumns/ResizeColumns.js")
+        kotlinext.js.require<Any>("tabulator-tables/dist/css/tabulator.min.css")
+        kotlinext.js.require<Any>("tabulator-tables/src/js/modules/ResizeColumns/ResizeColumns.js")
     }
 
     override fun rateVision(vision: Vision): Int = when (vision) {
