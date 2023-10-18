@@ -75,8 +75,8 @@ public class VisionRoute(
 public fun Application.serveVisionData(
     configuration: VisionRoute,
     onEvent: suspend Vision.(VisionEvent) -> Unit = { event ->
-        if (event is VisionChange) {
-            update(event)
+        if (event is VisionChangeEvent) {
+            update(event.change)
         }
     },
     resolveVision: (Name) -> Vision?,

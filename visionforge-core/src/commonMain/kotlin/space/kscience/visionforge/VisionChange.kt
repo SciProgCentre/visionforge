@@ -9,11 +9,33 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.plus
 import kotlin.time.Duration
+
+
+
+/**
+ * A vision used only in change propagation and showing that the target should be removed
+ */
+@Serializable
+@SerialName("null")
+public object NullVision : Vision {
+    override var parent: Vision?
+        get() = null
+        set(_) {
+            error("Can't set parent for null vision")
+        }
+
+    override val properties: MutableVisionProperties get() = error("Can't get properties of `NullVision`")
+
+    override val descriptor: MetaDescriptor? = null
+}
 
 /**
  * Create a deep copy of given Vision without external connections.
@@ -26,6 +48,22 @@ private fun Vision.deepCopy(manager: VisionManager): Vision {
     val json = manager.encodeToJsonElement(this)
     return manager.decodeFromJson(json)
 }
+
+
+/**
+ * An event that contains changes made to a vision.
+ *
+ * @param vision a new value for vision content. If the Vision is to be removed should be [NullVision]
+ * @param properties updated properties
+ * @param children a map of children changed in ths [VisionChange].
+ */
+@Serializable
+@SerialName("change")
+public data class VisionChange(
+    public val vision: Vision? = null,
+    public val properties: Meta? = null,
+    public val children: Map<Name, VisionChange>? = null,
+)
 
 
 /**

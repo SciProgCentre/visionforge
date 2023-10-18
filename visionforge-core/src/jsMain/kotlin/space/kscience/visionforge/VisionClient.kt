@@ -5,6 +5,9 @@ import kotlinx.browser.window
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -141,21 +144,19 @@ public class VisionClient : AbstractPlugin() {
 
                 onopen = {
                     feedbackJob = visionManager.context.launch {
+                        eventCollector.filter { it.targetName == name }.onEach {
+                            send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it))
+                        }.launchIn(this)
+
                         while (isActive) {
                             delay(feedbackAggregationTime.milliseconds)
                             val change = changeCollector[name] ?: continue
                             if (!change.isEmpty()) {
                                 mutex.withLock {
-                                    send(change.toJsonString(visionManager))
+                                    eventCollector.emit(VisionChangeEvent(name, change.deepCopy(visionManager)))
                                     change.reset()
                                 }
                             }
-//                            // take channel for given vision name
-//                            eventCollector[name]?.let { channel ->
-//                                for (e in channel) {
-//                                    send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), e))
-//                                }
-//                            }
                         }
                     }
                     logger.info { "WebSocket feedback channel established for output '$name'" }
