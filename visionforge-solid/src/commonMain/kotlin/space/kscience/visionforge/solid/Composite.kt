@@ -15,6 +15,9 @@ public enum class CompositeType {
     SUBTRACT
 }
 
+/**
+ * A CSG-based composite solid
+ */
 @Serializable
 @SerialName("solid.composite")
 public class Composite(

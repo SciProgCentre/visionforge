@@ -13,6 +13,7 @@ kscience {
     useKtor()
     fullStack(
         "muon-monitor.js",
+        development = true,
         jvmConfig = { withJava() },
         jsConfig = { useCommonJs() }
     ) {

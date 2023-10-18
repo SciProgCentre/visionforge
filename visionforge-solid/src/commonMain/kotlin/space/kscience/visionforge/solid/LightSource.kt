@@ -12,7 +12,7 @@ import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
 
 @Serializable
-public abstract class LightSource : SolidBase<LightSource>() {
+public abstract class LightSource : MiscSolid() {
     override val descriptor: MetaDescriptor get() = LightSource.descriptor
 
     public val color: ColorAccessor by colorProperty(SolidMaterial.COLOR_KEY)

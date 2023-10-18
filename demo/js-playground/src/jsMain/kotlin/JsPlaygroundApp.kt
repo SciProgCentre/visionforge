@@ -8,7 +8,7 @@ import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.VisionClient
+import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.react.createRoot
 import space.kscience.visionforge.react.render
@@ -34,7 +34,7 @@ private class JsPlaygroundApp : Application {
 
         val playgroundContext = Context {
             plugin(ThreeWithControlsPlugin)
-            plugin(VisionClient)
+            plugin(JsVisionClient)
             plugin(PlotlyPlugin)
         }
 

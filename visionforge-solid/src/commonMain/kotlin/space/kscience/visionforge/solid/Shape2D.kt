@@ -7,6 +7,9 @@ import kotlin.math.sin
 
 public typealias Shape2D = List<Float32Vector2D>
 
+/**
+ * A builder for 2D shapes
+ */
 @Serializable
 public class Shape2DBuilder(private val points: ArrayList<Float32Vector2D> = ArrayList()) {
 

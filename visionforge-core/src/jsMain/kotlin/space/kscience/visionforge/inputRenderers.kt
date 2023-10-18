@@ -20,7 +20,7 @@ import space.kscience.visionforge.html.VisionOfNumberField
 import space.kscience.visionforge.html.VisionOfTextField
 
 internal fun textVisionRenderer(
-    client: VisionClient,
+    client: JsVisionClient,
 ): ElementVisionRenderer = ElementVisionRenderer<VisionOfTextField> { name, vision, _ ->
     val fieldName = vision.name ?: "input[${vision.hashCode().toUInt()}]"
     vision.label?.let {
@@ -42,7 +42,7 @@ internal fun textVisionRenderer(
 }
 
 internal fun numberVisionRenderer(
-    client: VisionClient,
+    client: JsVisionClient,
 ): ElementVisionRenderer = ElementVisionRenderer<VisionOfNumberField> { name, vision, _ ->
     val fieldName = vision.name ?: "input[${vision.hashCode().toUInt()}]"
     vision.label?.let {
@@ -87,7 +87,7 @@ internal fun FormData.toMeta(): Meta {
 }
 
 internal fun formVisionRenderer(
-    client: VisionClient,
+    client: JsVisionClient,
 ): ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlForm> { name, vision, _ ->
 
     val form = document.getElementById(vision.formId) as? HTMLFormElement

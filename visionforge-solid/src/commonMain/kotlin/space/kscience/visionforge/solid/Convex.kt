@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.setChild
 
+/**
+ * A convex hull shape
+ */
 @Serializable
 @SerialName("solid.convex")
 public class Convex(public val points: List<Float32Vector3D>) : SolidBase<Convex>()

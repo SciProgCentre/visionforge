@@ -187,30 +187,10 @@ internal abstract class VisionChildrenImpl(
     }
 
     override fun clear() {
-        items?.forEach { set(it.key, null) }
-//        if (!items.isNullOrEmpty()) {
-//            updateJobs.values.forEach {
-//                it.cancel()
-//            }
-//            updateJobs.clear()
-//            items?.clear()
-//        }
+        items?.clear()
+        updateJobs.values.forEach { it.cancel() }
+        updateJobs.clear()
+        onChange(Name.EMPTY)
     }
 }
-//
-//internal object VisionChildrenContainerSerializer : KSerializer<MutableVisionChildren> {
-//    private val mapSerializer = serializer<Map<NameToken, Vision>>()
-//
-//    override val descriptor: SerialDescriptor = mapSerializer.descriptor
-//
-//    override fun deserialize(decoder: Decoder): MutableVisionChildren {
-//        val map = decoder.decodeSerializableValue(mapSerializer)
-//        return VisionChildrenImpl(map)
-//    }
-//
-//    override fun serialize(encoder: Encoder, value: MutableVisionChildren) {
-//        val map = value.keys.associateWith { value[it]!! }
-//        encoder.encodeSerializableValue(mapSerializer, map)
-//    }
-//
-//}
+

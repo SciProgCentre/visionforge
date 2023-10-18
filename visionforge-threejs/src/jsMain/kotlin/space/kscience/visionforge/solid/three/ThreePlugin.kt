@@ -7,12 +7,10 @@ import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
-import space.kscience.visionforge.ElementVisionRenderer
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionChildren
+import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.visible
+import space.kscience.visionforge.solid.three.set
 import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
@@ -22,6 +20,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
     public val solids: Solids by require(Solids)
+
+    public val client: VisionClient? get() = context.plugins.get<VisionClient>()
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
@@ -89,6 +89,8 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                         if (childName.isEmpty()) return@onEach
 
                         val child = vision.children.getChild(childName)
+
+                        logger.debug { "Changing vision $childName to $child" }
 
                         //removing old object
                         findChild(childName)?.let { oldChild ->

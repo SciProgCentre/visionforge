@@ -123,8 +123,8 @@ public class ThreeCanvas(
         element.appendChild(canvas)
         updateSize()
         canvas.addEventListener("pointerdown", {
-            val picked = pick()
-            options.onSelect?.invoke(picked?.fullName())
+            val newPicked = pick()
+            options.onSelect?.invoke(newPicked?.fullName())
         }, false)
 
         //Attach listener to track mouse changes
@@ -143,12 +143,12 @@ public class ThreeCanvas(
         addControls(canvas, options.controls)
 
         renderer.setAnimationLoop {
-            val picked = pick()
+            val newPicked = pick()
 
-            if (picked != null && this.picked != picked) {
-                this.picked?.toggleHighlight(false, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
-                picked.toggleHighlight(true, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
-                this.picked = picked
+            if (newPicked != null && picked !== newPicked) {
+                picked?.toggleHighlight(false, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
+                newPicked.toggleHighlight(true, HIGHLIGHT_NAME, HIGHLIGHT_MATERIAL)
+                picked = newPicked
             }
 
             renderer.render(scene, camera)
@@ -326,7 +326,7 @@ public class ThreeCanvas(
 
         public val HIGHLIGHT_MATERIAL: MeshLineMaterial = MeshLineMaterial().apply {
             color.set(Colors.blue)
-            thickness = 2f
+            thickness = 1f
             cached = true
         }
 //

@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.visionforge.AbstractVision
 
+/**
+ * An abstract solid that is both [Solid] and [AbstractVision]
+ */
 @Serializable
 @SerialName("solid")
 public open class SolidBase<T : Solid> : AbstractVision(), Solid {

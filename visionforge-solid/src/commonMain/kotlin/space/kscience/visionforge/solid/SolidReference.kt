@@ -21,6 +21,7 @@ import space.kscience.visionforge.solid.SolidReference.Companion.REFERENCE_CHILD
  * Get a vision prototype if it is a [SolidReference] or vision itself if it is not.
  * Unref is recursive, so it always returns a non-reference.
  */
+@Suppress("RecursivePropertyAccessor")
 public val Vision.prototype: Solid
     get() = when (this) {
         is SolidReference -> prototype.prototype
@@ -240,94 +241,3 @@ public fun SolidGroup.newRef(
     }
     return children.ref(prototypeName, name?.parseAsName())
 }
-
-
-//
-//
-///**
-// * A reference [Solid] to reuse a template object
-// */
-//@Serializable
-//@SerialName("solid.ref")
-//public class SolidReferenceGroup(
-//    public val refName: Name,
-//) : VisionGroup(), SolidReference, VisionGroup<Solid>, Solid {
-//
-//    /**
-//     * Recursively search for defined template in the parent
-//     */
-//    override val prototype: Solid by lazy {
-//        if (parent == null) error("No parent is present for SolidReferenceGroup")
-//        if (parent !is PrototypeHolder) error("Parent does not hold prototypes")
-//        (parent as? PrototypeHolder)?.getPrototype(refName) ?: error("Prototype with name $refName not found")
-//    }
-//
-//    override val items: Map<NameToken, VisionGroupItem<Solid>>
-//        get() = (prototype as? VisionGroup<*>)?.items
-//            ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
-//            ?.mapValues {
-//                VisionGroupItem.Node(ReferenceChild(this, it.key.asName()))
-//            } ?: emptyMap()
-//
-//    override val descriptor: MetaDescriptor get() = prototype.descriptor
-//
-//
-//    /**
-//     * A ProxyChild is created temporarily only to interact with properties, it does not store any values
-//     * (properties are stored in external cache) and created and destroyed on-demand).
-//     */
-//    private class ReferenceChild(
-//        val owner: SolidReferenceGroup,
-//        private val refName: Name,
-//    ) : SolidReference, VisionGroup<Solid>, Solid {
-//
-//        override val prototype: Solid by lazy {
-//            if (refName.isEmpty()) {
-//                owner.prototype
-//            } else {
-//                val proto = (owner.prototype).children.get(refName)
-//                    ?: error("Prototype with name $refName not found in SolidReferenceGroup ${owner.refName}")
-//                proto as? Solid ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
-////                proto.unref as? Solid
-////                    ?: error("Prototype with name $refName is ${proto::class} but expected Solid")
-//            }
-//        }
-//
-//        override val meta: ObservableMutableMeta by lazy {
-//            owner.meta.getOrCreate(childToken(refName).asName())
-//        }
-//
-//        override val items: Map<NameToken, VisionGroupItem<Solid>>
-//            get() = (prototype as? VisionGroup<*>)?.items
-//                ?.filter { it.key != SolidGroup.PROTOTYPES_TOKEN }
-//                ?.mapValues { (key, _) ->
-//                    VisionGroupItem.Node(ReferenceChild(owner, refName + key.asName()))
-//                } ?: emptyMap()
-//
-//        override var parent: VisionGroup<*>?
-//            get() {
-//                val parentName = refName.cutLast()
-//                return if (parentName.isEmpty()) owner else ReferenceChild(owner, parentName)
-//            }
-//            set(_) {
-//                error("Setting a parent for a reference child is not possible")
-//            }
-//
-//        override fun invalidateProperty(propertyName: Name) {
-//            owner.invalidateProperty(childPropertyName(refName, propertyName))
-//        }
-//
-//        override fun update(change: VisionChange) {
-//            change.properties?.let {
-//                updateProperties(it, Name.EMPTY)
-//            }
-//        }
-//
-//        override val descriptor: MetaDescriptor get() = prototype.descriptor
-//
-//    }
-//
-//    public companion object {
-//        public const val REFERENCE_CHILD_PROPERTY_PREFIX: String = "@child"
-//    }
-//}

@@ -11,12 +11,12 @@ import space.kscience.dataforge.names.asName
 import space.kscience.plotly.PlotlyConfig
 import space.kscience.plotly.plot
 import space.kscience.visionforge.ElementVisionRenderer
+import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.VisionPlugin
 
 public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
-    public val visionClient: VisionClient by require(VisionClient)
+    public val visionClient: JsVisionClient by require(JsVisionClient)
 
     override val tag: PluginTag get() = Companion.tag
 

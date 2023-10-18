@@ -8,14 +8,14 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
-import space.kscience.visionforge.VisionClient
+import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.renderAllVisions
 import space.kscience.visionforge.renderAllVisionsById
 import space.kscience.visionforge.renderAllVisionsIn
 
 @JsExport
 public class VFNotebookClient : AbstractPlugin() {
-    private val client by require(VisionClient)
+    private val client by require(JsVisionClient)
 
     public fun renderAllVisionsIn(element: Element) {
         client.renderAllVisionsIn(element)

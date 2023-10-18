@@ -3,6 +3,7 @@ package ru.mipt.npm.muon.monitor
 import ru.mipt.npm.muon.monitor.Monitor.CENTRAL_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.LOWER_LAYER_Z
 import ru.mipt.npm.muon.monitor.Monitor.UPPER_LAYER_Z
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.setAsRoot
@@ -34,7 +35,7 @@ class Model(val manager: VisionManager) {
         }
     }
 
-    var tracks: SolidGroup
+    val tracks: SolidGroup = SolidGroup()
 
     val root: SolidGroup = SolidGroup().apply {
         setAsRoot(this@Model.manager)
@@ -59,7 +60,8 @@ class Model(val manager: VisionManager) {
                 detector(it)
             }
         }
-        tracks = solidGroup("tracks")
+
+        setChild("tracks".asName(), tracks)
     }
 
     private fun highlight(pixel: String) {

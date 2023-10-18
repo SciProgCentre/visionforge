@@ -12,6 +12,9 @@ import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_COLOR_K
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_OPACITY_KEY
 
+/**
+ * A scheme for vision material
+ */
 @VisionBuilder
 public class SolidMaterial : Scheme() {
 

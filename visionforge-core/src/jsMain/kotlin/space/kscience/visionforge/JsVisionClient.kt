@@ -15,7 +15,10 @@ import kotlinx.coroutines.sync.withLock
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.MetaSerializer
+import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
@@ -29,9 +32,9 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * A Kotlin-browser plugin that renders visions based on provided renderers and governs communication with the server.
  */
-public class VisionClient : AbstractPlugin() {
+public class JsVisionClient : AbstractPlugin(), VisionClient {
     override val tag: PluginTag get() = Companion.tag
-    private val visionManager: VisionManager by require(VisionManager)
+    override val visionManager: VisionManager by require(VisionManager)
 
     /**
      * Up-going tree traversal in search for endpoint attribute. If element is null, return window URL
@@ -69,7 +72,7 @@ public class VisionClient : AbstractPlugin() {
     /**
      * Communicate vision property changed from rendering engine to model
      */
-    public fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
+    override fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
         context.launch {
             mutex.withLock {
                 changeCollector.propertyChanged(visionName, propertyName, item)
@@ -85,7 +88,7 @@ public class VisionClient : AbstractPlugin() {
     /**
      * Send a custom feedback event
      */
-    public suspend fun sendEvent(event: VisionEvent) {
+    override suspend fun sendEvent(event: VisionEvent) {
         eventCollector.emit(event)
     }
 
@@ -252,34 +255,12 @@ public class VisionClient : AbstractPlugin() {
             textVisionRenderer(this),
             formVisionRenderer(this)
         ).associateByName()
-    } else super.content(target)
+    } else super<AbstractPlugin>.content(target)
 
-    public companion object : PluginFactory<VisionClient> {
-        override fun build(context: Context, meta: Meta): VisionClient = VisionClient()
+    public companion object : PluginFactory<JsVisionClient> {
+        override fun build(context: Context, meta: Meta): JsVisionClient = JsVisionClient()
 
         override val tag: PluginTag = PluginTag(name = "vision.client.js", group = PluginTag.DATAFORGE_GROUP)
-    }
-}
-
-public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {
-    notifyPropertyChanged(visionName, propertyName.parseAsName(true), item)
-}
-
-public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Number) {
-    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
-}
-
-public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: String) {
-    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
-}
-
-public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Boolean) {
-    notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
-}
-
-public fun VisionClient.sendEvent(visionName: Name, event: MetaRepr): Unit {
-    context.launch {
-        sendEvent(VisionMetaEvent(visionName, event.toMeta()))
     }
 }
 
@@ -294,7 +275,7 @@ private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
 /**
  * Fetch and render visions for all elements with [VisionTagConsumer.OUTPUT_CLASS] class inside given [element].
  */
-public fun VisionClient.renderAllVisionsIn(element: Element) {
+public fun JsVisionClient.renderAllVisionsIn(element: Element) {
     val elements = element.getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
     logger.info { "Finished search for outputs. Found ${elements.length} items" }
     elements.asList().forEach { child ->
@@ -305,7 +286,7 @@ public fun VisionClient.renderAllVisionsIn(element: Element) {
 /**
  * Render all visions in an element with a given [id]
  */
-public fun VisionClient.renderAllVisionsById(document: Document, id: String): Unit {
+public fun JsVisionClient.renderAllVisionsById(document: Document, id: String): Unit {
     val element = document.getElementById(id)
     if (element != null) {
         renderAllVisionsIn(element)
@@ -318,13 +299,13 @@ public fun VisionClient.renderAllVisionsById(document: Document, id: String): Un
 /**
  * Fetch visions from the server for all elements with [VisionTagConsumer.OUTPUT_CLASS] class in the document body
  */
-public fun VisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
+public fun JsVisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
     val element = body ?: error("Document does not have a body")
     renderAllVisionsIn(element)
 }
 
 public class VisionClientApplication(public val context: Context) : Application {
-    private val client = context.request(VisionClient)
+    private val client = context.request(JsVisionClient)
 
     override fun start(document: Document, state: Map<String, Any>) {
         context.logger.info {
@@ -348,7 +329,7 @@ public fun runVisionClient(contextBuilder: ContextBuilder.() -> Unit) {
     Global.logger.info { "Starting VisionForge context" }
 
     val context = Context("VisionForge") {
-        plugin(VisionClient)
+        plugin(JsVisionClient)
         contextBuilder()
     }
 

@@ -12,13 +12,13 @@ import space.kscience.dataforge.meta.toDynamic
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
+import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionClient
 import tabulator.Tabulator
 import tabulator.TabulatorFull
 
 public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
-    public val visionClient: VisionClient by require(VisionClient)
+    public val visionClient: JsVisionClient by require(JsVisionClient)
     public val tablesBase: TableVisionPlugin by require(TableVisionPlugin)
 
     override val tag: PluginTag get() = Companion.tag

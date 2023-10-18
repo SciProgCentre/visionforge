@@ -152,7 +152,10 @@ public var Vision.ignore: Boolean?
 //    get() = getProperty(SELECTED_KEY).boolean
 //    set(value) = setProperty(SELECTED_KEY, value)
 
-internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
+/**
+ *A [Float] solid property delegate
+ */
+internal fun float32(name: Name, default: Number): ReadWriteProperty<Solid, Number> =
     object : ReadWriteProperty<Solid, Number> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Number {
             return thisRef.properties.getValue(name)?.number ?: default
@@ -163,7 +166,10 @@ internal fun float(name: Name, default: Number): ReadWriteProperty<Solid, Number
         }
     }
 
-internal fun point(
+/**
+ * A [Float32Vector3D] solid property delegate
+ */
+internal fun float32Vector(
     name: Name,
     defaultX: Float,
     defaultY: Float = defaultX,
@@ -193,17 +199,17 @@ internal fun point(
         }
     }
 
-public var Solid.position: Float32Vector3D? by point(POSITION_KEY, 0f)
-public var Solid.rotation: Float32Vector3D? by point(ROTATION_KEY, 0f)
-public var Solid.scale: Float32Vector3D? by point(SCALE_KEY, 1f)
+public var Solid.position: Float32Vector3D? by float32Vector(POSITION_KEY, 0f)
+public var Solid.rotation: Float32Vector3D? by float32Vector(ROTATION_KEY, 0f)
+public var Solid.scale: Float32Vector3D? by float32Vector(SCALE_KEY, 1f)
 
-public var Solid.x: Number by float(X_POSITION_KEY, 0f)
-public var Solid.y: Number by float(Y_POSITION_KEY, 0f)
-public var Solid.z: Number by float(Z_POSITION_KEY, 0f)
+public var Solid.x: Number by float32(X_POSITION_KEY, 0f)
+public var Solid.y: Number by float32(Y_POSITION_KEY, 0f)
+public var Solid.z: Number by float32(Z_POSITION_KEY, 0f)
 
-public var Solid.rotationX: Number by float(X_ROTATION_KEY, 0f)
-public var Solid.rotationY: Number by float(Y_ROTATION_KEY, 0f)
-public var Solid.rotationZ: Number by float(Z_ROTATION_KEY, 0f)
+public var Solid.rotationX: Number by float32(X_ROTATION_KEY, 0f)
+public var Solid.rotationY: Number by float32(Y_ROTATION_KEY, 0f)
+public var Solid.rotationZ: Number by float32(Z_ROTATION_KEY, 0f)
 
 /**
  * Raw quaternion value defined in properties
@@ -241,9 +247,9 @@ public var Solid.quaternion: Quaternion
         quaternionOrNull = value
     }
 
-public var Solid.scaleX: Number by float(X_SCALE_KEY, 1f)
-public var Solid.scaleY: Number by float(Y_SCALE_KEY, 1f)
-public var Solid.scaleZ: Number by float(Z_SCALE_KEY, 1f)
+public var Solid.scaleX: Number by float32(X_SCALE_KEY, 1f)
+public var Solid.scaleY: Number by float32(Y_SCALE_KEY, 1f)
+public var Solid.scaleZ: Number by float32(Z_SCALE_KEY, 1f)
 
 /**
  * Add rotation with given [angle] relative to given [axis]
