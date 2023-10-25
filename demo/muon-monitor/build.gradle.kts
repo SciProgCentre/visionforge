@@ -47,6 +47,8 @@ application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
 
+//TODO ???
+tasks.getByName("jsBrowserProductionWebpack").dependsOn("jsDevelopmentExecutableCompileSync")
 
 //distributions {
 //    main {

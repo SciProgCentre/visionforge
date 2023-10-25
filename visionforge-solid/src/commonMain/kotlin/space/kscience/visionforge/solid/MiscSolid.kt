@@ -9,6 +9,7 @@ import space.kscience.visionforge.setChild
 /**
  * Utility solids
  */
+@Serializable
 public abstract class MiscSolid: SolidBase<MiscSolid>()
 
 /**
