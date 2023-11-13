@@ -13,7 +13,6 @@ kscience {
     useKtor()
     fullStack(
         "muon-monitor.js",
-        development = true,
         jvmConfig = { withJava() },
         jsConfig = { useCommonJs() }
     ) {
@@ -46,9 +45,6 @@ kotlin.explicitApi = null
 application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")
 }
-
-//TODO ???
-tasks.getByName("jsBrowserProductionWebpack").dependsOn("jsDevelopmentExecutableCompileSync")
 
 //distributions {
 //    main {
