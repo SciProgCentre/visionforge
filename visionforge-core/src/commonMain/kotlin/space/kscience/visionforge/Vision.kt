@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.Described
@@ -45,13 +46,17 @@ public interface Vision : Described {
         }
     }
 
+    public fun onMetaEvent(meta: Meta){
+
+    }
+
     /**
      * Receive and process a generic [VisionEvent].
      */
     public fun receiveEvent(event: VisionEvent) {
         when (event) {
             is VisionChange -> receiveChange(event)
-            else -> TODO()
+            is VisionMetaEvent -> onMetaEvent(event.meta)
         }
     }
 
