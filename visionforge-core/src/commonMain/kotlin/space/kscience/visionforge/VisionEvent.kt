@@ -12,13 +12,6 @@ import space.kscience.dataforge.names.Name
  */
 @Serializable
 public sealed interface VisionEvent {
-    public val targetName: Name
-
-    /**
-     * Create a copy of this event with the same type and content, but different [targetName]
-     */
-    public fun changeTarget(newTarget: Name): VisionEvent
-
     public companion object {
         public val CLICK_EVENT_KEY: Name get() = Name.of("events", "click", "payload")
     }
@@ -29,15 +22,8 @@ public sealed interface VisionEvent {
  */
 @Serializable
 @SerialName("meta")
-public data class VisionMetaEvent(override val targetName: Name, public val meta: Meta) : VisionEvent {
-    override fun changeTarget(newTarget: Name): VisionMetaEvent = VisionMetaEvent(newTarget, meta)
-}
+public class VisionMetaEvent(public val meta: Meta) : VisionEvent
 
-@Serializable
-@SerialName("change")
-public data class VisionChangeEvent(override val targetName: Name, public val change: VisionChange) : VisionEvent {
-    override fun changeTarget(newTarget: Name): VisionChangeEvent = VisionChangeEvent(newTarget, change)
-}
 
 public val Vision.Companion.CLICK_EVENT_KEY: Name get() = Name.of("events", "click", "payload")
 

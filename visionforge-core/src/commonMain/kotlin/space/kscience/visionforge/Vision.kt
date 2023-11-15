@@ -11,7 +11,6 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.isEmpty
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.TYPE
 
@@ -50,13 +49,9 @@ public interface Vision : Described {
      * Receive and process a generic [VisionEvent].
      */
     public fun receiveEvent(event: VisionEvent) {
-        if(event.targetName.isEmpty()) {
-            when (event) {
-                is VisionChangeEvent -> receiveChange(event.change)
-                else -> TODO()
-            }
-        } else {
-            error("Vision is not a group and can't process an event with non-empty target")
+        when (event) {
+            is VisionChange -> receiveChange(event)
+            else -> TODO()
         }
     }
 

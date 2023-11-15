@@ -20,7 +20,6 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
@@ -82,15 +81,14 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
     }
 
     private val eventCollector by lazy {
-        MutableSharedFlow<VisionEvent>(meta["feedback.eventCache"].int ?: 100)
+        MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
     }
-
 
     /**
      * Send a custom feedback event
      */
-    override suspend fun sendEvent(event: VisionEvent) {
-        eventCollector.emit(event)
+    override suspend fun sendEvent(targetName: Name, event: VisionEvent) {
+        eventCollector.emit(targetName to event)
     }
 
     private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
@@ -127,8 +125,8 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                         )
 
                         // If change contains root vision replacement, do it
-                        if(event is VisionChangeEvent && event.targetName.isEmpty()) {
-                            event.change.vision?.let { vision ->
+                        if(event is VisionChange) {
+                            event.vision?.let { vision ->
                                 renderVision(element, name, vision, outputMeta)
                             }
                         }
@@ -150,8 +148,8 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
                 onopen = {
                     feedbackJob = visionManager.context.launch {
-                        eventCollector.filter { it.targetName == name }.onEach {
-                            send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it))
+                        eventCollector.filter { it.first == name }.onEach {
+                            send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it.second))
                         }.launchIn(this)
 
                         while (isActive) {
@@ -159,7 +157,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                             val change = changeCollector[name] ?: continue
                             if (!change.isEmpty()) {
                                 mutex.withLock {
-                                    eventCollector.emit(VisionChangeEvent(name, change.deepCopy(visionManager)))
+                                    eventCollector.emit(name to change.deepCopy(visionManager))
                                     change.reset()
                                 }
                             }

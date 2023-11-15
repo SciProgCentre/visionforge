@@ -6,7 +6,10 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
-import space.kscience.dataforge.names.*
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.parseAsName
+import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 
@@ -24,15 +27,6 @@ public interface VisionGroup : Vision {
         }
         change.properties?.let {
             updateProperties(it, Name.EMPTY)
-        }
-    }
-
-    override fun receiveEvent(event: VisionEvent) {
-        if (event.targetName.isEmpty()) {
-            super.receiveEvent(event)
-        } else {
-            val target = children[event.targetName] ?: error("Child vision with name ${event.targetName} not found")
-            target.receiveEvent(event.changeTarget(Name.EMPTY))
         }
     }
 }

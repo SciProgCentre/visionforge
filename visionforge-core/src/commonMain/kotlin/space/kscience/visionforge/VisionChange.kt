@@ -63,8 +63,7 @@ public data class VisionChange(
     public val vision: Vision? = null,
     public val properties: Meta? = null,
     public val children: Map<Name, VisionChange>? = null,
-)
-
+) : VisionEvent
 
 /**
  * An update for a [Vision]

@@ -107,8 +107,7 @@ public fun Application.serveVisionData(
 
                 try {
                     withContext(configuration.context.coroutineContext) {
-                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { update ->
-                            val event = VisionChangeEvent(Name.EMPTY, update)
+                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { event ->
                             val json = configuration.visionManager.jsonFormat.encodeToString(
                                 VisionEvent.serializer(),
                                 event
