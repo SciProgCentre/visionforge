@@ -20,6 +20,7 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.isEmpty
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
@@ -120,19 +121,21 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
                     if (stringData != null) {
-                        val change: VisionChange = visionManager.jsonFormat.decodeFromString(
-                            VisionChange.serializer(),
+                        val event: VisionEvent = visionManager.jsonFormat.decodeFromString(
+                            VisionEvent.serializer(),
                             stringData
                         )
 
                         // If change contains root vision replacement, do it
-                        change.vision?.let { vision ->
-                            renderVision(element, name, vision, outputMeta)
+                        if(event is VisionChangeEvent && event.targetName.isEmpty()) {
+                            event.change.vision?.let { vision ->
+                                renderVision(element, name, vision, outputMeta)
+                            }
                         }
 
-                        logger.debug { "Got update $change for output with name $name" }
+                        logger.debug { "Got $event for output with name $name" }
                         if (vision == null) error("Can't update vision because it is not loaded.")
-                        vision.update(change)
+                        vision.receiveEvent(event)
                     } else {
                         logger.error { "WebSocket message data is not a string" }
                     }

@@ -28,7 +28,7 @@ internal class VisionUpdateTest {
             propertyChanged("top".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
             propertyChanged("origin".asName(), SolidMaterial.MATERIAL_COLOR_KEY, Meta("red".asValue()))
         }
-        targetVision.update(dif)
+        targetVision.receiveChange(dif)
         assertTrue { targetVision.children.getChild("top") is SolidGroup }
         assertEquals("red", (targetVision.children.getChild("origin") as Solid).color.string) // Should work
         assertEquals(
