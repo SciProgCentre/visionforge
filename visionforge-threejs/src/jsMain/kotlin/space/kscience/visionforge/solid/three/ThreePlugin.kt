@@ -10,12 +10,14 @@ import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.set
 import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import three.objects.Group as ThreeGroup
 
+/**
+ * A plugin that handles Three Object3D representation of Visions.
+ */
 public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
@@ -48,6 +50,13 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
+    /**
+     * Build an Object3D representation of the given [Solid].
+     *
+     * @param vision 3D vision to build a representation of;
+     * @param observe whether the constructed Object3D should be changed when its
+     *  parent vision changes.
+     */
     public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
         is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
@@ -125,6 +134,16 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     private val canvasCache = HashMap<Element, ThreeCanvas>()
 
+    /**
+     * Return a [ThreeCanvas] object attached to the given [Element].
+     * If there is no canvas bound, a new canvas object is created
+     * and returned.
+     *
+     * @param element HTML element to which the canvas is
+     *  (or should be if it is created by this call) attached;
+     * @param options canvas options that are applied to a newly
+     *  created [ThreeCanvas] in case it does not exist.
+     */
     public fun getOrCreateCanvas(
         element: Element,
         options: Canvas3DOptions,
@@ -142,6 +161,19 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
+    /**
+     * Render the given [Solid] Vision in a [ThreeCanvas] attached
+     * to the [element]. Canvas objects are cached, so subsequent calls
+     * with the same [element] value do not create new canvas objects,
+     * but they replace existing content, so multiple Visions cannot be
+     * displayed in a single [ThreeCanvas].
+     *
+     * @param element HTML element [ThreeCanvas] should be
+     *  attached to;
+     *  @param vision Vision to render;
+     *  @param options options that are applied to a canvas
+     *    in case it is not in the cache and should be created.
+     */
     internal fun renderSolid(
         element: Element,
         vision: Solid,
@@ -165,6 +197,19 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     }
 }
 
+/**
+ * Render the given [Solid] Vision in a [ThreeCanvas] attached
+ * to the [element]. Canvas objects are cached, so subsequent calls
+ * with the same [element] value do not create new canvas objects,
+ * but they replace existing content, so multiple Visions cannot be
+ * displayed in a single [ThreeCanvas].
+ *
+ * @param element HTML element [ThreeCanvas] should be
+ *  attached to;
+ *  @param obj Vision to render;
+ *  @param optionsBuilder option builder that is applied to a canvas
+ *    in case it is not in the cache and should be created.
+ */
 public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,
