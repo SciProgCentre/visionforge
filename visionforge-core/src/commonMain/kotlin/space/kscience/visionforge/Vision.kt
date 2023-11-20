@@ -47,7 +47,7 @@ public interface Vision : Described {
     }
 
     public fun onMetaEvent(meta: Meta){
-
+        //Do nothing by default
     }
 
     /**

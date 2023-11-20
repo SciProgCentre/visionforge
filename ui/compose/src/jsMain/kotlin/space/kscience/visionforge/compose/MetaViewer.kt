@@ -1,11 +1,12 @@
 package space.kscience.visionforge.compose
 
 import androidx.compose.runtime.*
-import kotlinx.html.js.onClickFunction
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.alignItems
+import org.jetbrains.compose.web.dom.A
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
-import org.w3c.dom.events.Event
+import org.jetbrains.compose.web.dom.Text
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
@@ -17,10 +18,6 @@ import space.kscience.dataforge.names.lastOrNull
 import space.kscience.dataforge.names.plus
 
 
-private val MetaViewerItem: FC<MetaViewerProps> = fc("MetaViewerItem") { props ->
-    metaViewerItem(props)
-}
-
 @Composable
 private fun MetaViewerItem(root: Meta, name: Name, rootDescriptor: MetaDescriptor? = null) {
     var expanded: Boolean by remember { mutableStateOf(true) }
@@ -29,11 +26,7 @@ private fun MetaViewerItem(root: Meta, name: Name, rootDescriptor: MetaDescripto
     val actualValue = item?.value ?: descriptorItem?.defaultValue
     val actualMeta = item ?: descriptorItem?.defaultNode
 
-    val token = name.lastOrNull()?.toString() ?: props.rootName ?: ""
-
-    val expanderClick: (Event) -> Unit = {
-        expanded = !expanded
-    }
+    val token = name.lastOrNull()?.toString() ?: ""
 
     FlexRow(attrs = {
         classes("metaItem")
@@ -42,42 +35,34 @@ private fun MetaViewerItem(root: Meta, name: Name, rootDescriptor: MetaDescripto
         }
     }) {
         if (actualMeta?.isLeaf == false) {
-            Span(attrs = {
-
+            Span({
+                classes(TreeStyles.treeCaret)
+                if (expanded) {
+                    classes(TreeStyles.treeCaretDown)
+                }
+                onClick { expanded = !expanded }
             })
-            styledSpan {
-                css {
-                    +TreeStyles.treeCaret
-                    if (expanded) {
-                        +TreeStyles.treeCaredDown
-                    }
-                }
-                attrs {
-                    onClickFunction = expanderClick
-                }
-            }
         }
 
-        styledSpan {
-            css {
-                +TreeStyles.treeLabel
-                if (item == null) {
-                    +TreeStyles.treeLabelInactive
-                }
+        Span({
+            classes(TreeStyles.treeLabel)
+            if (item == null) {
+                classes(TreeStyles.treeLabelInactive)
             }
-            +token
+        }) {
+            Text(token)
         }
-        styledDiv {
-            a {
-                +actualValue.toString()
+
+        Div {
+            A {
+                Text(actualValue.toString())
             }
         }
     }
     if (expanded) {
-        flexColumn {
-            css {
-                +TreeStyles.tree
-            }
+        FlexColumn({
+            classes(TreeStyles.tree)
+        }) {
             val keys = buildSet {
                 descriptorItem?.children?.keys?.forEach {
                     add(NameToken(it))
@@ -86,45 +71,17 @@ private fun MetaViewerItem(root: Meta, name: Name, rootDescriptor: MetaDescripto
             }
 
             keys.filter { !it.body.startsWith("@") }.forEach { token ->
-                styledDiv {
-                    css {
-                        +TreeStyles.treeItem
-                    }
-                    child(MetaViewerItem) {
-                        attrs {
-                            this.key = props.name.toString()
-                            this.root = props.root
-                            this.name = props.name + token
-                            this.descriptor = props.descriptor
-                        }
-                    }
-                    //configEditor(props.root, props.name + token, props.descriptor, props.default)
+                Div({
+                    classes(TreeStyles.treeItem)
+                }) {
+                    MetaViewerItem(root, name + token, rootDescriptor)
                 }
             }
         }
     }
-
-
 }
 
-@JsExport
-public val MetaViewer: FC<MetaViewerProps> = fc("MetaViewer") { props ->
-    child(MetaViewerItem) {
-        attrs {
-            this.key = ""
-            this.root = props.root
-            this.name = Name.EMPTY
-            this.descriptor = props.descriptor
-        }
-    }
-}
-
-public fun RBuilder.metaViewer(meta: Meta, descriptor: MetaDescriptor? = null, key: Any? = null) {
-    child(MetaViewer) {
-        attrs {
-            this.key = key?.toString() ?: ""
-            this.root = meta
-            this.descriptor = descriptor
-        }
-    }
+@Composable
+public fun MetaViewer(meta: Meta, descriptor: MetaDescriptor? = null) {
+    MetaViewerItem(meta, Name.EMPTY, descriptor)
 }

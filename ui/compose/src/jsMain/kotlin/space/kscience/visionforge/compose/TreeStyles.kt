@@ -1,8 +1,10 @@
 package space.kscience.visionforge.compose
 
-import kotlinx.css.*
+import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 
+
+@OptIn(ExperimentalComposeWebApi::class)
 public object TreeStyles : StyleSheet() {
     /**
      * Remove default bullets
@@ -16,12 +18,12 @@ public object TreeStyles : StyleSheet() {
     /**
      * Style the caret/arrow
      */
-    public val treeCaret by style {
+    public val treeCaret: String by style {
         cursor("pointer")
-        userSelect = UserSelect.none
+        userSelect(UserSelect.none)
         /* Create the caret/arrow with a unicode, and style it */
         before {
-            content = "\u25B6".quoted
+            content("\u25B6")
             color(Color.black)
             display(DisplayStyle.InlineBlock)
             marginRight(6.px)
@@ -31,9 +33,9 @@ public object TreeStyles : StyleSheet() {
     /**
      *  Rotate the caret/arrow icon when clicked on (using JavaScript)
      */
-    public val treeCaredDown by style {
+    public val treeCaretDown: String by style {
         before {
-            content = "\u25B6".quoted
+            content("\u25B6")
             color(Color.black)
             display(DisplayStyle.InlineBlock)
             marginRight(6.px)
@@ -45,7 +47,7 @@ public object TreeStyles : StyleSheet() {
         alignItems(AlignItems.Center)
         paddingLeft(10.px)
         border {
-            left{
+            left {
                 width(1.px)
                 color(Color.lightgray)
                 style = LineStyle.Dashed
@@ -53,19 +55,40 @@ public object TreeStyles : StyleSheet() {
         }
     }
 
-    public val treeLabel by style {
+    public val treeLabel: String by style {
         border(style = LineStyle.None)
-        padding(left = 4.pt, right = 4.pt, top = 0.pt, bottom = 0.pt)
+        paddingAll(left = 4.pt, right = 4.pt)
         textAlign("left")
         flex(1)
     }
 
-    public val treeLabelInactive: RuleSet by css {
-        color = Color.lightGray
+    public val treeLabelInactive: String by style {
+        color(Color.lightgray)
     }
 
-    public val treeLabelSelected: RuleSet by css {
-        backgroundColor = Color.lightBlue
+    public val treeLabelSelected: String by style {
+        backgroundColor(Color.lightblue)
+    }
+
+    public val propertyEditorButton: String by style {
+        width(24.px)
+        alignSelf(AlignSelf.Stretch)
+        marginAll(1.px, 5.px)
+        backgroundColor(Color.white)
+        border{
+            style(LineStyle.Solid)
+        }
+        borderRadius(2.px)
+        textAlign("center")
+        textDecoration("none")
+        cursor("pointer")
+        disabled {
+            cursor("auto")
+            border{
+                style(LineStyle.Dashed)
+            }
+            color(Color.lightgray)
+        }
     }
 
 }
