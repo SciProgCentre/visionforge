@@ -53,9 +53,9 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     /**
      * Build an Object3D representation of the given [Solid].
      *
-     * @param vision 3D vision to build a representation of;
-     * @param observe whether the constructed Object3D should be changed when its
-     *  parent vision changes.
+     * @param vision [Solid] object to build a representation of;
+     * @param observe whether the constructed Object3D should be changed when the
+     *  original [Vision] changes.
      */
     public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
