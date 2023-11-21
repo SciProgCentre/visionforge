@@ -21,10 +21,7 @@ import space.kscience.dataforge.meta.descriptors.ValueRequirement
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.remove
-import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.isEmpty
-import space.kscience.dataforge.names.lastOrNull
+import space.kscience.dataforge.names.*
 import space.kscience.visionforge.hidden
 
 
@@ -39,19 +36,17 @@ public sealed class EditorPropertyState {
 }
 
 /**
+ * @param meta Root config object - always non-null
  * @param rootDescriptor Full path to the displayed node in [meta]. Could be empty
  */
 @Composable
-private fun PropertyEditorItem(
-    /**
-     * Root config object - always non-null
-     */
+public fun PropertyEditor(
+    scope: CoroutineScope,
     meta: MutableMeta,
     getPropertyState: (Name) -> EditorPropertyState,
-    scope: CoroutineScope,
     updates: Flow<Name>,
-    name: Name,
-    rootDescriptor: MetaDescriptor?,
+    name: Name = Name.EMPTY,
+    rootDescriptor: MetaDescriptor? = null,
     initialExpanded: Boolean? = null,
 ) {
     var expanded: Boolean by remember { mutableStateOf(initialExpanded ?: true) }
@@ -145,7 +140,7 @@ private fun PropertyEditorItem(
                 Div({
                     classes(TreeStyles.treeItem)
                 }) {
-                    PropertyEditorItem(meta, getPropertyState, scope, updates, name, descriptor, expanded)
+                    PropertyEditor(scope, meta, getPropertyState, updates, name + token, descriptor, expanded)
                 }
             }
         }
@@ -159,7 +154,8 @@ public fun PropertyEditor(
     descriptor: MetaDescriptor? = null,
     expanded: Boolean? = null,
 ) {
-    PropertyEditorItem(
+    PropertyEditor(
+        scope = scope,
         meta = properties,
         getPropertyState = { name ->
             if (properties[name] != null) {
@@ -170,7 +166,6 @@ public fun PropertyEditor(
                 EditorPropertyState.Undefined
             }
         },
-        scope = scope,
         updates = callbackFlow {
             properties.onChange(scope) { name ->
                 scope.launch {

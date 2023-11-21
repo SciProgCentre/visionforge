@@ -1,6 +1,7 @@
 package space.kscience.visionforge.compose
 
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.CSSAutoKeyword
 
 public enum class UserSelect {
     inherit, initial, revert, revertLayer, unset,
@@ -32,4 +33,12 @@ public fun StyleScope.marginAll(
     left: CSSNumeric = right,
 ) {
     margin(top, right, bottom, left)
+}
+
+public fun StyleScope.zIndex(value: Int) {
+    property("z-index", "$value")
+}
+
+public fun StyleScope.zIndex(value: CSSAutoKeyword) {
+    property("z-index", value)
 }
