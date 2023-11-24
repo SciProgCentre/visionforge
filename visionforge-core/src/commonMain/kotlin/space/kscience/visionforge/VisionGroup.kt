@@ -17,12 +17,12 @@ import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 public interface VisionGroup : Vision {
     public val children: VisionChildren
 
-    override fun receiveChange(change: VisionChange) {
+    override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             if (change.vision != null || change.vision == NullVision) {
                 error("VisionGroup is read-only")
             } else {
-                children.getChild(name)?.receiveChange(change)
+                children.getChild(name)?.update(change)
             }
         }
         change.properties?.let {
@@ -37,12 +37,12 @@ public interface MutableVisionGroup : VisionGroup {
 
     public fun createGroup(): MutableVisionGroup
 
-    override fun receiveChange(change: VisionChange) {
+    override fun update(change: VisionChange) {
         change.children?.forEach { (name, change) ->
             when {
                 change.vision == NullVision -> children.setChild(name, null)
                 change.vision != null -> children.setChild(name, change.vision)
-                else -> children.getChild(name)?.receiveChange(change)
+                else -> children.getChild(name)?.update(change)
             }
         }
         change.properties?.let {

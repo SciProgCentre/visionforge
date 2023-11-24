@@ -4,7 +4,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.context.logger
+import space.kscience.dataforge.context.warn
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.Described
@@ -37,7 +38,7 @@ public interface Vision : Described {
     /**
      * Update this vision using a dif represented by [VisionChange].
      */
-    public fun receiveChange(change: VisionChange) {
+    public fun update(change: VisionChange) {
         if (change.children?.isNotEmpty() == true) {
             error("Vision is not a group")
         }
@@ -46,18 +47,12 @@ public interface Vision : Described {
         }
     }
 
-    public fun onMetaEvent(meta: Meta){
-        //Do nothing by default
-    }
-
     /**
      * Receive and process a generic [VisionEvent].
      */
     public fun receiveEvent(event: VisionEvent) {
-        when (event) {
-            is VisionChange -> receiveChange(event)
-            is VisionMetaEvent -> onMetaEvent(event.meta)
-        }
+        if(event is VisionChange) update(event)
+        else manager?.logger?.warn { "Undispatched event: $event" }
     }
 
     override val descriptor: MetaDescriptor?
