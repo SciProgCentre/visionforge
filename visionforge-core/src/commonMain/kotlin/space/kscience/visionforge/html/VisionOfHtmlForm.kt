@@ -9,12 +9,15 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.node
 
+/**
+ * @param formId an id of the element in rendered DOM, this form is bound to
+ */
 @Serializable
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
-) : VisionOfHtmlInput() {
-    public var values: Meta? by mutableProperties.node()
+) : VisionOfHtml() {
+    public var values: Meta? by properties.node()
 }
 
 public fun <R> TagConsumer<R>.bindForm(
