@@ -264,6 +264,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) {
         listOf(
+            htmlVisionRenderer,
             inputVisionRenderer,
             checkboxVisionRenderer,
             numberVisionRenderer,

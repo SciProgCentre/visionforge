@@ -2,6 +2,7 @@ package space.kscience.visionforge
 
 import kotlinx.browser.document
 import kotlinx.html.InputType
+import kotlinx.html.div
 import kotlinx.html.js.input
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLFormElement
@@ -38,26 +39,36 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
     }
 }
 
+internal val htmlVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
+        div {}.also { div ->
+            div.subscribeToVision(vision)
+            vision.useProperty(VisionOfPlainHtml::content) {
+                div.textContent = it
+            }
+        }
+    }
+
 internal val inputVisionRenderer: ElementVisionRenderer =
     ElementVisionRenderer<VisionOfHtmlInput>(acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1) { _, vision, _ ->
         input {
             type = InputType.text
-        }.apply {
+        }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.value = value.asValue()
+                vision.value = htmlInputElement.value.asValue()
             }
 
 
             when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
 
-                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
                 InputFeedbackMode.NONE -> {}
             }
 
-            subscribeToInput(vision)
+            htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfHtmlInput::value) {
-                this@apply.value = it?.string ?: ""
+                htmlInputElement.value = it?.string ?: ""
             }
         }
     }
@@ -66,22 +77,22 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
     ElementVisionRenderer<VisionOfCheckbox> { _, vision, _ ->
         input {
             type = InputType.checkBox
-        }.apply {
+        }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.checked = checked
+                vision.checked = htmlInputElement.checked
             }
 
 
             when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
 
-                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
                 InputFeedbackMode.NONE -> {}
             }
 
-            subscribeToInput(vision)
+            htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfCheckbox::checked) {
-                this@apply.checked = it ?: false
+                htmlInputElement.checked = it ?: false
             }
         }
     }
@@ -90,22 +101,22 @@ internal val textVisionRenderer: ElementVisionRenderer =
     ElementVisionRenderer<VisionOfTextField> { _, vision, _ ->
         input {
             type = InputType.text
-        }.apply {
+        }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.text = value
+                vision.text = htmlInputElement.value
             }
 
 
             when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
 
-                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
                 InputFeedbackMode.NONE -> {}
             }
 
-            subscribeToInput(vision)
+            htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfTextField::text) {
-                this@apply.value = it ?: ""
+                htmlInputElement.value = it ?: ""
             }
         }
     }
@@ -114,21 +125,21 @@ internal val numberVisionRenderer: ElementVisionRenderer =
     ElementVisionRenderer<VisionOfNumberField> { _, vision, _ ->
         input {
             type = InputType.text
-        }.apply {
+        }.also { htmlInputElement ->
 
             val onEvent: (Event) -> Unit = {
-                value.toDoubleOrNull()?.let { vision.number = it }
+                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
             }
 
             when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
 
-                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
                 InputFeedbackMode.NONE -> {}
             }
-            subscribeToInput(vision)
+            htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfNumberField::value) {
-                this@apply.valueAsNumber = it?.double ?: 0.0
+                htmlInputElement.valueAsNumber = it?.double ?: 0.0
             }
         }
     }
@@ -140,21 +151,21 @@ internal val rangeVisionRenderer: ElementVisionRenderer =
             min = vision.min.toString()
             max = vision.max.toString()
             step = vision.step.toString()
-        }.apply {
+        }.also { htmlInputElement ->
 
             val onEvent: (Event) -> Unit = {
-                value.toDoubleOrNull()?.let { vision.number = it }
+                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
             }
 
             when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
 
-                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
                 InputFeedbackMode.NONE -> {}
             }
-            subscribeToInput(vision)
+            htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfRangeField::value) {
-                this@apply.valueAsNumber = it?.double ?: 0.0
+                htmlInputElement.valueAsNumber = it?.double ?: 0.0
             }
         }
     }
