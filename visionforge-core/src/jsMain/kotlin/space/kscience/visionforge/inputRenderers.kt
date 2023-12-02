@@ -3,10 +3,10 @@ package space.kscience.visionforge
 import kotlinx.browser.document
 import kotlinx.html.InputType
 import kotlinx.html.js.input
-import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.Event
 import org.w3c.dom.get
 import org.w3c.xhr.FormData
 import space.kscience.dataforge.context.debug
@@ -14,7 +14,11 @@ import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.html.*
 
-
+/**
+ * Subscribes the HTML element to a given vision.
+ *
+ * @param vision The vision to subscribe to.
+ */
 private fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
     vision.useProperty(VisionOfHtml::classes) {
         classList.value = classes.joinToString(separator = " ")
@@ -22,6 +26,11 @@ private fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
 }
 
 
+/**
+ * Subscribes the HTML input element to a given vision.
+ *
+ * @param inputVision The input vision to subscribe to.
+ */
 private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
     subscribeToVision(inputVision)
     inputVision.useProperty(VisionOfHtmlInput::disabled) {
@@ -29,33 +38,123 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
     }
 }
 
-
-internal fun JsVisionClient.textVisionRenderer(): ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfTextField> { visionName, vision, _ ->
+internal val inputVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfHtmlInput>(acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1) { _, vision, _ ->
         input {
             type = InputType.text
-            onChangeFunction = {
-                notifyPropertyChanged(visionName, VisionOfTextField::text.name, value)
-            }
         }.apply {
+            val onEvent: (Event) -> Unit = {
+                vision.value = value.asValue()
+            }
+
+
+            when (vision.feedbackMode) {
+                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+
+                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.NONE -> {}
+            }
+
             subscribeToInput(vision)
-            vision.useProperty(VisionOfTextField::text) {
-                value = (it ?: "").asValue()
+            vision.useProperty(VisionOfHtmlInput::value) {
+                this@apply.value = it?.string ?: ""
             }
         }
     }
 
-internal fun JsVisionClient.numberVisionRenderer(): ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfNumberField> { visionName, vision, _ ->
+internal val checkboxVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfCheckbox> { _, vision, _ ->
+        input {
+            type = InputType.checkBox
+        }.apply {
+            val onEvent: (Event) -> Unit = {
+                vision.checked = checked
+            }
+
+
+            when (vision.feedbackMode) {
+                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+
+                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.NONE -> {}
+            }
+
+            subscribeToInput(vision)
+            vision.useProperty(VisionOfCheckbox::checked) {
+                this@apply.checked = it ?: false
+            }
+        }
+    }
+
+internal val textVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfTextField> { _, vision, _ ->
         input {
             type = InputType.text
-            onChangeFunction = {
-                notifyPropertyChanged(visionName, VisionOfNumberField::value.name, value)
-            }
         }.apply {
+            val onEvent: (Event) -> Unit = {
+                vision.text = value
+            }
+
+
+            when (vision.feedbackMode) {
+                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+
+                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.NONE -> {}
+            }
+
+            subscribeToInput(vision)
+            vision.useProperty(VisionOfTextField::text) {
+                this@apply.value = it ?: ""
+            }
+        }
+    }
+
+internal val numberVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfNumberField> { _, vision, _ ->
+        input {
+            type = InputType.text
+        }.apply {
+
+            val onEvent: (Event) -> Unit = {
+                value.toDoubleOrNull()?.let { vision.number = it }
+            }
+
+            when (vision.feedbackMode) {
+                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+
+                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.NONE -> {}
+            }
             subscribeToInput(vision)
             vision.useProperty(VisionOfNumberField::value) {
-                value = (it?.double ?: 0.0).asValue()
+                this@apply.valueAsNumber = it?.double ?: 0.0
+            }
+        }
+    }
+
+internal val rangeVisionRenderer: ElementVisionRenderer =
+    ElementVisionRenderer<VisionOfRangeField> { _, vision, _ ->
+        input {
+            type = InputType.text
+            min = vision.min.toString()
+            max = vision.max.toString()
+            step = vision.step.toString()
+        }.apply {
+
+            val onEvent: (Event) -> Unit = {
+                value.toDoubleOrNull()?.let { vision.number = it }
+            }
+
+            when (vision.feedbackMode) {
+                InputFeedbackMode.ONCHANGE -> onchange = onEvent
+
+                InputFeedbackMode.ONINPUT -> oninput = onEvent
+                InputFeedbackMode.NONE -> {}
+            }
+            subscribeToInput(vision)
+            vision.useProperty(VisionOfRangeField::value) {
+                this@apply.valueAsNumber = it?.double ?: 0.0
             }
         }
     }
@@ -83,7 +182,7 @@ internal fun FormData.toMeta(): Meta {
     return DynamicMeta(`object`)
 }
 
-internal fun JsVisionClient.formVisionRenderer(): ElementVisionRenderer =
+internal val formVisionRenderer: ElementVisionRenderer =
     ElementVisionRenderer<VisionOfHtmlForm> { visionName, vision, _ ->
 
         val form = document.getElementById(vision.formId) as? HTMLFormElement
@@ -91,10 +190,10 @@ internal fun JsVisionClient.formVisionRenderer(): ElementVisionRenderer =
 
         form.subscribeToVision(vision)
 
-        logger.debug { "Adding hooks to form with id = '$vision.formId'" }
+        vision.manager?.logger?.debug { "Adding hooks to form with id = '$vision.formId'" }
 
         vision.useProperty(VisionOfHtmlForm::values) { values ->
-            logger.debug { "Updating form '${vision.formId}' with values $values" }
+            vision.manager?.logger?.debug { "Updating form '${vision.formId}' with values $values" }
             val inputs = form.getElementsByTagName("input")
             values?.valueSequence()?.forEach { (token, value) ->
                 (inputs[token.toString()] as? HTMLInputElement)?.value = value.toString()
@@ -104,7 +203,7 @@ internal fun JsVisionClient.formVisionRenderer(): ElementVisionRenderer =
         form.onsubmit = { event ->
             event.preventDefault()
             val formData = FormData(form).toMeta()
-            notifyPropertyChanged(visionName, VisionOfHtmlForm::values.name, formData)
+            vision.values = formData
             console.info("Sent: ${formData.toMap()}")
             false
         }

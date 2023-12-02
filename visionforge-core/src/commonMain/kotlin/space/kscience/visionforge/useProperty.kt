@@ -39,9 +39,22 @@ public fun Vision.useProperty(
     callback: (Meta) -> Unit,
 ): Job = useProperty(propertyName.parseAsName(), inherit, includeStyles, scope, callback)
 
+/**
+ * Observe changes to the specific property without passing the initial value.
+ */
+public fun <V : Vision, T> V.onPropertyChange(
+    property: KProperty1<V, T>,
+    scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties"),
+    callback: suspend V.(T) -> Unit,
+): Job = properties.changes.onEach { name ->
+    if (name.startsWith(property.name.asName())) {
+        callback(property.get(this))
+    }
+}.launchIn(scope)
+
 public fun <V : Vision, T> V.useProperty(
     property: KProperty1<V, T>,
-    scope: CoroutineScope? = manager?.context,
+    scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties"),
     callback: V.(T) -> Unit,
 ): Job {
     //Pass initial value.
@@ -50,5 +63,5 @@ public fun <V : Vision, T> V.useProperty(
         if (name.startsWith(property.name.asName())) {
             callback(property.get(this@useProperty))
         }
-    }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
+    }.launchIn(scope)
 }

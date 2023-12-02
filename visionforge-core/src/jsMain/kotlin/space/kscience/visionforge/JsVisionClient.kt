@@ -65,20 +65,20 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
-    private val mutex = Mutex()
+//    private val mutex = Mutex()
 
-    private val changeCollector = VisionChangeBuilder()
 
-    /**
-     * Communicate vision property changed from rendering engine to model
-     */
-    override fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
-        context.launch {
-            mutex.withLock {
-                changeCollector.propertyChanged(visionName, propertyName, item)
-            }
-        }
-    }
+
+//    /**
+//     * Communicate vision property changed from rendering engine to model
+//     */
+//    private fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
+//        context.launch {
+//            mutex.withLock {
+//                changeCollector.propertyChanged(visionName, propertyName, item)
+//            }
+//        }
+//    }
 
     private val eventCollector by lazy {
         MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
@@ -97,7 +97,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
         renderer.render(element, name, vision, outputMeta)
     }
 
-    private fun startVisionUpdate(element: Element, name: Name, vision: Vision?, outputMeta: Meta) {
+    private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {
         element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
             val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
                 val endpoint = resolveEndpoint(element)
@@ -109,8 +109,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 URL(attr.value)
             }.apply {
                 protocol = "ws"
-                searchParams.append("name", name.toString())
+                searchParams.append("name", visionName.toString())
             }
+
 
             logger.info { "Updating vision data from $wsUrl" }
 
@@ -125,14 +126,13 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                         )
 
                         // If change contains root vision replacement, do it
-                        if(event is VisionChange) {
+                        if (event is VisionChange) {
                             event.vision?.let { vision ->
-                                renderVision(element, name, vision, outputMeta)
+                                renderVision(element, visionName, vision, outputMeta)
                             }
                         }
 
-                        logger.debug { "Got $event for output with name $name" }
-                        if (vision == null) error("Can't update vision because it is not loaded.")
+                        logger.debug { "Got $event for output with name $visionName" }
                         vision.receiveEvent(event)
                     } else {
                         logger.error { "WebSocket message data is not a string" }
@@ -147,32 +147,44 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 val feedbackAggregationTime = meta["feedback.aggregationTime"]?.int ?: 300
 
                 onopen = {
+
+
+                    val mutex = Mutex()
+
+                    val changeCollector = VisionChangeBuilder()
+
                     feedbackJob = visionManager.context.launch {
-                        eventCollector.filter { it.first == name }.onEach {
+                        //launch a separate coroutine to send events to the backend
+                        eventCollector.filter { it.first == visionName }.onEach {
                             send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it.second))
                         }.launchIn(this)
 
+                        //launch backward property propagation
+                        vision.properties.changes.onEach { propertyName: Name ->
+                            changeCollector.propertyChanged(visionName, propertyName, vision.properties.getMeta(propertyName))
+                        }.launchIn(this)
+
+                        //aggregate atomic changes
                         while (isActive) {
                             delay(feedbackAggregationTime.milliseconds)
-                            val change = changeCollector[name] ?: continue
-                            if (!change.isEmpty()) {
+                            if (!changeCollector.isEmpty()) {
                                 mutex.withLock {
-                                    eventCollector.emit(name to change.deepCopy(visionManager))
-                                    change.reset()
+                                    eventCollector.emit(visionName to changeCollector.deepCopy(visionManager))
+                                    changeCollector.reset()
                                 }
                             }
                         }
                     }
-                    logger.info { "WebSocket feedback channel established for output '$name'" }
+                    logger.info { "WebSocket feedback channel established for output '$visionName'" }
                 }
 
                 onclose = {
                     feedbackJob?.cancel()
-                    logger.info { "WebSocket feedback channel closed for output '$name'" }
+                    logger.info { "WebSocket feedback channel closed for output '$visionName'" }
                 }
                 onerror = {
                     feedbackJob?.cancel()
-                    logger.error { "WebSocket feedback channel error for output '$name'" }
+                    logger.error { "WebSocket feedback channel error for output '$visionName'" }
                 }
             }
         }
@@ -241,9 +253,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             }
 
             //Try to load vision via websocket
-            element.attributes[OUTPUT_CONNECT_ATTRIBUTE] != null -> {
-                startVisionUpdate(element, name, null, outputMeta)
-            }
+//            element.attributes[OUTPUT_CONNECT_ATTRIBUTE] != null -> {
+//                startVisionUpdate(element, name, null, outputMeta)
+//            }
 
             else -> error("No embedded vision data / fetch url for $name")
         }
@@ -252,9 +264,12 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     override fun content(target: String): Map<Name, Any> = if (target == ElementVisionRenderer.TYPE) {
         listOf(
-            numberVisionRenderer(),
-            textVisionRenderer(),
-            formVisionRenderer()
+            inputVisionRenderer,
+            checkboxVisionRenderer,
+            numberVisionRenderer,
+            textVisionRenderer,
+            rangeVisionRenderer,
+            formVisionRenderer
         ).associateByName()
     } else super<AbstractPlugin>.content(target)
 

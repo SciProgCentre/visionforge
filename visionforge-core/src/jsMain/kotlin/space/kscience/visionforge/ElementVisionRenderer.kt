@@ -26,7 +26,7 @@ public interface ElementVisionRenderer : Named {
     /**
      * Give a [vision] integer rating based on this renderer capabilities. [ZERO_RATING] or negative values means that this renderer
      * can't process a vision. The value of [DEFAULT_RATING] used for default renderer. Specialized renderers could specify
-     * higher value in order to "steal" rendering job
+     * higher value to "steal" rendering job
      */
     public fun rateVision(vision: Vision): Int
 
