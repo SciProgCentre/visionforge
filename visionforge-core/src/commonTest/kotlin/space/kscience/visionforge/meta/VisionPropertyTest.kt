@@ -1,7 +1,6 @@
 package space.kscience.visionforge.meta
 
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
@@ -24,7 +23,6 @@ private class TestScheme : Scheme() {
     companion object : SchemeSpec<TestScheme>(::TestScheme)
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class VisionPropertyTest {
 
     private val manager = Global.request(VisionManager)

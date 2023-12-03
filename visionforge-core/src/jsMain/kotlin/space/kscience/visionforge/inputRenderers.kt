@@ -194,7 +194,7 @@ internal fun FormData.toMeta(): Meta {
 }
 
 internal val formVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlForm> { visionName, vision, _ ->
+    ElementVisionRenderer<VisionOfHtmlForm> { _, vision, _ ->
 
         val form = document.getElementById(vision.formId) as? HTMLFormElement
             ?: error("An element with id = '${vision.formId} is not a form")
