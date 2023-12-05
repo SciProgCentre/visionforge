@@ -4,6 +4,8 @@ import kotlinx.coroutines.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
+import space.kscience.kmath.geometry.Euclidean3DSpace
+import space.kscience.kmath.geometry.radians
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -18,7 +20,12 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
     val meta = Meta {
         "title" put title
     }
-    val vision = SolidGroup(block)
+    val vision = solids.solidGroup {
+        block()
+        ambientLight {
+            color(Colors.white)
+        }
+    }
     render(Name.parse(name), vision, meta)
 }
 
@@ -39,6 +46,7 @@ val canvasOptions = Canvas3DOptions {
 @OptIn(DelicateCoroutinesApi::class)
 fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
+        ambientLight()
         box(100.0, 100.0, 100.0) {
             z = -110.0
             color("teal")
@@ -62,7 +70,7 @@ fun VisionLayout<Solid>.showcase() {
     }
 
     demo("dynamic", "Dynamic properties") {
-        val group = group {
+        val group = solidGroup {
             box(100, 100, 100) {
                 z = 110.0
                 opacity = 0.5
@@ -94,11 +102,18 @@ fun VisionLayout<Solid>.showcase() {
 
     demo("rotation", "Rotations") {
         box(100, 100, 100)
-        group {
+        solidGroup {
             x = 200
             rotationY = PI / 4
+            axes(200)
             box(100, 100, 100) {
-                rotationZ = PI / 4
+                rotate((PI / 4).radians, Euclidean3DSpace.zAxis)
+                GlobalScope.launch(Dispatchers.Main) {
+                    while (isActive) {
+                        delay(100)
+                        rotate((PI/20).radians,Euclidean3DSpace.yAxis)
+                    }
+                }
                 color(Colors.red)
             }
         }
@@ -124,7 +139,10 @@ fun VisionLayout<Solid>.showcase() {
             color(Colors.blue)
         }
         repeat(20) {
-            polyline(Point3D(100, 100, 100), Point3D(-100, -100, -100)) {
+            polyline(
+                Float32Vector3D(100, 100, 100),
+                Float32Vector3D(-100, -100, -100)
+            ) {
                 thickness = 3.0
                 rotationX = it * PI2 / 20
                 color(Colors.green)
@@ -140,6 +158,10 @@ fun VisionLayout<Solid>.showcase() {
         label("Hello, world!", fontSize = 12) {
             z = 26
         }
+    }
+
+    demo("STL", "STL loaded from URL") {
+        stl("https://ozeki.hu/attachments/116/Menger_sponge_sample.stl")
     }
 }
 

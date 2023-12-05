@@ -3,6 +3,7 @@ package ru.mipt.npm.root.serialization
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -24,12 +25,12 @@ private fun Solid.rotate(rot: DoubleArray) {
     val xAngle = atan2(-rot[5], rot[8])
     val yAngle = atan2(rot[2], sqrt(1.0 - rot[2].pow(2)))
     val zAngle = atan2(-rot[1], rot[0])
-    rotation = Point3D(xAngle, yAngle, zAngle)
+    rotation = Float32Vector3D(xAngle, yAngle, zAngle)
 }
 
 private fun Solid.translate(trans: DoubleArray) {
     val (x, y, z) = trans
-    position = Point3D(x, y, z)
+    position = Float32Vector3D(x, y, z)
 }
 
 private fun Solid.useMatrix(matrix: TGeoMatrix?) {
@@ -51,7 +52,7 @@ private fun Solid.useMatrix(matrix: TGeoMatrix?) {
             translate(matrix.fTranslation)
             rotate(matrix.fRotationMatrix)
             val (xScale, yScale, zScale) = matrix.fScale
-            scale = Point3D(xScale, yScale, zScale)
+            scale = Float32Vector3D(xScale, yScale, zScale)
         }
     }
 }
@@ -132,7 +133,7 @@ private fun buildGroup(volume: TGeoVolume): SolidGroup {
     return if (volume is TGeoVolumeAssemblyRef) {
         buildGroup(volume.value)
     } else {
-        SolidGroup {
+        SolidGroup().apply {
             volume.fShape?.let { addShape(it) }
             volume.fNodes?.let {
                 it.arr.forEach { obj ->
@@ -160,7 +161,7 @@ private fun SolidGroup.volume(volume: TGeoVolume, name: String? = null, cache: B
         name = combinedName,
         obj = group,
         prototypeHolder = rootPrototypes,
-        templateName = volumesName + Name.parse(combinedName ?: "volume[${group.hashCode()}]")
+        prototypeName = volumesName + Name.parse(combinedName ?: "volume[${group.hashCode()}]")
     )
 }
 
@@ -180,8 +181,8 @@ private fun SolidGroup.volume(volume: TGeoVolume, name: String? = null, cache: B
 //    }
 
 
-public fun TGeoManager.toSolid(): SolidGroup = SolidGroup {
-    fNodes.arr.forEach {
+public fun MutableVisionContainer<Solid>.rootGeo(tGeoManager: TGeoManager): SolidGroup = solidGroup {
+    tGeoManager.fNodes.arr.forEach {
         node(it)
     }
 }

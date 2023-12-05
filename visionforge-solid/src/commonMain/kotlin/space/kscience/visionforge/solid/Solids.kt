@@ -6,29 +6,34 @@ import kotlinx.serialization.modules.PolymorphicModuleBuilder
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlinx.serialization.serializer
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.misc.DFExperimental
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
-import kotlin.reflect.KClass
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 
 
-public class Solids(meta: Meta) : VisionPlugin(meta) {
+public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Solid> {
     override val tag: PluginTag get() = Companion.tag
 
     override val visionSerializersModule: SerializersModule get() = serializersModuleForSolids
 
+    override fun setChild(name: Name?, child: Solid?) {
+        child?.setAsRoot(visionManager)
+    }
+
     public companion object : PluginFactory<Solids> {
         override val tag: PluginTag = PluginTag(name = "vision.solid", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out Solids> = Solids::class
-        override fun invoke(meta: Meta, context: Context): Solids = Solids(meta)
+
+        override fun build(context: Context, meta: Meta): Solids = Solids(meta)
 
         private fun PolymorphicModuleBuilder<Solid>.solids() {
             subclass(SolidGroup.serializer())
-            subclass(SolidReferenceGroup.serializer())
+            subclass(SolidReference.serializer())
             subclass(Composite.serializer())
             subclass(Box.serializer())
             subclass(GenericHexagon.serializer())
@@ -36,20 +41,28 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
             subclass(ConeSurface.serializer())
             subclass(Convex.serializer())
             subclass(Extruded.serializer())
+            subclass(Surface.serializer())
             subclass(PolyLine.serializer())
             subclass(SolidLabel.serializer())
             subclass(Sphere.serializer())
+            subclass(SphereLayer.serializer())
+            subclass(CutTube.serializer())
+
+            subclass(AmbientLightSource.serializer())
+            subclass(PointLightSource.serializer())
+
+            subclass(AxesSolid.serializer())
         }
 
         public val serializersModuleForSolids: SerializersModule = SerializersModule {
+
             polymorphic(Vision::class) {
-                subclass(VisionBase.serializer())
-                subclass(VisionGroupBase.serializer())
+                subclass(SimpleVisionGroup.serializer())
                 solids()
             }
 
             polymorphic(Solid::class) {
-                default { SolidBase.serializer() }
+                defaultDeserializer { SolidBase.serializer(serializer<Solid>()) }
                 solids()
             }
         }
@@ -64,12 +77,26 @@ public class Solids(meta: Meta) : VisionPlugin(meta) {
 
         public fun decodeFromString(str: String): Solid =
             jsonForSolids.decodeFromString(PolymorphicSerializer(Solid::class), str)
+
+//        override fun setChild(name: Name?, child: Solid?) {
+//            default.setChild(name, child)
+//        }
     }
 }
 
 @VisionBuilder
-@DFExperimental
-public inline fun VisionOutput.solid(block: SolidGroup.() -> Unit): SolidGroup {
+public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: SolidGroup.() -> Unit): SolidGroup {
     requirePlugin(Solids)
-    return SolidGroup().apply(block)
+    options?.let {
+        meta = options.meta
+    }
+    return SolidGroup().apply(block).apply {
+        if (children.values.none { it is LightSource }) {
+            ambientLight()
+        }
+    }
 }
+
+@VisionBuilder
+public inline fun VisionOutput.solid(options: Canvas3DOptions.() -> Unit, block: SolidGroup.() -> Unit): SolidGroup =
+    solid(Canvas3DOptions(options), block)

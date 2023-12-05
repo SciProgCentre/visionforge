@@ -8,18 +8,21 @@ import kotlinx.serialization.modules.subclass
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
+import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.VisionBuilder
+import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.root
 
 @Serializable
 @SerialName("vision.markup")
 public class VisionOfMarkup(
-    public val format: String = COMMONMARK_FORMAT
-) : VisionBase() {
+    public val format: String = COMMONMARK_FORMAT,
+) : AbstractVision() {
 
     //TODO add templates
 
-    public var content: String? by meta.string(CONTENT_PROPERTY_KEY)
+    public var content: String? by properties.root().string(CONTENT_PROPERTY_KEY)
 
     public companion object {
         public val CONTENT_PROPERTY_KEY: Name = "content".asName()
@@ -37,4 +40,16 @@ internal val markupSerializersModule = SerializersModule {
     polymorphic(Vision::class) {
         subclass(VisionOfMarkup.serializer())
     }
+}
+
+/**
+ * Embed a dynamic markdown block in a vision
+ */
+@VisionBuilder
+public inline fun VisionOutput.markdown(
+    format: String = VisionOfMarkup.COMMONMARK_FORMAT,
+    block: VisionOfMarkup.() -> Unit,
+): VisionOfMarkup {
+    requirePlugin(MarkupPlugin)
+    return VisionOfMarkup(format).apply(block)
 }

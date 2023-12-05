@@ -9,8 +9,8 @@ import kotlinx.serialization.serializerOrNull
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.misc.DfType
 import space.kscience.dataforge.misc.Named
-import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
@@ -20,13 +20,13 @@ import kotlin.reflect.cast
 /**
  * A browser renderer for a [Vision].
  */
-@Type(ElementVisionRenderer.TYPE)
+@DfType(ElementVisionRenderer.TYPE)
 public interface ElementVisionRenderer : Named {
 
     /**
      * Give a [vision] integer rating based on this renderer capabilities. [ZERO_RATING] or negative values means that this renderer
      * can't process a vision. The value of [DEFAULT_RATING] used for default renderer. Specialized renderers could specify
-     * higher value in order to "steal" rendering job
+     * higher value to "steal" rendering job
      */
     public fun rateVision(vision: Vision): Int
 
@@ -34,7 +34,7 @@ public interface ElementVisionRenderer : Named {
      * Display the [vision] inside a given [element] replacing its current content.
      * @param meta additional parameters for rendering container
      */
-    public fun render(element: Element, vision: Vision, meta: Meta = Meta.EMPTY)
+    public fun render(element: Element, name: Name, vision: Vision, meta: Meta = Meta.EMPTY)
 
     public companion object {
         public const val TYPE: String = "elementVisionRenderer"
@@ -49,7 +49,7 @@ public interface ElementVisionRenderer : Named {
 public class SingleTypeVisionRenderer<T : Vision>(
     public val kClass: KClass<T>,
     private val acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,
-    private val renderFunction: TagConsumer<HTMLElement>.(vision: T, meta: Meta) -> Unit,
+    private val renderFunction: TagConsumer<HTMLElement>.(name: Name, vision: T, meta: Meta) -> Unit,
 ) : ElementVisionRenderer {
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
@@ -60,15 +60,15 @@ public class SingleTypeVisionRenderer<T : Vision>(
     override fun rateVision(vision: Vision): Int =
         if (vision::class == kClass) acceptRating else ElementVisionRenderer.ZERO_RATING
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         element.clear()
         element.append {
-            renderFunction(kClass.cast(vision), meta)
+            renderFunction(name, kClass.cast(vision), meta)
         }
     }
 }
 
 public inline fun <reified T : Vision> ElementVisionRenderer(
     acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,
-    noinline renderFunction: TagConsumer<HTMLElement>.(vision: T, meta: Meta) -> Unit,
+    noinline renderFunction: TagConsumer<HTMLElement>.(name: Name, vision: T, meta: Meta) -> Unit,
 ): ElementVisionRenderer = SingleTypeVisionRenderer(T::class, acceptRating, renderFunction)

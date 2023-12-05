@@ -3,13 +3,7 @@ package space.kscience.visionforge.solid
 import javafx.scene.paint.Color
 import javafx.scene.paint.Material
 import javafx.scene.paint.PhongMaterial
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.double
-import space.kscience.dataforge.meta.get
-import space.kscience.dataforge.meta.int
-import space.kscience.dataforge.values.ValueType
-import space.kscience.dataforge.values.int
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.FXMaterials.GREY
 

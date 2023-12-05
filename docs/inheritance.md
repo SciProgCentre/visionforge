@@ -7,7 +7,7 @@ Properties, which can be inherited by objects, are `styles`, `prototypes` (if th
 All values of `styles` property are contained in class `StyleSheet`, where they all are defined at `Group`s level. The `prototypes` property tree is defined in `SolidGroup` class via `PrototypeHolder` interface, and
 `SolidReference` class helps to reuse a template object. 
 
-The order of inheritance of properties is set in function `getPropertyValue` in `VisionBase` class.
+The order of inheritance of properties is set in function `getProperty` in `VisionBase` class.
 The order is this:
 * own styles
 * prototypes

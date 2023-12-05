@@ -1,63 +1,46 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
     application
 }
 
 group = "ru.mipt.npm"
 
-val ktorVersion: String = npmlibs.versions.ktor.get()
+val ktorVersion: String = spclibs.versions.ktor.get()
 
 kscience {
     useCoroutines()
     useSerialization()
-    application()
-}
-
-kotlin {
-    jvm {
-        withJava()
-    }
-    js {
-        useCommonJs()
-        browser {
-            commonWebpackConfig {
-                cssSupport.enabled = false
+    useKtor()
+    fullStack(
+        "muon-monitor.js",
+        jvmConfig = { withJava() },
+        jsConfig = { useCommonJs() }
+    ) {
+        commonWebpackConfig {
+            cssSupport {
+                enabled.set(false)
             }
         }
     }
 
-    afterEvaluate {
-        val jsBrowserDistribution by tasks.getting
-
-        tasks.getByName<ProcessResources>("jvmProcessResources") {
-            dependsOn(jsBrowserDistribution)
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            from(jsBrowserDistribution)
-        }
+    commonMain {
+        implementation(projects.visionforgeSolid)
     }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":visionforge-solid"))
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation("org.apache.commons:commons-math3:3.6.1")
-                implementation(npmlibs.ktor.server.cio)
-                implementation(npmlibs.ktor.serialization)
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation(project(":ui:ring"))
-                implementation(project(":visionforge-threejs"))
-                //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
-            }
-        }
+    jvmMain {
+        implementation("org.apache.commons:commons-math3:3.6.1")
+        implementation("io.ktor:ktor-server-cio:${ktorVersion}")
+        implementation("io.ktor:ktor-server-content-negotiation:${ktorVersion}")
+        implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
+        implementation("ch.qos.logback:logback-classic:1.2.11")
+    }
+    jsMain {
+        implementation(projects.ui.ring)
+        implementation(projects.visionforgeThreejs)
+        //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
     }
 }
+
+kotlin.explicitApi = null
 
 application {
     mainClass.set("ru.mipt.npm.muon.monitor.server.MMServerKt")

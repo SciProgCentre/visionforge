@@ -13,29 +13,25 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.toJson
 import space.kscience.dataforge.meta.toMeta
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.html.VisionOfCheckbox
-import space.kscience.visionforge.html.VisionOfHtmlForm
-import space.kscience.visionforge.html.VisionOfNumberField
-import space.kscience.visionforge.html.VisionOfTextField
-import kotlin.reflect.KClass
+import space.kscience.visionforge.html.*
 
-public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
+public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionContainer<Vision> {
     override val tag: PluginTag get() = Companion.tag
 
     /**
      * Combined [SerializersModule] for all registered visions
      */
-    public val serializersModule: SerializersModule
-        get() = SerializersModule {
+    public val serializersModule: SerializersModule by lazy {
+        SerializersModule {
             include(defaultSerialModule)
             context.gather<SerializersModule>(VISION_SERIALIZER_MODULE_TARGET).values.forEach {
                 include(it)
             }
         }
+    }
 
     public val jsonFormat: Json
         get() = Json(defaultJson) {
-            encodeDefaults = false
             serializersModule = this@VisionManager.serializersModule
         }
 
@@ -57,22 +53,27 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
     public fun encodeToMeta(vision: Vision, descriptor: MetaDescriptor? = null): Meta =
         encodeToJsonElement(vision).toMeta(descriptor)
 
+    override fun setChild(name: Name?, child: Vision?) {
+        child?.setAsRoot(this)
+    }
+
     public companion object : PluginFactory<VisionManager> {
         override val tag: PluginTag = PluginTag(name = "vision", group = PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<out VisionManager> = VisionManager::class
 
         public const val VISION_SERIALIZER_MODULE_TARGET: String = "visionSerializerModule"
 
-        override fun invoke(meta: Meta, context: Context): VisionManager = VisionManager(meta)
+        override fun build(context: Context, meta: Meta): VisionManager = VisionManager(meta)
 
         private val defaultSerialModule: SerializersModule = SerializersModule {
             polymorphic(Vision::class) {
-                default { VisionBase.serializer() }
-                subclass(VisionBase.serializer())
-                subclass(VisionGroupBase.serializer())
+                defaultDeserializer { SimpleVisionGroup.serializer() }
+                subclass(NullVision.serializer())
+                subclass(SimpleVisionGroup.serializer())
+                subclass(VisionOfHtmlInput.serializer())
                 subclass(VisionOfNumberField.serializer())
                 subclass(VisionOfTextField.serializer())
                 subclass(VisionOfCheckbox.serializer())
+                subclass(VisionOfRangeField.serializer())
                 subclass(VisionOfHtmlForm.serializer())
             }
         }
@@ -82,7 +83,6 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta) {
             serializersModule = defaultSerialModule
             prettyPrint = true
             useArrayPolymorphism = false
-            encodeDefaults = false
             ignoreUnknownKeys = true
             explicitNulls = false
         }
@@ -105,7 +105,22 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
 /**
  * Fetch a [VisionManager] from this plugin or create a child plugin with a [VisionManager]
  */
-public val Context.visionManager: VisionManager get() = fetch(VisionManager)
+public val Context.visionManager: VisionManager get() = request(VisionManager )
 
 public fun Vision.encodeToString(): String =
-    manager?.encodeToString(this) ?: error("VisionManager not defined in Vision")
+    manager?.encodeToString(this) ?: error("Orphan vision could not be encoded")
+
+/**
+ * A root vision attached to [VisionManager]
+ */
+public class RootVision(override val manager: VisionManager) : AbstractVisionGroup() {
+    override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
+}
+
+/**
+ * Designate this [Vision] as a root and assign a [VisionManager] as its parent
+ */
+public fun Vision.setAsRoot(manager: VisionManager) {
+    if (parent != null) error("Vision $this already has a parent. It could not be set as root")
+    parent = RootVision(manager)
+}

@@ -5,7 +5,7 @@
  */
 package space.kscience.visionforge.editor
 
-import space.kscience.dataforge.values.Value
+import space.kscience.dataforge.meta.Value
 
 
 /**

@@ -16,7 +16,6 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.misc.Type
-import space.kscience.visionforge.computePropertyNode
 import space.kscience.visionforge.solid.FX3DFactory.Companion.TYPE
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_KEY
 import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_WIREFRAME_KEY
@@ -46,11 +45,11 @@ public class FX3DPlugin : AbstractPlugin() {
     }
 
     public fun buildNode(obj: Solid): Node {
-        val binding = VisualObjectFXBinding(this, obj)
+        val binding = VisionFXBinding(this, obj)
         return when (obj) {
-            is SolidReferenceGroup -> referenceFactory(obj, binding)
+            is SolidReference -> referenceFactory(obj, binding)
             is SolidGroup -> {
-                Group(obj.children.mapNotNull { (token, obj) ->
+                Group(obj.items.mapNotNull { (token, obj) ->
                     (obj as? Solid)?.let {
                         logger.info { token.toString() }
                         buildNode(it).apply {
@@ -77,7 +76,7 @@ public class FX3DPlugin : AbstractPlugin() {
             is PolyLine -> PolyLine3D(
                 obj.points.map { Point3D(it.x, it.y, it.z) },
                 obj.thickness.toFloat(),
-                obj.computePropertyNode(SolidMaterial.MATERIAL_COLOR_KEY)?.color()
+                obj.properties.getProperty(SolidMaterial.MATERIAL_COLOR_KEY).color()
             ).apply {
                 this.meshView.cullFace = CullFace.FRONT
             }
@@ -97,6 +96,8 @@ public class FX3DPlugin : AbstractPlugin() {
             scaleXProperty().bind(binding[Solid.X_SCALE_KEY].float(obj.scaleX.toFloat()))
             scaleYProperty().bind(binding[Solid.Y_SCALE_KEY].float(obj.scaleY.toFloat()))
             scaleZProperty().bind(binding[Solid.Z_SCALE_KEY].float(obj.scaleZ.toFloat()))
+
+            if(obj.quaternion!= null) TODO("Quaternion support not implemented")
 
             val rotateX = Rotate(0.0, Rotate.X_AXIS).apply {
                 angleProperty().bind(binding[Solid.X_ROTATION_KEY].float(obj.rotationX.toFloat()).multiply(180.0 / PI))
@@ -138,7 +139,8 @@ public class FX3DPlugin : AbstractPlugin() {
     public companion object : PluginFactory<FX3DPlugin> {
         override val tag: PluginTag = PluginTag("vision.fx3D", PluginTag.DATAFORGE_GROUP)
         override val type: KClass<FX3DPlugin> = FX3DPlugin::class
-        override fun invoke(meta: Meta, context: Context): FX3DPlugin = FX3DPlugin()
+
+        override fun build(context: Context, meta: Meta): FX3DPlugin = FX3DPlugin()
     }
 }
 
@@ -150,7 +152,7 @@ public interface FX3DFactory<in T : Solid> {
 
     public val type: KClass<in T>
 
-    public operator fun invoke(obj: T, binding: VisualObjectFXBinding): Node
+    public operator fun invoke(obj: T, binding: VisionFXBinding): Node
 
     public companion object {
         public const val TYPE: String = "fx3DFactory"

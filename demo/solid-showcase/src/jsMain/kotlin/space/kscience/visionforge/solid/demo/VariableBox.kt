@@ -1,20 +1,19 @@
 package space.kscience.visionforge.solid.demo
 
-import info.laht.threekt.core.Object3D
-import info.laht.threekt.geometries.BoxGeometry
-import info.laht.threekt.objects.Mesh
-import space.kscience.dataforge.meta.get
+import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.startsWith
-import space.kscience.dataforge.values.asValue
 import space.kscience.visionforge.onPropertyChange
-import space.kscience.visionforge.set
-import space.kscience.visionforge.setProperty
+import space.kscience.visionforge.setChild
 import space.kscience.visionforge.solid.SolidGroup
+import space.kscience.visionforge.solid.SolidMaterial.Companion.EDGES_KEY
 import space.kscience.visionforge.solid.layer
 import space.kscience.visionforge.solid.three.*
+import three.core.Object3D
+import three.geometries.BoxGeometry
+import three.objects.Mesh
 import kotlin.math.max
 
 internal fun SolidGroup.varBox(
@@ -22,11 +21,11 @@ internal fun SolidGroup.varBox(
     ySize: Number,
     name: String = "",
     action: VariableBox.() -> Unit = {},
-): VariableBox = VariableBox(xSize, ySize).apply(action).also { set(name, it) }
+): VariableBox = VariableBox(xSize, ySize).apply(action).also { setChild(name, it) }
 
 internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision() {
 
-    override fun render(three: ThreePlugin): Object3D {
+    override suspend fun render(three: ThreePlugin): Object3D {
         val geometry = BoxGeometry(xSize, ySize, 1)
 
         val material = ThreeMaterials.DEFAULT.clone()
@@ -44,13 +43,13 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
                 it.layers.enable(this@VariableBox.layer)
             }
         }
-        mesh.scale.z = meta[VALUE].number?.toDouble() ?: 1.0
+        mesh.scale.z = properties.getValue(VALUE)?.number?.toDouble() ?: 1.0
 
         //add listener to object properties
         onPropertyChange { name ->
             when {
                 name == VALUE -> {
-                    val value = meta.get(VALUE).int ?: 0
+                    val value = properties.getValue(VALUE)?.int ?: 0
                     val size = value.toFloat() / 255f * 20f
                     mesh.scale.z = size.toDouble()
                     mesh.position.z = size.toDouble() / 2
@@ -61,7 +60,8 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
                     material.color.setRGB(r.toFloat() / 256, g.toFloat() / 256, b.toFloat() / 256)
                     mesh.updateMatrix()
                 }
-                name.startsWith(MeshThreeFactory.EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
+
+                name.startsWith(EDGES_KEY) -> mesh.applyEdges(this@VariableBox)
                 else -> mesh.updateProperty(this@VariableBox, name)
             }
         }
@@ -70,9 +70,9 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
     }
 
     var value: Int
-        get() = meta[VALUE].int ?: 0
+        get() = properties.getValue(VALUE)?.int ?: 0
         set(value) {
-            setProperty(VALUE, value.asValue())
+            properties.setValue(VALUE, value.asValue())
         }
 
     companion object {

@@ -1,12 +1,18 @@
 package space.kscience.visionforge.gdml.demo
 
-import kotlinx.browser.document
 import kotlinx.css.*
-import react.dom.render
+import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.request
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.react.createRoot
+import space.kscience.visionforge.react.render
+import space.kscience.visionforge.solid.Solids
+import space.kscience.visionforge.solid.ambientLight
+import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 import styled.injectGlobal
@@ -14,7 +20,7 @@ import styled.injectGlobal
 
 private class GDMLDemoApp : Application {
 
-    override fun start(state: Map<String, Any>) {
+    override fun start(document: Document, state: Map<String, Any>) {
         val context = Context("gdml-demo"){
             plugin(ThreePlugin)
         }
@@ -39,12 +45,16 @@ private class GDMLDemoApp : Application {
 
         val element = document.getElementById("application") ?: error("Element with id 'application' not found on page")
 
-        render(element) {
+        createRoot(element).render {
             child(GDMLApp) {
-                val vision = GdmlShowCase.cubes().toVision()
+                val vision = GdmlShowCase.cubes().toVision().apply {
+                    ambientLight {
+                        color(Colors.white)
+                    }
+                }
                 //println(context.plugins.fetch(VisionManager).encodeToString(vision))
                 attrs {
-                    this.context = context
+                    this.solids = context.request(Solids)
                     this.vision = vision
                 }
             }

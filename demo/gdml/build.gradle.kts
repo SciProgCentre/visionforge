@@ -1,60 +1,68 @@
-import ru.mipt.npm.gradle.DependencyConfiguration
-import ru.mipt.npm.gradle.FXModule
-
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
-    application
+    id("space.kscience.gradle.mpp")
 }
+
+group = "demo"
 
 kscience {
-    val fxVersion: String by rootProject.extra
-    useFx(FXModule.CONTROLS, version = fxVersion, configuration = DependencyConfiguration.IMPLEMENTATION)
-    application()
-}
-
-kotlin {
-    jvm {
-        withJava()
-    }
-
+    jvm()
     js {
         useCommonJs()
         browser {
+            binaries.executable()
             commonWebpackConfig {
-                cssSupport.enabled = false
+                cssSupport {
+                    enabled.set(false)
+                }
             }
         }
     }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":visionforge-solid"))
-                implementation(project(":visionforge-gdml"))
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation(project(":visionforge-fx"))
-                implementation("ch.qos.logback:logback-classic:1.2.5")
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation(project(":ui:ring"))
-                implementation(project(":visionforge-threejs"))
-                implementation(npm("react-file-drop", "3.0.6"))
-            }
-        }
+    dependencies {
+        implementation(projects.visionforgeSolid)
+        implementation(projects.visionforgeGdml)
+    }
+    jvmMain {
+//                implementation(project(":visionforge-fx"))
+        implementation(spclibs.logback.classic)
+    }
+    jsMain {
+        implementation(projects.ui.ring)
+        implementation(projects.visionforgeThreejs)
+        implementation(npm("react-file-drop", "3.0.6"))
     }
 }
 
-application {
-    mainClass.set("space.kscience.visionforge.gdml.demo.GdmlFxDemoAppKt")
+kotlin {
+    explicitApi = null
 }
 
-val convertGdmlToJson by tasks.creating(JavaExec::class) {
-    group = "application"
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("space.kscience.dataforge.vis.spatial.gdml.demo.SaveToJsonKt")
-}
+//kotlin {
+//
+//    sourceSets {
+//        commonMain {
+//            dependencies {
+//                implementation(project(":visionforge-solid"))
+//                implementation(project(":visionforge-gdml"))
+//            }
+//        }
+//        jvmMain {
+//            dependencies {
+////                implementation(project(":visionforge-fx"))
+//                implementation("ch.qos.logback:logback-classic:1.2.11")
+//            }
+//        }
+//        jsMain {
+//            dependencies {
+//                implementation(project(":ui:ring"))
+//                implementation(project(":visionforge-threejs"))
+//                implementation(npm("react-file-drop", "3.0.6"))
+//            }
+//        }
+//    }
+//}
+
+//val convertGdmlToJson by tasks.creating(JavaExec::class) {
+//    group = "application"
+//    classpath = sourceSets["main"].runtimeClasspath
+//    mainClass.set("space.kscience.dataforge.vis.spatial.gdml.demo.SaveToJsonKt")
+//}

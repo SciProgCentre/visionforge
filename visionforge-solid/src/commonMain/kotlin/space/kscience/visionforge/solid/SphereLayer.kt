@@ -2,9 +2,9 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.set
+import space.kscience.visionforge.setChild
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -21,18 +21,18 @@ public class SphereLayer(
     public val phi: Float = PI2,
     public val thetaStart: Float = 0f,
     public val theta: Float = PI.toFloat(),
-) : SolidBase(), GeometrySolid {
+) : SolidBase<SphereLayer>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>): Unit = geometryBuilder.run {
         require(outerRadius > 0) { "Outer radius must be positive" }
         require(innerRadius >= 0) { "inner radius must be non-negative" }
 
-        fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
+        fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Float32Vector3D {
             // This transformation matches three.js sphere implementation
             val y = r * cos(theta)
             val z = r * sin(theta) * sin(phi)
             val x = -r * sin(theta) * cos(phi)
-            return Point3D(x, y, z)
+            return Float32Vector3D(x, y, z)
         }
 
         val segments = detail ?: 32
@@ -46,17 +46,17 @@ public class SphereLayer(
                 val phi1 = phiStart + j * phiStep
                 val phi2 = phi1 + phiStep
                 //outer points
-                val outerPoint1 = point3DfromSphCoord(outerRadius, theta1, phi1)
-                val outerPoint2 = point3DfromSphCoord(outerRadius, theta1, phi2)
-                val outerPoint3 = point3DfromSphCoord(outerRadius, theta2, phi2)
-                val outerPoint4 = point3DfromSphCoord(outerRadius, theta2, phi1)
+                val outerPoint1 = point3dFromSphCoord(outerRadius, theta1, phi1)
+                val outerPoint2 = point3dFromSphCoord(outerRadius, theta1, phi2)
+                val outerPoint3 = point3dFromSphCoord(outerRadius, theta2, phi2)
+                val outerPoint4 = point3dFromSphCoord(outerRadius, theta2, phi1)
                 // 1-2-3-4 gives the same face but with opposite orientation
                 face4(outerPoint1, outerPoint4, outerPoint3, outerPoint2)
                 if (innerRadius > 0) {
-                    val innerPoint1 = point3DfromSphCoord(innerRadius, theta1, phi1)
-                    val innerPoint2 = point3DfromSphCoord(innerRadius, theta1, phi2)
-                    val innerPoint3 = point3DfromSphCoord(innerRadius, theta2, phi2)
-                    val innerPoint4 = point3DfromSphCoord(innerRadius, theta2, phi1)
+                    val innerPoint1 = point3dFromSphCoord(innerRadius, theta1, phi1)
+                    val innerPoint2 = point3dFromSphCoord(innerRadius, theta1, phi2)
+                    val innerPoint3 = point3dFromSphCoord(innerRadius, theta2, phi2)
+                    val innerPoint4 = point3dFromSphCoord(innerRadius, theta2, phi1)
                     face4(innerPoint1, innerPoint2, innerPoint3, innerPoint4)
                     //the cup
                     if (i == segments - 1 && theta != PI.toFloat() && innerRadius != outerRadius) {
@@ -69,7 +69,7 @@ public class SphereLayer(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.sphereLayer(
+public inline fun MutableVisionContainer<Solid>.sphereLayer(
     outerRadius: Number,
     innerRadius: Number,
     phiStart: Number = 0f,
@@ -85,4 +85,4 @@ public inline fun VisionContainerBuilder<Solid>.sphereLayer(
     phi.toFloat(),
     thetaStart.toFloat(),
     theta.toFloat()
-).apply(action).also { set(name, it) }
+).apply(action).also { setChild(name, it) }

@@ -1,19 +1,14 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
 kscience{
+    jvm()
+    js()
+    dependencies {
+        api(projects.visionforgeSolid)
+    }
     useSerialization {
         json()
-    }
-}
-
-kotlin {
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(project(":visionforge-solid"))
-            }
-        }
     }
 }

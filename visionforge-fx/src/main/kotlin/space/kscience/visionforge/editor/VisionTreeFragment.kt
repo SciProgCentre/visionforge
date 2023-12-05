@@ -5,17 +5,17 @@ import javafx.scene.control.SelectionMode
 import javafx.scene.control.TreeItem
 import javafx.scene.layout.VBox
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.solid.SolidGroup
 import tornadofx.*
 
 private fun toTreeItem(vision: Vision, title: String): TreeItem<Pair<String, Vision>> {
     return object : TreeItem<Pair<String, Vision>>(title to vision) {
         init {
-            if (vision is VisionGroup) {
+            if (vision is SolidGroup) {
                 //lazy populate the tree
                 expandedProperty().onChange { expanded ->
                     if (expanded && children.isEmpty()) {
-                        children.setAll(vision.children.map {
+                        children.setAll(vision.items.map {
                             toTreeItem(it.value, it.key.toString())
                         })
                     }
@@ -24,7 +24,7 @@ private fun toTreeItem(vision: Vision, title: String): TreeItem<Pair<String, Vis
         }
 
         override fun isLeaf(): Boolean {
-            return !(vision is VisionGroup && vision.children.isNotEmpty())
+            return !(vision is SolidGroup && vision.items.isNotEmpty())
         }
     }
 }

@@ -2,7 +2,6 @@ package space.kscience.visionforge.gdml.demo
 
 import drop.FileDrop
 import kotlinx.css.*
-import kotlinx.css.properties.border
 import org.w3c.files.FileList
 import react.RBuilder
 import styled.css
@@ -13,7 +12,7 @@ import styled.styledDiv
 fun RBuilder.fileDrop(title: String, action: (files: FileList?) -> Unit) {
     styledDiv {
         css {
-            border(style = BorderStyle.dashed, width = 1.px, color = Color.orange)
+            border = Border(style = BorderStyle.dashed, width = 1.px, color = Color.orange)
             flexGrow = 0.0
             alignContent = Align.center
         }

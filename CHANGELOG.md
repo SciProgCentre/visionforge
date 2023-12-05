@@ -2,14 +2,27 @@
 
 ## [Unreleased]
 ### Added
+- Context receivers flag
+- MeshLine for thick lines
+- Custom client-side events and thier processing in VisionServer
 
 ### Changed
+- Color accessor property is now `colorProperty`. Color uses non-nullable `invoke` instead of `set`. 
+- API update for server and pages
+- Edges moved to solids module for easier construction
+- Visions **must** be rooted in order to subscribe to updates.
+- Visions use flows instead of direct subscriptions.
+- Radical change of inner workings of vision children and properties.
+- Three package changed to `three`.
+- Naming of Canvas3D options.
+- Lights are added to the scene instead of 3D options.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Jupyter integration for IDEA and Jupyter lab.
 
 ### Security
 

@@ -11,13 +11,14 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FORMAT
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
-import kotlin.reflect.KClass
 
-public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
-    public val visionClient: VisionClient by require(VisionClient)
+public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
+    public val visionClient: JsVisionClient by require(JsVisionClient)
     override val tag: PluginTag get() = Companion.tag
     override val visionSerializersModule: SerializersModule get() = markupSerializersModule
 
@@ -26,7 +27,7 @@ public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         require(vision is VisionOfMarkup) { "The vision is not a markup vision" }
         val div = document.createElement("div")
         val flavour = when (vision.format) {
@@ -44,9 +45,15 @@ public class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         element.append(div)
     }
 
-    public companion object : PluginFactory<MarkupPlugin> {
-        override val tag: PluginTag = PluginTag("vision.markup", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<MarkupPlugin> = MarkupPlugin::class
-        override fun invoke(meta: Meta, context: Context): MarkupPlugin = MarkupPlugin()
+    override fun content(target: String): Map<Name, Any> = when (target) {
+        ElementVisionRenderer.TYPE -> mapOf("markup".asName() to this)
+        else -> super.content(target)
+    }
+
+    public actual companion object : PluginFactory<MarkupPlugin> {
+        override val tag: PluginTag = PluginTag("vision.markup.js", PluginTag.DATAFORGE_GROUP)
+
+        override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()
+
     }
 }

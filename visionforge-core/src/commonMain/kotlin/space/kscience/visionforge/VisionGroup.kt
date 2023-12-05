@@ -1,109 +1,133 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
-import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.names.*
-import space.kscience.dataforge.provider.Provider
-
-@DslMarker
-public annotation class VisionBuilder
-
-public interface VisionContainer<out V : Vision> {
-    public operator fun get(name: Name): V?
-}
-
-/**
- * Represents a group of [Vision] instances
- */
-public interface VisionGroup : Provider, Vision, VisionContainer<Vision> {
-    /**
-     * A map of top level named children
-     */
-    public val children: Map<NameToken, Vision>
-
-    override val defaultTarget: String get() = Vision.TYPE
-
-    /**
-     * A map of direct children for specific target
-     * (currently "visual" or "style")
-     */
-    override fun content(target: String): Map<Name, Any> =
-        when (target) {
-            Vision.TYPE -> children.flatMap { (key, value) ->
-                val res: Map<Name, Any> = if (value is VisionGroup) {
-                    value.content(target).mapKeys { key + it.key }
-                } else {
-                    mapOf(key.asName() to value)
-                }
-                res.entries
-            }.associate { it.toPair() }
-            STYLE_TARGET -> styleSheet.items?.mapKeys { it.key.asName() } ?: emptyMap()
-            else -> emptyMap()
-        }
-
-    public override operator fun get(name: Name): Vision? {
-        return when {
-            name.isEmpty() -> this
-            name.length == 1 -> children[name.tokens.first()]
-            else -> (children[name.tokens.first()] as? VisionGroup)?.get(name.cutFirst())
-        }
-    }
-
-    public companion object {
-        public const val STYLE_TARGET: String = "style"
-    }
-}
-
-/**
- * Iterate over children of this group
- */
-public operator fun VisionGroup.iterator(): Iterator<Vision> = children.values.iterator()
-
-public fun VisionGroup.isEmpty(): Boolean = this.children.isEmpty()
-
-public interface VisionContainerBuilder<in V : Vision> {
-    //TODO add documentation
-    public operator fun set(name: Name?, child: V?)
-}
-
-/**
- * Mutable version of [VisionGroup]
- */
-public interface MutableVisionGroup : VisionGroup, VisionContainerBuilder<Vision> {
-    public fun onStructureChanged(owner: Any?, block: VisionGroup.(Name) -> Unit)
-
-    public fun removeStructureListener(owner: Any?)
-}
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.ValueType
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.NameToken
+import space.kscience.dataforge.names.parseAsName
+import space.kscience.dataforge.names.plus
+import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
+import space.kscience.visionforge.Vision.Companion.STYLE_KEY
 
 
-/**
- * Flow structure changes of this group. Unconsumed changes are discarded
- */
-@OptIn(ExperimentalCoroutinesApi::class)
-@DFExperimental
-public val MutableVisionGroup.structureChanges: Flow<Name>
-    get() = callbackFlow {
-        meta.onChange(this) { name ->
-            launch {
-                send(name)
+public interface VisionGroup : Vision {
+    public val children: VisionChildren
+
+    override fun update(change: VisionChange) {
+        change.children?.forEach { (name, change) ->
+            if (change.vision != null || change.vision == NullVision) {
+                error("VisionGroup is read-only")
+            } else {
+                children.getChild(name)?.update(change)
             }
         }
-        awaitClose {
-            removeStructureListener(this)
+        change.properties?.let {
+            updateProperties(it, Name.EMPTY)
+        }
+    }
+}
+
+public interface MutableVisionGroup : VisionGroup {
+
+    override val children: MutableVisionChildren
+
+    public fun createGroup(): MutableVisionGroup
+
+    override fun update(change: VisionChange) {
+        change.children?.forEach { (name, change) ->
+            when {
+                change.vision == NullVision -> children.setChild(name, null)
+                change.vision != null -> children.setChild(name, change.vision)
+                else -> children.getChild(name)?.update(change)
+            }
+        }
+        change.properties?.let {
+            updateProperties(it, Name.EMPTY)
+        }
+    }
+}
+
+public val Vision.children: VisionChildren? get() = (this as? VisionGroup)?.children
+
+/**
+ * A full base implementation for a [Vision]
+ */
+@Serializable
+public abstract class AbstractVisionGroup : AbstractVision(), MutableVisionGroup {
+
+    @SerialName("children")
+    protected var childrenInternal: MutableMap<NameToken, Vision>? = null
+
+
+    init {
+        childrenInternal?.forEach { it.value.parent = this }
+    }
+
+    override val children: MutableVisionChildren by lazy {
+        object : VisionChildrenImpl(this) {
+            override var items: MutableMap<NameToken, Vision>?
+                get() = this@AbstractVisionGroup.childrenInternal
+                set(value) {
+                    this@AbstractVisionGroup.childrenInternal = value
+                }
         }
     }
 
+    abstract override fun createGroup(): AbstractVisionGroup
 
-public operator fun <V : Vision> VisionContainer<V>.get(str: String): V? = get(Name.parse(str))
+    public companion object {
+        public val descriptor: MetaDescriptor = MetaDescriptor {
+            value(STYLE_KEY, ValueType.STRING) {
+                multiple = true
+            }
+        }
 
-public operator fun <V : Vision> VisionContainerBuilder<V>.set(token: NameToken, child: V?): Unit =
-    set(token.asName(), child)
+        public fun Vision.updateProperties(item: Meta, name: Name = Name.EMPTY) {
+            properties.setValue(name, item.value)
+            item.items.forEach { (token, item) ->
+                updateProperties(item, name + token)
+            }
+        }
 
-public operator fun <V : Vision> VisionContainerBuilder<V>.set(key: String?, child: V?): Unit =
-    set(key?.let(Name::parse), child)
+    }
+}
 
-public fun MutableVisionGroup.removeAll(): Unit = children.keys.map { it.asName() }.forEach { this[it] = null }
+/**
+ * A simple vision group that just holds children. Nothing else.
+ */
+@Serializable
+@SerialName("vision.group")
+public class SimpleVisionGroup : AbstractVisionGroup(), MutableVisionContainer<Vision> {
+    override fun createGroup(): SimpleVisionGroup = SimpleVisionGroup()
+
+    override fun setChild(name: Name?, child: Vision?) {
+        children.setChild(name, child)
+    }
+}
+
+@VisionBuilder
+public inline fun MutableVisionContainer<Vision>.group(
+    name: Name? = null,
+    builder: SimpleVisionGroup.() -> Unit = {},
+): SimpleVisionGroup = SimpleVisionGroup().also { setChild(name, it) }.apply(builder)
+
+/**
+ * Define a group with given [name], attach it to this parent and return it.
+ */
+@VisionBuilder
+public inline fun MutableVisionContainer<Vision>.group(
+    name: String,
+    builder: SimpleVisionGroup.() -> Unit = {},
+): SimpleVisionGroup = group(name.parseAsName(), builder)
+
+//fun VisualObject.findStyle(styleName: Name): Meta? {
+//    if (this is VisualGroup) {
+//        val style = resolveStyle(styleName)
+//        if (style != null) return style
+//    }
+//    return parent?.findStyle(styleName)
+//}

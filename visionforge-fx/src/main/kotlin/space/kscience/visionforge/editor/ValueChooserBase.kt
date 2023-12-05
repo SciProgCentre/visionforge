@@ -8,9 +8,9 @@ package space.kscience.visionforge.editor
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.Node
 import org.slf4j.LoggerFactory
+import space.kscience.dataforge.meta.Null
+import space.kscience.dataforge.meta.Value
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.values.Null
-import space.kscience.dataforge.values.Value
 import tornadofx.*
 
 /**

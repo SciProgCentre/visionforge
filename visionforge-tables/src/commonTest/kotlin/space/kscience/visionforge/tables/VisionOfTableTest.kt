@@ -1,11 +1,12 @@
 package space.kscience.visionforge.tables
 
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.double
-import space.kscience.dataforge.values.int
+import space.kscience.dataforge.meta.Value
+import space.kscience.dataforge.meta.asValue
+import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.int
 import space.kscience.tables.ColumnHeader
 import space.kscience.tables.ColumnTable
+import space.kscience.tables.fill
 import space.kscience.tables.get
 import kotlin.math.pow
 import kotlin.test.Test
@@ -17,8 +18,8 @@ internal class VisionOfTableTest {
         val x by ColumnHeader.typed<Value>()
         val y by ColumnHeader.typed<Value>()
 
-        val table = ColumnTable<Value>(100U) {
-            x.fill { it.asValue() }
+        val table = ColumnTable<Value>(100) {
+            fill(x, null) { it.asValue() }
             y.values = x.values.map { it?.double?.pow(2)?.asValue() }
         }
 
@@ -27,6 +28,6 @@ internal class VisionOfTableTest {
 
         val rows = vision.rowSequence().toList()
 
-        assertEquals(50, rows[50][x]?.int)
+        assertEquals(50, rows[50][x].int)
     }
 }

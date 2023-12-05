@@ -3,7 +3,7 @@
 ![](../docs/images/hierarchy.png)
 
 ### Vision
-* function `getPropertyValue(name: Name, inherit: Boolean = false, includeStyles: Boolean = true, includeDefaults: Boolean = true)` - get property value with given layer flags.
+* function `getProperty(name: Name, inherit: Boolean = false, includeStyles: Boolean = true, includeDefaults: Boolean = true)` - get property value with given layer flags.
 
 * function `setProperty(name: Name, item: Any?)` - a convenient method to set property node or value. If `item` is null, then node is removed, not a value
   Sets the `item` property to the element with the `name` identification.

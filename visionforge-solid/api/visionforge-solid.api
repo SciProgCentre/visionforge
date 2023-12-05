@@ -717,7 +717,7 @@ public final class space/kscience/visionforge/solid/SolidMaterialKt {
 }
 
 public abstract interface class space/kscience/visionforge/solid/SolidReference : space/kscience/visionforge/VisionGroup {
-	public fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
 	public abstract fun getPrototype ()Lspace/kscience/visionforge/solid/Solid;
 }
 
@@ -728,7 +728,7 @@ public final class space/kscience/visionforge/solid/SolidReferenceGroup : space/
 	public fun <init> (Lspace/kscience/dataforge/names/Name;)V
 	public fun getChildren ()Ljava/util/Map;
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
-	public fun getPropertyValue (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
+	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
 	public fun getPrototype ()Lspace/kscience/visionforge/solid/Solid;
 	public final fun getRefName ()Lspace/kscience/dataforge/names/Name;
 	public static final fun write$Self (Lspace/kscience/visionforge/solid/SolidReferenceGroup;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V

@@ -8,9 +8,7 @@ import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.VisionPlugin
-import kotlin.reflect.KClass
 
 public class TableVisionPlugin : VisionPlugin() {
     override val tag: PluginTag get() = Companion.tag
@@ -24,7 +22,7 @@ public class TableVisionPlugin : VisionPlugin() {
 
     public companion object : PluginFactory<TableVisionPlugin> {
         override val tag: PluginTag = PluginTag("vision.table", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<TableVisionPlugin> = TableVisionPlugin::class
-        override fun invoke(meta: Meta, context: Context): TableVisionPlugin = TableVisionPlugin()
+
+        override fun build(context: Context, meta: Meta): TableVisionPlugin = TableVisionPlugin()
     }
 }

@@ -1,7 +1,8 @@
 package space.kscience.visionforge.examples
 
 import kotlinx.html.h2
-import space.kscience.dataforge.values.ValueType
+import space.kscience.dataforge.meta.ValueType
+import space.kscience.dataforge.meta.invoke
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.ScatterMode
 import space.kscience.plotly.models.TextPosition
@@ -12,13 +13,14 @@ import space.kscience.visionforge.markup.markdown
 import space.kscience.visionforge.plotly.plotly
 import space.kscience.visionforge.solid.box
 import space.kscience.visionforge.solid.solid
+import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.z
 import space.kscience.visionforge.tables.columnTable
-import java.nio.file.Paths
+import kotlin.io.path.Path
 
 
 fun main() = makeVisionFile(
-    Paths.get("VisionForgeDemo.html"),
+    Path("VisionForgeDemo.html"),
     resourceLocation = ResourceLocation.EMBED
 ) {
     markdown {
@@ -32,8 +34,15 @@ fun main() = makeVisionFile(
 
     h2 { +"3D visualization with Three-js" }
     vision("3D") {
-        solid {
-            box(100, 100, 100, name = "aBox"){
+        solid(
+            Canvas3DOptions {
+                axes {
+                    size = 200.0
+                    visible = true
+                }
+            }
+        ) {
+            box(100, 100, 100, name = "aBox") {
                 z = 50.0
             }
         }

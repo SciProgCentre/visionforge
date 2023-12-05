@@ -1,7 +1,6 @@
 rootProject.name = "visionforge"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
 
@@ -12,13 +11,14 @@ pluginManagement {
         maven("https://repo.kotlin.link")
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 
     plugins {
-        id("ru.mipt.npm.gradle.project") version toolsVersion
-        id("ru.mipt.npm.gradle.mpp") version toolsVersion
-        id("ru.mipt.npm.gradle.jvm") version toolsVersion
-        id("ru.mipt.npm.gradle.js") version toolsVersion
+        id("space.kscience.gradle.project") version toolsVersion
+        id("space.kscience.gradle.mpp") version toolsVersion
+        id("space.kscience.gradle.jvm") version toolsVersion
+        id("space.kscience.gradle.js") version toolsVersion
     }
 }
 
@@ -33,8 +33,8 @@ dependencyResolutionManagement {
     }
 
     versionCatalogs {
-        create("npmlibs") {
-            from("ru.mipt.npm:version-catalog:$toolsVersion")
+        create("spclibs") {
+            from("space.kscience:version-catalog:$toolsVersion")
         }
     }
 }
@@ -45,9 +45,10 @@ include(
     ":ui:ring",
 //    ":ui:material",
     ":ui:bootstrap",
+    ":ui:compose",
     ":visionforge-core",
     ":visionforge-solid",
-    ":visionforge-fx",
+//    ":visionforge-fx",
     ":visionforge-threejs",
     ":visionforge-threejs:visionforge-threejs-server",
     ":visionforge-gdml",
@@ -61,8 +62,8 @@ include(
     ":demo:muon-monitor",
     ":demo:sat-demo",
     ":demo:playground",
-    ":demo:plotly-fx",
+//    ":demo:plotly-fx",
     ":demo:js-playground",
-    ":jupyter",
-    ":jupyter:visionforge-jupyter-gdml"
+    ":visionforge-jupyter",
+    ":visionforge-jupyter:visionforge-jupyter-common"
 )

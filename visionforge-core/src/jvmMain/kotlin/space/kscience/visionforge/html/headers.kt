@@ -4,12 +4,10 @@ import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.unsafe
 import org.slf4j.LoggerFactory
-import space.kscience.visionforge.VisionManager
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.security.MessageDigest
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
 
 
@@ -47,15 +45,14 @@ private fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toStr
  * Check if the asset exists in given local location and put it there if it does not
  * @param
  */
-@OptIn(ExperimentalPathApi::class)
-internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String): Path {
+internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String, classLoader: ClassLoader): Path {
     val logger = LoggerFactory.getLogger("")
 
     logger.info("Resolving or storing resource file $resource")
     val fullPath = htmlPath.resolveSibling(filePath).toAbsolutePath().resolve(resource)
     logger.debug("Full path to resource file $resource: $fullPath")
 
-    val bytes = VisionManager.Companion::class.java.getResourceAsStream("/$resource")?.readAllBytes()
+    val bytes = classLoader.getResourceAsStream(resource)?.readAllBytes()
         ?: error("Resource $resource not found on classpath")
     val md = MessageDigest.getInstance("MD5")
 
@@ -66,8 +63,20 @@ internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String):
     if (!skip) {
         logger.debug("File $fullPath does not exist or wrong checksum. Writing file")
         Files.createDirectories(fullPath.parent)
-        Files.write(fullPath, bytes, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-        Files.write(md5File, checksum.encodeToByteArray(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+        Files.write(
+            fullPath,
+            bytes,
+            StandardOpenOption.CREATE,
+            StandardOpenOption.TRUNCATE_EXISTING,
+            StandardOpenOption.WRITE
+        )
+        Files.write(
+            md5File,
+            checksum.encodeToByteArray(),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.TRUNCATE_EXISTING,
+            StandardOpenOption.WRITE
+        )
     }
 
     return if (htmlPath.isAbsolute && fullPath.startsWith(htmlPath.parent)) {
@@ -82,18 +91,18 @@ internal fun checkOrStoreFile(htmlPath: Path, filePath: Path, resource: String):
  */
 internal fun fileScriptHeader(
     path: Path,
-): HtmlFragment = {
+): HtmlFragment = HtmlFragment{
     script {
         type = "text/javascript"
         src = path.toString()
     }
 }
 
-internal fun embedScriptHeader(resource: String): HtmlFragment = {
+internal fun embedScriptHeader(resource: String, classLoader: ClassLoader): HtmlFragment = HtmlFragment{
     script {
         type = "text/javascript"
         unsafe {
-            val bytes = VisionManager::class.java.getResourceAsStream("/$resource")!!.readAllBytes()
+            val bytes = classLoader.getResourceAsStream(resource)!!.readAllBytes()
             +bytes.toString(Charsets.UTF_8)
         }
     }
@@ -103,8 +112,9 @@ internal fun fileCssHeader(
     basePath: Path,
     cssPath: Path,
     resource: String,
-): HtmlFragment = {
-    val relativePath = checkOrStoreFile(basePath, cssPath, resource)
+    classLoader: ClassLoader,
+): HtmlFragment = HtmlFragment{
+    val relativePath = checkOrStoreFile(basePath, cssPath, resource, classLoader)
     link {
         rel = "stylesheet"
         href = relativePath.toString()
@@ -114,26 +124,30 @@ internal fun fileCssHeader(
 /**
  * Make a script header from a resource file, automatically copying file to appropriate location
  */
-public fun Page.Companion.importScriptHeader(
+public fun VisionPage.Companion.importScriptHeader(
     scriptResource: String,
     resourceLocation: ResourceLocation,
     htmlPath: Path? = null,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
 ): HtmlFragment {
     val targetPath = when (resourceLocation) {
         ResourceLocation.LOCAL -> checkOrStoreFile(
             htmlPath ?: Path.of("."),
             Path.of(VISIONFORGE_ASSETS_PATH),
-            scriptResource
+            scriptResource,
+            classLoader
         )
+
         ResourceLocation.SYSTEM -> checkOrStoreFile(
             Path.of("."),
             Path.of(System.getProperty("user.home")).resolve(VISIONFORGE_ASSETS_PATH),
-            scriptResource
+            scriptResource, classLoader
         )
+
         ResourceLocation.EMBED -> null
     }
     return if (targetPath == null) {
-        embedScriptHeader(scriptResource)
+        embedScriptHeader(scriptResource, classLoader)
     } else {
         fileScriptHeader(targetPath)
     }

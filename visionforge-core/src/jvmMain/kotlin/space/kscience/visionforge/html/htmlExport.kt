@@ -1,9 +1,12 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
+import kotlinx.html.body
+import kotlinx.html.head
+import kotlinx.html.meta
 import kotlinx.html.stream.createHTML
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.visionforge.html.HtmlFragment
-import space.kscience.visionforge.html.Page
+import space.kscience.visionforge.visionManager
 import java.awt.Desktop
 import java.nio.file.Files
 import java.nio.file.Path
@@ -54,26 +57,41 @@ import java.nio.file.Path
 //    }
 //}
 
+/**
+ * Export a [VisionPage] to a file
+ *
+ * @param fileHeaders additional file system specific headers.
+ */
 @DFExperimental
-public fun Page.makeFile(
+public fun VisionPage.makeFile(
     path: Path?,
-    defaultHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
+    fileHeaders: ((Path) -> Map<String, HtmlFragment>)? = null,
 ): Path {
-    val actualFile = path?.let {
-        Path.of(System.getProperty("user.home")).resolve(path)
-    } ?: Files.createTempFile("tempPlot", ".html")
+    val actualFile = path ?: Files.createTempFile("tempPlot", ".html")
 
-    val actualDefaultHeaders = defaultHeaders?.invoke(actualFile)
-    val actualPage = if (actualDefaultHeaders == null) this else copy(headers = actualDefaultHeaders + headers)
+    val actualDefaultHeaders = fileHeaders?.invoke(actualFile)
+    val actualHeaders = if (actualDefaultHeaders == null) pageHeaders else actualDefaultHeaders + pageHeaders
 
-    val htmlString = actualPage.render(createHTML())
+    val htmlString = createHTML().apply {
+        head {
+            meta {
+                charset = "utf-8"
+            }
+            actualHeaders.values.forEach {
+                appendFragment(it)
+            }
+        }
+        body {
+            visionFragment(Global.visionManager, fragment = content)
+        }
+    }.finalize()
 
     Files.writeString(actualFile, htmlString)
     return actualFile
 }
 
 @DFExperimental
-public fun Page.show(path: Path? = null) {
+public fun VisionPage.show(path: Path? = null) {
     val actualPath = makeFile(path)
     Desktop.getDesktop().browse(actualPath.toFile().toURI())
 }

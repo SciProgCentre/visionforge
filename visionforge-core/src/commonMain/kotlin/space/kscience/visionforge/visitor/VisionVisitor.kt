@@ -6,7 +6,8 @@ import kotlinx.coroutines.launch
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionGroup
+import space.kscience.visionforge.children
+import space.kscience.visionforge.forEach
 
 public interface VisionVisitor {
     /**
@@ -19,29 +20,29 @@ public interface VisionVisitor {
     /**
      * Rearrange children of given group
      */
-    public suspend fun visitChildren(name: Name, group: VisionGroup) {
+    public suspend fun visitChildren(name: Name, group: Vision) {
         //Do nothing by default
     }
 
     public fun skip(name: Name, vision: Vision): Boolean = false
 
-    public companion object{
+    public companion object {
         private fun CoroutineScope.visitTreeAsync(
             visionVisitor: VisionVisitor,
             name: Name,
-            vision: Vision
+            vision: Vision,
         ): Job = launch {
             if (visionVisitor.skip(name, vision)) return@launch
             visionVisitor.visit(name, vision)
 
-            if (vision is VisionGroup) {
-                visionVisitor.visitChildren(name, vision)
 
-                for ((token, child) in vision.children) {
-                    visitTreeAsync(visionVisitor, name + token, child)
-                }
+            visionVisitor.visitChildren(name, vision)
+
+            vision.children?.forEach { token, child ->
+                visitTreeAsync(visionVisitor, name + token, child)
             }
         }
+
 
         /**
          * Recursively visit this [Vision] and all children

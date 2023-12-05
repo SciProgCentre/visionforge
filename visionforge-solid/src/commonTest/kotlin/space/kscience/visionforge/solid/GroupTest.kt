@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid
 
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.get
+import space.kscience.visionforge.getChild
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 class GroupTest {
     @Test
     fun testGroupWithComposite() {
-        val group = SolidGroup().apply {
+        val group = testSolids.solidGroup{
             union("union") {
                 box(100, 100, 100) {
                     z = 100
@@ -44,8 +44,8 @@ class GroupTest {
             }
         }
 
-        assertEquals(3, group.children.count())
-        assertEquals(300.0, (group["intersect"] as Solid).y.toDouble())
-        assertEquals(-300.0, (group["subtract"] as Solid).y.toDouble())
+        assertEquals(3, group.items.count())
+        assertEquals(300.0, (group.children.getChild("intersect") as Solid).y.toDouble())
+        assertEquals(-300.0, (group.children.getChild("subtract") as Solid).y.toDouble())
     }
 }

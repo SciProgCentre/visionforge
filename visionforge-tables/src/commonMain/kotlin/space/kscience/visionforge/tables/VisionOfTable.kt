@@ -8,12 +8,10 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.values.Null
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
 import space.kscience.tables.*
-import space.kscience.visionforge.VisionBase
+import space.kscience.visionforge.AbstractVision
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.root
 import kotlin.jvm.JvmName
 import kotlin.reflect.typeOf
 
@@ -41,12 +39,17 @@ public val ColumnHeader<Value>.properties: ValueColumnScheme get() = ValueColumn
 @SerialName("vision.table")
 public class VisionOfTable(
     override val headers: List<@Serializable(ColumnHeaderSerializer::class) ColumnHeader<Value>>,
-) : VisionBase(), Rows<Value> {
+) : AbstractVision(), Rows<Value> {
 
     public var data: List<Meta>
-        get() = meta.getIndexed("rows").entries.sortedBy { it.key?.toInt() }.map { it.value }
+        get() = properties.root().getIndexed("rows").entries.sortedBy {
+            it.key?.toInt()
+        }.map {
+            it.value
+        }
         set(value) {
-            meta["rows"] = value
+            //TODO Make it better
+            properties.root()["rows"] = value
         }
 
     public val rows: List<MetaRow> get() = data.map(::MetaRow)
@@ -83,10 +86,15 @@ public fun Table<String>.toVision(): VisionOfTable = toVision { (it ?: "").asVal
 @JvmName("numberTableToVision")
 public fun Table<Number>.toVision(): VisionOfTable = toVision { (it ?: Double.NaN).asValue() }
 
+@JvmName("anyTableToVision")
+public fun Table<Any?>.toVision(): VisionOfTable = toVision {
+    (it as? Number)?.asValue() ?: it?.toString()?.asValue() ?: Null
+}
+
 @DFExperimental
 public inline fun VisionOutput.table(
     vararg headers: ColumnHeader<Value>,
-    block: MutableRowTable<Value>.() -> Unit,
+    block: RowTableBuilder<Value>.() -> Unit,
 ): VisionOfTable {
     requirePlugin(TableVisionPlugin)
     return RowTable(*headers, block = block).toVision()
@@ -94,8 +102,8 @@ public inline fun VisionOutput.table(
 
 @DFExperimental
 public inline fun VisionOutput.columnTable(
-    columnSize: UInt,
-    block: MutableColumnTable<Value>.() -> Unit,
+    columnSize: Int,
+    block: ColumnTableBuilder<Value>.() -> Unit,
 ): VisionOfTable = ColumnTable(columnSize, block).toVision()
 
 @DFExperimental

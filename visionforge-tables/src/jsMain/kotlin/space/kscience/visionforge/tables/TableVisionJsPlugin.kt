@@ -1,34 +1,32 @@
 package space.kscience.visionforge.tables
 
-import kotlinext.js.jso
+import js.core.jso
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.AbstractPlugin
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
-import space.kscience.dataforge.meta.DynamicMeta
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.toDynamic
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
+import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionClient
 import tabulator.Tabulator
 import tabulator.TabulatorFull
-import kotlin.reflect.KClass
 
 public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
-    public val visionClient: VisionClient by require(VisionClient)
+    public val visionClient: JsVisionClient by require(JsVisionClient)
     public val tablesBase: TableVisionPlugin by require(TableVisionPlugin)
 
     override val tag: PluginTag get() = Companion.tag
 
     override fun attach(context: Context) {
         super.attach(context)
-        kotlinext.js.require("tabulator-tables/dist/css/tabulator.min.css")
-        kotlinext.js.require("tabulator-tables/src/js/modules/ResizeColumns/ResizeColumns.js")
+        kotlinext.js.require<Any>("tabulator-tables/dist/css/tabulator.min.css")
+        kotlinext.js.require<Any>("tabulator-tables/src/js/modules/ResizeColumns/ResizeColumns.js")
     }
 
     override fun rateVision(vision: Vision): Int = when (vision) {
@@ -36,7 +34,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         val table: VisionOfTable = (vision as? VisionOfTable)
             ?: error("VisionOfTable expected but ${vision::class} found")
 
@@ -49,15 +47,15 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
                 }
             }.toTypedArray()
 
-            columns = Array(table.headers.size + 1){
-                if(it==0){
+            columns = Array(table.headers.size + 1) {
+                if (it == 0) {
                     jso {
                         field = "@index"
                         title = "#"
                         resizable = false
                     }
                 } else {
-                    val header = table.headers[it-1]
+                    val header = table.headers[it - 1]
                     jso {
                         field = header.name
                         title = header.properties.title ?: header.name
@@ -67,7 +65,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
             }
 
 
-            data = table.rows.mapIndexed { index, row->
+            data = table.rows.mapIndexed { index, row ->
                 val d = row.meta.toDynamic()
                 d["@index"] = index
                 d
@@ -90,7 +88,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public companion object : PluginFactory<TableVisionJsPlugin> {
         override val tag: PluginTag = PluginTag("vision.table.js", PluginTag.DATAFORGE_GROUP)
-        override val type: KClass<TableVisionJsPlugin> = TableVisionJsPlugin::class
-        override fun invoke(meta: Meta, context: Context): TableVisionJsPlugin = TableVisionJsPlugin()
+
+        override fun build(context: Context, meta: Meta): TableVisionJsPlugin = TableVisionJsPlugin()
     }
 }

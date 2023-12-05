@@ -4,13 +4,10 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.configure
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionBase
-import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.*
 import kotlin.collections.set
 import kotlin.test.Test
 
@@ -22,23 +19,24 @@ fun FlowContent.renderVisionFragment(
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
-    val consumer = object : VisionTagConsumer<Any?>(consumer, Global, idPrefix) {
+    val consumer = object : VisionTagConsumer<Any?>(consumer, Global.visionManager, idPrefix) {
         override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             renderer(name, vision, outputMeta)
         }
     }
-    fragment(consumer)
+    fragment.appendTo(consumer)
     return visionMap
 }
 
 
 @DFExperimental
+private fun VisionOutput.base(block: VisionGroup.() -> Unit) = context.visionManager.group().apply(block)
+
+@DFExperimental
 class HtmlTagTest {
 
-    fun VisionOutput.base(block: VisionBase.() -> Unit) = VisionBase().apply(block)
-
-    val fragment: HtmlVisionFragment = {
+    val fragment = HtmlVisionFragment{
         div {
             h1 { +"Head" }
             vision("ddd") {
@@ -46,10 +44,8 @@ class HtmlTagTest {
                     "metaProperty" put 87
                 }
                 base {
-                    configure {
-                        set("myProp", 82)
-                        set("otherProp", false)
-                    }
+                    properties["myProp"] = 82
+                    properties["otherProp"] = false
                 }
             }
         }
@@ -59,7 +55,7 @@ class HtmlTagTest {
         div {
             h2 { +"Properties" }
             ul {
-                (vision as? VisionBase)?.meta?.items?.forEach {
+                vision.properties.own?.items?.forEach {
                     li {
                         a { +it.key.toString() }
                         p { +it.value.toString() }

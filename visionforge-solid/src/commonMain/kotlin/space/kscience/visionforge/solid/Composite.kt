@@ -2,12 +2,11 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.isEmpty
-import space.kscience.dataforge.meta.update
+import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.VisionPropertyContainer
-import space.kscience.visionforge.set
+import space.kscience.visionforge.setChild
+import space.kscience.visionforge.static
 
 public enum class CompositeType {
     GROUP, // Dumb sum of meshes
@@ -16,30 +15,33 @@ public enum class CompositeType {
     SUBTRACT
 }
 
+/**
+ * A CSG-based composite solid
+ */
 @Serializable
 @SerialName("solid.composite")
 public class Composite(
     public val compositeType: CompositeType,
     public val first: Solid,
     public val second: Solid,
-) : SolidBase(), VisionPropertyContainer<Composite>
+) : SolidBase<Composite>()
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.composite(
+public inline fun MutableVisionContainer<Solid>.composite(
     type: CompositeType,
     name: String? = null,
-    builder: SolidGroup.() -> Unit,
+    @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Composite {
     val group = SolidGroup().apply(builder)
-    val children = group.children.values.filterIsInstance<Solid>()
-    if (children.size != 2){
+    val children = group.items.values.toList()
+    if (children.size != 2) {
         error("Composite requires exactly two children, but found ${children.size}")
     }
     val res = Composite(type, children[0], children[1])
 
-    res.meta.update(group.meta)
+    res.properties[Name.EMPTY] = group.properties.own
 
-    set(name, res)
+    setChild(name, res)
     return res
 }
 
@@ -50,38 +52,38 @@ public inline fun VisionContainerBuilder<Solid>.composite(
 public fun SolidGroup.smartComposite(
     type: CompositeType,
     name: String? = null,
-    builder: SolidGroup.() -> Unit,
+    @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
-    val group = SolidGroup(builder)
-    if (name == null && group.meta.isEmpty()) {
+    val group = SolidGroup().apply(builder)
+    if (name == null && group.properties.own == null) {
         //append directly to group if no properties are defined
-        group.children.forEach { (_, value) ->
+        group.items.forEach { (_, value) ->
             value.parent = null
-            set(null, value)
+            children.static(value)
         }
         this
     } else {
-        set(name, group)
+        children.setChild(name, group)
         group
     }
 } else {
-    composite(type, name, builder)
+    children.composite(type, name, builder)
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.union(
+public inline fun MutableVisionContainer<Solid>.union(
     name: String? = null,
-    builder: SolidGroup.() -> Unit
+    builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.UNION, name, builder = builder)
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.subtract(
+public inline fun MutableVisionContainer<Solid>.subtract(
     name: String? = null,
-    builder: SolidGroup.() -> Unit
+    builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.SUBTRACT, name, builder = builder)
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.intersect(
+public inline fun MutableVisionContainer<Solid>.intersect(
     name: String? = null,
     builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.INTERSECT, name, builder = builder)

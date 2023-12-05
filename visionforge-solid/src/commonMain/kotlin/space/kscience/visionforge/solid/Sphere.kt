@@ -2,10 +2,9 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.VisionContainerBuilder
-import space.kscience.visionforge.VisionPropertyContainer
-import space.kscience.visionforge.set
+import space.kscience.visionforge.setChild
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -17,16 +16,16 @@ public class Sphere(
     public val phiStart: Float = 0f,
     public val phi: Float = PI2,
     public val thetaStart: Float = 0f,
-    public val theta: Float = PI .toFloat(),
-) : SolidBase(), GeometrySolid, VisionPropertyContainer<Sphere> {
+    public val theta: Float = PI.toFloat(),
+) : SolidBase<Sphere>(), GeometrySolid {
 
     override fun <T : Any> toGeometry(geometryBuilder: GeometryBuilder<T>) {
-        fun point3DfromSphCoord(r: Float, theta: Float, phi: Float): Point3D {
+        fun point3dFromSphCoord(r: Float, theta: Float, phi: Float): Float32Vector3D {
             // This transformation matches three.js sphere implementation
             val y = r * cos(theta)
             val z = r * sin(theta) * sin(phi)
             val x = -r * sin(theta) * cos(phi)
-            return Point3D(x, y, z)
+            return Float32Vector3D(x, y, z)
         }
 
         val segments = this.detail ?: 32
@@ -39,10 +38,10 @@ public class Sphere(
             for (j in 0 until segments) {   // phi iteration
                 val phi1 = phiStart + j * phiStep
                 val phi2 = phi1 + phiStep
-                val point1 = point3DfromSphCoord(radius, theta1, phi1)
-                val point2 = point3DfromSphCoord(radius, theta1, phi2)
-                val point3 = point3DfromSphCoord(radius, theta2, phi2)
-                val point4 = point3DfromSphCoord(radius, theta2, phi1)
+                val point1 = point3dFromSphCoord(radius, theta1, phi1)
+                val point2 = point3dFromSphCoord(radius, theta1, phi2)
+                val point3 = point3dFromSphCoord(radius, theta2, phi2)
+                val point4 = point3dFromSphCoord(radius, theta2, phi1)
                 geometryBuilder.apply {
                     // 1-2-3-4 gives the same face but with opposite orientation
                     face4(point1, point4, point3, point2)
@@ -53,10 +52,10 @@ public class Sphere(
 }
 
 @VisionBuilder
-public inline fun VisionContainerBuilder<Solid>.sphere(
+public inline fun MutableVisionContainer<Solid>.sphere(
     radius: Number,
     name: String? = null,
     action: Sphere.() -> Unit = {},
 ): Sphere = Sphere(
     radius.toFloat(),
-).apply(action).also { set(name, it) }
+).apply(action).also { setChild(name, it) }

@@ -1,23 +1,26 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
-kscience{
-    useSerialization{
+val kmathVersion = "0.3.1"
+
+kscience {
+    jvm()
+    js()
+    native()
+    useSerialization {
         json()
     }
-}
-
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":visionforge-core"))
-            }
-        }
+    useCoroutines()
+    dependencies {
+        api("space.kscience:kmath-geometry:0.3.1")
+        api(projects.visionforgeCore)
+    }
+    dependencies(jvmTest) {
+        implementation(spclibs.logback.classic)
     }
 }
 
-readme{
-    maturity = ru.mipt.npm.gradle.Maturity.DEVELOPMENT
+readme {
+    maturity = space.kscience.gradle.Maturity.DEVELOPMENT
 }

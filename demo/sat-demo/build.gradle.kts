@@ -1,5 +1,5 @@
 plugins {
-    id("ru.mipt.npm.gradle.jvm")
+    id("space.kscience.gradle.jvm")
     application
 }
 
@@ -8,15 +8,15 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
-    application()
+    useKtor()
+    dependencies{
+        implementation("io.ktor:ktor-server-cio")
+        implementation(projects.visionforgeThreejs.visionforgeThreejsServer)
+        implementation(spclibs.logback.classic)
+    }
 }
 
-group = "ru.mipt.npm"
-
-dependencies{
-    implementation(project(":visionforge-threejs:visionforge-threejs-server"))
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-}
+group = "center.sciprog"
 
 application {
     mainClass.set("ru.mipt.npm.sat.SatServerKt")

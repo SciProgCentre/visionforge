@@ -10,14 +10,14 @@ import javafx.beans.value.ObservableValue
 import javafx.scene.Node
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.Null
+import space.kscience.dataforge.meta.Value
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.dataforge.meta.descriptors.validate
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.values.Null
-import space.kscience.dataforge.values.Value
 import space.kscience.visionforge.widget
 import space.kscience.visionforge.widgetType
 import tornadofx.*

@@ -2,6 +2,7 @@ package space.kscience.visionforge.examples
 
 import kotlinx.html.div
 import kotlinx.html.h1
+import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.solid.*
 import java.nio.file.Paths
@@ -17,6 +18,9 @@ fun main() = makeVisionFile(
     div {
         vision {
             solid {
+                ambientLight {
+                    color(Colors.white)
+                }
                 repeat(100) {
                     sphere(5, name = "sphere[$it]") {
                         x = random.nextDouble(-300.0, 300.0)

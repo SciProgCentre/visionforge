@@ -21,7 +21,7 @@ import javafx.scene.control.TreeSortMode
 import javafx.scene.control.TreeTableView
 import javafx.scene.layout.BorderPane
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.values.string
+import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.dfIconView
 import tornadofx.*
 

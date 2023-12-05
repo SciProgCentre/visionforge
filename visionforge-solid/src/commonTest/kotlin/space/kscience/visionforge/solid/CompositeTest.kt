@@ -8,7 +8,7 @@ class CompositeTest {
     @Test
     fun testCompositeBuilder(){
         lateinit var composite: Composite
-        SolidGroup {
+        testSolids.solidGroup {
             composite = composite(CompositeType.INTERSECT) {
                 y = 300
                 box(100, 100, 100) {

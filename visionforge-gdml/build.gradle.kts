@@ -1,17 +1,17 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
-kotlin {
-    js{
+kscience {
+    jvm()
+    js {
         binaries.library()
     }
-    sourceSets {
-        commonMain{
-            dependencies {
-                api(projects.visionforgeSolid)
-                api("space.kscience:gdml:0.4.0")
-            }
-        }
+    dependencies {
+        api(projects.visionforgeSolid)
+        api("space.kscience:gdml:0.5.0")
+    }
+    dependencies(jvmTest) {
+        implementation(spclibs.logback.classic)
     }
 }

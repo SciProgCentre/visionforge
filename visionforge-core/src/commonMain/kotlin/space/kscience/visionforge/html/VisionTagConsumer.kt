@@ -2,12 +2,12 @@ package space.kscience.visionforge.html
 
 import kotlinx.html.*
 import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.isEmpty
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
@@ -25,9 +25,8 @@ public annotation class VisionDSL
 /**
  * A placeholder object to attach inline vision builders.
  */
-@DFExperimental
 @VisionDSL
-public class VisionOutput @PublishedApi internal constructor(public val context: Context, public val name: Name?) {
+public class VisionOutput @PublishedApi internal constructor(override val context: Context, public val name: Name): ContextAware {
     public var meta: Meta = Meta.EMPTY
 
     private val requirements: MutableSet<PluginFactory<*>> = HashSet()
@@ -36,8 +35,8 @@ public class VisionOutput @PublishedApi internal constructor(public val context:
         requirements.add(factory)
     }
 
-    internal fun buildVisionManager(): VisionManager =
-        if (requirements.all { req -> context.plugins.find(true) { it.tag == req.tag } != null }) {
+    public val visionManager: VisionManager
+        get() = if (requirements.all { req -> context.plugins.find(true) { it.tag == req.tag } != null }) {
             context.visionManager
         } else {
             val newContext = context.buildContext(NameToken(DEFAULT_VISION_NAME, name.toString()).asName()) {
@@ -56,12 +55,13 @@ public class VisionOutput @PublishedApi internal constructor(public val context:
  * Modified  [TagConsumer] that allows rendering output fragments and visions in them
  */
 @VisionDSL
-@OptIn(DFExperimental::class)
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
-    public val context: Context,
+    public val visionManager: VisionManager,
     private val idPrefix: String? = null,
-) : TagConsumer<R> by root {
+) : TagConsumer<R> by root, ContextAware {
+
+    override val context: Context get() = visionManager.context
 
     public open fun resolveId(name: Name): String = (idPrefix ?: "output") + "[$name]"
 
@@ -78,52 +78,66 @@ public abstract class VisionTagConsumer<R>(
      * Create a placeholder for a vision output with optional [Vision] in it
      * TODO with multi-receivers could be replaced by [VisionTagConsumer, TagConsumer] extension
      */
-    private fun <T> TagConsumer<T>.vision(
+    protected fun <T> TagConsumer<T>.addVision(
         name: Name,
         manager: VisionManager,
-        vision: Vision,
+        vision: Vision?,
         outputMeta: Meta = Meta.EMPTY,
-    ): T = div {
+    ): T = if (vision == null) div {
+        +"Empty Vision output"
+    } else div {
         id = resolveId(name)
         classes = setOf(OUTPUT_CLASS)
-        vision.setAsRoot(manager)
+        if (vision.parent == null) {
+            vision.setAsRoot(manager)
+        }
         attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
+        renderVision(manager, name, vision, outputMeta)
         if (!outputMeta.isEmpty()) {
             //Hard-code output configuration
             script {
+                type = "text/json"
                 attributes["class"] = OUTPUT_META_CLASS
                 unsafe {
-                    +manager.jsonFormat.encodeToString(MetaSerializer, outputMeta)
+                    +("\n" + manager.jsonFormat.encodeToString(MetaSerializer, outputMeta) + "\n")
                 }
             }
         }
-        renderVision(manager, name, vision, outputMeta)
     }
 
     /**
      * Insert a vision in this HTML.
      * TODO replace by multi-receiver
      */
-    @OptIn(DFExperimental::class)
-    public fun <T> TagConsumer<T>.vision(
+    @VisionDSL
+    public open fun <T> TagConsumer<T>.vision(
         name: Name? = null,
-        @OptIn(DFExperimental::class) visionProvider: VisionOutput.() -> Vision,
+        buildOutput: VisionOutput.() -> Vision,
     ): T {
-        val output = VisionOutput(context, name)
-        val vision = output.visionProvider()
-        val actualName = name ?: NameToken(DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
-        return vision(actualName, output.buildVisionManager(), vision, output.meta)
+        val actualName = name ?: NameToken(DEFAULT_VISION_NAME, buildOutput.hashCode().toUInt().toString()).asName()
+        val output = VisionOutput(context, actualName)
+        val vision = output.buildOutput()
+        return addVision(actualName, output.visionManager, vision, output.meta)
     }
 
     /**
      * TODO to be replaced by multi-receiver
      */
-    @OptIn(DFExperimental::class)
     @VisionDSL
     public fun <T> TagConsumer<T>.vision(
         name: String?,
-        @OptIn(DFExperimental::class) visionProvider: VisionOutput.() -> Vision,
-    ): T = vision(name?.parseAsName(), visionProvider)
+        buildOutput: VisionOutput.() -> Vision,
+    ): T = vision(name?.parseAsName(), buildOutput)
+
+    @VisionDSL
+    public open fun <T> TagConsumer<T>.vision(
+        vision: Vision,
+        name: Name? = null,
+        outputMeta: Meta = Meta.EMPTY,
+    ) {
+        val actualName = name ?: NameToken(DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
+        addVision(actualName, context.visionManager, vision, outputMeta)
+    }
 
     /**
      * Process the resulting object produced by [TagConsumer]

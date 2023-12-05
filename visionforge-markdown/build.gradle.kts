@@ -1,24 +1,18 @@
 plugins {
-    id("ru.mipt.npm.gradle.mpp")
+    id("space.kscience.gradle.mpp")
 }
 
-val markdownVersion = "0.2.4"
+val markdownVersion = "0.5.2"
 
 kscience {
-    useSerialization()
-}
-
-kotlin {
+    jvm()
     js {
         binaries.library()
     }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":visionforge-core"))
-                api("org.jetbrains:markdown:$markdownVersion")
-            }
-        }
+    dependencies {
+        api(projects.visionforgeCore)
+        api("org.jetbrains:markdown:$markdownVersion")
+        api("org.jetbrains:annotations:24.0.0")
     }
+    useSerialization()
 }

@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 public object FXConvexFactory : FX3DFactory<Convex> {
     override val type: KClass<in Convex> get() = Convex::class
 
-    override fun invoke(obj: Convex, binding: VisualObjectFXBinding): Node {
+    override fun invoke(obj: Convex, binding: VisionFXBinding): Node {
         val hull = HullUtil.hull(
             obj.points.map { Vector3d.xyz(it.x.toDouble(), it.y.toDouble(), it.z.toDouble()) },
             PropertyStorage()

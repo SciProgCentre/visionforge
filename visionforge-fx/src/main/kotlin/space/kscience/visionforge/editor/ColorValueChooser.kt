@@ -3,13 +3,9 @@ package space.kscience.visionforge.editor
 import javafx.scene.control.ColorPicker
 import javafx.scene.paint.Color
 import org.slf4j.LoggerFactory
-import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.values.Null
-import space.kscience.dataforge.values.Value
-import space.kscience.dataforge.values.asValue
-import space.kscience.dataforge.values.string
 import tornadofx.*
 
 /**
