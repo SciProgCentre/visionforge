@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaRepr
 import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.Value
 
 @Serializable
 @SerialName("control")
@@ -60,4 +61,10 @@ public fun ClickControl.onClick(scope: CoroutineScope, block: suspend VisionClic
 
 @Serializable
 @SerialName("control.valueChange")
-public class VisionValueChangeEvent(override val meta: Meta) : VisionControlEvent()
+public class VisionValueChangeEvent(override val meta: Meta) : VisionControlEvent() {
+
+    public val value: Value? get() = meta.value
+}
+
+public fun VisionValueChangeEvent(value: Value?): VisionValueChangeEvent =
+    VisionValueChangeEvent(Meta { this.value = value })

@@ -34,7 +34,7 @@ public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: St
     notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
 }
 
-public fun VisionClient.sendEvent(targetName: Name, payload: MetaRepr): Unit {
+public fun VisionClient.sendMetaEvent(targetName: Name, payload: MetaRepr): Unit {
     context.launch {
         sendEvent(targetName, VisionMetaEvent(payload.toMeta()))
     }

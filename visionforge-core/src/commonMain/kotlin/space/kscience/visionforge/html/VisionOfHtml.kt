@@ -1,13 +1,19 @@
 package space.kscience.visionforge.html
 
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.html.InputType
 import kotlinx.html.TagConsumer
 import kotlinx.html.stream.createHTML
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.AbstractVision
+import space.kscience.visionforge.ControlVision
+import space.kscience.visionforge.VisionControlEvent
+import space.kscience.visionforge.VisionValueChangeEvent
 
 
 @Serializable
@@ -53,10 +59,23 @@ public enum class InputFeedbackMode {
 public open class VisionOfHtmlInput(
     public val inputType: String,
     public val feedbackMode: InputFeedbackMode = InputFeedbackMode.ONCHANGE,
-) : VisionOfHtml() {
+) : VisionOfHtml(), ControlVision {
     public var value: Value? by properties.value()
     public var disabled: Boolean by properties.boolean { false }
     public var fieldName: String? by properties.string()
+
+    @Transient
+    private val mutableControlEventFlow = MutableSharedFlow<VisionControlEvent>()
+
+    override val controlEventFlow: SharedFlow<VisionControlEvent>
+        get() = mutableControlEventFlow
+
+    override fun dispatchControlEvent(event: VisionControlEvent) {
+        if(event is VisionValueChangeEvent){
+            this.value = event.value
+        }
+        mutableControlEventFlow.tryEmit(event)
+    }
 }
 
 @Suppress("UnusedReceiverParameter")

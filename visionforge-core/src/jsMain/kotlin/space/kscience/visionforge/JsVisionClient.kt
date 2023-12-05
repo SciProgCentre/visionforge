@@ -94,8 +94,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
         vision.setAsRoot(visionManager)
-        val renderer = findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
-        renderer.render(element, name, vision, outputMeta)
+        val renderer: ElementVisionRenderer =
+            findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
+        renderer.render(element, this, name, vision, outputMeta)
     }
 
     private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {

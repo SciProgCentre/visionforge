@@ -40,7 +40,7 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
 }
 
 internal val htmlVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfPlainHtml> { _, _, vision, _ ->
         div {}.also { div ->
             div.subscribeToVision(vision)
             vision.useProperty(VisionOfPlainHtml::content) {
@@ -50,12 +50,14 @@ internal val htmlVisionRenderer: ElementVisionRenderer =
     }
 
 internal val inputVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlInput>(acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1) { _, vision, _ ->
+    ElementVisionRenderer<VisionOfHtmlInput>(
+        acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1
+    ) { name, client, vision, _ ->
         input {
             type = InputType.text
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.value = htmlInputElement.value.asValue()
+                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.value.asValue()))
             }
 
 
@@ -74,12 +76,12 @@ internal val inputVisionRenderer: ElementVisionRenderer =
     }
 
 internal val checkboxVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfCheckbox> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfCheckbox> { name, client, vision, _ ->
         input {
             type = InputType.checkBox
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.checked = htmlInputElement.checked
+                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.checked.asValue()))
             }
 
 
@@ -98,12 +100,12 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
     }
 
 internal val textVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfTextField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfTextField> { name, client, vision, _ ->
         input {
             type = InputType.text
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                vision.text = htmlInputElement.value
+                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.value.asValue()))
             }
 
 
@@ -122,13 +124,15 @@ internal val textVisionRenderer: ElementVisionRenderer =
     }
 
 internal val numberVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfNumberField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfNumberField> { name, client, vision, _ ->
         input {
             type = InputType.text
         }.also { htmlInputElement ->
 
             val onEvent: (Event) -> Unit = {
-                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEvent(name, VisionValueChangeEvent(it.asValue()))
+                }
             }
 
             when (vision.feedbackMode) {
@@ -145,7 +149,7 @@ internal val numberVisionRenderer: ElementVisionRenderer =
     }
 
 internal val rangeVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfRangeField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfRangeField> { name, client, vision, _ ->
         input {
             type = InputType.text
             min = vision.min.toString()
@@ -154,7 +158,9 @@ internal val rangeVisionRenderer: ElementVisionRenderer =
         }.also { htmlInputElement ->
 
             val onEvent: (Event) -> Unit = {
-                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEvent(name, VisionValueChangeEvent(it.asValue()))
+                }
             }
 
             when (vision.feedbackMode) {
