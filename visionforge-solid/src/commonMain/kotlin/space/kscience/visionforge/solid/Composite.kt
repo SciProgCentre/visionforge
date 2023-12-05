@@ -39,7 +39,7 @@ public inline fun MutableVisionContainer<Solid>.composite(
     }
     val res = Composite(type, children[0], children[1])
 
-    res.properties.setMeta(Name.EMPTY, group.properties.own)
+    res.properties[Name.EMPTY] = group.properties.own
 
     setChild(name, res)
     return res

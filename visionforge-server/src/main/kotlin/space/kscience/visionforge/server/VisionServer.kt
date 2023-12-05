@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 public class VisionRoute(
     public val route: String,
     public val visionManager: VisionManager,
-    override val meta: ObservableMutableMeta = MutableMeta(),
+    override val meta: ObservableMutableMeta = ObservableMutableMeta(),
 ) : Configurable, ContextAware {
 
     public enum class Mode {

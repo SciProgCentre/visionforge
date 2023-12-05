@@ -92,7 +92,7 @@ public class Extruded(
         }
 
         internal fun build(): Extruded = Extruded(shape, layers).apply {
-            this.properties.setMeta(Name.EMPTY, this@Builder.properties)
+            this.properties[Name.EMPTY] = this@Builder.properties
         }
     }
 

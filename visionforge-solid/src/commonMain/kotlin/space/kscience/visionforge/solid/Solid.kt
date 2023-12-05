@@ -190,7 +190,7 @@ internal fun float32Vector(
 
         override fun setValue(thisRef: Solid, property: KProperty<*>, value: Float32Vector3D?) {
             if (value == null) {
-                thisRef.properties.setMeta(name, null)
+                thisRef.properties[name] = null
             } else {
                 thisRef.properties[name + X_KEY] = value.x
                 thisRef.properties[name + Y_KEY] = value.y

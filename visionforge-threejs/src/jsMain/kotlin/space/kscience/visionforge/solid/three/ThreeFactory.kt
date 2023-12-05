@@ -1,6 +1,6 @@
 package space.kscience.visionforge.solid.three
 
-import space.kscience.dataforge.misc.Type
+import space.kscience.dataforge.misc.DfType
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 /**
  * Builder and updater for three.js object
  */
-@Type(TYPE)
+@DfType(TYPE)
 public interface ThreeFactory<in T : Vision> {
 
     public val type: KClass<in T>

@@ -16,7 +16,7 @@ import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.asList
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.ValueRequirement
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
@@ -199,7 +199,7 @@ public fun RangeValueChooser(
 
 
     FlexRow {
-        if (descriptor?.valueRequirement != ValueRequirement.REQUIRED) {
+        if (descriptor?.valueRestriction != ValueRestriction.REQUIRED) {
             Input(type = InputType.Checkbox) {
                 if (!rangeDisabled) defaultChecked()
 

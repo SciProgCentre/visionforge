@@ -10,7 +10,7 @@ import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.descriptors.Described
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.misc.Type
+import space.kscience.dataforge.misc.DfType
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.AbstractVisionGroup.Companion.updateProperties
@@ -19,7 +19,7 @@ import space.kscience.visionforge.Vision.Companion.TYPE
 /**
  * A root type for display hierarchy
  */
-@Type(TYPE)
+@DfType(TYPE)
 public interface Vision : Described {
 
     /**

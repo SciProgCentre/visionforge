@@ -6,6 +6,7 @@ import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.int
 import space.kscience.tables.ColumnHeader
 import space.kscience.tables.ColumnTable
+import space.kscience.tables.fill
 import space.kscience.tables.get
 import kotlin.math.pow
 import kotlin.test.Test
@@ -18,7 +19,7 @@ internal class VisionOfTableTest {
         val y by ColumnHeader.typed<Value>()
 
         val table = ColumnTable<Value>(100) {
-            x.fill { it.asValue() }
+            fill(x, null) { it.asValue() }
             y.values = x.values.map { it?.double?.pow(2)?.asValue() }
         }
 

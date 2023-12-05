@@ -36,9 +36,9 @@ internal fun Meta.toVector2D(): Float32Vector2D =
 //}
 
 internal fun MetaProvider.point3D(default: Float = 0f) = Float32Euclidean3DSpace.vector(
-    getMeta(X_KEY).float ?: default,
-    getMeta(Y_KEY).float ?: default,
-    getMeta(Z_KEY).float ?: default
+    get(X_KEY).float ?: default,
+    get(Y_KEY).float ?: default,
+    get(Z_KEY).float ?: default
 )
 
 

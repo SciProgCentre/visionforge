@@ -161,7 +161,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
                         //launch backward property propagation
                         vision.properties.changes.onEach { propertyName: Name ->
-                            changeCollector.propertyChanged(visionName, propertyName, vision.properties.getMeta(propertyName))
+                            changeCollector.propertyChanged(visionName, propertyName, vision.properties[propertyName])
                         }.launchIn(this)
 
                         //aggregate atomic changes

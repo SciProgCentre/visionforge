@@ -2,7 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val tablesVersion = "0.2.1"
+val tablesVersion = "0.3.0"
 
 kscience {
     jvm()

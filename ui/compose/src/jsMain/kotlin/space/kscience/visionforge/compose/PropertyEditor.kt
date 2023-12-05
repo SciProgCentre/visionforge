@@ -17,9 +17,8 @@ import org.jetbrains.compose.web.dom.Text
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.ValueRequirement
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.remove
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.hidden
@@ -104,7 +103,7 @@ public fun PropertyEditor(
             Text(token)
         }
 
-        if (!name.isEmpty() && descriptor?.valueRequirement != ValueRequirement.ABSENT) {
+        if (!name.isEmpty() && descriptor?.valueRestriction != ValueRestriction.ABSENT) {
             Div({
                 style {
                     width(160.px)

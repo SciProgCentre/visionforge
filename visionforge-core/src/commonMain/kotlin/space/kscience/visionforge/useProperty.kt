@@ -23,10 +23,10 @@ public fun Vision.useProperty(
     callback: (Meta) -> Unit,
 ): Job {
     //Pass initial value.
-    callback(properties.getMeta(propertyName, inherit, includeStyles))
+    callback(properties.get(propertyName, inherit, includeStyles))
     return properties.changes.onEach { name ->
         if (name.startsWith(propertyName)) {
-            callback(properties.getMeta(propertyName, inherit, includeStyles))
+            callback(properties.get(propertyName, inherit, includeStyles))
         }
     }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
 }

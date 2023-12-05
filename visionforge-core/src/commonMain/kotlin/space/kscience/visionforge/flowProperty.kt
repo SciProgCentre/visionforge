@@ -17,10 +17,10 @@ public fun Vision.flowProperty(
     includeStyles: Boolean? = null,
 ): Flow<Meta> = flow {
     //Pass initial value.
-    emit(properties.getMeta(propertyName, inherit, includeStyles))
+    emit(properties.get(propertyName, inherit, includeStyles))
     properties.changes.collect { name ->
         if (name.startsWith(propertyName)) {
-            emit(properties.getMeta(propertyName, inherit, includeStyles))
+            emit(properties.get(propertyName, inherit, includeStyles))
         }
     }
 }
