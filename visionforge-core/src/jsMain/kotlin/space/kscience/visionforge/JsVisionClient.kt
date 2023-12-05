@@ -65,20 +65,21 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     private fun Element.getFlag(attribute: String): Boolean = attributes[attribute]?.value != null
 
-//    private val mutex = Mutex()
+    private val mutex = Mutex()
 
 
+    private val rootChangeCollector = VisionChangeBuilder()
 
-//    /**
-//     * Communicate vision property changed from rendering engine to model
-//     */
-//    private fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
-//        context.launch {
-//            mutex.withLock {
-//                changeCollector.propertyChanged(visionName, propertyName, item)
-//            }
-//        }
-//    }
+    /**
+     * Communicate vision property changed from rendering engine to model
+     */
+    override fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?) {
+        context.launch {
+            mutex.withLock {
+                rootChangeCollector.propertyChanged(visionName, propertyName, item)
+            }
+        }
+    }
 
     private val eventCollector by lazy {
         MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
@@ -139,7 +140,6 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                     }
                 }
 
-
                 //Backward change propagation
                 var feedbackJob: Job? = null
 
@@ -148,29 +148,20 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
                 onopen = {
 
-
-                    val mutex = Mutex()
-
-                    val changeCollector = VisionChangeBuilder()
-
                     feedbackJob = visionManager.context.launch {
                         //launch a separate coroutine to send events to the backend
                         eventCollector.filter { it.first == visionName }.onEach {
                             send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it.second))
                         }.launchIn(this)
 
-                        //launch backward property propagation
-                        vision.properties.changes.onEach { propertyName: Name ->
-                            changeCollector.propertyChanged(visionName, propertyName, vision.properties[propertyName])
-                        }.launchIn(this)
-
                         //aggregate atomic changes
                         while (isActive) {
                             delay(feedbackAggregationTime.milliseconds)
-                            if (!changeCollector.isEmpty()) {
+                            val visionChangeCollector = rootChangeCollector[name]
+                            if (visionChangeCollector?.isEmpty() == false) {
                                 mutex.withLock {
-                                    eventCollector.emit(visionName to changeCollector.deepCopy(visionManager))
-                                    changeCollector.reset()
+                                    eventCollector.emit(visionName to visionChangeCollector.deepCopy(visionManager))
+                                    rootChangeCollector.reset()
                                 }
                             }
                         }
