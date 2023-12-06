@@ -13,6 +13,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
@@ -26,9 +27,9 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING * 2 else ElementVisionRenderer.ZERO_RATING
 
-    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
-        if(meta["controls.enabled"].boolean == false){
-            three.render(element, name, vision, meta)
+    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+        if (meta["controls.enabled"].boolean == false) {
+            three.render(element, client, name, vision, meta)
         } else {
             space.kscience.visionforge.react.createRoot(element).render {
                 child(ThreeCanvasWithControls) {

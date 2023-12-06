@@ -150,7 +150,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         render(vision)
     }
 
-    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
+    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
         renderSolid(
             element,
             vision as? Solid ?: error("Solid expected but ${vision::class} found"),

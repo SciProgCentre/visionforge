@@ -1,8 +1,11 @@
 package space.kscience.visionforge
 
 import kotlinx.browser.document
+import kotlinx.coroutines.launch
+import kotlinx.dom.clear
 import kotlinx.html.InputType
 import kotlinx.html.div
+import kotlinx.html.dom.append
 import kotlinx.html.js.input
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLFormElement
@@ -13,6 +16,7 @@ import org.w3c.xhr.FormData
 import space.kscience.dataforge.context.debug
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.*
 
 /**
@@ -26,6 +30,12 @@ private fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
     }
 }
 
+
+private fun VisionClient.sendInputEvent(name: Name, value: Value?) {
+    context.launch {
+        sendEvent(name, VisionValueChangeEvent(value))
+    }
+}
 
 /**
  * Subscribes the HTML input element to a given vision.
@@ -44,6 +54,10 @@ internal val htmlVisionRenderer: ElementVisionRenderer =
         div {}.also { div ->
             div.subscribeToVision(vision)
             vision.useProperty(VisionOfPlainHtml::content) {
+                div.clear()
+                div.append {
+
+                }
                 div.textContent = it
             }
         }
@@ -57,7 +71,7 @@ internal val inputVisionRenderer: ElementVisionRenderer =
             type = InputType.text
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.value.asValue()))
+                client.sendInputEvent(name, htmlInputElement.value.asValue())
             }
 
 
@@ -81,7 +95,7 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
             type = InputType.checkBox
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.checked.asValue()))
+                client.sendInputEvent(name, htmlInputElement.value.asValue())
             }
 
 
@@ -105,7 +119,7 @@ internal val textVisionRenderer: ElementVisionRenderer =
             type = InputType.text
         }.also { htmlInputElement ->
             val onEvent: (Event) -> Unit = {
-                client.sendEvent(name, VisionValueChangeEvent(htmlInputElement.value.asValue()))
+                client.sendInputEvent(name, htmlInputElement.value.asValue())
             }
 
 
@@ -131,7 +145,7 @@ internal val numberVisionRenderer: ElementVisionRenderer =
 
             val onEvent: (Event) -> Unit = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEvent(name, VisionValueChangeEvent(it.asValue()))
+                    client.sendInputEvent(name, htmlInputElement.value.asValue())
                 }
             }
 
@@ -159,7 +173,7 @@ internal val rangeVisionRenderer: ElementVisionRenderer =
 
             val onEvent: (Event) -> Unit = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEvent(name, VisionValueChangeEvent(it.asValue()))
+                    client.sendInputEvent(name, htmlInputElement.value.asValue())
                 }
             }
 
@@ -200,7 +214,7 @@ internal fun FormData.toMeta(): Meta {
 }
 
 internal val formVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlForm> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfHtmlForm> { name, client, vision, _ ->
 
         val form = document.getElementById(vision.formId) as? HTMLFormElement
             ?: error("An element with id = '${vision.formId} is not a form")
@@ -220,7 +234,7 @@ internal val formVisionRenderer: ElementVisionRenderer =
         form.onsubmit = { event ->
             event.preventDefault()
             val formData = FormData(form).toMeta()
-            vision.values = formData
+            client.sendMetaEvent(name, formData)
             console.info("Sent: ${formData.toMap()}")
             false
         }
