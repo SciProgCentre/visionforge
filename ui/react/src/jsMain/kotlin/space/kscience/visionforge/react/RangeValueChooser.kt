@@ -12,7 +12,7 @@ import react.dom.attrs
 import react.fc
 import react.useState
 import space.kscience.dataforge.meta.asValue
-import space.kscience.dataforge.meta.descriptors.ValueRequirement
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.string
@@ -43,7 +43,7 @@ public val RangeValueChooser: FC<ValueChooserProps> = fc("RangeValueChooser") { 
     }
 
     flexRow {
-        if (props.descriptor?.valueRequirement != ValueRequirement.REQUIRED) {
+        if (props.descriptor?.valueRestriction != ValueRestriction.REQUIRED) {
             styledInput(type = InputType.checkBox) {
                 attrs {
                     defaultChecked = rangeDisabled.not()

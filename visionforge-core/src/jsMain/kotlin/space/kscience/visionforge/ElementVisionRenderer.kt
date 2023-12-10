@@ -9,8 +9,8 @@ import kotlinx.serialization.serializerOrNull
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.meta.Meta
+import space.kscience.dataforge.misc.DfType
 import space.kscience.dataforge.misc.Named
-import space.kscience.dataforge.misc.Type
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
@@ -20,13 +20,13 @@ import kotlin.reflect.cast
 /**
  * A browser renderer for a [Vision].
  */
-@Type(ElementVisionRenderer.TYPE)
+@DfType(ElementVisionRenderer.TYPE)
 public interface ElementVisionRenderer : Named {
 
     /**
      * Give a [vision] integer rating based on this renderer capabilities. [ZERO_RATING] or negative values means that this renderer
      * can't process a vision. The value of [DEFAULT_RATING] used for default renderer. Specialized renderers could specify
-     * higher value in order to "steal" rendering job
+     * higher value to "steal" rendering job
      */
     public fun rateVision(vision: Vision): Int
 

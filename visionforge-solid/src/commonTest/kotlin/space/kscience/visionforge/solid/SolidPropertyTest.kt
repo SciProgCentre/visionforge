@@ -94,7 +94,7 @@ class SolidPropertyTest {
                 }
             }
         }
-        assertEquals("#555555", box?.color.string)
+        assertEquals("#555555", box?.color?.string)
     }
 
     @Test

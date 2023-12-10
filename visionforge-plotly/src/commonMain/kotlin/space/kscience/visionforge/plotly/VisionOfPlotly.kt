@@ -33,8 +33,8 @@ public class VisionOfPlotly private constructor(
 
     @Transient
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
-        override fun setMeta(name: Name, node: Meta?, notify: Boolean) {
-            meta.setMeta(name, node)
+        override fun set(name: Name, node: Meta?, notify: Boolean) {
+            meta[name] = node
         }
 
         override fun setValue(name: Name, value: Value?, notify: Boolean) {
@@ -45,11 +45,11 @@ public class VisionOfPlotly private constructor(
 
         override val descriptor: MetaDescriptor? get() = this@VisionOfPlotly.descriptor
 
-        override fun getMeta(
+        override fun get(
             name: Name,
             inherit: Boolean?,
             includeStyles: Boolean?,
-        ): MutableMeta = meta.getMeta(name) ?: MutableMeta()
+        ): MutableMeta = meta[name] ?: MutableMeta()
 
         override fun getValue(
             name: Name,

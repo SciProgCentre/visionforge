@@ -24,7 +24,7 @@ public object ThreeLineFactory : ThreeFactory<PolyLine> {
         }
 
         val material = ThreeMaterials.getLineMaterial(
-            vision.properties.getMeta(SolidMaterial.MATERIAL_KEY),
+            vision.properties[SolidMaterial.MATERIAL_KEY],
             false
         )
 

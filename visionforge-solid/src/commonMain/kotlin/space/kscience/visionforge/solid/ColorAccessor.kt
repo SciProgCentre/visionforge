@@ -34,33 +34,33 @@ public fun Vision.colorProperty(
     ColorAccessor(properties.root(true), propertyName ?: property.name.asName())
 }
 
-public var ColorAccessor?.string: String?
-    get() = this?.value?.let { if (it == Null) null else it.string }
+public var ColorAccessor.string: String?
+    get() = value?.let { if (it == Null) null else it.string }
     set(value) {
-        this?.value = value?.asValue()
+        this.value = value?.asValue()
     }
 
 /**
  * Set [webcolor](https://en.wikipedia.org/wiki/Web_colors) as string
  */
-public operator fun ColorAccessor?.invoke(webColor: String) {
-    this?.value = webColor.asValue()
+public operator fun ColorAccessor.invoke(webColor: String) {
+    value = webColor.asValue()
 }
 
 /**
  * Set color as RGB integer
  */
-public operator fun ColorAccessor?.invoke(rgb: Int) {
-    this?.value = Colors.rgbToString(rgb).asValue()
+public operator fun ColorAccessor.invoke(rgb: Int) {
+    value = Colors.rgbToString(rgb).asValue()
 }
 
 /**
  * Set color as RGB
  */
-public operator fun ColorAccessor?.invoke(r: UByte, g: UByte, b: UByte) {
-    this?.value = Colors.rgbToString(r, g, b).asValue()
+public operator fun ColorAccessor.invoke(r: UByte, g: UByte, b: UByte) {
+    value = Colors.rgbToString(r, g, b).asValue()
 }
 
-public fun ColorAccessor?.clear() {
-    this?.value = null
+public fun ColorAccessor.clear() {
+    value = null
 }

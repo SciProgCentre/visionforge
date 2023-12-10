@@ -1,14 +1,14 @@
 package space.kscience.visionforge.jupyter
 
-import kotlinx.html.*
+import kotlinx.html.div
+import kotlinx.html.p
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.gdml.Gdml
 import space.kscience.plotly.Plot
 import space.kscience.plotly.PlotlyPage
 import space.kscience.plotly.StaticPlotlyRenderer
-import space.kscience.tables.*
+import space.kscience.tables.Table
 import space.kscience.visionforge.gdml.toVision
 import space.kscience.visionforge.html.HtmlFragment
 import space.kscience.visionforge.html.VisionPage
@@ -21,7 +21,6 @@ import space.kscience.visionforge.tables.toVision
 import space.kscience.visionforge.visionManager
 
 
-@DFExperimental
 public class JupyterCommonIntegration : VisionForgeIntegration(CONTEXT.visionManager) {
 
     override fun Builder.afterLoaded(vf: VisionForge) {

@@ -162,7 +162,7 @@ internal class SolidReferenceChild(
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
         override val descriptor: MetaDescriptor get() = this@SolidReferenceChild.descriptor
 
-        override val own: MutableMeta by lazy { owner.properties.getMeta(childToken(childName).asName()) }
+        override val own: MutableMeta by lazy { owner.properties[childToken(childName).asName()] }
 
         override fun getValue(
             name: Name,
@@ -170,8 +170,8 @@ internal class SolidReferenceChild(
             includeStyles: Boolean?,
         ): Value? = own.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
-        override fun setMeta(name: Name, node: Meta?, notify: Boolean) {
-            own.setMeta(name, node)
+        override fun set(name: Name, node: Meta?, notify: Boolean) {
+            own[name] = node
         }
 
         override fun setValue(name: Name, value: Value?, notify: Boolean) {

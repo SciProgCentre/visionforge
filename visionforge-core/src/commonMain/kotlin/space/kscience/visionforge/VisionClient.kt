@@ -13,11 +13,10 @@ import space.kscience.dataforge.names.parseAsName
 public interface VisionClient: Plugin {
     public val visionManager: VisionManager
 
-    public suspend fun sendEvent(event: VisionEvent)
+    public suspend fun sendEvent(targetName: Name, event: VisionEvent)
 
     public fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?)
 }
-
 
 public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {
     notifyPropertyChanged(visionName, propertyName.parseAsName(true), item)
@@ -35,8 +34,8 @@ public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: St
     notifyPropertyChanged(visionName, propertyName.parseAsName(true), Meta(item))
 }
 
-public fun VisionClient.sendEvent(visionName: Name, event: MetaRepr): Unit {
+public fun VisionClient.sendEvent(targetName: Name, payload: MetaRepr): Unit {
     context.launch {
-        sendEvent(VisionMetaEvent(visionName, event.toMeta()))
+        sendEvent(targetName, VisionMetaEvent(payload.toMeta()))
     }
 }

@@ -29,7 +29,7 @@ public fun RBuilder.visionPropertyEditor(
                 this.descriptor = descriptor
                 this.scope = vision.manager?.context ?: error("Orphan vision could not be observed")
                 this.getPropertyState = { name ->
-                    val ownMeta = vision.properties.own?.getMeta(name)
+                    val ownMeta = vision.properties.own?.get(name)
                     if (ownMeta != null && !ownMeta.isEmpty()) {
                         EditorPropertyState.Defined
                     } else if (vision.properties.root().getValue(name) != null) {

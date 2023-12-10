@@ -75,7 +75,7 @@ fun main() {
 
     server.openInBrowser()
 
-    while (readln() != "exit") {
+    while (readlnOrNull() != "exit") {
 
     }
 

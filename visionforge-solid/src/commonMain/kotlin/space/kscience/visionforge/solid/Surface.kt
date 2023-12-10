@@ -155,7 +155,7 @@ public class Surface(
         }
 
         internal fun build(): Surface = Surface(layers).apply {
-            properties.setMeta(Name.EMPTY, this@Builder.properties)
+            properties[Name.EMPTY] = this@Builder.properties
         }
     }
 

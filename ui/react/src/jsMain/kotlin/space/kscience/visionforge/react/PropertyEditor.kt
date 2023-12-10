@@ -16,9 +16,8 @@ import react.dom.attrs
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.ObservableMutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.ValueRequirement
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.remove
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.hidden
@@ -146,7 +145,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
             }
             +token
         }
-        if (!props.name.isEmpty() && descriptor?.valueRequirement != ValueRequirement.ABSENT) {
+        if (!props.name.isEmpty() && descriptor?.valueRestriction != ValueRestriction.ABSENT) {
             styledDiv {
                 css {
                     //+TreeStyles.resizeableInput
@@ -185,7 +184,7 @@ private fun RBuilder.propertyEditorItem(props: PropertyEditorProps) {
                 }
                 +"\u00D7"
                 attrs {
-                    if (editorPropertyState!= EditorPropertyState.Defined) {
+                    if (editorPropertyState != EditorPropertyState.Defined) {
                         disabled = true
                     } else {
                         onClickFunction = removeClick

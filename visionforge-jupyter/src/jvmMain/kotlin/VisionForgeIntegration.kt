@@ -7,7 +7,6 @@ import org.jetbrains.kotlinx.jupyter.api.declare
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.*
@@ -17,7 +16,6 @@ import kotlin.random.nextUInt
 /**
  * A base class for different Jupyter VF integrations
  */
-@DFExperimental
 public abstract class VisionForgeIntegration(
     public val visionManager: VisionManager,
 ) : JupyterIntegration(), ContextAware {

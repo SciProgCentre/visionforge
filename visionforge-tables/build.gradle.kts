@@ -2,7 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val tablesVersion = "0.2.0-dev-4"
+val tablesVersion = "0.3.0"
 
 kscience {
     jvm()
@@ -22,8 +22,8 @@ kscience {
         api("space.kscience:tables-kt:${tablesVersion}")
     }
     dependencies(jsMain) {
-        implementation(npm("tabulator-tables", "5.4.4"))
-        implementation(npm("@types/tabulator-tables", "5.4.8"))
+        implementation(npm("tabulator-tables", "5.5.2"))
+        implementation(npm("@types/tabulator-tables", "5.5.3"))
     }
     useSerialization()
 }

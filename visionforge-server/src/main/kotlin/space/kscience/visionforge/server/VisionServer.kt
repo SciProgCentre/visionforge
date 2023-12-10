@@ -14,6 +14,7 @@ import io.ktor.server.util.*
 import io.ktor.server.websocket.*
 import io.ktor.util.pipeline.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ import kotlin.time.Duration.Companion.milliseconds
 public class VisionRoute(
     public val route: String,
     public val visionManager: VisionManager,
-    override val meta: ObservableMutableMeta = MutableMeta(),
+    override val meta: ObservableMutableMeta = ObservableMutableMeta(),
 ) : Configurable, ContextAware {
 
     public enum class Mode {
@@ -71,14 +72,11 @@ public class VisionRoute(
 /**
  * Serve visions in a given [route] without providing a page template.
  * [visions] could be changed during the service.
+ *
+ * @return a [Flow] of backward events, including vision change events
  */
 public fun Application.serveVisionData(
     configuration: VisionRoute,
-    onEvent: suspend Vision.(VisionEvent) -> Unit = { event ->
-        if (event is VisionChangeEvent) {
-            update(event.change)
-        }
-    },
     resolveVision: (Name) -> Vision?,
 ) {
     require(WebSockets)
@@ -102,16 +100,17 @@ public fun Application.serveVisionData(
                         val event = configuration.visionManager.jsonFormat.decodeFromString(
                             VisionEvent.serializer(), data
                         )
-                        vision.onEvent(event)
+
+                        vision.receiveEvent(event)
                     }
                 }
 
                 try {
                     withContext(configuration.context.coroutineContext) {
-                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { update ->
+                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { event ->
                             val json = configuration.visionManager.jsonFormat.encodeToString(
-                                VisionChange.serializer(),
-                                update
+                                VisionEvent.serializer(),
+                                event
                             )
                             application.log.debug("Sending update for $name: \n$json")
                             outgoing.send(Frame.Text(json))
@@ -147,6 +146,8 @@ public fun Application.serveVisionData(
 
 /**
  * Serve a page, potentially containing any number of visions at a given [route] with given [header].
+ *
+ * @return a [Flow] containing backward propagated events, including vision change events
  */
 public fun Application.visionPage(
     route: String,
@@ -154,7 +155,7 @@ public fun Application.visionPage(
     headers: Collection<HtmlFragment>,
     connector: EngineConnectorConfig? = null,
     visionFragment: HtmlVisionFragment,
-) {
+){
     require(WebSockets)
 
     val collector: MutableMap<Name, Vision> = mutableMapOf()
