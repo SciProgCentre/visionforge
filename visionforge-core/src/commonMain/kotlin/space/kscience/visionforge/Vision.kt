@@ -50,7 +50,7 @@ public interface Vision : Described {
     /**
      * Receive and process a generic [VisionEvent].
      */
-    public fun receiveEvent(event: VisionEvent) {
+    public suspend fun receiveEvent(event: VisionEvent) {
         if(event is VisionChange) update(event)
         else manager?.logger?.warn { "Undispatched event: $event" }
     }

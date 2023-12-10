@@ -135,7 +135,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                         }
 
                         logger.debug { "Got $event for output with name $visionName" }
-                        vision.receiveEvent(event)
+                        context.launch {
+                            vision.receiveEvent(event)
+                        }
                     } else {
                         logger.error { "WebSocket message data is not a string" }
                     }
@@ -262,7 +264,8 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             numberVisionRenderer,
             textVisionRenderer,
             rangeVisionRenderer,
-            formVisionRenderer
+            formVisionRenderer,
+            buttonVisionRenderer
         ).associateByName()
     } else super<AbstractPlugin>.content(target)
 

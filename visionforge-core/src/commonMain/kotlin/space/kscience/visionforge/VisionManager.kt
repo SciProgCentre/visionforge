@@ -69,12 +69,14 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
                 defaultDeserializer { SimpleVisionGroup.serializer() }
                 subclass(NullVision.serializer())
                 subclass(SimpleVisionGroup.serializer())
+                subclass(VisionOfPlainHtml.serializer())
                 subclass(VisionOfHtmlInput.serializer())
                 subclass(VisionOfNumberField.serializer())
                 subclass(VisionOfTextField.serializer())
                 subclass(VisionOfCheckbox.serializer())
                 subclass(VisionOfRangeField.serializer())
                 subclass(VisionOfHtmlForm.serializer())
+                subclass(VisionOfHtmlButton.serializer())
             }
         }
 
