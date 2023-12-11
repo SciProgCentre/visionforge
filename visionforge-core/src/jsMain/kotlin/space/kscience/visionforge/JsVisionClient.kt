@@ -12,6 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.encodeToString
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -81,9 +82,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
         }
     }
 
-    private val eventCollector by lazy {
-        MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
-    }
+    private val eventCollector = MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
 
     /**
      * Send a custom feedback event
@@ -122,10 +121,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
                     if (stringData != null) {
-                        val event: VisionEvent = visionManager.jsonFormat.decodeFromString(
-                            VisionEvent.serializer(),
-                            stringData
-                        )
+                        val event: VisionEvent = visionManager.jsonFormat.decodeFromString(stringData)
 
                         // If change contains root vision replacement, do it
                         if (event is VisionChange) {
@@ -154,7 +150,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                     feedbackJob = visionManager.context.launch {
                         //launch a separate coroutine to send events to the backend
                         eventCollector.filter { it.first == visionName }.onEach {
-                            send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it.second))
+                            send(visionManager.jsonFormat.encodeToString(it.second))
                         }.launchIn(this)
 
                         //aggregate atomic changes

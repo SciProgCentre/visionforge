@@ -12,12 +12,12 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 
-@Serializable
-@SerialName("control")
-public sealed class VisionControlEvent : VisionEvent, MetaRepr {
+public abstract class VisionControlEvent : VisionEvent, MetaRepr {
     public abstract val meta: Meta
 
     override fun toMeta(): Meta = meta
+
+    override fun toString(): String = toMeta().toString()
 }
 
 public interface ControlVision : Vision {
@@ -42,7 +42,7 @@ public class VisionClickEvent(override val meta: Meta) : VisionControlEvent() {
     public val payload: Meta? by meta.node()
     public val name: Name? get() = meta["name"].string?.parseAsName()
 
-    override fun toString(): String  = meta.toString()
+    override fun toString(): String = meta.toString()
 }
 
 public fun VisionClickEvent(payload: Meta = Meta.EMPTY, name: Name? = null): VisionClickEvent = VisionClickEvent(

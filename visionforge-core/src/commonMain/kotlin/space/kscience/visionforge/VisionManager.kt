@@ -30,10 +30,11 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
         }
     }
 
-    public val jsonFormat: Json
-        get() = Json(defaultJson) {
+    public val jsonFormat: Json by lazy {
+        Json(defaultJson) {
             serializersModule = this@VisionManager.serializersModule
         }
+    }
 
     public fun decodeFromString(string: String): Vision = jsonFormat.decodeFromString(visionSerializer, string)
 
@@ -78,6 +79,13 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
                 subclass(VisionOfHtmlForm.serializer())
                 subclass(VisionOfHtmlButton.serializer())
             }
+
+            polymorphic(VisionEvent::class) {
+                subclass(VisionChange.serializer())
+                subclass(VisionMetaEvent.serializer())
+                subclass(VisionClickEvent.serializer())
+                subclass(VisionValueChangeEvent.serializer())
+            }
         }
 
         @OptIn(ExperimentalSerializationApi::class)
@@ -107,7 +115,7 @@ public abstract class VisionPlugin(meta: Meta = Meta.EMPTY) : AbstractPlugin(met
 /**
  * Fetch a [VisionManager] from this plugin or create a child plugin with a [VisionManager]
  */
-public val Context.visionManager: VisionManager get() = request(VisionManager )
+public val Context.visionManager: VisionManager get() = request(VisionManager)
 
 public fun Vision.encodeToString(): String =
     manager?.encodeToString(this) ?: error("Orphan vision could not be encoded")
