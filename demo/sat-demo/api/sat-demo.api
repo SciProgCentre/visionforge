@@ -3,3 +3,8 @@ public final class ru/mipt/npm/sat/SatServerKt {
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
+public final class ru/mipt/npm/sat/StaticKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+

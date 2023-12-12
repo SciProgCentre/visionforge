@@ -1,0 +1,54 @@
+public final class space/kscience/visionforge/jupyter/FormsKt {
+	public static final fun HtmlFormFragment (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/jupyter/HtmlFormFragment;
+	public static synthetic fun HtmlFormFragment$default (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/jupyter/HtmlFormFragment;
+	public static final fun form (Lspace/kscience/visionforge/jupyter/VisionForge;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/jupyter/HtmlFormFragment;
+	public static synthetic fun form$default (Lspace/kscience/visionforge/jupyter/VisionForge;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/jupyter/HtmlFormFragment;
+}
+
+public final class space/kscience/visionforge/jupyter/HtmlFormFragment {
+	public final fun get (Ljava/lang/String;)Lspace/kscience/dataforge/meta/Meta;
+	public final fun getFormBody ()Lspace/kscience/visionforge/html/HtmlFragment;
+	public final fun getValues ()Lspace/kscience/dataforge/meta/Meta;
+	public final fun getVision ()Lspace/kscience/visionforge/html/VisionOfHtmlForm;
+}
+
+public final class space/kscience/visionforge/jupyter/VisionForge : kotlinx/coroutines/CoroutineScope, space/kscience/dataforge/context/ContextAware {
+	public fun <init> (Lspace/kscience/visionforge/VisionManager;Lorg/jetbrains/kotlinx/jupyter/api/Notebook;Lspace/kscience/dataforge/meta/Meta;)V
+	public synthetic fun <init> (Lspace/kscience/visionforge/VisionManager;Lorg/jetbrains/kotlinx/jupyter/api/Notebook;Lspace/kscience/dataforge/meta/Meta;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun form (Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/jupyter/HtmlFormFragment;
+	public final fun getConfiguration ()Lspace/kscience/dataforge/meta/ObservableMutableMeta;
+	public fun getContext ()Lspace/kscience/dataforge/context/Context;
+	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getNotebook ()Lorg/jetbrains/kotlinx/jupyter/api/Notebook;
+	public final fun getProperty (Ljava/lang/String;)Lspace/kscience/dataforge/meta/TypedMeta;
+	public final fun getVisionManager ()Lspace/kscience/visionforge/VisionManager;
+	public final fun isServerRunning ()Z
+	public final fun produceHtml (Ljava/lang/Boolean;Lspace/kscience/visionforge/html/HtmlVisionFragment;)Lorg/jetbrains/kotlinx/jupyter/api/MimeTypedResult;
+	public static synthetic fun produceHtml$default (Lspace/kscience/visionforge/jupyter/VisionForge;Ljava/lang/Boolean;Lspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)Lorg/jetbrains/kotlinx/jupyter/api/MimeTypedResult;
+}
+
+public final class space/kscience/visionforge/jupyter/VisionForgeCompatibility : java/lang/Enum {
+	public static final field DATALORE Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+	public static final field IDEA Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+	public static final field JUPYTER Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+	public static final field JUPYTER_LAB Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+	public static fun values ()[Lspace/kscience/visionforge/jupyter/VisionForgeCompatibility;
+}
+
+public abstract class space/kscience/visionforge/jupyter/VisionForgeIntegration : org/jetbrains/kotlinx/jupyter/api/libraries/JupyterIntegration, space/kscience/dataforge/context/ContextAware {
+	public fun <init> (Lspace/kscience/visionforge/VisionManager;)V
+	protected abstract fun afterLoaded (Lorg/jetbrains/kotlinx/jupyter/api/libraries/JupyterIntegration$Builder;Lspace/kscience/visionforge/jupyter/VisionForge;)V
+	public fun getContext ()Lspace/kscience/dataforge/context/Context;
+	public final fun getVisionManager ()Lspace/kscience/visionforge/VisionManager;
+	public final fun onLoaded (Lorg/jetbrains/kotlinx/jupyter/api/libraries/JupyterIntegration$Builder;)V
+}
+
+public final class space/kscience/visionforge/jupyter/VisionForgeIntegrationKt {
+	public static final fun fragment (Lspace/kscience/visionforge/jupyter/VisionForge;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlinx/jupyter/api/MimeTypedResult;
+	public static final fun html (Lspace/kscience/visionforge/jupyter/VisionForge;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlinx/jupyter/api/MimeTypedResult;
+	public static final fun page (Lspace/kscience/visionforge/jupyter/VisionForge;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/html/VisionPage;
+	public static synthetic fun page$default (Lspace/kscience/visionforge/jupyter/VisionForge;Ljava/util/Map;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/html/VisionPage;
+}
+

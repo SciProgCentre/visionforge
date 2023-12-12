@@ -1,10 +1,11 @@
 plugins {
-    id("space.kscience.gradle.jvm")
+    id("space.kscience.gradle.mpp")
 }
 
 kscience{
+    jvm()
     useKtor()
-    dependencies {
+    jvmMain {
         api(projects.visionforgeCore)
         api("io.ktor:ktor-server-host-common")
         api("io.ktor:ktor-server-html-builder")
