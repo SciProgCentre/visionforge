@@ -11,7 +11,7 @@ val dataforgeVersion by extra("0.7.1")
 
 allprojects {
     group = "space.kscience"
-    version = "0.3.0-RC"
+    version = "0.3.0"
 }
 
 subprojects {

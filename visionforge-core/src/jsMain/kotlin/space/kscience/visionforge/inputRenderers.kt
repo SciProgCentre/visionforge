@@ -1,18 +1,14 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.launch
 import kotlinx.dom.clear
 import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.js.input
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.events.Event
-import space.kscience.dataforge.meta.Value
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.*
 
 /**
@@ -23,13 +19,6 @@ import space.kscience.visionforge.html.*
 internal fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
     vision.useProperty(VisionOfHtml::classes) {
         classList.value = classes.joinToString(separator = " ")
-    }
-}
-
-
-private fun VisionClient.sendInputEvent(name: Name, value: Value?) {
-    context.launch {
-        sendEvent(name, VisionValueChangeEvent(value, name))
     }
 }
 
@@ -62,16 +51,13 @@ internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<
     input {
         type = InputType.text
     }.also { htmlInputElement ->
-        val onEvent: (Event) -> Unit = {
-            client.sendInputEvent(name, htmlInputElement.value.asValue())
+
+        htmlInputElement.onchange = {
+            client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
         }
 
-
-        when (vision.feedbackMode) {
-            InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-            InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-            InputFeedbackMode.NONE -> {}
+        htmlInputElement.oninput = {
+            client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
         }
 
         htmlInputElement.subscribeToInput(vision)
@@ -86,17 +72,15 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
         input {
             type = InputType.checkBox
         }.also { htmlInputElement ->
-            val onEvent: (Event) -> Unit = {
-                client.sendInputEvent(name, htmlInputElement.checked.asValue())
+
+            htmlInputElement.onchange = {
+                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
-
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
+
 
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfCheckbox::checked) {
@@ -110,16 +94,13 @@ internal val textVisionRenderer: ElementVisionRenderer =
         input {
             type = InputType.text
         }.also { htmlInputElement ->
-            val onEvent: (Event) -> Unit = {
-                client.sendInputEvent(name, htmlInputElement.value.asValue())
+
+            htmlInputElement.onchange = {
+                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
-
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
 
             htmlInputElement.subscribeToInput(vision)
@@ -135,18 +116,19 @@ internal val numberVisionRenderer: ElementVisionRenderer =
             type = InputType.number
         }.also { htmlInputElement ->
 
-            val onEvent: (Event) -> Unit = {
+            htmlInputElement.onchange = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendInputEvent(name, htmlInputElement.value.asValue())
+                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
                 }
             }
 
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                }
             }
+
+
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfNumberField::value) {
                 htmlInputElement.valueAsNumber = it?.double ?: 0.0
@@ -163,18 +145,18 @@ internal val rangeVisionRenderer: ElementVisionRenderer =
             step = vision.step.toString()
         }.also { htmlInputElement ->
 
-            val onEvent: (Event) -> Unit = {
+            htmlInputElement.onchange = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendInputEvent(name, htmlInputElement.value.asValue())
+                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
                 }
             }
 
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                }
             }
+
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfRangeField::value) {
                 htmlInputElement.valueAsNumber = it?.double ?: 0.0

@@ -12,15 +12,16 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.AbstractVision
-import space.kscience.visionforge.ControlVision
-import space.kscience.visionforge.VisionControlEvent
-import space.kscience.visionforge.VisionValueChangeEvent
+import space.kscience.visionforge.*
 
 
 @Serializable
 public abstract class VisionOfHtml : AbstractVision() {
-    public var classes: List<String> by properties.stringList(*emptyArray())
+    public var classes: Set<String>
+        get() = properties.get(::classes.name,false).stringList?.toSet() ?: emptySet()
+        set(value) {
+            properties[::classes.name] = value.map { it.asValue() }
+        }
 }
 
 @Serializable
@@ -58,6 +59,7 @@ public enum class InputFeedbackMode {
     NONE
 }
 
+@Serializable
 public abstract class VisionOfHtmlControl: VisionOfHtml(), ControlVision{
 
     @Transient
@@ -76,7 +78,6 @@ public abstract class VisionOfHtmlControl: VisionOfHtml(), ControlVision{
 @SerialName("html.input")
 public open class VisionOfHtmlInput(
     public val inputType: String,
-    public val feedbackMode: InputFeedbackMode = InputFeedbackMode.ONCHANGE,
 ) : VisionOfHtmlControl() {
     public var value: Value? by properties.value()
     public var disabled: Boolean by properties.boolean { false }
@@ -91,6 +92,11 @@ public fun VisionOfHtmlInput.onValueChange(
     scope: CoroutineScope = manager?.context ?: error("Coroutine context is not resolved for $this"),
     callback: suspend VisionValueChangeEvent.() -> Unit,
 ): Job = controlEventFlow.filterIsInstance<VisionValueChangeEvent>().onEach(callback).launchIn(scope)
+
+public fun VisionOfHtmlInput.onInput(
+    scope: CoroutineScope = manager?.context ?: error("Coroutine context is not resolved for $this"),
+    callback: suspend VisionInputEvent.() -> Unit,
+): Job = controlEventFlow.filterIsInstance<VisionInputEvent>().onEach(callback).launchIn(scope)
 
 @Suppress("UnusedReceiverParameter")
 public inline fun VisionOutput.htmlInput(
