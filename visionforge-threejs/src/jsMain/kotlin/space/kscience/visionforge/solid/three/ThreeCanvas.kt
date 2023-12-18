@@ -236,7 +236,7 @@ public class ThreeCanvas(
 //        }
 //    }
 
-    private fun addControls(element: Node, controls: ControlsScheme) {
+    private fun addControls(element: Node, controls: Canvas3DUIScheme) {
         when (controls.meta["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)

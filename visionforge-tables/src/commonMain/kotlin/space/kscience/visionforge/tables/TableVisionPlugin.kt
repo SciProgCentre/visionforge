@@ -13,12 +13,11 @@ import space.kscience.visionforge.VisionPlugin
 public class TableVisionPlugin : VisionPlugin() {
     override val tag: PluginTag get() = Companion.tag
 
-    override val visionSerializersModule: SerializersModule
-        get() = SerializersModule {
-            polymorphic(Vision::class) {
-                subclass(VisionOfTable.serializer())
-            }
+    override val visionSerializersModule: SerializersModule = SerializersModule {
+        polymorphic(Vision::class) {
+            subclass(VisionOfTable.serializer())
         }
+    }
 
     public companion object : PluginFactory<TableVisionPlugin> {
         override val tag: PluginTag = PluginTag("vision.table", PluginTag.DATAFORGE_GROUP)

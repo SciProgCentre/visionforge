@@ -9,23 +9,17 @@ kscience {
     js {
         useCommonJs()
         binaries.library()
-        browser {
-            commonWebpackConfig {
-                cssSupport {
-                    enabled.set(true)
-                }
-            }
-        }
     }
-    dependencies {
+
+    useSerialization()
+    commonMain {
         api(projects.visionforgeCore)
         api("space.kscience:tables-kt:${tablesVersion}")
     }
-    dependencies(jsMain) {
+    jsMain {
         implementation(npm("tabulator-tables", "5.5.2"))
         implementation(npm("@types/tabulator-tables", "5.5.3"))
     }
-    useSerialization()
 }
 
 readme {

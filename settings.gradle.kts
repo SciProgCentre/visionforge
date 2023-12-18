@@ -45,7 +45,7 @@ include(
     ":ui:ring",
 //    ":ui:material",
     ":ui:bootstrap",
-    ":ui:compose",
+    ":visionforge-compose",
     ":visionforge-core",
     ":visionforge-solid",
 //    ":visionforge-fx",

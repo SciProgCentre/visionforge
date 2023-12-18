@@ -2,8 +2,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.compose)
-//    id("org.jetbrains.compose") version "1.5.11"
-//    id("com.android.library")
 }
 
 kscience{
@@ -15,9 +13,9 @@ kscience{
 kotlin {
 //    android()
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-
+        commonMain{
+            dependencies{
+                api(projects.visionforgeCore)
             }
         }
 
@@ -35,7 +33,6 @@ kotlin {
                 api(compose.html.core)
                 api("app.softwork:bootstrap-compose:0.1.15")
                 api("app.softwork:bootstrap-compose-icons:0.1.15")
-                api(projects.visionforge.visionforgeThreejs)
             }
         }
     }

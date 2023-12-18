@@ -62,7 +62,7 @@ public class Canvas3DOptions : Scheme() {
     @Suppress("DEPRECATION")
     public var axes: AxesScheme by spec(AxesScheme)
     public var camera: CameraScheme by spec(CameraScheme)
-    public var controls: ControlsScheme by spec(ControlsScheme)
+    public var controls: Canvas3DUIScheme by spec(Canvas3DUIScheme)
 
     public var size: CanvasSize by spec(CanvasSize)
 
@@ -92,7 +92,7 @@ public class Canvas3DOptions : Scheme() {
                     hide()
                 }
 
-                scheme(Canvas3DOptions::controls, ControlsScheme) {
+                scheme(Canvas3DOptions::controls, Canvas3DUIScheme) {
                     hide()
                 }
 

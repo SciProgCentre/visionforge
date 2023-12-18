@@ -7,14 +7,8 @@ group = "demo"
 kscience {
     jvm()
     js {
-        useCommonJs()
         browser {
             binaries.executable()
-            commonWebpackConfig {
-                cssSupport {
-                    enabled.set(false)
-                }
-            }
         }
     }
     dependencies {
@@ -26,7 +20,6 @@ kscience {
         implementation(spclibs.logback.classic)
     }
     jsMain {
-        implementation(projects.ui.ring)
         implementation(projects.visionforgeThreejs)
         implementation(npm("react-file-drop", "3.0.6"))
     }

@@ -7,8 +7,6 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.boolean
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
@@ -28,16 +26,12 @@ public class ThreeWithControlsPlugin : AbstractPlugin(), ElementVisionRenderer {
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING * 2 else ElementVisionRenderer.ZERO_RATING
 
     override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
-        if (meta["controls.enabled"].boolean == false) {
-            three.render(element, client, name, vision, meta)
-        } else {
-            space.kscience.visionforge.react.createRoot(element).render {
-                child(ThreeCanvasWithControls) {
-                    attrs {
-                        this.solids = three.solids
-                        this.options = Canvas3DOptions.read(meta)
-                        this.builderOfSolid = context.async { vision as Solid }
-                    }
+        space.kscience.visionforge.react.createRoot(element).render {
+            child(ThreeCanvasWithControls) {
+                attrs {
+                    this.solids = three.solids
+                    this.options = Canvas3DOptions.read(meta)
+                    this.builderOfSolid = context.async { vision as Solid }
                 }
             }
         }

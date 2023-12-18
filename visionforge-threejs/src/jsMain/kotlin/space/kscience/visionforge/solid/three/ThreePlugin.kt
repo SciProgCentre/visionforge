@@ -2,14 +2,15 @@ package space.kscience.visionforge.solid.three
 
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Element
-import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
+import space.kscience.visionforge.solid.three.compose.ThreeView
 import space.kscience.visionforge.solid.three.set
 import three.core.Object3D
 import kotlin.collections.set
@@ -21,7 +22,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     public val solids: Solids by require(Solids)
 
-    public val client: VisionClient? get() = context.plugins.get<VisionClient>()
+    public val client: VisionClient by require(JsVisionClient)
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
@@ -123,15 +124,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
-    private val canvasCache = HashMap<Element, ThreeCanvas>()
-
-    public fun getOrCreateCanvas(
-        element: Element,
-        options: Canvas3DOptions,
-    ): ThreeCanvas = canvasCache.getOrPut(element) {
-        ThreeCanvas(this, element, options)
-    }
-
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
             ElementVisionRenderer.TYPE -> mapOf("three".asName() to this)
@@ -142,20 +134,11 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
-    internal fun renderSolid(
-        element: Element,
-        vision: Solid,
-        options: Canvas3DOptions,
-    ): ThreeCanvas = getOrCreateCanvas(element, options).apply {
-        render(vision)
-    }
-
     override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
-        renderSolid(
-            element,
-            vision as? Solid ?: error("Solid expected but ${vision::class} found"),
-            Canvas3DOptions.read(meta)
-        )
+        require(vision is Solid) { "Expected Solid but found ${vision::class}" }
+        renderComposable(element) {
+            ThreeView(solids, vision, null, Canvas3DOptions.read(meta))
+        }
     }
 
     public companion object : PluginFactory<ThreePlugin> {
@@ -163,14 +146,6 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
         override fun build(context: Context, meta: Meta): ThreePlugin = ThreePlugin()
     }
-}
-
-public fun ThreePlugin.render(
-    element: HTMLElement,
-    obj: Solid,
-    optionsBuilder: Canvas3DOptions.() -> Unit = {},
-): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(optionsBuilder)).apply {
-    options.apply(optionsBuilder)
 }
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {

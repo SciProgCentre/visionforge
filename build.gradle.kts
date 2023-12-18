@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
 
@@ -11,7 +10,7 @@ val dataforgeVersion by extra("0.7.1")
 
 allprojects {
     group = "space.kscience"
-    version = "0.3.0-RC"
+    version = "0.4.0-dev-1"
 }
 
 subprojects {
@@ -31,11 +30,11 @@ subprojects {
         }
     }
 
-    tasks.withType<KotlinJsCompile>{
-        kotlinOptions{
-            useEsClasses = true
-        }
-    }
+//    tasks.withType<KotlinJsCompile>{
+//        kotlinOptions{
+//            useEsClasses = true
+//        }
+//    }
 }
 
 ksciencePublish {

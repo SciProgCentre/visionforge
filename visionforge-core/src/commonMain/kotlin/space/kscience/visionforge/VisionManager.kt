@@ -85,6 +85,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
                 subclass(VisionMetaEvent.serializer())
                 subclass(VisionClickEvent.serializer())
                 subclass(VisionValueChangeEvent.serializer())
+                subclass(VisionInputEvent.serializer())
             }
         }
 

@@ -83,7 +83,30 @@ public class VisionValueChangeEvent(override val meta: Meta) : VisionControlEven
     override fun toString(): String = meta.toString()
 }
 
+
 public fun VisionValueChangeEvent(value: Value?, name: Name? = null): VisionValueChangeEvent = VisionValueChangeEvent(
+    Meta {
+        this.value = value
+        name?.let { set("name", it.toString()) }
+    }
+)
+
+
+@Serializable
+@SerialName("control.input")
+public class VisionInputEvent(override val meta: Meta) : VisionControlEvent() {
+
+    public val value: Value? get() = meta.value
+
+    /**
+     * The name of a control that fired the event
+     */
+    public val name: Name? get() = meta["name"]?.string?.parseAsName()
+
+    override fun toString(): String = meta.toString()
+}
+
+public fun VisionInputEvent(value: Value?, name: Name? = null): VisionInputEvent = VisionInputEvent(
     Meta {
         this.value = value
         name?.let { set("name", it.toString()) }

@@ -14,16 +14,9 @@ repositories {
 kotlin {
 
     js(IR) {
-        useCommonJs()
         browser {
             webpackTask {
                 mainOutputFileName.set("js/visionforge-playground.js")
-            }
-            commonWebpackConfig {
-                sourceMaps = true
-                cssSupport{
-                    enabled.set(false)
-                }
             }
         }
         binaries.executable()
@@ -57,7 +50,6 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(projects.ui.ring)
                 implementation(projects.visionforgeThreejs)
                 compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
             }

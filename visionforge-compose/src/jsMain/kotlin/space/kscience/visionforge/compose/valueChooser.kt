@@ -20,7 +20,6 @@ import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
-import three.math.Color
 
 
 @Composable
@@ -151,7 +150,8 @@ public fun ColorValueChooser(
         value(
             value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
-                else "#" + Color(value.string).getHexString()
+                else value.string
+                //else "#" + Color(value.string).getHexString()
             } ?: "#000000"
         )
         onChange {

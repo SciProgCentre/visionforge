@@ -72,7 +72,7 @@ class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
                 }
             }
             val element = document.getElementById("output-$name") ?: error("Element not found")
-            three.getOrCreateCanvas(element, canvasOptions)
+            ThreeCanvas(three, element, canvasOptions)
         }.render(vision)
     }
 }

@@ -15,13 +15,7 @@ kscience {
         "muon-monitor.js",
         jvmConfig = { withJava() },
         jsConfig = { useCommonJs() }
-    ) {
-        commonWebpackConfig {
-            cssSupport {
-                enabled.set(false)
-            }
-        }
-    }
+    )
 
     commonMain {
         implementation(projects.visionforgeSolid)
@@ -34,7 +28,6 @@ kscience {
         implementation("ch.qos.logback:logback-classic:1.2.11")
     }
     jsMain {
-        implementation(projects.ui.ring)
         implementation(projects.visionforgeThreejs)
         //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
     }

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
+
 plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.ktor)
@@ -18,6 +21,8 @@ kscience {
 }
 
 group = "center.sciprog"
+
+kotlin.explicitApi = ExplicitApiMode.Disabled
 
 application {
     mainClass.set("ru.mipt.npm.sat.SatServerKt")

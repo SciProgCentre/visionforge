@@ -1,12 +1,11 @@
 package ru.mipt.npm.muon.monitor
 
+import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.react.createRoot
-import space.kscience.visionforge.react.render
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
@@ -24,13 +23,8 @@ private class MMDemoApp : Application {
         val model = Model(visionManager)
 
         val element = document.getElementById("app") ?: error("Element with id 'app' not found on page")
-        createRoot(element).render {
-            child(MMApp) {
-                attrs {
-                    this.model = model
-                    this.solids = context.request(Solids)
-                }
-            }
+        renderComposable(element) {
+            MMApp(context.request(Solids), model)
         }
     }
 }

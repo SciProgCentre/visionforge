@@ -1,5 +1,7 @@
 package space.kscience.visionforge
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import space.kscience.dataforge.context.Plugin
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
@@ -14,6 +16,10 @@ public interface VisionClient: Plugin {
     public suspend fun sendEvent(targetName: Name, event: VisionEvent)
 
     public fun notifyPropertyChanged(visionName: Name, propertyName: Name, item: Meta?)
+}
+
+public fun VisionClient.sendEventAsync(targetName: Name, event: VisionEvent): Job = context.launch {
+    sendEvent(targetName, event)
 }
 
 public fun VisionClient.notifyPropertyChanged(visionName: Name, propertyName: String, item: Meta?) {

@@ -10,7 +10,6 @@ import org.jetbrains.compose.web.dom.Text
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
-import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.isLeaf
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
