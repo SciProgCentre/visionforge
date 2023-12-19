@@ -1,7 +1,7 @@
 
 plugins {
     id("space.kscience.gradle.mpp")
-    id("org.jetbrains.compose") version "1.5.11"
+    alias(spclibs.plugins.compose)
 //    id("com.android.library")
 }
 

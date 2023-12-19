@@ -12,6 +12,7 @@ kscience {
     dependencies {
         api("space.kscience:dataforge-context:$dataforgeVersion")
         api(spclibs.kotlinx.html)
+        api(spclibs.atomicfu)
 //        api("org.jetbrains.kotlin-wrappers:kotlin-css")
     }
     jsMain {
