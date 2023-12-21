@@ -1,8 +1,8 @@
 package space.kscience.visionforge.html
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.html.FORM
-import kotlinx.html.TagConsumer
-import kotlinx.html.form
 import kotlinx.html.id
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,6 +10,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.node
 import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.ClickControl
+import space.kscience.visionforge.onClick
 
 /**
  * @param formId an id of the element in rendered DOM, this form is bound to
@@ -18,17 +19,24 @@ import space.kscience.visionforge.ClickControl
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
-) : VisionOfHtmlControl() {
+) : VisionOfHtmlControl(), ClickControl {
     public var values: Meta? by properties.node()
 }
 
-public fun <R> TagConsumer<R>.bindForm(
-    visionOfForm: VisionOfHtmlForm,
-    builder: FORM.() -> Unit,
-): R = form {
-    this.id = visionOfForm.formId
-    builder()
+/**
+ * Create a [VisionOfHtmlForm] and bind this form to the id
+ */
+public fun FORM.bindToVision(id: String): VisionOfHtmlForm {
+    this.id = id
+    return VisionOfHtmlForm(id)
 }
+
+public fun FORM.bindToVision(vision: VisionOfHtmlForm): VisionOfHtmlForm {
+    this.id = vision.formId
+    return vision
+}
+
+public fun VisionOfHtmlForm.onSubmit(scope: CoroutineScope, block: (Meta?) -> Unit): Job = onClick(scope) { block(payload) }
 
 
 @Serializable
