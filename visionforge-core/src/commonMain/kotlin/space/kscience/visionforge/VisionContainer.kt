@@ -10,10 +10,17 @@ import space.kscience.visionforge.VisionChildren.Companion.STATIC_TOKEN_BODY
 @DslMarker
 public annotation class VisionBuilder
 
+/**
+ * A container interface with read access to its content
+ * using DataForge [Name] objects as keys.
+ */
 public interface VisionContainer<out V : Vision> {
     public fun getChild(name: Name): V?
 }
 
+/**
+ * A container interface with write/replace/delete access to its content.
+ */
 public interface MutableVisionContainer<in V : Vision> {
     //TODO add documentation
     public fun setChild(name: Name?, child: V?)
@@ -61,12 +68,22 @@ public inline fun VisionChildren.forEach(block: (NameToken, Vision) -> Unit) {
     keys.forEach { block(it, get(it)!!) }
 }
 
+/**
+ * A serializable representation of [Vision] children container
+ * with the ability to modify the container content.
+ */
 public interface MutableVisionChildren : VisionChildren, MutableVisionContainer<Vision> {
 
     public override val parent: MutableVisionGroup
 
     public operator fun set(token: NameToken, value: Vision?)
 
+    /**
+     * Set child [Vision] by name.
+     * @param name child name. Pass null to add a static child. Note that static children cannot
+     *  be removed, replaced or accessed by name by other means.
+     * @param child new child value. Pass null to delete the child.
+     */
     override fun setChild(name: Name?, child: Vision?) {
         when {
             name == null -> {
