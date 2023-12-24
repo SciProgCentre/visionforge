@@ -750,10 +750,10 @@ public abstract interface class space/kscience/visionforge/html/HtmlVisionFragme
 
 public final class space/kscience/visionforge/html/HtmlVisionRendererKt {
 	public static final fun appendTo (Lspace/kscience/visionforge/html/HtmlVisionFragment;Lspace/kscience/visionforge/html/VisionTagConsumer;)V
-	public static final fun visionFragment (Lkotlinx/html/FlowContent;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lspace/kscience/visionforge/html/HtmlVisionFragment;)V
-	public static final fun visionFragment (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lspace/kscience/visionforge/html/HtmlVisionFragment;)V
-	public static synthetic fun visionFragment$default (Lkotlinx/html/FlowContent;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
-	public static synthetic fun visionFragment$default (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Lspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
+	public static final fun visionFragment (Lkotlinx/html/FlowContent;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lspace/kscience/visionforge/html/HtmlVisionFragment;)V
+	public static final fun visionFragment (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lspace/kscience/visionforge/html/HtmlVisionFragment;)V
+	public static synthetic fun visionFragment$default (Lkotlinx/html/FlowContent;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
+	public static synthetic fun visionFragment$default (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/VisionManager;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
 }
 
 public final class space/kscience/visionforge/html/InputFeedbackMode : java/lang/Enum {
@@ -780,6 +780,21 @@ public final class space/kscience/visionforge/html/ResourceLocation : java/lang/
 }
 
 public abstract interface annotation class space/kscience/visionforge/html/VisionDSL : java/lang/annotation/Annotation {
+}
+
+public final class space/kscience/visionforge/html/VisionDisplay {
+	public fun <init> (Lspace/kscience/visionforge/VisionManager;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;)V
+	public final fun component1 ()Lspace/kscience/visionforge/VisionManager;
+	public final fun component2 ()Lspace/kscience/visionforge/Vision;
+	public final fun component3 ()Lspace/kscience/dataforge/meta/Meta;
+	public final fun copy (Lspace/kscience/visionforge/VisionManager;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;)Lspace/kscience/visionforge/html/VisionDisplay;
+	public static synthetic fun copy$default (Lspace/kscience/visionforge/html/VisionDisplay;Lspace/kscience/visionforge/VisionManager;Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)Lspace/kscience/visionforge/html/VisionDisplay;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMeta ()Lspace/kscience/dataforge/meta/Meta;
+	public final fun getVision ()Lspace/kscience/visionforge/Vision;
+	public final fun getVisionManager ()Lspace/kscience/visionforge/VisionManager;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class space/kscience/visionforge/html/VisionOfCheckbox : space/kscience/visionforge/html/VisionOfHtmlInput {
@@ -852,7 +867,7 @@ public final class space/kscience/visionforge/html/VisionOfHtmlControl$Companion
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class space/kscience/visionforge/html/VisionOfHtmlForm : space/kscience/visionforge/html/VisionOfHtmlControl {
+public final class space/kscience/visionforge/html/VisionOfHtmlForm : space/kscience/visionforge/html/VisionOfHtmlControl, space/kscience/visionforge/ClickControl {
 	public static final field Companion Lspace/kscience/visionforge/html/VisionOfHtmlForm$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getFormId ()Ljava/lang/String;
@@ -876,9 +891,11 @@ public final class space/kscience/visionforge/html/VisionOfHtmlForm$Companion {
 }
 
 public final class space/kscience/visionforge/html/VisionOfHtmlFormKt {
-	public static final fun bindForm (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/html/VisionOfHtmlForm;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun button (Lspace/kscience/visionforge/html/VisionOutput;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/html/VisionOfHtmlButton;
 	public static synthetic fun button$default (Lspace/kscience/visionforge/html/VisionOutput;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/html/VisionOfHtmlButton;
+	public static final fun onSubmit (Lspace/kscience/visionforge/html/VisionOfHtmlForm;Lkotlinx/coroutines/CoroutineScope;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/Job;
+	public static final fun visionOfForm (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/html/VisionOfHtmlForm;Ljava/lang/String;Lkotlinx/html/FormEncType;Lkotlinx/html/FormMethod;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static synthetic fun visionOfForm$default (Lkotlinx/html/TagConsumer;Lspace/kscience/visionforge/html/VisionOfHtmlForm;Ljava/lang/String;Lkotlinx/html/FormEncType;Lkotlinx/html/FormMethod;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public class space/kscience/visionforge/html/VisionOfHtmlInput : space/kscience/visionforge/html/VisionOfHtmlControl {

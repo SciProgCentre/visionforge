@@ -44,7 +44,7 @@ val Markup = fc<MarkupProps>("Markup") { props ->
         css {
             width = 100.pct
             height = 100.pct
-            border= Border(2.pt, BorderStyle.solid, Color.blue)
+            border = Border(2.pt, BorderStyle.solid, Color.blue)
             padding = Padding(left = 8.pt)
             backgroundColor = Color.white
             flex = Flex(1.0)

@@ -1,31 +1,50 @@
 package space.kscience.visionforge.server
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.html.*
-import io.ktor.server.http.content.*
-import io.ktor.server.plugins.*
-import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLProtocol
+import io.ktor.http.path
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.application.log
+import io.ktor.server.engine.EngineConnectorConfig
+import io.ktor.server.html.respondHtml
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.request.header
+import io.ktor.server.request.host
+import io.ktor.server.request.port
+import io.ktor.server.response.header
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
-import io.ktor.server.util.*
-import io.ktor.server.websocket.*
-import io.ktor.util.pipeline.*
-import io.ktor.websocket.*
+import io.ktor.server.util.getOrFail
+import io.ktor.server.util.url
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.application
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.html.*
+import kotlinx.html.body
+import kotlinx.html.head
+import kotlinx.html.header
+import kotlinx.html.meta
 import kotlinx.serialization.encodeToString
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.Configurable
+import space.kscience.dataforge.meta.ObservableMutableMeta
+import space.kscience.dataforge.meta.enum
+import space.kscience.dataforge.meta.long
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionEvent
+import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.flowChanges
 import space.kscience.visionforge.html.*
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -72,7 +91,6 @@ public class VisionRoute(
 
 /**
  * Serve visions in a given [route] without providing a page template.
- * [visions] could be changed during the service.
  *
  * @return a [Flow] of backward events, including vision change events
  */
@@ -137,8 +155,8 @@ public fun Application.serveVisionData(
 
 public fun Application.serveVisionData(
     configuration: VisionRoute,
-    data: Map<Name, Vision>,
-): Unit = serveVisionData(configuration) { data[it] }
+    data: Map<Name, VisionDisplay>,
+): Unit = serveVisionData(configuration) { data[it]?.vision }
 
 /**
  * Serve a page, potentially containing any number of visions at a given [route] with given [header].
@@ -154,10 +172,10 @@ public fun Application.visionPage(
 ) {
     require(WebSockets)
 
-    val collector: MutableMap<Name, Vision> = mutableMapOf()
+    val cache: MutableMap<Name, VisionDisplay> = mutableMapOf()
 
     //serve data
-    serveVisionData(configuration, collector)
+    serveVisionData(configuration, cache)
 
     //filled pages
     routing {
@@ -193,7 +211,7 @@ public fun Application.visionPage(
                                 path(route, "ws")
                             }
                         } else null,
-                        onVisionRendered = { name, vision -> collector[name] = vision },
+                        displayCache =  cache,
                         fragment = visionFragment
                     )
                 }

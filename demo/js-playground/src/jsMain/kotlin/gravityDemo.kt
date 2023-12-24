@@ -11,6 +11,7 @@ import space.kscience.visionforge.markup.VisionOfMarkup
 import space.kscience.visionforge.react.flexRow
 import space.kscience.visionforge.ring.ThreeCanvasWithControls
 import space.kscience.visionforge.ring.solid
+import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.solid.*
 import styled.css
 import styled.styledDiv
@@ -27,7 +28,9 @@ val GravityDemo = fc<DemoProps> { props ->
     val energyTrace = Trace {
         name = "energy"
     }
-    val markup = VisionOfMarkup()
+    val markup = VisionOfMarkup().apply {
+        setAsRoot(props.solids.visionManager)
+    }
 
     styledDiv {
         css {

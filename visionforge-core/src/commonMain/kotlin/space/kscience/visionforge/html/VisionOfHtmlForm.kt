@@ -2,8 +2,7 @@ package space.kscience.visionforge.html
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.html.FORM
-import kotlinx.html.id
+import kotlinx.html.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
@@ -23,18 +22,23 @@ public class VisionOfHtmlForm(
     public var values: Meta? by properties.node()
 }
 
+
 /**
  * Create a [VisionOfHtmlForm] and bind this form to the id
  */
-public fun FORM.bindToVision(id: String): VisionOfHtmlForm {
-    this.id = id
-    return VisionOfHtmlForm(id)
+@HtmlTagMarker
+public inline fun <T, C : TagConsumer<T>> C.visionOfForm(
+    vision: VisionOfHtmlForm,
+    action: String? = null,
+    encType: FormEncType? = null,
+    method: FormMethod? = null,
+    classes: String? = null,
+    crossinline block: FORM.() -> Unit = {},
+) : T  = form(action, encType, method, classes){
+    this.id = vision.formId
+    block()
 }
 
-public fun FORM.bindToVision(vision: VisionOfHtmlForm): VisionOfHtmlForm {
-    this.id = vision.formId
-    return vision
-}
 
 public fun VisionOfHtmlForm.onSubmit(scope: CoroutineScope, block: (Meta?) -> Unit): Job = onClick(scope) { block(payload) }
 

@@ -10,7 +10,7 @@ import space.kscience.dataforge.context.request
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionPage
-import space.kscience.visionforge.html.bindToVision
+import space.kscience.visionforge.html.visionOfForm
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
@@ -36,7 +36,7 @@ fun main() {
             visionManager,
             VisionPage.scriptHeader("js/visionforge-playground.js"),
         ) {
-            form {
+            visionOfForm(form) {
                 label {
                     htmlFor = "fname"
                     +"First name:"
@@ -66,8 +66,8 @@ fun main() {
                     type = InputType.submit
                     value = "Submit"
                 }
-                vision(bindToVision(form))
             }
+            vision(form)
             println(form.values)
         }
 

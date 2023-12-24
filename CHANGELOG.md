@@ -1,12 +1,31 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
+
 ### Added
+
+### Changed
+- **Breaking API** Move vision cache to upper level for renderers to avoid re-creating visions for page reload.
+- **Breaking API** Forms refactor
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## 0.3.0 - 2023-12-23
+
+### Added
+
 - Context receivers flag
 - MeshLine for thick lines
 - Custom client-side events and thier processing in VisionServer
 
 ### Changed
+
 - Color accessor property is now `colorProperty`. Color uses non-nullable `invoke` instead of `set`. 
 - API update for server and pages
 - Edges moved to solids module for easier construction
@@ -17,17 +36,14 @@
 - Naming of Canvas3D options.
 - Lights are added to the scene instead of 3D options.
 
-### Deprecated
-
-### Removed
-
 ### Fixed
+
 - Jupyter integration for IDEA and Jupyter lab.
 
-### Security
+## 0.2.0
 
-## [0.2.0]
 ### Added
+
 - Server module
 - Change collector
 - Customizable accessors for colors
@@ -38,8 +54,8 @@
 - Markdown module
 - Tables module
 
-
 ### Changed
+
 - Vision does not implement ItemProvider anymore. Property changes are done via `getProperty`/`setProperty` and `property` delegate.
 - Point3D and Point2D are made separate classes instead of expect/actual (to split up different engines.
 - JavaFX support moved to a separate module
@@ -54,16 +70,10 @@
 - Property listeners are not triggered if there are no changes.
 - Feedback websocket connection in the client.
 
-
-### Deprecated
-
 ### Removed
+
 - Primary modules dependencies on UI
 
-
 ### Fixed
+
 - Version conflicts
-
-
-### Security
-

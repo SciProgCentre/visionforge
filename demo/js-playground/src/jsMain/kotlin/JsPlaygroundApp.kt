@@ -4,6 +4,7 @@ import ringui.SmartTabs
 import ringui.Tab
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
+import space.kscience.plotly.Plotly.plot
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
@@ -97,7 +98,7 @@ private class JsPlaygroundApp : Application {
                     Tab("plotly") {
                         Plotly {
                             attrs {
-                                plot = space.kscience.plotly.Plotly.plot {
+                                plot = plot {
                                     scatter {
                                         x(1, 2, 3)
                                         y(5, 8, 7)
