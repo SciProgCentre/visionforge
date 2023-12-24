@@ -8,6 +8,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.node
+import space.kscience.dataforge.meta.string
+import space.kscience.visionforge.ClickControl
 
 /**
  * @param formId an id of the element in rendered DOM, this form is bound to
@@ -16,7 +18,7 @@ import space.kscience.dataforge.meta.node
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
-) : VisionOfHtml() {
+) : VisionOfHtmlControl() {
     public var values: Meta? by properties.node()
 }
 
@@ -26,4 +28,21 @@ public fun <R> TagConsumer<R>.bindForm(
 ): R = form {
     this.id = visionOfForm.formId
     builder()
+}
+
+
+@Serializable
+@SerialName("html.button")
+public class VisionOfHtmlButton : VisionOfHtmlControl(), ClickControl {
+    public var label: String? by properties.string()
+}
+
+
+@Suppress("UnusedReceiverParameter")
+public inline fun VisionOutput.button(
+    text: String,
+    block: VisionOfHtmlButton.() -> Unit = {},
+): VisionOfHtmlButton = VisionOfHtmlButton().apply {
+    label = text
+    block()
 }

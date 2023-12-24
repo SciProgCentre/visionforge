@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
+import kotlinx.serialization.encodeToString
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.*
@@ -97,9 +98,7 @@ public fun Application.serveVisionData(
                     for (frame in incoming) {
                         val data = frame.data.decodeToString()
                         application.log.debug("Received event for $name: \n$data")
-                        val event = configuration.visionManager.jsonFormat.decodeFromString(
-                            VisionEvent.serializer(), data
-                        )
+                        val event: VisionEvent = configuration.visionManager.jsonFormat.decodeFromString(data)
 
                         vision.receiveEvent(event)
                     }
@@ -108,10 +107,7 @@ public fun Application.serveVisionData(
                 try {
                     withContext(configuration.context.coroutineContext) {
                         vision.flowChanges(configuration.updateInterval.milliseconds).onEach { event ->
-                            val json = configuration.visionManager.jsonFormat.encodeToString(
-                                VisionEvent.serializer(),
-                                event
-                            )
+                            val json = configuration.visionManager.jsonFormat.encodeToString<VisionEvent>(event)
                             application.log.debug("Sending update for $name: \n$json")
                             outgoing.send(Frame.Text(json))
                         }.collect()
@@ -155,7 +151,7 @@ public fun Application.visionPage(
     headers: Collection<HtmlFragment>,
     connector: EngineConnectorConfig? = null,
     visionFragment: HtmlVisionFragment,
-){
+) {
     require(WebSockets)
 
     val collector: MutableMap<Name, Vision> = mutableMapOf()

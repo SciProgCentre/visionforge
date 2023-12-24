@@ -12,6 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.serialization.encodeToString
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -81,9 +82,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
         }
     }
 
-    private val eventCollector by lazy {
-        MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
-    }
+    private val eventCollector = MutableSharedFlow<Pair<Name, VisionEvent>>(meta["feedback.eventCache"].int ?: 100)
 
     /**
      * Send a custom feedback event
@@ -94,8 +93,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
         vision.setAsRoot(visionManager)
-        val renderer = findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
-        renderer.render(element, name, vision, outputMeta)
+        val renderer: ElementVisionRenderer =
+            findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
+        renderer.render(element, this, name, vision, outputMeta)
     }
 
     private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {
@@ -121,10 +121,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 onmessage = { messageEvent ->
                     val stringData: String? = messageEvent.data as? String
                     if (stringData != null) {
-                        val event: VisionEvent = visionManager.jsonFormat.decodeFromString(
-                            VisionEvent.serializer(),
-                            stringData
-                        )
+                        val event: VisionEvent = visionManager.jsonFormat.decodeFromString(stringData)
 
                         // If change contains root vision replacement, do it
                         if (event is VisionChange) {
@@ -134,7 +131,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                         }
 
                         logger.debug { "Got $event for output with name $visionName" }
-                        vision.receiveEvent(event)
+                        context.launch {
+                            vision.receiveEvent(event)
+                        }
                     } else {
                         logger.error { "WebSocket message data is not a string" }
                     }
@@ -151,7 +150,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                     feedbackJob = visionManager.context.launch {
                         //launch a separate coroutine to send events to the backend
                         eventCollector.filter { it.first == visionName }.onEach {
-                            send(visionManager.jsonFormat.encodeToString(VisionEvent.serializer(), it.second))
+                            send(visionManager.jsonFormat.encodeToString(it.second))
                         }.launchIn(this)
 
                         //aggregate atomic changes
@@ -261,7 +260,8 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             numberVisionRenderer,
             textVisionRenderer,
             rangeVisionRenderer,
-            formVisionRenderer
+            formVisionRenderer,
+            buttonVisionRenderer
         ).associateByName()
     } else super<AbstractPlugin>.content(target)
 

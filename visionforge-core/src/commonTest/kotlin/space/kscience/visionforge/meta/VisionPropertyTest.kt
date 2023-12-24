@@ -40,7 +40,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyEdit() {
         val vision = manager.group()
-        vision.properties.get("fff.ddd").apply {
+        vision.properties["fff.ddd"].apply {
             value = 2.asValue()
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)
@@ -50,7 +50,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyUpdate() {
         val vision = manager.group()
-        vision.properties.get("fff").updateWith(TestScheme) {
+        vision.properties["fff"].updateWith(TestScheme) {
             ddd = 2
         }
         assertEquals(2, vision.properties.getValue("fff.ddd")?.int)

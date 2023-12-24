@@ -1,6 +1,5 @@
 public final class ru/mipt/npm/muon/monitor/Event {
 	public static final field Companion Lru/mipt/npm/muon/monitor/Event$Companion;
-	public synthetic fun <init> (IILjava/util/List;Ljava/util/Collection;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (ILjava/util/List;Ljava/util/Collection;)V
 	public final fun component1 ()I
 	public final fun component2 ()Ljava/util/List;
@@ -13,12 +12,10 @@ public final class ru/mipt/npm/muon/monitor/Event {
 	public final fun getTrack ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-	public static final fun write$Self (Lru/mipt/npm/muon/monitor/Event;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/muon/monitor/Event$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/muon/monitor/Event$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/muon/monitor/Event;
@@ -40,7 +37,6 @@ public final class ru/mipt/npm/muon/monitor/Model {
 	public final fun getRoot ()Lspace/kscience/visionforge/solid/SolidGroup;
 	public final fun getTracks ()Lspace/kscience/visionforge/solid/SolidGroup;
 	public final fun reset ()V
-	public final fun setTracks (Lspace/kscience/visionforge/solid/SolidGroup;)V
 }
 
 public final class ru/mipt/npm/muon/monitor/Monitor {
@@ -61,9 +57,9 @@ public final class ru/mipt/npm/muon/monitor/ReadResourceKt {
 }
 
 public final class ru/mipt/npm/muon/monitor/SC1 {
-	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;FFF)V
-	public synthetic fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getCenter ()Lspace/kscience/visionforge/solid/Point3D;
+	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;FFF)V
+	public synthetic fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCenter ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getXSize ()F
 	public final fun getYSize ()F
@@ -71,8 +67,8 @@ public final class ru/mipt/npm/muon/monitor/SC1 {
 }
 
 public final class ru/mipt/npm/muon/monitor/SC16 {
-	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Point3D;)V
-	public final fun getCenter ()Lspace/kscience/visionforge/solid/Point3D;
+	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public final fun getCenter ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getPixels ()Ljava/util/Collection;
 }
@@ -80,8 +76,8 @@ public final class ru/mipt/npm/muon/monitor/SC16 {
 public final class ru/mipt/npm/muon/monitor/server/MMServerKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V
-	public static final fun module (Lio/ktor/application/Application;Lspace/kscience/dataforge/context/Context;)V
-	public static synthetic fun module$default (Lio/ktor/application/Application;Lspace/kscience/dataforge/context/Context;ILjava/lang/Object;)V
+	public static final fun module (Lio/ktor/server/application/Application;Lspace/kscience/dataforge/context/Context;)V
+	public static synthetic fun module$default (Lio/ktor/server/application/Application;Lspace/kscience/dataforge/context/Context;ILjava/lang/Object;)V
 }
 
 public final class ru/mipt/npm/muon/monitor/sim/Cos2TrackGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
@@ -112,8 +108,8 @@ public final class ru/mipt/npm/muon/monitor/sim/LineKt {
 	public static final fun getY (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)D
 	public static final fun makeTrack (DDDD)Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
 	public static final fun makeTrack (Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;)Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
-	public static final fun toPoint (Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun toPoints (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)Ljava/util/List;
+	public static final fun toKMathVector (Lorg/apache/commons/math3/geometry/euclidean/threed/Vector3D;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public static final fun toKMathVectors (Lorg/apache/commons/math3/geometry/euclidean/threed/Line;)Ljava/util/List;
 }
 
 public final class ru/mipt/npm/muon/monitor/sim/MonitorKt {

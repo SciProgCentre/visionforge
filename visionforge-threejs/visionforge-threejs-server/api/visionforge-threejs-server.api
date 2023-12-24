@@ -1,6 +1,6 @@
 public final class space/kscience/visionforge/three/ServerExtensionsKt {
-	public static final fun getThreeJsHeader (Lspace/kscience/visionforge/html/Page$Companion;)Lkotlin/jvm/functions/Function1;
-	public static final fun makeThreeJsFile (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLkotlin/jvm/functions/Function1;)V
-	public static synthetic fun makeThreeJsFile$default (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun getThreeJsHeader (Lspace/kscience/visionforge/html/VisionPage$Companion;)Lspace/kscience/visionforge/html/HtmlFragment;
+	public static final fun makeThreeJsFile (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLspace/kscience/visionforge/html/HtmlVisionFragment;)V
+	public static synthetic fun makeThreeJsFile$default (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
 }
 

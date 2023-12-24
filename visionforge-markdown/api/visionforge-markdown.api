@@ -3,23 +3,36 @@ public final class space/kscience/visionforge/markup/MarkdownKt {
 	public static synthetic fun markdown$default (Lkotlinx/html/TagConsumer;Lorg/intellij/markdown/flavours/MarkdownFlavourDescriptor;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
-public final class space/kscience/visionforge/markup/VisionOfMarkup : space/kscience/visionforge/VisionBase {
+public final class space/kscience/visionforge/markup/MarkupPlugin : space/kscience/visionforge/VisionPlugin {
+	public static final field Companion Lspace/kscience/visionforge/markup/MarkupPlugin$Companion;
+	public fun <init> ()V
+	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
+}
+
+public final class space/kscience/visionforge/markup/MarkupPlugin$Companion : space/kscience/dataforge/context/PluginFactory {
+	public synthetic fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Ljava/lang/Object;
+	public fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Lspace/kscience/visionforge/markup/MarkupPlugin;
+	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
+}
+
+public final class space/kscience/visionforge/markup/MarkupPluginKt {
+	public static final fun content (Lspace/kscience/visionforge/markup/VisionOfMarkup;Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/markup/VisionOfMarkup : space/kscience/visionforge/AbstractVision {
 	public static final field COMMONMARK_FORMAT Ljava/lang/String;
 	public static final field Companion Lspace/kscience/visionforge/markup/VisionOfMarkup$Companion;
 	public static final field GFM_FORMAT Ljava/lang/String;
 	public fun <init> ()V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getContent ()Ljava/lang/String;
 	public final fun getFormat ()Ljava/lang/String;
 	public final fun setContent (Ljava/lang/String;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/markup/VisionOfMarkup;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/markup/VisionOfMarkup$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/markup/VisionOfMarkup$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/markup/VisionOfMarkup;
@@ -36,5 +49,7 @@ public final class space/kscience/visionforge/markup/VisionOfMarkup$Companion {
 
 public final class space/kscience/visionforge/markup/VisionOfMarkupKt {
 	public static final fun content (Lspace/kscience/visionforge/markup/VisionOfMarkup;Lkotlin/jvm/functions/Function0;)V
+	public static final fun markdown (Lspace/kscience/visionforge/html/VisionOutput;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/markup/VisionOfMarkup;
+	public static synthetic fun markdown$default (Lspace/kscience/visionforge/html/VisionOutput;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/markup/VisionOfMarkup;
 }
 

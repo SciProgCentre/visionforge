@@ -265,14 +265,14 @@ public abstract class AbstractVisionProperties(
 
 public fun VisionProperties.getValue(
     name: String,
-    inherit: Boolean? = null,
+    inherit: Boolean,
     includeStyles: Boolean? = null,
 ): Value? = getValue(name.parseAsName(), inherit, includeStyles)
 
 /**
  * Get [Vision] property using key as a String
  */
-public fun VisionProperties.get(
+public operator fun VisionProperties.get(
     name: String,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
@@ -292,7 +292,7 @@ public fun MutableVisionProperties.root(
 /**
  * Get [Vision] property using key as a String
  */
-public fun MutableVisionProperties.get(
+public operator fun MutableVisionProperties.get(
     name: String,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,

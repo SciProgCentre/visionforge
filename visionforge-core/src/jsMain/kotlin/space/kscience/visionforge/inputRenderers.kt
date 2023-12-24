@@ -1,18 +1,14 @@
 package space.kscience.visionforge
 
-import kotlinx.browser.document
+import kotlinx.dom.clear
 import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.js.input
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.events.Event
-import org.w3c.dom.get
-import org.w3c.xhr.FormData
-import space.kscience.dataforge.context.debug
-import space.kscience.dataforge.context.logger
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.asValue
+import space.kscience.dataforge.meta.double
+import space.kscience.dataforge.meta.string
 import space.kscience.visionforge.html.*
 
 /**
@@ -20,12 +16,11 @@ import space.kscience.visionforge.html.*
  *
  * @param vision The vision to subscribe to.
  */
-private fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
+internal fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
     vision.useProperty(VisionOfHtml::classes) {
         classList.value = classes.joinToString(separator = " ")
     }
 }
-
 
 /**
  * Subscribes the HTML input element to a given vision.
@@ -40,55 +35,52 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
 }
 
 internal val htmlVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
-        div {}.also { div ->
+    ElementVisionRenderer<VisionOfPlainHtml> { _, _, vision, _ ->
+        div().also { div ->
             div.subscribeToVision(vision)
             vision.useProperty(VisionOfPlainHtml::content) {
-                div.textContent = it
+                div.clear()
+                if (it != null) div.innerHTML = it
             }
         }
     }
 
-internal val inputVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlInput>(acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1) { _, vision, _ ->
-        input {
-            type = InputType.text
-        }.also { htmlInputElement ->
-            val onEvent: (Event) -> Unit = {
-                vision.value = htmlInputElement.value.asValue()
-            }
+internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlInput>(
+    acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1
+) { name, client, vision, _ ->
+    input {
+        type = InputType.text
+    }.also { htmlInputElement ->
 
+        htmlInputElement.onchange = {
+            client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
+        }
 
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
+        htmlInputElement.oninput = {
+            client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
+        }
 
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
-            }
-
-            htmlInputElement.subscribeToInput(vision)
-            vision.useProperty(VisionOfHtmlInput::value) {
-                htmlInputElement.value = it?.string ?: ""
-            }
+        htmlInputElement.subscribeToInput(vision)
+        vision.useProperty(VisionOfHtmlInput::value) {
+            htmlInputElement.value = it?.string ?: ""
         }
     }
+}
 
 internal val checkboxVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfCheckbox> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfCheckbox> { name, client, vision, _ ->
         input {
             type = InputType.checkBox
         }.also { htmlInputElement ->
-            val onEvent: (Event) -> Unit = {
-                vision.checked = htmlInputElement.checked
+
+            htmlInputElement.onchange = {
+                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
-
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
+
 
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfCheckbox::checked) {
@@ -98,20 +90,17 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
     }
 
 internal val textVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfTextField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfTextField> { name, client, vision, _ ->
         input {
             type = InputType.text
         }.also { htmlInputElement ->
-            val onEvent: (Event) -> Unit = {
-                vision.text = htmlInputElement.value
+
+            htmlInputElement.onchange = {
+                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
-
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
 
             htmlInputElement.subscribeToInput(vision)
@@ -122,21 +111,24 @@ internal val textVisionRenderer: ElementVisionRenderer =
     }
 
 internal val numberVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfNumberField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfNumberField> { name, client, vision, _ ->
         input {
-            type = InputType.text
+            type = InputType.number
         }.also { htmlInputElement ->
 
-            val onEvent: (Event) -> Unit = {
-                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
+            htmlInputElement.onchange = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
+                }
             }
 
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                }
             }
+
+
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfNumberField::value) {
                 htmlInputElement.valueAsNumber = it?.double ?: 0.0
@@ -145,77 +137,29 @@ internal val numberVisionRenderer: ElementVisionRenderer =
     }
 
 internal val rangeVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfRangeField> { _, vision, _ ->
+    ElementVisionRenderer<VisionOfRangeField> { name, client, vision, _ ->
         input {
-            type = InputType.text
+            type = InputType.range
             min = vision.min.toString()
             max = vision.max.toString()
             step = vision.step.toString()
         }.also { htmlInputElement ->
 
-            val onEvent: (Event) -> Unit = {
-                htmlInputElement.value.toDoubleOrNull()?.let { vision.number = it }
+            htmlInputElement.onchange = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
+                }
             }
 
-            when (vision.feedbackMode) {
-                InputFeedbackMode.ONCHANGE -> htmlInputElement.onchange = onEvent
-
-                InputFeedbackMode.ONINPUT -> htmlInputElement.oninput = onEvent
-                InputFeedbackMode.NONE -> {}
+            htmlInputElement.oninput = {
+                htmlInputElement.value.toDoubleOrNull()?.let {
+                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                }
             }
+
             htmlInputElement.subscribeToInput(vision)
             vision.useProperty(VisionOfRangeField::value) {
                 htmlInputElement.valueAsNumber = it?.double ?: 0.0
             }
-        }
-    }
-
-internal fun FormData.toMeta(): Meta {
-    @Suppress("UNUSED_VARIABLE") val formData = this
-    //val res = js("Object.fromEntries(formData);")
-    val `object` = js("{}")
-    //language=JavaScript
-    js(
-        """
-    formData.forEach(function(value, key){
-        // Reflect.has in favor of: object.hasOwnProperty(key)
-        if(!Reflect.has(object, key)){
-            object[key] = value;
-            return;
-        }
-        if(!Array.isArray(object[key])){
-            object[key] = [object[key]];    
-        }
-        object[key].push(value);
-    }); 
-    """
-    )
-    return DynamicMeta(`object`)
-}
-
-internal val formVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlForm> { _, vision, _ ->
-
-        val form = document.getElementById(vision.formId) as? HTMLFormElement
-            ?: error("An element with id = '${vision.formId} is not a form")
-
-        form.subscribeToVision(vision)
-
-        vision.manager?.logger?.debug { "Adding hooks to form with id = '$vision.formId'" }
-
-        vision.useProperty(VisionOfHtmlForm::values) { values ->
-            vision.manager?.logger?.debug { "Updating form '${vision.formId}' with values $values" }
-            val inputs = form.getElementsByTagName("input")
-            values?.valueSequence()?.forEach { (token, value) ->
-                (inputs[token.toString()] as? HTMLInputElement)?.value = value.toString()
-            }
-        }
-
-        form.onsubmit = { event ->
-            event.preventDefault()
-            val formData = FormData(form).toMeta()
-            vision.values = formData
-            console.info("Sent: ${formData.toMap()}")
-            false
         }
     }

@@ -34,7 +34,13 @@ public interface ElementVisionRenderer : Named {
      * Display the [vision] inside a given [element] replacing its current content.
      * @param meta additional parameters for rendering container
      */
-    public fun render(element: Element, name: Name, vision: Vision, meta: Meta = Meta.EMPTY)
+    public fun render(
+        element: Element,
+        client: VisionClient,
+        name: Name,
+        vision: Vision,
+        meta: Meta = Meta.EMPTY,
+    )
 
     public companion object {
         public const val TYPE: String = "elementVisionRenderer"
@@ -49,7 +55,7 @@ public interface ElementVisionRenderer : Named {
 public class SingleTypeVisionRenderer<T : Vision>(
     public val kClass: KClass<T>,
     private val acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,
-    private val renderFunction: TagConsumer<HTMLElement>.(name: Name, vision: T, meta: Meta) -> Unit,
+    private val renderFunction: TagConsumer<HTMLElement>.(name: Name, client: VisionClient, vision: T, meta: Meta) -> Unit,
 ) : ElementVisionRenderer {
 
     @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
@@ -60,15 +66,21 @@ public class SingleTypeVisionRenderer<T : Vision>(
     override fun rateVision(vision: Vision): Int =
         if (vision::class == kClass) acceptRating else ElementVisionRenderer.ZERO_RATING
 
-    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
+    override fun render(
+        element: Element,
+        client: VisionClient,
+        name: Name,
+        vision: Vision,
+        meta: Meta,
+    ) {
         element.clear()
         element.append {
-            renderFunction(name, kClass.cast(vision), meta)
+            renderFunction(name, client, kClass.cast(vision), meta)
         }
     }
 }
 
 public inline fun <reified T : Vision> ElementVisionRenderer(
     acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,
-    noinline renderFunction: TagConsumer<HTMLElement>.(name: Name, vision: T, meta: Meta) -> Unit,
+    noinline renderFunction: TagConsumer<HTMLElement>.(name: Name, client: VisionClient, vision: T, meta: Meta) -> Unit,
 ): ElementVisionRenderer = SingleTypeVisionRenderer(T::class, acceptRating, renderFunction)

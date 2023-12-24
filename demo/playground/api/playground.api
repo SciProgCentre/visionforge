@@ -3,6 +3,31 @@ public final class space/kscience/visionforge/examples/AllThingsDemoKt {
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
+public final class space/kscience/visionforge/examples/AntennaKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/examples/AxesKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/examples/BmnDemoKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/examples/ControlVisionKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
+public final class space/kscience/visionforge/examples/ExtrudedKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
 public final class space/kscience/visionforge/examples/FormServerKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V
@@ -38,17 +63,24 @@ public final class space/kscience/visionforge/examples/RandomSpheresKt {
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
-public final class space/kscience/visionforge/examples/RootParserKt {
+public final class space/kscience/visionforge/examples/ServerExtensionsKt {
+	public static final fun makeVisionFile (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLspace/kscience/visionforge/html/HtmlVisionFragment;)V
+	public static synthetic fun makeVisionFile$default (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
+	public static final fun serve (Ljava/lang/String;ZLspace/kscience/visionforge/html/HtmlVisionFragment;)V
+	public static synthetic fun serve$default (Ljava/lang/String;ZLspace/kscience/visionforge/html/HtmlVisionFragment;ILjava/lang/Object;)V
+}
+
+public final class space/kscience/visionforge/examples/ShapesKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
-public final class space/kscience/visionforge/examples/ServerExtensionsKt {
-	public static final fun makeVisionFile (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLkotlin/jvm/functions/Function1;)V
-	public static synthetic fun makeVisionFile$default (Ljava/nio/file/Path;Ljava/lang/String;Lspace/kscience/visionforge/html/ResourceLocation;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+public final class space/kscience/visionforge/examples/SimpleCubeKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
-public final class space/kscience/visionforge/examples/SimpleCubeKt {
+public final class space/kscience/visionforge/examples/SurfaceKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V
 }

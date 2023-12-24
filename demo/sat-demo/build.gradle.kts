@@ -1,5 +1,6 @@
 plugins {
-    id("space.kscience.gradle.jvm")
+    id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.ktor)
     application
 }
 
@@ -8,8 +9,8 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
-    useKtor()
-    dependencies{
+    jvm()
+    jvmMain{
         implementation("io.ktor:ktor-server-cio")
         implementation(projects.visionforgeThreejs.visionforgeThreejsServer)
         implementation(spclibs.logback.classic)
