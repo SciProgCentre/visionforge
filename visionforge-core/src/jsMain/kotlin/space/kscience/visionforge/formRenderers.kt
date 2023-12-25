@@ -15,8 +15,10 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.html.VisionOfHtmlButton
 import space.kscience.visionforge.html.VisionOfHtmlForm
 
-
-internal fun FormData.toMeta(): Meta {
+/**
+ * Convert form data to Meta
+ */
+public fun FormData.toMeta(): Meta {
     @Suppress("UNUSED_VARIABLE") val formData = this
     //val res = js("Object.fromEntries(formData);")
     val `object` = js("{}")
@@ -67,8 +69,10 @@ internal val formVisionRenderer: ElementVisionRenderer =
         form.onsubmit = { event ->
             event.preventDefault()
             val formData = FormData(form).toMeta()
-            client.sendMetaEvent(name, formData)
-            console.info("Sent: ${formData.toMap()}")
+            client.context.launch {
+                client.sendEvent(name, VisionClickEvent(name = name, payload = formData))
+            }
+            console.info("Sent form data: ${formData.toMap()}")
             false
         }
     }

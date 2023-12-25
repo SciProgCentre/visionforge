@@ -12,7 +12,9 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
-    jvm()
+    jvm{
+        withJava()
+    }
     jvmMain{
         implementation("io.ktor:ktor-server-cio")
         implementation(projects.visionforgeThreejs.visionforgeThreejsServer)

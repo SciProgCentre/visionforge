@@ -39,7 +39,8 @@ public interface ControlVision : Vision {
 @Serializable
 @SerialName("control.click")
 public class VisionClickEvent(override val meta: Meta) : VisionControlEvent() {
-    public val payload: Meta? by meta.node()
+    public val payload: Meta get() = meta[::payload.name] ?: Meta.EMPTY
+
     public val name: Name? get() = meta["name"].string?.parseAsName()
 
     override fun toString(): String = meta.toString()

@@ -17,6 +17,9 @@ import kotlin.collections.set
 import kotlin.reflect.KClass
 import three.objects.Group as ThreeGroup
 
+/**
+ * A plugin that handles Three Object3D representation of Visions.
+ */
 public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
@@ -49,6 +52,13 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                 as ThreeFactory<Solid>?
     }
 
+    /**
+     * Build an Object3D representation of the given [Solid].
+     *
+     * @param vision [Solid] object to build a representation of;
+     * @param observe whether the constructed Object3D should be changed when the
+     *  original [Vision] changes.
+     */
     public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
         is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
@@ -124,6 +134,25 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         }
     }
 
+    private val canvasCache = HashMap<Element, ThreeCanvas>()
+
+    /**
+     * Return a [ThreeCanvas] object attached to the given [Element].
+     * If there is no canvas bound, a new canvas object is created
+     * and returned.
+     *
+     * @param element HTML element to which the canvas is
+     *  (or should be if it is created by this call) attached;
+     * @param options canvas options that are applied to a newly
+     *  created [ThreeCanvas] in case it does not exist.
+     */
+    public fun getOrCreateCanvas(
+        element: Element,
+        options: Canvas3DOptions,
+    ): ThreeCanvas = canvasCache.getOrPut(element) {
+        ThreeCanvas(this, element, options)
+    }
+
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
             ElementVisionRenderer.TYPE -> mapOf("three".asName() to this)
@@ -133,6 +162,27 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
+
+    /**
+     * Render the given [Solid] Vision in a [ThreeCanvas] attached
+     * to the [element]. Canvas objects are cached, so subsequent calls
+     * with the same [element] value do not create new canvas objects,
+     * but they replace existing content, so multiple Visions cannot be
+     * displayed in a single [ThreeCanvas].
+     *
+     * @param element HTML element [ThreeCanvas] should be
+     *  attached to;
+     *  @param vision Vision to render;
+     *  @param options options that are applied to a canvas
+     *    in case it is not in the cache and should be created.
+     */
+    internal fun renderSolid(
+        element: Element,
+        vision: Solid,
+        options: Canvas3DOptions,
+    ): ThreeCanvas = getOrCreateCanvas(element, options).apply {
+        render(vision)
+    }
 
     override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
         require(vision is Solid) { "Expected Solid but found ${vision::class}" }
@@ -146,6 +196,27 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
         override fun build(context: Context, meta: Meta): ThreePlugin = ThreePlugin()
     }
+}
+
+/**
+ * Render the given [Solid] Vision in a [ThreeCanvas] attached
+ * to the [element]. Canvas objects are cached, so subsequent calls
+ * with the same [element] value do not create new canvas objects,
+ * but they replace existing content, so multiple Visions cannot be
+ * displayed in a single [ThreeCanvas].
+ *
+ * @param element HTML element [ThreeCanvas] should be
+ *  attached to;
+ *  @param obj Vision to render;
+ *  @param optionsBuilder option builder that is applied to a canvas
+ *    in case it is not in the cache and should be created.
+ */
+public fun ThreePlugin.render(
+    element: HTMLElement,
+    obj: Solid,
+    optionsBuilder: Canvas3DOptions.() -> Unit = {},
+): ThreeCanvas = renderSolid(element, obj, Canvas3DOptions(optionsBuilder)).apply {
+    options.apply(optionsBuilder)
 }
 
 internal operator fun Object3D.set(token: NameToken, object3D: Object3D) {
