@@ -14,7 +14,6 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
-import space.kscience.visionforge.Vision
 import space.kscience.visionforge.compose.*
 import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.Solid
@@ -81,15 +80,6 @@ public fun ThreeView(
         }
     }
 
-    val selectedVision: Vision? by derivedStateOf {
-        selected?.let {
-            when {
-                it.isEmpty() -> solid
-                else -> (solid as? SolidGroup)?.get(it)
-            }
-        }
-    }
-
     if (optionsSnapshot.controls.enabled) {
 
         Row(
@@ -147,47 +137,57 @@ public fun ThreeView(
                     SimpleThreeView(solids.context, optionsSnapshot, solid, selected)
                 }
 
-                selectedVision?.let { vision ->
-                    Card(
-                        attrs = {
-                            style {
-                                position(Position.Absolute)
-                                top(5.px)
-                                right(5.px)
-                                width(450.px)
-                            }
-                        },
-                        headerAttrs = {
-                            // border = true
-                        },
-                        header = {
-                            NameCrumbs(selected) { selected = it }
-                        },
-                        footer = {
-                            vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
-                                P {
-                                    B { Text("Styles: ") }
-                                    Text(styles.joinToString(separator = ", "))
-                                }
-                            }
+                key(selected) {
+                    selected?.let {
+                        when {
+                            it.isEmpty() -> solid
+                            else -> (solid as? SolidGroup)?.get(it)
                         }
-                    ) {
-                        PropertyEditor(
-                            scope = solids.context,
-                            meta = vision.properties.root(),
-                            getPropertyState = { name ->
-                                if (vision.properties.own?.get(name) != null) {
-                                    EditorPropertyState.Defined
-                                } else if (vision.properties.root()[name] != null) {
-                                    // TODO differentiate
-                                    EditorPropertyState.Default()
-                                } else {
-                                    EditorPropertyState.Undefined
+                    }?.let { vision ->
+                        Card(
+                            attrs = {
+                                style {
+                                    position(Position.Absolute)
+                                    top(5.px)
+                                    right(5.px)
+                                    width(450.px)
+                                    overflowY("auto")
                                 }
                             },
-                            updates = vision.properties.changes,
-                            rootDescriptor = vision.descriptor
-                        )
+                            headerAttrs = {
+                                style {
+                                    alignItems(AlignItems.Center)
+                                }
+                            },
+                            header = {
+                                NameCrumbs(selected) { selected = it }
+                            },
+                            footer = {
+                                vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
+                                    P {
+                                        B { Text("Styles: ") }
+                                        Text(styles.joinToString(separator = ", "))
+                                    }
+                                }
+                            }
+                        ) {
+                            PropertyEditor(
+                                scope = solids.context,
+                                rootMeta = vision.properties.root(),
+                                getPropertyState = { name ->
+                                    if (vision.properties.own?.get(name) != null) {
+                                        EditorPropertyState.Defined
+                                    } else if (vision.properties.root()[name] != null) {
+                                        // TODO differentiate
+                                        EditorPropertyState.Default()
+                                    } else {
+                                        EditorPropertyState.Undefined
+                                    }
+                                },
+                                updates = vision.properties.changes,
+                                rootDescriptor = vision.descriptor
+                            )
+                        }
                     }
                 }
             }
@@ -204,7 +204,6 @@ public fun ThreeView(
                         paddingAll(4.px)
                         minWidth(400.px)
                         height(100.percent)
-                        overflowY("auto")
                     }
                 }
             ) {

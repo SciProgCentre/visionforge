@@ -4,14 +4,10 @@ package space.kscience.visionforge.compose
 
 import androidx.compose.runtime.*
 import org.jetbrains.compose.web.attributes.*
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Option
 import org.jetbrains.compose.web.dom.Select
 import org.jetbrains.compose.web.dom.Text
-import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.asList
 import space.kscience.dataforge.meta.*
@@ -29,20 +25,16 @@ public fun StringValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var stringValue by remember { mutableStateOf(value?.string ?: "") }
+    var stringValue by remember(value, descriptor) { mutableStateOf(value?.string ?: "") }
     Input(type = InputType.Text) {
-        style {
-            width(100.percent)
-        }
+        classes("w-100")
         value(stringValue)
-        onKeyDown { event ->
-            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-                stringValue = (event.target as HTMLInputElement).value
-                onValueChange(stringValue.asValue())
-            }
+        onChange { event ->
+            stringValue = event.value
         }
-        onChange {
-            stringValue = it.target.value
+        onInput { event ->
+            stringValue = event.value
+            onValueChange(event.value.asValue())
         }
     }
 }
@@ -55,16 +47,18 @@ public fun BooleanValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
+    var innerValue by remember(value, descriptor) {
+        mutableStateOf(
+            value?.boolean ?: descriptor?.defaultValue?.boolean
+        )
+    }
     Input(type = InputType.Checkbox) {
-        style {
-            width(100.percent)
-        }
-        //this.attributes["indeterminate"] = (props.item == null).toString()
-        checked(value?.boolean ?: false)
+        classes("w-100")
+        checked(innerValue ?: false)
 
-        onChange {
-            val newValue = it.target.checked
-            onValueChange(newValue.asValue())
+        onInput { event ->
+            innerValue = event.value
+            onValueChange(event.value.asValue())
         }
     }
 }
@@ -76,25 +70,18 @@ public fun NumberValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var innerValue by remember { mutableStateOf(value?.string ?: "") }
+    var innerValue by remember(value, descriptor) { mutableStateOf(value?.number) }
     Input(type = InputType.Number) {
-        style {
-            width(100.percent)
+        classes("w-100")
+
+        value(innerValue ?: descriptor?.defaultValue?.number ?: 0.0)
+
+        onChange { event ->
+            innerValue = event.value
         }
-        value(innerValue)
-        onKeyDown { event ->
-            if (event.type == "keydown" && event.asDynamic().key == "Enter") {
-                innerValue = (event.target as HTMLInputElement).value
-                val number = innerValue.toDoubleOrNull()
-                if (number == null) {
-                    console.error("The input value $innerValue is not a number")
-                } else {
-                    onValueChange(number.asValue())
-                }
-            }
-        }
-        onChange {
-            innerValue = it.target.value
+        onInput { event ->
+            innerValue = event.value
+            onValueChange(event.value?.asValue())
         }
         descriptor?.attributes?.get("step").number?.let {
             step(it)
@@ -116,11 +103,10 @@ public fun ComboValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var selected by remember { mutableStateOf(value?.string ?: "") }
+    var selected by remember(value, descriptor) { mutableStateOf(value?.string ?: "") }
     Select({
-        style {
-            width(100.percent)
-        }
+        classes("w-100")
+
         onChange {
             selected = it.target.value
             onValueChange(selected.asValue())
@@ -142,11 +128,11 @@ public fun ColorValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
+    var innerValue by remember { mutableStateOf<String?>(value?.string ?: descriptor?.defaultValue?.string) }
+
     Input(type = InputType.Color) {
-        style {
-            width(100.percent)
-            marginAll(0.px)
-        }
+        classes("w-100")
+
         value(
             value?.let { value ->
                 if (value.type == ValueType.NUMBER) Colors.rgbToString(value.int)
@@ -154,8 +140,12 @@ public fun ColorValueChooser(
                 //else "#" + Color(value.string).getHexString()
             } ?: "#000000"
         )
-        onChange {
-            onValueChange(it.target.value.asValue())
+        onChange { event ->
+            innerValue = event.value
+        }
+        onInput { event ->
+            innerValue = event.value
+            onValueChange(event.value.asValue())
         }
     }
 }
@@ -194,7 +184,7 @@ public fun RangeValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var innerValue by remember { mutableStateOf(value?.double) }
+    var innerValue by remember(value, descriptor) { mutableStateOf(value?.double) }
     var rangeDisabled: Boolean by remember { mutableStateOf(state != EditorPropertyState.Defined) }
 
 
@@ -219,9 +209,8 @@ public fun RangeValueChooser(
     }
 
     Input(type = InputType.Range) {
-        style {
-            width(100.percent)
-        }
+        classes("w-100")
+
         if (rangeDisabled) disabled()
         value(innerValue?.toString() ?: "")
         onChange {

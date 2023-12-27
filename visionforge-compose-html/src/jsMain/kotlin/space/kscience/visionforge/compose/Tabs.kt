@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import app.softwork.bootstrapcompose.Card
 import app.softwork.bootstrapcompose.NavbarLink
 import app.softwork.bootstrapcompose.Styling
+import org.jetbrains.compose.web.css.overflowY
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLAnchorElement
 import org.w3c.dom.HTMLDivElement
@@ -50,6 +51,11 @@ public fun Tabs(
                         }
                     }
                 }
+            }
+        },
+        bodyAttrs = {
+            style {
+                overflowY("auto")
             }
         }
     ) {

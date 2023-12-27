@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.cursor
-import org.jetbrains.compose.web.css.textDecorationLine
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
@@ -15,8 +14,6 @@ import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionGroup
 import space.kscience.visionforge.asSequence
-import space.kscience.visionforge.compose.TreeStyles.hover
-import space.kscience.visionforge.compose.TreeStyles.invoke
 import space.kscience.visionforge.isEmpty
 
 
@@ -35,10 +32,6 @@ private fun TreeLabel(
         style {
             color(Color("#069"))
             cursor("pointer")
-            hover.invoke {
-                textDecorationLine("underline")
-            }
-
         }
         onClick { clickCallback(name) }
     }) {

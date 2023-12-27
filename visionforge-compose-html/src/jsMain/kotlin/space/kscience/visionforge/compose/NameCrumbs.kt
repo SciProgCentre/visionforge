@@ -17,7 +17,7 @@ public fun NameCrumbs(name: Name?, link: (Name) -> Unit): Unit = Nav({
         classes("breadcrumb")
         style {
             property("--bs-breadcrumb-divider", "'.'")
-            property("--bs-breadcrumb-item-padding-x",".2rem")
+            property("--bs-breadcrumb-item-padding-x",".1rem")
         }
     }) {
         Li({

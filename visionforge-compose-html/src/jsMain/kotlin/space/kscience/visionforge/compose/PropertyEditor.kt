@@ -1,16 +1,16 @@
 package space.kscience.visionforge.compose
 
 import androidx.compose.runtime.*
+import app.softwork.bootstrapcompose.CloseButton
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.alignItems
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.width
-import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
@@ -35,13 +35,13 @@ public sealed class EditorPropertyState {
 }
 
 /**
- * @param meta Root config object - always non-null
- * @param rootDescriptor Full path to the displayed node in [meta]. Could be empty
+ * @param rootMeta Root config object - always non-null
+ * @param rootDescriptor Full path to the displayed node in [rootMeta]. Could be empty
  */
 @Composable
 public fun PropertyEditor(
     scope: CoroutineScope,
-    meta: MutableMeta,
+    rootMeta: MutableMeta,
     getPropertyState: (Name) -> EditorPropertyState,
     updates: Flow<Name>,
     name: Name = Name.EMPTY,
@@ -50,11 +50,11 @@ public fun PropertyEditor(
 ) {
     var expanded: Boolean by remember { mutableStateOf(initialExpanded ?: true) }
     val descriptor: MetaDescriptor? = remember(rootDescriptor, name) { rootDescriptor?.get(name) }
-    var property: MutableMeta by remember { mutableStateOf(meta.getOrCreate(name)) }
+    var property: MutableMeta by remember { mutableStateOf(rootMeta.getOrCreate(name)) }
     var editorPropertyState: EditorPropertyState by remember { mutableStateOf(getPropertyState(name)) }
 
 
-    val keys = remember(descriptor) {
+    val keys by derivedStateOf {
         buildSet {
             descriptor?.children?.filterNot {
                 it.key.startsWith("@") || it.value.hidden
@@ -68,11 +68,11 @@ public fun PropertyEditor(
     val token = name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        property = meta.getOrCreate(name)
+        property = rootMeta.getOrCreate(name)
         editorPropertyState = getPropertyState(name)
     }
 
-    LaunchedEffect(meta) {
+    LaunchedEffect(rootMeta) {
         updates.collect { updatedName ->
             if (updatedName == name) {
                 update()
@@ -116,18 +116,9 @@ public fun PropertyEditor(
                 }
             }
 
-            Button({
-                classes(TreeStyles.propertyEditorButton)
-                if (editorPropertyState != EditorPropertyState.Defined) {
-                    disabled()
-                } else {
-                    onClick {
-                        meta.remove(name)
-                        update()
-                    }
-                }
-            }) {
-                Text("\u00D7")
+            CloseButton(editorPropertyState != EditorPropertyState.Defined){
+                rootMeta.remove(name)
+                update()
             }
         }
     }
@@ -139,7 +130,7 @@ public fun PropertyEditor(
                 Div({
                     classes(TreeStyles.treeItem)
                 }) {
-                    PropertyEditor(scope, meta, getPropertyState, updates, name + token, descriptor, expanded)
+                    PropertyEditor(scope, rootMeta, getPropertyState, updates, name + token, rootDescriptor, expanded)
                 }
             }
         }
@@ -155,7 +146,7 @@ public fun PropertyEditor(
 ) {
     PropertyEditor(
         scope = scope,
-        meta = properties,
+        rootMeta = properties,
         getPropertyState = { name ->
             if (properties[name] != null) {
                 EditorPropertyState.Defined
@@ -172,9 +163,7 @@ public fun PropertyEditor(
                 }
             }
 
-            invokeOnClose {
-                properties.removeListener(scope)
-            }
+            awaitClose {  properties.removeListener(scope) }
         },
         name = Name.EMPTY,
         rootDescriptor = descriptor,
