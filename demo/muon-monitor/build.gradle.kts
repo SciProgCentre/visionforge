@@ -1,5 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.compose)
     application
 }
 
@@ -14,11 +15,22 @@ kscience {
     fullStack(
         "muon-monitor.js",
         jvmConfig = { withJava() },
-        jsConfig = { useCommonJs() }
+//        jsConfig = { useCommonJs() },
+        browserConfig = {
+            webpackTask{
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport{
+                    enabled = true
+                }
+            }
+        }
     )
 
     commonMain {
         implementation(projects.visionforgeSolid)
+        implementation(projects.visionforgeComposeHtml)
     }
     jvmMain {
         implementation("org.apache.commons:commons-math3:3.6.1")

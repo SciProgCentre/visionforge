@@ -5,7 +5,7 @@ import org.jetbrains.compose.web.css.*
 
 
 @OptIn(ExperimentalComposeWebApi::class)
-public object TreeStyles : StyleSheet() {
+public object TreeStyles : StyleSheet(VisionForgeStyles) {
     /**
      * Remove default bullets
      */
@@ -46,13 +46,11 @@ public object TreeStyles : StyleSheet() {
     public val treeItem: String by style {
         alignItems(AlignItems.Center)
         paddingLeft(10.px)
-        border {
-            left {
-                width(1.px)
-                color(Color.lightgray)
-                style = LineStyle.Dashed
-            }
-        }
+        property("border-left", CSSBorder().apply{
+            width(1.px)
+            color(Color.lightgray)
+            style = LineStyle.Dashed
+        })
     }
 
     public val treeLabel: String by style {
@@ -75,7 +73,7 @@ public object TreeStyles : StyleSheet() {
         alignSelf(AlignSelf.Stretch)
         marginAll(1.px, 5.px)
         backgroundColor(Color.white)
-        border{
+        border {
             style(LineStyle.Solid)
         }
         borderRadius(2.px)
@@ -84,7 +82,7 @@ public object TreeStyles : StyleSheet() {
         cursor("pointer")
         disabled {
             cursor("auto")
-            border{
+            border {
                 style(LineStyle.Dashed)
             }
             color(Color.lightgray)

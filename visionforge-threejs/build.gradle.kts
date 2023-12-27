@@ -14,7 +14,7 @@ kscience {
 
     commonMain {
         api(projects.visionforgeSolid)
-        api(projects.visionforgeCompose)
+        api(projects.visionforgeComposeHtml)
     }
 
     jsMain {

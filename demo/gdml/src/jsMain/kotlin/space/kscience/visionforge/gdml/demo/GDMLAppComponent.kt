@@ -69,8 +69,8 @@ fun GDMLApp(solids: Solids, initialVision: Solid?, selected: Name? = null) {
                 H2 {
                     Text("Drag and drop .gdml or .json VisionForge files here")
                 }
-                fileDrop("(drag file here)") { files ->
-                    val file = files?.get(0)
+                FileDrop("(drag file here)") { files ->
+                    val file = files[0]
                     if (file != null) {
                         readFileAsync(file)
                     }

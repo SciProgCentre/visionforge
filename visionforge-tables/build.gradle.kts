@@ -7,8 +7,14 @@ val tablesVersion = "0.3.0"
 kscience {
     jvm()
     js {
-        useCommonJs()
         binaries.library()
+        browser {
+            webpackTask{
+                scssSupport {
+                    enabled = true
+                }
+            }
+        }
     }
 
     useSerialization()
@@ -17,8 +23,8 @@ kscience {
         api("space.kscience:tables-kt:${tablesVersion}")
     }
     jsMain {
-        implementation(npm("tabulator-tables", "5.5.2"))
-        implementation(npm("@types/tabulator-tables", "5.5.3"))
+        api(npm("tabulator-tables", "5.5.2"))
+        api(npm("@types/tabulator-tables", "5.5.3"))
     }
 }
 

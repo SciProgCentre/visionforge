@@ -2,6 +2,10 @@ package space.kscience.visionforge.solid.three.compose
 
 import androidx.compose.runtime.*
 import app.softwork.bootstrapcompose.Card
+import app.softwork.bootstrapcompose.Column
+import app.softwork.bootstrapcompose.Layout.Height
+import app.softwork.bootstrapcompose.Layout.Width
+import app.softwork.bootstrapcompose.Row
 import kotlinx.dom.clear
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -90,24 +94,27 @@ public fun ThreeView(
 
     if (optionsSnapshot.controls.enabled) {
 
-
-        FlexRow({
-            style {
-                height(100.percent)
-                width(100.percent)
-                flexWrap(FlexWrap.Wrap)
-                alignItems(AlignItems.Stretch)
-                alignContent(AlignContent.Stretch)
-            }
-        }) {
-            FlexColumn({
-                style {
-                    height(100.percent)
-                    minWidth(600.px)
-                    flex(10, 1, 600.px)
-                    position(Position.Relative)
+        Row(
+            styling = {
+                Layout {
+                    width = Width.Full
+                    height = Height.Full
                 }
-            }) {
+            }
+        ) {
+            Column(
+                styling = {
+                    Layout {
+                        height = Height.Full
+                    }
+                },
+                attrs = {
+                    style {
+                        position(Position.Relative)
+                        minWidth(600.px)
+                    }
+                }
+            ) {
                 if (solid == null) {
                     Div({
                         style {
@@ -143,61 +150,68 @@ public fun ThreeView(
                 }
 
                 selectedVision?.let { vision ->
-                    Div({
-                        style {
-                            position(Position.Absolute)
-                            top(5.px)
-                            right(5.px)
-                            width(450.px)
+                    Card(
+                        attrs = {
+                            style {
+                                position(Position.Absolute)
+                                top(5.px)
+                                right(5.px)
+                                width(450.px)
+                            }
+                        },
+                        headerAttrs = {
+                            // border = true
+                        },
+                        header = {
+                            NameCrumbs(selected) { selected = it }
+                        },
+                        footer = {
+                            vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
+                                P {
+                                    B { Text("Styles: ") }
+                                    Text(styles.joinToString(separator = ", "))
+                                }
+                            }
                         }
-                    }) {
-                        Card(
-                            headerAttrs = {
-                                // border = true
+                    ) {
+                        PropertyEditor(
+                            scope = solids.context,
+                            meta = vision.properties.root(),
+                            getPropertyState = { name ->
+                                if (vision.properties.own?.get(name) != null) {
+                                    EditorPropertyState.Defined
+                                } else if (vision.properties.root()[name] != null) {
+                                    // TODO differentiate
+                                    EditorPropertyState.Default()
+                                } else {
+                                    EditorPropertyState.Undefined
+                                }
                             },
-                            header = {
-                                NameCrumbs(selected) { selected = it }
-                            }
-                        ) {
-                            PropertyEditor(
-                                scope = solids.context,
-                                meta = vision.properties.root(),
-                                getPropertyState = { name ->
-                                    if (vision.properties.own?.get(name) != null) {
-                                        EditorPropertyState.Defined
-                                    } else if (vision.properties.root()[name] != null) {
-                                        // TODO differentiate
-                                        EditorPropertyState.Default()
-                                    } else {
-                                        EditorPropertyState.Undefined
-                                    }
-                                },
-                                updates = vision.properties.changes,
-                                rootDescriptor = vision.descriptor
-                            )
-
-                        }
-
-                        vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
-                            P {
-                                B { Text("Styles: ") }
-                                Text(styles.joinToString(separator = ", "))
-                            }
-                        }
+                            updates = vision.properties.changes,
+                            rootDescriptor = vision.descriptor
+                        )
                     }
                 }
             }
-        }
-        FlexColumn({
-            style {
-                paddingAll(4.px)
-                minWidth(400.px)
-                height(100.percent)
-                overflowY("auto")
-                flex(1, 10, 300.px)
+
+            Column(
+                auto = true,
+                styling = {
+                    Layout {
+                        height = Height.Full
+                    }
+                },
+                attrs = {
+                    style {
+                        paddingAll(4.px)
+                        minWidth(400.px)
+                        height(100.percent)
+                        overflowY("auto")
+                    }
+                }
+            ) {
+                ThreeControls(solid, optionsSnapshot, selected, onSelect = { selected = it }, tabBuilder = sidebarTabs)
             }
-        }) {
-            ThreeControls(solid, optionsSnapshot, selected, onSelect = { selected = it }, tabBuilder = sidebarTabs)
         }
     } else {
         SimpleThreeView(solids.context, optionsSnapshot, solid, selected)

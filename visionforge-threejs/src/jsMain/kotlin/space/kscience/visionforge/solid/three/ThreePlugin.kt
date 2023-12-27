@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*

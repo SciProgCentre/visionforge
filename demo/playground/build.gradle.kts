@@ -16,6 +16,12 @@ kotlin {
     js(IR) {
         browser {
             webpackTask {
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport{
+                    enabled = true
+                }
                 mainOutputFileName.set("js/visionforge-playground.js")
             }
         }

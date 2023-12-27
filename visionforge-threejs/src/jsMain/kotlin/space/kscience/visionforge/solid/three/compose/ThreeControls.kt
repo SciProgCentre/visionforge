@@ -1,6 +1,9 @@
 package space.kscience.visionforge.solid.three.compose
 
 import androidx.compose.runtime.Composable
+import app.softwork.bootstrapcompose.Column
+import app.softwork.bootstrapcompose.Layout.Height
+import app.softwork.bootstrapcompose.Row
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Text
@@ -18,8 +21,8 @@ internal fun CanvasControls(
     vision: Vision?,
     options: Canvas3DOptions,
 ) {
-    FlexColumn {
-        FlexRow({
+    Column {
+        Row(attrs = {
             style {
                 border {
                     width(1.px)
@@ -64,8 +67,11 @@ public fun ThreeControls(
     onSelect: (Name?) -> Unit,
     tabBuilder: @Composable TabsBuilder.() -> Unit = {},
 ) {
-    Tabs {
-        active = "Tree"
+    Tabs(
+        styling = {
+            Layout.height = Height.Full
+        }
+    ) {
         vision?.let { vision ->
             Tab("Tree") {
                 CardTitle("Vision tree")

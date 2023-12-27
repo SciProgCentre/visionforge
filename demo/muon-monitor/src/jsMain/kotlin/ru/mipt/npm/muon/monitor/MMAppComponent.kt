@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import app.softwork.bootstrapcompose.Button
+import app.softwork.bootstrapcompose.ButtonGroup
+import app.softwork.bootstrapcompose.Container
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
@@ -17,8 +18,6 @@ import org.w3c.fetch.RequestInit
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.compose.FlexColumn
-import space.kscience.visionforge.compose.FlexRow
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.edges
@@ -51,16 +50,21 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
 
     val events = remember { mutableStateListOf<Event>() }
 
-    Div({
-        style {
-            height(100.vh - 12.pt)
+    Container(fluid = true,
+        attrs = {
+            style {
+                height(100.vh - 12.pt)
+            }
         }
-    }) {
-        ThreeView(solids, root, selected, mmOptions) {
-            Tab("Events") {
-
-                FlexColumn {
-                    FlexRow {
+    ) {
+        ThreeView(
+            solids = solids,
+            solid = root,
+            initialSelected = selected,
+            options = mmOptions,
+            sidebarTabs = {
+                Tab("Events") {
+                    ButtonGroup {
                         Button("Next") {
                             solids.context.launch {
                                 val event = window.fetch(
@@ -84,23 +88,24 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
                             model.reset()
                         }
                     }
-                }
-                events.forEach { event ->
-                    P {
-                        Span {
-                            Text(event.id.toString())
-                        }
-                        Text(" : ")
-                        Span({
-                            style {
-                                color(Color.blue)
+
+                    events.forEach { event ->
+                        P {
+                            Span {
+                                Text(event.id.toString())
                             }
-                        }) {
-                            Text(event.hits.toString())
+                            Text(" : ")
+                            Span({
+                                style {
+                                    color(Color.blue)
+                                }
+                            }) {
+                                Text(event.hits.toString())
+                            }
                         }
                     }
                 }
             }
-        }
+        )
     }
 }

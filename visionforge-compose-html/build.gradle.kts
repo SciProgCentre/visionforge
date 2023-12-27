@@ -1,10 +1,9 @@
-
 plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.compose)
 }
 
-kscience{
+kscience {
     jvm()
     js()
 //    wasm()
@@ -13,22 +12,22 @@ kscience{
 kotlin {
 //    android()
     sourceSets {
-        commonMain{
-            dependencies{
+        commonMain {
+            dependencies {
                 api(projects.visionforgeCore)
+                api(compose.runtime)
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
                 api(compose.preview)
             }
         }
 
-        val jsMain by getting{
+        val jsMain by getting {
             dependencies {
                 api(compose.html.core)
                 api("app.softwork:bootstrap-compose:0.1.15")
