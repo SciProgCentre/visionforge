@@ -22,7 +22,7 @@ public object TreeStyles : StyleSheet(VisionForgeStyles) {
         cursor("pointer")
         userSelect(UserSelect.none)
         /* Create the caret/arrow with a unicode, and style it */
-        before {
+        (self + before) {
             content("\u25B6")
             color(Color.black)
             display(DisplayStyle.InlineBlock)
@@ -34,7 +34,7 @@ public object TreeStyles : StyleSheet(VisionForgeStyles) {
      *  Rotate the caret/arrow icon when clicked on (using JavaScript)
      */
     public val treeCaretDown: String by style {
-        before {
+        (self + before) {
             content("\u25B6")
             color(Color.black)
             display(DisplayStyle.InlineBlock)
@@ -80,7 +80,7 @@ public object TreeStyles : StyleSheet(VisionForgeStyles) {
         textAlign("center")
         textDecoration("none")
         cursor("pointer")
-        disabled {
+        (self + disabled)  {
             cursor("auto")
             border {
                 style(LineStyle.Dashed)

@@ -33,8 +33,6 @@ private fun SimpleThreeView(
     selected: Name?,
 ) {
 
-    val three: ThreePlugin by derivedStateOf { context.request(ThreePlugin) }
-
     Div({
         style {
             maxWidth(100.vw)
@@ -43,9 +41,9 @@ private fun SimpleThreeView(
             height(100.percent)
         }
     }) {
-        var canvas: ThreeCanvas? = null
+        var canvas: ThreeCanvas? by remember { mutableStateOf(null) }
         DisposableEffect(options) {
-            canvas = ThreeCanvas(three, scopeElement, options ?: Canvas3DOptions())
+            canvas = ThreeCanvas(context.request(ThreePlugin), scopeElement, options ?: Canvas3DOptions())
             onDispose {
                 scopeElement.clear()
                 canvas = null
@@ -75,7 +73,7 @@ public fun ThreeView(
 ) {
     var selected: Name? by remember { mutableStateOf(initialSelected) }
 
-    val optionsSnapshot = remember(options) {
+    val optionsSnapshot by derivedStateOf {
         (options ?: Canvas3DOptions()).apply {
             this.onSelect = {
                 selected = it
@@ -83,7 +81,7 @@ public fun ThreeView(
         }
     }
 
-    val selectedVision: Vision? = remember(solid, selected) {
+    val selectedVision: Vision? by derivedStateOf {
         selected?.let {
             when {
                 it.isEmpty() -> solid
