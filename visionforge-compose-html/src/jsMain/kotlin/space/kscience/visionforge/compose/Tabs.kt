@@ -69,7 +69,7 @@ public class TabsBuilder {
     @Composable
     public fun Tab(
         key: String,
-        label: ContentBuilder<HTMLAnchorElement> = { Text(key) },
+        label: ContentBuilder<HTMLAnchorElement> = { A("#") { Text(key) } },
         disabled: Boolean = false,
         content: ContentBuilder<HTMLDivElement>,
     ) {

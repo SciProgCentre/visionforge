@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import app.softwork.bootstrapcompose.Button
 import app.softwork.bootstrapcompose.ButtonGroup
+import app.softwork.bootstrapcompose.Color.Secondary
 import app.softwork.bootstrapcompose.Container
+import app.softwork.bootstrapcompose.Layout.Width
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
@@ -64,7 +66,7 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
             options = mmOptions,
             sidebarTabs = {
                 Tab("Events") {
-                    ButtonGroup {
+                    ButtonGroup({ Layout.width = Width.Full }) {
                         Button("Next") {
                             solids.context.launch {
                                 val event = window.fetch(
@@ -83,7 +85,7 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
                                 model.displayEvent(event)
                             }
                         }
-                        Button("Clear") {
+                        Button("Clear", color = Secondary) {
                             events.clear()
                             model.reset()
                         }

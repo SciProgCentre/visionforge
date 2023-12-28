@@ -1,10 +1,7 @@
 package space.kscience.visionforge.compose
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.web.dom.Li
-import org.jetbrains.compose.web.dom.Nav
-import org.jetbrains.compose.web.dom.Ol
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.length
@@ -17,7 +14,7 @@ public fun NameCrumbs(name: Name?, link: (Name) -> Unit): Unit = Nav({
         classes("breadcrumb")
         style {
             property("--bs-breadcrumb-divider", "'.'")
-            property("--bs-breadcrumb-item-padding-x",".1rem")
+            property("--bs-breadcrumb-item-padding-x", ".1rem")
         }
     }) {
         Li({
@@ -26,7 +23,9 @@ public fun NameCrumbs(name: Name?, link: (Name) -> Unit): Unit = Nav({
                 link(Name.EMPTY)
             }
         }) {
-            Text("\u2302")
+            A("#") {
+                Text("\u2302")
+            }
         }
 
         if (name != null) {
@@ -41,7 +40,9 @@ public fun NameCrumbs(name: Name?, link: (Name) -> Unit): Unit = Nav({
                         link(fullName)
                     }
                 }) {
-                    Text(token.toString())
+                    A("#") {
+                        Text(token.toString())
+                    }
                 }
             }
         }

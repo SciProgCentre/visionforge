@@ -59,6 +59,8 @@ public class CanvasSize : Scheme() {
 }
 
 public class Canvas3DOptions : Scheme() {
+    public var canvasName: String by string("vision")
+
     @Suppress("DEPRECATION")
     public var axes: AxesScheme by spec(AxesScheme)
     public var camera: CameraScheme by spec(CameraScheme)

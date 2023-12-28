@@ -7,7 +7,6 @@ import app.softwork.bootstrapcompose.Layout.Height
 import app.softwork.bootstrapcompose.Layout.Width
 import app.softwork.bootstrapcompose.Row
 import kotlinx.dom.clear
-import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import space.kscience.dataforge.context.Context
@@ -104,32 +103,13 @@ public fun ThreeView(
                 }
             ) {
                 if (solid == null) {
-                    Div({
-                        style {
-                            position(Position.Fixed)
-                            width(100.percent)
-                            height(100.percent)
-                            zIndex(1000)
-                            top(40.percent)
-                            left(0.px)
-                            opacity(0.5)
-
-                            @OptIn(ExperimentalComposeWebApi::class) filter {
-                                opacity(50.percent)
-                            }
-                        }
-                    }) {
-                        Div({ classes("d-flex", " justify-content-center") }) {
-                            Div({
-                                classes("spinner-grow", "text-primary")
-                                style {
-                                    width(3.cssRem)
-                                    height(3.cssRem)
-                                    zIndex(20)
-                                }
-                                attr("role", "status")
-                            }) {
-                                Span({ classes("sr-only") }) { Text("Loading 3D vision") }
+                    Div({ classes("d-flex", "justify-content-center") }) {
+                        Div({
+                            classes("spinner-border")
+                            attr("role", "status")
+                        }) {
+                            Span({ classes("visually-hidden") }) {
+                                Text("Loading...")
                             }
                         }
                     }
@@ -144,33 +124,17 @@ public fun ThreeView(
                             else -> (solid as? SolidGroup)?.get(it)
                         }
                     }?.let { vision ->
-                        Card(
-                            attrs = {
-                                style {
-                                    position(Position.Absolute)
-                                    top(5.px)
-                                    right(5.px)
-                                    width(450.px)
-                                    overflowY("auto")
-                                }
-                            },
-                            headerAttrs = {
-                                style {
-                                    alignItems(AlignItems.Center)
-                                }
-                            },
-                            header = {
-                                NameCrumbs(selected) { selected = it }
-                            },
-                            footer = {
-                                vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
-                                    P {
-                                        B { Text("Styles: ") }
-                                        Text(styles.joinToString(separator = ", "))
-                                    }
-                                }
+                        Card(attrs = {
+                            style {
+                                position(Position.Absolute)
+                                top(10.px)
+                                right(10.px)
+                                width(450.px)
+                                overflowY("auto")
                             }
-                        ) {
+                        }) {
+                            NameCrumbs(selected) { selected = it }
+                            Hr()
                             PropertyEditor(
                                 scope = solids.context,
                                 rootMeta = vision.properties.root(),
@@ -187,6 +151,13 @@ public fun ThreeView(
                                 updates = vision.properties.changes,
                                 rootDescriptor = vision.descriptor
                             )
+                            vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
+                                Hr()
+                                P {
+                                    B { Text("Styles: ") }
+                                    Text(styles.joinToString(separator = ", "))
+                                }
+                            }
                         }
                     }
                 }
@@ -207,7 +178,13 @@ public fun ThreeView(
                     }
                 }
             ) {
-                ThreeControls(solid, optionsSnapshot, selected, onSelect = { selected = it }, tabBuilder = sidebarTabs)
+                ThreeControls(
+                    solid,
+                    optionsSnapshot,
+                    selected,
+                    onSelect = { selected = it },
+                    tabBuilder = sidebarTabs
+                )
             }
         }
     } else {

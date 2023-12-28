@@ -10,7 +10,7 @@ public object TreeStyles : StyleSheet(VisionForgeStyles) {
      * Remove default bullets
      */
     public val tree: String by style {
-        paddingLeft(5.px)
+        paddingLeft(10.px)
         marginLeft(0.px)
         listStyleType("none")
     }

@@ -1,12 +1,12 @@
 package space.kscience.visionforge.solid.three.compose
 
 import androidx.compose.runtime.Composable
+import app.softwork.bootstrapcompose.Button
+import app.softwork.bootstrapcompose.Color.Info
 import app.softwork.bootstrapcompose.Column
 import app.softwork.bootstrapcompose.Layout.Height
-import app.softwork.bootstrapcompose.Row
-import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Text
+import app.softwork.bootstrapcompose.Layout.Width
+import org.jetbrains.compose.web.dom.Hr
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 import space.kscience.dataforge.context.Global
@@ -22,32 +22,16 @@ internal fun CanvasControls(
     options: Canvas3DOptions,
 ) {
     Column {
-        Row(attrs = {
-            style {
-                border {
-                    width(1.px)
-                    style(LineStyle.Solid)
-                    color(Color("blue"))
-                }
-                padding(4.px)
-            }
-        }) {
-            vision?.let { vision ->
-                Button({
-                    onClick { event ->
-                        val json = vision.encodeToString()
-                        event.stopPropagation();
-                        event.preventDefault();
+        vision?.let { vision ->
+            Button("Export", color = Info, styling = { Layout.width = Width.Full }) {
+                val json = vision.encodeToString()
 
-                        val fileSaver = kotlinext.js.require<dynamic>("file-saver")
-                        val blob = Blob(arrayOf(json), BlobPropertyBag("text/json;charset=utf-8"))
-                        fileSaver.saveAs(blob, "object.json") as Unit
-                    }
-                }) {
-                    Text("Export")
-                }
+                val fileSaver = kotlinext.js.require<dynamic>("file-saver")
+                val blob = Blob(arrayOf(json), BlobPropertyBag("text/json;charset=utf-8"))
+                fileSaver.saveAs(blob, "${options.canvasName}.json") as Unit
             }
         }
+        Hr()
         PropertyEditor(
             scope = vision?.manager?.context ?: Global,
             properties = options.meta,

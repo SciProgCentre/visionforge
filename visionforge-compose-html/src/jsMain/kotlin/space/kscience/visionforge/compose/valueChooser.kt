@@ -3,16 +3,14 @@
 package space.kscience.visionforge.compose
 
 import androidx.compose.runtime.*
+import kotlinx.uuid.UUID
+import kotlinx.uuid.generateUUID
 import org.jetbrains.compose.web.attributes.*
-import org.jetbrains.compose.web.dom.Input
-import org.jetbrains.compose.web.dom.Option
-import org.jetbrains.compose.web.dom.Select
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLOptionElement
 import org.w3c.dom.asList
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
-import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.allowedValues
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.widgetType
@@ -47,18 +45,29 @@ public fun BooleanValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
+    val uid = remember { "checkbox[${UUID.generateUUID().toString(false)}]" }
     var innerValue by remember(value, descriptor) {
         mutableStateOf(
             value?.boolean ?: descriptor?.defaultValue?.boolean
         )
     }
+
     Input(type = InputType.Checkbox) {
-        classes("w-100")
+        classes("btn-check")
         checked(innerValue ?: false)
+        autoComplete(AutoComplete.off)
+        id(uid)
 
         onInput { event ->
             innerValue = event.value
             onValueChange(event.value.asValue())
+        }
+    }
+    Label(uid, attrs = { classes("btn", "btn-sm", "btn-outline-secondary", "w-100") }) {
+        if (innerValue == true) {
+            Text("On")
+        } else {
+            Text("Off")
         }
     }
 }
@@ -70,7 +79,7 @@ public fun NumberValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var innerValue by remember(value, descriptor) { mutableStateOf(value?.number) }
+    var innerValue by remember(value, descriptor) { mutableStateOf(value?.number ?: descriptor?.defaultValue?.number) }
     Input(type = InputType.Number) {
         classes("w-100")
 
@@ -159,6 +168,7 @@ public fun MultiSelectChooser(
     onValueChange: (Value?) -> Unit,
 ) {
     Select({
+        classes("w-100","form-select")
         onChange { event ->
             val newSelected = event.target.selectedOptions.asList()
                 .map { (it as HTMLOptionElement).value.asValue() }
@@ -184,39 +194,18 @@ public fun RangeValueChooser(
     value: Value?,
     onValueChange: (Value?) -> Unit,
 ) {
-    var innerValue by remember(value, descriptor) { mutableStateOf(value?.double) }
-    var rangeDisabled: Boolean by remember { mutableStateOf(state != EditorPropertyState.Defined) }
-
-
-    FlexRow {
-        if (descriptor?.valueRestriction != ValueRestriction.REQUIRED) {
-            Input(type = InputType.Checkbox) {
-                if (!rangeDisabled) defaultChecked()
-
-                onChange {
-                    val checkBoxValue = it.target.checked
-                    rangeDisabled = !checkBoxValue
-                    onValueChange(
-                        if (!checkBoxValue) {
-                            null
-                        } else {
-                            innerValue?.asValue()
-                        }
-                    )
-                }
-            }
-        }
-    }
+    var innerValue by remember(value, descriptor) { mutableStateOf(value?.number ?: descriptor?.defaultValue?.number) }
 
     Input(type = InputType.Range) {
-        classes("w-100")
+        classes("w-100", "form-range")
 
-        if (rangeDisabled) disabled()
         value(innerValue?.toString() ?: "")
-        onChange {
-            val newValue = it.target.value
-            onValueChange(newValue.toDoubleOrNull()?.asValue())
-            innerValue = newValue.toDoubleOrNull()
+        onInput { event ->
+            innerValue = event.value
+        }
+        onChange { event ->
+            innerValue = event.value
+            onValueChange(innerValue?.asValue())
         }
         descriptor?.attributes?.get("min").string?.let {
             min(it)

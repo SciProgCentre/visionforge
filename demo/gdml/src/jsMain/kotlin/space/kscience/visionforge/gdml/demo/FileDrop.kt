@@ -3,12 +3,12 @@
 package space.kscience.visionforge.gdml.demo
 
 import androidx.compose.runtime.*
+import app.softwork.bootstrapcompose.Icon
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.I
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.files.FileList
@@ -70,7 +70,7 @@ fun FileDrop(
         }
     }) {
 
-        I({ classes("bi", "bi-cloud-upload", "dropzone-icon") })
+        Icon("cloud-upload"){ classes("dropzone-icon") }
         Text(title)
         Input(type = InputType.File, attrs = {
             style {
