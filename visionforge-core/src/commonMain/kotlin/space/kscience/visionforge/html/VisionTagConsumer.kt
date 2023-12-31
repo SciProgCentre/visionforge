@@ -4,10 +4,7 @@ import kotlinx.html.*
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.PluginFactory
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaSerializer
-import space.kscience.dataforge.meta.MutableMeta
-import space.kscience.dataforge.meta.isEmpty
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
@@ -46,9 +43,14 @@ public class VisionOutput @PublishedApi internal constructor(override val contex
             newContext.visionManager
         }
 
-    public inline fun meta(block: MutableMeta.() -> Unit) {
-        this.meta = Meta(block)
-    }
+}
+
+public inline fun VisionOutput.meta(block: MutableMeta.() -> Unit) {
+    this.meta = Meta(block)
+}
+
+public fun VisionOutput.meta(metaRepr: MetaRepr) {
+    this.meta = metaRepr.toMeta()
 }
 
 /**

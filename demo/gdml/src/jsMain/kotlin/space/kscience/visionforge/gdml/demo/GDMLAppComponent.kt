@@ -4,7 +4,7 @@ import androidx.compose.runtime.*
 import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H2
+import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.files.File
 import org.w3c.files.FileReader
@@ -66,7 +66,7 @@ fun GDMLApp(solids: Solids, initialVision: Solid?, selected: Name? = null) {
     }) {
         ThreeView(solids, vision, selected) {
             Tab("Load") {
-                H2 {
+                P {
                     Text("Drag and drop .gdml or .json VisionForge files here")
                 }
                 FileDrop("(drag file here)") { files ->

@@ -1,27 +1,36 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.compose)
 }
 
 group = "demo"
 
 kscience {
-    jvm()
+//    jvm()
     js {
         browser {
             binaries.executable()
+            commonWebpackConfig{
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport{
+                    enabled = true
+                }
+                sourceMaps = true
+            }
         }
     }
     dependencies {
         implementation(projects.visionforgeSolid)
         implementation(projects.visionforgeGdml)
     }
-    jvmMain {
-//                implementation(project(":visionforge-fx"))
-        implementation(spclibs.logback.classic)
-    }
+//    jvmMain {
+////                implementation(project(":visionforge-fx"))
+//        implementation(spclibs.logback.classic)
+//    }
     jsMain {
         implementation(projects.visionforgeThreejs)
-        implementation(npm("react-file-drop", "3.0.6"))
     }
 }
 

@@ -6,21 +6,33 @@ plugins {
 val ktorVersion: String by rootProject.extra
 
 kscience {
-    fullStack("js/visionforge-three.js")
+    fullStack(
+        bundleName = "js/visionforge-three.js",
+        browserConfig = {
+            webpackTask {
+                cssSupport {
+                    enabled = true
+                }
+                scssSupport {
+                    enabled = true
+                }
+            }
+        }
+    )
 
     commonMain {
         api(projects.visionforgeSolid)
         api(projects.visionforgeComposeHtml)
     }
 
-    jvmMain{
+    jvmMain {
         api(projects.visionforgeServer)
     }
 
-    jsMain{
+    jsMain {
         api(projects.visionforgeThreejs)
-        implementation(npm("file-saver","2.0.5"))
+        implementation(npm("file-saver", "2.0.5"))
         implementation(npm("@types/file-saver", "2.0.7"))
-        compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
+        compileOnly(npm("webpack-bundle-analyzer", "4.5.0"))
     }
 }

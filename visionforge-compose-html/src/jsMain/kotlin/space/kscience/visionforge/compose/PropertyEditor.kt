@@ -28,9 +28,9 @@ import space.kscience.visionforge.hidden
  * The display state of a property
  */
 public sealed class EditorPropertyState {
-    public object Defined : EditorPropertyState()
-    public class Default(public val source: String = "unknown") : EditorPropertyState()
-    public object Undefined : EditorPropertyState()
+    public data object Defined : EditorPropertyState()
+    public data class Default(public val source: String = "unknown") : EditorPropertyState()
+    public data object Undefined : EditorPropertyState()
 
 }
 

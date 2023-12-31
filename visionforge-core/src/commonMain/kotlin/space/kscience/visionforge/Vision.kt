@@ -79,8 +79,8 @@ public var Vision.visible: Boolean?
  * Subscribe on property updates. The subscription is bound to the given scope and canceled when the scope is canceled
  */
 public fun Vision.onPropertyChange(
-    scope: CoroutineScope? = manager?.context,
+    scope: CoroutineScope,
     callback: suspend (Name) -> Unit,
 ): Job = properties.changes.onEach {
     callback(it)
-}.launchIn(scope ?: error("Orphan Vision can't observe properties"))
+}.launchIn(scope)

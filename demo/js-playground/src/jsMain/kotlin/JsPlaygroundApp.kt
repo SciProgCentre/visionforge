@@ -47,8 +47,7 @@ private class JsPlaygroundApp : Application {
                     width(100.vw)
                 }
             }) {
-                Tabs {
-                    active = "gravity"
+                Tabs("gravity") {
                     Tab("gravity") {
                         GravityDemo(solids, client)
                     }

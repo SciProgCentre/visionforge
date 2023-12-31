@@ -19,7 +19,7 @@ public fun Vision.useProperty(
     propertyName: Name,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
-    scope: CoroutineScope? = manager?.context,
+    scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties"),
     callback: (Meta) -> Unit,
 ): Job {
     //Pass initial value.
@@ -28,14 +28,14 @@ public fun Vision.useProperty(
         if (name.startsWith(propertyName)) {
             callback(properties.get(propertyName, inherit, includeStyles))
         }
-    }.launchIn(scope ?: error("Orphan Vision can't observe properties"))
+    }.launchIn(scope)
 }
 
 public fun Vision.useProperty(
     propertyName: String,
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
-    scope: CoroutineScope? = manager?.context,
+    scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties"),
     callback: (Meta) -> Unit,
 ): Job = useProperty(propertyName.parseAsName(), inherit, includeStyles, scope, callback)
 

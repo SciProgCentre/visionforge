@@ -1,14 +1,16 @@
 package space.kscience.visionforge.solid.three
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.jetbrains.compose.web.renderComposable
+import org.jetbrains.compose.web.dom.DOMScope
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
+import space.kscience.visionforge.compose.ComposeVisionRenderer
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.compose.ThreeView
@@ -21,7 +23,7 @@ import three.objects.Group as ThreeGroup
 /**
  * A plugin that handles Three Object3D representation of Visions.
  */
-public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
+public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
     public val solids: Solids by require(Solids)
@@ -75,7 +77,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                         // disable tracking changes for statics
                         group[token] = object3D
                     } catch (ex: Throwable) {
-                        logger.error(ex) { "Failed to render $child" }
+                        logger.error(ex) { "Failed to render vision with token $token and type ${child::class}" }
                     }
                 }
             }
@@ -115,7 +117,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                                 val object3D = buildObject3D(child)
                                 set(childName, object3D)
                             } catch (ex: Throwable) {
-                                logger.error(ex) { "Failed to render $child" }
+                                logger.error(ex) { "Failed to render vision with name $childName" }
                             }
                         }
                     }.launchIn(context)
@@ -185,11 +187,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         render(vision)
     }
 
-    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+    @Composable
+    override fun DOMScope<Element>.render(client: VisionClient, name: Name, vision: Vision, meta: Meta) {
         require(vision is Solid) { "Expected Solid but found ${vision::class}" }
-        renderComposable(element) {
-            ThreeView(solids, vision, null, Canvas3DOptions.read(meta))
-        }
+        ThreeView(solids, vision, null, Canvas3DOptions.read(meta))
     }
 
     public companion object : PluginFactory<ThreePlugin> {

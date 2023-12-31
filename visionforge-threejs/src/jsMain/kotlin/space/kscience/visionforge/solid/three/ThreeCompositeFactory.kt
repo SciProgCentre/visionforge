@@ -52,7 +52,7 @@ public class ThreeCompositeFactory(public val three: ThreePlugin) : ThreeFactory
             applyProperties(vision)
 
             if (observe) {
-                vision.onPropertyChange { name ->
+                vision.onPropertyChange(three.context) { name ->
                     when {
                         //name.startsWith(WIREFRAME_KEY) -> mesh.applyWireFrame(obj)
                         name.startsWith(EDGES_KEY) -> applyEdges(vision)
