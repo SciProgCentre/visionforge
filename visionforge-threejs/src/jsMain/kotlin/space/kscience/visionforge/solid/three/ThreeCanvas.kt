@@ -155,9 +155,10 @@ public class ThreeCanvas(
         }
 
         //Clipping planes
-        options.useProperty(Canvas3DOptions::clipping) { clipping ->
-            if (!clipping.meta.isEmpty()) {
-                renderer.localClippingEnabled = true
+        options.useProperty(Canvas3DOptions::clipping) { clipping: PointScheme ->
+            if (clipping.meta.isEmpty()) {
+                renderer.clippingPlanes = emptyArray()
+            } else {
                 boundingBox?.let { boundingBox ->
                     val xClippingPlane = clipping.x?.let {
                         val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
@@ -175,8 +176,6 @@ public class ThreeCanvas(
                     renderer.clippingPlanes =
                         listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
                 }
-            } else {
-                renderer.localClippingEnabled = false
             }
         }
 

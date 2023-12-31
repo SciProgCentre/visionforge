@@ -116,7 +116,7 @@ public fun PropertyEditor(
                 }
             }
 
-            CloseButton(editorPropertyState != EditorPropertyState.Defined){
+            CloseButton(editorPropertyState != EditorPropertyState.Defined) {
                 rootMeta.remove(name)
                 update()
             }
@@ -163,7 +163,7 @@ public fun PropertyEditor(
                 }
             }
 
-            awaitClose {  properties.removeListener(scope) }
+            awaitClose { properties.removeListener(scope) }
         },
         name = Name.EMPTY,
         rootDescriptor = descriptor,
