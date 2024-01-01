@@ -148,6 +148,7 @@ public fun ThreeView(
                                         EditorPropertyState.Undefined
                                     }
                                 },
+                                name = Name.EMPTY,
                                 updates = vision.properties.changes,
                                 rootDescriptor = vision.descriptor
                             )

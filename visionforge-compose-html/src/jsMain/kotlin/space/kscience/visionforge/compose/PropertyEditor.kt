@@ -31,7 +31,6 @@ public sealed class EditorPropertyState {
     public data object Defined : EditorPropertyState()
     public data class Default(public val source: String = "unknown") : EditorPropertyState()
     public data object Undefined : EditorPropertyState()
-
 }
 
 /**
@@ -44,8 +43,8 @@ public fun PropertyEditor(
     rootMeta: MutableMeta,
     getPropertyState: (Name) -> EditorPropertyState,
     updates: Flow<Name>,
-    name: Name = Name.EMPTY,
-    rootDescriptor: MetaDescriptor? = null,
+    name: Name,
+    rootDescriptor: MetaDescriptor?,
     initialExpanded: Boolean? = null,
 ) {
     var expanded: Boolean by remember { mutableStateOf(initialExpanded ?: true) }
@@ -97,8 +96,12 @@ public fun PropertyEditor(
         }
         Span({
             classes(TreeStyles.treeLabel)
-            if (editorPropertyState != EditorPropertyState.Defined) {
-                classes(TreeStyles.treeLabelInactive)
+            when (editorPropertyState) {
+                is EditorPropertyState.Default, EditorPropertyState.Undefined -> {
+                    classes(TreeStyles.treeLabelInactive)
+                }
+
+                EditorPropertyState.Defined -> {}
             }
         }) {
             Text(token)
