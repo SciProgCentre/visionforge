@@ -44,16 +44,15 @@ public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
         objectFactories[PointLightSource::class] = ThreePointLightFactory
-        objectFactories[StlSolid::class] = ThreeStlFactory
+        objectFactories[StlUrlSolid::class] = ThreeStlFactory
+        objectFactories[StlBinarySolid::class] = ThreeStlFactory
         objectFactories[AxesSolid::class] = ThreeAxesFactory
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Solid>? {
-        return (objectFactories[type]
-            ?: context.gather<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
+    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Solid>? =
+        (objectFactories[type] ?: context.gather<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
                 as ThreeFactory<Solid>?
-    }
 
     /**
      * Build an Object3D representation of the given [Solid].

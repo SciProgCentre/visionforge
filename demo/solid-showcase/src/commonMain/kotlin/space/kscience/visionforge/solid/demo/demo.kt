@@ -24,6 +24,11 @@ fun VisionLayout<Solid>.demo(name: String, title: String = name, block: SolidGro
         block()
         ambientLight {
             color(Colors.white)
+            intensity = 0.5
+        }
+        pointLight(0, 0, 1000) {
+            color(Colors.white)
+            intensity = 10.0
         }
     }
     render(Name.parse(name), vision, meta)
@@ -111,7 +116,7 @@ fun VisionLayout<Solid>.showcase() {
                 GlobalScope.launch(Dispatchers.Main) {
                     while (isActive) {
                         delay(100)
-                        rotate((PI/20).radians,Euclidean3DSpace.yAxis)
+                        rotate((PI / 20).radians, Euclidean3DSpace.yAxis)
                     }
                 }
                 color(Colors.red)
@@ -122,13 +127,16 @@ fun VisionLayout<Solid>.showcase() {
     demo("extrude", "extruded shape") {
         extruded {
             shape {
-                polygon(8, 50)
+                polygon(32, 50)
             }
             for (i in 0..100) {
                 layer(i * 5, 20 * sin(2 * PI / 100 * i), 20 * cos(2 * PI / 100 * i))
             }
-            color(Colors.teal)
-            rotationX = -PI / 2
+            rotationY = -PI / 2
+            material {
+                type = "lambert"
+                color(Colors.teal)
+            }
         }
     }
 
@@ -161,7 +169,15 @@ fun VisionLayout<Solid>.showcase() {
     }
 
     demo("STL", "STL loaded from URL") {
-        stl("https://ozeki.hu/attachments/116/Menger_sponge_sample.stl")
+        stl("Menger_sponge_sample.stl") {
+            scale(100f)
+            material {
+                type = "phong"
+                color("red")
+                specularColor("blue")
+            }
+        }
+        //stl("https://ozeki.hu/attachments/116/Menger_sponge_sample.stl")
     }
 }
 

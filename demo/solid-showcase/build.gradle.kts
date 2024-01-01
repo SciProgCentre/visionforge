@@ -8,6 +8,16 @@ kscience {
     jvm()
     js{
         binaries.executable()
+        browser{
+            commonWebpackConfig{
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport{
+                    enabled = true
+                }
+            }
+        }
     }
     dependencies {
         implementation(projects.visionforgeSolid)

@@ -18,6 +18,8 @@ import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_OPACITY
 @VisionBuilder
 public class SolidMaterial : Scheme() {
 
+    public var type: String by string("default", key = TYPE_KEY)
+
     /**
      * Primary web-color for the material
      */
@@ -65,9 +67,9 @@ public class SolidMaterial : Scheme() {
             MetaDescriptor {
                 inherited = true
 
-                value(TYPE_KEY, ValueType.STRING){
+                value(TYPE_KEY, ValueType.STRING) {
                     inherited = true
-                    allowedValues = listOf("default".asValue(), "simple".asValue())
+                    allowedValues = listOf("default", "basic", "lambert", "phong").map { it.asValue() }
                     default("default")
                 }
 
