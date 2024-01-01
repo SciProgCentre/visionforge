@@ -49,8 +49,8 @@ public fun PropertyEditor(
     initialExpanded: Boolean? = null,
 ) {
     var expanded: Boolean by remember { mutableStateOf(initialExpanded ?: true) }
-    val descriptor: MetaDescriptor? = remember(rootDescriptor, name) { rootDescriptor?.get(name) }
-    var property: MutableMeta by remember { mutableStateOf(rootMeta.getOrCreate(name)) }
+    val descriptor: MetaDescriptor? by derivedStateOf { rootDescriptor?.get(name) }
+    var displayedValue by remember { mutableStateOf(rootMeta.getValue(name)) }
     var editorPropertyState: EditorPropertyState by remember { mutableStateOf(getPropertyState(name)) }
 
 
@@ -68,13 +68,13 @@ public fun PropertyEditor(
     val token = name.lastOrNull()?.toString() ?: "Properties"
 
     fun update() {
-        property = rootMeta.getOrCreate(name)
+        displayedValue = rootMeta.getValue(name)
         editorPropertyState = getPropertyState(name)
     }
 
     LaunchedEffect(rootMeta) {
         updates.collect { updatedName ->
-            if (updatedName == name) {
+            if (name.startsWith(updatedName)) {
                 update()
             }
         }
@@ -85,6 +85,7 @@ public fun PropertyEditor(
             alignItems(AlignItems.Center)
         }
     }) {
+        //if node has children
         if (keys.isNotEmpty()) {
             Span({
                 classes(TreeStyles.treeCaret)
@@ -110,12 +111,14 @@ public fun PropertyEditor(
                     marginAll(1.px, 5.px)
                 }
             }) {
-                ValueChooser(descriptor, editorPropertyState, property.value) {
-                    property.value = it
-                    editorPropertyState = getPropertyState(name)
+                ValueChooser(descriptor, editorPropertyState, displayedValue) {
+                    rootMeta.setValue(name, it)
+                    update()
                 }
             }
 
+        }
+        if (!name.isEmpty()) {
             CloseButton(editorPropertyState != EditorPropertyState.Defined) {
                 rootMeta.remove(name)
                 update()

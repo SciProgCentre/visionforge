@@ -25,4 +25,6 @@ public interface ComposeVisionRenderer: ElementVisionRenderer {
             render(client, name, vision, meta)
         }
     }
+
+    public companion object
 }

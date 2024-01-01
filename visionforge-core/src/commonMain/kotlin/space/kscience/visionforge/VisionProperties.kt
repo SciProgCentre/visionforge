@@ -1,11 +1,9 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -233,15 +231,12 @@ public abstract class AbstractVisionProperties(
     }
 
     @Transient
-    protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow<Name>()
+    protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow(500, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val changes: SharedFlow<Name> get() = changesInternal
 
     override fun invalidate(propertyName: Name) {
         //send update signal
-        @OptIn(DelicateCoroutinesApi::class)
-        (vision.manager?.context ?: GlobalScope).launch {
-            changesInternal.emit(propertyName)
-        }
+        changesInternal.tryEmit(propertyName)
 
         //notify children if there are any
         if (vision is VisionGroup) {
@@ -280,8 +275,8 @@ public operator fun VisionProperties.get(
 
 /**
  * The root property node with given inheritance and style flags
- * @param inherit - inherit properties from the [Vision] parent. If null, infer from descriptor
- * @param includeStyles - include style information. If null, infer from descriptor
+ * @param inherit inherit properties from the [Vision] parent. If null, infer from descriptor
+ * @param includeStyles include style information. If null, infer from descriptor
  */
 public fun MutableVisionProperties.root(
     inherit: Boolean? = null,
@@ -297,22 +292,3 @@ public operator fun MutableVisionProperties.get(
     inherit: Boolean? = null,
     includeStyles: Boolean? = null,
 ): MutableMeta = get(name.parseAsName(), inherit, includeStyles)
-
-//
-//public operator fun MutableVisionProperties.set(name: Name, value: Number): Unit =
-//    setValue(name, value.asValue())
-//
-//public operator fun MutableVisionProperties.set(name: String, value: Number): Unit =
-//    set(name.parseAsName(), value)
-//
-//public operator fun MutableVisionProperties.set(name: Name, value: Boolean): Unit =
-//    setValue(name, value.asValue())
-//
-//public operator fun MutableVisionProperties.set(name: String, value: Boolean): Unit =
-//    set(name.parseAsName(), value)
-//
-//public operator fun MutableVisionProperties.set(name: Name, value: String): Unit =
-//    setValue(name, value.asValue())
-//
-//public operator fun MutableVisionProperties.set(name: String, value: String): Unit =
-//    set(name.parseAsName(), value)
