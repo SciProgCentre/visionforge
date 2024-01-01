@@ -3,6 +3,7 @@
 *.iws
 out/
 .gradle
+.kotlin
 build/
 data/
 
