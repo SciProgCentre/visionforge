@@ -1,9 +1,14 @@
 package space.kscience.visionforge.examples
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.html.h2
 import kotlinx.html.p
 import space.kscience.visionforge.VisionControlEvent
 import space.kscience.visionforge.html.*
 import space.kscience.visionforge.onClick
+import kotlin.time.Duration.Companion.seconds
 
 
 fun main() = serve {
@@ -25,6 +30,7 @@ fun main() = serve {
             }
         }
     }
+    h2 { +"Control elements" }
 
     vision {
         htmlCheckBox {
@@ -41,13 +47,19 @@ fun main() = serve {
             onValueChange(context) {
                 pushEvent(this)
             }
+            context.launch {
+                while (isActive) {
+                    delay(1.seconds)
+                    numberValue = ((numberValue?.toInt() ?: 0) + 1) % 10
+                }
+            }
         }
     }
 
 
     vision {
-        button("Click me"){
-            onClick(context){
+        button("Click me") {
+            onClick(context) {
                 pushEvent(this)
             }
         }

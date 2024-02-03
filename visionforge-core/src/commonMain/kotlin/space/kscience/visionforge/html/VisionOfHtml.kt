@@ -18,7 +18,7 @@ import space.kscience.visionforge.*
 @Serializable
 public abstract class VisionOfHtml : AbstractVision() {
     public var classes: Set<String>
-        get() = properties.get(::classes.name,false).stringList?.toSet() ?: emptySet()
+        get() = properties[::classes.name, false].stringList?.toSet() ?: emptySet()
         set(value) {
             properties[::classes.name] = value.map { it.asValue() }
         }
