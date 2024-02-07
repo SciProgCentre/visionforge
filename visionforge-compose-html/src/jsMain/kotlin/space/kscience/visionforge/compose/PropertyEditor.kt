@@ -55,7 +55,7 @@ public fun PropertyEditor(
 
     val keys by derivedStateOf {
         buildSet {
-            descriptor?.children?.filterNot {
+            descriptor?.nodes?.filterNot {
                 it.key.startsWith("@") || it.value.hidden
             }?.forEach {
                 add(NameToken(it.key))

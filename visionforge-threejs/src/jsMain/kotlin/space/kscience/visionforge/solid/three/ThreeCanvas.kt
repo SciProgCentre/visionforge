@@ -20,7 +20,6 @@ import three.core.Raycaster
 import three.external.controls.OrbitControls
 import three.external.controls.TrackballControls
 import three.geometries.EdgesGeometry
-import three.helpers.AxesHelper
 import three.materials.Material
 import three.math.*
 import three.meshline.MeshLine
@@ -50,14 +49,7 @@ public class ThreeCanvas(
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
 
-    private val scene: Scene = Scene().apply {
-        options.useProperty(Canvas3DOptions::axes, this) {
-            getObjectByName(AXES_NAME)?.let { remove(it) }
-            val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
-            axesObject.name = AXES_NAME
-            add(axesObject)
-        }
-    }
+    private val scene: Scene = Scene()
 
 
     private fun buildCamera(spec: CameraScheme) = PerspectiveCamera(

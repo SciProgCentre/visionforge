@@ -3,13 +3,13 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.request
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.compose.Tabs
+import space.kscience.visionforge.compose.TreeStyles
+import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.three.ThreePlugin
@@ -26,19 +26,21 @@ fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number?
 
 private class JsPlaygroundApp : Application {
 
+    val playgroundContext = Context {
+        plugin(ThreePlugin)
+        plugin(PlotlyPlugin)
+        plugin(MarkupPlugin)
+    }
+
     override fun start(document: Document, state: Map<String, Any>) {
 
-        val playgroundContext = Context {
-            plugin(ThreePlugin)
-            plugin(PlotlyPlugin)
-        }
-
-        val solids = playgroundContext.request(Solids)
-        val client = playgroundContext.request(JsVisionClient)
+//        val solids = playgroundContext.request(Solids)
+//        val client = playgroundContext.request(JsVisionClient)
 
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
         renderComposable(element) {
+            Style(TreeStyles)
             Div({
                 style {
                     padding(0.pt)
@@ -49,7 +51,7 @@ private class JsPlaygroundApp : Application {
             }) {
                 Tabs("gravity") {
                     Tab("gravity") {
-                        GravityDemo(solids, client)
+                        GravityDemo(playgroundContext)
                     }
 
 //                    Tab("D0") {
@@ -66,7 +68,7 @@ private class JsPlaygroundApp : Application {
                                 height(100.vh - 50.pt)
                             }
                         }) {
-                            ThreeView(solids, SolidGroup {
+                            ThreeView(playgroundContext, SolidGroup {
                                 ambientLight {
                                     color(Colors.white)
                                 }
@@ -85,7 +87,7 @@ private class JsPlaygroundApp : Application {
                         }
                     }
                     Tab("plotly") {
-                        Plot(client) {
+                        Plot(playgroundContext) {
                             scatter {
                                 x(1, 2, 3)
                                 y(5, 8, 7)

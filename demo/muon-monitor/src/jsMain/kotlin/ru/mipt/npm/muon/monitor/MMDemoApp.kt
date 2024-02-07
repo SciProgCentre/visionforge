@@ -8,7 +8,6 @@ import space.kscience.dataforge.context.request
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.compose.VisionForgeStyles
-import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 
@@ -26,7 +25,7 @@ private class MMDemoApp : Application {
 
         renderComposable("app") {
             Style(VisionForgeStyles)
-            MMApp(context.request(Solids), model)
+            MMApp(context, model)
         }
     }
 }

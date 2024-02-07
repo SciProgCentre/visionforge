@@ -1,3 +1,5 @@
+@file:OptIn(DFExperimental::class)
+
 package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.*
@@ -5,6 +7,7 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.scheme
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.set
+import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.hide
 import space.kscience.visionforge.widgetType
@@ -61,16 +64,14 @@ public class CanvasSize : Scheme() {
 public class Canvas3DOptions : Scheme() {
     public var canvasName: String by string("vision")
 
-    @Suppress("DEPRECATION")
-    public var axes: AxesScheme by spec(AxesScheme)
-    public var camera: CameraScheme by spec(CameraScheme)
-    public var controls: Canvas3DUIScheme by spec(Canvas3DUIScheme)
+    public var camera: CameraScheme by scheme(CameraScheme)
+    public var controls: Canvas3DUIScheme by scheme(Canvas3DUIScheme)
 
-    public var size: CanvasSize by spec(CanvasSize)
+    public var size: CanvasSize by scheme(CanvasSize)
 
     public var layers: List<Number> by numberList(0)
 
-    public var clipping: PointScheme by spec(Clipping)
+    public var clipping: PointScheme by scheme(Clipping)
 
     public var onSelect: ((Name?) -> Unit)? = null
 
@@ -78,9 +79,6 @@ public class Canvas3DOptions : Scheme() {
     public companion object : SchemeSpec<Canvas3DOptions>(::Canvas3DOptions) {
         override val descriptor: MetaDescriptor by lazy {
             MetaDescriptor {
-                @Suppress("DEPRECATION")
-                scheme(Canvas3DOptions::axes, AxesScheme)
-
                 value(Canvas3DOptions::layers) {
                     multiple = true
                     default(listOf(0))

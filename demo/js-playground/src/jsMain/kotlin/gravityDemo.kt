@@ -1,19 +1,20 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import app.softwork.bootstrapcompose.Column
+import app.softwork.bootstrapcompose.Row
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.AttrBuilderContext
 import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.Meta
 import space.kscience.plotly.Plot
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.VisionClient
-import space.kscience.visionforge.compose.FlexRow
 import space.kscience.visionforge.compose.Vision
 import space.kscience.visionforge.compose.zIndex
 import space.kscience.visionforge.markup.VisionOfMarkup
@@ -24,12 +25,12 @@ import kotlin.math.sqrt
 
 @Composable
 fun Plot(
-    client: VisionClient,
+    context: Context,
     meta: Meta = Meta.EMPTY,
     attrs: AttrBuilderContext<HTMLDivElement>? = null,
     block: Plot.() -> Unit,
 ) = Vision(
-    client = client,
+    context = context,
     attrs = attrs,
     meta = meta,
     vision = Plot().apply(block).asVision()
@@ -37,12 +38,12 @@ fun Plot(
 
 @Composable
 fun Markup(
-    client: VisionClient,
+    context: Context,
     markup: VisionOfMarkup,
     meta: Meta = Meta.EMPTY,
     attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ) = Vision(
-    client = client,
+    context = context,
     attrs = attrs,
     meta = meta,
     vision = markup
@@ -52,7 +53,7 @@ fun Markup(
 private val h = 100.0
 
 @Composable
-fun GravityDemo(solids: Solids, client: VisionClient) {
+fun GravityDemo(context: Context) {
     val velocityTrace = remember {
         Trace {
             name = "velocity"
@@ -128,32 +129,36 @@ fun GravityDemo(solids: Solids, client: VisionClient) {
                 height(50.vh)
             }
         }) {
-            ThreeView(solids, solid)
+            ThreeView(context, solid)
         }
-        FlexRow({
+        Row(attrs = {
             style {
                 alignContent(AlignContent.Stretch)
                 alignItems(AlignItems.Stretch)
                 height(50.vh - 50.pt)
             }
         }) {
-            Plot(client) {
-                traces(velocityTrace, energyTrace)
-                layout {
-                    xaxis.title = "time"
+            Column {
+                Plot(context) {
+                    traces(velocityTrace, energyTrace)
+                    layout {
+                        xaxis.title = "time"
+                    }
                 }
             }
-            Markup(client, markup, attrs = {
-                style {
-                    width(100.percent)
-                    height(100.percent)
-                    border(2.pt, LineStyle.Solid, Color.blue)
-                    paddingLeft(8.pt)
-                    backgroundColor(Color.white)
-                    flex(1)
-                    zIndex(10000)
-                }
-            })
+            Column {
+                Markup(context, markup, attrs = {
+                    style {
+                        width(100.percent)
+                        height(100.percent)
+                        border(2.pt, LineStyle.Solid, Color.blue)
+                        paddingLeft(8.pt)
+                        backgroundColor(Color.white)
+                        flex(1)
+                        zIndex(10000)
+                    }
+                })
+            }
         }
     }
 }

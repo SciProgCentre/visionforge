@@ -2,7 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val plotlyVersion = "0.6.1"
+val plotlyVersion = "0.7.0"
 
 kscience {
     jvm()

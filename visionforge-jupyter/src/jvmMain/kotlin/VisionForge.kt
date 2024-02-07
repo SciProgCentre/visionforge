@@ -55,7 +55,7 @@ public class VisionForge(
 
     override val context: Context get() = visionManager.context
 
-    public val configuration: ObservableMutableMeta = meta.toMutableMeta()
+    public val configuration: ObservableMutableMeta = meta.toMutableMeta().asObservable()
 
     private var counter = 0
 

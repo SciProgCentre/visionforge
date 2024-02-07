@@ -17,7 +17,6 @@ import space.kscience.visionforge.compose.*
 import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup
-import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
@@ -63,7 +62,7 @@ private fun SimpleThreeView(
 
 @Composable
 public fun ThreeView(
-    solids: Solids,
+    context: Context,
     solid: Solid?,
     initialSelected: Name? = null,
     options: Canvas3DOptions? = null,
@@ -114,7 +113,7 @@ public fun ThreeView(
                         }
                     }
                 } else {
-                    SimpleThreeView(solids.context, optionsSnapshot, solid, selected)
+                    SimpleThreeView(context, optionsSnapshot, solid, selected)
                 }
 
                 key(selected) {
@@ -136,7 +135,7 @@ public fun ThreeView(
                             NameCrumbs(selected) { selected = it }
                             Hr()
                             PropertyEditor(
-                                scope = solids.context,
+                                scope = context,
                                 rootMeta = vision.properties.root(),
                                 getPropertyState = { name ->
                                     if (vision.properties.own?.get(name) != null) {
@@ -189,6 +188,6 @@ public fun ThreeView(
             }
         }
     } else {
-        SimpleThreeView(solids.context, optionsSnapshot, solid, selected)
+        SimpleThreeView(context, optionsSnapshot, solid, selected)
     }
 }

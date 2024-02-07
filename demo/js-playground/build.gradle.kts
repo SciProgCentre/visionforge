@@ -1,5 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.compose)
 }
 
 kscience {
@@ -11,12 +12,20 @@ kotlin {
     js {
         browser {
             binaries.executable()
+            commonWebpackConfig{
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport{
+                    enabled = true
+                }
+                sourceMaps = true
+            }
         }
     }
 }
 
 kscience {
-
     dependencies {
         implementation(projects.visionforge.visionforgeGdml)
         implementation(projects.visionforge.visionforgePlotly)

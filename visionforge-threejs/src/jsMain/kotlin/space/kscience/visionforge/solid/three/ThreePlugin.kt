@@ -189,7 +189,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
     @Composable
     override fun DOMScope<Element>.render(client: VisionClient, name: Name, vision: Vision, meta: Meta) {
         require(vision is Solid) { "Expected Solid but found ${vision::class}" }
-        ThreeView(solids, vision, null, Canvas3DOptions.read(meta))
+        ThreeView(context, vision, null, Canvas3DOptions.read(meta))
     }
 
     public companion object : PluginFactory<ThreePlugin> {

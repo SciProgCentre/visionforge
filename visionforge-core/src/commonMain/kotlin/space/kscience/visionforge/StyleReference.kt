@@ -3,7 +3,7 @@ package space.kscience.visionforge
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.Scheme
-import space.kscience.dataforge.meta.Specification
+import space.kscience.dataforge.meta.SchemeSpec
 import kotlin.properties.ReadOnlyProperty
 
 /**
@@ -36,7 +36,7 @@ public fun Vision.style(
 
 @VisionBuilder
 public fun <T : Scheme> Vision.style(
-    spec: Specification<T>,
+    spec: SchemeSpec<T>,
     styleKey: String? = null,
     builder: T.() -> Unit,
 ): ReadOnlyProperty<Any?, StyleReference> = ReadOnlyProperty { _, property ->

@@ -17,10 +17,10 @@ import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.fetch.RequestInit
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.edges
 import space.kscience.visionforge.solid.invoke
@@ -29,7 +29,7 @@ import space.kscience.visionforge.solid.three.compose.ThreeView
 import kotlin.math.PI
 
 @Composable
-fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
+fun MMApp(context: Context, model: Model, selected: Name? = null) {
 
     val mmOptions = remember {
         Canvas3DOptions {
@@ -60,7 +60,7 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
         }
     ) {
         ThreeView(
-            solids = solids,
+            context,
             solid = root,
             initialSelected = selected,
             options = mmOptions,
@@ -68,7 +68,7 @@ fun MMApp(solids: Solids, model: Model, selected: Name? = null) {
                 Tab("Events") {
                     ButtonGroup({ Layout.width = Width.Full }) {
                         Button("Next") {
-                            solids.context.launch {
+                            context.launch {
                                 val event = window.fetch(
                                     "http://localhost:8080/event",
                                     RequestInit("GET")

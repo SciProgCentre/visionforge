@@ -38,10 +38,6 @@ val canvasOptions = Canvas3DOptions {
     size {
         minSize = 400
     }
-    axes {
-        size = 500.0
-        visible = true
-    }
     camera {
         distance = 600.0
         latitude = PI / 6
@@ -52,6 +48,8 @@ val canvasOptions = Canvas3DOptions {
 fun VisionLayout<Solid>.showcase() {
     demo("shapes", "Basic shapes") {
         ambientLight()
+        axes(size = 500.0)
+
         box(100.0, 100.0, 100.0) {
             z = -110.0
             color("teal")

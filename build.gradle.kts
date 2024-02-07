@@ -6,11 +6,11 @@ plugins {
 //    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
-val dataforgeVersion by extra("0.7.1")
+val dataforgeVersion by extra("0.8.0")
 
 allprojects {
     group = "space.kscience"
-    version = "0.4.0-dev-1"
+    version = "0.4.0-dev-2"
 }
 
 subprojects {

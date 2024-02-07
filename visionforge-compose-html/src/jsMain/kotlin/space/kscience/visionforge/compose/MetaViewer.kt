@@ -63,7 +63,7 @@ private fun MetaViewerItem(root: Meta, name: Name, rootDescriptor: MetaDescripto
             classes(TreeStyles.tree)
         }) {
             val keys = buildSet {
-                descriptorItem?.children?.keys?.forEach {
+                descriptorItem?.nodes?.keys?.forEach {
                     add(NameToken(it))
                 }
                 actualMeta!!.items.keys.let { addAll(it) }

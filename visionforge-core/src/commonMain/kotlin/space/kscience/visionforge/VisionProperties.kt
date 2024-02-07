@@ -113,7 +113,7 @@ private class VisionPropertiesItem(
     override val items: Map<NameToken, MutableMeta>
         get() {
             val metaKeys = properties.own?.get(nodeName)?.items?.keys ?: emptySet()
-            val descriptorKeys = descriptor?.children?.map { NameToken(it.key) } ?: emptySet()
+            val descriptorKeys = descriptor?.nodes?.map { NameToken(it.key) } ?: emptySet()
             val defaultKeys = default?.get(nodeName)?.items?.keys ?: emptySet()
             val inheritFlag = descriptor?.inherited ?: inherit
             val stylesFlag = descriptor?.usesStyles ?: useStyles

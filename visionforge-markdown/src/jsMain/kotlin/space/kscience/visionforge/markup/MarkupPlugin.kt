@@ -34,7 +34,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
             COMMONMARK_FORMAT -> CommonMarkFlavourDescriptor()
             GFM_FORMAT -> GFMFlavourDescriptor()
             //TODO add new formats via plugins
-            else-> error("Format ${vision.format} not recognized")
+            else -> error("Format ${vision.format} not recognized")
         }
         vision.useProperty(VisionOfMarkup::content) {
             div.clear()
@@ -53,7 +53,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public actual companion object : PluginFactory<MarkupPlugin> {
         override val tag: PluginTag = PluginTag("vision.markup.js", PluginTag.DATAFORGE_GROUP)
 
-        override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()
+        override fun build(context: Context, meta: Meta): MarkupPlugin = MarkupPlugin()
 
     }
 }
