@@ -96,7 +96,13 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
         vision.setAsRoot(visionManager)
         val renderer: ElementVisionRenderer =
             findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
-        renderer.render(element, this, name, vision, outputMeta)
+        //subscribe to a backwards events propagation for control visions
+        if(vision is ControlVision){
+            vision.controlEventFlow.onEach {
+                sendEvent(name,it)
+            }.launchIn(context)
+        }
+        renderer.render(element, name, vision, outputMeta)
     }
 
     private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {

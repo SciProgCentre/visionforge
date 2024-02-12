@@ -48,7 +48,7 @@ public fun Vision(
     }
 
     DisposableEffect(vision, name, renderer, meta) {
-        renderer.render(scopeElement, client, name, vision, meta)
+        renderer.render(scopeElement, name, vision, meta)
         onDispose {
             scopeElement.clear()
         }

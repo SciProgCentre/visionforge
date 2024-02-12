@@ -27,7 +27,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+    override fun render(element: Element,name: Name, vision: Vision, meta: Meta) {
         require(vision is VisionOfMarkup) { "The vision is not a markup vision" }
         val div = document.createElement("div")
         val flavour = when (vision.format) {

@@ -14,7 +14,6 @@ import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.JsVisionClient
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionClient
 import tabulator.Tabulator
 import tabulator.TabulatorFull
 
@@ -35,7 +34,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         val table: VisionOfTable = (vision as? VisionOfTable)
             ?: error("VisionOfTable expected but ${vision::class} found")
 

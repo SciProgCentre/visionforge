@@ -49,7 +49,7 @@ public fun VisionClient.sendMetaEvent(targetName: Name, payload: MetaRepr): Unit
 }
 
 internal val formVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlForm> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfHtmlForm> { name, vision, _ ->
 
         val form = document.getElementById(vision.formId) as? HTMLFormElement
             ?: error("An element with id = '${vision.formId} is not a form")
@@ -69,22 +69,18 @@ internal val formVisionRenderer: ElementVisionRenderer =
         form.onsubmit = { event ->
             event.preventDefault()
             val formData = FormData(form).toMeta()
-            client.context.launch {
-                client.sendEvent(name, VisionSubmitEvent(name = name, payload = formData))
-            }
+            vision.asyncControlEvent(VisionSubmitEvent(name = name, payload = formData))
             console.info("Sent form data: ${formData.toMap()}")
             false
         }
     }
 
 internal val buttonVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfHtmlButton> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfHtmlButton> { name, vision, _ ->
         button(type = ButtonType.button).also { button ->
             button.subscribeToVision(vision)
             button.onclick = {
-                client.context.launch {
-                    client.sendEvent(name, VisionSubmitEvent(name = name))
-                }
+                vision.asyncControlEvent(VisionSubmitEvent(name = name))
             }
             vision.useProperty(VisionOfHtmlButton::label) {
                 button.innerHTML = it ?: ""

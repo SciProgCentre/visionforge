@@ -10,7 +10,7 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
-import space.kscience.visionforge.html.ComposeVisionRenderer
+import space.kscience.visionforge.html.ComposeHtmlVisionRenderer
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.compose.ThreeView
@@ -22,7 +22,7 @@ import three.objects.Group as ThreeGroup
 /**
  * A plugin that handles Three Object3D representation of Visions.
  */
-public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
+public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
     public val solids: Solids by require(Solids)
@@ -186,7 +186,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
     }
 
     @Composable
-    override fun DOMScope<Element>.render(client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+    override fun DOMScope<Element>.render(name: Name, vision: Vision, meta: Meta) {
         require(vision is Solid) { "Expected Solid but found ${vision::class}" }
         ThreeView(context, vision, null, Canvas3DOptions.read(meta))
     }

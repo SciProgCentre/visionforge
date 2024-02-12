@@ -35,7 +35,7 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
 }
 
 internal val htmlVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfPlainHtml> { _, _, vision, _ ->
+    ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
         div().also { div ->
             div.subscribeToVision(vision)
             vision.useProperty(VisionOfPlainHtml::content) {
@@ -47,17 +47,18 @@ internal val htmlVisionRenderer: ElementVisionRenderer =
 
 internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlInput>(
     acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1
-) { name, client, vision, _ ->
+) { name, vision, _ ->
+
     input {
         type = InputType.text
     }.also { htmlInputElement ->
 
         htmlInputElement.onchange = {
-            client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
+            vision.asyncControlEvent( VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
         }
 
         htmlInputElement.oninput = {
-            client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
+            vision.asyncControlEvent(VisionInputEvent(htmlInputElement.value.asValue(), name))
         }
 
         htmlInputElement.subscribeToInput(vision)
@@ -68,17 +69,17 @@ internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<
 }
 
 internal val checkboxVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfCheckbox> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfCheckbox> { name, vision, _ ->
         input {
             type = InputType.checkBox
         }.also { htmlInputElement ->
 
             htmlInputElement.onchange = {
-                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
+                vision.asyncControlEvent(VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
             htmlInputElement.oninput = {
-                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
+                vision.asyncControlEvent(VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
 
 
@@ -90,17 +91,17 @@ internal val checkboxVisionRenderer: ElementVisionRenderer =
     }
 
 internal val textVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfTextField> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfTextField> { name, vision, _ ->
         input {
             type = InputType.text
         }.also { htmlInputElement ->
 
             htmlInputElement.onchange = {
-                client.sendEventAsync(name, VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
+                vision.asyncControlEvent(VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
             }
 
             htmlInputElement.oninput = {
-                client.sendEventAsync(name, VisionInputEvent(htmlInputElement.value.asValue(), name))
+                vision.asyncControlEvent(VisionInputEvent(htmlInputElement.value.asValue(), name))
             }
 
             htmlInputElement.subscribeToInput(vision)
@@ -111,20 +112,20 @@ internal val textVisionRenderer: ElementVisionRenderer =
     }
 
 internal val numberVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfNumberField> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfNumberField> { name, vision, _ ->
         input {
             type = InputType.number
         }.also { htmlInputElement ->
 
             htmlInputElement.onchange = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
+                    vision.asyncControlEvent(VisionValueChangeEvent(it.asValue(), name))
                 }
             }
 
             htmlInputElement.oninput = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                    vision.asyncControlEvent(VisionInputEvent(it.asValue(), name))
                 }
             }
 
@@ -137,7 +138,7 @@ internal val numberVisionRenderer: ElementVisionRenderer =
     }
 
 internal val rangeVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfRangeField> { name, client, vision, _ ->
+    ElementVisionRenderer<VisionOfRangeField> { name, vision, _ ->
         input {
             type = InputType.range
             min = vision.min.toString()
@@ -147,13 +148,13 @@ internal val rangeVisionRenderer: ElementVisionRenderer =
 
             htmlInputElement.onchange = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEventAsync(name, VisionValueChangeEvent(it.asValue(), name))
+                    vision.asyncControlEvent(VisionValueChangeEvent(it.asValue(), name))
                 }
             }
 
             htmlInputElement.oninput = {
                 htmlInputElement.value.toDoubleOrNull()?.let {
-                    client.sendEventAsync(name, VisionInputEvent(it.asValue(), name))
+                    vision.asyncControlEvent(VisionInputEvent(it.asValue(), name))
                 }
             }
 

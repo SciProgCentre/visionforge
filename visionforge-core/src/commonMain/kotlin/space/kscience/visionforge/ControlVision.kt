@@ -2,12 +2,11 @@ package space.kscience.visionforge
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
@@ -23,12 +22,37 @@ public abstract class VisionControlEvent : VisionEvent, MetaRepr {
 public interface ControlVision : Vision {
     public val controlEventFlow: SharedFlow<VisionControlEvent>
 
+    /**
+     * Fire a [VisionControlEvent] on this [ControlVision]
+     */
     public suspend fun dispatchControlEvent(event: VisionControlEvent)
 
     override suspend fun receiveEvent(event: VisionEvent) {
         if (event is VisionControlEvent) {
             dispatchControlEvent(event)
         } else super.receiveEvent(event)
+    }
+}
+
+public fun ControlVision.asyncControlEvent(
+    event: VisionControlEvent,
+    scope: CoroutineScope = manager?.context ?: error("Can't fire asynchronous event for an orphan vision. Provide a scope."),
+) {
+    scope.launch { dispatchControlEvent(event) }
+}
+
+
+@Serializable
+public abstract class AbstractControlVision : AbstractVision(), ControlVision {
+
+    @Transient
+    private val mutableControlEventFlow = MutableSharedFlow<VisionControlEvent>()
+
+    override val controlEventFlow: SharedFlow<VisionControlEvent>
+        get() = mutableControlEventFlow
+
+    override suspend fun dispatchControlEvent(event: VisionControlEvent) {
+        mutableControlEventFlow.emit(event)
     }
 }
 

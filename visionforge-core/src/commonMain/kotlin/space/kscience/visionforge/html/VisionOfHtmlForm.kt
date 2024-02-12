@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.node
 import space.kscience.dataforge.meta.string
+import space.kscience.visionforge.AbstractControlVision
 import space.kscience.visionforge.DataControl
 import space.kscience.visionforge.onSubmit
 
@@ -18,7 +19,7 @@ import space.kscience.visionforge.onSubmit
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
-) : VisionOfHtmlControl(), DataControl {
+) : AbstractControlVision(), DataControl, VisionOfHtml {
     public var values: Meta? by properties.node()
 }
 
@@ -45,7 +46,7 @@ public fun VisionOfHtmlForm.onFormSubmit(scope: CoroutineScope, block: (Meta?) -
 
 @Serializable
 @SerialName("html.button")
-public class VisionOfHtmlButton : VisionOfHtmlControl(), DataControl {
+public class VisionOfHtmlButton : AbstractControlVision(), DataControl, VisionOfHtml {
     public var label: String? by properties.string()
 }
 

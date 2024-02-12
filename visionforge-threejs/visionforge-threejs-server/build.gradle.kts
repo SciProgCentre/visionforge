@@ -1,3 +1,4 @@
+
 plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.compose)
@@ -22,7 +23,6 @@ kscience {
 
     commonMain {
         api(projects.visionforgeSolid)
-        api(projects.visionforgeComposeHtml)
     }
 
     jvmMain {

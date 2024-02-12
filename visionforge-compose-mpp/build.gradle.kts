@@ -5,7 +5,7 @@ plugins {
 
 kscience {
     jvm()
-    wasm()
+//    wasm()
 }
 
 kotlin {
@@ -16,6 +16,10 @@ kotlin {
                 api(projects.visionforgeCore)
                 api(compose.runtime)
                 api(compose.foundation)
+            }
+        }
+        jvmMain{
+            dependencies{
                 api(compose.material)
                 api(compose.preview)
             }

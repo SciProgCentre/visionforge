@@ -10,7 +10,10 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.plotly.PlotlyConfig
 import space.kscience.plotly.plot
-import space.kscience.visionforge.*
+import space.kscience.visionforge.ElementVisionRenderer
+import space.kscience.visionforge.JsVisionClient
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionPlugin
 
 public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
     public val visionClient: JsVisionClient by require(JsVisionClient)
@@ -24,7 +27,7 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element, client: VisionClient, name: Name, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         val plot = (vision as? VisionOfPlotly)?.plot ?: error("VisionOfPlotly expected but ${vision::class} found")
         val config = PlotlyConfig.read(meta)
         element.plot(config, plot)

@@ -14,10 +14,10 @@ kscience {
 
     commonMain {
         api(projects.visionforgeSolid)
-        api(projects.visionforgeComposeHtml)
     }
 
     jsMain {
+        api(projects.visionforgeComposeHtml)
         implementation(npm("three", "0.143.0"))
         implementation(npm("three-csg-ts", "3.1.13"))
         implementation(npm("three.meshline", "1.4.0"))

@@ -2,21 +2,21 @@ package space.kscience.visionforge.html
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.html.DIV
 import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.stream.createHTML
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
 
 
-@Serializable
-public abstract class VisionOfHtml : AbstractVision() {
+public interface VisionOfHtml : Vision {
     public var classes: Set<String>
         get() = properties[::classes.name, false].stringList?.toSet() ?: emptySet()
         set(value) {
@@ -26,7 +26,7 @@ public abstract class VisionOfHtml : AbstractVision() {
 
 @Serializable
 @SerialName("html.plain")
-public class VisionOfPlainHtml : VisionOfHtml() {
+public class VisionOfPlainHtml : AbstractVision(), VisionOfHtml {
     public var content: String? by properties.string()
 }
 
@@ -60,25 +60,10 @@ public enum class InputFeedbackMode {
 }
 
 @Serializable
-public abstract class VisionOfHtmlControl: VisionOfHtml(), ControlVision{
-
-    @Transient
-    private val mutableControlEventFlow = MutableSharedFlow<VisionControlEvent>()
-
-    override val controlEventFlow: SharedFlow<VisionControlEvent>
-        get() = mutableControlEventFlow
-
-    override suspend fun dispatchControlEvent(event: VisionControlEvent) {
-        mutableControlEventFlow.emit(event)
-    }
-}
-
-
-@Serializable
 @SerialName("html.input")
 public open class VisionOfHtmlInput(
     public val inputType: String,
-) : VisionOfHtmlControl() {
+) : AbstractControlVision(), VisionOfHtml {
     public var value: Value? by properties.value()
     public var disabled: Boolean by properties.boolean { false }
     public var fieldName: String? by properties.string()
