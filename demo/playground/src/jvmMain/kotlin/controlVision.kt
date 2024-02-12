@@ -7,7 +7,7 @@ import kotlinx.html.h2
 import kotlinx.html.p
 import space.kscience.visionforge.VisionControlEvent
 import space.kscience.visionforge.html.*
-import space.kscience.visionforge.onClick
+import space.kscience.visionforge.onSubmit
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -59,7 +59,7 @@ fun main() = serve {
 
     vision {
         button("Click me") {
-            onClick(context) {
+            onSubmit(context) {
                 pushEvent(this)
             }
         }

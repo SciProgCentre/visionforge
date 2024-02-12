@@ -1,11 +1,10 @@
 package space.kscience.visionforge.meta
 
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.request
@@ -92,7 +91,7 @@ internal class VisionPropertyTest {
     }
 
     @Test
-    fun testChildrenPropertyFlow() = runTest(timeout = 200.milliseconds) {
+    fun testChildrenPropertyFlow() = runTest(timeout = 500.milliseconds) {
         val group = Global.request(VisionManager).group {
 
             properties {
@@ -109,17 +108,32 @@ internal class VisionPropertyTest {
 
         val child = group.children["child"]!!
 
-        launch {
-            val list = child.flowPropertyValue("test", inherit = true).take(3).map { it?.int }.toList()
-            assertEquals(22, list.first())
-            //assertEquals(11, list[1]) //a race
-            assertEquals(33, list.last())
+        val semaphore = Semaphore(1, 1)
+
+        val changesFlow = child.flowPropertyValue("test", inherit = true).map {
+            semaphore.release()
+            it!!.int
         }
 
-        //wait for subscription to be created
-        delay(5)
+        val collectedValues = ArrayList<Int>(5)
 
+        val collectorJob = changesFlow.onEach {
+            collectedValues.add(it)
+        }.launchIn(this)
+
+        assertEquals(22, child.properties["test", true].int)
+
+        semaphore.acquire()
         child.properties.remove("test")
+
+        assertEquals(11, child.properties["test", true].int)
+
+        semaphore.acquire()
         group.properties["test"] = 33
+        assertEquals(33, child.properties["test", true].int)
+
+        semaphore.acquire()
+        collectorJob.cancel()
+        assertEquals(listOf(22, 11, 33), collectedValues)
     }
 }

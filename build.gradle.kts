@@ -3,14 +3,14 @@ import space.kscience.gradle.useSPCTeam
 
 plugins {
     id("space.kscience.gradle.project")
-//    id("org.jetbrains.kotlinx.kover") version "0.5.0"
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
 val dataforgeVersion by extra("0.8.0")
 
 allprojects {
     group = "space.kscience"
-    version = "0.4.0-dev-2"
+    version = "0.4.0-dev-3"
 }
 
 subprojects {

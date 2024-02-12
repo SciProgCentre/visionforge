@@ -133,7 +133,7 @@ internal var Material.cached: Boolean
 
 public fun Mesh.setMaterial(vision: Vision) {
     if (
-        vision.properties.own?.get(SolidMaterial.MATERIAL_KEY) == null
+        vision.properties.own[SolidMaterial.MATERIAL_KEY] == null
         && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()
     ) {
         //if this is a reference, use material of the prototype

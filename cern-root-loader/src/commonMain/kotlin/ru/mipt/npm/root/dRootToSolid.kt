@@ -1,9 +1,6 @@
 package ru.mipt.npm.root
 
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.double
-import space.kscience.dataforge.meta.int
-import space.kscience.dataforge.meta.set
+import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.dataforge.names.plus
@@ -365,7 +362,7 @@ private fun buildVolume(volume: DGeoVolume, context: RootToSolidContext): Solid?
     }
     return if (group.children.isEmpty()) {
         null
-    } else if (group.items.size == 1 && group.properties.own == null) {
+    } else if (group.items.size == 1 && group.properties.own.isEmpty()) {
         group.items.values.first().apply { parent = null }
     } else {
         group

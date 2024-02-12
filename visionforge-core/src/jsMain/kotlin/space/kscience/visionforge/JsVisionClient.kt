@@ -21,6 +21,7 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.html.VisionTagConsumer
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
@@ -262,7 +263,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             rangeVisionRenderer,
             formVisionRenderer,
             buttonVisionRenderer
-        ).associateByName()
+        ).associateBy { it.toString().asName() }
     } else super<AbstractPlugin>.content(target)
 
     public companion object : PluginFactory<JsVisionClient> {
@@ -321,7 +322,7 @@ public class VisionClientApplication(public val context: Context) : Application 
                 client.renderers.joinToString(
                     prefix = "\n\t",
                     separator = "\n\t"
-                ) { it.name.toString() }
+                ) { it.toString() }
             }"
         }
         val element = document.body ?: error("Document does not have a body")

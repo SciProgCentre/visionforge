@@ -3,17 +3,11 @@ package space.kscience.visionforge
 import kotlinx.dom.clear
 import kotlinx.html.TagConsumer
 import kotlinx.html.dom.append
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.serializerOrNull
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DfType
-import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
-import space.kscience.dataforge.names.parseAsName
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -21,7 +15,7 @@ import kotlin.reflect.cast
  * A browser renderer for a [Vision].
  */
 @DfType(ElementVisionRenderer.TYPE)
-public interface ElementVisionRenderer : Named {
+public interface ElementVisionRenderer {
 
     /**
      * Give a [vision] integer rating based on this renderer capabilities. [ZERO_RATING] or negative values means that this renderer
@@ -57,11 +51,6 @@ public class SingleTypeVisionRenderer<T : Vision>(
     private val acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,
     private val renderFunction: TagConsumer<HTMLElement>.(name: Name, client: VisionClient, vision: T, meta: Meta) -> Unit,
 ) : ElementVisionRenderer {
-
-    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
-    override val name: Name
-        get() = kClass.serializerOrNull()?.descriptor?.serialName?.parseAsName()
-            ?: kClass.toString().asName()
 
     override fun rateVision(vision: Vision): Int =
         if (vision::class == kClass) acceptRating else ElementVisionRenderer.ZERO_RATING

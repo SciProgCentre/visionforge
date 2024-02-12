@@ -8,12 +8,16 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.meta.MutableMeta
+import space.kscience.dataforge.meta.MutableMetaSerializer
+import space.kscience.dataforge.meta.ObservableMeta
+import space.kscience.dataforge.meta.asObservable
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.Plotly
 import space.kscience.plotly.PlotlyConfig
+import space.kscience.visionforge.AbstractVisionProperties
 import space.kscience.visionforge.MutableVisionProperties
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
@@ -32,32 +36,9 @@ public class VisionOfPlotly private constructor(
     override var parent: Vision? = null
 
     @Transient
-    override val properties: MutableVisionProperties = object : MutableVisionProperties {
-        override fun set(name: Name, node: Meta?, notify: Boolean) {
-            meta[name] = node
-        }
+    override val properties: MutableVisionProperties = object : AbstractVisionProperties(this, meta) {
 
-        override fun setValue(name: Name, value: Value?, notify: Boolean) {
-            meta.setValue(name, value)
-        }
-
-        override val own: Meta get() = meta
-
-        override val descriptor: MetaDescriptor? get() = this@VisionOfPlotly.descriptor
-
-        override fun get(
-            name: Name,
-            inherit: Boolean?,
-            includeStyles: Boolean?,
-        ): MutableMeta = meta[name] ?: MutableMeta()
-
-        override fun getValue(
-            name: Name,
-            inherit: Boolean?,
-            includeStyles: Boolean?,
-        ): Value? = meta.getValue(name)
-
-        override val changes: Flow<Name> = if (meta is ObservableMeta) {
+        override fun flowChanges(): Flow<Name> = if (meta is ObservableMeta) {
             callbackFlow {
                 meta.onChange(this) {
                     launch {
@@ -78,7 +59,7 @@ public class VisionOfPlotly private constructor(
     }
 
 
-    override val descriptor: MetaDescriptor? = null // TODO add descriptor for Plot
+    override val descriptor: MetaDescriptor = Plot.descriptor
 }
 
 public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)

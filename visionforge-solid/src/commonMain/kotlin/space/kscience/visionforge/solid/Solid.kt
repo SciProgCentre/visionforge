@@ -177,7 +177,7 @@ internal fun float32Vector(
 ): ReadWriteProperty<Solid, Float32Vector3D?> =
     object : ReadWriteProperty<Solid, Float32Vector3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Float32Vector3D? {
-            val item = thisRef.properties.own?.get(name) ?: return null
+            val item = thisRef.properties.own[name] ?: return null
             //using dynamic property accessor because values could change
             return object : Float32Vector3D {
                 override val x: Float get() = item[X_KEY]?.float ?: defaultX

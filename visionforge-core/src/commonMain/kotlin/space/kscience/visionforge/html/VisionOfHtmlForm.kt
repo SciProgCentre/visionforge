@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.node
 import space.kscience.dataforge.meta.string
-import space.kscience.visionforge.ClickControl
-import space.kscience.visionforge.onClick
+import space.kscience.visionforge.DataControl
+import space.kscience.visionforge.onSubmit
 
 /**
  * @param formId an id of the element in rendered DOM, this form is bound to
@@ -18,7 +18,7 @@ import space.kscience.visionforge.onClick
 @SerialName("html.form")
 public class VisionOfHtmlForm(
     public val formId: String,
-) : VisionOfHtmlControl(), ClickControl {
+) : VisionOfHtmlControl(), DataControl {
     public var values: Meta? by properties.node()
 }
 
@@ -40,12 +40,12 @@ public inline fun <T, C : TagConsumer<T>> C.visionOfForm(
 }
 
 
-public fun VisionOfHtmlForm.onSubmit(scope: CoroutineScope, block: (Meta?) -> Unit): Job = onClick(scope) { block(payload) }
+public fun VisionOfHtmlForm.onFormSubmit(scope: CoroutineScope, block: (Meta?) -> Unit): Job = onSubmit(scope) { block(payload) }
 
 
 @Serializable
 @SerialName("html.button")
-public class VisionOfHtmlButton : VisionOfHtmlControl(), ClickControl {
+public class VisionOfHtmlButton : VisionOfHtmlControl(), DataControl {
     public var label: String? by properties.string()
 }
 

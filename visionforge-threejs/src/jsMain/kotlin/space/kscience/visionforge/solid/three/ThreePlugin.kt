@@ -14,7 +14,6 @@ import space.kscience.visionforge.compose.ComposeVisionRenderer
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.compose.ThreeView
-import space.kscience.visionforge.solid.three.set
 import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
@@ -85,7 +84,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeVisionRenderer {
                 updatePosition(vision)
                 //obj.onChildrenChange()
                 if (observe) {
-                    vision.properties.changes.onEach { name ->
+                    vision.properties.flowChanges().onEach { name ->
                         if (
                             name.startsWith(Solid.POSITION_KEY) ||
                             name.startsWith(Solid.ROTATION_KEY) ||

@@ -83,7 +83,7 @@ public class VisionManager(meta: Meta) : AbstractPlugin(meta), MutableVisionCont
             polymorphic(VisionEvent::class) {
                 subclass(VisionChange.serializer())
                 subclass(VisionMetaEvent.serializer())
-                subclass(VisionClickEvent.serializer())
+                subclass(VisionSubmitEvent.serializer())
                 subclass(VisionValueChangeEvent.serializer())
                 subclass(VisionInputEvent.serializer())
             }

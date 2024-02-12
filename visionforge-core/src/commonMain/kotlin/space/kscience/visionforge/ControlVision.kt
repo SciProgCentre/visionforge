@@ -34,11 +34,11 @@ public interface ControlVision : Vision {
 
 
 /**
- * @param payload The optional payload associated with the click event.
+ * An event for submitting changes
  */
 @Serializable
-@SerialName("control.click")
-public class VisionClickEvent(override val meta: Meta) : VisionControlEvent() {
+@SerialName("control.submit")
+public class VisionSubmitEvent(override val meta: Meta) : VisionControlEvent() {
     public val payload: Meta get() = meta[::payload.name] ?: Meta.EMPTY
 
     public val name: Name? get() = meta["name"].string?.parseAsName()
@@ -46,28 +46,28 @@ public class VisionClickEvent(override val meta: Meta) : VisionControlEvent() {
     override fun toString(): String = meta.toString()
 }
 
-public fun VisionClickEvent(payload: Meta = Meta.EMPTY, name: Name? = null): VisionClickEvent = VisionClickEvent(
+public fun VisionSubmitEvent(payload: Meta = Meta.EMPTY, name: Name? = null): VisionSubmitEvent = VisionSubmitEvent(
     Meta {
-        VisionClickEvent::payload.name put payload
-        VisionClickEvent::name.name put name.toString()
+        VisionSubmitEvent::payload.name put payload
+        VisionSubmitEvent::name.name put name.toString()
     }
 )
 
 
-public interface ClickControl : ControlVision {
+public interface DataControl : ControlVision {
     /**
-     * Create and dispatch a click event
+     * Create and dispatch submit event
      */
-    public suspend fun click(builder: MutableMeta.() -> Unit = {}) {
-        dispatchControlEvent(VisionClickEvent(Meta(builder)))
+    public suspend fun submit(builder: MutableMeta.() -> Unit = {}) {
+        dispatchControlEvent(VisionSubmitEvent(Meta(builder)))
     }
 }
 
 /**
  * Register listener
  */
-public fun ClickControl.onClick(scope: CoroutineScope, block: suspend VisionClickEvent.() -> Unit): Job =
-    controlEventFlow.filterIsInstance<VisionClickEvent>().onEach(block).launchIn(scope)
+public fun DataControl.onSubmit(scope: CoroutineScope, block: suspend VisionSubmitEvent.() -> Unit): Job =
+    controlEventFlow.filterIsInstance<VisionSubmitEvent>().onEach(block).launchIn(scope)
 
 
 @Serializable

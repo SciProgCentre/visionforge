@@ -138,7 +138,7 @@ public fun ThreeView(
                                 scope = context,
                                 rootMeta = vision.properties.root(),
                                 getPropertyState = { name ->
-                                    if (vision.properties.own?.get(name) != null) {
+                                    if (vision.properties.own[name] != null) {
                                         EditorPropertyState.Defined
                                     } else if (vision.properties.root()[name] != null) {
                                         // TODO differentiate
@@ -148,7 +148,7 @@ public fun ThreeView(
                                     }
                                 },
                                 name = Name.EMPTY,
-                                updates = vision.properties.changes,
+                                updates = vision.properties.flowChanges(),
                                 rootDescriptor = vision.descriptor
                             )
                             vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->

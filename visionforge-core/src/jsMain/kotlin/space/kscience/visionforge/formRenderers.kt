@@ -70,7 +70,7 @@ internal val formVisionRenderer: ElementVisionRenderer =
             event.preventDefault()
             val formData = FormData(form).toMeta()
             client.context.launch {
-                client.sendEvent(name, VisionClickEvent(name = name, payload = formData))
+                client.sendEvent(name, VisionSubmitEvent(name = name, payload = formData))
             }
             console.info("Sent form data: ${formData.toMap()}")
             false
@@ -83,7 +83,7 @@ internal val buttonVisionRenderer: ElementVisionRenderer =
             button.subscribeToVision(vision)
             button.onclick = {
                 client.context.launch {
-                    client.sendEvent(name, VisionClickEvent(name = name))
+                    client.sendEvent(name, VisionSubmitEvent(name = name))
                 }
             }
             vision.useProperty(VisionOfHtmlButton::label) {

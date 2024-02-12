@@ -1,9 +1,8 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -15,7 +14,7 @@ public interface VisionProperties : MetaProvider {
     /**
      * Raw Visions own properties without styles, defaults, etc.
      */
-    public val own: Meta?
+    public val own: Meta
 
     public val descriptor: MetaDescriptor?
 
@@ -41,7 +40,7 @@ public interface VisionProperties : MetaProvider {
     override fun get(name: Name): Meta? = get(name, null, null)
 
 
-    public val changes: Flow<Name>
+    public fun flowChanges(): Flow<Name>
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated.
@@ -112,7 +111,7 @@ private class VisionPropertiesItem(
 
     override val items: Map<NameToken, MutableMeta>
         get() {
-            val metaKeys = properties.own?.get(nodeName)?.items?.keys ?: emptySet()
+            val metaKeys = properties.own[nodeName]?.items?.keys ?: emptySet()
             val descriptorKeys = descriptor?.nodes?.map { NameToken(it.key) } ?: emptySet()
             val defaultKeys = default?.get(nodeName)?.items?.keys ?: emptySet()
             val inheritFlag = descriptor?.inherited ?: inherit
@@ -158,24 +157,11 @@ private class VisionPropertiesItem(
 /**
  * A base implementation of [MutableVisionProperties]
  */
-public abstract class AbstractVisionProperties(
+public open class AbstractVisionProperties(
     public val vision: Vision,
+    final override val own: MutableMeta,
 ) : MutableVisionProperties {
     override val descriptor: MetaDescriptor? get() = vision.descriptor
-
-    protected abstract var properties: MutableMeta?
-
-    override val own: Meta? get() = properties
-
-    @JvmSynchronized
-    protected fun getOrCreateProperties(): MutableMeta {
-        if (properties == null) {
-            //TODO check performance issues
-            val newProperties = MutableMeta()
-            properties = newProperties
-        }
-        return properties!!
-    }
 
     private val descriptorCache = HashMap<Name, MetaDescriptor?>()
 
@@ -184,7 +170,7 @@ public abstract class AbstractVisionProperties(
         inherit: Boolean?,
         includeStyles: Boolean?,
     ): Value? {
-        own?.get(name)?.value?.let { return it }
+        own[name]?.value?.let { return it }
 
         val descriptor = descriptor?.let { descriptor -> descriptorCache.getOrPut(name) { descriptor[name] } }
         val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
@@ -202,14 +188,26 @@ public abstract class AbstractVisionProperties(
 
     override fun set(name: Name, node: Meta?, notify: Boolean) {
         //ignore if the value is the same as existing
-        if (own?.get(name) == node) return
+        if (own[name] == node) return
 
         if (name.isEmpty()) {
-            properties = node?.asMutableMeta()
+            if (node == null) {
+                own.items.keys.forEach {
+                    remove(it.asName())
+                }
+            } else {
+                (own.items.keys - node.items.keys).forEach {
+                    remove(it.asName())
+                }
+                node.items.forEach { (token, item) ->
+                    set(token, item)
+                }
+            }
+
         } else if (node == null) {
-            properties?.set(name, node)
+            own[name] = node
         } else {
-            getOrCreateProperties()[name] = node
+            own[name] = node
         }
         if (notify) {
             invalidate(name)
@@ -218,12 +216,12 @@ public abstract class AbstractVisionProperties(
 
     override fun setValue(name: Name, value: Value?, notify: Boolean) {
         //ignore if the value is the same as existing
-        if (own?.getValue(name) == value) return
+        if (own.getValue(name) == value) return
 
         if (value == null) {
-            properties?.get(name)?.value = null
+            own[name]?.value = null
         } else {
-            getOrCreateProperties().setValue(name, value)
+            own.setValue(name, value)
         }
         if (notify) {
             invalidate(name)
@@ -231,12 +229,20 @@ public abstract class AbstractVisionProperties(
     }
 
     @Transient
-    protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow(500, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    override val changes: SharedFlow<Name> get() = changesInternal
+    protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow()
+
+    override fun flowChanges(): Flow<Name> = changesInternal
 
     override fun invalidate(propertyName: Name) {
         //send update signal
-        changesInternal.tryEmit(propertyName)
+        val manager = vision.manager
+        if (manager != null) {
+            manager.context.launch {
+                changesInternal.emit(propertyName)
+            }
+        } else {
+            changesInternal.tryEmit(propertyName)
+        }
 
         //notify children if there are any
         if (vision is VisionGroup) {

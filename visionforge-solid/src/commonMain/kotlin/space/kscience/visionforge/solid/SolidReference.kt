@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlinx.serialization.*
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.get
@@ -51,21 +49,19 @@ public class SolidReference(
     }
     override val descriptor: MetaDescriptor get() = prototype.descriptor
 
+
     @SerialName("properties")
-    private var propertiesInternal: MutableMeta? = null
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    private val propertiesInternal: MutableMeta = MutableMeta()
 
     override val properties: MutableVisionProperties by lazy {
-        object : AbstractVisionProperties(this) {
-            override var properties: MutableMeta?
-                get() = propertiesInternal
-                set(value) {
-                    propertiesInternal = value
-                }
+        object : AbstractVisionProperties(this, propertiesInternal) {
 
             override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? {
                 if (name == Vision.STYLE_KEY) {
                     return buildList {
-                        properties?.getValue(Vision.STYLE_KEY)?.list?.forEach {
+                        own.getValue(Vision.STYLE_KEY)?.list?.forEach {
                             add(it)
                         }
                         prototype.styles.forEach {
@@ -74,18 +70,18 @@ public class SolidReference(
                     }.distinct().asValue()
                 }
                 //1. resolve own properties
-                properties?.getValue(name)?.let { return it }
+                own.getValue(name)?.let { return it }
 
                 val descriptor = descriptor?.get(name)
                 val inheritFlag = inherit ?: descriptor?.inherited ?: false
                 val stylesFlag = includeStyles ?: descriptor?.usesStyles ?: true
 
                 //2. Resolve prototype onw properties
-                prototype.properties.own?.getValue(name)?.let { return it }
+                prototype.properties.own.getValue(name)?.let { return it }
 
                 if (stylesFlag) {
                     //3. own styles
-                    own?.getValue(Vision.STYLE_KEY)?.list?.forEach { styleName ->
+                    own.getValue(Vision.STYLE_KEY)?.list?.forEach { styleName ->
                         getStyle(styleName.string)?.getValue(name)?.let { return it }
                     }
                     //4. prototype styles
@@ -178,7 +174,8 @@ internal class SolidReferenceChild(
             own.setValue(name, value)
         }
 
-        override val changes: Flow<Name> get() = owner.properties.changes.filter { it.startsWith(childToken(childName)) }
+        override fun flowChanges(): Flow<Name> =
+            owner.properties.flowChanges().filter { it.startsWith(childToken(childName)) }
 
         override fun invalidate(propertyName: Name) {
             owner.properties.invalidate(childPropertyName(childName, propertyName))

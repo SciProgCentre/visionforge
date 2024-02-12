@@ -147,8 +147,8 @@ private fun CoroutineScope.collectChange(
 ) {
 
     //Collect properties change
-    source.properties.changes.onEach { propertyName ->
-        val newItem = source.properties.own?.get(propertyName)
+    source.properties.flowChanges().onEach { propertyName ->
+        val newItem = source.properties.own[propertyName]
         collector.propertyChanged(name, propertyName, newItem)
     }.launchIn(this)
 

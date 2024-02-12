@@ -1,9 +1,5 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.dataforge.meta.asValue
@@ -74,13 +70,3 @@ public var Vision.visible: Boolean?
     set(value) {
         properties.setValue(Vision.VISIBLE_KEY, value?.asValue())
     }
-
-/**
- * Subscribe on property updates. The subscription is bound to the given scope and canceled when the scope is canceled
- */
-public fun Vision.onPropertyChange(
-    scope: CoroutineScope,
-    callback: suspend (Name) -> Unit,
-): Job = properties.changes.onEach {
-    callback(it)
-}.launchIn(scope)

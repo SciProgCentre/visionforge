@@ -1,8 +1,6 @@
 package space.kscience.visionforge
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import kotlinx.serialization.*
 import space.kscience.dataforge.meta.MutableMeta
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 
@@ -14,16 +12,12 @@ public abstract class AbstractVision : Vision {
     override var parent: Vision? = null
 
     @SerialName("properties")
-    protected var propertiesInternal: MutableMeta? = null
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    protected var propertiesInternal: MutableMeta = MutableMeta()
 
     final override val properties: MutableVisionProperties by lazy {
-        object : AbstractVisionProperties(this) {
-            override var properties: MutableMeta?
-                get() = propertiesInternal
-                set(value) {
-                    propertiesInternal = value
-                }
-        }
+        AbstractVisionProperties(this, propertiesInternal)
     }
 
     override val descriptor: MetaDescriptor? get() = null
