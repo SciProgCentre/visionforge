@@ -13,7 +13,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.isEmpty
-import space.kscience.visionforge.compose.*
+import space.kscience.visionforge.html.*
 import space.kscience.visionforge.root
 import space.kscience.visionforge.solid.Solid
 import space.kscience.visionforge.solid.SolidGroup

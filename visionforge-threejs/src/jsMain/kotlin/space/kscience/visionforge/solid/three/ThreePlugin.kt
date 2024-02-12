@@ -10,7 +10,7 @@ import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
 import space.kscience.visionforge.*
-import space.kscience.visionforge.compose.ComposeVisionRenderer
+import space.kscience.visionforge.html.ComposeVisionRenderer
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.compose.ThreeView

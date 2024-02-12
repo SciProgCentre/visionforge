@@ -8,8 +8,8 @@ import space.kscience.dataforge.context.Context
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.compose.TreeStyles
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.html.TreeStyles
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin

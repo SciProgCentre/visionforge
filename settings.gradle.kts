@@ -40,13 +40,9 @@ dependencyResolutionManagement {
 }
 
 include(
-//    ":ui",
-//    ":ui:react",
-//    ":ui:ring",
-//    ":ui:material",
-//    ":ui:bootstrap",
-    ":visionforge-compose-html",
     ":visionforge-core",
+    ":visionforge-compose-html",
+    ":visionforge-compose-mpp",
     ":visionforge-solid",
 //    ":visionforge-fx",
     ":visionforge-threejs",

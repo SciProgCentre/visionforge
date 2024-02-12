@@ -12,8 +12,8 @@ import org.w3c.files.BlobPropertyBag
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
-import space.kscience.visionforge.compose.*
 import space.kscience.visionforge.encodeToString
+import space.kscience.visionforge.html.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 
 @Composable

@@ -7,8 +7,8 @@ import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.compose.Tabs
-import space.kscience.visionforge.compose.TreeStyles
+import space.kscience.visionforge.html.Tabs
+import space.kscience.visionforge.html.TreeStyles
 import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.solid.*

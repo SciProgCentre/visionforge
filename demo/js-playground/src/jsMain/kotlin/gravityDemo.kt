@@ -15,8 +15,8 @@ import space.kscience.plotly.Plot
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.compose.Vision
-import space.kscience.visionforge.compose.zIndex
+import space.kscience.visionforge.html.Vision
+import space.kscience.visionforge.html.zIndex
 import space.kscience.visionforge.markup.VisionOfMarkup
 import space.kscience.visionforge.plotly.asVision
 import space.kscience.visionforge.solid.*

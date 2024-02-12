@@ -7,7 +7,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.visionforge.Application
 import space.kscience.visionforge.VisionManager
-import space.kscience.visionforge.compose.VisionForgeStyles
+import space.kscience.visionforge.html.VisionForgeStyles
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.startApplication
 
