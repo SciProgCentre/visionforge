@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -23,7 +23,7 @@ import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
-import space.kscience.visionforge.html.VisionTagConsumer
+import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
@@ -90,19 +90,6 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
      */
     override suspend fun sendEvent(targetName: Name, event: VisionEvent) {
         eventCollector.emit(targetName to event)
-    }
-
-    private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
-        vision.setAsRoot(visionManager)
-        val renderer: ElementVisionRenderer =
-            findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
-        //subscribe to a backwards events propagation for control visions
-        if(vision is ControlVision){
-            vision.controlEventFlow.onEach {
-                sendEvent(name,it)
-            }.launchIn(context)
-        }
-        renderer.render(element, name, vision, outputMeta)
     }
 
     private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {
@@ -187,6 +174,24 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
         }
     }
 
+
+    private fun renderVision(element: Element, name: Name, vision: Vision, outputMeta: Meta) {
+        vision.setAsRoot(visionManager)
+        val renderer: ElementVisionRenderer =
+            findRendererFor(vision) ?: error("Could not find renderer for ${vision::class}")
+        //render vision
+        renderer.render(element, name, vision, outputMeta)
+        //start vision update from backend model
+        startVisionUpdate(element, name, vision, outputMeta)
+        //subscribe to a backwards events propagation for control visions
+        if(vision is ControlVision){
+            vision.controlEventFlow.onEach {
+                sendEvent(name,it)
+            }.launchIn(context)
+        }
+
+    }
+
     /**
      * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
      */
@@ -230,7 +235,6 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                         response.text().then { text ->
                             val vision = visionManager.decodeFromString(text)
                             renderVision(element, name, vision, outputMeta)
-                            startVisionUpdate(element, name, vision, outputMeta)
                         }
                     } else {
                         logger.error { "Failed to fetch initial vision state from $fetchUrl" }
@@ -246,7 +250,6 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
                 }
                 logger.info { "Found embedded vision for output with name $name" }
                 renderVision(element, name, embeddedVision, outputMeta)
-                startVisionUpdate(element, name, embeddedVision, outputMeta)
             }
 
             //Try to load vision via websocket

@@ -17,10 +17,23 @@ import space.kscience.visionforge.*
 
 
 public interface VisionOfHtml : Vision {
+
+    /**
+     * Html class strings for this instance. Does not use vision inheritance, but uses styles
+     */
     public var classes: Set<String>
-        get() = properties[::classes.name, false].stringList?.toSet() ?: emptySet()
+        get() = properties[::classes.name, false, true].stringList?.toSet() ?: emptySet()
         set(value) {
             properties[::classes.name] = value.map { it.asValue() }
+        }
+
+    /**
+     * A custom style string
+     */
+    public var styleString: String?
+        get() = properties[::styleString.name,false,true].string
+        set(value){
+            properties[::styleString.name] = value?.asValue()
         }
 }
 
@@ -67,7 +80,6 @@ public open class VisionOfHtmlInput(
     public var value: Value? by properties.value()
     public var disabled: Boolean by properties.boolean { false }
     public var fieldName: String? by properties.string()
-
 }
 
 /**

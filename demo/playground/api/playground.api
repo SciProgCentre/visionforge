@@ -53,6 +53,11 @@ public final class space/kscience/visionforge/examples/GenerateSchemaKt {
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
+public final class space/kscience/visionforge/examples/MarkdownVisionKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
 public final class space/kscience/visionforge/examples/PlotlyVisionKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V

@@ -4,6 +4,7 @@ package space.kscience.visionforge.solid.specifications
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.scheme
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.set
@@ -15,6 +16,7 @@ import space.kscience.visionforge.widgetType
 
 public object Clipping : SchemeSpec<PointScheme>(::PointScheme) {
     override val descriptor: MetaDescriptor = MetaDescriptor {
+        valueRestriction = ValueRestriction.ABSENT
         value(PointScheme::x) {
             widgetType = "range"
             attributes["min"] = 0.0

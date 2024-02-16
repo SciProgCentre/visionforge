@@ -135,7 +135,6 @@ public fun ThreeView(
                             NameCrumbs(selected) { selected = it }
                             Hr()
                             PropertyEditor(
-                                scope = context,
                                 rootMeta = vision.properties.root(),
                                 getPropertyState = { name ->
                                     if (vision.properties.own[name] != null) {

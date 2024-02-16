@@ -13,9 +13,13 @@ import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionPlugin
+import space.kscience.visionforge.html.ElementVisionRenderer
+import space.kscience.visionforge.html.JsVisionClient
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FORMAT
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
+import space.kscience.visionforge.useProperty
 
 public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public val visionClient: JsVisionClient by require(JsVisionClient)

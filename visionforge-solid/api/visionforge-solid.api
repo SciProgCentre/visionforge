@@ -747,6 +747,7 @@ public final class space/kscience/visionforge/solid/SolidKt {
 	public static final fun getY (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getZ (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun rotate (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/kmath/geometry/Angle;Lspace/kscience/kmath/geometry/Vector3D;)V
+	public static final fun scale (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setDetail (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Integer;)V
 	public static final fun setIgnore (Lspace/kscience/visionforge/Vision;Ljava/lang/Boolean;)V
 	public static final fun setLayer (Lspace/kscience/visionforge/solid/Solid;I)V
@@ -802,8 +803,10 @@ public final class space/kscience/visionforge/solid/SolidMaterial : space/kscien
 	public final fun getEmissiveColor ()Lspace/kscience/visionforge/solid/ColorAccessor;
 	public final fun getOpacity ()F
 	public final fun getSpecularColor ()Lspace/kscience/visionforge/solid/ColorAccessor;
+	public final fun getType ()Ljava/lang/String;
 	public final fun getWireframe ()Z
 	public final fun setOpacity (F)V
+	public final fun setType (Ljava/lang/String;)V
 	public final fun setWireframe (Z)V
 }
 
@@ -1087,23 +1090,6 @@ public final class space/kscience/visionforge/solid/SurfaceKt {
 	public static synthetic fun surface$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Surface;
 }
 
-public final class space/kscience/visionforge/solid/specifications/AxesScheme : space/kscience/dataforge/meta/Scheme {
-	public static final field AXIS_SIZE D
-	public static final field AXIS_WIDTH D
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/AxesScheme$Companion;
-	public fun <init> ()V
-	public final fun getSize ()D
-	public final fun getVisible ()Z
-	public final fun getWidth ()D
-	public final fun setSize (D)V
-	public final fun setVisible (Z)V
-	public final fun setWidth (D)V
-}
-
-public final class space/kscience/visionforge/solid/specifications/AxesScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
-	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
-}
-
 public final class space/kscience/visionforge/solid/specifications/CameraScheme : space/kscience/dataforge/meta/Scheme {
 	public static final field Companion Lspace/kscience/visionforge/solid/specifications/CameraScheme$Companion;
 	public static final field FAR_CLIP D
@@ -1138,15 +1124,15 @@ public final class space/kscience/visionforge/solid/specifications/CameraSchemeK
 public final class space/kscience/visionforge/solid/specifications/Canvas3DOptions : space/kscience/dataforge/meta/Scheme {
 	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Canvas3DOptions$Companion;
 	public fun <init> ()V
-	public final fun getAxes ()Lspace/kscience/visionforge/solid/specifications/AxesScheme;
 	public final fun getCamera ()Lspace/kscience/visionforge/solid/specifications/CameraScheme;
+	public final fun getCanvasName ()Ljava/lang/String;
 	public final fun getClipping ()Lspace/kscience/visionforge/solid/specifications/PointScheme;
 	public final fun getControls ()Lspace/kscience/visionforge/solid/specifications/Canvas3DUIScheme;
 	public final fun getLayers ()Ljava/util/List;
 	public final fun getOnSelect ()Lkotlin/jvm/functions/Function1;
 	public final fun getSize ()Lspace/kscience/visionforge/solid/specifications/CanvasSize;
-	public final fun setAxes (Lspace/kscience/visionforge/solid/specifications/AxesScheme;)V
 	public final fun setCamera (Lspace/kscience/visionforge/solid/specifications/CameraScheme;)V
+	public final fun setCanvasName (Ljava/lang/String;)V
 	public final fun setClipping (Lspace/kscience/visionforge/solid/specifications/PointScheme;)V
 	public final fun setControls (Lspace/kscience/visionforge/solid/specifications/Canvas3DUIScheme;)V
 	public final fun setLayers (Ljava/util/List;)V
@@ -1171,6 +1157,7 @@ public final class space/kscience/visionforge/solid/specifications/Canvas3DUISch
 }
 
 public final class space/kscience/visionforge/solid/specifications/Canvas3DUIScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
+	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 }
 
 public final class space/kscience/visionforge/solid/specifications/CanvasSize : space/kscience/dataforge/meta/Scheme {

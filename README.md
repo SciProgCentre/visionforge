@@ -70,7 +70,11 @@ To learn more about DataForge, please consult the following URLs:
 >
 > **Maturity**: EXPERIMENTAL
 
-### [ui](ui)
+### [visionforge-compose-html](visionforge-compose-html)
+>
+> **Maturity**: EXPERIMENTAL
+
+### [visionforge-compose-multiplatform](visionforge-compose-multiplatform)
 >
 > **Maturity**: EXPERIMENTAL
 
@@ -111,6 +115,10 @@ To learn more about DataForge, please consult the following URLs:
 >
 > **Maturity**: EXPERIMENTAL
 
+### [demo/compose-desktop-demo](demo/compose-desktop-demo)
+>
+> **Maturity**: EXPERIMENTAL
+
 ### [demo/gdml](demo/gdml)
 >
 > **Maturity**: EXPERIMENTAL
@@ -132,22 +140,6 @@ To learn more about DataForge, please consult the following URLs:
 > **Maturity**: EXPERIMENTAL
 
 ### [demo/solid-showcase](demo/solid-showcase)
->
-> **Maturity**: EXPERIMENTAL
-
-### [ui/bootstrap](ui/bootstrap)
->
-> **Maturity**: EXPERIMENTAL
-
-### [ui/compose](ui/compose)
->
-> **Maturity**: EXPERIMENTAL
-
-### [ui/react](ui/react)
->
-> **Maturity**: EXPERIMENTAL
-
-### [ui/ring](ui/ring)
 >
 > **Maturity**: EXPERIMENTAL
 

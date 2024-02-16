@@ -1,3 +1,5 @@
+import space.kscience.gradle.Maturity
+
 plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.compose)
@@ -14,15 +16,20 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.visionforgeCore)
-                api(compose.runtime)
                 api(compose.foundation)
+                api(compose.runtime)
+                api(compose.material)
+                api(compose.materialIconsExtended)
             }
         }
-        jvmMain{
-            dependencies{
-                api(compose.material)
-                api(compose.preview)
+        jvmMain {
+            dependencies {
+                implementation("com.eygraber:compose-color-picker:0.0.17")
             }
         }
     }
+}
+
+readme {
+    maturity = Maturity.EXPERIMENTAL
 }

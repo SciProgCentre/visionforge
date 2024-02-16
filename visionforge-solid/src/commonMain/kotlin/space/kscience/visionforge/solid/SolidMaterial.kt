@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.names.Name
@@ -66,6 +67,7 @@ public class SolidMaterial : Scheme() {
             //must be lazy to avoid initialization bug
             MetaDescriptor {
                 inherited = true
+                valueRestriction = ValueRestriction.ABSENT
 
                 value(TYPE_KEY, ValueType.STRING) {
                     inherited = true

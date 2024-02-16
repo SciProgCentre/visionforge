@@ -23,7 +23,7 @@ public annotation class VisionDSL
  * A placeholder object to attach inline vision builders.
  */
 @VisionDSL
-public class VisionOutput @PublishedApi internal constructor(override val context: Context, public val name: Name): ContextAware {
+public class VisionOutput(override val context: Context, public val name: Name): ContextAware {
     public var meta: Meta = Meta.EMPTY
 
     private val requirements: MutableSet<PluginFactory<*>> = HashSet()

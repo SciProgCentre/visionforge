@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +46,7 @@ public interface Application: CoroutineScope {
 }
 
 public fun startApplication(builder: () -> Application) {
-    fun start(document: Document, state: dynamic): Application{
+    fun start(document: Document, state: dynamic): Application {
         val application = builder()
 
         @Suppress("UnsafeCastFromDynamic")

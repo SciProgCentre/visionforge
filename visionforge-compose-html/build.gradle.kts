@@ -14,11 +14,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.visionforgeCore)
-            }
-        }
-        jvmMain{
-            //need this to placate compose compiler in MPP applications
-            dependencies{
+                //need this to placate compose compiler in MPP applications
                 api(compose.runtime)
             }
         }
@@ -28,7 +24,6 @@ kotlin {
                 api("app.softwork:bootstrap-compose:0.1.15")
                 api("app.softwork:bootstrap-compose-icons:0.1.15")
 
-                api(compose.runtime)
                 api(compose.html.core)
             }
         }

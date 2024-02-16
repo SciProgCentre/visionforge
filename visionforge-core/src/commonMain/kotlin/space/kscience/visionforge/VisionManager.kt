@@ -132,6 +132,8 @@ public class RootVision(override val manager: VisionManager) : AbstractVisionGro
  * Designate this [Vision] as a root and assign a [VisionManager] as its parent
  */
 public fun Vision.setAsRoot(manager: VisionManager) {
+    //do nothing if vision is already rooted
+    if(this.manager == manager) return
     if (parent != null) error("Vision $this already has a parent. It could not be set as root")
     parent = RootVision(manager)
 }

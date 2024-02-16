@@ -1,4 +1,5 @@
 public final class ru/mipt/npm/muon/monitor/Event {
+	public static final field $stable I
 	public static final field Companion Lru/mipt/npm/muon/monitor/Event$Companion;
 	public fun <init> (ILjava/util/List;Ljava/util/Collection;)V
 	public final fun component1 ()I
@@ -15,6 +16,7 @@ public final class ru/mipt/npm/muon/monitor/Event {
 }
 
 public final class ru/mipt/npm/muon/monitor/Event$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field $stable I
 	public static final field INSTANCE Lru/mipt/npm/muon/monitor/Event$$serializer;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
@@ -30,6 +32,7 @@ public final class ru/mipt/npm/muon/monitor/Event$Companion {
 }
 
 public final class ru/mipt/npm/muon/monitor/Model {
+	public static final field $stable I
 	public fun <init> (Lspace/kscience/visionforge/VisionManager;)V
 	public final fun displayEvent (Lru/mipt/npm/muon/monitor/Event;)V
 	public final fun encodeToString ()Ljava/lang/String;
@@ -40,6 +43,7 @@ public final class ru/mipt/npm/muon/monitor/Model {
 }
 
 public final class ru/mipt/npm/muon/monitor/Monitor {
+	public static final field $stable I
 	public static final field CENTRAL_LAYER_Z F
 	public static final field GEOMETRY_TOLERANCE D
 	public static final field INSTANCE Lru/mipt/npm/muon/monitor/Monitor;
@@ -57,6 +61,7 @@ public final class ru/mipt/npm/muon/monitor/ReadResourceKt {
 }
 
 public final class ru/mipt/npm/muon/monitor/SC1 {
+	public static final field $stable I
 	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;FFF)V
 	public synthetic fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getCenter ()Lspace/kscience/visionforge/solid/Float32Vector3D;
@@ -67,6 +72,7 @@ public final class ru/mipt/npm/muon/monitor/SC1 {
 }
 
 public final class ru/mipt/npm/muon/monitor/SC16 {
+	public static final field $stable I
 	public fun <init> (Ljava/lang/String;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
 	public final fun getCenter ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public final fun getName ()Ljava/lang/String;
@@ -81,6 +87,7 @@ public final class ru/mipt/npm/muon/monitor/server/MMServerKt {
 }
 
 public final class ru/mipt/npm/muon/monitor/sim/Cos2TrackGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public static final field $stable I
 	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DFF)V
 	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
@@ -91,6 +98,7 @@ public final class ru/mipt/npm/muon/monitor/sim/Cos2TrackGenerator : ru/mipt/npm
 }
 
 public final class ru/mipt/npm/muon/monitor/sim/FixedAngleGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public static final field $stable I
 	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DDFF)V
 	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;DDFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;
@@ -134,6 +142,7 @@ public abstract interface class ru/mipt/npm/muon/monitor/sim/TrackGenerator {
 }
 
 public final class ru/mipt/npm/muon/monitor/sim/UniformTrackGenerator : ru/mipt/npm/muon/monitor/sim/TrackGenerator {
+	public static final field $stable I
 	public fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;FF)V
 	public synthetic fun <init> (Lorg/apache/commons/math3/random/RandomGenerator;FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun generate ()Lorg/apache/commons/math3/geometry/euclidean/threed/Line;

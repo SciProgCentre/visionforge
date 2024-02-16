@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.browser.document
 import kotlinx.coroutines.launch
@@ -12,8 +12,7 @@ import space.kscience.dataforge.context.debug
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.html.VisionOfHtmlButton
-import space.kscience.visionforge.html.VisionOfHtmlForm
+import space.kscience.visionforge.*
 
 /**
  * Convert form data to Meta

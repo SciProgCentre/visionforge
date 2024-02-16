@@ -30,6 +30,7 @@ kscience {
 
     commonMain {
         implementation(projects.visionforgeSolid)
+        implementation(projects.visionforgeComposeHtml)
     }
     jvmMain {
         implementation("org.apache.commons:commons-math3:3.6.1")
@@ -39,7 +40,6 @@ kscience {
         implementation("ch.qos.logback:logback-classic:1.2.11")
     }
     jsMain {
-//        implementation(projects.visionforgeComposeHtml)
         implementation(projects.visionforgeThreejs)
         //implementation(devNpm("webpack-bundle-analyzer", "4.4.0"))
     }

@@ -9,7 +9,6 @@ import app.softwork.bootstrapcompose.Layout.Width
 import org.jetbrains.compose.web.dom.Hr
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.encodeToString
@@ -33,7 +32,6 @@ internal fun CanvasControls(
         }
         Hr()
         PropertyEditor(
-            scope = vision?.manager?.context ?: Global,
             properties = options.meta,
             descriptor = Canvas3DOptions.descriptor,
             expanded = false

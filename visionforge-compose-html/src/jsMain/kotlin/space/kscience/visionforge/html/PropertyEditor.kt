@@ -2,7 +2,6 @@ package space.kscience.visionforge.html
 
 import androidx.compose.runtime.*
 import app.softwork.bootstrapcompose.CloseButton
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -39,7 +38,6 @@ public sealed class EditorPropertyState {
  */
 @Composable
 public fun PropertyEditor(
-    scope: CoroutineScope,
     rootMeta: MutableMeta,
     getPropertyState: (Name) -> EditorPropertyState,
     updates: Flow<Name>,
@@ -136,7 +134,7 @@ public fun PropertyEditor(
                 Div({
                     classes(TreeStyles.treeItem)
                 }) {
-                    PropertyEditor(scope, rootMeta, getPropertyState, updates, name + token, rootDescriptor, expanded)
+                    PropertyEditor(rootMeta, getPropertyState, updates, name + token, rootDescriptor, expanded)
                 }
             }
         }
@@ -145,13 +143,12 @@ public fun PropertyEditor(
 
 @Composable
 public fun PropertyEditor(
-    scope: CoroutineScope,
     properties: ObservableMutableMeta,
     descriptor: MetaDescriptor? = null,
     expanded: Boolean? = null,
 ) {
+    val scope = rememberCoroutineScope()
     PropertyEditor(
-        scope = scope,
         rootMeta = properties,
         getPropertyState = { name ->
             if (properties[name] != null) {

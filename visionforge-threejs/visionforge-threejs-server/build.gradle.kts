@@ -23,6 +23,7 @@ kscience {
 
     commonMain {
         api(projects.visionforgeSolid)
+        api(projects.visionforgeComposeHtml)
     }
 
     jvmMain {

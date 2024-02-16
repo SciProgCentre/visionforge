@@ -4,10 +4,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.w3c.dom.Document
-import space.kscience.visionforge.Application
+import space.kscience.visionforge.html.Application
+import space.kscience.visionforge.html.startApplication
 import space.kscience.visionforge.solid.x
 import space.kscience.visionforge.solid.y
-import space.kscience.visionforge.startApplication
 import kotlin.random.Random
 
 private class ThreeDemoApp : Application {

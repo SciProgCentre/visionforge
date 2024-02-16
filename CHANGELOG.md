@@ -5,8 +5,6 @@
 ### Added
 
 ### Changed
-- **Breaking API** Move vision cache to upper level for renderers to avoid re-creating visions for page reload.
-- **Breaking API** Forms refactor
 
 ### Deprecated
 
@@ -15,6 +13,19 @@
 ### Fixed
 
 ### Security
+
+## 0.4.0 - 2024-02-16
+
+### Added
+
+- Added compose-mpp rendering.
+
+### Changed
+
+- **Breaking API** Move vision cache to upper level for renderers to avoid re-creating visions for page reload.
+- **Breaking API** Forms refactor.
+- **Breaking API** Migrated from React to Compose-html.
+- **Breaking API** changed js package for `visionforge-core` to `space.kscience.visionforge.html` to avoid mixing html and generic parts.
 
 ## 0.3.0 - 2023-12-23
 

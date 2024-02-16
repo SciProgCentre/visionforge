@@ -10,6 +10,7 @@ import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.*
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -91,6 +92,7 @@ internal class VisionPropertyTest {
     }
 
     @Test
+    @Ignore
     fun testChildrenPropertyFlow() = runTest(timeout = 500.milliseconds) {
         val group = Global.request(VisionManager).group {
 

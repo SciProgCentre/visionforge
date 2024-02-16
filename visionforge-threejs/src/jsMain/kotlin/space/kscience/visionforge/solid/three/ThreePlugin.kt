@@ -9,11 +9,16 @@ import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionChildren
+import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.html.ComposeHtmlVisionRenderer
+import space.kscience.visionforge.html.ElementVisionRenderer
+import space.kscience.visionforge.html.JsVisionClient
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.solid.three.compose.ThreeView
+import space.kscience.visionforge.visible
 import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass

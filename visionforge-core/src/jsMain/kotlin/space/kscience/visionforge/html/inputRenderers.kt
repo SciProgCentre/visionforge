@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.dom.clear
 import kotlinx.html.InputType
@@ -9,7 +9,10 @@ import org.w3c.dom.HTMLInputElement
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.double
 import space.kscience.dataforge.meta.string
-import space.kscience.visionforge.html.*
+import space.kscience.visionforge.VisionInputEvent
+import space.kscience.visionforge.VisionValueChangeEvent
+import space.kscience.visionforge.asyncControlEvent
+import space.kscience.visionforge.useProperty
 
 /**
  * Subscribes the HTML element to a given vision.
@@ -19,6 +22,10 @@ import space.kscience.visionforge.html.*
 internal fun HTMLElement.subscribeToVision(vision: VisionOfHtml) {
     vision.useProperty(VisionOfHtml::classes) {
         classList.value = classes.joinToString(separator = " ")
+    }
+
+    vision.useProperty(VisionOfHtml::styleString) {
+        style.cssText = it ?: ""
     }
 }
 
@@ -54,7 +61,7 @@ internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<
     }.also { htmlInputElement ->
 
         htmlInputElement.onchange = {
-            vision.asyncControlEvent( VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
+            vision.asyncControlEvent(VisionValueChangeEvent(htmlInputElement.value.asValue(), name))
         }
 
         htmlInputElement.oninput = {

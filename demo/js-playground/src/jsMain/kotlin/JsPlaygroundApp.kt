@@ -5,16 +5,16 @@ import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
-import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.html.Application
 import space.kscience.visionforge.html.Tabs
-import space.kscience.visionforge.html.TreeStyles
+import space.kscience.visionforge.html.VisionForgeStyles
+import space.kscience.visionforge.html.startApplication
 import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.plotly.PlotlyPlugin
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.three.ThreePlugin
 import space.kscience.visionforge.solid.three.compose.ThreeView
-import space.kscience.visionforge.startApplication
 import kotlin.random.Random
 
 fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number? = null, yErr: Number? = null) {
@@ -40,7 +40,7 @@ private class JsPlaygroundApp : Application {
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
         renderComposable(element) {
-            Style(TreeStyles)
+            Style(VisionForgeStyles)
             Div({
                 style {
                     padding(0.pt)

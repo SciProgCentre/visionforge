@@ -1,4 +1,4 @@
-package space.kscience.visionforge
+package space.kscience.visionforge.html
 
 import kotlinx.dom.clear
 import kotlinx.html.TagConsumer
@@ -8,6 +8,7 @@ import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.misc.DfType
 import space.kscience.dataforge.names.Name
+import space.kscience.visionforge.Vision
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 

@@ -7,7 +7,6 @@ import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Element
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.ElementVisionRenderer
 import space.kscience.visionforge.Vision
 
 /**

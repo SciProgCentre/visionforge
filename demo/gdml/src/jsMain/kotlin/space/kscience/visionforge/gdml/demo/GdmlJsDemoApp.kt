@@ -6,14 +6,14 @@ import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Document
 import space.kscience.dataforge.context.Context
 import space.kscience.gdml.GdmlShowCase
-import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.gdml.toVision
-import space.kscience.visionforge.html.TreeStyles
+import space.kscience.visionforge.html.Application
+import space.kscience.visionforge.html.VisionForgeStyles
+import space.kscience.visionforge.html.startApplication
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.three.ThreePlugin
-import space.kscience.visionforge.startApplication
 
 
 private class GDMLDemoApp : Application {
@@ -33,7 +33,7 @@ private class GDMLDemoApp : Application {
         }
 
         renderComposable(element) {
-            Style(TreeStyles)
+            Style(VisionForgeStyles)
             Style {
                 "html" {
                     height(100.percent)
