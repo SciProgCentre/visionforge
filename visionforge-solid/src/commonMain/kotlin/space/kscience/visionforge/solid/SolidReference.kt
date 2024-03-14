@@ -166,16 +166,16 @@ internal class SolidReferenceChild(
             includeStyles: Boolean?,
         ): Value? = own.getValue(name) ?: prototype.properties.getValue(name, inherit, includeStyles)
 
-        override fun set(name: Name, node: Meta?, notify: Boolean) {
-            own[name] = node
+        override fun set(name: Name, item: Meta?, notify: Boolean) {
+            own[name] = item
         }
 
         override fun setValue(name: Name, value: Value?, notify: Boolean) {
             own.setValue(name, value)
         }
 
-        override fun flowChanges(): Flow<Name> =
-            owner.properties.flowChanges().filter { it.startsWith(childToken(childName)) }
+        override val changes: Flow<Name>
+            get() = owner.properties.changes.filter { it.startsWith(childToken(childName)) }
 
         override fun invalidate(propertyName: Name) {
             owner.properties.invalidate(childPropertyName(childName, propertyName))

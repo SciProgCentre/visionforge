@@ -18,7 +18,7 @@ public fun Vision.flowProperty(
 ): Flow<Meta> = flow {
     //Pass initial value.
     emit(properties.get(propertyName, inherit, includeStyles))
-    properties.flowChanges().collect { name ->
+    properties.changes.collect { name ->
         if (name.startsWith(propertyName)) {
             emit(properties.get(propertyName, inherit, includeStyles))
         }
@@ -41,7 +41,7 @@ public fun Vision.flowPropertyValue(
 ): Flow<Value?> = flow {
     //Pass initial value.
     emit(properties.getValue(propertyName, inherit, includeStyles))
-    properties.flowChanges().collect { name ->
+    properties.changes.collect { name ->
         if (name.startsWith(propertyName)) {
             emit(properties.getValue(propertyName, inherit, includeStyles))
         }

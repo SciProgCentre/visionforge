@@ -25,7 +25,7 @@ public fun Vision.useProperty(
 ): Job {
     //Pass initial value.
     callback(properties.get(propertyName, inherit, includeStyles))
-    return properties.flowChanges().onEach { name ->
+    return properties.changes.onEach { name ->
         if (name.startsWith(propertyName)) {
             callback(properties.get(propertyName, inherit, includeStyles))
         }
@@ -47,7 +47,7 @@ public fun <V : Vision, T> V.useProperty(
 ): Job {
     //Pass initial value.
     callback(property.get(this))
-    return properties.flowChanges().onEach { name ->
+    return properties.changes.onEach { name ->
         if (name.startsWith(property.name.asName())) {
             callback(property.get(this@useProperty))
         }
@@ -60,7 +60,7 @@ public fun <V : Vision, T> V.useProperty(
 public fun Vision.onPropertyChange(
     scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties. Use explicit scope."),
     callback: suspend (Name) -> Unit,
-): Job = properties.flowChanges().onEach {
+): Job = properties.changes.onEach {
     callback(it)
 }.launchIn(scope)
 
@@ -71,6 +71,6 @@ public fun <V : Vision, T> V.onPropertyChange(
     property: KProperty1<V, T>,
     scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties. Use explicit scope."),
     callback: suspend V.(T) -> Unit,
-): Job = properties.flowChanges().filter { it.startsWith(property.name.asName()) }.onEach {
+): Job = properties.changes.filter { it.startsWith(property.name.asName()) }.onEach {
     callback(property.get(this))
 }.launchIn(scope)

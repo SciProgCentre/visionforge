@@ -89,7 +89,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
                 updatePosition(vision)
                 //obj.onChildrenChange()
                 if (observe) {
-                    vision.properties.flowChanges().onEach { name ->
+                    vision.properties.changes.onEach { name ->
                         if (
                             name.startsWith(Solid.POSITION_KEY) ||
                             name.startsWith(Solid.ROTATION_KEY) ||

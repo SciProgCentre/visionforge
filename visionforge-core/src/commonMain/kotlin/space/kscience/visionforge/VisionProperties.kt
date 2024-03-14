@@ -40,7 +40,11 @@ public interface VisionProperties : MetaProvider {
     override fun get(name: Name): Meta? = get(name, null, null)
 
 
-    public fun flowChanges(): Flow<Name>
+    public val changes: Flow<Name>
+
+    @Deprecated("Replace with property", ReplaceWith("changes"))
+    public fun flowChanges(): Flow<Name> = changes
+
 
     /**
      * Notify all listeners that a property has been changed and should be invalidated.
@@ -64,7 +68,7 @@ public interface MutableVisionProperties : VisionProperties, MutableMetaProvider
 
     public fun set(
         name: Name,
-        node: Meta?,
+        item: Meta?,
         notify: Boolean,
     )
 
@@ -186,28 +190,28 @@ public open class AbstractVisionProperties(
         return descriptor?.defaultValue
     }
 
-    override fun set(name: Name, node: Meta?, notify: Boolean) {
+    override fun set(name: Name, item: Meta?, notify: Boolean) {
         //ignore if the value is the same as existing
-        if (own[name] == node) return
+        if (own[name] == item) return
 
         if (name.isEmpty()) {
-            if (node == null) {
+            if (item == null) {
                 own.items.keys.forEach {
                     remove(it.asName())
                 }
             } else {
-                (own.items.keys - node.items.keys).forEach {
+                (own.items.keys - item.items.keys).forEach {
                     remove(it.asName())
                 }
-                node.items.forEach { (token, item) ->
+                item.items.forEach { (token, item) ->
                     set(token, item)
                 }
             }
 
-        } else if (node == null) {
-            own[name] = node
+        } else if (item == null) {
+            own[name] = item
         } else {
-            own[name] = node
+            own[name] = item
         }
         if (notify) {
             invalidate(name)
@@ -231,7 +235,8 @@ public open class AbstractVisionProperties(
     @Transient
     protected val changesInternal: MutableSharedFlow<Name> = MutableSharedFlow()
 
-    override fun flowChanges(): Flow<Name> = changesInternal
+    override val changes: Flow<Name>
+        get() = changesInternal
 
     override fun invalidate(propertyName: Name) {
         //send update signal

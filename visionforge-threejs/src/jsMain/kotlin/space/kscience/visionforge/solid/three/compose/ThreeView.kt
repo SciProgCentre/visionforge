@@ -147,7 +147,7 @@ public fun ThreeView(
                                     }
                                 },
                                 name = Name.EMPTY,
-                                updates = vision.properties.flowChanges(),
+                                updates = vision.properties.changes,
                                 rootDescriptor = vision.descriptor
                             )
                             vision.styles.takeIf { it.isNotEmpty() }?.let { styles ->
