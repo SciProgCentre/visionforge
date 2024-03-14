@@ -36,7 +36,6 @@ public class VisionOfPlotly private constructor(
 
         override val changes = callbackFlow {
             plot.meta.onChange(this) {
-                println(it)
                 launch {
                     send(it)
                 }
