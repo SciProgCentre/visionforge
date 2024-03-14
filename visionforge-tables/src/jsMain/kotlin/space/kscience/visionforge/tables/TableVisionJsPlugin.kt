@@ -81,6 +81,8 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
         TabulatorFull(element as HTMLElement, tableOptions)
     }
 
+    override fun toString(): String  = "Table"
+
     override fun content(target: String): Map<Name, Any> = when (target) {
         ElementVisionRenderer.TYPE -> mapOf("table".asName() to this)
         else -> super.content(target)

@@ -23,6 +23,7 @@ kotlin {
             dependencies {
                 api("app.softwork:bootstrap-compose:0.1.15")
                 api("app.softwork:bootstrap-compose-icons:0.1.15")
+                implementation(compose.html.svg)
 
                 api(compose.html.core)
             }

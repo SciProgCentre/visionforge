@@ -36,6 +36,8 @@ public interface ElementVisionRenderer {
         meta: Meta = Meta.EMPTY,
     )
 
+    override fun toString(): String
+
     public companion object {
         public const val TYPE: String = "elementVisionRenderer"
         public const val ZERO_RATING: Int = 0
@@ -66,6 +68,8 @@ public class SingleTypeVisionRenderer<T : Vision>(
             renderFunction(name, kClass.cast(vision), meta)
         }
     }
+
+    override fun toString(): String = "ElementVisionRender(${kClass.simpleName})"
 }
 
 public inline fun <reified T : Vision> ElementVisionRenderer(

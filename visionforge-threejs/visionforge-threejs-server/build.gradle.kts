@@ -32,8 +32,8 @@ kscience {
 
     jsMain {
         api(projects.visionforgeThreejs)
-        implementation(npm("file-saver", "2.0.5"))
-        implementation(npm("@types/file-saver", "2.0.7"))
+        api(npm("file-saver", "2.0.5"))
+        api(npm("@types/file-saver", "2.0.7"))
         compileOnly(npm("webpack-bundle-analyzer", "4.5.0"))
     }
 }

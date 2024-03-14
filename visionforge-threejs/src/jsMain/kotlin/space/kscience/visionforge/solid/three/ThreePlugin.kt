@@ -169,6 +169,8 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
+    override fun toString(): String  = "ThreeJS"
+
     /**
      * Render the given [Solid] Vision in a [ThreeCanvas] attached
      * to the [element]. Canvas objects are cached, so subsequent calls

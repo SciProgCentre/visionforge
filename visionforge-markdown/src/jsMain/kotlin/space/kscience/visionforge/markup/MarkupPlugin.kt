@@ -31,7 +31,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> ElementVisionRenderer.ZERO_RATING
     }
 
-    override fun render(element: Element,name: Name, vision: Vision, meta: Meta) {
+    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
         require(vision is VisionOfMarkup) { "The vision is not a markup vision" }
         val div = document.createElement("div")
         val flavour = when (vision.format) {
@@ -48,6 +48,8 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         }
         element.append(div)
     }
+
+    override fun toString(): String = "Markup"
 
     override fun content(target: String): Map<Name, Any> = when (target) {
         ElementVisionRenderer.TYPE -> mapOf("markup".asName() to this)

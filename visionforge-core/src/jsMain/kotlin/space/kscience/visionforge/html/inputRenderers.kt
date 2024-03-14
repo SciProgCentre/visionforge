@@ -41,16 +41,15 @@ private fun HTMLInputElement.subscribeToInput(inputVision: VisionOfHtmlInput) {
     }
 }
 
-internal val htmlVisionRenderer: ElementVisionRenderer =
-    ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
-        div().also { div ->
-            div.subscribeToVision(vision)
-            vision.useProperty(VisionOfPlainHtml::content) {
-                div.clear()
-                if (it != null) div.innerHTML = it
-            }
+internal val htmlVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfPlainHtml> { _, vision, _ ->
+    div().also { div ->
+        div.subscribeToVision(vision)
+        vision.useProperty(VisionOfPlainHtml::content) {
+            div.clear()
+            if (it != null) div.innerHTML = it
         }
     }
+}
 
 internal val inputVisionRenderer: ElementVisionRenderer = ElementVisionRenderer<VisionOfHtmlInput>(
     acceptRating = ElementVisionRenderer.DEFAULT_RATING - 1

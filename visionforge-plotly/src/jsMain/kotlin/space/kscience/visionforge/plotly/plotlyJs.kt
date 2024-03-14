@@ -33,6 +33,8 @@ public actual class PlotlyPlugin : VisionPlugin(), ElementVisionRenderer {
         element.plot(config, plot)
     }
 
+    override fun toString(): String = "Plotly"
+
     override fun content(target: String): Map<Name, Any> = when (target) {
         ElementVisionRenderer.TYPE -> mapOf("plotly".asName() to this)
         else -> super.content(target)
