@@ -14,6 +14,17 @@
 
 ### Security
 
+## 0.4.1 - 2024-03-15
+
+### Changed
+
+- VisionProperties `flowChanges()` -> `changes`
+
+### Fixed
+
+- Bug with ElementVisionRenderer having the same name
+- Plotly update problem
+
 ## 0.4.0 - 2024-02-16
 
 ### Added

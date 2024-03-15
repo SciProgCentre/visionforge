@@ -6,7 +6,7 @@ Common visionforge jupyter module
 
 ## Artifact:
 
-The Maven coordinates of this project are `space.kscience:visionforge-jupyter:0.4.0-dev-3`.
+The Maven coordinates of this project are `space.kscience:visionforge-jupyter:0.4.1`.
 
 **Gradle Kotlin DSL:**
 ```kotlin
@@ -16,6 +16,6 @@ repositories {
 }
 
 dependencies {
-    implementation("space.kscience:visionforge-jupyter:0.4.0-dev-3")
+    implementation("space.kscience:visionforge-jupyter:0.4.1")
 }
 ```

@@ -23,6 +23,11 @@ public final class space/kscience/visionforge/examples/ControlVisionKt {
 	public static synthetic fun main ([Ljava/lang/String;)V
 }
 
+public final class space/kscience/visionforge/examples/DynamicPlotlyVisionKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+
 public final class space/kscience/visionforge/examples/ExtrudedKt {
 	public static final fun main ()V
 	public static synthetic fun main ([Ljava/lang/String;)V

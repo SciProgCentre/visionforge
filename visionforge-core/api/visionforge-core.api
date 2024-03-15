@@ -49,7 +49,7 @@ public final class space/kscience/visionforge/AbstractVisionGroup$Companion {
 
 public class space/kscience/visionforge/AbstractVisionProperties : space/kscience/visionforge/MutableVisionProperties {
 	public fun <init> (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/meta/MutableMeta;)V
-	public fun flowChanges ()Lkotlinx/coroutines/flow/Flow;
+	public fun getChanges ()Lkotlinx/coroutines/flow/Flow;
 	protected final fun getChangesInternal ()Lkotlinx/coroutines/flow/MutableSharedFlow;
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 	public synthetic fun getOwn ()Lspace/kscience/dataforge/meta/Meta;
@@ -647,10 +647,11 @@ public abstract class space/kscience/visionforge/VisionPlugin : space/kscience/d
 }
 
 public abstract interface class space/kscience/visionforge/VisionProperties : space/kscience/dataforge/meta/MetaProvider {
-	public abstract fun flowChanges ()Lkotlinx/coroutines/flow/Flow;
+	public fun flowChanges ()Lkotlinx/coroutines/flow/Flow;
 	public fun get (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/dataforge/meta/Meta;
 	public abstract fun get (Lspace/kscience/dataforge/names/Name;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lspace/kscience/dataforge/meta/Meta;
 	public static synthetic fun get$default (Lspace/kscience/visionforge/VisionProperties;Lspace/kscience/dataforge/names/Name;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lspace/kscience/dataforge/meta/Meta;
+	public abstract fun getChanges ()Lkotlinx/coroutines/flow/Flow;
 	public abstract fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 	public abstract fun getOwn ()Lspace/kscience/dataforge/meta/Meta;
 	public fun getValue (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/dataforge/meta/Value;

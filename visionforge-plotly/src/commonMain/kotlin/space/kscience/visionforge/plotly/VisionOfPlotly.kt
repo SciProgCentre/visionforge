@@ -20,7 +20,7 @@ import space.kscience.visionforge.html.VisionOutput
 @Serializable
 @SerialName("vision.plotly")
 public class VisionOfPlotly private constructor(
-    @Serializable(MutableMetaSerializer::class) private val meta: MutableMeta,
+    @Serializable(MutableMetaSerializer::class) public val meta: MutableMeta,
 ) : Vision {
     public constructor(plot: Plot) : this(plot.meta)
 
