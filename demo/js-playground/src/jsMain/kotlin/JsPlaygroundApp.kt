@@ -1,24 +1,20 @@
-import kotlinx.css.*
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.Document
-import ringui.SmartTabs
-import ringui.Tab
 import space.kscience.dataforge.context.Context
-import space.kscience.dataforge.context.request
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.scatter
-import space.kscience.visionforge.Application
 import space.kscience.visionforge.Colors
-import space.kscience.visionforge.JsVisionClient
+import space.kscience.visionforge.html.Application
+import space.kscience.visionforge.html.Tabs
+import space.kscience.visionforge.html.VisionForgeStyles
+import space.kscience.visionforge.html.startApplication
+import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.plotly.PlotlyPlugin
-import space.kscience.visionforge.react.createRoot
-import space.kscience.visionforge.react.render
-import space.kscience.visionforge.ring.ThreeCanvasWithControls
-import space.kscience.visionforge.ring.ThreeWithControlsPlugin
-import space.kscience.visionforge.ring.solid
 import space.kscience.visionforge.solid.*
-import space.kscience.visionforge.startApplication
-import styled.css
-import styled.styledDiv
+import space.kscience.visionforge.solid.three.ThreePlugin
+import space.kscience.visionforge.solid.three.compose.ThreeView
 import kotlin.random.Random
 
 fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number? = null, yErr: Number? = null) {
@@ -30,31 +26,32 @@ fun Trace.appendXYLatest(x: Number, y: Number, history: Int = 400, xErr: Number?
 
 private class JsPlaygroundApp : Application {
 
+    val playgroundContext = Context {
+        plugin(ThreePlugin)
+        plugin(PlotlyPlugin)
+        plugin(MarkupPlugin)
+    }
+
     override fun start(document: Document, state: Map<String, Any>) {
 
-        val playgroundContext = Context {
-            plugin(ThreeWithControlsPlugin)
-            plugin(JsVisionClient)
-            plugin(PlotlyPlugin)
-        }
+//        val solids = playgroundContext.request(Solids)
+//        val client = playgroundContext.request(JsVisionClient)
 
         val element = document.getElementById("playground") ?: error("Element with id 'playground' not found on page")
 
-        createRoot(element).render {
-            styledDiv {
-                css {
-                    padding = Padding(0.pt)
-                    margin = Margin(0.pt)
-                    height = 100.vh
-                    width = 100.vw
+        renderComposable(element) {
+            Style(VisionForgeStyles)
+            Div({
+                style {
+                    padding(0.pt)
+                    margin(0.pt)
+                    height(100.vh)
+                    width(100.vw)
                 }
-                SmartTabs("gravity") {
+            }) {
+                Tabs("gravity") {
                     Tab("gravity") {
-                        GravityDemo {
-                            attrs {
-                                this.solids = playgroundContext.request(Solids)
-                            }
-                        }
+                        GravityDemo(playgroundContext)
                     }
 
 //                    Tab("D0") {
@@ -66,43 +63,34 @@ private class JsPlaygroundApp : Application {
 //                        }
 //                    }
                     Tab("spheres") {
-                        styledDiv {
-                            css {
-                                height = 100.vh - 50.pt
+                        Div({
+                            style {
+                                height(100.vh - 50.pt)
                             }
-                            child(ThreeCanvasWithControls) {
-                                val random = Random(112233)
-                                attrs {
-                                    solids = playgroundContext.request(Solids)
-                                    solid {
-                                        ambientLight {
-                                            color(Colors.white)
+                        }) {
+                            ThreeView(playgroundContext, SolidGroup {
+                                ambientLight {
+                                    color(Colors.white)
+                                }
+                                repeat(100) {
+                                    sphere(5, name = "sphere[$it]") {
+                                        x = Random.nextDouble(-300.0, 300.0)
+                                        y = Random.nextDouble(-300.0, 300.0)
+                                        z = Random.nextDouble(-300.0, 300.0)
+                                        material {
+                                            color(Random.nextInt())
                                         }
-                                        repeat(100) {
-                                            sphere(5, name = "sphere[$it]") {
-                                                x = random.nextDouble(-300.0, 300.0)
-                                                y = random.nextDouble(-300.0, 300.0)
-                                                z = random.nextDouble(-300.0, 300.0)
-                                                material {
-                                                    color(random.nextInt())
-                                                }
-                                                detail = 16
-                                            }
-                                        }
+                                        detail = 16
                                     }
                                 }
-                            }
+                            })
                         }
                     }
                     Tab("plotly") {
-                        Plotly {
-                            attrs {
-                                plot = space.kscience.plotly.Plotly.plot {
-                                    scatter {
-                                        x(1, 2, 3)
-                                        y(5, 8, 7)
-                                    }
-                                }
+                        Plot(playgroundContext) {
+                            scatter {
+                                x(1, 2, 3)
+                                y(5, 8, 7)
                             }
                         }
                     }
@@ -110,6 +98,7 @@ private class JsPlaygroundApp : Application {
             }
         }
     }
+
 }
 
 public fun main() {

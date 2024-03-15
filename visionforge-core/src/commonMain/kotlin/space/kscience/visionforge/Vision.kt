@@ -1,9 +1,5 @@
 package space.kscience.visionforge
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.dataforge.meta.asValue
@@ -50,7 +46,7 @@ public interface Vision : Described {
     /**
      * Receive and process a generic [VisionEvent].
      */
-    public fun receiveEvent(event: VisionEvent) {
+    public suspend fun receiveEvent(event: VisionEvent) {
         if(event is VisionChange) update(event)
         else manager?.logger?.warn { "Undispatched event: $event" }
     }
@@ -74,13 +70,3 @@ public var Vision.visible: Boolean?
     set(value) {
         properties.setValue(Vision.VISIBLE_KEY, value?.asValue())
     }
-
-/**
- * Subscribe on property updates. The subscription is bound to the given scope and canceled when the scope is canceled
- */
-public fun Vision.onPropertyChange(
-    scope: CoroutineScope? = manager?.context,
-    callback: suspend (Name) -> Unit,
-): Job = properties.changes.onEach {
-    callback(it)
-}.launchIn(scope ?: error("Orphan Vision can't observe properties"))

@@ -64,10 +64,10 @@ internal fun Vision.styleChanged(key: String, oldStyle: Meta?, newStyle: Meta?) 
 }
 
 /**
- * List of names of styles applied to this object. Order matters. Not inherited.
+ * List of style names applied to this object. Order matters. Not inherited.
  */
 public var Vision.styles: List<String>
-    get() = properties.own?.getValue(Vision.STYLE_KEY)?.stringList ?: emptyList()
+    get() = properties.own[Vision.STYLE_KEY]?.stringList ?: emptyList()
     set(value) {
         properties.setValue(Vision.STYLE_KEY, value.map { it.asValue() }.asValue())
     }
@@ -83,7 +83,7 @@ public val Vision.styleSheet: StyleSheet get() = StyleSheet(this)
  * The style with given name does not necessary exist at the moment.
  */
 public fun Vision.useStyle(name: String, notify: Boolean = true) {
-    val newStyle = properties.own?.get(Vision.STYLE_KEY)?.value?.list?.plus(name.asValue()) ?: listOf(name.asValue())
+    val newStyle = properties.own[Vision.STYLE_KEY]?.value?.list?.plus(name.asValue()) ?: listOf(name.asValue())
     properties.setValue(Vision.STYLE_KEY, newStyle.asValue(), notify)
 }
 
@@ -92,7 +92,7 @@ public fun Vision.useStyle(name: String, notify: Boolean = true) {
  * Resolve a style with given name for given [Vision]. The style is not necessarily applied to this [Vision].
  */
 public fun Vision.getStyle(name: String): Meta? =
-    properties.own?.get(StyleSheet.STYLESHEET_KEY + name) ?: parent?.getStyle(name)
+    properties.own[StyleSheet.STYLESHEET_KEY + name] ?: parent?.getStyle(name)
 
 /**
  * Resolve a property from all styles

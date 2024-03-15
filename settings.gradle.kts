@@ -40,13 +40,9 @@ dependencyResolutionManagement {
 }
 
 include(
-//    ":ui",
-    ":ui:react",
-    ":ui:ring",
-//    ":ui:material",
-    ":ui:bootstrap",
-    ":ui:compose",
     ":visionforge-core",
+    ":visionforge-compose-html",
+    ":visionforge-compose-multiplatform",
     ":visionforge-solid",
 //    ":visionforge-fx",
     ":visionforge-threejs",
@@ -64,6 +60,7 @@ include(
     ":demo:playground",
 //    ":demo:plotly-fx",
     ":demo:js-playground",
+    ":demo:compose-desktop-demo",
     ":visionforge-jupyter",
     ":visionforge-jupyter:visionforge-jupyter-common"
 )

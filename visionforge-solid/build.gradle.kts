@@ -8,6 +8,7 @@ kscience {
     jvm()
     js()
     native()
+//    wasm()
     useSerialization {
         json()
     }

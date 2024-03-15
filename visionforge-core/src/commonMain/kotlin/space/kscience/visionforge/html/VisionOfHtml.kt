@@ -1,28 +1,52 @@
 package space.kscience.visionforge.html
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.html.DIV
 import kotlinx.html.InputType
-import kotlinx.html.TagConsumer
+import kotlinx.html.div
 import kotlinx.html.stream.createHTML
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.AbstractVision
+import space.kscience.visionforge.*
 
 
-@Serializable
-public abstract class VisionOfHtml : AbstractVision() {
-    public var classes: List<String> by properties.stringList(*emptyArray())
+public interface VisionOfHtml : Vision {
+
+    /**
+     * Html class strings for this instance. Does not use vision inheritance, but uses styles
+     */
+    public var classes: Set<String>
+        get() = properties[::classes.name, false, true].stringList?.toSet() ?: emptySet()
+        set(value) {
+            properties[::classes.name] = value.map { it.asValue() }
+        }
+
+    /**
+     * A custom style string
+     */
+    public var styleString: String?
+        get() = properties[::styleString.name,false,true].string
+        set(value){
+            properties[::styleString.name] = value?.asValue()
+        }
 }
 
 @Serializable
 @SerialName("html.plain")
-public class VisionOfPlainHtml : VisionOfHtml() {
+public class VisionOfPlainHtml : AbstractVision(), VisionOfHtml {
     public var content: String? by properties.string()
 }
 
-public inline fun VisionOfPlainHtml.content(block: TagConsumer<*>.() -> Unit) {
-    content = createHTML().apply(block).finalize()
+public fun VisionOfPlainHtml.content(block: DIV.() -> Unit) {
+    content = createHTML().apply {
+        div(block = block)
+    }.finalize()
 }
 
 @Suppress("UnusedReceiverParameter")
@@ -52,12 +76,24 @@ public enum class InputFeedbackMode {
 @SerialName("html.input")
 public open class VisionOfHtmlInput(
     public val inputType: String,
-    public val feedbackMode: InputFeedbackMode = InputFeedbackMode.ONCHANGE,
-) : VisionOfHtml() {
+) : AbstractControlVision(), VisionOfHtml {
     public var value: Value? by properties.value()
     public var disabled: Boolean by properties.boolean { false }
     public var fieldName: String? by properties.string()
 }
+
+/**
+ * Trigger [callback] on each value change
+ */
+public fun VisionOfHtmlInput.onValueChange(
+    scope: CoroutineScope = manager?.context ?: error("Coroutine context is not resolved for $this"),
+    callback: suspend VisionValueChangeEvent.() -> Unit,
+): Job = controlEventFlow.filterIsInstance<VisionValueChangeEvent>().onEach(callback).launchIn(scope)
+
+public fun VisionOfHtmlInput.onInput(
+    scope: CoroutineScope = manager?.context ?: error("Coroutine context is not resolved for $this"),
+    callback: suspend VisionInputEvent.() -> Unit,
+): Job = controlEventFlow.filterIsInstance<VisionInputEvent>().onEach(callback).launchIn(scope)
 
 @Suppress("UnusedReceiverParameter")
 public inline fun VisionOutput.htmlInput(
@@ -91,7 +127,7 @@ public inline fun VisionOutput.htmlCheckBox(
 @Serializable
 @SerialName("html.number")
 public class VisionOfNumberField : VisionOfHtmlInput(InputType.number.realValue) {
-    public var number: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
+    public var numberValue: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
 }
 
 @Suppress("UnusedReceiverParameter")
@@ -106,14 +142,14 @@ public class VisionOfRangeField(
     public val max: Double,
     public val step: Double = 1.0,
 ) : VisionOfHtmlInput(InputType.range.realValue) {
-    public var number: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
+    public var numberValue: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
 }
 
 @Suppress("UnusedReceiverParameter")
 public inline fun VisionOutput.htmlRangeField(
-    min: Double,
-    max: Double,
-    step: Double = 1.0,
+    min: Number,
+    max: Number,
+    step: Number = 1.0,
     block: VisionOfRangeField.() -> Unit = {},
-): VisionOfRangeField = VisionOfRangeField(min, max, step).apply(block)
+): VisionOfRangeField = VisionOfRangeField(min.toDouble(), max.toDouble(), step.toDouble()).apply(block)
 

@@ -13,9 +13,13 @@ import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionPlugin
+import space.kscience.visionforge.html.ElementVisionRenderer
+import space.kscience.visionforge.html.JsVisionClient
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.COMMONMARK_FORMAT
 import space.kscience.visionforge.markup.VisionOfMarkup.Companion.GFM_FORMAT
+import space.kscience.visionforge.useProperty
 
 public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public val visionClient: JsVisionClient by require(JsVisionClient)
@@ -34,7 +38,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
             COMMONMARK_FORMAT -> CommonMarkFlavourDescriptor()
             GFM_FORMAT -> GFMFlavourDescriptor()
             //TODO add new formats via plugins
-            else-> error("Format ${vision.format} not recognized")
+            else -> error("Format ${vision.format} not recognized")
         }
         vision.useProperty(VisionOfMarkup::content) {
             div.clear()
@@ -45,6 +49,8 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
         element.append(div)
     }
 
+    override fun toString(): String = "Markup"
+
     override fun content(target: String): Map<Name, Any> = when (target) {
         ElementVisionRenderer.TYPE -> mapOf("markup".asName() to this)
         else -> super.content(target)
@@ -53,7 +59,7 @@ public actual class MarkupPlugin : VisionPlugin(), ElementVisionRenderer {
     public actual companion object : PluginFactory<MarkupPlugin> {
         override val tag: PluginTag = PluginTag("vision.markup.js", PluginTag.DATAFORGE_GROUP)
 
-        override fun build(context: Context, meta: Meta): MarkupPlugin  = MarkupPlugin()
+        override fun build(context: Context, meta: Meta): MarkupPlugin = MarkupPlugin()
 
     }
 }

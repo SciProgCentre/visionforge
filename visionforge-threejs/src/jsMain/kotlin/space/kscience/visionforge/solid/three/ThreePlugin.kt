@@ -1,27 +1,38 @@
 package space.kscience.visionforge.solid.three
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.jetbrains.compose.web.dom.DOMScope
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.*
-import space.kscience.visionforge.*
+import space.kscience.visionforge.Vision
+import space.kscience.visionforge.VisionChildren
+import space.kscience.visionforge.VisionClient
+import space.kscience.visionforge.html.ComposeHtmlVisionRenderer
+import space.kscience.visionforge.html.ElementVisionRenderer
+import space.kscience.visionforge.html.JsVisionClient
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
-import space.kscience.visionforge.solid.three.set
+import space.kscience.visionforge.solid.three.compose.ThreeView
+import space.kscience.visionforge.visible
 import three.core.Object3D
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import three.objects.Group as ThreeGroup
 
-public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
+/**
+ * A plugin that handles Three Object3D representation of Visions.
+ */
+public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
     override val tag: PluginTag get() = Companion.tag
 
     public val solids: Solids by require(Solids)
 
-    public val client: VisionClient? get() = context.plugins.get<VisionClient>()
+    public val client: VisionClient by require(JsVisionClient)
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
     private val compositeFactory = ThreeCompositeFactory(this)
@@ -37,17 +48,23 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         objectFactories[SolidLabel::class] = ThreeCanvasLabelFactory
         objectFactories[AmbientLightSource::class] = ThreeAmbientLightFactory
         objectFactories[PointLightSource::class] = ThreePointLightFactory
-        objectFactories[StlSolid::class] = ThreeStlFactory
+        objectFactories[StlUrlSolid::class] = ThreeStlFactory
+        objectFactories[StlBinarySolid::class] = ThreeStlFactory
         objectFactories[AxesSolid::class] = ThreeAxesFactory
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Solid>? {
-        return (objectFactories[type]
-            ?: context.gather<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
+    private fun findObjectFactory(type: KClass<out Vision>): ThreeFactory<Solid>? =
+        (objectFactories[type] ?: context.gather<ThreeFactory<*>>(ThreeFactory.TYPE).values.find { it.type == type })
                 as ThreeFactory<Solid>?
-    }
 
+    /**
+     * Build an Object3D representation of the given [Solid].
+     *
+     * @param vision [Solid] object to build a representation of;
+     * @param observe whether the constructed Object3D should be changed when the
+     *  original [Vision] changes.
+     */
     public suspend fun buildObject3D(vision: Solid, observe: Boolean = true): Object3D = when (vision) {
         is ThreeJsVision -> vision.render(this)
         is SolidReference -> ThreeReferenceFactory.build(this, vision, observe)
@@ -63,7 +80,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                         // disable tracking changes for statics
                         group[token] = object3D
                     } catch (ex: Throwable) {
-                        logger.error(ex) { "Failed to render $child" }
+                        logger.error(ex) { "Failed to render vision with token $token and type ${child::class}" }
                     }
                 }
             }
@@ -103,7 +120,7 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
                                 val object3D = buildObject3D(child)
                                 set(childName, object3D)
                             } catch (ex: Throwable) {
-                                logger.error(ex) { "Failed to render $child" }
+                                logger.error(ex) { "Failed to render vision with name $childName" }
                             }
                         }
                     }.launchIn(context)
@@ -125,6 +142,16 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
 
     private val canvasCache = HashMap<Element, ThreeCanvas>()
 
+    /**
+     * Return a [ThreeCanvas] object attached to the given [Element].
+     * If there is no canvas bound, a new canvas object is created
+     * and returned.
+     *
+     * @param element HTML element to which the canvas is
+     *  (or should be if it is created by this call) attached;
+     * @param options canvas options that are applied to a newly
+     *  created [ThreeCanvas] in case it does not exist.
+     */
     public fun getOrCreateCanvas(
         element: Element,
         options: Canvas3DOptions,
@@ -142,6 +169,21 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun rateVision(vision: Vision): Int =
         if (vision is Solid) ElementVisionRenderer.DEFAULT_RATING else ElementVisionRenderer.ZERO_RATING
 
+    override fun toString(): String  = "ThreeJS"
+
+    /**
+     * Render the given [Solid] Vision in a [ThreeCanvas] attached
+     * to the [element]. Canvas objects are cached, so subsequent calls
+     * with the same [element] value do not create new canvas objects,
+     * but they replace existing content, so multiple Visions cannot be
+     * displayed in a single [ThreeCanvas].
+     *
+     * @param element HTML element [ThreeCanvas] should be
+     *  attached to;
+     *  @param vision Vision to render;
+     *  @param options options that are applied to a canvas
+     *    in case it is not in the cache and should be created.
+     */
     internal fun renderSolid(
         element: Element,
         vision: Solid,
@@ -150,12 +192,10 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
         render(vision)
     }
 
-    override fun render(element: Element, name: Name, vision: Vision, meta: Meta) {
-        renderSolid(
-            element,
-            vision as? Solid ?: error("Solid expected but ${vision::class} found"),
-            Canvas3DOptions.read(meta)
-        )
+    @Composable
+    override fun DOMScope<Element>.render(name: Name, vision: Vision, meta: Meta) {
+        require(vision is Solid) { "Expected Solid but found ${vision::class}" }
+        ThreeView(context, vision, null, Canvas3DOptions.read(meta))
     }
 
     public companion object : PluginFactory<ThreePlugin> {
@@ -165,6 +205,19 @@ public class ThreePlugin : AbstractPlugin(), ElementVisionRenderer {
     }
 }
 
+/**
+ * Render the given [Solid] Vision in a [ThreeCanvas] attached
+ * to the [element]. Canvas objects are cached, so subsequent calls
+ * with the same [element] value do not create new canvas objects,
+ * but they replace existing content, so multiple Visions cannot be
+ * displayed in a single [ThreeCanvas].
+ *
+ * @param element HTML element [ThreeCanvas] should be
+ *  attached to;
+ *  @param obj Vision to render;
+ *  @param optionsBuilder option builder that is applied to a canvas
+ *    in case it is not in the cache and should be created.
+ */
 public fun ThreePlugin.render(
     element: HTMLElement,
     obj: Solid,

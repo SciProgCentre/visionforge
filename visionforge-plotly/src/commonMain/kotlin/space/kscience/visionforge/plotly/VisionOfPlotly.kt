@@ -1,9 +1,7 @@
 package space.kscience.visionforge.plotly
 
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -26,59 +24,51 @@ public class VisionOfPlotly private constructor(
 ) : Vision {
     public constructor(plot: Plot) : this(plot.meta)
 
-    public val plot: Plot get() = Plot(meta.asObservable())
+    @Transient
+    public val plot: Plot = Plot(meta.asObservable())
 
     @Transient
     override var parent: Vision? = null
 
     @Transient
     override val properties: MutableVisionProperties = object : MutableVisionProperties {
-        override fun set(name: Name, node: Meta?, notify: Boolean) {
-            meta[name] = node
+        override val own: Meta get() = plot.meta
+
+        override val changes = callbackFlow {
+            plot.meta.onChange(this) {
+                launch {
+                    send(it)
+                }
+            }
+            awaitClose {
+                plot.meta.removeListener(this)
+            }
+        }
+
+        override fun invalidate(propertyName: Name) {
+            //do nothing, updates to source already counted
+//            manager?.context?.launch {
+//                changes.emit(propertyName)
+//            }
+        }
+
+        override fun getValue(name: Name, inherit: Boolean?, includeStyles: Boolean?): Value? = plot.meta[name]?.value
+
+        override fun set(name: Name, item: Meta?, notify: Boolean) {
+            plot.meta[name] = item
+            if (notify) invalidate(name)
         }
 
         override fun setValue(name: Name, value: Value?, notify: Boolean) {
-            meta.setValue(name, value)
+            plot.meta[name] = value
+            if (notify) invalidate(name)
         }
 
-        override val own: Meta get() = meta
-
-        override val descriptor: MetaDescriptor? get() = this@VisionOfPlotly.descriptor
-
-        override fun get(
-            name: Name,
-            inherit: Boolean?,
-            includeStyles: Boolean?,
-        ): MutableMeta = meta[name] ?: MutableMeta()
-
-        override fun getValue(
-            name: Name,
-            inherit: Boolean?,
-            includeStyles: Boolean?,
-        ): Value? = meta.getValue(name)
-
-        override val changes: Flow<Name> = if (meta is ObservableMeta) {
-            callbackFlow {
-                meta.onChange(this) {
-                    launch {
-                        send(it)
-                    }
-                }
-                awaitClose {
-                    meta.removeListener(this)
-                }
-            }
-        } else emptyFlow()
-
-
-        override fun invalidate(propertyName: Name) {
-            // Do nothing
-        }
-
+        override val descriptor: MetaDescriptor get() = plot.descriptor
     }
 
 
-    override val descriptor: MetaDescriptor? = null // TODO add descriptor for Plot
+    override val descriptor: MetaDescriptor = Plot.descriptor
 }
 
 public fun Plot.asVision(): VisionOfPlotly = VisionOfPlotly(this)

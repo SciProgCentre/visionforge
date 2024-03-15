@@ -70,7 +70,7 @@ public fun <T> Table<T>.toVision(
         } else {
             Meta {
                 headers.forEach {
-                    it.name put converter(row[it.name])
+                    it.name put converter(row.getOrNull(it.name))
                 }
             }
         }

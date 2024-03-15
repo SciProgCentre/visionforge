@@ -2,62 +2,138 @@ package space.kscience.visionforge
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import space.kscience.dataforge.meta.Meta
-import space.kscience.dataforge.meta.MetaRepr
-import space.kscience.dataforge.meta.MutableMeta
+import kotlinx.serialization.Transient
+import space.kscience.dataforge.meta.*
+import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.parseAsName
 
-@Serializable
-@SerialName("control")
 public abstract class VisionControlEvent : VisionEvent, MetaRepr {
     public abstract val meta: Meta
 
     override fun toMeta(): Meta = meta
+
+    override fun toString(): String = toMeta().toString()
 }
 
 public interface ControlVision : Vision {
     public val controlEventFlow: SharedFlow<VisionControlEvent>
 
-    public fun dispatchControlEvent(event: VisionControlEvent)
+    /**
+     * Fire a [VisionControlEvent] on this [ControlVision]
+     */
+    public suspend fun dispatchControlEvent(event: VisionControlEvent)
 
-    override fun receiveEvent(event: VisionEvent) {
+    override suspend fun receiveEvent(event: VisionEvent) {
         if (event is VisionControlEvent) {
             dispatchControlEvent(event)
         } else super.receiveEvent(event)
     }
 }
 
-/**
- * @param payload The optional payload associated with the click event.
- */
-@Serializable
-@SerialName("control.click")
-public class VisionClickEvent(public val payload: Meta = Meta.EMPTY) : VisionControlEvent() {
-    override val meta: Meta get() = Meta { ::payload.name put payload }
+public fun ControlVision.asyncControlEvent(
+    event: VisionControlEvent,
+    scope: CoroutineScope = manager?.context ?: error("Can't fire asynchronous event for an orphan vision. Provide a scope."),
+) {
+    scope.launch { dispatchControlEvent(event) }
 }
 
 
-public interface ClickControl : ControlVision {
+@Serializable
+public abstract class AbstractControlVision : AbstractVision(), ControlVision {
+
+    @Transient
+    private val mutableControlEventFlow = MutableSharedFlow<VisionControlEvent>()
+
+    override val controlEventFlow: SharedFlow<VisionControlEvent>
+        get() = mutableControlEventFlow
+
+    override suspend fun dispatchControlEvent(event: VisionControlEvent) {
+        mutableControlEventFlow.emit(event)
+    }
+}
+
+
+/**
+ * An event for submitting changes
+ */
+@Serializable
+@SerialName("control.submit")
+public class VisionSubmitEvent(override val meta: Meta) : VisionControlEvent() {
+    public val payload: Meta get() = meta[::payload.name] ?: Meta.EMPTY
+
+    public val name: Name? get() = meta["name"].string?.parseAsName()
+
+    override fun toString(): String = meta.toString()
+}
+
+public fun VisionSubmitEvent(payload: Meta = Meta.EMPTY, name: Name? = null): VisionSubmitEvent = VisionSubmitEvent(
+    Meta {
+        VisionSubmitEvent::payload.name put payload
+        VisionSubmitEvent::name.name put name.toString()
+    }
+)
+
+
+public interface DataControl : ControlVision {
     /**
-     * Create and dispatch a click event
+     * Create and dispatch submit event
      */
-    public fun click(builder: MutableMeta.() -> Unit = {}) {
-        dispatchControlEvent(VisionClickEvent(Meta(builder)))
+    public suspend fun submit(builder: MutableMeta.() -> Unit = {}) {
+        dispatchControlEvent(VisionSubmitEvent(Meta(builder)))
     }
 }
 
 /**
  * Register listener
  */
-public fun ClickControl.onClick(scope: CoroutineScope, block: suspend VisionClickEvent.() -> Unit): Job =
-    controlEventFlow.filterIsInstance<VisionClickEvent>().onEach(block).launchIn(scope)
+public fun DataControl.onSubmit(scope: CoroutineScope, block: suspend VisionSubmitEvent.() -> Unit): Job =
+    controlEventFlow.filterIsInstance<VisionSubmitEvent>().onEach(block).launchIn(scope)
 
 
 @Serializable
 @SerialName("control.valueChange")
-public class VisionValueChangeEvent(override val meta: Meta) : VisionControlEvent()
+public class VisionValueChangeEvent(override val meta: Meta) : VisionControlEvent() {
+
+    public val value: Value? get() = meta.value
+
+    /**
+     * The name of a control that fired the event
+     */
+    public val name: Name? get() = meta["name"]?.string?.parseAsName()
+
+    override fun toString(): String = meta.toString()
+}
+
+
+public fun VisionValueChangeEvent(value: Value?, name: Name? = null): VisionValueChangeEvent = VisionValueChangeEvent(
+    Meta {
+        this.value = value
+        name?.let { set("name", it.toString()) }
+    }
+)
+
+
+@Serializable
+@SerialName("control.input")
+public class VisionInputEvent(override val meta: Meta) : VisionControlEvent() {
+
+    public val value: Value? get() = meta.value
+
+    /**
+     * The name of a control that fired the event
+     */
+    public val name: Name? get() = meta["name"]?.string?.parseAsName()
+
+    override fun toString(): String = meta.toString()
+}
+
+public fun VisionInputEvent(value: Value?, name: Name? = null): VisionInputEvent = VisionInputEvent(
+    Meta {
+        this.value = value
+        name?.let { set("name", it.toString()) }
+    }
+)

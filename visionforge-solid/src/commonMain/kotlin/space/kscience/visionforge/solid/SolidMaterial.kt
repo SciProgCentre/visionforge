@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.names.Name
@@ -17,6 +18,8 @@ import space.kscience.visionforge.solid.SolidMaterial.Companion.MATERIAL_OPACITY
  */
 @VisionBuilder
 public class SolidMaterial : Scheme() {
+
+    public var type: String by string("default", key = TYPE_KEY)
 
     /**
      * Primary web-color for the material
@@ -64,10 +67,11 @@ public class SolidMaterial : Scheme() {
             //must be lazy to avoid initialization bug
             MetaDescriptor {
                 inherited = true
+                valueRestriction = ValueRestriction.ABSENT
 
-                value(TYPE_KEY, ValueType.STRING){
+                value(TYPE_KEY, ValueType.STRING) {
                     inherited = true
-                    allowedValues = listOf("default".asValue(), "simple".asValue())
+                    allowedValues = listOf("default", "basic", "lambert", "phong").map { it.asValue() }
                     default("default")
                 }
 

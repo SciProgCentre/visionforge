@@ -20,7 +20,6 @@ import three.core.Raycaster
 import three.external.controls.OrbitControls
 import three.external.controls.TrackballControls
 import three.geometries.EdgesGeometry
-import three.helpers.AxesHelper
 import three.materials.Material
 import three.math.*
 import three.meshline.MeshLine
@@ -50,14 +49,7 @@ public class ThreeCanvas(
     private val raycaster = Raycaster()
     private val mousePosition: Vector2 = Vector2()
 
-    private val scene: Scene = Scene().apply {
-        options.useProperty(Canvas3DOptions::axes, this) {
-            getObjectByName(AXES_NAME)?.let { remove(it) }
-            val axesObject = AxesHelper(axes.size.toInt()).apply { visible = axes.visible }
-            axesObject.name = AXES_NAME
-            add(axesObject)
-        }
-    }
+    private val scene: Scene = Scene()
 
 
     private fun buildCamera(spec: CameraScheme) = PerspectiveCamera(
@@ -155,9 +147,10 @@ public class ThreeCanvas(
         }
 
         //Clipping planes
-        options.useProperty(Canvas3DOptions::clipping) { clipping ->
-            if (!clipping.meta.isEmpty()) {
-                renderer.localClippingEnabled = true
+        options.useProperty(Canvas3DOptions::clipping) { clipping: PointScheme ->
+            if (clipping.meta.isEmpty()) {
+                renderer.clippingPlanes = emptyArray()
+            } else {
                 boundingBox?.let { boundingBox ->
                     val xClippingPlane = clipping.x?.let {
                         val absoluteValue = boundingBox.min.x + (boundingBox.max.x - boundingBox.min.x) * it
@@ -175,8 +168,6 @@ public class ThreeCanvas(
                     renderer.clippingPlanes =
                         listOfNotNull(xClippingPlane, yClippingPlane, zClippingPlane).toTypedArray()
                 }
-            } else {
-                renderer.localClippingEnabled = false
             }
         }
 
@@ -236,7 +227,7 @@ public class ThreeCanvas(
 //        }
 //    }
 
-    private fun addControls(element: Node, controls: ControlsScheme) {
+    private fun addControls(element: Node, controls: Canvas3DUIScheme) {
         when (controls.meta["type"].string) {
             "trackball" -> TrackballControls(camera, element)
             else -> OrbitControls(camera, element)

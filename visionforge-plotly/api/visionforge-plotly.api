@@ -5,23 +5,24 @@ public final class space/kscience/visionforge/plotly/PlotlyPlugin : space/kscien
 }
 
 public final class space/kscience/visionforge/plotly/PlotlyPlugin$Companion : space/kscience/dataforge/context/PluginFactory {
+	public synthetic fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Ljava/lang/Object;
+	public fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Lspace/kscience/visionforge/plotly/PlotlyPlugin;
 	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
-	public fun getType ()Lkotlin/reflect/KClass;
-	public synthetic fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Ljava/lang/Object;
-	public fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Lspace/kscience/visionforge/plotly/PlotlyPlugin;
 }
 
-public final class space/kscience/visionforge/plotly/VisionOfPlotly : space/kscience/visionforge/VisionBase {
+public final class space/kscience/visionforge/plotly/VisionOfPlotly : space/kscience/visionforge/Vision {
 	public static final field Companion Lspace/kscience/visionforge/plotly/VisionOfPlotly$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Lspace/kscience/plotly/Plot;)V
+	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getMeta ()Lspace/kscience/dataforge/meta/MutableMeta;
+	public fun getParent ()Lspace/kscience/visionforge/Vision;
 	public final fun getPlot ()Lspace/kscience/plotly/Plot;
-	public static final fun write$Self (Lspace/kscience/visionforge/plotly/VisionOfPlotly;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public fun getProperties ()Lspace/kscience/visionforge/MutableVisionProperties;
+	public fun setParent (Lspace/kscience/visionforge/Vision;)V
 }
 
 public final class space/kscience/visionforge/plotly/VisionOfPlotly$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/plotly/VisionOfPlotly$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/plotly/VisionOfPlotly;
@@ -37,6 +38,7 @@ public final class space/kscience/visionforge/plotly/VisionOfPlotly$Companion {
 
 public final class space/kscience/visionforge/plotly/VisionOfPlotlyKt {
 	public static final fun asVision (Lspace/kscience/plotly/Plot;)Lspace/kscience/visionforge/plotly/VisionOfPlotly;
-	public static final fun plotly (Lspace/kscience/visionforge/html/VisionOutput;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/plotly/VisionOfPlotly;
+	public static final fun plotly (Lspace/kscience/visionforge/html/VisionOutput;Lspace/kscience/plotly/PlotlyConfig;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/plotly/VisionOfPlotly;
+	public static synthetic fun plotly$default (Lspace/kscience/visionforge/html/VisionOutput;Lspace/kscience/plotly/PlotlyConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/plotly/VisionOfPlotly;
 }
 

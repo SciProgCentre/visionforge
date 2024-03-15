@@ -7,16 +7,17 @@ description = "Jupyter api artifact including all common modules"
 kscience {
     fullStack(
         "js/visionforge-jupyter-common.js",
-        jsConfig = { useCommonJs() }
-    ) {
-        commonWebpackConfig {
-            sourceMaps = false
-            cssSupport {
-                enabled.set(false)
+        browserConfig = {
+            webpackTask {
+                cssSupport{
+                    enabled = true
+                }
+                scssSupport {
+                    enabled = true
+                }
             }
         }
-    }
-
+    )
     dependencies {
         api(projects.visionforgeSolid)
         api(projects.visionforgePlotly)
@@ -30,7 +31,6 @@ kscience {
     }
 
     jsMain {
-        implementation(projects.ui.ring)
         implementation(projects.visionforgeThreejs)
     }
 

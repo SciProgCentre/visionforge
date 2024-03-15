@@ -1,24 +1,63 @@
+public final class space/kscience/visionforge/solid/AmbientLightSource : space/kscience/visionforge/solid/LightSource {
+	public static final field Companion Lspace/kscience/visionforge/solid/AmbientLightSource$Companion;
+	public fun <init> ()V
+}
+
+public final class space/kscience/visionforge/solid/AmbientLightSource$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/AmbientLightSource$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/AmbientLightSource;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/AmbientLightSource;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/AmbientLightSource$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/AxesSolid : space/kscience/visionforge/solid/MiscSolid {
+	public static final field AXES_NAME Ljava/lang/String;
+	public static final field Companion Lspace/kscience/visionforge/solid/AxesSolid$Companion;
+	public fun <init> (D)V
+	public final fun getSize ()D
+}
+
+public final class space/kscience/visionforge/solid/AxesSolid$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/AxesSolid$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/AxesSolid;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/AxesSolid;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/AxesSolid$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class space/kscience/visionforge/solid/Box : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/Hexagon {
 	public static final field Companion Lspace/kscience/visionforge/solid/Box$Companion;
 	public fun <init> (FFF)V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;FFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public fun getNode1 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode2 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode3 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode4 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode5 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode6 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode7 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode8 ()Lspace/kscience/visionforge/solid/Point3D;
+	public fun getNode1 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode2 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode3 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode4 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode5 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode6 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode7 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode8 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public final fun getXSize ()F
 	public final fun getYSize ()F
 	public final fun getZSize ()F
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Box;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Box$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Box$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Box;
@@ -32,16 +71,18 @@ public final class space/kscience/visionforge/solid/Box$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class space/kscience/visionforge/solid/ColorAccessor : space/kscience/dataforge/values/MutableValueProvider {
-	public fun <init> (Lspace/kscience/dataforge/values/MutableValueProvider;Lspace/kscience/dataforge/names/Name;)V
-	public final fun getValue ()Lspace/kscience/dataforge/values/Value;
-	public fun getValue (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/dataforge/values/Value;
-	public fun setValue (Lspace/kscience/dataforge/names/Name;Lspace/kscience/dataforge/values/Value;)V
-	public final fun setValue (Lspace/kscience/dataforge/values/Value;)V
+public final class space/kscience/visionforge/solid/ColorAccessor : space/kscience/dataforge/meta/MutableValueProvider {
+	public fun <init> (Lspace/kscience/dataforge/meta/MutableValueProvider;Lspace/kscience/dataforge/names/Name;)V
+	public final fun getValue ()Lspace/kscience/dataforge/meta/Value;
+	public fun getValue (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/dataforge/meta/Value;
+	public final fun setValue (Lspace/kscience/dataforge/meta/Value;)V
+	public fun setValue (Lspace/kscience/dataforge/names/Name;Lspace/kscience/dataforge/meta/Value;)V
 }
 
 public final class space/kscience/visionforge/solid/ColorAccessorKt {
 	public static final fun clear (Lspace/kscience/visionforge/solid/ColorAccessor;)V
+	public static final fun colorProperty (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/names/Name;)Lkotlin/properties/ReadOnlyProperty;
+	public static synthetic fun colorProperty$default (Lspace/kscience/visionforge/Vision;Lspace/kscience/dataforge/names/Name;ILjava/lang/Object;)Lkotlin/properties/ReadOnlyProperty;
 	public static final fun getString (Lspace/kscience/visionforge/solid/ColorAccessor;)Ljava/lang/String;
 	public static final fun invoke (Lspace/kscience/visionforge/solid/ColorAccessor;I)V
 	public static final fun invoke (Lspace/kscience/visionforge/solid/ColorAccessor;Ljava/lang/String;)V
@@ -49,19 +90,16 @@ public final class space/kscience/visionforge/solid/ColorAccessorKt {
 	public static final fun setString (Lspace/kscience/visionforge/solid/ColorAccessor;Ljava/lang/String;)V
 }
 
-public final class space/kscience/visionforge/solid/Composite : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer {
+public final class space/kscience/visionforge/solid/Composite : space/kscience/visionforge/solid/SolidBase {
 	public static final field Companion Lspace/kscience/visionforge/solid/Composite$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lspace/kscience/visionforge/solid/CompositeType;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Solid;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Lspace/kscience/visionforge/solid/CompositeType;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Solid;)V
 	public final fun getCompositeType ()Lspace/kscience/visionforge/solid/CompositeType;
 	public final fun getFirst ()Lspace/kscience/visionforge/solid/Solid;
 	public final fun getSecond ()Lspace/kscience/visionforge/solid/Solid;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Composite;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Composite$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Composite$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Composite;
@@ -76,16 +114,16 @@ public final class space/kscience/visionforge/solid/Composite$Companion {
 }
 
 public final class space/kscience/visionforge/solid/CompositeKt {
-	public static final fun composite (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
-	public static synthetic fun composite$default (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
-	public static final fun intersect (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
-	public static synthetic fun intersect$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
+	public static final fun composite (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
+	public static synthetic fun composite$default (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
+	public static final fun intersect (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
+	public static synthetic fun intersect$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
 	public static final fun smartComposite (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Solid;
 	public static synthetic fun smartComposite$default (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/visionforge/solid/CompositeType;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Solid;
-	public static final fun subtract (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
-	public static synthetic fun subtract$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
-	public static final fun union (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
-	public static synthetic fun union$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
+	public static final fun subtract (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
+	public static synthetic fun subtract$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
+	public static final fun union (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Composite;
+	public static synthetic fun union$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Composite;
 }
 
 public final class space/kscience/visionforge/solid/CompositeType : java/lang/Enum {
@@ -93,6 +131,7 @@ public final class space/kscience/visionforge/solid/CompositeType : java/lang/En
 	public static final field INTERSECT Lspace/kscience/visionforge/solid/CompositeType;
 	public static final field SUBTRACT Lspace/kscience/visionforge/solid/CompositeType;
 	public static final field UNION Lspace/kscience/visionforge/solid/CompositeType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lspace/kscience/visionforge/solid/CompositeType;
 	public static fun values ()[Lspace/kscience/visionforge/solid/CompositeType;
 }
@@ -101,19 +140,16 @@ public final class space/kscience/visionforge/solid/ConeSegment : space/kscience
 	public static final field Companion Lspace/kscience/visionforge/solid/ConeSegment$Companion;
 	public fun <init> (FFFFF)V
 	public synthetic fun <init> (FFFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;FFFFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public final fun getAngle ()F
 	public final fun getBottomRadius ()F
 	public final fun getHeight ()F
-	public final fun getStartAngle ()F
+	public final fun getPhi ()F
+	public final fun getPhiStart ()F
 	public final fun getTopRadius ()F
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/ConeSegment;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/ConeSegment$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/ConeSegment$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/ConeSegment;
@@ -128,31 +164,28 @@ public final class space/kscience/visionforge/solid/ConeSegment$Companion {
 }
 
 public final class space/kscience/visionforge/solid/ConeSegmentKt {
-	public static final fun cone (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSegment;
-	public static synthetic fun cone$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSegment;
-	public static final fun cylinder (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSegment;
-	public static synthetic fun cylinder$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSegment;
+	public static final fun cone (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSegment;
+	public static synthetic fun cone$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSegment;
+	public static final fun cylinder (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSegment;
+	public static synthetic fun cylinder$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSegment;
 }
 
-public final class space/kscience/visionforge/solid/ConeSurface : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer, space/kscience/visionforge/solid/GeometrySolid {
+public final class space/kscience/visionforge/solid/ConeSurface : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
 	public static final field Companion Lspace/kscience/visionforge/solid/ConeSurface$Companion;
 	public fun <init> (FFFFFFF)V
 	public synthetic fun <init> (FFFFFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;FFFFFFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public final fun getAngle ()F
 	public final fun getBottomInnerRadius ()F
 	public final fun getBottomRadius ()F
 	public final fun getHeight ()F
-	public final fun getStartAngle ()F
+	public final fun getPhi ()F
+	public final fun getPhiStart ()F
 	public final fun getTopInnerRadius ()F
 	public final fun getTopRadius ()F
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/ConeSurface;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/ConeSurface$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/ConeSurface$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/ConeSurface;
@@ -167,23 +200,20 @@ public final class space/kscience/visionforge/solid/ConeSurface$Companion {
 }
 
 public final class space/kscience/visionforge/solid/ConeSurfaceKt {
-	public static final fun coneSurface (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSurface;
-	public static synthetic fun coneSurface$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSurface;
-	public static final fun tube (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSurface;
-	public static synthetic fun tube$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSurface;
+	public static final fun coneSurface (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSurface;
+	public static synthetic fun coneSurface$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSurface;
+	public static final fun tube (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/ConeSurface;
+	public static synthetic fun tube$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/ConeSurface;
 }
 
-public final class space/kscience/visionforge/solid/Convex : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer {
+public final class space/kscience/visionforge/solid/Convex : space/kscience/visionforge/solid/SolidBase {
 	public static final field Companion Lspace/kscience/visionforge/solid/Convex$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/util/List;)V
 	public final fun getPoints ()Ljava/util/List;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Convex;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Convex$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Convex$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Convex;
@@ -204,37 +234,55 @@ public final class space/kscience/visionforge/solid/ConvexBuilder {
 }
 
 public final class space/kscience/visionforge/solid/ConvexKt {
-	public static final fun convex (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Convex;
-	public static synthetic fun convex$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Convex;
+	public static final fun convex (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Convex;
+	public static synthetic fun convex$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Convex;
 }
 
-public final class space/kscience/visionforge/solid/ExtrudeBuilder : space/kscience/visionforge/SimpleVisionPropertyContainer {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/List;Ljava/util/List;Lspace/kscience/dataforge/meta/ObservableMutableMeta;)V
-	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Lspace/kscience/dataforge/meta/ObservableMutableMeta;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getLayers ()Ljava/util/List;
-	public final fun getShape ()Ljava/util/List;
-	public final fun layer (Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)V
-	public static synthetic fun layer$default (Lspace/kscience/visionforge/solid/ExtrudeBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;ILjava/lang/Object;)V
-	public final fun setLayers (Ljava/util/List;)V
-	public final fun setShape (Ljava/util/List;)V
-	public final fun shape (Lkotlin/jvm/functions/Function1;)V
+public final class space/kscience/visionforge/solid/CutTube : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
+	public static final field Companion Lspace/kscience/visionforge/solid/CutTube$Companion;
+	public fun <init> (FFFFFLspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public synthetic fun <init> (FFFFFLspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getHeight ()F
+	public final fun getInnerRadius ()F
+	public final fun getNBottom ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun getNTop ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun getOuterRadius ()F
+	public final fun getPhi ()F
+	public final fun getPhiStart ()F
+	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
 }
 
-public final class space/kscience/visionforge/solid/Extruded : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer, space/kscience/visionforge/solid/GeometrySolid {
+public final class space/kscience/visionforge/solid/CutTube$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/CutTube$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/CutTube;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/CutTube;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/CutTube$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/CutTubeKt {
+	public static final fun cutTube (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/CutTube;
+	public static synthetic fun cutTube$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/CutTube;
+}
+
+public final class space/kscience/visionforge/solid/Extruded : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
 	public static final field Companion Lspace/kscience/visionforge/solid/Extruded$Companion;
 	public static final field TYPE Ljava/lang/String;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/util/List;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
 	public final fun getLayers ()Ljava/util/List;
 	public final fun getShape ()Ljava/util/List;
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Extruded;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Extruded$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Extruded$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Extruded;
@@ -244,34 +292,172 @@ public final class space/kscience/visionforge/solid/Extruded$$serializer : kotli
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
 
+public final class space/kscience/visionforge/solid/Extruded$Builder {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/util/List;Lspace/kscience/dataforge/meta/MutableMeta;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Lspace/kscience/dataforge/meta/MutableMeta;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLayers ()Ljava/util/List;
+	public final fun getProperties ()Lspace/kscience/dataforge/meta/MutableMeta;
+	public final fun getShape ()Ljava/util/List;
+	public final fun layer (Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)V
+	public static synthetic fun layer$default (Lspace/kscience/visionforge/solid/Extruded$Builder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;ILjava/lang/Object;)V
+	public final fun setLayers (Ljava/util/List;)V
+	public final fun setShape (Ljava/util/List;)V
+	public final fun shape (Lkotlin/jvm/functions/Function1;)V
+}
+
 public final class space/kscience/visionforge/solid/Extruded$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
+public final class space/kscience/visionforge/solid/Extruded$Layer {
+	public static final field Companion Lspace/kscience/visionforge/solid/Extruded$Layer$Companion;
+	public fun <init> (FFFF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lspace/kscience/visionforge/solid/Extruded$Layer;
+	public static synthetic fun copy$default (Lspace/kscience/visionforge/solid/Extruded$Layer;FFFFILjava/lang/Object;)Lspace/kscience/visionforge/solid/Extruded$Layer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getScale ()F
+	public final fun getX ()F
+	public final fun getY ()F
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun setScale (F)V
+	public final fun setX (F)V
+	public final fun setY (F)V
+	public final fun setZ (F)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class space/kscience/visionforge/solid/Extruded$Layer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Extruded$Layer$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Extruded$Layer;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Extruded$Layer;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/Extruded$Layer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class space/kscience/visionforge/solid/ExtrudedKt {
-	public static final fun extruded (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Extruded;
-	public static synthetic fun extruded$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Extruded;
-	public static final fun polygon (Lspace/kscience/visionforge/solid/Shape2DBuilder;ILjava/lang/Number;)V
+	public static final fun extruded (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Extruded;
+	public static synthetic fun extruded$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Extruded;
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean2DSpace : space/kscience/kmath/geometry/GeometrySpace, space/kscience/kmath/operations/ScaleOperations {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Float32Euclidean2DSpace;
+	public synthetic fun add (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun add (Lspace/kscience/visionforge/solid/Float32Vector2D;Lspace/kscience/visionforge/solid/Float32Vector2D;)Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public synthetic fun distanceTo (Lspace/kscience/kmath/geometry/Vector;Lspace/kscience/kmath/geometry/Vector;)D
+	public fun distanceTo (Lspace/kscience/visionforge/solid/Float32Vector2D;Lspace/kscience/visionforge/solid/Float32Vector2D;)D
+	public synthetic fun dot (Lspace/kscience/kmath/geometry/Vector;Lspace/kscience/kmath/geometry/Vector;)D
+	public fun dot (Lspace/kscience/visionforge/solid/Float32Vector2D;Lspace/kscience/visionforge/solid/Float32Vector2D;)D
+	public final fun getXAxis ()Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public final fun getYAxis ()Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public synthetic fun getZero ()Ljava/lang/Object;
+	public fun getZero ()Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public synthetic fun norm (Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun norm (Lspace/kscience/visionforge/solid/Float32Vector2D;)D
+	public fun norm (Lspace/kscience/visionforge/solid/Float32Vector2D;)Ljava/lang/Double;
+	public synthetic fun scale (Ljava/lang/Object;D)Ljava/lang/Object;
+	public fun scale (Lspace/kscience/visionforge/solid/Float32Vector2D;D)Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public synthetic fun unaryMinus (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun unaryMinus (Lspace/kscience/visionforge/solid/Float32Vector2D;)Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public final fun vector (FF)Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public final fun vector (Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Float32Vector2D;
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean2DSpace$VectorSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Float32Euclidean2DSpace$VectorSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Float32Vector2D;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Float32Vector2D;)V
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean2DSpaceKt {
+	public static final fun Float32Vector2D (Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Float32Vector2D;
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean3DSpace : space/kscience/kmath/geometry/GeometrySpace, space/kscience/kmath/operations/ScaleOperations {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Float32Euclidean3DSpace;
+	public synthetic fun add (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun add (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun cross (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public synthetic fun distanceTo (Lspace/kscience/kmath/geometry/Vector;Lspace/kscience/kmath/geometry/Vector;)D
+	public fun distanceTo (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)D
+	public synthetic fun dot (Lspace/kscience/kmath/geometry/Vector;Lspace/kscience/kmath/geometry/Vector;)D
+	public fun dot (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)D
+	public final fun getXAxis ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun getYAxis ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun getZAxis ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public synthetic fun getZero ()Ljava/lang/Object;
+	public fun getZero ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public synthetic fun norm (Ljava/lang/Object;)Ljava/lang/Object;
+	public final fun norm (Lspace/kscience/visionforge/solid/Float32Vector3D;)D
+	public fun norm (Lspace/kscience/visionforge/solid/Float32Vector3D;)Ljava/lang/Double;
+	public synthetic fun scale (Ljava/lang/Object;D)Ljava/lang/Object;
+	public fun scale (Lspace/kscience/visionforge/solid/Float32Vector3D;D)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public synthetic fun unaryMinus (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun unaryMinus (Lspace/kscience/visionforge/solid/Float32Vector3D;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun vector (FFF)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun vector (Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun vectorProduct (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean3DSpace$VectorSerializer : kotlinx/serialization/KSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Float32Euclidean3DSpace$VectorSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+}
+
+public final class space/kscience/visionforge/solid/Float32Euclidean3DSpaceKt {
+	public static final fun Float32Vector3D (Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+}
+
+public abstract interface class space/kscience/visionforge/solid/Float32Vector2D : space/kscience/kmath/geometry/Vector2D {
+	public static final field Companion Lspace/kscience/visionforge/solid/Float32Vector2D$Companion;
+}
+
+public final class space/kscience/visionforge/solid/Float32Vector2D$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract interface class space/kscience/visionforge/solid/Float32Vector3D : space/kscience/kmath/geometry/Vector3D {
+	public static final field Companion Lspace/kscience/visionforge/solid/Float32Vector3D$Companion;
+}
+
+public final class space/kscience/visionforge/solid/Float32Vector3D$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class space/kscience/visionforge/solid/GenericHexagon : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/Hexagon {
 	public static final field Companion Lspace/kscience/visionforge/solid/GenericHexagon$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public fun <init> (Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;)V
-	public fun getNode1 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode2 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode3 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode4 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode5 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode6 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode7 ()Lspace/kscience/visionforge/solid/Point3D;
-	public fun getNode8 ()Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/GenericHexagon;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public fun <init> (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public fun getNode1 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode2 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode3 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode4 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode5 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode6 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode7 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public fun getNode8 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 }
 
 public final class space/kscience/visionforge/solid/GenericHexagon$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/GenericHexagon$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/GenericHexagon;
@@ -287,28 +473,21 @@ public final class space/kscience/visionforge/solid/GenericHexagon$Companion {
 
 public abstract interface class space/kscience/visionforge/solid/GeometryBuilder {
 	public abstract fun build ()Ljava/lang/Object;
-	public abstract fun face (Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/dataforge/meta/Meta;)V
-	public static synthetic fun face$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)V
+	public abstract fun face (Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/dataforge/meta/Meta;)V
+	public static synthetic fun face$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)V
 }
 
 public final class space/kscience/visionforge/solid/GeometryBuilderKt {
-	public static final fun cap (Lspace/kscience/visionforge/solid/GeometryBuilder;Ljava/util/List;Lspace/kscience/visionforge/solid/Point3D;)V
-	public static synthetic fun cap$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Ljava/util/List;Lspace/kscience/visionforge/solid/Point3D;ILjava/lang/Object;)V
-	public static final fun face4 (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/dataforge/meta/Meta;)V
-	public static synthetic fun face4$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)V
+	public static final fun cap (Lspace/kscience/visionforge/solid/GeometryBuilder;Ljava/util/List;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public static synthetic fun cap$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Ljava/util/List;Lspace/kscience/visionforge/solid/Float32Vector3D;ILjava/lang/Object;)V
+	public static final fun face4 (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/dataforge/meta/Meta;)V
+	public static synthetic fun face4$default (Lspace/kscience/visionforge/solid/GeometryBuilder;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/dataforge/meta/Meta;ILjava/lang/Object;)V
 }
 
 public final class space/kscience/visionforge/solid/GeometryKt {
 	public static final field PI2 F
-	public static final fun Point2D (Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Point2D;
-	public static final fun Point3D (Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun cross (Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun minus (Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun normalizeInPlace (Lspace/kscience/visionforge/solid/MutablePoint3D;)V
-	public static final fun plus (Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun toMeta (Lspace/kscience/visionforge/solid/Point2D;)Lspace/kscience/dataforge/meta/Meta;
-	public static final fun toMeta (Lspace/kscience/visionforge/solid/Point3D;)Lspace/kscience/dataforge/meta/Meta;
-	public static final fun unaryMinus (Lspace/kscience/visionforge/solid/Point3D;)Lspace/kscience/visionforge/solid/Point3D;
+	public static final fun toMeta (Lspace/kscience/visionforge/solid/Float32Vector2D;)Lspace/kscience/dataforge/meta/Meta;
+	public static final fun toMeta (Lspace/kscience/visionforge/solid/Float32Vector3D;)Lspace/kscience/dataforge/meta/Meta;
 }
 
 public abstract interface class space/kscience/visionforge/solid/GeometrySolid : space/kscience/visionforge/solid/Solid {
@@ -316,132 +495,95 @@ public abstract interface class space/kscience/visionforge/solid/GeometrySolid :
 }
 
 public abstract interface class space/kscience/visionforge/solid/Hexagon : space/kscience/visionforge/solid/GeometrySolid {
-	public abstract fun getNode1 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode2 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode3 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode4 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode5 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode6 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode7 ()Lspace/kscience/visionforge/solid/Point3D;
-	public abstract fun getNode8 ()Lspace/kscience/visionforge/solid/Point3D;
+	public abstract fun getNode1 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode2 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode3 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode4 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode5 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode6 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode7 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public abstract fun getNode8 ()Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
 }
 
 public final class space/kscience/visionforge/solid/HexagonKt {
-	public static final fun box (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Box;
-	public static synthetic fun box$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Box;
-	public static final fun hexagon (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Hexagon;
-	public static synthetic fun hexagon$default (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Lspace/kscience/visionforge/solid/Point3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Hexagon;
+	public static final fun box (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Box;
+	public static synthetic fun box$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Box;
+	public static final fun hexagon (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Hexagon;
+	public static synthetic fun hexagon$default (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Hexagon;
 }
 
-public final class space/kscience/visionforge/solid/Layer {
-	public static final field Companion Lspace/kscience/visionforge/solid/Layer$Companion;
-	public fun <init> (FFFF)V
-	public synthetic fun <init> (IFFFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public final fun component1 ()F
-	public final fun component2 ()F
-	public final fun component3 ()F
-	public final fun component4 ()F
-	public final fun copy (FFFF)Lspace/kscience/visionforge/solid/Layer;
-	public static synthetic fun copy$default (Lspace/kscience/visionforge/solid/Layer;FFFFILjava/lang/Object;)Lspace/kscience/visionforge/solid/Layer;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getScale ()F
-	public final fun getX ()F
-	public final fun getY ()F
-	public final fun getZ ()F
-	public fun hashCode ()I
-	public final fun setScale (F)V
-	public final fun setX (F)V
-	public final fun setY (F)V
-	public final fun setZ (F)V
-	public fun toString ()Ljava/lang/String;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Layer;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+public abstract class space/kscience/visionforge/solid/LightSource : space/kscience/visionforge/solid/MiscSolid {
+	public static final field Companion Lspace/kscience/visionforge/solid/LightSource$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
+	public final fun getColor ()Lspace/kscience/visionforge/solid/ColorAccessor;
+	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getIntensity ()Ljava/lang/Number;
+	public final fun setIntensity (Ljava/lang/Number;)V
+	public static final synthetic fun write$Self (Lspace/kscience/visionforge/solid/LightSource;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
-public final class space/kscience/visionforge/solid/Layer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lspace/kscience/visionforge/solid/Layer$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Layer;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Layer;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class space/kscience/visionforge/solid/Layer$Companion {
+public final class space/kscience/visionforge/solid/LightSource$Companion {
+	public final fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getINTENSITY_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface class space/kscience/visionforge/solid/MutablePoint3D : space/kscience/visionforge/solid/Point3D {
-	public abstract fun getX ()F
-	public abstract fun getY ()F
-	public abstract fun getZ ()F
-	public abstract fun setX (F)V
-	public abstract fun setY (F)V
-	public abstract fun setZ (F)V
+public final class space/kscience/visionforge/solid/LightSourceKt {
+	public static final fun ambientLight (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/AmbientLightSource;
+	public static synthetic fun ambientLight$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/AmbientLightSource;
+	public static final fun pointLight (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/PointLightSource;
+	public static synthetic fun pointLight$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/PointLightSource;
 }
 
-public final class space/kscience/visionforge/solid/Point2D {
-	public static final field Companion Lspace/kscience/visionforge/solid/Point2D$Companion;
-	public fun <init> (FF)V
-	public synthetic fun <init> (IFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public final fun component1 ()F
-	public final fun component2 ()F
-	public final fun copy (FF)Lspace/kscience/visionforge/solid/Point2D;
-	public static synthetic fun copy$default (Lspace/kscience/visionforge/solid/Point2D;FFILjava/lang/Object;)Lspace/kscience/visionforge/solid/Point2D;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getX ()F
-	public final fun getY ()F
-	public fun hashCode ()I
-	public final fun setX (F)V
-	public final fun setY (F)V
-	public fun toString ()Ljava/lang/String;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Point2D;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+public abstract class space/kscience/visionforge/solid/MiscSolid : space/kscience/visionforge/solid/SolidBase {
+	public static final field Companion Lspace/kscience/visionforge/solid/MiscSolid$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
+	public static final synthetic fun write$Self (Lspace/kscience/visionforge/solid/MiscSolid;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
-public final class space/kscience/visionforge/solid/Point2D$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lspace/kscience/visionforge/solid/Point2D$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Point2D;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Point2D;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class space/kscience/visionforge/solid/Point2D$Companion {
+public final class space/kscience/visionforge/solid/MiscSolid$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public abstract interface class space/kscience/visionforge/solid/Point3D {
-	public static final field Companion Lspace/kscience/visionforge/solid/Point3D$Companion;
-	public abstract fun getX ()F
-	public abstract fun getY ()F
-	public abstract fun getZ ()F
+public final class space/kscience/visionforge/solid/MiscSolidKt {
+	public static final fun axes (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/AxesSolid;
+	public static synthetic fun axes$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/AxesSolid;
 }
 
-public final class space/kscience/visionforge/solid/Point3D$Companion {
-	public final fun getONE ()Lspace/kscience/visionforge/solid/Point3D;
-	public final fun getZERO ()Lspace/kscience/visionforge/solid/Point3D;
+public final class space/kscience/visionforge/solid/PointLightSource : space/kscience/visionforge/solid/LightSource {
+	public static final field Companion Lspace/kscience/visionforge/solid/PointLightSource$Companion;
+	public fun <init> ()V
 }
 
-public final class space/kscience/visionforge/solid/PolyLine : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer {
+public final class space/kscience/visionforge/solid/PointLightSource$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/PointLightSource$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/PointLightSource;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/PointLightSource;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/PointLightSource$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/PolyLine : space/kscience/visionforge/solid/SolidBase {
 	public static final field Companion Lspace/kscience/visionforge/solid/PolyLine$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
+	public static final field DEFAULT_THICKNESS D
 	public fun <init> (Ljava/util/List;)V
 	public final fun getPoints ()Ljava/util/List;
 	public final fun getThickness ()Ljava/lang/Number;
 	public final fun setThickness (Ljava/lang/Number;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/PolyLine;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/PolyLine$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/PolyLine$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/PolyLine;
@@ -452,13 +594,12 @@ public final class space/kscience/visionforge/solid/PolyLine$$serializer : kotli
 }
 
 public final class space/kscience/visionforge/solid/PolyLine$Companion {
-	public final fun getTHICKNESS_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class space/kscience/visionforge/solid/PolyLineKt {
-	public static final fun polyline (Lspace/kscience/visionforge/VisionContainerBuilder;[Lspace/kscience/visionforge/solid/Point3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/PolyLine;
-	public static synthetic fun polyline$default (Lspace/kscience/visionforge/VisionContainerBuilder;[Lspace/kscience/visionforge/solid/Point3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/PolyLine;
+	public static final fun polyline (Lspace/kscience/visionforge/MutableVisionContainer;[Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/PolyLine;
+	public static synthetic fun polyline$default (Lspace/kscience/visionforge/MutableVisionContainer;[Lspace/kscience/visionforge/solid/Float32Vector3D;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/PolyLine;
 }
 
 public abstract interface class space/kscience/visionforge/solid/PrototypeHolder {
@@ -466,53 +607,17 @@ public abstract interface class space/kscience/visionforge/solid/PrototypeHolder
 	public abstract fun prototypes (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class space/kscience/visionforge/solid/Quaternion {
-	public static final synthetic fun box-impl ([D)Lspace/kscience/visionforge/solid/Quaternion;
-	public static fun constructor-impl ([D)[D
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl ([DLjava/lang/Object;)Z
-	public static final fun equals-impl0 ([D[D)Z
-	public final fun getValues ()[D
-	public fun hashCode ()I
-	public static fun hashCode-impl ([D)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl ([D)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()[D
-}
-
-public final class space/kscience/visionforge/solid/QuaternionKt {
-	public static final fun component1-VMqeIco ([D)D
-	public static final fun component2-VMqeIco ([D)D
-	public static final fun component3-VMqeIco ([D)D
-	public static final fun component4-VMqeIco ([D)D
-}
-
-public final class space/kscience/visionforge/solid/RotationOrder : java/lang/Enum {
-	public static final field XYZ Lspace/kscience/visionforge/solid/RotationOrder;
-	public static final field XZY Lspace/kscience/visionforge/solid/RotationOrder;
-	public static final field YXZ Lspace/kscience/visionforge/solid/RotationOrder;
-	public static final field YZX Lspace/kscience/visionforge/solid/RotationOrder;
-	public static final field ZXY Lspace/kscience/visionforge/solid/RotationOrder;
-	public static final field ZYX Lspace/kscience/visionforge/solid/RotationOrder;
-	public static fun valueOf (Ljava/lang/String;)Lspace/kscience/visionforge/solid/RotationOrder;
-	public static fun values ()[Lspace/kscience/visionforge/solid/RotationOrder;
-}
-
 public final class space/kscience/visionforge/solid/Shape2DBuilder {
 	public static final field Companion Lspace/kscience/visionforge/solid/Shape2DBuilder$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILjava/util/ArrayList;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/util/ArrayList;)V
 	public synthetic fun <init> (Ljava/util/ArrayList;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun build ()Ljava/util/List;
 	public final fun point (Ljava/lang/Number;Ljava/lang/Number;)V
-	public final fun to (Ljava/lang/Number;Ljava/lang/Number;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Shape2DBuilder;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Shape2DBuilder$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Shape2DBuilder$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Shape2DBuilder;
@@ -524,6 +629,10 @@ public final class space/kscience/visionforge/solid/Shape2DBuilder$$serializer :
 
 public final class space/kscience/visionforge/solid/Shape2DBuilder$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/Shape2DKt {
+	public static final fun polygon (Lspace/kscience/visionforge/solid/Shape2DBuilder;ILjava/lang/Number;)V
 }
 
 public abstract interface class space/kscience/visionforge/solid/Solid : space/kscience/visionforge/Vision {
@@ -555,17 +664,16 @@ public final class space/kscience/visionforge/solid/Solid$Companion {
 	public final fun getZ_SCALE_KEY ()Lspace/kscience/dataforge/names/Name;
 }
 
-public class space/kscience/visionforge/solid/SolidBase : space/kscience/visionforge/VisionBase, space/kscience/visionforge/solid/Solid {
+public class space/kscience/visionforge/solid/SolidBase : space/kscience/visionforge/AbstractVision, space/kscience/visionforge/solid/Solid {
 	public static final field Companion Lspace/kscience/visionforge/solid/SolidBase$Companion;
 	public fun <init> ()V
 	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/SolidBase;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lspace/kscience/visionforge/solid/SolidBase;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Lkotlinx/serialization/KSerializer;)V
 }
 
 public final class space/kscience/visionforge/solid/SolidBase$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lspace/kscience/visionforge/solid/SolidBase$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun <init> (Lkotlinx/serialization/KSerializer;)V
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SolidBase;
@@ -576,24 +684,26 @@ public final class space/kscience/visionforge/solid/SolidBase$$serializer : kotl
 }
 
 public final class space/kscience/visionforge/solid/SolidBase$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
-public final class space/kscience/visionforge/solid/SolidGroup : space/kscience/visionforge/VisionGroupBase, space/kscience/visionforge/solid/PrototypeHolder, space/kscience/visionforge/solid/Solid {
+public final class space/kscience/visionforge/solid/SolidGroup : space/kscience/visionforge/AbstractVisionGroup, space/kscience/visionforge/MutableVisionContainer, space/kscience/visionforge/MutableVisionGroup, space/kscience/visionforge/solid/PrototypeHolder, space/kscience/visionforge/solid/Solid {
 	public static final field Companion Lspace/kscience/visionforge/solid/SolidGroup$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/util/Map;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
-	public synthetic fun createGroup ()Lspace/kscience/visionforge/VisionGroupBase;
-	public fun getChildren ()Ljava/util/Map;
+	public synthetic fun createGroup ()Lspace/kscience/visionforge/AbstractVisionGroup;
+	public synthetic fun createGroup ()Lspace/kscience/visionforge/MutableVisionGroup;
+	public fun createGroup ()Lspace/kscience/visionforge/solid/SolidGroup;
+	public final fun get (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/visionforge/solid/Solid;
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getItems ()Ljava/util/Map;
 	public fun getPrototype (Lspace/kscience/dataforge/names/Name;)Lspace/kscience/visionforge/solid/Solid;
 	public fun prototypes (Lkotlin/jvm/functions/Function1;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/SolidGroup;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public synthetic fun setChild (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/Vision;)V
+	public fun setChild (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/solid/Solid;)V
 }
 
 public final class space/kscience/visionforge/solid/SolidGroup$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/SolidGroup$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SolidGroup;
@@ -610,39 +720,46 @@ public final class space/kscience/visionforge/solid/SolidGroup$Companion {
 
 public final class space/kscience/visionforge/solid/SolidGroupKt {
 	public static final fun SolidGroup (Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
-	public static final fun group (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
-	public static final fun group (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/dataforge/names/Name;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
-	public static synthetic fun group$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
-	public static synthetic fun group$default (Lspace/kscience/visionforge/VisionContainerBuilder;Lspace/kscience/dataforge/names/Name;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun get (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;)Lspace/kscience/visionforge/solid/Solid;
+	public static final fun solidGroup (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun solidGroup (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/dataforge/names/Name;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static synthetic fun solidGroup$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static synthetic fun solidGroup$default (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/dataforge/names/Name;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
 }
 
 public final class space/kscience/visionforge/solid/SolidKt {
 	public static final fun getDetail (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Integer;
 	public static final fun getIgnore (Lspace/kscience/visionforge/Vision;)Ljava/lang/Boolean;
 	public static final fun getLayer (Lspace/kscience/visionforge/solid/Solid;)I
-	public static final fun getPosition (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun getRotation (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Point3D;
-	public static final fun getRotationOrder (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/RotationOrder;
+	public static final fun getPosition (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public static final fun getQuaternion (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/kmath/complex/Quaternion;
+	public static final fun getQuaternionOrNull (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/kmath/complex/Quaternion;
+	public static final fun getRotation (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public static final fun getRotationOrder (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/kmath/geometry/RotationOrder;
 	public static final fun getRotationX (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getRotationY (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getRotationZ (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
-	public static final fun getScale (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Point3D;
+	public static final fun getScale (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/Float32Vector3D;
 	public static final fun getScaleX (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getScaleY (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getScaleZ (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getX (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getY (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
 	public static final fun getZ (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
+	public static final fun rotate (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/kmath/geometry/Angle;Lspace/kscience/kmath/geometry/Vector3D;)V
+	public static final fun scale (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setDetail (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Integer;)V
 	public static final fun setIgnore (Lspace/kscience/visionforge/Vision;Ljava/lang/Boolean;)V
 	public static final fun setLayer (Lspace/kscience/visionforge/solid/Solid;I)V
-	public static final fun setPosition (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Point3D;)V
-	public static final fun setRotation (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Point3D;)V
-	public static final fun setRotationOrder (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/RotationOrder;)V
+	public static final fun setPosition (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public static final fun setQuaternion (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/kmath/complex/Quaternion;)V
+	public static final fun setQuaternionOrNull (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/kmath/complex/Quaternion;)V
+	public static final fun setRotation (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
+	public static final fun setRotationOrder (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/kmath/geometry/RotationOrder;)V
 	public static final fun setRotationX (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setRotationY (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setRotationZ (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
-	public static final fun setScale (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Point3D;)V
+	public static final fun setScale (Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/Float32Vector3D;)V
 	public static final fun setScaleX (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setScaleY (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 	public static final fun setScaleZ (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
@@ -651,19 +768,16 @@ public final class space/kscience/visionforge/solid/SolidKt {
 	public static final fun setZ (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 }
 
-public final class space/kscience/visionforge/solid/SolidLabel : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer {
+public final class space/kscience/visionforge/solid/SolidLabel : space/kscience/visionforge/solid/SolidBase {
 	public static final field Companion Lspace/kscience/visionforge/solid/SolidLabel$Companion;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Ljava/lang/String;DLjava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;DLjava/lang/String;)V
 	public final fun getFontFamily ()Ljava/lang/String;
 	public final fun getFontSize ()D
 	public final fun getText ()Ljava/lang/String;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/SolidLabel;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/SolidLabel$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/SolidLabel$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SolidLabel;
@@ -678,8 +792,8 @@ public final class space/kscience/visionforge/solid/SolidLabel$Companion {
 }
 
 public final class space/kscience/visionforge/solid/SolidLabelKt {
-	public static final fun label (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidLabel;
-	public static synthetic fun label$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidLabel;
+	public static final fun label (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidLabel;
+	public static synthetic fun label$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Ljava/lang/Number;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidLabel;
 }
 
 public final class space/kscience/visionforge/solid/SolidMaterial : space/kscience/dataforge/meta/Scheme {
@@ -689,25 +803,36 @@ public final class space/kscience/visionforge/solid/SolidMaterial : space/kscien
 	public final fun getEmissiveColor ()Lspace/kscience/visionforge/solid/ColorAccessor;
 	public final fun getOpacity ()F
 	public final fun getSpecularColor ()Lspace/kscience/visionforge/solid/ColorAccessor;
+	public final fun getType ()Ljava/lang/String;
 	public final fun getWireframe ()Z
 	public final fun setOpacity (F)V
+	public final fun setType (Ljava/lang/String;)V
 	public final fun setWireframe (Z)V
 }
 
 public final class space/kscience/visionforge/solid/SolidMaterial$Companion : space/kscience/dataforge/meta/SchemeSpec {
 	public final fun getCOLOR_KEY ()Lspace/kscience/dataforge/names/Name;
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+	public final fun getEDGES_ENABLED_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getEDGES_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getEDGES_MATERIAL_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getEMISSIVE_COLOR_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getENABLED_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getMATERIAL_COLOR_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getMATERIAL_EMISSIVE_COLOR_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getMATERIAL_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getMATERIAL_OPACITY_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getMATERIAL_SPECULAR_COLOR_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getMATERIAL_WIREFRAME_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getOPACITY_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getSPECULAR_COLOR_KEY ()Lspace/kscience/dataforge/names/Name;
+	public final fun getTYPE_KEY ()Lspace/kscience/dataforge/names/Name;
 	public final fun getWIREFRAME_KEY ()Lspace/kscience/dataforge/names/Name;
 }
 
 public final class space/kscience/visionforge/solid/SolidMaterialKt {
+	public static final fun edges (Lspace/kscience/visionforge/solid/Solid;ZLkotlin/jvm/functions/Function1;)V
+	public static synthetic fun edges$default (Lspace/kscience/visionforge/solid/Solid;ZLkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public static final fun getColor (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/ColorAccessor;
 	public static final fun getMaterial (Lspace/kscience/visionforge/solid/Solid;)Lspace/kscience/visionforge/solid/SolidMaterial;
 	public static final fun getOpacity (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/Number;
@@ -716,87 +841,80 @@ public final class space/kscience/visionforge/solid/SolidMaterialKt {
 	public static final fun setOpacity (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/Number;)V
 }
 
-public abstract interface class space/kscience/visionforge/solid/SolidReference : space/kscience/visionforge/VisionGroup {
-	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
-	public abstract fun getPrototype ()Lspace/kscience/visionforge/solid/Solid;
-}
-
-public final class space/kscience/visionforge/solid/SolidReferenceGroup : space/kscience/visionforge/VisionBase, space/kscience/visionforge/VisionGroup, space/kscience/visionforge/solid/Solid, space/kscience/visionforge/solid/SolidReference {
-	public static final field Companion Lspace/kscience/visionforge/solid/SolidReferenceGroup$Companion;
+public final class space/kscience/visionforge/solid/SolidReference : space/kscience/visionforge/VisionGroup, space/kscience/visionforge/solid/Solid {
+	public static final field Companion Lspace/kscience/visionforge/solid/SolidReference$Companion;
 	public static final field REFERENCE_CHILD_PROPERTY_PREFIX Ljava/lang/String;
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;Lspace/kscience/dataforge/names/Name;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public fun <init> (Lspace/kscience/dataforge/names/Name;)V
-	public fun getChildren ()Ljava/util/Map;
+	public fun getChildren ()Lspace/kscience/visionforge/VisionChildren;
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
-	public fun getProperty (Lspace/kscience/dataforge/names/Name;ZZZ)Lspace/kscience/dataforge/values/Value;
-	public fun getPrototype ()Lspace/kscience/visionforge/solid/Solid;
-	public final fun getRefName ()Lspace/kscience/dataforge/names/Name;
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/SolidReferenceGroup;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public fun getParent ()Lspace/kscience/visionforge/Vision;
+	public fun getProperties ()Lspace/kscience/visionforge/MutableVisionProperties;
+	public final fun getPrototype ()Lspace/kscience/visionforge/solid/Solid;
+	public final fun getPrototypeName ()Lspace/kscience/dataforge/names/Name;
+	public fun setParent (Lspace/kscience/visionforge/Vision;)V
 }
 
-public final class space/kscience/visionforge/solid/SolidReferenceGroup$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lspace/kscience/visionforge/solid/SolidReferenceGroup$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
+public final class space/kscience/visionforge/solid/SolidReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/SolidReference$$serializer;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SolidReference;
 	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/SolidReferenceGroup;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/SolidReference;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
 
-public final class space/kscience/visionforge/solid/SolidReferenceGroup$Companion {
+public final class space/kscience/visionforge/solid/SolidReference$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class space/kscience/visionforge/solid/SolidReferenceKt {
-	public static final fun getUnref (Lspace/kscience/visionforge/Vision;)Lspace/kscience/visionforge/solid/Solid;
-	public static final fun newRef (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/PrototypeHolder;Lspace/kscience/dataforge/names/Name;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
-	public static synthetic fun newRef$default (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/PrototypeHolder;Lspace/kscience/dataforge/names/Name;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
-	public static final fun ref (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Ljava/lang/String;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
-	public static final fun ref (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/dataforge/names/Name;Ljava/lang/String;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
-	public static synthetic fun ref$default (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
-	public static synthetic fun ref$default (Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/dataforge/names/Name;Ljava/lang/String;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidReferenceGroup;
+	public static final fun getPrototype (Lspace/kscience/visionforge/Vision;)Lspace/kscience/visionforge/solid/Solid;
+	public static final fun newRef (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/dataforge/names/Name;)Lspace/kscience/visionforge/solid/SolidReference;
+	public static synthetic fun newRef$default (Lspace/kscience/visionforge/solid/SolidGroup;Ljava/lang/String;Lspace/kscience/visionforge/solid/Solid;Lspace/kscience/visionforge/solid/SolidGroup;Lspace/kscience/dataforge/names/Name;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidReference;
+	public static final fun ref (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/dataforge/names/Name;Ljava/lang/String;)Lspace/kscience/visionforge/solid/SolidReference;
+	public static final fun ref (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/dataforge/names/Name;Lspace/kscience/dataforge/names/Name;)Lspace/kscience/visionforge/solid/SolidReference;
+	public static synthetic fun ref$default (Lspace/kscience/visionforge/MutableVisionContainer;Lspace/kscience/dataforge/names/Name;Lspace/kscience/dataforge/names/Name;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidReference;
 }
 
-public final class space/kscience/visionforge/solid/Solids : space/kscience/visionforge/VisionPlugin {
+public final class space/kscience/visionforge/solid/Solids : space/kscience/visionforge/VisionPlugin, space/kscience/visionforge/MutableVisionContainer {
 	public static final field Companion Lspace/kscience/visionforge/solid/Solids$Companion;
 	public fun <init> (Lspace/kscience/dataforge/meta/Meta;)V
 	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
+	public synthetic fun setChild (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/Vision;)V
+	public fun setChild (Lspace/kscience/dataforge/names/Name;Lspace/kscience/visionforge/solid/Solid;)V
 }
 
 public final class space/kscience/visionforge/solid/Solids$Companion : space/kscience/dataforge/context/PluginFactory {
+	public synthetic fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Ljava/lang/Object;
+	public fun build (Lspace/kscience/dataforge/context/Context;Lspace/kscience/dataforge/meta/Meta;)Lspace/kscience/visionforge/solid/Solids;
 	public final fun decodeFromString (Ljava/lang/String;)Lspace/kscience/visionforge/solid/Solid;
 	public final fun encodeToString (Lspace/kscience/visionforge/solid/Solid;)Ljava/lang/String;
 	public final fun getSerializersModuleForSolids ()Lkotlinx/serialization/modules/SerializersModule;
 	public fun getTag ()Lspace/kscience/dataforge/context/PluginTag;
-	public fun getType ()Lkotlin/reflect/KClass;
-	public synthetic fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Ljava/lang/Object;
-	public fun invoke (Lspace/kscience/dataforge/meta/Meta;Lspace/kscience/dataforge/context/Context;)Lspace/kscience/visionforge/solid/Solids;
 }
 
 public final class space/kscience/visionforge/solid/SolidsKt {
-	public static final fun solid (Lspace/kscience/visionforge/html/VisionOutput;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun solid (Lspace/kscience/visionforge/html/VisionOutput;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun solid (Lspace/kscience/visionforge/html/VisionOutput;Lspace/kscience/visionforge/solid/specifications/Canvas3DOptions;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static synthetic fun solid$default (Lspace/kscience/visionforge/html/VisionOutput;Lspace/kscience/visionforge/solid/specifications/Canvas3DOptions;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
 }
 
-public final class space/kscience/visionforge/solid/Sphere : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/VisionPropertyContainer, space/kscience/visionforge/solid/GeometrySolid {
+public final class space/kscience/visionforge/solid/Sphere : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
 	public static final field Companion Lspace/kscience/visionforge/solid/Sphere$Companion;
 	public fun <init> (FFFFF)V
 	public synthetic fun <init> (FFFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;FFFFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public final fun getPhi ()F
 	public final fun getPhiStart ()F
 	public final fun getRadius ()F
 	public final fun getTheta ()F
 	public final fun getThetaStart ()F
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/Sphere;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/Sphere$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/Sphere$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Sphere;
@@ -811,15 +929,14 @@ public final class space/kscience/visionforge/solid/Sphere$Companion {
 }
 
 public final class space/kscience/visionforge/solid/SphereKt {
-	public static final fun sphere (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Sphere;
-	public static synthetic fun sphere$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Sphere;
+	public static final fun sphere (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Sphere;
+	public static synthetic fun sphere$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Sphere;
 }
 
 public final class space/kscience/visionforge/solid/SphereLayer : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
 	public static final field Companion Lspace/kscience/visionforge/solid/SphereLayer$Companion;
 	public fun <init> (FFFFFF)V
 	public synthetic fun <init> (FFFFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (ILspace/kscience/dataforge/meta/MutableMeta;FFFFFFLkotlinx/serialization/internal/SerializationConstructorMarker;)V
 	public final fun getInnerRadius ()F
 	public final fun getOuterRadius ()F
 	public final fun getPhi ()F
@@ -827,12 +944,10 @@ public final class space/kscience/visionforge/solid/SphereLayer : space/kscience
 	public final fun getTheta ()F
 	public final fun getThetaStart ()F
 	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
-	public static final fun write$Self (Lspace/kscience/visionforge/solid/SphereLayer;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class space/kscience/visionforge/solid/SphereLayer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lspace/kscience/visionforge/solid/SphereLayer$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/SphereLayer;
@@ -847,29 +962,136 @@ public final class space/kscience/visionforge/solid/SphereLayer$Companion {
 }
 
 public final class space/kscience/visionforge/solid/SphereLayerKt {
-	public static final fun sphereLayer (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SphereLayer;
-	public static synthetic fun sphereLayer$default (Lspace/kscience/visionforge/VisionContainerBuilder;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SphereLayer;
+	public static final fun sphereLayer (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/SphereLayer;
+	public static synthetic fun sphereLayer$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/SphereLayer;
 }
 
-public final class space/kscience/visionforge/solid/specifications/Axes : space/kscience/dataforge/meta/Scheme {
-	public static final field AXIS_SIZE D
-	public static final field AXIS_WIDTH D
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Axes$Companion;
+public final class space/kscience/visionforge/solid/StlBinarySolid : space/kscience/visionforge/solid/StlSolid {
+	public static final field Companion Lspace/kscience/visionforge/solid/StlBinarySolid$Companion;
+	public fun <init> ([B)V
+	public final fun getData ()[B
+}
+
+public final class space/kscience/visionforge/solid/StlBinarySolid$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/StlBinarySolid$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/StlBinarySolid;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/StlBinarySolid;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/StlBinarySolid$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public abstract class space/kscience/visionforge/solid/StlSolid : space/kscience/visionforge/solid/SolidBase {
+}
+
+public final class space/kscience/visionforge/solid/StlSolidKt {
+	public static final fun stl (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/StlSolid;
+	public static synthetic fun stl$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/StlSolid;
+}
+
+public final class space/kscience/visionforge/solid/StlUrlSolid : space/kscience/visionforge/solid/StlSolid {
+	public static final field Companion Lspace/kscience/visionforge/solid/StlUrlSolid$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getUrl ()Ljava/lang/String;
+}
+
+public final class space/kscience/visionforge/solid/StlUrlSolid$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/StlUrlSolid$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/StlUrlSolid;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/StlUrlSolid;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/StlUrlSolid$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/Surface : space/kscience/visionforge/solid/SolidBase, space/kscience/visionforge/solid/GeometrySolid {
+	public static final field Companion Lspace/kscience/visionforge/solid/Surface$Companion;
+	public static final field TYPE Ljava/lang/String;
+	public fun <init> (Ljava/util/List;)V
+	public final fun getLayers ()Ljava/util/List;
+	public fun toGeometry (Lspace/kscience/visionforge/solid/GeometryBuilder;)V
+}
+
+public final class space/kscience/visionforge/solid/Surface$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Surface$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Surface;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Surface;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/Surface$Builder {
 	public fun <init> ()V
-	public final fun getSize ()D
-	public final fun getVisible ()Z
-	public final fun getWidth ()D
-	public final fun setSize (D)V
-	public final fun setVisible (Z)V
-	public final fun setWidth (D)V
+	public fun <init> (Ljava/util/List;Lspace/kscience/dataforge/meta/MutableMeta;)V
+	public synthetic fun <init> (Ljava/util/List;Lspace/kscience/dataforge/meta/MutableMeta;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLayers ()Ljava/util/List;
+	public final fun getProperties ()Lspace/kscience/dataforge/meta/MutableMeta;
+	public final fun layer (Ljava/lang/Number;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun layer$default (Lspace/kscience/visionforge/solid/Surface$Builder;Ljava/lang/Number;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun setLayers (Ljava/util/List;)V
 }
 
-public final class space/kscience/visionforge/solid/specifications/Axes$Companion : space/kscience/dataforge/meta/SchemeSpec {
-	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+public final class space/kscience/visionforge/solid/Surface$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class space/kscience/visionforge/solid/specifications/Camera : space/kscience/dataforge/meta/Scheme {
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Camera$Companion;
+public final class space/kscience/visionforge/solid/Surface$Layer {
+	public static final field Companion Lspace/kscience/visionforge/solid/Surface$Layer$Companion;
+	public fun <init> (FLjava/util/List;Ljava/util/List;)V
+	public final fun component1 ()F
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (FLjava/util/List;Ljava/util/List;)Lspace/kscience/visionforge/solid/Surface$Layer;
+	public static synthetic fun copy$default (Lspace/kscience/visionforge/solid/Surface$Layer;FLjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Surface$Layer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCenter ()Lspace/kscience/visionforge/solid/Float32Vector3D;
+	public final fun getInner ()Ljava/util/List;
+	public final fun getOuter ()Ljava/util/List;
+	public final fun getSize ()I
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun innerPoints ()Ljava/util/List;
+	public final fun outerPoints ()Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class space/kscience/visionforge/solid/Surface$Layer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/Surface$Layer$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lspace/kscience/visionforge/solid/Surface$Layer;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lspace/kscience/visionforge/solid/Surface$Layer;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/Surface$Layer$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class space/kscience/visionforge/solid/SurfaceKt {
+	public static final fun surface (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lspace/kscience/visionforge/solid/Surface;
+	public static synthetic fun surface$default (Lspace/kscience/visionforge/MutableVisionContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lspace/kscience/visionforge/solid/Surface;
+}
+
+public final class space/kscience/visionforge/solid/specifications/CameraScheme : space/kscience/dataforge/meta/Scheme {
+	public static final field Companion Lspace/kscience/visionforge/solid/specifications/CameraScheme$Companion;
 	public static final field FAR_CLIP D
 	public static final field FIELD_OF_VIEW I
 	public static final field INITIAL_AZIMUTH D
@@ -891,31 +1113,29 @@ public final class space/kscience/visionforge/solid/specifications/Camera : spac
 	public final fun setNearClip (D)V
 }
 
-public final class space/kscience/visionforge/solid/specifications/Camera$Companion : space/kscience/dataforge/meta/SchemeSpec {
+public final class space/kscience/visionforge/solid/specifications/CameraScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 }
 
-public final class space/kscience/visionforge/solid/specifications/CameraKt {
-	public static final fun getZenith (Lspace/kscience/visionforge/solid/specifications/Camera;)D
+public final class space/kscience/visionforge/solid/specifications/CameraSchemeKt {
+	public static final fun getZenith (Lspace/kscience/visionforge/solid/specifications/CameraScheme;)D
 }
 
 public final class space/kscience/visionforge/solid/specifications/Canvas3DOptions : space/kscience/dataforge/meta/Scheme {
 	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Canvas3DOptions$Companion;
 	public fun <init> ()V
-	public final fun getAxes ()Lspace/kscience/visionforge/solid/specifications/Axes;
-	public final fun getCamera ()Lspace/kscience/visionforge/solid/specifications/Camera;
-	public final fun getClipping ()Lspace/kscience/visionforge/solid/specifications/Clipping;
-	public final fun getControls ()Lspace/kscience/visionforge/solid/specifications/Controls;
+	public final fun getCamera ()Lspace/kscience/visionforge/solid/specifications/CameraScheme;
+	public final fun getCanvasName ()Ljava/lang/String;
+	public final fun getClipping ()Lspace/kscience/visionforge/solid/specifications/PointScheme;
+	public final fun getControls ()Lspace/kscience/visionforge/solid/specifications/Canvas3DUIScheme;
 	public final fun getLayers ()Ljava/util/List;
-	public final fun getLight ()Lspace/kscience/visionforge/solid/specifications/Light;
 	public final fun getOnSelect ()Lkotlin/jvm/functions/Function1;
 	public final fun getSize ()Lspace/kscience/visionforge/solid/specifications/CanvasSize;
-	public final fun setAxes (Lspace/kscience/visionforge/solid/specifications/Axes;)V
-	public final fun setCamera (Lspace/kscience/visionforge/solid/specifications/Camera;)V
-	public final fun setClipping (Lspace/kscience/visionforge/solid/specifications/Clipping;)V
-	public final fun setControls (Lspace/kscience/visionforge/solid/specifications/Controls;)V
+	public final fun setCamera (Lspace/kscience/visionforge/solid/specifications/CameraScheme;)V
+	public final fun setCanvasName (Ljava/lang/String;)V
+	public final fun setClipping (Lspace/kscience/visionforge/solid/specifications/PointScheme;)V
+	public final fun setControls (Lspace/kscience/visionforge/solid/specifications/Canvas3DUIScheme;)V
 	public final fun setLayers (Ljava/util/List;)V
-	public final fun setLight (Lspace/kscience/visionforge/solid/specifications/Light;)V
 	public final fun setOnSelect (Lkotlin/jvm/functions/Function1;)V
 	public final fun setSize (Lspace/kscience/visionforge/solid/specifications/CanvasSize;)V
 }
@@ -927,6 +1147,17 @@ public final class space/kscience/visionforge/solid/specifications/Canvas3DOptio
 public final class space/kscience/visionforge/solid/specifications/Canvas3DOptionsKt {
 	public static final fun computeHeight (Lspace/kscience/visionforge/solid/specifications/CanvasSize;Ljava/lang/Number;)I
 	public static final fun computeWidth (Lspace/kscience/visionforge/solid/specifications/CanvasSize;Ljava/lang/Number;)I
+}
+
+public final class space/kscience/visionforge/solid/specifications/Canvas3DUIScheme : space/kscience/dataforge/meta/Scheme {
+	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Canvas3DUIScheme$Companion;
+	public fun <init> ()V
+	public final fun getEnabled ()Z
+	public final fun setEnabled (Z)V
+}
+
+public final class space/kscience/visionforge/solid/specifications/Canvas3DUIScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
+	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 }
 
 public final class space/kscience/visionforge/solid/specifications/CanvasSize : space/kscience/dataforge/meta/Scheme {
@@ -950,8 +1181,13 @@ public final class space/kscience/visionforge/solid/specifications/CanvasSize$Co
 	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
 }
 
-public final class space/kscience/visionforge/solid/specifications/Clipping : space/kscience/dataforge/meta/Scheme {
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Clipping$Companion;
+public final class space/kscience/visionforge/solid/specifications/Clipping : space/kscience/dataforge/meta/SchemeSpec {
+	public static final field INSTANCE Lspace/kscience/visionforge/solid/specifications/Clipping;
+	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+}
+
+public final class space/kscience/visionforge/solid/specifications/PointScheme : space/kscience/dataforge/meta/Scheme {
+	public static final field Companion Lspace/kscience/visionforge/solid/specifications/PointScheme$Companion;
 	public fun <init> ()V
 	public final fun getX ()Ljava/lang/Double;
 	public final fun getY ()Ljava/lang/Double;
@@ -961,24 +1197,11 @@ public final class space/kscience/visionforge/solid/specifications/Clipping : sp
 	public final fun setZ (Ljava/lang/Double;)V
 }
 
-public final class space/kscience/visionforge/solid/specifications/Clipping$Companion : space/kscience/dataforge/meta/SchemeSpec {
-	public fun getDescriptor ()Lspace/kscience/dataforge/meta/descriptors/MetaDescriptor;
+public final class space/kscience/visionforge/solid/specifications/PointScheme$Companion : space/kscience/dataforge/meta/SchemeSpec {
 }
 
-public final class space/kscience/visionforge/solid/specifications/Controls : space/kscience/dataforge/meta/Scheme {
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Controls$Companion;
-	public fun <init> ()V
-}
-
-public final class space/kscience/visionforge/solid/specifications/Controls$Companion : space/kscience/dataforge/meta/SchemeSpec {
-}
-
-public final class space/kscience/visionforge/solid/specifications/Light : space/kscience/dataforge/meta/Scheme {
-	public static final field Companion Lspace/kscience/visionforge/solid/specifications/Light$Companion;
-	public fun <init> ()V
-}
-
-public final class space/kscience/visionforge/solid/specifications/Light$Companion : space/kscience/dataforge/meta/SchemeSpec {
+public final class space/kscience/visionforge/solid/specifications/PointSchemeKt {
+	public static final fun invoke (Lspace/kscience/visionforge/solid/specifications/PointScheme;Ljava/lang/Number;Ljava/lang/Number;Ljava/lang/Number;)V
 }
 
 public abstract class space/kscience/visionforge/solid/transform/VisualTreeTransform {

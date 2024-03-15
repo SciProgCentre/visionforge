@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 
-import js.core.jso
+import js.objects.jso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange
@@ -27,7 +27,7 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
         return Mesh(textGeo, ThreeMaterials.DEFAULT).apply {
             setMaterial(vision)
             updatePosition(vision)
-            if(observe) {
+            if (observe) {
                 vision.onPropertyChange(three.context) {
                     //TODO
                     three.logger.warn { "Label parameter change not implemented" }

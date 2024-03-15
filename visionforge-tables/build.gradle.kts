@@ -2,30 +2,30 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val tablesVersion = "0.3.0"
+val tablesVersion = "0.4.0"
 
 kscience {
     jvm()
     js {
-        useCommonJs()
         binaries.library()
         browser {
-            commonWebpackConfig {
-                cssSupport {
-                    enabled.set(true)
+            webpackTask{
+                scssSupport {
+                    enabled = true
                 }
             }
         }
     }
-    dependencies {
+
+    useSerialization()
+    commonMain {
         api(projects.visionforgeCore)
         api("space.kscience:tables-kt:${tablesVersion}")
     }
-    dependencies(jsMain) {
-        implementation(npm("tabulator-tables", "5.5.2"))
-        implementation(npm("@types/tabulator-tables", "5.5.3"))
+    jsMain {
+        api(npm("tabulator-tables", "5.5.2"))
+        api(npm("@types/tabulator-tables", "5.5.3"))
     }
-    useSerialization()
 }
 
 readme {

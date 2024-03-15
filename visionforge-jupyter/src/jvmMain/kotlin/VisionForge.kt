@@ -17,9 +17,9 @@ import space.kscience.dataforge.context.info
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.HtmlVisionFragment
+import space.kscience.visionforge.html.VisionDisplay
 import space.kscience.visionforge.html.visionFragment
 import space.kscience.visionforge.server.VisionRoute
 import space.kscience.visionforge.server.serveVisionData
@@ -55,7 +55,7 @@ public class VisionForge(
 
     override val context: Context get() = visionManager.context
 
-    public val configuration: ObservableMutableMeta = meta.toMutableMeta()
+    public val configuration: ObservableMutableMeta = meta.toMutableMeta().asObservable()
 
     private var counter = 0
 
@@ -142,7 +142,7 @@ public class VisionForge(
                     //server.serveVisionsFromFragment(consumer, "content-${counter++}", fragment)
                     val cellRoute = "content-${counter++}"
 
-                    val collector: MutableMap<Name, Vision> = mutableMapOf()
+                    val cache: MutableMap<Name, VisionDisplay> = mutableMapOf()
 
                     val url = engine.environment.connectors.first().let {
                         url {
@@ -153,13 +153,13 @@ public class VisionForge(
                         }
                     }
 
-                    engine.application.serveVisionData(VisionRoute(cellRoute, visionManager), collector)
+                    engine.application.serveVisionData(VisionRoute(cellRoute, visionManager), cache)
 
                     visionFragment(
                         visionManager,
                         embedData = true,
                         updatesUrl = url,
-                        onVisionRendered = { name, vision -> collector[name] = vision },
+                        displayCache = cache,
                         fragment = fragment
                     )
                 } else {

@@ -46,7 +46,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
         mesh.scale.z = properties.getValue(VALUE)?.number?.toDouble() ?: 1.0
 
         //add listener to object properties
-        onPropertyChange { name ->
+        onPropertyChange(three.context) { name ->
             when {
                 name == VALUE -> {
                     val value = properties.getValue(VALUE)?.int ?: 0

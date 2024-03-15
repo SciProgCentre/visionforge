@@ -4,6 +4,7 @@ import org.w3c.xhr.FormData
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.stringList
+import space.kscience.visionforge.html.toMeta
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

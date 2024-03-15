@@ -2,6 +2,7 @@ package space.kscience.visionforge.solid
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.MutableVisionContainer
 import space.kscience.visionforge.VisionBuilder
@@ -55,7 +56,7 @@ public fun SolidGroup.smartComposite(
     @VisionBuilder builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
     val group = SolidGroup().apply(builder)
-    if (name == null && group.properties.own == null) {
+    if (name == null && group.properties.own.isEmpty()) {
         //append directly to group if no properties are defined
         group.items.forEach { (_, value) ->
             value.parent = null

@@ -8,10 +8,10 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
-import space.kscience.visionforge.JsVisionClient
-import space.kscience.visionforge.renderAllVisions
-import space.kscience.visionforge.renderAllVisionsById
-import space.kscience.visionforge.renderAllVisionsIn
+import space.kscience.visionforge.html.JsVisionClient
+import space.kscience.visionforge.html.renderAllVisions
+import space.kscience.visionforge.html.renderAllVisionsById
+import space.kscience.visionforge.html.renderAllVisionsIn
 
 @JsExport
 public class VFNotebookClient : AbstractPlugin() {

@@ -177,7 +177,7 @@ internal fun float32Vector(
 ): ReadWriteProperty<Solid, Float32Vector3D?> =
     object : ReadWriteProperty<Solid, Float32Vector3D?> {
         override fun getValue(thisRef: Solid, property: KProperty<*>): Float32Vector3D? {
-            val item = thisRef.properties.own?.get(name) ?: return null
+            val item = thisRef.properties.own[name] ?: return null
             //using dynamic property accessor because values could change
             return object : Float32Vector3D {
                 override val x: Float get() = item[X_KEY]?.float ?: defaultX
@@ -202,6 +202,10 @@ internal fun float32Vector(
 public var Solid.position: Float32Vector3D? by float32Vector(POSITION_KEY, 0f)
 public var Solid.rotation: Float32Vector3D? by float32Vector(ROTATION_KEY, 0f)
 public var Solid.scale: Float32Vector3D? by float32Vector(SCALE_KEY, 1f)
+
+public fun Solid.scale(scaleFactor: Number) {
+    scale = Float32Vector3D(scaleFactor, scaleFactor, scaleFactor)
+}
 
 public var Solid.x: Number by float32(X_POSITION_KEY, 0f)
 public var Solid.y: Number by float32(Y_POSITION_KEY, 0f)
@@ -255,5 +259,5 @@ public var Solid.scaleZ: Number by float32(Z_SCALE_KEY, 1f)
  * Add rotation with given [angle] relative to given [axis]
  */
 public fun Solid.rotate(angle: Angle, axis: DoubleVector3D): Unit = with(QuaternionField) {
-    quaternion = Quaternion.fromRotation(angle, axis)*quaternion
+    quaternion = Quaternion.fromRotation(angle, axis) * quaternion
 }

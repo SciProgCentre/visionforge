@@ -16,7 +16,9 @@ fun ArrayBuffer.toByteArray(): ByteArray = Int8Array(this).unsafeCast<ByteArray>
 public object ThreeStlFactory : ThreeMeshFactory<StlSolid>(StlSolid::class) {
 
     private val loader = STLLoader().apply {
-        requestHeader = listOf("Access-Control-Allow-Origin: *")
+        requestHeader = listOf(
+            "Access-Control-Allow-Origin: *",
+        )
     }
 
     override suspend fun buildGeometry(obj: StlSolid): BufferGeometry = when (obj) {
@@ -25,6 +27,7 @@ public object ThreeStlFactory : ThreeMeshFactory<StlSolid>(StlSolid::class) {
             loader.load(
                 url = obj.url,
                 onLoad = {
+                    console.info("Loaded STL from ${obj.url}")
                     continuation.resume(it)
                 },
                 onError = {

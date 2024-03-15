@@ -1,29 +1,39 @@
+
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.compose)
 }
 
 val ktorVersion: String by rootProject.extra
 
 kscience {
-    fullStack("js/visionforge-three.js") {
-        commonWebpackConfig {
-            cssSupport {
-                enabled.set(false)
+    fullStack(
+        bundleName = "js/visionforge-three.js",
+        browserConfig = {
+            webpackTask {
+                cssSupport {
+                    enabled = true
+                }
+                scssSupport {
+                    enabled = true
+                }
             }
         }
-    }
+    )
 
-    dependencies {
+    commonMain {
         api(projects.visionforgeSolid)
+        api(projects.visionforgeComposeHtml)
     }
 
-    dependencies(jvmMain) {
+    jvmMain {
         api(projects.visionforgeServer)
     }
 
-    dependencies(jsMain) {
+    jsMain {
         api(projects.visionforgeThreejs)
-        api(projects.ui.ring)
-        compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
+        api(npm("file-saver", "2.0.5"))
+        api(npm("@types/file-saver", "2.0.7"))
+        compileOnly(npm("webpack-bundle-analyzer", "4.5.0"))
     }
 }

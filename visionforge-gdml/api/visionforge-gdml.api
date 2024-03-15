@@ -14,19 +14,21 @@ public final class space/kscience/visionforge/gdml/GdmlLoaderKt {
 public final class space/kscience/visionforge/gdml/GdmlLoaderOptions {
 	public static final field Companion Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Companion;
 	public fun <init> ()V
-	public final fun configure (Lkotlin/jvm/functions/Function4;)V
 	public final fun getAUnit ()Lspace/kscience/gdml/AUnit;
 	public final fun getConfigurePaint ()Lkotlin/jvm/functions/Function3;
 	public final fun getConfigureSolid ()Lkotlin/jvm/functions/Function4;
 	public final fun getLUnit ()Lspace/kscience/gdml/LUnit;
+	public final fun getLight ()Lspace/kscience/visionforge/solid/LightSource;
 	public final fun getSolidAction ()Lkotlin/jvm/functions/Function1;
 	public final fun getVolumeAction ()Lkotlin/jvm/functions/Function1;
 	public final fun paint (Lkotlin/jvm/functions/Function3;)V
 	public final fun registerAndUseStyle (Lspace/kscience/visionforge/solid/Solid;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public final fun setAUnit (Lspace/kscience/gdml/AUnit;)V
 	public final fun setLUnit (Lspace/kscience/gdml/LUnit;)V
+	public final fun setLight (Lspace/kscience/visionforge/solid/LightSource;)V
 	public final fun setSolidAction (Lkotlin/jvm/functions/Function1;)V
 	public final fun setVolumeAction (Lkotlin/jvm/functions/Function1;)V
+	public final fun solids (Lkotlin/jvm/functions/Function4;)V
 	public final fun transparent (Lspace/kscience/visionforge/solid/Solid;)V
 }
 
@@ -34,6 +36,7 @@ public final class space/kscience/visionforge/gdml/GdmlLoaderOptions$Action : ja
 	public static final field ADD Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
 	public static final field PROTOTYPE Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
 	public static final field REJECT Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
 	public static fun values ()[Lspace/kscience/visionforge/gdml/GdmlLoaderOptions$Action;
 }

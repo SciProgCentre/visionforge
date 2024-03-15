@@ -55,7 +55,7 @@ class HtmlTagTest {
         div {
             h2 { +"Properties" }
             ul {
-                vision.properties.own?.items?.forEach {
+                vision.properties.own.items.forEach {
                     li {
                         a { +it.key.toString() }
                         p { +it.value.toString() }

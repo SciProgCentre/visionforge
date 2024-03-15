@@ -1,9 +1,105 @@
+public final class ru/mipt/npm/root/BMN {
+	public static final field INSTANCE Lru/mipt/npm/root/BMN;
+	public final fun getJson ()Lkotlinx/serialization/json/Json;
+	public final fun readEventJson (Ljava/lang/String;)Lru/mipt/npm/root/BmnEventContainer;
+}
+
+public final class ru/mipt/npm/root/BMNKt {
+	public static final fun toVector (Lru/mipt/npm/root/FairTrackParam;)Lspace/kscience/visionforge/solid/Float32Vector3D;
+}
+
+public final class ru/mipt/npm/root/BmnEventContainer {
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public final fun getBmnGlobalTracks ()Ljava/util/List;
+	public final fun getCbmTracks ()Ljava/util/List;
+}
+
+public final class ru/mipt/npm/root/BmnGlobalTrack {
+	public static final field Companion Lru/mipt/npm/root/BmnGlobalTrack$Companion;
+	public fun <init> (Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;)V
+	public final fun component1 ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun component2 ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun copy (Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;)Lru/mipt/npm/root/BmnGlobalTrack;
+	public static synthetic fun copy$default (Lru/mipt/npm/root/BmnGlobalTrack;Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;ILjava/lang/Object;)Lru/mipt/npm/root/BmnGlobalTrack;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFParamFirst ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun getFParamLast ()Lru/mipt/npm/root/FairTrackParam;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/mipt/npm/root/BmnGlobalTrack$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lru/mipt/npm/root/BmnGlobalTrack$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/BmnGlobalTrack;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lru/mipt/npm/root/BmnGlobalTrack;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/root/BmnGlobalTrack$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/root/CbmStsTrack {
+	public static final field Companion Lru/mipt/npm/root/CbmStsTrack$Companion;
+	public fun <init> (Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;)V
+	public final fun component1 ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun component2 ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun copy (Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;)Lru/mipt/npm/root/CbmStsTrack;
+	public static synthetic fun copy$default (Lru/mipt/npm/root/CbmStsTrack;Lru/mipt/npm/root/FairTrackParam;Lru/mipt/npm/root/FairTrackParam;ILjava/lang/Object;)Lru/mipt/npm/root/CbmStsTrack;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFParamFirst ()Lru/mipt/npm/root/FairTrackParam;
+	public final fun getFParamLast ()Lru/mipt/npm/root/FairTrackParam;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/mipt/npm/root/CbmStsTrack$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lru/mipt/npm/root/CbmStsTrack$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/CbmStsTrack;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lru/mipt/npm/root/CbmStsTrack;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/root/CbmStsTrack$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public final class ru/mipt/npm/root/DGeoBoolNode : ru/mipt/npm/root/DObject {
 	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
 	public final fun getFLeft ()Lru/mipt/npm/root/DGeoShape;
 	public final fun getFLeftMat ()Lru/mipt/npm/root/DGeoMatrix;
 	public final fun getFRight ()Lru/mipt/npm/root/DGeoShape;
 	public final fun getFRightMat ()Lru/mipt/npm/root/DGeoMatrix;
+}
+
+public class ru/mipt/npm/root/DGeoCombiTrans : ru/mipt/npm/root/DGeoMatrix {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+	public final fun getFRotation ()Lru/mipt/npm/root/DGeoRotation;
+	public final fun getFTranslation ()[D
+}
+
+public final class ru/mipt/npm/root/DGeoGenTrans : ru/mipt/npm/root/DGeoCombiTrans {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+	public final fun getFScale ()[D
+}
+
+public final class ru/mipt/npm/root/DGeoHMatrix : ru/mipt/npm/root/DGeoMatrix {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+	public final fun getFRotation ()Lru/mipt/npm/root/DGeoRotation;
+	public final fun getFScale ()[D
+	public final fun getFTranslation ()[D
+}
+
+public final class ru/mipt/npm/root/DGeoIdentity : ru/mipt/npm/root/DGeoMatrix {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
 }
 
 public final class ru/mipt/npm/root/DGeoManager : ru/mipt/npm/root/DNamed {
@@ -23,8 +119,8 @@ public final class ru/mipt/npm/root/DGeoMaterial : ru/mipt/npm/root/DNamed {
 	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
 }
 
-public class ru/mipt/npm/root/DGeoMatrix : ru/mipt/npm/root/DNamed {
-	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+public abstract class ru/mipt/npm/root/DGeoMatrix : ru/mipt/npm/root/DNamed {
+	public synthetic fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class ru/mipt/npm/root/DGeoMedium : ru/mipt/npm/root/DNamed {
@@ -38,7 +134,12 @@ public final class ru/mipt/npm/root/DGeoNode : ru/mipt/npm/root/DNamed {
 	public final fun getFVolume ()Lru/mipt/npm/root/DGeoVolume;
 }
 
-public class ru/mipt/npm/root/DGeoScale : ru/mipt/npm/root/DGeoMatrix {
+public final class ru/mipt/npm/root/DGeoRotation : ru/mipt/npm/root/DGeoMatrix {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+	public final fun getFRotationMatrix ()[D
+}
+
+public final class ru/mipt/npm/root/DGeoScale : ru/mipt/npm/root/DGeoMatrix {
 	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
 	public final fun getFScale ()[D
 	public final fun getX ()D
@@ -51,6 +152,11 @@ public final class ru/mipt/npm/root/DGeoShape : ru/mipt/npm/root/DNamed {
 	public final fun getFDX ()D
 	public final fun getFDY ()D
 	public final fun getFDZ ()D
+}
+
+public final class ru/mipt/npm/root/DGeoTranslation : ru/mipt/npm/root/DGeoMatrix {
+	public fun <init> (Lspace/kscience/dataforge/meta/Meta;Lru/mipt/npm/root/DObjectCache;)V
+	public final fun getFTranslation ()[D
 }
 
 public final class ru/mipt/npm/root/DGeoVolume : ru/mipt/npm/root/DNamed, space/kscience/dataforge/misc/Named {
@@ -94,7 +200,45 @@ public final class ru/mipt/npm/root/DObjectKt {
 }
 
 public final class ru/mipt/npm/root/DRootToSolidKt {
-	public static final fun toSolid (Lru/mipt/npm/root/DGeoManager;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun rootGeo (Lspace/kscience/visionforge/MutableVisionContainer;Lru/mipt/npm/root/DGeoManager;Ljava/lang/String;IZ)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static synthetic fun rootGeo$default (Lspace/kscience/visionforge/MutableVisionContainer;Lru/mipt/npm/root/DGeoManager;Ljava/lang/String;IZILjava/lang/Object;)Lspace/kscience/visionforge/solid/SolidGroup;
+}
+
+public final class ru/mipt/npm/root/FairTrackParam {
+	public static final field Companion Lru/mipt/npm/root/FairTrackParam$Companion;
+	public fun <init> (DDDDDD)V
+	public final fun component1 ()D
+	public final fun component2 ()D
+	public final fun component3 ()D
+	public final fun component4 ()D
+	public final fun component5 ()D
+	public final fun component6 ()D
+	public final fun copy (DDDDDD)Lru/mipt/npm/root/FairTrackParam;
+	public static synthetic fun copy$default (Lru/mipt/npm/root/FairTrackParam;DDDDDDILjava/lang/Object;)Lru/mipt/npm/root/FairTrackParam;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFQp ()D
+	public final fun getFTx ()D
+	public final fun getFTy ()D
+	public final fun getFX ()D
+	public final fun getFY ()D
+	public final fun getFZ ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/mipt/npm/root/FairTrackParam$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lru/mipt/npm/root/FairTrackParam$$serializer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/FairTrackParam;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lru/mipt/npm/root/FairTrackParam;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class ru/mipt/npm/root/FairTrackParam$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
 public final class ru/mipt/npm/root/RootColors {
@@ -108,7 +252,7 @@ public final class ru/mipt/npm/root/serialization/JsonToRootKt {
 }
 
 public final class ru/mipt/npm/root/serialization/RootToSolidKt {
-	public static final fun toSolid (Lru/mipt/npm/root/serialization/TGeoManager;)Lspace/kscience/visionforge/solid/SolidGroup;
+	public static final fun rootGeo (Lspace/kscience/visionforge/MutableVisionContainer;Lru/mipt/npm/root/serialization/TGeoManager;)Lspace/kscience/visionforge/solid/SolidGroup;
 }
 
 public class ru/mipt/npm/root/serialization/TGeoBBox : ru/mipt/npm/root/serialization/TGeoShape {
@@ -119,12 +263,11 @@ public class ru/mipt/npm/root/serialization/TGeoBBox : ru/mipt/npm/root/serializ
 	public final fun getFDY ()D
 	public final fun getFDZ ()D
 	public final fun getFOrigin ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoBBox;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoBBox;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoBBox$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoBBox$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoBBox;
@@ -145,7 +288,7 @@ public abstract class ru/mipt/npm/root/serialization/TGeoBoolNode : ru/mipt/npm/
 	public final fun getFLeftMat ()Lru/mipt/npm/root/serialization/TGeoMatrix;
 	public abstract fun getFRight ()Lru/mipt/npm/root/serialization/TGeoShape;
 	public final fun getFRightMat ()Lru/mipt/npm/root/serialization/TGeoMatrix;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoBoolNode;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoBoolNode;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoBoolNode$Companion {
@@ -154,17 +297,14 @@ public final class ru/mipt/npm/root/serialization/TGeoBoolNode$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoCombiTrans : ru/mipt/npm/root/serialization/TGeoMatrix {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoCombiTrans$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;[DLru/mipt/npm/root/serialization/TGeoRotation;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> ([DLru/mipt/npm/root/serialization/TGeoRotation;)V
 	public synthetic fun <init> ([DLru/mipt/npm/root/serialization/TGeoRotation;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFRotation ()Lru/mipt/npm/root/serialization/TGeoRotation;
 	public final fun getFTranslation ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoCombiTrans;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoCombiTrans$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoCombiTrans$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoCombiTrans;
@@ -180,15 +320,12 @@ public final class ru/mipt/npm/root/serialization/TGeoCombiTrans$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoCompositeShape : ru/mipt/npm/root/serialization/TGeoBBox {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoCompositeShape$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;IDDD[DLru/mipt/npm/root/serialization/TGeoBoolNode;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lru/mipt/npm/root/serialization/TGeoBoolNode;)V
 	public final fun getFNode ()Lru/mipt/npm/root/serialization/TGeoBoolNode;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoCompositeShape;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoCompositeShape$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoCompositeShape$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoCompositeShape;
@@ -204,17 +341,14 @@ public final class ru/mipt/npm/root/serialization/TGeoCompositeShape$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoHMatrix : ru/mipt/npm/root/serialization/TGeoMatrix {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoHMatrix$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;[D[D[DLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> ([D[D[D)V
 	public final fun getFRotationMatrix ()[D
 	public final fun getFScale ()[D
 	public final fun getFTranslation ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoHMatrix;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoHMatrix$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoHMatrix$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoHMatrix;
@@ -231,13 +365,10 @@ public final class ru/mipt/npm/root/serialization/TGeoHMatrix$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoIdentity : ru/mipt/npm/root/serialization/TGeoMatrix {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoIdentity$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoIdentity;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoIdentity$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoIdentity$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoIdentity;
@@ -253,16 +384,13 @@ public final class ru/mipt/npm/root/serialization/TGeoIdentity$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoIntersection : ru/mipt/npm/root/serialization/TGeoBoolNode {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoIntersection$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;)V
 	public fun getFLeft ()Lru/mipt/npm/root/serialization/TGeoShape;
 	public fun getFRight ()Lru/mipt/npm/root/serialization/TGeoShape;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoIntersection;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoIntersection$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoIntersection$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoIntersection;
@@ -279,17 +407,14 @@ public final class ru/mipt/npm/root/serialization/TGeoIntersection$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoManager : ru/mipt/npm/root/serialization/TNamed {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoManager$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lru/mipt/npm/root/serialization/TObjArray;Lru/mipt/npm/root/serialization/TObjArray;Lru/mipt/npm/root/serialization/TObjArray;Lru/mipt/npm/root/serialization/TObjArray;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFMatrices ()Lru/mipt/npm/root/serialization/TObjArray;
 	public final fun getFNodes ()Lru/mipt/npm/root/serialization/TObjArray;
 	public final fun getFShapes ()Lru/mipt/npm/root/serialization/TObjArray;
 	public final fun getFVolumes ()Lru/mipt/npm/root/serialization/TObjArray;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoManager;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoManager$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoManager$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoManager;
@@ -307,12 +432,11 @@ public class ru/mipt/npm/root/serialization/TGeoMaterial : ru/mipt/npm/root/seri
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoMaterial$Companion;
 	public fun <init> ()V
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoMaterial;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoMaterial;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoMaterial$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoMaterial$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoMaterial;
@@ -329,7 +453,7 @@ public final class ru/mipt/npm/root/serialization/TGeoMaterial$Companion {
 public abstract class ru/mipt/npm/root/serialization/TGeoMatrix : ru/mipt/npm/root/serialization/TNamed {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoMatrix$Companion;
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoMatrix;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoMatrix;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoMatrix$Companion {
@@ -338,17 +462,14 @@ public final class ru/mipt/npm/root/serialization/TGeoMatrix$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoMedium : ru/mipt/npm/root/serialization/TNamed {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoMedium$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;ILru/mipt/npm/root/serialization/TGeoMaterial;[DLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (ILru/mipt/npm/root/serialization/TGeoMaterial;[D)V
 	public final fun getFId ()I
 	public final fun getFMaterial ()Lru/mipt/npm/root/serialization/TGeoMaterial;
 	public final fun getFParams ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoMedium;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoMedium$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoMedium$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoMedium;
@@ -365,13 +486,10 @@ public final class ru/mipt/npm/root/serialization/TGeoMedium$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoMixture : ru/mipt/npm/root/serialization/TGeoMaterial {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoMixture$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoMixture;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoMixture$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoMixture$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoMixture;
@@ -394,12 +512,11 @@ public class ru/mipt/npm/root/serialization/TGeoNode : ru/mipt/npm/root/serializ
 	public final fun getFNumber ()I
 	public final fun getFOverlaps ()[I
 	public final fun getFVolume ()Lru/mipt/npm/root/serialization/TGeoVolume;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoNode;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoNode;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoNode$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoNode$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoNode;
@@ -416,14 +533,11 @@ public final class ru/mipt/npm/root/serialization/TGeoNode$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoNodeMatrix : ru/mipt/npm/root/serialization/TGeoNode {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoNodeMatrix$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;Lru/mipt/npm/root/serialization/TGeoVolume;II[ILru/mipt/npm/root/serialization/TGeoMatrix;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFMatrix ()Lru/mipt/npm/root/serialization/TGeoMatrix;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoNodeMatrix;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoNodeMatrix$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoNodeMatrix$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoNodeMatrix;
@@ -440,14 +554,11 @@ public final class ru/mipt/npm/root/serialization/TGeoNodeMatrix$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoNodeOffset : ru/mipt/npm/root/serialization/TGeoNode {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoNodeOffset$Companion;
 	public fun <init> ()V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;Lru/mipt/npm/root/serialization/TGeoVolume;II[IDLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFOffset ()D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoNodeOffset;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoNodeOffset$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoNodeOffset$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoNodeOffset;
@@ -471,12 +582,11 @@ public class ru/mipt/npm/root/serialization/TGeoPcon : ru/mipt/npm/root/serializ
 	public final fun getFRmax ()[D
 	public final fun getFRmin ()[D
 	public final fun getFZ ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoPcon;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoPcon;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoPcon$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoPcon$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoPcon;
@@ -495,12 +605,11 @@ public class ru/mipt/npm/root/serialization/TGeoPgon : ru/mipt/npm/root/serializ
 	public fun <init> ()V
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;IDDD[DIDD[D[D[DILkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFNedges ()I
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoPgon;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoPgon;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoPgon$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoPgon$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoPgon;
@@ -516,15 +625,12 @@ public final class ru/mipt/npm/root/serialization/TGeoPgon$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoRotation : ru/mipt/npm/root/serialization/TGeoMatrix {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoRotation$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;[DLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> ([D)V
 	public final fun getFRotationMatrix ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoRotation;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoRotation$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoRotation$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoRotation;
@@ -543,7 +649,7 @@ public abstract class ru/mipt/npm/root/serialization/TGeoShape : ru/mipt/npm/roo
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;ILkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFShapeBits-pVg5ArA ()I
 	public final fun getFShapeId ()I
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoShape;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoShape;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoShape$Companion {
@@ -552,17 +658,14 @@ public final class ru/mipt/npm/root/serialization/TGeoShape$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoShapeAssembly : ru/mipt/npm/root/serialization/TGeoBBox {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoShapeAssembly$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;IDDD[DLru/mipt/npm/root/serialization/TGeoVolumeAssembly;ZLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;Z)V
 	public synthetic fun <init> (Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFBBoxOK ()Z
 	public final fun getFVolume ()Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoShapeAssembly;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoShapeAssembly$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoShapeAssembly$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoShapeAssembly;
@@ -583,16 +686,13 @@ public final class ru/mipt/npm/root/serialization/TGeoShapeRef : ru/mipt/npm/roo
 
 public final class ru/mipt/npm/root/serialization/TGeoSubtraction : ru/mipt/npm/root/serialization/TGeoBoolNode {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoSubtraction$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;)V
 	public fun getFLeft ()Lru/mipt/npm/root/serialization/TGeoShape;
 	public fun getFRight ()Lru/mipt/npm/root/serialization/TGeoShape;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoSubtraction;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoSubtraction$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoSubtraction$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoSubtraction;
@@ -608,15 +708,12 @@ public final class ru/mipt/npm/root/serialization/TGeoSubtraction$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoTranslation : ru/mipt/npm/root/serialization/TGeoMatrix {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoTranslation$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;[DLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> ([D)V
 	public final fun getFTranslation ()[D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoTranslation;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoTranslation$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoTranslation$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoTranslation;
@@ -637,12 +734,11 @@ public class ru/mipt/npm/root/serialization/TGeoTube : ru/mipt/npm/root/serializ
 	public final fun getFDz ()D
 	public final fun getFRmax ()D
 	public final fun getFRmin ()D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoTube;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoTube;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoTube$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoTube$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoTube;
@@ -659,7 +755,6 @@ public final class ru/mipt/npm/root/serialization/TGeoTube$Companion {
 public final class ru/mipt/npm/root/serialization/TGeoTubeSeg : ru/mipt/npm/root/serialization/TGeoTube {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoTubeSeg$Companion;
 	public fun <init> (DDDDDDDDD)V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;IDDD[DDDDDDDDDDDDDLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFC1 ()D
 	public final fun getFC2 ()D
 	public final fun getFCdfi ()D
@@ -669,12 +764,10 @@ public final class ru/mipt/npm/root/serialization/TGeoTubeSeg : ru/mipt/npm/root
 	public final fun getFS1 ()D
 	public final fun getFS2 ()D
 	public final fun getFSm ()D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoTubeSeg;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoTubeSeg$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoTubeSeg$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoTubeSeg;
@@ -690,16 +783,13 @@ public final class ru/mipt/npm/root/serialization/TGeoTubeSeg$Companion {
 
 public final class ru/mipt/npm/root/serialization/TGeoUnion : ru/mipt/npm/root/serialization/TGeoBoolNode {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoUnion$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoMatrix;Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoShape;)V
 	public fun getFLeft ()Lru/mipt/npm/root/serialization/TGeoShape;
 	public fun getFRight ()Lru/mipt/npm/root/serialization/TGeoShape;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoUnion;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoUnion$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoUnion$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoUnion;
@@ -729,12 +819,11 @@ public class ru/mipt/npm/root/serialization/TGeoVolume : ru/mipt/npm/root/serial
 	public final fun getFNumber ()I
 	public final fun getFRefCount ()I
 	public final fun getFShape ()Lru/mipt/npm/root/serialization/TGeoShape;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoVolume;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoVolume;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoVolume$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoVolume$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoVolume;
@@ -752,12 +841,11 @@ public class ru/mipt/npm/root/serialization/TGeoVolumeAssembly : ru/mipt/npm/roo
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoVolumeAssembly$Companion;
 	public fun <init> ()V
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;ILjava/lang/Integer;Lkotlin/UInt;Ljava/lang/Integer;Ljava/lang/Integer;Lru/mipt/npm/root/serialization/TObjArray;Lru/mipt/npm/root/serialization/TGeoShape;Lru/mipt/npm/root/serialization/TGeoMedium;IIILkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoVolumeAssembly$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoVolumeAssembly$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoVolumeAssembly;
@@ -784,7 +872,6 @@ public final class ru/mipt/npm/root/serialization/TGeoVolumeRef : ru/mipt/npm/ro
 public final class ru/mipt/npm/root/serialization/TGeoXtru : ru/mipt/npm/root/serialization/TGeoBBox {
 	public static final field Companion Lru/mipt/npm/root/serialization/TGeoXtru$Companion;
 	public fun <init> (IID[D[D[D[D[D[D)V
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlin/UInt;IDDD[DIID[D[D[D[D[D[DLkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFNvert ()I
 	public final fun getFNz ()I
 	public final fun getFScale ()[D
@@ -794,12 +881,10 @@ public final class ru/mipt/npm/root/serialization/TGeoXtru : ru/mipt/npm/root/se
 	public final fun getFY0 ()[D
 	public final fun getFZ ()[D
 	public final fun getFZcurrent ()D
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TGeoXtru;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TGeoXtru$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TGeoXtru$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TGeoXtru;
@@ -815,15 +900,12 @@ public final class ru/mipt/npm/root/serialization/TGeoXtru$Companion {
 
 public final class ru/mipt/npm/root/serialization/THashList : ru/mipt/npm/root/serialization/TObject {
 	public static final field Companion Lru/mipt/npm/root/serialization/THashList$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/util/List;)V
 	public final fun getArr ()Ljava/util/List;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/THashList;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/THashList$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/THashList$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/THashList;
@@ -839,15 +921,12 @@ public final class ru/mipt/npm/root/serialization/THashList$Companion {
 
 public final class ru/mipt/npm/root/serialization/TList : ru/mipt/npm/root/serialization/TObject {
 	public static final field Companion Lru/mipt/npm/root/serialization/TList$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/util/List;)V
 	public final fun getArr ()Ljava/util/List;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TList;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TList$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TList$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TList;
@@ -867,12 +946,11 @@ public class ru/mipt/npm/root/serialization/TNamed : ru/mipt/npm/root/serializat
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFName ()Ljava/lang/String;
 	public final fun getFTitle ()Ljava/lang/String;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TNamed;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TNamed;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TNamed$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lru/mipt/npm/root/serialization/TNamed$$serializer;
-	public static final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lru/mipt/npm/root/serialization/TNamed;
@@ -888,14 +966,11 @@ public final class ru/mipt/npm/root/serialization/TNamed$Companion {
 
 public final class ru/mipt/npm/root/serialization/TObjArray : ru/mipt/npm/root/serialization/TObject {
 	public static final field Companion Lru/mipt/npm/root/serialization/TObjArray$Companion;
-	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Ljava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/util/List;)V
 	public final fun getArr ()Ljava/util/List;
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TObjArray;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;Lkotlinx/serialization/KSerializer;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TObjArray$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public final synthetic field descriptor Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun <init> (Lkotlinx/serialization/KSerializer;)V
 	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
@@ -917,7 +992,7 @@ public abstract class ru/mipt/npm/root/serialization/TObject {
 	public synthetic fun <init> (ILkotlin/UInt;Lkotlin/UInt;Lkotlinx/serialization/internal/SerializationConstructorMarker;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getFBits-pVg5ArA ()I
 	public final fun getFUniqueID-pVg5ArA ()I
-	public static final fun write$Self (Lru/mipt/npm/root/serialization/TObject;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
+	public static final synthetic fun write$Self (Lru/mipt/npm/root/serialization/TObject;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V
 }
 
 public final class ru/mipt/npm/root/serialization/TObject$Companion {

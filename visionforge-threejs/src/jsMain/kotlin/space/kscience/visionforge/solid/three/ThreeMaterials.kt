@@ -10,10 +10,7 @@ import space.kscience.visionforge.getStyleNodes
 import space.kscience.visionforge.solid.ColorAccessor
 import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.SolidReference
-import three.materials.LineBasicMaterial
-import three.materials.Material
-import three.materials.MeshBasicMaterial
-import three.materials.MeshStandardMaterial
+import three.materials.*
 import three.math.Color
 import three.objects.Mesh
 
@@ -56,8 +53,20 @@ public object ThreeMaterials {
     }
 
     internal fun buildMaterial(meta: Meta): Material = when (meta[SolidMaterial.TYPE_KEY]?.string) {
-        "simple" -> MeshBasicMaterial().apply {
+        "basic" -> MeshBasicMaterial().apply {
             color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
+            wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
+        }
+
+        "lambert" -> MeshLambertMaterial().apply {
+            color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
+            emissive = meta[SolidMaterial.EMISSIVE_COLOR_KEY]?.threeColor() ?: DEFAULT_EMISSIVE_COLOR
+            wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
+        }
+
+        "phong" -> MeshPhongMaterial().apply {
+            color = meta[SolidMaterial.COLOR_KEY]?.threeColor() ?: DEFAULT_COLOR
+            emissive = meta[SolidMaterial.EMISSIVE_COLOR_KEY]?.threeColor() ?: DEFAULT_EMISSIVE_COLOR
             wireframe = meta[SolidMaterial.WIREFRAME_KEY].boolean ?: false
         }
 
@@ -124,7 +133,7 @@ internal var Material.cached: Boolean
 
 public fun Mesh.setMaterial(vision: Vision) {
     if (
-        vision.properties.own?.get(SolidMaterial.MATERIAL_KEY) == null
+        vision.properties.own[SolidMaterial.MATERIAL_KEY] == null
         && vision.getStyleNodes(SolidMaterial.MATERIAL_KEY).isEmpty()
     ) {
         //if this is a reference, use material of the prototype
