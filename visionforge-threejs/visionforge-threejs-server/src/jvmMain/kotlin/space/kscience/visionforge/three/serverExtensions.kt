@@ -1,6 +1,5 @@
 package space.kscience.visionforge.three
 
-import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.*
 import space.kscience.visionforge.solid.Solids
 import java.awt.Desktop
@@ -9,7 +8,6 @@ import java.nio.file.Path
 
 public val VisionPage.Companion.threeJsHeader: HtmlFragment get() = scriptHeader("js/visionforge-three.js")
 
-@DFExperimental
 public fun Solids.makeThreeJsFile(
     path: Path? = null,
     title: String = "VisionForge page",

@@ -118,7 +118,7 @@ public interface MutableVision : Vision {
     override suspend fun receiveEvent(event: VisionEvent) {
         if (event is VisionChange) {
             if (event.children?.isNotEmpty() == true) {
-                error("Vision is not a group")
+                error("Received vision group change event, but $this Vision does not handle children changes")
             }
             event.properties?.let {
                 updateProperties(it, Name.EMPTY)
@@ -130,7 +130,7 @@ public interface MutableVision : Vision {
         name: Name,
         inherited: Boolean = isInheritedProperty(name),
         useStyles: Boolean = isStyledProperty(name),
-    ): MutableMeta = properties.getOrCreate(name).withDefault { suffix->
+    ): MutableMeta = properties.getOrCreate(name).withDefault { suffix ->
         val propertyName = name + suffix
         if (useStyles) getStyleProperty(propertyName)?.let { return@withDefault it }
         if (inherited) parent?.readProperty(propertyName, inherited, useStyles)?.let { return@withDefault it }

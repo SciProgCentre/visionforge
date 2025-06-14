@@ -73,5 +73,6 @@ internal class PropertyFlowTest {
 
         collectorJob.cancel()
         assertEquals(listOf(22, 11, 33), collectedValues)
+        println("finished")
     }
 }

@@ -2,7 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val kmathVersion = "0.4.1"
+val kmathVersion = "0.4.2"
 
 kscience {
     jvm()

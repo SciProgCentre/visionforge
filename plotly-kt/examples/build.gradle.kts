@@ -20,7 +20,7 @@ kotlin{
 
 // A workaround for https://youtrack.jetbrains.com/issue/KT-44101
 
-val copyPlotlyResources by tasks.creating(Copy::class){
+val copyPlotlyResources by tasks.registering(Copy::class){
     dependsOn(":plotly-kt:plotly-kt-server:jvmProcessResources")
     mustRunAfter(":plotly-kt:plotly-kt-server:jvmTestProcessResources")
     from(project(":plotly-kt:plotly-kt-server").layout.buildDirectory.file("processedResources/jvm/main"))

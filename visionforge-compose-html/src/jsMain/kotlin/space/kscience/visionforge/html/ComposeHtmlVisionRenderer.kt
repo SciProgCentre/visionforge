@@ -28,9 +28,8 @@ public interface ComposeHtmlVisionRenderer : ElementVisionRenderer {
     public companion object
 }
 
-
 /**
- * A compose-html renderer for a vision of given type
+ * A compose-html renderer for a vision of a given type
  */
 public inline fun <reified T : Vision> ComposeHtmlVisionRenderer(
     acceptRating: Int = ElementVisionRenderer.DEFAULT_RATING,

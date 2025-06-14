@@ -11,6 +11,7 @@
 ### Removed
 
 ### Fixed
+- Fix the problem where property listeners do not react on property child node changa
 
 ### Security
 

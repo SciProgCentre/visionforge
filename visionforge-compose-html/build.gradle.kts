@@ -22,7 +22,7 @@ kotlin {
 
         jsMain {
             dependencies {
-                api("app.softwork:bootstrap-compose:0.3.0")
+                api("app.softwork:bootstrap-compose:0.3.1")
                 api("app.softwork:bootstrap-compose-icons:0.3.0")
 //                implementation(npm("bootstrap", "5.3.3"))
 //                implementation(npm(" bootstrap-icons", "1.11.3"))
