@@ -14,7 +14,6 @@ import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.DEFAULT_VISION_NAME
 import space.kscience.visionforge.setAsRoot
 import space.kscience.visionforge.visionManager
-import kotlin.collections.set
 
 @DslMarker
 public annotation class VisionDSL
@@ -23,7 +22,7 @@ public annotation class VisionDSL
  * A placeholder object to attach inline vision builders.
  */
 @VisionDSL
-public class VisionOutput(override val context: Context, public val name: Name): ContextAware {
+public class VisionOutput(override val context: Context, public val name: Name) : ContextAware {
     public var meta: Meta = Meta.EMPTY
 
     private val requirements: MutableSet<PluginFactory<*>> = HashSet()
@@ -89,7 +88,8 @@ public abstract class VisionTagConsumer<R>(
         +"Empty Vision output"
     } else div {
         id = resolveId(name)
-        classes = setOf(OUTPUT_CLASS)
+
+        classes = setOf(OUTPUT_CLASS, *(outputMeta[OUTPUT_DIV_CLASSES_KEY].stringList?.toTypedArray() ?: emptyArray()))
         if (vision.parent == null) {
             vision.setAsRoot(manager)
         }
@@ -154,6 +154,8 @@ public abstract class VisionTagConsumer<R>(
         public const val OUTPUT_CLASS: String = "visionforge-output"
         public const val OUTPUT_META_CLASS: String = "visionforge-output-meta"
         public const val OUTPUT_DATA_CLASS: String = "visionforge-output-data"
+
+        public const val OUTPUT_DIV_CLASSES_KEY: String = "classes"
 
         public const val OUTPUT_FETCH_ATTRIBUTE: String = "data-output-fetch"
         public const val OUTPUT_CONNECT_ATTRIBUTE: String = "data-output-connect"
