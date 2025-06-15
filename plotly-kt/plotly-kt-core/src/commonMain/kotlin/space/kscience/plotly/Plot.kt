@@ -80,8 +80,9 @@ public class Plot : AbstractVision(), MutableVisionGroup<Trace> {
      */
     @UnstablePlotlyAPI
     @JvmSynchronized
-    internal fun removeTrace(index: Int) {
+    public fun removeTrace(index: Int) {
         _data.removeAt(index)
+        emitEvent(VisionGroupCompositionChangedEvent(NameToken("trace", _data.size.toString()), null))
     }
 
     override val descriptor: MetaDescriptor get() = Companion.descriptor

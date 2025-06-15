@@ -1,5 +1,6 @@
 package space.kscience.plotly
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.filterIsInstance
@@ -32,7 +33,11 @@ private fun List<MetaRepr>.toDynamic(): Array<dynamic> = map { it.toDynamic() }.
  * Attach a plot to this element or update the existing plot
  */
 @OptIn(DelicateCoroutinesApi::class)
-public fun Element.plot(plotlyConfig: PlotlyConfig = PlotlyConfig(), plot: Plot) {
+public fun Element.plot(
+    plotlyConfig: PlotlyConfig,
+    plot: Plot,
+    scope: CoroutineScope = plot.manager?.context ?: GlobalScope
+) {
 
 //    console.info("""
 //                        Plotly.react(
@@ -51,7 +56,7 @@ public fun Element.plot(plotlyConfig: PlotlyConfig = PlotlyConfig(), plot: Plot)
     )
 
     //start updates
-    val listenJob = (plot.manager?.context ?: GlobalScope).launch {
+    val listenJob = scope.launch {
         plot.data.forEachIndexed { index, trace ->
             trace.eventFlow.filterIsInstance<VisionPropertyChangedEvent>().onEach { event ->
                 val traceData = trace.toDynamic()
@@ -92,27 +97,34 @@ public fun Element.plot(plot: Plot, plotlyConfig: PlotlyConfig = PlotlyConfig())
 /**
  * Create a plot in this element
  */
-public inline fun Element.plot(plotlyConfig: PlotlyConfig = PlotlyConfig(), plotBuilder: Plot.() -> Unit) {
-    plot(plotlyConfig, Plot().apply(plotBuilder))
+public inline fun Element.plot(
+    scope: CoroutineScope,
+    plotlyConfig: PlotlyConfig = PlotlyConfig(),
+    plotBuilder: Plot.() -> Unit
+) {
+    plot(plotlyConfig, Plot().apply(plotBuilder), scope)
 }
 
 public class PlotlyElement(public val div: HTMLElement)
 
 /**
- * Create a div element and render plot in it
+ * Create a div element and render the plot in it
  */
+@OptIn(DelicateCoroutinesApi::class)
 public fun TagConsumer<HTMLElement>.plotDiv(
-    plotlyConfig: PlotlyConfig = PlotlyConfig(),
+    plotlyConfig: PlotlyConfig,
     plot: Plot,
+    scope: CoroutineScope = plot.manager?.context ?: GlobalScope,
 ): PlotlyElement = PlotlyElement(div("plotly-kt-plot").apply { plot(plotlyConfig, plot) })
 
 /**
  * Render plot in the HTML element using direct plotly API.
  */
 public inline fun TagConsumer<HTMLElement>.plotDiv(
+    scope: CoroutineScope,
     plotlyConfig: PlotlyConfig = PlotlyConfig(),
     plotBuilder: Plot.() -> Unit,
-): PlotlyElement = PlotlyElement(div("plotly-kt-plot").apply { plot(plotlyConfig, plotBuilder) })
+): PlotlyElement = PlotlyElement(div("plotly-kt-plot").apply { plot(scope, plotlyConfig, plotBuilder) })
 
 @OptIn(ExperimentalSerializationApi::class)
 public fun PlotlyElement.on(eventType: PlotlyEventListenerType, block: MouseEvent.(PlotlyEvent) -> Unit) {
