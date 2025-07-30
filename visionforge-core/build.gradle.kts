@@ -7,7 +7,7 @@ val dataforgeVersion: String by rootProject.extra
 kscience {
     jvm()
     js()
-    native {}
+    native()
 //    wasm()
     useCoroutines()
     commonMain {

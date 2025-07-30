@@ -1,5 +1,7 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.kotlin.jupyter.api)
+
 }
 
 description = "Common visionforge jupyter module"
@@ -7,7 +9,6 @@ description = "Common visionforge jupyter module"
 kscience {
     jvm()
     js()
-    jupyterLibrary()
     dependencies {
         api(projects.visionforgeCore)
     }
@@ -19,7 +20,6 @@ kscience {
         api("io.ktor:ktor-server-cors-jvm")
     }
 }
-
 
 readme {
     maturity = space.kscience.gradle.Maturity.EXPERIMENTAL

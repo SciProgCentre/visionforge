@@ -1,7 +1,7 @@
 package space.kscience.visionforge.solid.three
 
 
-import js.objects.jso
+import js.objects.unsafeJso
 import space.kscience.dataforge.context.logger
 import space.kscience.dataforge.context.warn
 import space.kscience.visionforge.onPropertyChange
@@ -18,7 +18,7 @@ public object ThreeLabelFactory : ThreeFactory<SolidLabel> {
     override val type: KClass<in SolidLabel> get() = SolidLabel::class
 
     override suspend fun build(three: ThreePlugin, vision: SolidLabel, observe: Boolean): Object3D {
-        val textGeo = TextBufferGeometry(vision.text, jso {
+        val textGeo = TextBufferGeometry(vision.text, unsafeJso {
             font = vision.fontFamily
             size = 20
             height = 1
