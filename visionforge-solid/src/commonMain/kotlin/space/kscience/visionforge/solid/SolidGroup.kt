@@ -117,7 +117,7 @@ public operator fun SolidGroup.get(name: Name): Solid? = getVision(name)
 public operator fun SolidGroup.get(name: String): Solid? = getVision(name)
 
 
-public operator fun SolidGroup.set(name: NameToken, value: Solid?) = setVision(name, value)
+public operator fun SolidGroup.set(name: NameToken, value: Solid?): Unit = setVision(name, value)
 
 public operator fun SolidGroup.set(name: Name, vision: Solid?) {
     when (name.length) {
@@ -143,7 +143,7 @@ public operator fun SolidGroup.set(name: Name, vision: Solid?) {
     }
 }
 
-public operator fun SolidGroup.set(name: String, vision: Solid?) = set(name.parseAsName(), vision)
+public operator fun SolidGroup.set(name: String, vision: Solid?): Unit = set(name.parseAsName(), vision)
 
 /**
  * Add anonymous (auto-assigned name) child to a SolidGroup

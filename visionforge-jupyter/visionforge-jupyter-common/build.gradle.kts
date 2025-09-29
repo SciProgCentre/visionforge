@@ -1,5 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.kotlin.jupyter.api)
 }
 
 description = "Jupyter api artifact including all common modules"
@@ -33,9 +34,12 @@ kscience {
     jsMain {
         implementation(projects.visionforgeThreejs)
     }
-
-    jupyterLibrary("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
 }
+
+
+//tasks.processJupyterApiResources {
+//    libraryProducers = listOf("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
+//}
 
 readme {
     maturity = space.kscience.gradle.Maturity.EXPERIMENTAL
