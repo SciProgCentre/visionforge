@@ -83,7 +83,10 @@ internal class VisionUpdateTest {
 
             val collected = Channel<String?>(5)
 
-            box.useProperty(SolidMaterial.MATERIAL_COLOR_KEY) {
+            box.useProperty(
+                propertyName = SolidMaterial.MATERIAL_COLOR_KEY,
+                scope = backgroundScope
+            ) {
                 println(it.string)
                 collected.send(it.string)
             }
