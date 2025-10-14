@@ -1,13 +1,11 @@
 package space.kscience.visionforge.solid
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.names.asName
@@ -74,36 +72,37 @@ internal class VisionUpdateTest {
 
     @Test
     fun useProperty() = runTest(timeout = 1.seconds) {
-        withContext(Dispatchers.Default) {
-            val group = testSolids.solidGroup {
-                box(100, 100, 100)
-            }
 
-            val box = group.visions.values.first()
-
-            val collected = Channel<String?>(5)
-
-            box.useProperty(
-                propertyName = SolidMaterial.MATERIAL_COLOR_KEY,
-                scope = backgroundScope
-            ) {
-                println(it.string)
-                collected.send(it.string)
-            }
-
-            delay(1)
-
-            group.color("red")
-            group.color("green")
-            box.color("blue")
-
-            assertEquals("blue", box.readProperty(SolidMaterial.MATERIAL_COLOR_KEY).string)
-            assertEquals("blue", box.color.string)
-
-            val list = collected.consumeAsFlow().take(4).toList()
-
-            assertEquals(null, list.first())
-            assertEquals("blue", list.last())
+        val group = testSolids.solidGroup {
+            box(100, 100, 100)
         }
+
+        val box = group.visions.values.first()
+
+        val collected = Channel<String?>(5)
+
+        box.useProperty(
+            propertyName = SolidMaterial.MATERIAL_COLOR_KEY,
+            scope = backgroundScope
+        ) {
+            println(it.string)
+            collected.send(it.string)
+        }
+
+        delay(1)
+
+        group.color("red")
+        group.color("green")
+        box.color("blue")
+        delay(1)
+
+        assertEquals("blue", box.readProperty(SolidMaterial.MATERIAL_COLOR_KEY).string)
+        assertEquals("blue", box.color.string)
+
+        val list = collected.consumeAsFlow().take(4).toList()
+
+        assertEquals(null, list.first())
+        assertEquals("blue", list.last())
+
     }
 }
