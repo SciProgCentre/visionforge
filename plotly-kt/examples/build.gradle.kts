@@ -15,7 +15,7 @@ dependencies {
 }
 
 kotlin{
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 // A workaround for https://youtrack.jetbrains.com/issue/KT-44101

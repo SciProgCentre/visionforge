@@ -36,10 +36,11 @@ kscience {
     }
 }
 
-
-//tasks.processJupyterApiResources {
-//    libraryProducers = listOf("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
-//}
+kotlinJupyter {
+    integrations {
+        producer("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
+    }
+}
 
 readme {
     maturity = space.kscience.gradle.Maturity.EXPERIMENTAL
