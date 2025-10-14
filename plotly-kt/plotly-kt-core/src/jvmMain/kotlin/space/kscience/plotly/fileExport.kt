@@ -1,5 +1,7 @@
 package space.kscience.plotly
 
+import kotlinx.html.script
+import kotlinx.html.unsafe
 import space.kscience.visionforge.html.*
 import space.kscience.visionforge.visionManager
 import java.awt.Desktop
@@ -53,6 +55,17 @@ public fun Plotly.makePageFile(
                 resourceLocation,
                 actualPath
             ),
+            "plotly-render" to HtmlFragment {
+                script {
+                    defer = true
+
+                    unsafe {
+                        +"""
+                            window.renderAllPlots()
+                        """.trimIndent()
+                    }
+                }
+            }
         ) + additionalHeaders
     }
     if (show) Desktop.getDesktop().browse(actualPath.toFile().toURI())

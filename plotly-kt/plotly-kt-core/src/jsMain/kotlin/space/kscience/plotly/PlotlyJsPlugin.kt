@@ -1,5 +1,6 @@
 package space.kscience.plotly
 
+import kotlinx.browser.window
 import kotlinx.serialization.modules.SerializersModule
 import org.w3c.dom.Element
 import space.kscience.dataforge.context.Context
@@ -12,6 +13,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionPlugin
 import space.kscience.visionforge.html.ElementVisionRenderer
 import space.kscience.visionforge.html.JsVisionClient
+import space.kscience.visionforge.html.renderAllVisions
 
 public class PlotlyJsPlugin : VisionPlugin(), ElementVisionRenderer {
     public val plotly: PlotlyPlugin by require(PlotlyPlugin)
@@ -39,10 +41,25 @@ public class PlotlyJsPlugin : VisionPlugin(), ElementVisionRenderer {
         else -> super.content(target)
     }
 
-    public  companion object : PluginFactory<PlotlyJsPlugin> {
+    public companion object : PluginFactory<PlotlyJsPlugin> {
         override val tag: PluginTag = PluginTag("vision.plotly.js", PluginTag.DATAFORGE_GROUP)
 
         override fun build(context: Context, meta: Meta): PlotlyJsPlugin = PlotlyJsPlugin()
 
+        public val defaultClient: JsVisionClient by lazy {
+            val context = Context("Plotly-kt") {
+                plugin(PlotlyJsPlugin)
+            }
+            context.plugins[PlotlyJsPlugin]!!.visionClient
+
+        }
+
+    }
+}
+
+public fun main() {
+    window.asDynamic().Plotly = PlotlyJs
+    window.asDynamic().renderAllPlots = {
+        PlotlyJsPlugin.defaultClient.renderAllVisions()
     }
 }

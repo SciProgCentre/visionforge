@@ -45,7 +45,7 @@ public fun TagConsumer<*>.staticPlot(
     config: PlotlyConfig = PlotlyConfig(),
     plotId: String = "plotly[${Uuid.random()}]",
     plot: Plot.() -> Unit
-) = staticPlot(Plotly.plot(plot), config, plotId)
+): Unit = staticPlot(Plotly.plot(plot), config, plotId)
 
 /**
  * Create an html (including headers) string from plot
