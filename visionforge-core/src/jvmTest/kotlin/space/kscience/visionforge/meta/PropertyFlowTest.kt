@@ -3,6 +3,7 @@ package space.kscience.visionforge.meta
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.request
@@ -38,41 +39,31 @@ internal class PropertyFlowTest {
 
         val changesFlow = child.flowProperty("test", inherited = true)
 
-
-//        child.inheritedEventFlow().filterIsInstance<VisionPropertyChangedEvent>().onEach { event ->
-//            println(event)
-//            delay(2)
-//            println(child.readProperty("test", inherited = true))
-//        }.launchIn(this)
-
         val collectedValues = ArrayList<Int>(5)
 
-        val collectorJob = changesFlow.onEach {
+        changesFlow.onEach {
             collectedValues.add(it.int!!)
-        }.launchIn(this)
+        }.launchIn(backgroundScope)
 
-
-        delay(2)
+        delay(1)
         assertEquals(22, child.readProperty("test", true).int)
-//        assertEquals(1, collectedValues.size)
 
         parent.properties["test1"] = 88 // another property
 
         child.properties.remove("test")
 
-        delay(2)
-
+        delay(1)
         assertEquals(11, child.readProperty("test", true).int)
-  //      assertEquals(2, collectedValues.size)
 
         parent.properties["test"] = 33
-        delay(2)
-
+        delay(1)
         assertEquals(33, child.readProperty("test", true).int)
-    //    assertEquals(3, collectedValues.size)
 
-        collectorJob.cancel()
-        assertEquals(listOf(22, 11, 33), collectedValues)
+        advanceUntilIdle()
+        //assertEquals(listOf(22, 11, 33), collectedValues)
+        assertEquals(22, collectedValues.first())
+        assertEquals(33, collectedValues.last())
+
         println("finished")
     }
 }

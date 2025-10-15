@@ -106,12 +106,14 @@ public inline fun VisionOutput.plotly(
     return Plotly.plot(block)
 }
 
+
+//FIXME rework VisionTagConsumer toa a context
 context(rootConsumer: VisionTagConsumer<*>)
 public fun TagConsumer<*>.plot(
     config: PlotlyConfig = PlotlyConfig(),
     block: Plot.() -> Unit,
 ): Unit = with(rootConsumer) {
-    vision {
+    this@plot.vision {
         plotly(config, block)
     }
 }
