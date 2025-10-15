@@ -12,7 +12,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.encodeToString
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -24,11 +23,11 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_FETCH_ATTRIBUTE
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_NAME_ATTRIBUTE
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_RENDERED
+import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_CONNECT_ATTRIBUTE
+import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_ENDPOINT_ATTRIBUTE
+import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_FETCH_ATTRIBUTE
+import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_NAME_ATTRIBUTE
+import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_RENDERED
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -94,7 +93,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
 
     private fun startVisionUpdate(element: Element, visionName: Name, vision: Vision, outputMeta: Meta) {
         element.attributes[OUTPUT_CONNECT_ATTRIBUTE]?.let { attr ->
-            val wsUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
+            val wsUrl = if (attr.value.isBlank() || attr.value == HtmlVisionContext.AUTO_DATA_ATTRIBUTE) {
                 val endpoint = resolveEndpoint(element)
                 logger.info { "Vision server is resolved to $endpoint" }
                 URL(endpoint).apply {
@@ -194,10 +193,10 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
     }
 
     /**
-     * Fetch from server and render a vision, described in a given with [VisionTagConsumer.OUTPUT_CLASS] class.
+     * Fetch from server and render a vision, described in a given with [HtmlVisionContext.OUTPUT_CLASS] class.
      */
     public fun renderVisionIn(element: Element) {
-        if (!element.classList.contains(VisionTagConsumer.OUTPUT_CLASS)) error("The element $element is not an output element")
+        if (!element.classList.contains(HtmlVisionContext.OUTPUT_CLASS)) error("The element $element is not an output element")
         val name = resolveName(element)?.parseAsName() ?: error("The element is not a vision output")
 
         if (element.attributes[OUTPUT_RENDERED]?.value == "true") {
@@ -207,7 +206,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             logger.info { "Rendering VF output with name $name" }
         }
 
-        val outputMeta = element.getEmbeddedData(VisionTagConsumer.OUTPUT_META_CLASS)?.let {
+        val outputMeta = element.getEmbeddedData(HtmlVisionContext.OUTPUT_META_CLASS)?.let {
             VisionManager.defaultJson.decodeFromString(MetaSerializer, it).also {
                 logger.info { "Output meta for $name: $it" }
             }
@@ -218,7 +217,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             element.attributes[OUTPUT_FETCH_ATTRIBUTE] != null -> {
                 val attr = element.attributes[OUTPUT_FETCH_ATTRIBUTE]!!
 
-                val fetchUrl = if (attr.value.isBlank() || attr.value == VisionTagConsumer.AUTO_DATA_ATTRIBUTE) {
+                val fetchUrl = if (attr.value.isBlank() || attr.value == HtmlVisionContext.AUTO_DATA_ATTRIBUTE) {
                     val endpoint = resolveEndpoint(element)
                     logger.info { "Vision server is resolved to $endpoint" }
                     URL(endpoint).apply {
@@ -244,9 +243,9 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             }
 
             // use embedded data if it is available
-            element.getElementsByClassName(VisionTagConsumer.OUTPUT_DATA_CLASS).length > 0 -> {
+            element.getElementsByClassName(HtmlVisionContext.OUTPUT_DATA_CLASS).length > 0 -> {
                 //Getting embedded vision data
-                val embeddedVision = element.getEmbeddedData(VisionTagConsumer.OUTPUT_DATA_CLASS)!!.let {
+                val embeddedVision = element.getEmbeddedData(HtmlVisionContext.OUTPUT_DATA_CLASS)!!.let {
                     visionManager.decodeFromString(it)
                 }
                 logger.info { "Found embedded vision data with name $name" }
@@ -292,10 +291,10 @@ private fun whenDocumentLoaded(block: Document.() -> Unit): Unit {
 }
 
 /**
- * Fetch and render visions for all elements with [VisionTagConsumer.OUTPUT_CLASS] class inside given [element].
+ * Fetch and render visions for all elements with [HtmlVisionContext.OUTPUT_CLASS] class inside given [element].
  */
 public fun JsVisionClient.renderAllVisionsIn(element: Element) {
-    val elements = element.getElementsByClassName(VisionTagConsumer.OUTPUT_CLASS)
+    val elements = element.getElementsByClassName(HtmlVisionContext.OUTPUT_CLASS)
     logger.info { "Finished search for outputs. Found ${elements.length} items" }
     elements.asList().forEach { child ->
         renderVisionIn(child)
@@ -316,7 +315,7 @@ public fun JsVisionClient.renderAllVisionsById(document: Document, id: String): 
 
 
 /**
- * Fetch visions from the server for all elements with [VisionTagConsumer.OUTPUT_CLASS] class in the document body
+ * Fetch visions from the server for all elements with [HtmlVisionContext.OUTPUT_CLASS] class in the document body
  */
 public fun JsVisionClient.renderAllVisions(): Unit = whenDocumentLoaded {
     val element = body ?: error("Document does not have a body")

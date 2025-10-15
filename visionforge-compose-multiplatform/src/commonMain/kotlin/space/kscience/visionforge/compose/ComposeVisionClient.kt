@@ -16,8 +16,8 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.*
+import space.kscience.visionforge.html.HtmlVisionContext
 import space.kscience.visionforge.html.VisionOutput
-import space.kscience.visionforge.html.VisionTagConsumer
 
 /**
  * A Kotlin-browser plugin that renders visions based on provided renderers and governs communication with the server.
@@ -116,7 +116,7 @@ public fun Vision(
     name: Name? = null,
     meta: Meta = Meta.EMPTY,
 ) {
-    val actualName = name ?: NameToken(VisionTagConsumer.DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
+    val actualName = name ?: NameToken(HtmlVisionContext.DEFAULT_VISION_NAME, vision.hashCode().toUInt().toString()).asName()
     context.request(ComposeVisionClient).renderVision(actualName, vision, meta)
 }
 
@@ -127,7 +127,7 @@ public fun Vision(
     meta: Meta = Meta.EMPTY,
     buildOutput: VisionOutput.() -> Vision,
 ) {
-    val actualName = name ?: NameToken(VisionTagConsumer.DEFAULT_VISION_NAME, buildOutput.hashCode().toUInt().toString()).asName()
+    val actualName = name ?: NameToken(HtmlVisionContext.DEFAULT_VISION_NAME, buildOutput.hashCode().toUInt().toString()).asName()
     val output = VisionOutput(context, actualName)
     val vision = output.buildOutput()
     context.request(ComposeVisionClient).renderVision(actualName, vision, meta)

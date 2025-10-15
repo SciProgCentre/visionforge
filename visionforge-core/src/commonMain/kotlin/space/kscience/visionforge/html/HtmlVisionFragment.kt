@@ -3,16 +3,15 @@ package space.kscience.visionforge.html
 import kotlinx.html.*
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.NameToken
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 
 public fun interface HtmlVisionFragment {
-    public fun VisionTagConsumer<*>.append()
+    context(scope: HtmlVisionContext) public fun TagConsumer<*>.append()
 }
 
-public fun HtmlVisionFragment.appendTo(consumer: VisionTagConsumer<*>): Unit = consumer.append()
+context(scope: HtmlVisionContext)
+public fun HtmlVisionFragment.appendTo(consumer: TagConsumer<*>): Unit = consumer.append()
 
 public data class VisionDisplay(val visionManager: VisionManager, val vision: Vision, val meta: Meta)
 
@@ -36,25 +35,9 @@ public fun TagConsumer<*>.visionFragment(
     fragment: HtmlVisionFragment,
 ) {
 
-    val consumer = object : VisionTagConsumer<Any?>(this@visionFragment, visionManager, idPrefix) {
+    val consumer = object : HtmlVisionContext(visionManager.context, idPrefix) {
 
-        override fun <T> TagConsumer<T>.vision(name: Name?, buildOutput: VisionOutput.() -> Vision): T {
-            //Avoid re-creating cached visions
-            val actualName = name ?: NameToken(
-                DEFAULT_VISION_NAME,
-                buildOutput.hashCode().toString(16)
-            ).asName()
-
-            val display = displayCache.getOrPut(actualName) {
-                val output = VisionOutput(context, actualName)
-                val vision = output.buildOutput()
-                VisionDisplay(output.visionManager, vision, output.meta)
-            }
-
-            return addVision(actualName, display.visionManager, display.vision, display.meta)
-        }
-
-        override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
+        override fun renderVision(div: DIV, manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) = with(div) {
 
             displayCache[name] = VisionDisplay(manager, vision, outputMeta)
 
@@ -79,7 +62,9 @@ public fun TagConsumer<*>.visionFragment(
         }
     }
 
-    fragment.appendTo(consumer)
+    with(consumer) {
+        fragment.appendTo(this@visionFragment)
+    }
 }
 
 public fun FlowContent.visionFragment(

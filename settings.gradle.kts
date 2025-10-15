@@ -7,11 +7,11 @@ pluginManagement {
     val toolsVersion: String by extra
 
     repositories {
-        mavenLocal()
-        maven("https://repo.kotlin.link")
-        mavenCentral()
         gradlePluginPortal()
+        mavenCentral()
+        maven("https://repo.kotlin.link")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        mavenLocal()
     }
 
     plugins {
@@ -26,9 +26,10 @@ dependencyResolutionManagement {
     val toolsVersion: String by extra
 
     repositories {
-        mavenLocal()
-        maven("https://repo.kotlin.link")
         mavenCentral()
+        maven("https://repo.kotlin.link")
+        maven("https://maven.jzy3d.org/releases")
+        mavenLocal()
     }
 
     versionCatalogs {

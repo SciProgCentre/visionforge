@@ -118,7 +118,7 @@ public fun VisionForge.html(body: TagConsumer<*>.() -> Unit): MimeTypedResult = 
 /**
  * Create a fragment without a head to be embedded in the page
  */
-public fun VisionForge.fragment(body: VisionTagConsumer<*>.() -> Unit): MimeTypedResult = produceHtml(false, body)
+public fun VisionForge.fragment(body: HtmlVisionFragment): MimeTypedResult = produceHtml(false, body)
 
 
 /**
@@ -126,6 +126,6 @@ public fun VisionForge.fragment(body: VisionTagConsumer<*>.() -> Unit): MimeType
  */
 public fun VisionForge.page(
     pageHeaders: Map<String, HtmlFragment> = emptyMap(),
-    body: VisionTagConsumer<*>.() -> Unit,
+    body: HtmlVisionFragment,
 ): VisionPage = VisionPage(visionManager, pageHeaders, body)
 

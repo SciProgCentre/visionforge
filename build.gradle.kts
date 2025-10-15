@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
 
@@ -17,17 +17,19 @@ allprojects {
 subprojects {
     if (name.startsWith("visionforge")) apply<MavenPublishPlugin>()
 
-    repositories {
-        mavenLocal()
-        maven("https://repo.kotlin.link")
-        mavenCentral()
-        maven("https://maven.jzy3d.org/releases")
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    }
+//    repositories {
+//        mavenLocal()
+//        maven("https://repo.kotlin.link")
+//        mavenCentral()
+//        maven("https://maven.jzy3d.org/releases")
+//        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+//    }
 
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.addAll("-Xcontext-parameters")
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        extensions.configure<KotlinMultiplatformExtension>{
+            compilerOptions{
+                freeCompilerArgs.addAll("-Xcontext-parameters")
+            }
         }
     }
 
