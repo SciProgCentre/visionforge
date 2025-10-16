@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- Replaced `VisionTagConsumer` with a proper `VisionHtmlContext` as a context parameter.
 
 ### Deprecated
 
