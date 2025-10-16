@@ -2,6 +2,7 @@ package space.kscience.visionforge.examples
 
 import space.kscience.gdml.GdmlShowCase
 import space.kscience.visionforge.gdml.gdml
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.solid.solid
 

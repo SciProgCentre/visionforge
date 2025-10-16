@@ -10,7 +10,7 @@ import space.kscience.plotly.models.geo.json.GeoJsonFeatureCollection
 import space.kscience.plotly.models.geo.json.combine
 import space.kscience.plotly.models.geo.openStreetMap
 import space.kscience.plotly.openInBrowser
-import java.net.URL
+import java.net.URI
 import kotlin.random.Random
 
 
@@ -18,7 +18,9 @@ fun main() {
 
     //downloading GeoJson
     val geoJsonString =
-        URL("https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/4_niedrig.geo.json").readText()
+        URI("https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/4_niedrig.geo.json")
+            .toURL()
+            .readText()
 
 
     // Filtering GeoJson features and creating new feature set

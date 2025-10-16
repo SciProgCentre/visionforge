@@ -3,6 +3,7 @@ package space.kscience.visionforge.examples
 import space.kscience.kmath.geometry.euclidean3d.Float64Space3D
 import space.kscience.kmath.geometry.radians
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 

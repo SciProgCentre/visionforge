@@ -5,6 +5,7 @@ import space.kscience.plotly.Plotly
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.*
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 
 fun main() = makeVisionFile(resourceLocation = ResourceLocation.SYSTEM) {
     vision {

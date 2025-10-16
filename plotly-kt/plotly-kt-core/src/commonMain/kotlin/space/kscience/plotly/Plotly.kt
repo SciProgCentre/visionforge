@@ -13,6 +13,7 @@ import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.html.HtmlVisionContext
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.html.vision
 import kotlin.js.JsName
 
 /**
@@ -77,7 +78,10 @@ public class PlotlyConfig : Scheme() {
      * By default, this property is initialized as an empty list and can be updated to include
      * necessary class names as strings.
      */
-    public var classes: List<String> by stringList(default = emptyArray(), key = HtmlVisionContext.OUTPUT_DIV_CLASSES_KEY.asName())
+    public var classes: List<String> by stringList(
+        default = emptyArray(),
+        key = HtmlVisionContext.OUTPUT_DIV_CLASSES_KEY.asName()
+    )
 
     public fun withEditorButton() {
         showEditInChartStudio = true
@@ -106,14 +110,10 @@ public inline fun VisionOutput.plotly(
     return Plotly.plot(block)
 }
 
-
-//FIXME rework VisionTagConsumer toa a context
-context(rootConsumer: HtmlVisionContext<*>)
-public fun TagConsumer<*>.plot(
+context(htmlContext: HtmlVisionContext)
+public fun <T> TagConsumer<T>.plot(
     config: PlotlyConfig = PlotlyConfig(),
     block: Plot.() -> Unit,
-): Unit = with(rootConsumer) {
-    this@plot.vision {
-        plotly(config, block)
-    }
+): T = vision {
+    plotly(config, block)
 }

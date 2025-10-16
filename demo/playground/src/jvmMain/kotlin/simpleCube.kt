@@ -1,6 +1,7 @@
 package space.kscience.visionforge.examples
 
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.box
 import space.kscience.visionforge.solid.invoke
 import space.kscience.visionforge.solid.material

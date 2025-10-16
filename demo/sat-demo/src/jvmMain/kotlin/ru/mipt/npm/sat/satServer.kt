@@ -15,6 +15,7 @@ import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.VisionPage
 import space.kscience.visionforge.html.meta
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.server.close
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage

@@ -7,6 +7,7 @@ import space.kscience.plotly.Plot
 import space.kscience.plotly.PlotlyPlugin
 import space.kscience.tables.Table
 import space.kscience.visionforge.gdml.toVision
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.markup.MarkupPlugin
 import space.kscience.visionforge.solid.Solids
 import space.kscience.visionforge.tables.TableVisionPlugin

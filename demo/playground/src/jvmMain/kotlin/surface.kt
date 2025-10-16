@@ -1,5 +1,6 @@
 package space.kscience.visionforge.examples
 
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.ambientLight
 import space.kscience.visionforge.solid.polygon
 import space.kscience.visionforge.solid.solid

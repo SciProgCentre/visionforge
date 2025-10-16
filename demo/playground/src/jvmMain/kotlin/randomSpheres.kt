@@ -4,6 +4,7 @@ import kotlinx.html.div
 import kotlinx.html.h1
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import java.nio.file.Paths
 import kotlin.random.Random

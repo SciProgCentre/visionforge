@@ -14,13 +14,13 @@ import kotlin.test.Test
 typealias HtmlVisionRenderer = FlowContent.(name: Name, vision: Vision, meta: Meta) -> Unit
 
 internal fun FlowContent.renderVisionFragment(
-    renderer: DIV.(name: Name, vision: Vision, meta: Meta) -> Unit,
+    renderer: FlowContent.(name: Name, vision: Vision, meta: Meta) -> Unit,
     idPrefix: String? = null,
     fragment: HtmlVisionFragment,
 ): Map<Name, Vision> {
     val visionMap = HashMap<Name, Vision>()
     val visionContext = object : HtmlVisionContext(Global, idPrefix) {
-        override fun renderVision(div: DIV, manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
+        override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
             visionMap[name] = vision
             renderer(name, vision, outputMeta)
         }

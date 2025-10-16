@@ -13,16 +13,17 @@ import space.kscience.plotly.models.geo.json.GeoJsonFeatureCollection
 import space.kscience.plotly.models.geo.json.combine
 import space.kscience.plotly.models.geo.openStreetMap
 import space.kscience.plotly.plot
+import space.kscience.visionforge.html.HtmlVisionContext
 import space.kscience.visionforge.plotly.serveSinglePage
 import space.kscience.visionforge.server.openInBrowser
-import java.net.URL
+import java.net.URI
 import kotlin.random.Random
 
 suspend fun main() {
 
     //downloading GeoJson
     val geoJsonString =
-        URL("https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/4_niedrig.geo.json").readText()
+        URI("https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/4_kreise/4_niedrig.geo.json").toURL().readText()
 
 
     // Filtering GeoJson features and creating new feature set
@@ -50,7 +51,7 @@ suspend fun main() {
                 locations.numbers = features.map { it.id!!.int }
                 // Set random values to locations
                 z.numbers = features.map { Random.nextDouble(1.0, 10.0) }
-                context.launch {
+               contextOf<HtmlVisionContext>().context.launch {
                     while (isActive) {
                         delay(300)
                         z.numbers = features.map { Random.nextDouble(1.0, 10.0) }

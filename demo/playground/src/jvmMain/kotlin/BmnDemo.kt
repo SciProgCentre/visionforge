@@ -9,6 +9,7 @@ import space.kscience.dataforge.meta.*
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.html.ResourceLocation
 import space.kscience.visionforge.html.meta
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import java.util.zip.ZipInputStream
 import kotlin.io.path.Path

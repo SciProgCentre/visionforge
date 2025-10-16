@@ -1,5 +1,6 @@
 package space.kscience.visionforge.solid
 
+import kotlinx.html.TagConsumer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.PolymorphicModuleBuilder
@@ -13,7 +14,9 @@ import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.*
+import space.kscience.visionforge.html.HtmlVisionContext
 import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 
 
@@ -100,3 +103,15 @@ public inline fun VisionOutput.solid(options: Canvas3DOptions? = null, block: So
 @VisionBuilder
 public inline fun VisionOutput.solid(options: Canvas3DOptions.() -> Unit, block: SolidGroup.() -> Unit): SolidGroup =
     solid(Canvas3DOptions(options), block)
+
+
+@VisionBuilder
+context(htmlContext: HtmlVisionContext)
+public fun <T> TagConsumer<T>.solid(
+    name: String? = null,
+    options: Canvas3DOptions? = null,
+    block: SolidGroup.() -> Unit
+): T = vision(name) {
+    requirePlugin(Solids)
+    solid(options = options, block = block)
+}

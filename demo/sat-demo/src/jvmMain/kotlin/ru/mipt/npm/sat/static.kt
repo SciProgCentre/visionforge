@@ -4,6 +4,7 @@ import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.misc.DFExperimental
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.three.makeThreeJsFile
 

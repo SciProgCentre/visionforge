@@ -14,6 +14,7 @@ import space.kscience.kmath.geometry.euclidean3d.RotationOrder
 import space.kscience.kmath.geometry.euclidean3d.fromEuler
 import space.kscience.kmath.geometry.euclidean3d.fromRotation
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 import kotlin.math.cos

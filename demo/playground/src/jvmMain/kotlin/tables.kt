@@ -4,6 +4,7 @@ import space.kscience.dataforge.meta.ValueType
 import space.kscience.tables.ColumnHeader
 import space.kscience.tables.valueRow
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.tables.table
 import kotlin.math.pow
 

@@ -10,6 +10,7 @@ import space.kscience.plotly.models.scatter
 import space.kscience.plotly.plotly
 import space.kscience.tables.ColumnHeader
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.markup.markdown
 import space.kscience.visionforge.solid.axes
 import space.kscience.visionforge.solid.box

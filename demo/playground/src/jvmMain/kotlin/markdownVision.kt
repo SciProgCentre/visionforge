@@ -1,6 +1,7 @@
 package space.kscience.visionforge.examples
 
 import space.kscience.visionforge.html.ResourceLocation
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.markup.markdown
 
 fun main() = makeVisionFile(resourceLocation = ResourceLocation.SYSTEM) {

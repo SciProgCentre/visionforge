@@ -7,7 +7,7 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionManager
 
 public fun interface HtmlVisionFragment {
-    context(scope: HtmlVisionContext) public fun TagConsumer<*>.append()
+    context(htmlContext: HtmlVisionContext) public fun TagConsumer<*>.append()
 }
 
 context(scope: HtmlVisionContext)
@@ -37,7 +37,7 @@ public fun TagConsumer<*>.visionFragment(
 
     val consumer = object : HtmlVisionContext(visionManager.context, idPrefix) {
 
-        override fun renderVision(div: DIV, manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) = with(div) {
+        override fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta) {
 
             displayCache[name] = VisionDisplay(manager, vision, outputMeta)
 

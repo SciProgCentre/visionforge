@@ -1,6 +1,7 @@
 package space.kscience.visionforge.examples
 
 import space.kscience.visionforge.Colors
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.solid.*
 import kotlin.math.PI
 

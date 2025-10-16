@@ -10,6 +10,7 @@ import space.kscience.dataforge.context.request
 import space.kscience.visionforge.VisionManager
 import space.kscience.visionforge.html.VisionOfHtmlForm
 import space.kscience.visionforge.html.VisionPage
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.html.visionOfForm
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.server.close

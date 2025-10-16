@@ -15,8 +15,10 @@ import space.kscience.plotly.PlotlyPlugin
 import space.kscience.plotly.layout
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.models.invoke
+import space.kscience.plotly.plot
 import space.kscience.plotly.plotly
 import space.kscience.visionforge.html.VisionPage
+import space.kscience.visionforge.html.vision
 import space.kscience.visionforge.server.openInBrowser
 import space.kscience.visionforge.server.visionPage
 import kotlin.math.PI
@@ -51,15 +53,14 @@ suspend fun main() {
 
             h1 { +"This is the plot page" }
             a("/other") { +"The other page" }
-            vision {
-                plotly {
-                    traces(sinTrace, cosTrace)
-                    layout {
-                        title = "Other dynamic plot"
-                        xaxis.title = "x axis name"
-                        yaxis.title = "y axis name"
-                    }
+            plot {
+                traces(sinTrace, cosTrace)
+                layout {
+                    title = "Other dynamic plot"
+                    xaxis.title = "x axis name"
+                    yaxis.title = "y axis name"
                 }
+
             }
         }
 

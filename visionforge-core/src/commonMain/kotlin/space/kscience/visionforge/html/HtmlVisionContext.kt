@@ -9,23 +9,17 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.*
 import space.kscience.visionforge.html.HtmlVisionContext.Companion.DEFAULT_VISION_NAME
 import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_CLASS
 import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_DIV_CLASSES_KEY
 import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_META_CLASS
 import space.kscience.visionforge.html.HtmlVisionContext.Companion.OUTPUT_NAME_ATTRIBUTE
-import space.kscience.visionforge.setAsRoot
-import space.kscience.visionforge.visionManager
-
-@DslMarker
-public annotation class VisionDSL
 
 /**
  * A placeholder object to attach inline vision builders.
  */
-@VisionDSL
+@VisionBuilder
 public class VisionOutput(override val context: Context, public val name: Name) : ContextAware {
     public var meta: Meta = Meta.EMPTY
 
@@ -59,7 +53,7 @@ public fun VisionOutput.meta(metaRepr: MetaRepr) {
 /**
  * Modified scope that allows rendering output fragments and visions in them
  */
-@VisionDSL
+@VisionBuilder
 public abstract class HtmlVisionContext(
     override val context: Context,
     private val idPrefix: String? = null,
@@ -74,7 +68,7 @@ public abstract class HtmlVisionContext(
      * @param vision an object to be rendered
      * @param outputMeta optional configuration for the output container
      */
-    public abstract fun renderVision(div: DIV, manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta)
+    public abstract fun DIV.renderVision(manager: VisionManager, name: Name, vision: Vision, outputMeta: Meta)
 
 
     public companion object {
@@ -118,7 +112,9 @@ public fun <T> TagConsumer<T>.addVision(
         vision.setAsRoot(manager)
     }
     attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
-    htmlContext.renderVision(this, manager, name, vision, outputMeta)
+    with(htmlContext) {
+        renderVision(manager, name, vision, outputMeta)
+    }
     if (!outputMeta.isEmpty()) {
         //Hard-code output configuration
         script {
@@ -132,7 +128,7 @@ public fun <T> TagConsumer<T>.addVision(
 }
 
 
-@VisionDSL
+@VisionBuilder
 context(htmlContext: HtmlVisionContext)
 public fun <T> TagConsumer<T>.vision(
     vision: Vision,
@@ -144,6 +140,7 @@ public fun <T> TagConsumer<T>.vision(
 }
 
 
+@VisionBuilder
 context(htmlContext: HtmlVisionContext)
 private fun <T> TagConsumer<T>.vision(
     visionManager: VisionManager,
@@ -155,6 +152,10 @@ private fun <T> TagConsumer<T>.vision(
     classes = setOf(OUTPUT_CLASS)
     vision.setAsRoot(visionManager)
     attributes[OUTPUT_NAME_ATTRIBUTE] = name.toString()
+    with(htmlContext) {
+        renderVision(visionManager, name, vision, outputMeta)
+    }
+
     if (!outputMeta.isEmpty()) {
         //Hard-code output configuration
         script {
@@ -164,9 +165,9 @@ private fun <T> TagConsumer<T>.vision(
             }
         }
     }
-    htmlContext.renderVision(this, visionManager, name, vision, outputMeta)
 }
 
+@VisionBuilder
 context(htmlContext: HtmlVisionContext)
 private fun <T> TagConsumer<T>.vision(
     name: Name,
@@ -177,7 +178,7 @@ private fun <T> TagConsumer<T>.vision(
 /**
  * Insert a vision in this HTML.
  */
-@VisionDSL
+@VisionBuilder
 context(htmlContext: HtmlVisionContext)
 public fun <T> TagConsumer<T>.vision(
     name: Name? = null,
@@ -192,7 +193,7 @@ public fun <T> TagConsumer<T>.vision(
 /**
  * Insert a vision in this HTML.
  */
-@VisionDSL
+@VisionBuilder
 context(htmlContext: HtmlVisionContext)
 public fun <T> TagConsumer<T>.vision(
     name: String?,
