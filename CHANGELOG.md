@@ -12,6 +12,7 @@
 
 ### Fixed
 - Fix the problem where property listeners do not react on property child node changa
+- Plotly plot title now writes proper field
 
 ### Security
 

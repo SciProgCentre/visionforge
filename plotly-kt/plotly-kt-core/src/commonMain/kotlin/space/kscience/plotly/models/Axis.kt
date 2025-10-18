@@ -45,7 +45,7 @@ public class Axis : Scheme() {
     public var title: String?
         get() = meta["title.text"].string ?: meta["title"].string
         set(value) {
-            meta["title"] = value?.asValue()
+            meta["title.text"] = value?.asValue()
         }
 
     /**
