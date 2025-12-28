@@ -39,17 +39,24 @@ subprojects {
 }
 
 
-ksciencePublish {
+kscienceProject {
     pom("https://github.com/SciProgCentre/visionforge") {
         useApache2Licence()
         useSPCTeam()
     }
-    repository("spc", "https://maven.sciprog.center/kscience")
-    central()
+    publishTo("spc", "https://maven.sciprog.center/kscience")
+    publishToCentral()
+
+    abiValidation {
+//        filters{
+//            excluded{
+//                byNames
+//            }
+//        }
+        //ignoredPackages.add("info.laht.threekt")
+    }
+
+    readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")
 }
 
-apiValidation {
-    ignoredPackages.add("info.laht.threekt")
-}
 
-readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")

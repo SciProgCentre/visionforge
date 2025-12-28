@@ -13,14 +13,10 @@ kscience {
 //    useSerialization {
 //        json()
 //    }
-    jvm{
-        binaries {
-            executable {
-                mainClass.set("ru.mipt.npm.sat.SatServerKt")
-            }
-        }
+    jvm {
+        application("ru.mipt.npm.sat.SatServerKt")
     }
-    jvmMain{
+    jvmMain {
         implementation("io.ktor:ktor-server-cio")
         implementation(projects.visionforgeThreejs.visionforgeThreejsServer)
         implementation(spclibs.logback.classic)

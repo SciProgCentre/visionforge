@@ -31,10 +31,11 @@ kscience {
     }
 }
 
-//tasks.processJupyterApiResources {
-//    libraryProducers = listOf("space.kscience.plotly.PlotlyIntegration")
-//}
-
+kotlinJupyter {
+    integrations {
+        producer("space.kscience.plotly.PlotlyIntegration")
+    }
+}
 
 kotlin {
     compilerOptions {

@@ -1,7 +1,10 @@
 plugins{
-    id("org.jetbrains.changelog")
+    id("space.kscience.gradle.project")
 }
 
-readme {
-    readmeTemplate = file("docs/templates/README-TEMPLATE.md")
+kscienceProject{
+    readme {
+        readmeTemplate = file("docs/templates/README-TEMPLATE.md")
+    }
 }
+
