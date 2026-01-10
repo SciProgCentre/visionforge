@@ -8,7 +8,6 @@ import kotlinx.serialization.json.buildJsonObject
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.node
-import space.kscience.dataforge.misc.DFBuilder
 import space.kscience.dataforge.names.NameToken
 import space.kscience.plotly.models.Layout
 import space.kscience.plotly.models.Trace
@@ -18,7 +17,6 @@ import space.kscience.visionforge.*
  * The main plot class.
  *
  */
-@DFBuilder
 @Serializable
 public class Plot : AbstractVision(), MutableVisionGroup<Trace> {
 
@@ -80,8 +78,9 @@ public class Plot : AbstractVision(), MutableVisionGroup<Trace> {
      */
     @UnstablePlotlyAPI
     @JvmSynchronized
-    internal fun removeTrace(index: Int) {
+    public fun removeTrace(index: Int) {
         _data.removeAt(index)
+        emitEvent(VisionGroupCompositionChangedEvent(NameToken("trace", _data.size.toString()), null))
     }
 
     override val descriptor: MetaDescriptor get() = Companion.descriptor

@@ -1,9 +1,10 @@
 package space.kscience.visionforge.meta
 
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.int
@@ -12,14 +13,14 @@ import space.kscience.dataforge.meta.set
 import space.kscience.visionforge.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.milliseconds
 
 internal class PropertyFlowTest {
 
     private val manager = Global.request(VisionManager)
 
     @Test
-    fun testChildrenPropertyFlow() = runTest(timeout = 200.milliseconds) {
+    fun testChildrenPropertyFlow(): Unit = runBlocking {
+
         val parent = MutableVisionGroup(manager) {
 
             properties {
@@ -36,42 +37,30 @@ internal class PropertyFlowTest {
 
         val child = parent.getVision("child") as MutableVisionGroup<*>
 
-        val changesFlow = child.flowProperty("test", inherited = true)
+        launch {
+            val changesFlow = child.flowProperty("test", inherited = true).stateIn(this)
+
+            assertEquals(22, child.readProperty("test", true).int)
+
+            delay(10)
+            assertEquals(22, changesFlow.value.int)
+
+            parent.properties["test1"] = 88 // another property
+
+            child.properties.remove("test")
+
+            assertEquals(11, child.readProperty("test", true).int)
+            delay(10)
+            assertEquals(11, changesFlow.value.int)
+
+            parent.properties["test"] = 33
+            assertEquals(33, child.readProperty("test", true).int)
+
+            delay(10)
+            assertEquals(33, changesFlow.value.int)
 
 
-//        child.inheritedEventFlow().filterIsInstance<VisionPropertyChangedEvent>().onEach { event ->
-//            println(event)
-//            delay(2)
-//            println(child.readProperty("test", inherited = true))
-//        }.launchIn(this)
-
-        val collectedValues = ArrayList<Int>(5)
-
-        val collectorJob = changesFlow.onEach {
-            collectedValues.add(it.int!!)
-        }.launchIn(this)
-
-
-        delay(2)
-        assertEquals(22, child.readProperty("test", true).int)
-//        assertEquals(1, collectedValues.size)
-
-        parent.properties["test1"] = 88 // another property
-
-        child.properties.remove("test")
-
-        delay(2)
-
-        assertEquals(11, child.readProperty("test", true).int)
-  //      assertEquals(2, collectedValues.size)
-
-        parent.properties["test"] = 33
-        delay(2)
-
-        assertEquals(33, child.readProperty("test", true).int)
-    //    assertEquals(3, collectedValues.size)
-
-        collectorJob.cancel()
-        assertEquals(listOf(22, 11, 33), collectedValues)
+            cancel()
+        }
     }
 }

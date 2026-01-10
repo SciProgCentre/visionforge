@@ -7,11 +7,11 @@ plugins {
     alias(spclibs.plugins.kotlinx.kover)
 }
 
-val dataforgeVersion by extra("0.10.1")
+val dataforgeVersion by extra("0.10.2")
 
 allprojects {
     group = "space.kscience"
-    version = "0.5.0"
+    version = "0.5.1"
 }
 
 subprojects {
@@ -39,17 +39,24 @@ subprojects {
 }
 
 
-ksciencePublish {
+kscienceProject {
     pom("https://github.com/SciProgCentre/visionforge") {
         useApache2Licence()
         useSPCTeam()
     }
-    repository("spc", "https://maven.sciprog.center/kscience")
-    central()
+    publishTo("spc", "https://maven.sciprog.center/kscience")
+    publishToCentral()
+
+    abiValidation {
+//        filters{
+//            excluded{
+//                byNames
+//            }
+//        }
+        //ignoredPackages.add("info.laht.threekt")
+    }
+
+    readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")
 }
 
-apiValidation {
-    ignoredPackages.add("info.laht.threekt")
-}
 
-readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")

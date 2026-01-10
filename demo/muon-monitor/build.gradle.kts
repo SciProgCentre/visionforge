@@ -12,11 +12,7 @@ kscience {
         "muon-monitor.js",
         development = false,
         jvmConfig = {
-            binaries {
-                executable {
-                    mainClass.set("ru.mipt.npm.muon.monitor.MMServerKt")
-                }
-            }
+            application("ru.mipt.npm.muon.monitor.MMServerKt")
         },
         browserConfig = {
             commonWebpackConfig {

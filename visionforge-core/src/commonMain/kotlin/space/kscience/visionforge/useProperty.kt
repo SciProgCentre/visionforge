@@ -9,6 +9,7 @@ import space.kscience.dataforge.meta.Value
 import space.kscience.dataforge.meta.descriptors.get
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.parseAsName
+import space.kscience.dataforge.names.startsWith
 import kotlin.reflect.KProperty1
 
 private fun Vision.withAncestors(): List<Vision> = buildList {
@@ -42,7 +43,7 @@ public fun Vision.flowProperty(
     }
 
     combinedFlow.filterIsInstance<VisionPropertyChangedEvent>().collect { event ->
-        if (event.propertyName == propertyName || (useStyles && event.propertyName == Vision.STYLE_KEY)) {
+        if (event.propertyName.startsWith(propertyName) || (useStyles && event.propertyName == Vision.STYLE_KEY)) {
             emit(readProperty(event.propertyName, inherited, useStyles))
         }
     }
@@ -89,7 +90,7 @@ public fun Vision.useProperty(
     } else {
         eventFlow
     }.filterIsInstance<VisionPropertyChangedEvent>().onEach { event ->
-        if (event.propertyName == propertyName || (useStyles && event.propertyName == Vision.STYLE_KEY)) {
+        if (event.propertyName.startsWith(propertyName) || (useStyles && event.propertyName == Vision.STYLE_KEY)) {
             callback(readProperty(event.propertyName, inherited, useStyles))
         }
     }.collect()
@@ -134,7 +135,7 @@ public fun <V : Vision, T> V.onPropertyChange(
     scope: CoroutineScope = manager?.context ?: error("Orphan Vision can't observe properties. Use explicit scope."),
     callback: suspend V.(T) -> Unit,
 ): Job = inheritedEventFlow().filterIsInstance<VisionPropertyChangedEvent>().onEach {
-    if (it.propertyName.toString() == property.name) {
+    if (it.propertyName.startsWith(property.name)) {
         callback(property.get(this))
     }
 }.launchIn(scope)

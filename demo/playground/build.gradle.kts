@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("jupyter.api")
+    alias(spclibs.plugins.kotlin.jupyter.api)
     id("com.gradleup.shadow") version "8.3.6"
 
 }
@@ -12,7 +12,7 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     js {
         useEsModules()
         browser {

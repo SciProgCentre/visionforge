@@ -45,6 +45,7 @@ public interface VisionGroup<out V : Vision> : Vision, VisionContainer<V> {
 //    public val propertyName: Name
 //) : VisionEvent
 
+@VisionBuilder
 public interface MutableVisionGroup<V : Vision> : VisionGroup<V>, MutableVision, MutableVisionContainer<V> {
 
     /**
@@ -123,7 +124,6 @@ public class SimpleVisionGroup : AbstractVision(), MutableVisionGroup<Vision> {
     }
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Vision>.group(
     name: NameToken? = null,
     builder: SimpleVisionGroup.() -> Unit = {},
@@ -134,7 +134,6 @@ public inline fun MutableVisionContainer<Vision>.group(
 /**
  * Define a group with given [token], attach it to this parent and return it.
  */
-@VisionBuilder
 public inline fun MutableVisionContainer<Vision>.group(
     token: String,
     builder: SimpleVisionGroup.() -> Unit = {},

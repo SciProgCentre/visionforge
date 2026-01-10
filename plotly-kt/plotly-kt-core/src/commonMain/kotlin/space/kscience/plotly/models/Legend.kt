@@ -6,14 +6,10 @@ import space.kscience.dataforge.meta.enum
 import space.kscience.dataforge.meta.scheme
 import space.kscience.plotly.numberGreaterThan
 import space.kscience.plotly.numberInRange
-import kotlin.js.JsName
 
 public enum class LegendOrientation {
-    @JsName("v")
-    vertical,
-
-    @JsName("h")
-    horizontal
+    v,
+    h
 }
 
 public enum class XAnchor {
@@ -103,7 +99,7 @@ public class Legend : Scheme() {
      * Sets the orientation of the legend (vertical/horizontal).
      * Default: vertical.
      */
-    public var orientation: LegendOrientation by enum(LegendOrientation.vertical)
+    public var orientation: LegendOrientation by enum(LegendOrientation.v)
 
     /**
      * The order at which the legend items are displayed.

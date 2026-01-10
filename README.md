@@ -5,14 +5,14 @@
 
 [![Slack](https://img.shields.io/badge/slack-channel-green?logo=slack)](https://kotlinlang.slack.com/archives/CEXV2QWNM)
 
-# DataForge Visualization Platform
+# VisionForge platform
 
 ## Table of Contents
 
 * [Introduction](#introduction)
 * [Requirements](#requirements)
 * [Features](#features)
-* [About DataForge](#about-dataforge)
+* [About VisionForge](#about-VisionForge)
 * [Modules contained in this repository](#modules-contained-in-this-repository)
 * [Visualization for External Systems](#visualization-for-external-systems)
 * [Demonstrations](#demonstrations)
@@ -23,7 +23,7 @@
 
 ## Introduction
 
-This repository contains a [DataForge](#about-dataforge)\-based framework
+This repository contains a [VisionForge](#about-VisionForge) framework
 used for visualization in various scientific applications.
 
 The main framework's use case for now is 3D visualization for particle physics experiments.
@@ -41,16 +41,16 @@ JVM backend requires JDK 11 or later
 The main framework's features for now include:
 - 3D visualization of complex experimental set-ups
 - Event display such as particle tracks, etc.
-- Scales up to few hundred thousands of elements
-- Camera move, rotate, zoom-in and zoom-out
+- Scales up to hundreds of thousands of elements
+- The camera moves, rotates, zoom-in and zoom-out
 - Scene graph as an object tree with property editor
 - Settings export and import
 - Multiple platform support
 
-## About DataForge
+## About VisionForge
 
-DataForge is a software framework for automated scientific data processing. DataForge Visualization
-Platform uses some of the concepts and modules of DataForge, including: `Meta`, `Configuration`, `Context`,
+[DataForge](https://git.sciprog.center/kscience/dataforge-core) is a software framework for automated scientific data processing. VisionForge
+Platform uses some concepts and modules of DataForge, including: `Meta`, `Configuration`, `Context`,
 `Provider`, and some others.
 
 To learn more about DataForge, please consult the following URLs:
@@ -63,10 +63,6 @@ To learn more about DataForge, please consult the following URLs:
 
 
 ### [cern-root-loader](cern-root-loader)
->
-> **Maturity**: EXPERIMENTAL
-
-### [demo](demo)
 >
 > **Maturity**: EXPERIMENTAL
 
@@ -131,19 +127,11 @@ To learn more about DataForge, please consult the following URLs:
 >
 > **Maturity**: EXPERIMENTAL
 
-### [demo/playground](demo/playground)
->
-> **Maturity**: EXPERIMENTAL
-
 ### [demo/sat-demo](demo/sat-demo)
 >
 > **Maturity**: EXPERIMENTAL
 
 ### [demo/solid-showcase](demo/solid-showcase)
->
-> **Maturity**: EXPERIMENTAL
-
-### [plotly-kt/examples](plotly-kt/examples)
 >
 > **Maturity**: EXPERIMENTAL
 
@@ -161,18 +149,6 @@ To learn more about DataForge, please consult the following URLs:
 > **Maturity**: EXPERIMENTAL
 
 ### [visionforge-threejs/visionforge-threejs-server](visionforge-threejs/visionforge-threejs-server)
->
-> **Maturity**: EXPERIMENTAL
-
-### [plotly-kt/examples/compose-demo](plotly-kt/examples/compose-demo)
->
-> **Maturity**: EXPERIMENTAL
-
-### [plotly-kt/examples/js-demo](plotly-kt/examples/js-demo)
->
-> **Maturity**: EXPERIMENTAL
-
-### [plotly-kt/examples/native-demo](plotly-kt/examples/native-demo)
 >
 > **Maturity**: EXPERIMENTAL
 

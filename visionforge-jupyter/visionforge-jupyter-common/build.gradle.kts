@@ -1,5 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
+    alias(spclibs.plugins.kotlin.jupyter.api)
 }
 
 description = "Jupyter api artifact including all common modules"
@@ -33,8 +34,12 @@ kscience {
     jsMain {
         implementation(projects.visionforgeThreejs)
     }
+}
 
-    jupyterLibrary("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
+kotlinJupyter {
+    integrations {
+        producer("space.kscience.visionforge.jupyter.JupyterCommonIntegration")
+    }
 }
 
 readme {

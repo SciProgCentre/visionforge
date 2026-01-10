@@ -8,9 +8,11 @@ import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
+import space.kscience.dataforge.names.asName
 import space.kscience.plotly.models.Trace
 import space.kscience.visionforge.VisionBuilder
-import space.kscience.visionforge.html.*
+import space.kscience.visionforge.html.VisionOutput
+import space.kscience.visionforge.html.VisionTagConsumer
 import kotlin.js.JsName
 
 /**
@@ -65,6 +67,18 @@ public class PlotlyConfig : Scheme() {
     public var responsive: Boolean? by boolean()
     public var imageFormat: String? by string(Name.parse("toImageButtonOptions.format"))
 
+    /**
+     * A list of class names applied to the output `div` in the generated HTML for the plot.
+     *
+     * This property allows customization of the CSS classes assigned to the `div` element
+     * that contains the rendered plot. It can be utilized to add custom styling or specific
+     * class-based behaviors to the output.
+     *
+     * By default, this property is initialized as an empty list and can be updated to include
+     * necessary class names as strings.
+     */
+    public var classes: List<String> by stringList(default = emptyArray(), key = VisionTagConsumer.OUTPUT_DIV_CLASSES_KEY.asName())
+
     public fun withEditorButton() {
         showEditInChartStudio = true
         plotlyServerURL = "https://chart-studio.plotly.com"
@@ -92,12 +106,14 @@ public inline fun VisionOutput.plotly(
     return Plotly.plot(block)
 }
 
+
+//FIXME rework VisionTagConsumer toa a context
 context(rootConsumer: VisionTagConsumer<*>)
 public fun TagConsumer<*>.plot(
     config: PlotlyConfig = PlotlyConfig(),
     block: Plot.() -> Unit,
 ): Unit = with(rootConsumer) {
-    vision {
+    this@plot.vision {
         plotly(config, block)
     }
 }

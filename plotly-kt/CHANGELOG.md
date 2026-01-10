@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## 0.5.1 - 2026-01-10
+
+### Fixed
+
+- Fix legend orientation constants
+
 ## 0.5.0 (package and versioning change!)
 
 ### Changed

@@ -1,10 +1,6 @@
 package space.kscience.visionforge.meta
 
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.context.request
@@ -13,7 +9,6 @@ import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.get
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
@@ -93,51 +88,4 @@ internal class VisionPropertyTest {
         subscription.cancel()
     }
 
-    @Test
-    @Ignore
-    fun testChildrenPropertyFlow() = runTest(timeout = 500.milliseconds) {
-        val group = SimpleVisionGroup().apply {
-
-            properties {
-                "test" put 11
-            }
-
-            group("child") {
-                properties {
-                    "test" put 22
-                }
-            }
-
-        }
-
-        val child = group.visions["child"] as MutableVision
-
-        val semaphore = Semaphore(1, 1)
-
-        val changesFlow = child.flowPropertyValue("test", inherited = true).map {
-            semaphore.release()
-            it!!.int
-        }
-
-        val collectedValues = ArrayList<Int>(5)
-
-        val collectorJob = changesFlow.onEach {
-            collectedValues.add(it)
-        }.launchIn(this)
-
-        assertEquals(22, child.readProperty("test", true).int)
-
-        semaphore.acquire()
-        child.properties.remove("test")
-
-        assertEquals(11, child.readProperty("test", true).int)
-
-        semaphore.acquire()
-        group.properties["test"] = 33
-        assertEquals(33, child.readProperty("test", true).int)
-
-        semaphore.acquire()
-        collectorJob.cancel()
-        assertEquals(listOf(22, 11, 33), collectedValues)
-    }
 }

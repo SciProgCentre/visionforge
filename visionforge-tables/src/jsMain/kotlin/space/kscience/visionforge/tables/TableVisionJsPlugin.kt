@@ -1,6 +1,6 @@
 package space.kscience.visionforge.tables
 
-import js.objects.jso
+import js.objects.unsafeJso
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import space.kscience.dataforge.context.AbstractPlugin
@@ -39,17 +39,17 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
         val table: VisionOfTable = (vision as? VisionOfTable)
             ?: error("VisionOfTable expected but ${vision::class} found")
 
-        val tableOptions = jso<Options> {
+        val tableOptions = unsafeJso<Options> {
             columns = Array(table.headers.size + 1) {
                 if (it == 0) {
-                    jso {
+                    unsafeJso {
                         field = "@index"
                         title = "#"
                         resizable = false
                     }
                 } else {
                     val header = table.headers[it - 1]
-                    jso {
+                    unsafeJso {
                         field = header.name
                         title = header.properties.title ?: header.name
                         resizable = true

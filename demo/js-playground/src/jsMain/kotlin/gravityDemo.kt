@@ -81,10 +81,12 @@ fun GravityDemo(context: Context) {
                 y = h
 
 
-                box(200, 5, 200, name = "floor") {
-                    y = -2.5
-                }
             }
+
+            box(200, 5, 200, name = "floor") {
+                y = -2.5
+            }
+
         }
     }
 

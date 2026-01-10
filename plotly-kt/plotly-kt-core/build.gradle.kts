@@ -1,6 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
-    kotlin("jupyter.api")
+    alias(spclibs.plugins.kotlin.jupyter.api)
     `maven-publish`
 }
 
@@ -31,10 +31,11 @@ kscience {
     }
 }
 
-tasks.processJupyterApiResources {
-    libraryProducers = listOf("space.kscience.plotly.PlotlyIntegration")
+kotlinJupyter {
+    integrations {
+        producer("space.kscience.plotly.PlotlyIntegration")
+    }
 }
-
 
 kotlin {
     compilerOptions {

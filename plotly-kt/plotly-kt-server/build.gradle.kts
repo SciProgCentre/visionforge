@@ -2,6 +2,7 @@ plugins {
     id("space.kscience.gradle.mpp")
     alias(spclibs.plugins.compose.compiler)
     alias(spclibs.plugins.compose.jb)
+    `maven-publish`
 }
 
 kscience {
@@ -26,6 +27,7 @@ kscience {
 
     jvmMain {
         api(projects.visionforgeServer)
+        api(project.dependencies.platform(spclibs.ktor.bom))
         api("io.ktor:ktor-server-cio")
     }
 }
