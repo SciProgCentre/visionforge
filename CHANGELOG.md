@@ -5,19 +5,27 @@
 ### Added
 
 ### Changed
-- Kotlin 2.3
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+### Security
+
+## 0.5.1 - 2026-01-10
+
+### Changed
+
+- Kotlin 2.3
+
+### Fixed
+
 - Fix DSLMarker annotations for builders
 - Flaky test
 - Fix the problem where property listeners do not react on property child node changes
 - Plotly plot title now writes proper field
-
-### Security
 
 ## 0.5.0 - 2025-03-21
 
