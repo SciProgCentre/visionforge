@@ -27,7 +27,6 @@ public class VisionOfHtmlForm(
 /**
  * Create a [VisionOfHtmlForm] and bind this form to the id
  */
-@HtmlTagMarker
 public inline fun <T, C : TagConsumer<T>> C.visionOfForm(
     vision: VisionOfHtmlForm,
     action: String? = null,

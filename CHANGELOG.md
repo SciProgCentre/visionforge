@@ -5,13 +5,16 @@
 ### Added
 
 ### Changed
+- Kotlin 2.3
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Fix the problem where property listeners do not react on property child node changa
+- Fix DSLMarker annotations for builders
+- Flaky test
+- Fix the problem where property listeners do not react on property child node changes
 - Plotly plot title now writes proper field
 
 ### Security

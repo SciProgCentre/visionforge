@@ -9,19 +9,13 @@ import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
-import space.kscience.visionforge.Vision
-import space.kscience.visionforge.VisionManager
+import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.DEFAULT_VISION_NAME
-import space.kscience.visionforge.setAsRoot
-import space.kscience.visionforge.visionManager
-
-@DslMarker
-public annotation class VisionDSL
 
 /**
  * A placeholder object to attach inline vision builders.
  */
-@VisionDSL
+@VisionBuilder
 public class VisionOutput(override val context: Context, public val name: Name) : ContextAware {
     public var meta: Meta = Meta.EMPTY
 
@@ -55,7 +49,7 @@ public fun VisionOutput.meta(metaRepr: MetaRepr) {
 /**
  * Modified  [TagConsumer] that allows rendering output fragments and visions in them
  */
-@VisionDSL
+@VisionBuilder
 public abstract class VisionTagConsumer<R>(
     private val root: TagConsumer<R>,
     public val visionManager: VisionManager,
@@ -111,7 +105,6 @@ public abstract class VisionTagConsumer<R>(
      * Insert a vision in this HTML.
      * TODO replace by multi-receiver
      */
-    @VisionDSL
     public open fun <T> TagConsumer<T>.vision(
         name: Name? = null,
         buildOutput: VisionOutput.() -> Vision,
@@ -125,13 +118,11 @@ public abstract class VisionTagConsumer<R>(
     /**
      * TODO to be replaced by multi-receiver
      */
-    @VisionDSL
     public fun <T> TagConsumer<T>.vision(
         name: String?,
         buildOutput: VisionOutput.() -> Vision,
     ): T = vision(name?.parseAsName(), buildOutput)
 
-    @VisionDSL
     public open fun <T> TagConsumer<T>.vision(
         vision: Vision,
         name: Name? = null,

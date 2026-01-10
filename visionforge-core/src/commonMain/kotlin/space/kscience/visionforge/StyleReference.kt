@@ -16,14 +16,12 @@ private tailrec fun styleIsDefined(vision: Vision, reference: StyleReference): B
     else -> styleIsDefined(vision.parent!!, reference)
 }
 
-@VisionBuilder
 public fun MutableVision.useStyle(reference: StyleReference) {
     //check that style is defined in a parent
     //check(styleIsDefined(this, reference)) { "Style reference does not belong to a Vision parent" }
     useStyle(reference.name)
 }
 
-@VisionBuilder
 public fun MutableVision.style(
     styleKey: String? = null,
     builder: MutableMeta.() -> Unit,
@@ -33,7 +31,6 @@ public fun MutableVision.style(
     StyleReference(this, styleName)
 }
 
-@VisionBuilder
 public fun <T : Scheme> MutableVision.style(
     spec: SchemeSpec<T>,
     styleKey: String? = null,

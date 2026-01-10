@@ -75,7 +75,6 @@ private fun <T> TagConsumer<T>.vision(
  * Insert a vision in this HTML.
  */
 context(htmlContext: HtmlVisionContext)
-@VisionDSL
 public fun <T> TagConsumer<T>.vision(
     name: Name? = null,
     visionProvider: VisionOutput.() -> Vision,
@@ -90,7 +89,6 @@ public fun <T> TagConsumer<T>.vision(
  * Insert a vision in this HTML.
  */
 context(htmlContext: HtmlVisionContext)
-@VisionDSL
 public fun <T> TagConsumer<T>.vision(
     name: String?,
     visionProvider: VisionOutput.() -> Vision,

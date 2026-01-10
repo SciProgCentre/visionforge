@@ -49,7 +49,7 @@ suspend fun main() = serve(
             //axes(200)
             ambientLight {
                 color(Colors.white)
-                intensity = 3.0
+                intensity = 1.5
             }
             val platform = solidGroup("platform") {
                 cylinder(50, 5, name = "base")
@@ -88,7 +88,7 @@ suspend fun main() = serve(
             val incRot = Quaternion.fromRotation(30.degrees, Float64Space3D.zAxis)
 
 
-            context.launch {
+            this@vision.context.launch {
                 var time: Long = 0L
                 while (isActive) {
                     with(QuaternionAlgebra) {
