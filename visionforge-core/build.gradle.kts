@@ -8,7 +8,7 @@ kscience {
     jvm()
     js()
     native()
-//    wasm()
+    wasmJs()
     useCoroutines()
     commonMain {
         api("space.kscience:dataforge-context:$dataforgeVersion")

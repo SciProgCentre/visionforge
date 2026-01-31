@@ -7,7 +7,6 @@ import okio.Path.Companion.toPath
 /**
  * Create a standalone html with the plot
  * @param path the reference to html file. If null, create a temporary file
- * @param show if true, start the browser after file is created
  * @param config represents plotly frame configuration
  */
 @UnstablePlotlyAPI

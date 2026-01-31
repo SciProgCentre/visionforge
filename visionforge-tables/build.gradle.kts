@@ -19,6 +19,8 @@ kscience {
             }
         }
     }
+    native()
+    wasmJs()
 
     useSerialization()
     commonMain {

@@ -11,11 +11,9 @@ val plotlyVersion by extra("2.35.3")
 //}
 
 kscience {
-//    jvm()
-//    js()
     fullStack(bundleName = "js/plotly-kt.js")
     native()
-//    wasm()
+    wasmJs()
     useSerialization()
 
     commonMain {
