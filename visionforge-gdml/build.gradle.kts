@@ -7,8 +7,8 @@ kscience {
     js {
         binaries.library()
     }
-    native()
-    wasmJs()
+//    native()
+//    wasmJs()
     dependencies {
         api(projects.visionforgeSolid)
         api("space.kscience:gdml:0.5.0")
