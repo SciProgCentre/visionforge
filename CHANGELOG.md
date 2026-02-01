@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- Plotly implementation and demo for Kotlin/Wasm
+- Wasm targets for plotly-kt and visionforge-core/solid
 
 ### Changed
 - Order of arguments in Plotly-kt for js plotDiv functions

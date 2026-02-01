@@ -9,22 +9,25 @@ import kotlinx.html.h1
 import kotlinx.html.js.div
 import kotlinx.html.style
 import kotlinx.serialization.json.Json
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.plotly.*
-import space.kscience.plotly.events.PlotlyEventListenerType
 import space.kscience.plotly.models.ScatterMode
 import space.kscience.plotly.models.TraceType
+import space.kscience.plotly.models.histogram
+import space.kscience.plotly.models.scatter
 import kotlin.random.Random
 
 private fun onDomLoaded(block: (Event) -> Unit) {
     document.addEventListener("DOMContentLoaded", block)
 }
 
-private fun withCanvas(block: TagConsumer<HTMLElement>.() -> Unit) = onDomLoaded {
+private fun withCanvas(block: TagConsumer<Element>.() -> Unit) {
     val element = document.getElementById("canvas") as? HTMLElement
-        ?: error("Element with id 'app' not found on page")
+        ?: error("Element with id 'canvas' not found on page")
     println("element loaded")
     element.append { block() }
 }
@@ -35,7 +38,7 @@ fun main(): Unit = withCanvas {
     div {
         style = "height:50%; width=100%;"
         h1 { +"Histogram demo" }
-        plotDiv {
+        plotDiv(Global) {
             val rnd = Random(222)
             histogram {
                 name = "Random data"
@@ -79,7 +82,7 @@ fun main(): Unit = withCanvas {
     div {
         style = "height:50%; width=100%;"
         h1 { +"Dynamic trace demo" }
-        plotDiv {
+        plotDiv(Global) {
             scatter {
                 x(1, 2, 3, 4)
                 y(10, 15, 13, 17)
@@ -131,11 +134,12 @@ fun main(): Unit = withCanvas {
             }
         }
         val serialized = plot.toJsonString()
-        kotlin.js.console.log(serialized)
+        println(serialized)
         val deserialized = Plot(Json.decodeFromString(MetaSerializer, serialized))
-        plotDiv(plot = deserialized).on(PlotlyEventListenerType.CLICK){
-            kotlin.js.console.info(it.toString())
-        }
+        plotDiv(plot = deserialized)
+//        plotDiv(plot = deserialized).on(PlotlyEventListenerType.CLICK){
+//            println(it.toString())
+//        }
     }
 }
 
