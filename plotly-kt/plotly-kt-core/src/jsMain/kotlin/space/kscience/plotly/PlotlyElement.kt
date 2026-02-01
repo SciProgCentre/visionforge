@@ -61,9 +61,10 @@ public fun Element.plot(
             trace.eventFlow.filterIsInstance<VisionPropertyChangedEvent>().onEach { event ->
                 val traceData = trace.toDynamic()
 
+                //need to wrap coordinates into an additional array because plotly API for some reason expects 2D arrays
                 Plotly.coordinateNames.forEach { coordinate ->
                     val data = traceData[coordinate]
-                    if (traceData[coordinate] != null) {
+                    if (data != null) {
                         traceData[coordinate] = arrayOf(data)
                     }
                 }
@@ -111,9 +112,21 @@ public class PlotlyElement(public val div: HTMLElement)
  * Create a div element and render the plot in it
  */
 @OptIn(DelicateCoroutinesApi::class)
+@Deprecated("Change arguments positions", ReplaceWith("plotDiv(plot, plotlyConfig, scope)"))
 public fun TagConsumer<HTMLElement>.plotDiv(
     plotlyConfig: PlotlyConfig,
     plot: Plot,
+    scope: CoroutineScope = plot.manager?.context ?: GlobalScope,
+): PlotlyElement = PlotlyElement(div("plotly-kt-plot").apply { plot(plotlyConfig, plot) })
+
+
+/**
+ * Create a div element and render the plot in it
+ */
+@OptIn(DelicateCoroutinesApi::class)
+public fun TagConsumer<HTMLElement>.plotDiv(
+    plot: Plot,
+    plotlyConfig: PlotlyConfig = PlotlyConfig(),
     scope: CoroutineScope = plot.manager?.context ?: GlobalScope,
 ): PlotlyElement = PlotlyElement(div("plotly-kt-plot").apply { plot(plotlyConfig, plot) })
 

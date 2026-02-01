@@ -5,12 +5,14 @@
 ### Added
 
 ### Changed
+- Order of arguments in Plotly-kt for js plotDiv functions
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Plotly-kt js demo
 
 ### Security
 

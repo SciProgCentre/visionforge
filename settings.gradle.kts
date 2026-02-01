@@ -68,5 +68,6 @@ include(
 //    ":plotly:examples:fx-demo",
     ":plotly-kt:examples:compose-demo",
     ":plotly-kt:examples:js-demo",
-    ":plotly-kt:examples:native-demo"
+    ":plotly-kt:examples:native-demo",
+    ":plotly-kt:examples:wasm-demo"
 )

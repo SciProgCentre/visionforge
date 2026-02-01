@@ -27,6 +27,11 @@ kscience {
     nativeMain {
         implementation("com.squareup.okio:okio:3.3.0")
     }
+
+    wasmJsMain {
+        api(npm("plotly.js", plotlyVersion))
+        api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+    }
 }
 
 kotlinJupyter {

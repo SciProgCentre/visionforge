@@ -720,13 +720,11 @@ public fun <T : Scheme> Trace.scheme(
 
 /**
  * A base class for Plotly traces
- *
- * @param uid a unique identifier for this trace
  */
 @Serializable
 public open class Trace : AbstractVision(), MutableMetaProvider, MetaRepr {
 
-    override fun get(name: Name): MutableMeta? = properties.get(name)
+    override fun get(name: Name): MutableMeta? = properties[name]
 
     override fun set(name: Name, node: Meta?) {
         properties[name] = node
