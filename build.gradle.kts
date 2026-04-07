@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalAbiValidation::class)
+
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
@@ -48,12 +51,11 @@ kscienceProject {
     publishToCentral()
 
     abiValidation {
-//        filters{
-//            excluded{
-//                byNames
-//            }
-//        }
-        //ignoredPackages.add("info.laht.threekt")
+        filters{
+            exclude{
+                byNames.add("info.laht.threekt.**")
+            }
+        }
     }
 
     readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")

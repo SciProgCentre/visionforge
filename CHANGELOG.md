@@ -5,6 +5,7 @@
 ### Added
 - Plotly implementation and demo for Kotlin/Wasm
 - Wasm targets for plotly-kt and visionforge-core/solid
+- Time (Instant) based TraceValues in Plotly
 
 ### Changed
 - Order of arguments in Plotly-kt for js plotDiv functions

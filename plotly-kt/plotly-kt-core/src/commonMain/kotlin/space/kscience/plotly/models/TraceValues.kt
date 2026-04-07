@@ -2,6 +2,7 @@ package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
+import kotlin.time.Instant
 
 /**
  * Type-safe accessor class for values in the trace
@@ -27,6 +28,12 @@ public class TraceValues internal constructor(public val owner: MutableMetaProvi
             this.value = value.map { it.asValue() }.asValue()
         }
 
+    public var times: Iterable<Instant?>
+        get() = value?.list?.map { Instant.parseOrNull(it.string) } ?: emptyList()
+        set(value) {
+            this.value = value.map { it.toString().asValue() }.asValue()
+        }
+
     /**
      * Smart fill for trace values. The following types are accepted: [DoubleArray], [IntArray], [Array] of primitive or string,
      * [Iterable] of primitive or string.
@@ -48,6 +55,10 @@ public class TraceValues internal constructor(public val owner: MutableMetaProvi
 
     public operator fun invoke(vararg strings: String) {
         this.strings = strings.asList()
+    }
+
+    public operator fun invoke(vararg times: Instant) {
+        this.times = times.asList()
     }
 
     public operator fun invoke(lists: List<List<Number>>) {
