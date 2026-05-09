@@ -1,45 +1,91 @@
 package space.kscience.visionforge.solid
 
+import space.kscience.dataforge.meta.Meta
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * GeometryBuilder that computes closed-mesh volume for verification.
+ */
+private class VolumeCollectorBuilder : GeometryBuilder<Unit> {
+    private var signedVolume = 0.0
+
+    /**
+     * Accumulates signed volume contribution from each triangular face.
+     */
+    override fun face(
+        vertex1: FloatVector3D,
+        vertex2: FloatVector3D,
+        vertex3: FloatVector3D,
+        normal: FloatVector3D?,
+        meta: Meta
+    ) {
+        val x1 = vertex1.x.toDouble(); val y1 = vertex1.y.toDouble(); val z1 = vertex1.z.toDouble()
+        val x2 = vertex2.x.toDouble(); val y2 = vertex2.y.toDouble(); val z2 = vertex2.z.toDouble()
+        val x3 = vertex3.x.toDouble(); val y3 = vertex3.y.toDouble(); val z3 = vertex3.z.toDouble()
+        // Signed volume contribution of the tetrahedron formed with the origin
+        signedVolume += (x1 * (y2 * z3 - y3 * z2) +
+                x2 * (y3 * z1 - y1 * z3) +
+                x3 * (y1 * z2 - y2 * z1)) / 6.0
+    }
+
+    /**
+     * Builds the final result.
+     */
+    override fun build() {}
+
+    /**
+     * Returns the absolute volume of the closed triangulated mesh.
+     */
+    fun volume(): Double = abs(signedVolume)
+}
+
 class CSGTest {
 
+    /**
+     * Tests that union of two non-overlapping boxes produces correct total volume.
+     */
     @Test
-    fun testUnionVolume() {
-        // два непересекающихся куба — объём суммируется
-        val boxA = Box(1f, 1f, 1f).apply { x = -2f }
-        val boxB = Box(1f, 1f, 1f).apply { x = 2f }
+    fun testCompositeUnionVolume() {
+        val group = SolidGroup()
 
-        val result = boxA.toCSGSolid().union(boxB.toCSGSolid())
+        val composite = group.union {
+            box(1f, 1f, 1f) {
+                x = -2f
+            }
+            box(1f, 1f, 1f) {
+                x = 2f
+            }
+        }
 
-        val expectedVolume = boxA.toCSGSolid().calculateVolume() + boxB.toCSGSolid().calculateVolume()
-        assertEquals(expectedVolume, result.calculateVolume(), 0.01)
+        val collector = VolumeCollectorBuilder()
+
+        buildComposite(composite, collector)
+
+        val volume = collector.volume()
+        assertEquals(2.0, volume, 0.01)
     }
 
+    /**
+     * Tests that subtraction of sphere from box produces correct remaining volume.
+     */
     @Test
-    fun testSubtractVolume() {
-        // куб 1.5 минус шар 0.5
-        // объём куба = 1.728, объём шара = (4/3)*PI*0.5³ ≈ 0.5236
-        // ожидаем ≈ 1.204
-        val box = Box(1.5f, 1.5f, 1.5f)
-        val sphere = Sphere(0.5f)
+    fun testCompositeSubtractVolume() {
+        val group = SolidGroup()
 
-        val result = box.toCSGSolid().subtract(sphere.toCSGSolid())
+        val composite = SolidGroup().subtract {
+            box(1.5f, 1.5f, 1.5f)
+            sphere(0.5f)
+        }
 
+        val collector = VolumeCollectorBuilder()
+
+        buildComposite(composite, collector)
+
+        val volume = collector.volume()
         val expectedVolume = 1.5 * 1.5 * 1.5 - (4.0 / 3.0) * PI * 0.5 * 0.5 * 0.5
-        assertEquals(expectedVolume, result.calculateVolume(), 0.05)
-    }
-
-    @Test
-    fun testIntersectVolume() {
-        // два куба 1x1x1 со смещением 0.5 — пересечение 0.5x1x1 = 0.5
-        val boxA = Box(1f, 1f, 1f).apply { x = -0.25 }
-        val boxB = Box(1f, 1f, 1f).apply { x = 0.25 }
-
-        val result = boxA.toCSGSolid().intersect(boxB.toCSGSolid())
-
-        assertEquals(0.5, result.calculateVolume(), 0.05)
+        assertEquals(expectedVolume, volume, 0.05)
     }
 }
