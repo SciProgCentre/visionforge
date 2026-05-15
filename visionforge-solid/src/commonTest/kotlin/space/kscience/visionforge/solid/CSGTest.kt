@@ -62,7 +62,7 @@ class CSGTest {
 
         val collector = VolumeCollectorBuilder()
 
-        buildComposite(composite, collector)
+        collector.buildComposite(composite)
 
         val volume = collector.volume()
         assertEquals(2.0, volume, 0.01)
@@ -82,10 +82,35 @@ class CSGTest {
 
         val collector = VolumeCollectorBuilder()
 
-        buildComposite(composite, collector)
+        collector.buildComposite(composite)
 
         val volume = collector.volume()
         val expectedVolume = 1.5 * 1.5 * 1.5 - (4.0 / 3.0) * PI * 0.5 * 0.5 * 0.5
         assertEquals(expectedVolume, volume, 0.05)
     }
+
+    /**
+     * Rotation preserves volume: two separated boxes each rotated 45° around Y still
+     * have no overlap, so union volume must equal the sum of their individual volumes (2.0).
+     */
+    @Test
+    fun testUnionOfRotatedBoxesVolume() {
+        val composite = SolidGroup().union {
+            box(1f, 1f, 1f) {
+                x = -3f
+                rotationY = PI / 4
+            }
+            box(1f, 1f, 1f) {
+                x = 3f
+                rotationY = PI / 4
+            }
+        }
+
+        val collector = VolumeCollectorBuilder()
+        collector.buildComposite(composite)
+
+        // Rotation is volume-preserving, and the boxes are far apart, so total = 1 + 1
+        assertEquals(2.0, collector.volume(), 0.01)
+    }
+
 }

@@ -9,6 +9,12 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.kmath.geometry.euclidean3d.Float32Space3D
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.kmath.geometry.euclidean3d.Float64Vector3D
+import space.kscience.kmath.geometry.euclidean3d.RotationOrder
+import space.kscience.kmath.geometry.euclidean3d.fromEuler
+import space.kscience.kmath.geometry.euclidean3d.rotate
+import space.kscience.kmath.complex.Quaternion
+import space.kscience.kmath.geometry.euclidean3d.toRotationMatrix
+import space.kscience.kmath.geometry.radians
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,7 +34,7 @@ public enum class PolygonType {
 /**
  * 3D vertex with position and normal.
  */
-public data class CSGVertex(
+private data class CSGVertex(
     val position: Vector3D<Float64>, // 3D position of the vertex
     val normal: Vector3D<Float64> // Normal vector at the vertex
 ) {
@@ -38,7 +44,7 @@ public data class CSGVertex(
      * @param other Target vertex for interpolation
      * @param t Interpolation parameter in range [0.0, 1.0]
      */
-    public fun interpolate(other: CSGVertex, t: Double): CSGVertex = with(Float64Space3D) {
+    fun interpolate(other: CSGVertex, t: Double): CSGVertex = with(Float64Space3D) {
         val newPosition = position + (other.position - position) * t
         val newNormal = (normal + (other.normal - normal) * t).let {
             val len = norm(it)
@@ -50,7 +56,7 @@ public data class CSGVertex(
     /**
      * Returns a vertex with flipped normal direction.
      */
-    public fun flipped(): CSGVertex = with(Float64Space3D) {
+    fun flipped(): CSGVertex = with(Float64Space3D) {
         copy(normal = -normal)
     }
 }
@@ -58,7 +64,7 @@ public data class CSGVertex(
 /**
  * Convex polygon with vertices in CCW order.
  */
-public data class CSGPolygon(
+private data class CSGPolygon(
     val vertices: List<CSGVertex>, // List of vertices in counter-clockwise order
     val shared: Int? = null // Optional shared material/property identifier
 ) {
@@ -84,7 +90,7 @@ public data class CSGPolygon(
     /**
      * Returns a polygon with flipped orientation and reversed vertex order.
      */
-    public fun flipped(): CSGPolygon = CSGPolygon(
+    fun flipped(): CSGPolygon = CSGPolygon(
         vertices.asReversed().map { it.flipped() },
         shared
     )
@@ -93,7 +99,7 @@ public data class CSGPolygon(
 /**
  * Plane equation: normal · point = w.
  */
-public data class CSGPlane(
+private data class CSGPlane(
     val normal: Vector3D<Float64>, // Unit normal vector of the plane
     val w: Double // Distance from origin along the normal
 ) {
@@ -102,7 +108,7 @@ public data class CSGPlane(
      *
      * @param point The point to classify
      */
-    public fun classifyPoint(point: Vector3D<Float64>): PolygonType = with(Float64Space3D) {
+    fun classifyPoint(point: Vector3D<Float64>): PolygonType = with(Float64Space3D) {
         val t = normal.dot(point) - w
         return when {
             t < -EPSILON -> PolygonType.BACK
@@ -120,7 +126,7 @@ public data class CSGPlane(
      * @param front Output list for front-side polygons
      * @param back Output list for back-side polygons
      */
-    public fun splitPolygon(
+    fun splitPolygon(
         polygon: CSGPolygon,
         coplanarFront: MutableList<CSGPolygon>,
         coplanarBack: MutableList<CSGPolygon>,
@@ -183,7 +189,7 @@ public data class CSGPlane(
     /**
      * Returns a plane with flipped normal direction.
      */
-    public fun flipped(): CSGPlane = with(Float64Space3D) {
+    fun flipped(): CSGPlane = with(Float64Space3D) {
         CSGPlane(-normal, -w)
     }
 }
@@ -338,54 +344,6 @@ private fun triangulatePolygon(p: CSGPolygon): List<CSGPolygon> {
 }
 
 /**
- * Serialization data structure for CSG vertex.
- */
-private data class CSGVertexData(
-    val px: Double, val py: Double, val pz: Double,
-    val nx: Double, val ny: Double, val nz: Double
-) {
-    /**
-     * Converts this data structure to CSGVertex.
-     */
-    fun toCSGVertex(): CSGVertex = CSGVertex(
-        position = Float64Space3D.vector(px, py, pz),
-        normal   = Float64Space3D.vector(nx, ny, nz)
-    )
-
-    companion object {
-        /**
-         * Creates CSGVertexData from CSGVertex.
-         */
-        fun fromCSGVertex(v: CSGVertex): CSGVertexData = CSGVertexData(
-            px = v.position.x, py = v.position.y, pz = v.position.z,
-            nx = v.normal.x,   ny = v.normal.y,   nz = v.normal.z
-        )
-    }
-}
-
-/**
- * Serialization data structure for CSG polygon.
- */
-private data class CSGPolygonData(
-    val vertices: List<CSGVertexData>,
-    val shared: Int? = null
-) {
-    /**
-     * Converts this data structure to CSGPolygon.
-     */
-    fun toCSGPolygon(): CSGPolygon =
-        CSGPolygon(vertices = vertices.map { it.toCSGVertex() }, shared = shared)
-
-    companion object {
-        /**
-         * Creates CSGPolygonData from CSGPolygon.
-         */
-        fun fromCSGPolygon(p: CSGPolygon): CSGPolygonData =
-            CSGPolygonData(vertices = p.vertices.map { CSGVertexData.fromCSGVertex(it) }, shared = p.shared)
-    }
-}
-
-/**
  * Geometry builder that collects polygons for CSG operations.
  */
 private class CSGGeometryCollector : GeometryBuilder<Unit> {
@@ -488,72 +446,29 @@ private fun collectSpherePolygons(center: Float64Vector3D, radius: Double, segme
 }
 
 /**
- * 3x3 transformation matrix for rotation operations.
- */
-private data class Matrix3x3(
-    val m00: Double, val m01: Double, val m02: Double,
-    val m10: Double, val m11: Double, val m12: Double,
-    val m20: Double, val m21: Double, val m22: Double
-) {
-    /**
-     * Transforms a vector by this matrix.
-     */
-    fun transform(v: Float64Vector3D) = with(Float64Space3D) {
-        vector(
-            m00 * v.x + m01 * v.y + m02 * v.z,
-            m10 * v.x + m11 * v.y + m12 * v.z,
-            m20 * v.x + m21 * v.y + m22 * v.z
-        )
-    }
-}
-
-/**
- * Builds a 3D rotation matrix from Euler angles.
- */
-private fun buildRotationMatrix(rotX: Double, rotY: Double, rotZ: Double): Matrix3x3 {
-    val cx = cos(rotX); val sx = sin(rotX)
-    val cy = cos(rotY); val sy = sin(rotY)
-    val cz = cos(rotZ); val sz = sin(rotZ)
-    return Matrix3x3(
-        m00 =  cy * cz,                m01 = -cy * sz,                m02 =  sy,
-        m10 =  sx * sy * cz + cx * sz, m11 = -sx * sy * sz + cx * cz, m12 = -sx * cy,
-        m20 = -cx * sy * cz + sx * sz, m21 =  cx * sy * sz + sx * cz, m22 =  cx * cy
-    )
-}
-
-/**
- * Applies position, rotation, and scale transformations to polygons.
+ * Applies scale, rotation (from Euler angles via quaternion), and translation from [solid] to [polygons].
  */
 private fun applyTransformations(polygons: List<CSGPolygon>, solid: Solid): List<CSGPolygon> {
-    val position = solid.position ?: Float32Space3D.zero
-    val rotMatrix = buildRotationMatrix(
-        (solid.rotationX).toDouble(),
-        (solid.rotationY).toDouble(),
-        (solid.rotationZ).toDouble()
-    )
-    val scaleX = (solid.scaleX).toDouble()
-    val scaleY = (solid.scaleY).toDouble()
-    val scaleZ = (solid.scaleZ).toDouble()
+    val rotation = Quaternion.fromEuler(
+        solid.rotationX.radians, solid.rotationY.radians, solid.rotationZ.radians, RotationOrder.XYZ,
+    ).toRotationMatrix()
+    val translation = Float64Space3D.vector(solid.x, solid.y, solid.z)
 
     return polygons.map { polygon ->
-        CSGPolygon(
-            vertices = polygon.vertices.map { vertex ->
-                with(Float64Space3D) {
-                    val scaled     = vector(vertex.position.x * scaleX, vertex.position.y * scaleY, vertex.position.z * scaleZ)
-                    val rotated    = rotMatrix.transform(scaled)
-                    val translated = rotated + vector(position.x.toDouble(), position.y.toDouble(), position.z.toDouble())
-                    CSGVertex(translated, rotMatrix.transform(vertex.normal))
-                }
-            },
-            shared = polygon.shared
-        )
+        CSGPolygon(polygon.vertices.map { v ->
+            with(Float64Space3D) {
+                val scaled = vector(v.position.x * solid.scaleX.toDouble(), v.position.y * solid.scaleY.toDouble(), v.position.z * solid.scaleZ.toDouble())
+                val rotatedNormal = rotate(v.normal, rotation).let { n -> val len = norm(n); if (len > EPSILON) n * (1.0 / len) else n }
+                CSGVertex(rotate(scaled, rotation) + translation, rotatedNormal)
+            }
+        }, polygon.shared)
     }
 }
 
 /**
  * Converts a [GeometrySolid] to CSG polygon representation with applied transformations.
  */
-public fun GeometrySolid.toCSGPolygons(): List<CSGPolygon> {
+private fun GeometrySolid.toCSGPolygons(): List<CSGPolygon> {
     val polygons = when (this) {
         is Sphere -> collectSpherePolygons(
             center   = Float64Space3D.zero,
@@ -598,7 +513,7 @@ private fun buildPolygons(polygons: List<CSGPolygon>, geometryBuilder: GeometryB
 }
 
 /**
- * builds a [Composite] solid into [geometryBuilder] using CSG Boolean operations.
+ * builds a [Composite] solid into [GeometryBuilder] using CSG Boolean operations.
  *
  * Both [Composite.first] and [Composite.second] must implement [GeometrySolid].
  * The operation performed depends on [Composite.compositeType]:
@@ -611,10 +526,7 @@ private fun buildPolygons(polygons: List<CSGPolygon>, geometryBuilder: GeometryB
  * @param geometryBuilder Target builder for output geometry
  * @throws IllegalArgumentException if either solid is not a [GeometrySolid]
  */
-public fun buildComposite(
-    composite: Composite,
-    geometryBuilder: GeometryBuilder<*>
-) {
+public fun GeometryBuilder<*>.buildComposite(composite: Composite) {
     require(composite.first is GeometrySolid) { "First solid must be GeometrySolid" }
     require(composite.second is GeometrySolid) { "Second solid must be GeometrySolid" }
 
@@ -628,5 +540,5 @@ public fun buildComposite(
         CompositeType.GROUP -> polygonsA + polygonsB
     }
 
-    buildPolygons(result, geometryBuilder)
+    buildPolygons(result, this)
 }
