@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -146,7 +145,6 @@ public class CutTube(
  * @param topNormal normal vector of the top section
  * @param bottomNormal normal vector of the bottom section
  */
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.cutTube(
     outerRadius: Number,
     innerRadius: Number,

@@ -17,6 +17,7 @@ import space.kscience.visionforge.properties
  */
 @Serializable
 @SerialName("solid.extrude")
+@VisionBuilder
 public class Extruded(
     public val shape: Shape2D,
     public val layers: List<Layer>,
@@ -82,13 +83,11 @@ public class Extruded(
         public var layers: MutableList<Layer> = ArrayList(),
         public val properties: MutableMeta = MutableMeta(),
     ) {
-        @VisionBuilder
-        public fun shape(block: Shape2DBuilder.() -> Unit) {
+                public fun shape(block: Shape2DBuilder.() -> Unit) {
             this.shape = Shape2DBuilder().apply(block).build()
         }
 
-        @VisionBuilder
-        public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
+                public fun layer(z: Number, x: Number = 0.0, y: Number = 0.0, scale: Number = 1.0) {
             layers.add(Layer(x.toFloat(), y.toFloat(), z.toFloat(), scale.toFloat()))
         }
 
@@ -104,7 +103,6 @@ public class Extruded(
     }
 }
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.extruded(
     name: String? = null,
     action: Extruded.Builder.() -> Unit = {},

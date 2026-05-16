@@ -54,7 +54,6 @@ public abstract class LightSource : MiscSolid() {
 @SerialName("solid.light.ambient")
 public class AmbientLightSource : LightSource()
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.ambientLight(
     name: String? = "@ambientLight",
     block: AmbientLightSource.() -> Unit = {},
@@ -67,7 +66,6 @@ public fun MutableVisionContainer<Solid>.ambientLight(
 public class PointLightSource : LightSource()
 
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.pointLight(
     x: Number,
     y: Number,

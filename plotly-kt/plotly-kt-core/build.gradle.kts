@@ -18,6 +18,7 @@ kscience {
 
     commonMain {
         api(projects.visionforgeCore)
+        api(project.dependencies.platform(spclibs.kotlin.js.wrappers))
     }
 
     jsMain {

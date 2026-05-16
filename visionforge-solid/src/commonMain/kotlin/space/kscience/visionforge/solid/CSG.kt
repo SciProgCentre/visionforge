@@ -1,21 +1,13 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.kmath.geometry.Vector3D
-import space.kscience.kmath.geometry.euclidean3d.Float64Space3D
-import space.kscience.kmath.structures.Float64
-import kotlin.math.abs
-
 import space.kscience.dataforge.meta.Meta
-import space.kscience.kmath.geometry.euclidean3d.Float32Space3D
-import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
-import space.kscience.kmath.geometry.euclidean3d.Float64Vector3D
-import space.kscience.kmath.geometry.euclidean3d.RotationOrder
-import space.kscience.kmath.geometry.euclidean3d.fromEuler
-import space.kscience.kmath.geometry.euclidean3d.rotate
 import space.kscience.kmath.complex.Quaternion
-import space.kscience.kmath.geometry.euclidean3d.toRotationMatrix
+import space.kscience.kmath.geometry.Vector3D
+import space.kscience.kmath.geometry.euclidean3d.*
 import space.kscience.kmath.geometry.radians
+import space.kscience.kmath.structures.Float64
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -513,7 +505,7 @@ private fun buildPolygons(polygons: List<CSGPolygon>, geometryBuilder: GeometryB
 }
 
 /**
- * builds a [Composite] solid into [GeometryBuilder] using CSG Boolean operations.
+ * Builds a [Composite] solid into [GeometryBuilder] using CSG Boolean operations.
  *
  * Both [Composite.first] and [Composite.second] must implement [GeometrySolid].
  * The operation performed depends on [Composite.compositeType]:
@@ -523,7 +515,6 @@ private fun buildPolygons(polygons: List<CSGPolygon>, geometryBuilder: GeometryB
  * - [CompositeType.GROUP]: Simple concatenation without Boolean operation
  *
  * @param composite The composite solid to render
- * @param geometryBuilder Target builder for output geometry
  * @throws IllegalArgumentException if either solid is not a [GeometrySolid]
  */
 public fun GeometryBuilder<*>.buildComposite(composite: Composite) {

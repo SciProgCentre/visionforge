@@ -5,8 +5,10 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.meta.update
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 
+/**
+ * Types of composite solids
+ */
 public enum class CompositeType {
     GROUP, // Dumb sum of meshes
     UNION, //CSG union
@@ -25,11 +27,10 @@ public class Composite(
     public val second: Solid,
 ) : SolidBase<Composite>()
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.composite(
     type: CompositeType,
     name: String? = null,
-    @VisionBuilder builder: SolidGroup.() -> Unit,
+    builder: SolidGroup.() -> Unit,
 ): Composite {
     val group = SolidGroup().apply(builder)
     val children = group.visions.values.toList()
@@ -47,11 +48,11 @@ public inline fun MutableVisionContainer<Solid>.composite(
 /**
  * A smart form of [Composite] that in case of [CompositeType.GROUP] creates a static group instead
  */
-@VisionBuilder
+
 public fun SolidGroup.smartComposite(
     type: CompositeType,
     name: String? = null,
-    @VisionBuilder builder: SolidGroup.() -> Unit,
+    builder: SolidGroup.() -> Unit,
 ): Solid = if (type == CompositeType.GROUP) {
     val group = SolidGroup().apply(builder)
     if (name == null && group.properties.isEmpty()) {
@@ -69,19 +70,16 @@ public fun SolidGroup.smartComposite(
     composite(type, name, builder)
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.union(
     name: String? = null,
     builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.UNION, name, builder = builder)
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.subtract(
     name: String? = null,
     builder: SolidGroup.() -> Unit,
 ): Composite = composite(CompositeType.SUBTRACT, name, builder = builder)
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.intersect(
     name: String? = null,
     builder: SolidGroup.() -> Unit,

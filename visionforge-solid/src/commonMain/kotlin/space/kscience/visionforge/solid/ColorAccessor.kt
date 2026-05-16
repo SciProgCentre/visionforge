@@ -9,6 +9,9 @@ import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionBuilder
 import kotlin.properties.ReadOnlyProperty
 
+/**
+ * A property that provides access to a color value
+ */
 @VisionBuilder
 public class ColorAccessor(
     private val provider: MutableMeta,

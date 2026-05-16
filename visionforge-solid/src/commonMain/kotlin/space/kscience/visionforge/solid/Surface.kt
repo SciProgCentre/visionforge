@@ -9,7 +9,6 @@ import space.kscience.kmath.geometry.component2
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.kmath.structures.Float32
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.properties
 
 
@@ -169,7 +168,6 @@ public class Surface(
 }
 
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.surface(
     name: String? = null,
     action: Surface.Builder.() -> Unit = {},

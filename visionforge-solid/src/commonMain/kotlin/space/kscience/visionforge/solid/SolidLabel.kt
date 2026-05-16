@@ -3,7 +3,6 @@ package space.kscience.visionforge.solid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 
 @Serializable
 @SerialName("solid.label")
@@ -13,7 +12,6 @@ public class SolidLabel(
     public val fontFamily: String,
 ) : SolidBase<SolidLabel>()
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.label(
     text: String,
     fontSize: Number = 20,

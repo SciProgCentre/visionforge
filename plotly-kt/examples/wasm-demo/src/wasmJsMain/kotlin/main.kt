@@ -20,6 +20,7 @@ import space.kscience.plotly.models.TraceType
 import space.kscience.plotly.models.histogram
 import space.kscience.plotly.models.scatter
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 private fun onDomLoaded(block: (Event) -> Unit) {
     document.addEventListener("DOMContentLoaded", block)
@@ -45,7 +46,7 @@ fun main(): Unit = withCanvas {
                 GlobalScope.launch {
                     while (isActive) {
                         x.numbers = List(500) { rnd.nextDouble() }
-                        delay(300)
+                        delay(300.milliseconds)
                     }
                 }
             }
@@ -97,7 +98,7 @@ fun main(): Unit = withCanvas {
 
                 GlobalScope.launch {
                     while (isActive) {
-                        delay(500)
+                        delay(500.milliseconds)
                         marker {
                             if (Random.nextBoolean()) {
                                 color("magenta")

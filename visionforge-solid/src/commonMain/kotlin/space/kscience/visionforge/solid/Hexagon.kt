@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 
 public interface Hexagon : GeometrySolid {
     public val node1: FloatVector3D
@@ -51,7 +50,6 @@ public class Box(
     override val node8: FloatVector3D get() = Float32Vector3D(-dx, dy, dz)
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.box(
     xSize: Number,
     ySize: Number,
@@ -75,7 +73,6 @@ public class GenericHexagon(
     override val node8: FloatVector3D,
 ) : SolidBase<GenericHexagon>(), Hexagon
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.hexagon(
     node1: FloatVector3D,
     node2: FloatVector3D,

@@ -8,7 +8,7 @@ import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
  */
 public interface GeometryBuilder<T : Any> {
     /**
-     * Add a face to 3D model. If one of the vertices is not present in the current geometry model list of vertices,
+     * Add a face to a 3D model. If one of the vertices is not present in the current geometry model list of vertices,
      * it is added automatically.
      *
      * @param normal optional external normal to the face

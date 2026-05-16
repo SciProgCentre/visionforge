@@ -119,7 +119,6 @@ public var Solid.material: SolidMaterial?
     get() = readProperty(MATERIAL_KEY)?.let { SolidMaterial.read(it)}
     set(value) = properties.set(MATERIAL_KEY, value?.meta)
 
-@VisionBuilder
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     mutableProperty(MATERIAL_KEY, inherited = false, useStyles = false).updateWith(SolidMaterial, builder)
 }
@@ -131,7 +130,6 @@ public var Solid.opacity: Number?
     }
 
 
-@VisionBuilder
 public fun Solid.edges(enabled: Boolean = true, block: SolidMaterial.() -> Unit = {}) {
     properties[SolidMaterial.EDGES_ENABLED_KEY] = enabled
     SolidMaterial.write(mutableProperty(SolidMaterial.EDGES_MATERIAL_KEY)).apply(block)

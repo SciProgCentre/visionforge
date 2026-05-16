@@ -16,7 +16,34 @@ import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 
-
+/**
+ * The `Solids` class represents a plugin for managing and serializing 3D solid objects
+ * in a vision-based system. It extends `VisionPlugin` and implements `MutableVisionContainer<Solid>`.
+ *
+ * This class facilitates the serialization, deserialization, and manipulation of various
+ * 3D solid objects while integrating with the vision management system.
+ *
+ * Primary features include:
+ * - A comprehensive serializers module specifically designed for various types of solid objects.
+ * - Utilities for encoding and decoding solid objects to and from JSON representations.
+ * - The ability to set a specific solid as the root within the vision management system.
+ *
+ * @constructor Initializes the plugin with the provided metadata.
+ * @param meta Metadata necessary to configure this plugin.
+ *
+ * Properties:
+ * @property tag A unique identifier for this plugin.
+ * @property visionSerializersModule Module providing serializers for all supported solid types.
+ *
+ * Functions:
+ * @function setVision Sets or replaces a solid in the vision container, assigning it as the root
+ * in the associated `VisionManager`.
+ *
+ * Companion Object:
+ * - Handles the creation of `Solids` instances.
+ * - Provides a serializers module supporting polymorphic serialization of `Solid` objects.
+ * - Contains utility methods for encoding and decoding solids to/from JSON strings.
+ */
 public class Solids(meta: Meta) : VisionPlugin(meta), MutableVisionContainer<Solid> {
     override val tag: PluginTag get() = Companion.tag
 

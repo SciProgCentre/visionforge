@@ -10,7 +10,6 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.asName
 import space.kscience.plotly.models.Trace
-import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.html.VisionTagConsumer
 import kotlin.js.JsName
@@ -96,7 +95,6 @@ public class PlotlyConfig : Scheme() {
 /**
  * Embed a dynamic plotly plot in a vision
  */
-@VisionBuilder
 public inline fun VisionOutput.plotly(
     config: PlotlyConfig = PlotlyConfig(),
     block: Plot.() -> Unit,

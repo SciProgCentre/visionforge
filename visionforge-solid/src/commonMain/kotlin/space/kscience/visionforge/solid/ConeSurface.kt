@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -120,7 +119,6 @@ public class ConeSurface(
 }
 
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.tube(
     radius: Number,
     height: Number,
@@ -141,7 +139,6 @@ public inline fun MutableVisionContainer<Solid>.tube(
     setVision(SolidGroup.inferNameFor(name, it), it)
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.coneSurface(
     bottomOuterRadius: Number,
     bottomInnerRadius: Number,
