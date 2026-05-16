@@ -142,6 +142,7 @@ private data class CSGPlane(
                 val sameDirection = with(Float64Space3D) { normal.dot(polygon.plane.normal) > 0 }
                 if (sameDirection) coplanarFront.add(polygon) else coplanarBack.add(polygon)
             }
+
             PolygonType.FRONT -> front.add(polygon)
             PolygonType.BACK -> back.add(polygon)
             PolygonType.SPANNING -> {
@@ -204,16 +205,16 @@ private data class BSPNode(
         val currentPlane = plane ?: newPolygons[0].plane
         val coplanar = mutableListOf<CSGPolygon>()
         val frontList = mutableListOf<CSGPolygon>()
-        val backList  = mutableListOf<CSGPolygon>()
+        val backList = mutableListOf<CSGPolygon>()
 
         for (polygon in newPolygons) {
             currentPlane.splitPolygon(polygon, coplanar, coplanar, frontList, backList)
         }
 
         return BSPNode(
-            plane    = currentPlane,
-            front    = if (frontList.isNotEmpty()) (front ?: BSPNode()).build(frontList) else front,
-            back     = if (backList.isNotEmpty())  (back  ?: BSPNode()).build(backList)  else back,
+            plane = currentPlane,
+            front = if (frontList.isNotEmpty()) (front ?: BSPNode()).build(frontList) else front,
+            back = if (backList.isNotEmpty()) (back ?: BSPNode()).build(backList) else back,
             polygons = polygons + coplanar
         )
     }
@@ -222,9 +223,9 @@ private data class BSPNode(
      * Inverts the tree by flipping all planes and polygons.
      */
     fun invert(): BSPNode = BSPNode(
-        plane    = plane?.flipped(),
-        front    = back?.invert(),
-        back     = front?.invert(),
+        plane = plane?.flipped(),
+        front = back?.invert(),
+        back = front?.invert(),
         polygons = polygons.map { it.flipped() }
     )
 
@@ -235,23 +236,23 @@ private data class BSPNode(
         if (plane == null) return polygons
 
         val frontList = mutableListOf<CSGPolygon>()
-        val backList  = mutableListOf<CSGPolygon>()
+        val backList = mutableListOf<CSGPolygon>()
 
         for (polygon in polygons) {
             plane.splitPolygon(polygon, frontList, backList, frontList, backList)
         }
 
         return (front?.clipPolygons(frontList) ?: frontList) +
-                (back?.clipPolygons(backList)   ?: emptyList())
+                (back?.clipPolygons(backList) ?: emptyList())
     }
 
     /**
      * Clips this tree to another BSP tree.
      */
     fun clipTo(bsp: BSPNode): BSPNode = BSPNode(
-        plane    = plane,
-        front    = front?.clipTo(bsp),
-        back     = back?.clipTo(bsp),
+        plane = plane,
+        front = front?.clipTo(bsp),
+        back = back?.clipTo(bsp),
         polygons = bsp.clipPolygons(polygons)
     )
 
@@ -349,11 +350,15 @@ private class CSGGeometryCollector : GeometryBuilder<Unit> {
         meta: Meta
     ) {
         val n = normal ?: calculateNormal(vertex1, vertex2, vertex3)
-        polygons.add(CSGPolygon(listOf(
-            vertex1.toCSGVertex(n),
-            vertex2.toCSGVertex(n),
-            vertex3.toCSGVertex(n)
-        )))
+        polygons.add(
+            CSGPolygon(
+                listOf(
+                    vertex1.toCSGVertex(n),
+                    vertex2.toCSGVertex(n),
+                    vertex3.toCSGVertex(n)
+                )
+            )
+        )
     }
 
     override fun build() {}
@@ -373,7 +378,7 @@ private class CSGGeometryCollector : GeometryBuilder<Unit> {
      */
     private fun FloatVector3D.toCSGVertex(n: FloatVector3D): CSGVertex = CSGVertex(
         position = Float64Space3D.vector(x.toDouble(), y.toDouble(), z.toDouble()),
-        normal   = Float64Space3D.vector(n.x.toDouble(), n.y.toDouble(), n.z.toDouble())
+        normal = Float64Space3D.vector(n.x.toDouble(), n.y.toDouble(), n.z.toDouble())
     )
 }
 
@@ -383,8 +388,8 @@ private class CSGGeometryCollector : GeometryBuilder<Unit> {
 private fun sphereVertex(center: Float64Vector3D, radius: Double, theta: Double, phi: Double): CSGVertex =
     with(Float64Space3D) {
         val x = -radius * sin(theta) * cos(phi)
-        val y =  radius * cos(theta)
-        val z =  radius * sin(theta) * sin(phi)
+        val y = radius * cos(theta)
+        val z = radius * sin(theta) * sin(phi)
         val pos = center + vector(x, y, z)
         val len = kotlin.math.sqrt(x * x + y * y + z * z)
         val norm = if (len > 1e-5) vector(x / len, y / len, z / len) else vector(x, y, z)
@@ -395,25 +400,27 @@ private fun sphereVertex(center: Float64Vector3D, radius: Double, theta: Double,
  * Generates sphere polygons using spherical tessellation.
  */
 private fun collectSpherePolygons(center: Float64Vector3D, radius: Double, segments: Int): List<CSGPolygon> {
-    val phiStep   = 2.0 * PI / segments
+    val phiStep = 2.0 * PI / segments
     val thetaStep = PI / segments
-    val polygons  = mutableListOf<CSGPolygon>()
+    val polygons = mutableListOf<CSGPolygon>()
 
     // Top cap
     for (j in 0 until segments) {
-        polygons += CSGPolygon(listOf(
-            sphereVertex(center, radius, 0.0,       0.0),
-            sphereVertex(center, radius, thetaStep, j                    * phiStep),
-            sphereVertex(center, radius, thetaStep, ((j + 1) % segments) * phiStep)
-        ))
+        polygons += CSGPolygon(
+            listOf(
+                sphereVertex(center, radius, 0.0, 0.0),
+                sphereVertex(center, radius, thetaStep, j * phiStep),
+                sphereVertex(center, radius, thetaStep, ((j + 1) % segments) * phiStep)
+            )
+        )
     }
 
     // Middle bands
     for (i in 1 until segments - 1) {
-        val theta1 = i       * thetaStep
+        val theta1 = i * thetaStep
         val theta2 = (i + 1) * thetaStep
         for (j in 0 until segments) {
-            val phi1 = j                    * phiStep
+            val phi1 = j * phiStep
             val phi2 = ((j + 1) % segments) * phiStep
             val v00 = sphereVertex(center, radius, theta1, phi1)
             val v10 = sphereVertex(center, radius, theta2, phi1)
@@ -427,11 +434,13 @@ private fun collectSpherePolygons(center: Float64Vector3D, radius: Double, segme
     // Bottom cap
     val lastTheta = PI - thetaStep
     for (j in 0 until segments) {
-        polygons += CSGPolygon(listOf(
-            sphereVertex(center, radius, PI,        0.0),
-            sphereVertex(center, radius, lastTheta, ((j + 1) % segments) * phiStep),
-            sphereVertex(center, radius, lastTheta, j                    * phiStep)
-        ))
+        polygons += CSGPolygon(
+            listOf(
+                sphereVertex(center, radius, PI, 0.0),
+                sphereVertex(center, radius, lastTheta, ((j + 1) % segments) * phiStep),
+                sphereVertex(center, radius, lastTheta, j * phiStep)
+            )
+        )
     }
 
     return polygons
@@ -449,8 +458,13 @@ private fun applyTransformations(polygons: List<CSGPolygon>, solid: Solid): List
     return polygons.map { polygon ->
         CSGPolygon(polygon.vertices.map { v ->
             with(Float64Space3D) {
-                val scaled = vector(v.position.x * solid.scaleX.toDouble(), v.position.y * solid.scaleY.toDouble(), v.position.z * solid.scaleZ.toDouble())
-                val rotatedNormal = rotate(v.normal, rotation).let { n -> val len = norm(n); if (len > EPSILON) n * (1.0 / len) else n }
+                val scaled = vector(
+                    v.position.x * solid.scaleX.toDouble(),
+                    v.position.y * solid.scaleY.toDouble(),
+                    v.position.z * solid.scaleZ.toDouble()
+                )
+                val rotatedNormal =
+                    rotate(v.normal, rotation).let { n -> val len = norm(n); if (len > EPSILON) n * (1.0 / len) else n }
                 CSGVertex(rotate(scaled, rotation) + translation, rotatedNormal)
             }
         }, polygon.shared)
@@ -463,10 +477,11 @@ private fun applyTransformations(polygons: List<CSGPolygon>, solid: Solid): List
 private fun GeometrySolid.toCSGPolygons(): List<CSGPolygon> {
     val polygons = when (this) {
         is Sphere -> collectSpherePolygons(
-            center   = Float64Space3D.zero,
-            radius   = this.radius.toDouble(),
+            center = Float64Space3D.zero,
+            radius = this.radius.toDouble(),
             segments = this.detail ?: 32
         )
+
         else -> {
             val collector = CSGGeometryCollector()
             toGeometry(collector)
@@ -505,26 +520,21 @@ private fun buildPolygons(polygons: List<CSGPolygon>, geometryBuilder: GeometryB
 }
 
 /**
- * Builds a [Composite] solid into [GeometryBuilder] using CSG Boolean operations.
+ * Combines two [GeometrySolid] into a single [GeometryBuilder] using CSG Boolean operations.
  *
- * Both [Composite.first] and [Composite.second] must implement [GeometrySolid].
- * The operation performed depends on [Composite.compositeType]:
+ * The operation performed depends on [compositeType]:
  * - [CompositeType.UNION]: Combines both solids
  * - [CompositeType.SUBTRACT]: Removes second solid from first
  * - [CompositeType.INTERSECT]: Keeps only overlapping regions
  * - [CompositeType.GROUP]: Simple concatenation without Boolean operation
  *
- * @param composite The composite solid to render
- * @throws IllegalArgumentException if either solid is not a [GeometrySolid]
  */
-public fun GeometryBuilder<*>.buildComposite(composite: Composite) {
-    require(composite.first is GeometrySolid) { "First solid must be GeometrySolid" }
-    require(composite.second is GeometrySolid) { "Second solid must be GeometrySolid" }
+public fun GeometryBuilder<*>.composite(compositeType: CompositeType, first: GeometrySolid, second: GeometrySolid) {
 
-    val polygonsA = (composite.first).toCSGPolygons()
-    val polygonsB = (composite.second).toCSGPolygons()
+    val polygonsA = first.toCSGPolygons()
+    val polygonsB = second.toCSGPolygons()
 
-    val result = when (composite.compositeType) {
+    val result = when (compositeType) {
         CompositeType.UNION -> csgUnion(polygonsA, polygonsB)
         CompositeType.SUBTRACT -> csgSubtract(polygonsA, polygonsB)
         CompositeType.INTERSECT -> csgIntersect(polygonsA, polygonsB)
@@ -532,4 +542,15 @@ public fun GeometryBuilder<*>.buildComposite(composite: Composite) {
     }
 
     buildPolygons(result, this)
+}
+
+/**
+ *  Builds a geometry for [Composite] solid into [GeometryBuilder] using CSG Boolean operations.
+ *  Both components of [composite] must implement [GeometrySolid].
+ */
+public fun GeometryBuilder<*>.composite(composite: Composite) {
+    require(composite.first is GeometrySolid) { "First solid must be GeometrySolid" }
+    require(composite.second is GeometrySolid) { "Second solid must be GeometrySolid" }
+
+    return composite(composite.compositeType, composite.first, composite.second)
 }

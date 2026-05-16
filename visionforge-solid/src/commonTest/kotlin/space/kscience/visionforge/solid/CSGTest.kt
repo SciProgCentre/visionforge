@@ -62,7 +62,7 @@ class CSGTest {
 
         val collector = VolumeCollectorBuilder()
 
-        collector.buildComposite(composite)
+        collector.composite(composite)
 
         val volume = collector.volume()
         assertEquals(2.0, volume, 0.01)
@@ -73,7 +73,6 @@ class CSGTest {
      */
     @Test
     fun testCompositeSubtractVolume() {
-        val group = SolidGroup()
 
         val composite = SolidGroup().subtract {
             box(1.5f, 1.5f, 1.5f)
@@ -82,7 +81,7 @@ class CSGTest {
 
         val collector = VolumeCollectorBuilder()
 
-        collector.buildComposite(composite)
+        collector.composite(composite)
 
         val volume = collector.volume()
         val expectedVolume = 1.5 * 1.5 * 1.5 - (4.0 / 3.0) * PI * 0.5 * 0.5 * 0.5
@@ -107,7 +106,7 @@ class CSGTest {
         }
 
         val collector = VolumeCollectorBuilder()
-        collector.buildComposite(composite)
+        collector.composite(composite)
 
         // Rotation is volume-preserving, and the boxes are far apart, so total = 1 + 1
         assertEquals(2.0, collector.volume(), 0.01)
