@@ -32,7 +32,7 @@ kotlin {
     jvm {
 //        withJava()
         compilerOptions {
-            freeCompilerArgs.addAll("-Xjvm-default=all", "-Xcontext-parameters")
+            freeCompilerArgs.addAll("-Xjvm-default=all")
 
         }
         testRuns["test"].executionTask.configure {

@@ -41,12 +41,6 @@ kotlinJupyter {
     }
 }
 
-kotlin {
-    compilerOptions {
-        freeCompilerArgs.addAll("-Xcontext-parameters")
-    }
-}
-
 readme {
     maturity = space.kscience.gradle.Maturity.DEVELOPMENT
 }

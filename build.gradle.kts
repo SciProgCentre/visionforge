@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalAbiValidation::class)
 
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
 
@@ -24,12 +23,6 @@ subprojects {
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    }
-
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.addAll("-Xcontext-parameters")
-        }
     }
 
 //    tasks.withType<KotlinJsCompile>{
