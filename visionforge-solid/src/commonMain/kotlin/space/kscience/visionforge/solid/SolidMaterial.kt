@@ -5,7 +5,6 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.hide
@@ -47,21 +46,21 @@ public class SolidMaterial : Scheme() {
 
     public companion object : SchemeSpec<SolidMaterial>(::SolidMaterial) {
 
-        public val MATERIAL_KEY: Name = "material".asName()
-        public val COLOR_KEY: Name = "color".asName()
-        public val TYPE_KEY: Name = "type".asName()
-        public val SPECULAR_COLOR_KEY: Name = "specularColor".asName()
-        public val EMISSIVE_COLOR_KEY: Name = "emissiveColor".asName()
-        public val OPACITY_KEY: Name = "opacity".asName()
+        public val MATERIAL_KEY: Name = Name.of("material")
+        public val COLOR_KEY: Name = Name.of("color")
+        public val TYPE_KEY: Name = Name.of("type")
+        public val SPECULAR_COLOR_KEY: Name = Name.of("specularColor")
+        public val EMISSIVE_COLOR_KEY: Name = Name.of("emissiveColor")
+        public val OPACITY_KEY: Name = Name.of("opacity")
         public val MATERIAL_OPACITY_KEY: Name = MATERIAL_KEY + OPACITY_KEY
-        public val WIREFRAME_KEY: Name = "wireframe".asName()
+        public val WIREFRAME_KEY: Name = Name.of("wireframe")
         public val MATERIAL_COLOR_KEY: Name = MATERIAL_KEY + COLOR_KEY
         public val MATERIAL_EMISSIVE_COLOR_KEY: Name = MATERIAL_KEY + EMISSIVE_COLOR_KEY
         public val MATERIAL_SPECULAR_COLOR_KEY: Name = MATERIAL_KEY + SPECULAR_COLOR_KEY
         public val MATERIAL_WIREFRAME_KEY: Name = MATERIAL_KEY + WIREFRAME_KEY
 
-        public val EDGES_KEY: Name = "edges".asName()
-        public val ENABLED_KEY: Name = "enabled".asName()
+        public val EDGES_KEY: Name = Name.of("edges")
+        public val ENABLED_KEY: Name = Name.of("enabled")
         public val EDGES_ENABLED_KEY: Name = EDGES_KEY + ENABLED_KEY
         public val EDGES_MATERIAL_KEY: Name = EDGES_KEY + MATERIAL_KEY
 

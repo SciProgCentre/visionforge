@@ -84,7 +84,7 @@ To learn more about DataForge, please consult the following URLs:
 
 ### [visionforge-gdml](visionforge-gdml)
 >
-> **Maturity**: EXPERIMENTAL
+> **Maturity**: DEPRECATED
 
 ### [visionforge-jupyter](visionforge-jupyter)
 > Common visionforge jupyter module

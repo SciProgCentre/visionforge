@@ -22,6 +22,8 @@ import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.three.threeJsHeader
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 
 @Suppress("ExtractKtorModule")
@@ -72,15 +74,15 @@ suspend fun main() {
             val target = Name.parse("layer[$randomLayer].segment[$randomI,$randomJ]")
             val targetVision = sat[target] as Solid
             targetVision.color("red")
-            delay(1000)
+            delay(1.seconds)
             //use to ensure that color is cleared
             targetVision.color.value = Null
-            delay(500)
+            delay(500.milliseconds)
         }
     }
 
     println("Enter 'exit' to close server")
-    while (readLine() != "exit") {
+    while (readlnOrNull() != "exit") {
         //
     }
 

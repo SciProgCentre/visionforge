@@ -2,7 +2,6 @@ package space.kscience.visionforge.solid
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.MutableVision
 import space.kscience.visionforge.Vision
@@ -32,7 +31,7 @@ public class ColorAccessor(
 public fun MutableVision.colorProperty(
     propertyName: Name? = null,
 ): ReadOnlyProperty<Vision, ColorAccessor> = ReadOnlyProperty { _, property ->
-    ColorAccessor(mutableProperty(propertyName ?: property.name.asName(), inherited = true))
+    ColorAccessor(mutableProperty(propertyName ?: Name.of(property.name), inherited = true))
 }
 
 public var ColorAccessor.string: String?

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.VisionChange
 import space.kscience.visionforge.getOrCreateChange
 import space.kscience.visionforge.useProperty
@@ -30,11 +30,11 @@ internal class VisionUpdateTest {
                 box(100, 100, 100)
             }
 
-            getOrCreateChange("top".asName()).propertyChanged(
+            getOrCreateChange(Name.of("top")).propertyChanged(
                 SolidMaterial.MATERIAL_COLOR_KEY,
                 Meta("red")
             )
-            getOrCreateChange("origin".asName()).propertyChanged(
+            getOrCreateChange(Name.of("origin")).propertyChanged(
                 SolidMaterial.MATERIAL_COLOR_KEY,
                 Meta("red")
             )
@@ -55,11 +55,11 @@ internal class VisionUpdateTest {
                 color(123)
                 box(100, 100, 100)
             }
-            getOrCreateChange("top".asName()).propertyChanged(
+            getOrCreateChange(Name.of("top")).propertyChanged(
                 SolidMaterial.MATERIAL_COLOR_KEY,
                 Meta("red")
             )
-            getOrCreateChange("origin".asName()).propertyChanged(
+            getOrCreateChange(Name.of("origin")).propertyChanged(
                 SolidMaterial.MATERIAL_COLOR_KEY,
                 Meta("red")
             )

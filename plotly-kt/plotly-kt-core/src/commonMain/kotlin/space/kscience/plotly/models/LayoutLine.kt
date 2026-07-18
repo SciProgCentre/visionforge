@@ -4,7 +4,7 @@ import space.kscience.dataforge.meta.Scheme
 import space.kscience.dataforge.meta.SchemeSpec
 import space.kscience.dataforge.meta.enum
 import space.kscience.dataforge.meta.numberList
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.numberGreaterThan
 import space.kscience.plotly.numberInRange
 
@@ -40,7 +40,7 @@ public class LayoutLine : Scheme(), Line {
     /**
      * Sets the width (in px) of the lines bounding the marker points.
      */
-    override var widthList: List<Number> by numberList(key = "width".asName())
+    override var widthList: List<Number> by numberList(key = Name.of("width"))
 
     /**
      * Determines the line shape. With "spline" the lines

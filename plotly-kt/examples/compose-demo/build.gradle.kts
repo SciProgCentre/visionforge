@@ -19,9 +19,9 @@ kotlin {
                 implementation(projects.plotlyKt.plotlyKtServer)
                 api("io.ktor:ktor-server-cio")
 
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material)
                 implementation(compose.desktop.currentOs)
                 implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
                 implementation(spclibs.logback.classic)

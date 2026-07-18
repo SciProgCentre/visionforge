@@ -50,7 +50,7 @@ suspend fun main() {
     }
     server.openInBrowser()
     println("Enter 'exit' to close server")
-    while (readLine()?.trim() != "exit") {
+    while (readlnOrNull()?.trim() != "exit") {
         //wait
     }
 

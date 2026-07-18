@@ -1,7 +1,7 @@
 package space.kscience.plotly.models.geo
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.models.Trace
 import space.kscience.plotly.models.TraceValues
 import space.kscience.plotly.models.geo.json.GeoJsonFeatureCollection
@@ -29,7 +29,7 @@ public abstract class GeoTrace : Trace() {
     /**
      * An url to geojson
      */
-    public var geojsonUrl: String? by string(key = "geojson".asName())
+    public var geojsonUrl: String? by string(key = Name.of("geojson"))
 
     /**
      * Sets the key in GeoJSON features which is used as id to match the items included in the `locations` array.

@@ -3,22 +3,33 @@
 ## Unreleased
 
 ### Added
-- Pure Kotlin CSG implementation by https://github.com/mon-key1
-- Plotly implementation and demo for Kotlin/Wasm
-- Wasm targets for plotly-kt and visionforge-core/solid
-- Time (Instant) based TraceValues in Plotly
 
 ### Changed
-- Order of arguments in Plotly-kt for js plotDiv functions
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-- Plotly-kt js demo
 
 ### Security
+
+## 0.5.2 - 2026-07-12
+
+### Added
+
+- Pure Kotlin CSG implementation by https://github.com/mon-key1
+- Plotly implementation and demo for Kotlin/Wasm
+- Wasm targets for plotly-kt and visionforge-core/solid
+- Time (Instant) based TraceValues in Plotly
+
+### Changed
+
+- Order of arguments in Plotly-kt for js plotDiv functions
+
+### Fixed
+
+- Plotly-kt js demo
 
 ## 0.5.1 - 2026-01-10
 

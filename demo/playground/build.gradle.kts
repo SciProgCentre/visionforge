@@ -41,7 +41,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        getByName("commonMain") {
             dependencies {
                 implementation(projects.visionforgeSolid)
                 implementation(projects.plotlyKt.plotlyKtCore)
@@ -52,14 +52,14 @@ kotlin {
             }
         }
 
-        val jsMain by getting {
+       getByName("jsMain") {
             dependencies {
                 implementation(projects.visionforgeThreejs)
 //                compileOnly(npm("webpack-bundle-analyzer","4.5.0"))
             }
         }
 
-        val jvmMain by getting {
+        getByName("jvmMain"){
             dependencies {
                 implementation("io.ktor:ktor-server-cio")
                 implementation(projects.visionforgeGdml)
@@ -87,11 +87,13 @@ tasks.getByName<ProcessResources>("jvmProcessResources") {
     from(jsBrowserDistribution)
 }
 
-val processJupyterApiResources by tasks.getting(org.jetbrains.kotlinx.jupyter.api.plugin.tasks.JupyterApiResourcesTask::class) {
-    libraryProducers = listOf("space.kscience.visionforge.examples.VisionForgePlayGroundForJupyter")
+kotlinJupyter {
+    integrations {
+        producer("space.kscience.visionforge.examples.VisionForgePlayGroundForJupyter")
+    }
 }
 
-tasks.findByName("shadowJar")?.dependsOn(processJupyterApiResources)
+tasks.findByName("shadowJar")?.dependsOn("processJupyterApiResources")
 
 //application{
 //    mainClass.set("space.kscience.visionforge.examples.ShapesKt")

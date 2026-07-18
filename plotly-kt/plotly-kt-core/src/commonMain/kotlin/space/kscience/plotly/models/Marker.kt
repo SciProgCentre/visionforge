@@ -1,7 +1,7 @@
 package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.intGreaterThan
 import space.kscience.plotly.listOfValues
 import space.kscience.plotly.numberGreaterThan
@@ -52,7 +52,7 @@ public class Marker : Scheme() {
     /**
      * Array of enumerateds. Sets the marker symbol type.
      */
-    public var symbolsList: List<Value> by listOfValues(key = "symbol".asName())
+    public var symbolsList: List<Value> by listOfValues(key = Name.of("symbol"))
 
     /**
      * Sets the marker size (in px).
@@ -64,7 +64,7 @@ public class Marker : Scheme() {
      * Array of numbers greater than or equal to 0.
      * Sets the markers size. Default: 6.
      */
-    public var sizesList: List<Number> by numberList(key = "size".asName())
+    public var sizesList: List<Number> by numberList(key = Name.of("size"))
 
     /**
      * Sets the marker opacity.
@@ -74,7 +74,7 @@ public class Marker : Scheme() {
     /**
      * Sets the markers opacity.
      */
-    public var opacitiesList: List<Number> by numberList(key = "opacity".asName())
+    public var opacitiesList: List<Number> by numberList(key = Name.of("opacity"))
 
     /**
      * Sets a maximum number of points to be drawn on the graph.
@@ -117,7 +117,7 @@ public class Marker : Scheme() {
     /**
      * Sets the color of each sector. If not specified, the default trace color set is used to pick the sector colors.
      */
-    public var pieColors: List<Value> by listOfValues(key = "colors".asName())
+    public var pieColors: List<Value> by listOfValues(key = Name.of("colors"))
 
     public var colorbar: ColorBar by scheme(ColorBar)
 

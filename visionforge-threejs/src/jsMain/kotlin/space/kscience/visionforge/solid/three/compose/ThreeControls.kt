@@ -1,13 +1,14 @@
 package space.kscience.visionforge.solid.three.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import app.softwork.bootstrapcompose.Button
 import app.softwork.bootstrapcompose.Color
 import app.softwork.bootstrapcompose.Column
-import app.softwork.bootstrapcompose.Layout
 import app.softwork.bootstrapcompose.Layout.Height
 import app.softwork.bootstrapcompose.Layout.Width
-import io.github.vinceglb.filekit.core.FileKit
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.download
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.dom.Hr
 import space.kscience.dataforge.context.Global
@@ -24,24 +25,18 @@ internal fun CanvasControls(
     vision: Vision?,
     options: Canvas3DOptions,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column {
         vision?.let { vision ->
             Button("Export", color = Color.Info, styling = { Layout.width = Width.Full }) {
                 val json = vision.encodeToString()
 
-                Global.launch {
-                    FileKit.saveFile(
-                        baseName = options.canvasName,
-                        extension = "json",
-                        bytes = json.encodeToByteArray()
+                coroutineScope.launch {
+                    FileKit.download(
+                        bytes = json.encodeToByteArray(),
+                        fileName = options.canvasName + ".json"
                     )
                 }
-
-//                val blob = Blob(arrayOf(json), BlobPropertyBag("text/json;charset=utf-8"))
-//
-//                fileSaver.then {
-//                    it.saveAs(blob, "${options.canvasName}.json") as Unit
-//                }
             }
         }
         Hr()

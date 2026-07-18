@@ -132,7 +132,7 @@ suspend fun main() {
     server.openInBrowser()
 
     println("Press Enter to close server")
-    readLine()
+    readlnOrNull()
 
     server.stop()
 }

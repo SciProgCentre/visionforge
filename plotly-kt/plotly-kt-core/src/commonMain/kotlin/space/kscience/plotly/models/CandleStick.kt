@@ -2,7 +2,6 @@ package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.plotly.Plot
 import space.kscience.plotly.doubleInRange
 
@@ -52,7 +51,7 @@ public class CandleStick : Trace() {
     public val low: TraceValues by axis
 
 
-    public var candleStickMeta: Value? by value("meta".asName())
+    public var candleStickMeta: Value? by value(Name.of("meta"))
 
     /**
      * Sets a reference between this trace's x coordinates and a 2D cartesian x axis. If "x" (the default value),

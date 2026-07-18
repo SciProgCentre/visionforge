@@ -3,7 +3,7 @@ package space.kscience.visionforge.solid.demo
 import space.kscience.dataforge.meta.asValue
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.number
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.startsWith
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.SolidGroup
@@ -76,7 +76,7 @@ internal class VariableBox(val xSize: Number, val ySize: Number) : ThreeJsVision
         }
 
     companion object {
-        private val VALUE = "value".asName()
+        private val VALUE = Name.of("value")
 //
 //        private val X_SIZE_KEY = GEOMETRY_KEY + "xSize"
 //        private val Y_SIZE_KEY = GEOMETRY_KEY + "ySize"

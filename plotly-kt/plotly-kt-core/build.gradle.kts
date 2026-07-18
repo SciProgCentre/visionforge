@@ -1,10 +1,10 @@
 plugins {
     id("space.kscience.gradle.mpp")
-    alias(spclibs.plugins.kotlin.jupyter.api)
+    alias(libs.plugins.kotlin.jupyter.api)
     `maven-publish`
 }
 
-val plotlyVersion by extra("2.35.3")
+val plotlyVersion = "2.35.3"
 
 //kotlin{
 //    applyDefaultHierarchyTemplate()
@@ -26,12 +26,12 @@ kscience {
     }
 
     nativeMain {
-        implementation("com.squareup.okio:okio:3.3.0")
+        implementation(libs.okio)
     }
 
     wasmJsMain {
         api(npm("plotly.js", plotlyVersion))
-        api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+        api(libs.kotlinx.browser)
     }
 }
 

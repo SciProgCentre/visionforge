@@ -12,7 +12,7 @@ import kotlinx.html.stream.createHTML
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.*
 
 
@@ -104,7 +104,7 @@ public inline fun VisionOutput.htmlInput(
 @Serializable
 @SerialName("html.text")
 public class VisionOfTextField : VisionOfHtmlInput(InputType.text.realValue) {
-    public var text: String? by properties.string(key = VisionOfHtmlInput::value.name.asName())
+    public var text: String? by properties.string(key = Name.of(VisionOfHtmlInput::value.name))
 }
 
 @Suppress("UnusedReceiverParameter")
@@ -116,7 +116,7 @@ public inline fun VisionOutput.htmlTextField(
 @Serializable
 @SerialName("html.checkbox")
 public class VisionOfCheckbox : VisionOfHtmlInput(InputType.checkBox.realValue) {
-    public var checked: Boolean? by properties.boolean(key = VisionOfHtmlInput::value.name.asName())
+    public var checked: Boolean? by properties.boolean(key = Name.of(VisionOfHtmlInput::value.name))
 }
 
 @Suppress("UnusedReceiverParameter")
@@ -127,7 +127,7 @@ public inline fun VisionOutput.htmlCheckBox(
 @Serializable
 @SerialName("html.number")
 public class VisionOfNumberField : VisionOfHtmlInput(InputType.number.realValue) {
-    public var numberValue: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
+    public var numberValue: Number? by properties.number(key = Name.of(VisionOfHtmlInput::value.name))
 }
 
 @Suppress("UnusedReceiverParameter")
@@ -142,7 +142,7 @@ public class VisionOfRangeField(
     public val max: Double,
     public val step: Double = 1.0,
 ) : VisionOfHtmlInput(InputType.range.realValue) {
-    public var numberValue: Number? by properties.number(key = VisionOfHtmlInput::value.name.asName())
+    public var numberValue: Number? by properties.number(key = Name.of(VisionOfHtmlInput::value.name))
 }
 
 @Suppress("UnusedReceiverParameter")

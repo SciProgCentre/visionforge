@@ -1,6 +1,6 @@
 package space.kscience.visionforge.solid.three
 
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.onPropertyChange
 import space.kscience.visionforge.solid.LightSource
 import space.kscience.visionforge.solid.PointLightSource
@@ -24,8 +24,8 @@ public object ThreePointLightFactory : ThreeFactory<PointLightSource> {
         if (observe) {
             vision.onPropertyChange(three.context) { name, _ ->
                 when (name) {
-                    LightSource::color.name.asName() -> res.color = vision.color.threeColor() ?: DEFAULT_COLOR
-                    LightSource::intensity.name.asName() -> res.intensity = vision.intensity.toDouble()
+                    Name.of(LightSource::color.name) -> res.color = vision.color.threeColor() ?: DEFAULT_COLOR
+                    Name.of(LightSource::intensity.name) -> res.intensity = vision.intensity.toDouble()
                     else -> res.updateProperty(vision, name)
                 }
             }
