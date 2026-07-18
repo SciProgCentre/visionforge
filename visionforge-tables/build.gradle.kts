@@ -25,12 +25,11 @@ kscience {
     useSerialization()
     commonMain {
         api(projects.visionforgeCore)
-        api("space.kscience:tables-kt:${tablesVersion}")
+        api(libs.dataforge.tables)
     }
     jsMain {
         api("org.jetbrains.kotlin-wrappers:kotlin-js")
         implementation(npm("tabulator-tables", "6.3.1"))
-//        api(npm("@types/tabulator-tables", "6.2.3"))
     }
 }
 

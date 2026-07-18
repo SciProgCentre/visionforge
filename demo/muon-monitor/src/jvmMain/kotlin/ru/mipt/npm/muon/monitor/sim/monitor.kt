@@ -18,7 +18,7 @@ private val layerCache = HashMap<Float, Plane>()
 fun findLayer(z: Float): Plane = layerCache.getOrPut(z) {
     Plane(
         Vector3D(0.0, 0.0, z.toDouble()), Vector3D(0.0, 0.0, 1.0),
-        Monitor.GEOMETRY_TOLERANCE.toDouble()
+        Monitor.GEOMETRY_TOLERANCE
     )
 }
 

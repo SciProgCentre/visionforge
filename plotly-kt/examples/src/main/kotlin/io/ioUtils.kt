@@ -14,7 +14,7 @@ fun readResourceAsString(resource: String): String =
         ?: error("Resource $resource not found")
 
 fun readResourceAsCsv(resource: String): AnyFrame =
-    DataFrame.readCSV(Plotly.javaClass.getResource(resource)?.file?.toString() ?: error("Resource $resource not found"))
+    DataFrame.readCSV(Plotly.javaClass.getResource(resource)?.file ?: error("Resource $resource not found"))
 
 /**
  * Extension function for using krangl data columns as axis values

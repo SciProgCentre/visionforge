@@ -25,7 +25,7 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation("com.eygraber:compose-color-picker:0.0.17")
+                implementation("com.eygraber:compose-color-picker:0.0.19")
             }
         }
     }

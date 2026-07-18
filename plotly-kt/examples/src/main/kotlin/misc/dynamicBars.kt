@@ -59,7 +59,7 @@ suspend fun main() {
     }
 
     println("Press Enter to close server")
-    readLine()
+    readlnOrNull()
 
     server.stop()
 }
