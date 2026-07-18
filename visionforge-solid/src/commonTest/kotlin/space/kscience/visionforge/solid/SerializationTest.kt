@@ -1,6 +1,7 @@
 package space.kscience.visionforge.solid
 
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
+import space.kscience.dataforge.context.request
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.*
@@ -32,6 +33,11 @@ private fun failOnOrphan(vision: Vision, prefix: Name = Name.EMPTY) {
 
 
 class SerializationTest {
+    companion object {
+        private val visionManager = Context("test") {
+            plugin(VisionManager)
+        }.request(VisionManager)
+    }
     @Test
     fun testCubeSerialization() {
         val cube = Box(100f, 100f, 100f).apply {
@@ -63,7 +69,7 @@ class SerializationTest {
         val string = Solids.encodeToString(group)
         println(string)
         val reconstructed = Solids.decodeFromString(string) as SolidGroup
-        reconstructed.setAsRoot(Global.visionManager)
+        reconstructed.setAsRoot(visionManager)
         failOnOrphan(reconstructed)
         assertEquals(group["cube"]?.properties, reconstructed["cube"]?.properties)
     }
@@ -79,7 +85,7 @@ class SerializationTest {
         val serialized = Solids.encodeToString(group)
 
         val reconstructed = Solids.decodeFromString(serialized) as SolidGroup
-        reconstructed.setAsRoot(Global.visionManager)
+        reconstructed.setAsRoot(visionManager)
         failOnOrphan(reconstructed)
         assertEquals(100.0, (reconstructed["@ambientLight"] as AmbientLightSource).intensity.toDouble())
     }

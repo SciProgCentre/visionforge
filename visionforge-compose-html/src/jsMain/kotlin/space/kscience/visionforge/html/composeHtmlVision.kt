@@ -13,7 +13,6 @@ import space.kscience.dataforge.context.gather
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionClient
 import space.kscience.visionforge.setAsRoot
@@ -26,7 +25,7 @@ import space.kscience.visionforge.setAsRoot
 public fun VisionDiv(
     context: Context,
     vision: Vision,
-    name: Name = "@vision[${vision.hashCode().toString(16)}]".asName(),
+    name: Name = Name.parse("@vision[${vision.hashCode().toString(16)}]"),
     meta: Meta = Meta.EMPTY,
     attrs: AttrBuilderContext<HTMLDivElement>? = null,
 ): Unit = Div(attrs) {

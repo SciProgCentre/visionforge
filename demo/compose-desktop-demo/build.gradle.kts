@@ -23,7 +23,7 @@ kotlin{
         commonMain{
             dependencies {
                 implementation(compose.desktop.currentOs)
-                api(compose.preview)
+                api(libs.compose.preview)
             }
         }
     }

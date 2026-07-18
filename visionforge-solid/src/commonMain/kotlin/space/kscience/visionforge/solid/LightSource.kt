@@ -8,7 +8,6 @@ import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.*
 
@@ -20,7 +19,7 @@ public abstract class LightSource : MiscSolid() {
     public var intensity: Number by properties.number(INTENSITY_KEY) { DEFAULT_INTENSITY }
 
     public companion object {
-        public val INTENSITY_KEY: Name = "intensity".asName()
+        public val INTENSITY_KEY: Name = Name.of("intensity")
 
         public const val DEFAULT_INTENSITY: Double = 1.0
 

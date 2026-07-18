@@ -12,7 +12,6 @@ import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionPlugin
 import space.kscience.visionforge.html.ElementVisionRenderer
@@ -54,7 +53,7 @@ public class MarkupJsPlugin : VisionPlugin(), ElementVisionRenderer {
     override fun toString(): String = "Markup"
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        ElementVisionRenderer.TYPE -> mapOf("markup".asName() to this)
+        ElementVisionRenderer.TYPE -> mapOf(Name.of("markup") to this)
         else -> super.content(target)
     }
 

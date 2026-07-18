@@ -13,7 +13,6 @@ import space.kscience.dataforge.meta.isEmpty
 import space.kscience.dataforge.meta.string
 import space.kscience.dataforge.meta.useProperty
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.solid.Solid
@@ -247,7 +246,7 @@ public class ThreeCanvas(
     public fun render(vision: Solid) {
         if (root != null) {
             three.logger.info { "Replacing root node in three canvas" }
-            scene.findChild("@root".asName())?.let { scene.remove(it) }
+            scene.findChild(Name.of("@root"))?.let { scene.remove(it) }
             root?.dispose()
         }
         three.context.launch {

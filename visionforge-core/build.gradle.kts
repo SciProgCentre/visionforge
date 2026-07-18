@@ -2,7 +2,6 @@ plugins {
     id("space.kscience.gradle.mpp")
 }
 
-val dataforgeVersion: String by rootProject.extra
 
 kscience {
     jvm()
@@ -11,7 +10,7 @@ kscience {
     wasmJs()
     useCoroutines()
     commonMain {
-        api("space.kscience:dataforge-context:$dataforgeVersion")
+        api(libs.dataforge.context)
         api(project.dependencies.platform(spclibs.ktor.bom))
         api(spclibs.kotlinx.html)
     }

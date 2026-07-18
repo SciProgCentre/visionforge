@@ -7,7 +7,7 @@
 
 ## Artifact details
 
-[![Maven Central](https://img.shields.io/maven-central/v/space.kscience/plotlykt-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22space.kscience%22%20AND%20a:%22plotlykt-core%22)
+[![Maven Central](https://img.shields.io/maven-central/v/space.kscience/plotly-kt-core.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22space.kscience%22%20AND%20a:%22plotly-kt-core%22)
 
 Dev builds and intermediate artifacts are available via `https://repo.kotlin.link` maven repository.
 

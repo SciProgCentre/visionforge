@@ -1,0 +1,30 @@
+[versions]
+
+dataforge = "0.11.1"
+compose = "1.11.1"
+bootstrap-compose = "0.5.0"
+kmath = "0.5.0"
+
+kotlin-jupyter = "0.19.0-951"
+
+[libraries]
+
+dataforge-context = { module = "space.kscience:dataforge-context", version.ref = "dataforge" }
+kmath-geometry = { module = "space.kscience:kmath-geometry", version.ref = "kmath" }
+
+okio = "com.squareup.okio:okio:3.3.0"
+kotlinx-browser = "org.jetbrains.kotlinx:kotlinx-browser:0.5.0"
+bootstrap-compose = { module = "app.softwork:bootstrap-compose", version.ref = "bootstrap-compose" }
+bootstrap-compose-icons = { module = "app.softwork:bootstrap-compose-icons", version.ref = "bootstrap-compose" }
+
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-html-core = { module = "org.jetbrains.compose.html:html-core", version.ref = "compose" }
+compose-preview = {module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose"}
+compose-material = {module = "org.jetbrains.compose.material:material", version.ref = "compose"}
+
+compose-materialIconsExtended = "org.jetbrains.compose.material:material-icons-extended:1.7.3"
+
+[plugins]
+
+kotlin-jupyter-api = { id = "org.jetbrains.kotlin.jupyter.api", version.ref = "kotlin-jupyter" }

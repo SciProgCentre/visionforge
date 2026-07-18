@@ -10,7 +10,6 @@ import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.toDynamic
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.html.ElementVisionRenderer
 import space.kscience.visionforge.html.JsVisionClient
@@ -77,7 +76,7 @@ public class TableVisionJsPlugin : AbstractPlugin(), ElementVisionRenderer {
     override fun toString(): String = "Table"
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        ElementVisionRenderer.TYPE -> mapOf("table".asName() to this)
+        ElementVisionRenderer.TYPE -> mapOf(Name.of("table") to this)
         else -> super.content(target)
     }
 

@@ -17,10 +17,10 @@ kotlin {
         commonMain {
             dependencies {
                 api(projects.visionforgeCore)
-                api(compose.foundation)
-                api(compose.runtime)
-                api(compose.material)
-                api(compose.materialIconsExtended)
+                api(libs.compose.foundation)
+                api(libs.compose.runtime)
+                api(libs.compose.material)
+                api(libs.compose.materialIconsExtended)
             }
         }
         jvmMain {

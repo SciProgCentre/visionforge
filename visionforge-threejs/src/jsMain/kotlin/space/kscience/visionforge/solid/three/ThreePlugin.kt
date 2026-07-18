@@ -165,7 +165,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
 
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
-            ElementVisionRenderer.TYPE -> mapOf("three".asName() to this)
+            ElementVisionRenderer.TYPE -> mapOf(Name.of("three") to this)
             else -> super.content(target)
         }
     }

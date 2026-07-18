@@ -81,11 +81,11 @@ public interface Vision : Described, Provider {
 
         public const val VISION_PROPERTY_TARGET: String = "property"
 
-        public val STYLE_KEY: Name = "@style".asName()
-        public val STYLESHEET_KEY: Name = "@stylesheet".asName()
+        public val STYLE_KEY: Name = Name.of("@style")
+        public val STYLESHEET_KEY: Name = Name.of("@stylesheet")
         public const val STYLE_TARGET: String = "style"
 
-        public val VISIBLE_KEY: Name = "visible".asName()
+        public val VISIBLE_KEY: Name = Name.of("visible")
 
         @OptIn(ExperimentalUuidApi::class)
         public fun randomId(): String = Uuid.random().toHexString()

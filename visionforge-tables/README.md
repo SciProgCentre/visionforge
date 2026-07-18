@@ -6,7 +6,7 @@
 
 ## Artifact:
 
-The Maven coordinates of this project are `space.kscience:visionforge-tables:0.5.1`.
+The Maven coordinates of this project are `space.kscience:visionforge-tables:0.5.2`.
 
 **Gradle Kotlin DSL:**
 ```kotlin
@@ -16,6 +16,6 @@ repositories {
 }
 
 dependencies {
-    implementation("space.kscience:visionforge-tables:0.5.1")
+    implementation("space.kscience:visionforge-tables:0.5.2")
 }
 ```
