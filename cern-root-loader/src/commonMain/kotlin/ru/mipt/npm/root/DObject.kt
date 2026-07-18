@@ -4,7 +4,6 @@ import kotlinx.serialization.json.Json
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.Named
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import kotlin.properties.ReadOnlyProperty
 
 public fun MetaProvider.doubleArray(
@@ -26,7 +25,7 @@ public class DObjectCache(private val cache: List<Meta>, public val refStack: Li
 
 public open class DObject(public val meta: Meta, public val refCache: DObjectCache) {
 
-    public val typename: String by meta.string(key = "_typename".asName()) {
+    public val typename: String by meta.string(key = Name.of("_typename")) {
         error("Type is not defined")
     }
 
@@ -53,7 +52,7 @@ public open class DObject(public val meta: Meta, public val refCache: DObjectCac
         builder: (Meta, DObjectCache) -> T,
         key: Name? = null,
     ): ReadOnlyProperty<Any?, T?> = ReadOnlyProperty { _, property ->
-        meta[key ?: property.name.asName()]?.takeIf { it.value != Null }?.let { resolve(builder, it) }
+        meta[key ?: Name.of(property.name)]?.takeIf { it.value != Null }?.let { resolve(builder, it) }
     }
 }
 

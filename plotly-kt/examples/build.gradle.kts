@@ -14,13 +14,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
 }
 
-kotlin{
+kotlin {
     jvmToolchain(21)
 }
 
 // A workaround for https://youtrack.jetbrains.com/issue/KT-44101
 
-val copyPlotlyResources by tasks.registering(Copy::class){
+val copyPlotlyResources = tasks.register("copyPlotlyResources", Copy::class) {
+    description = "Copy plotly resources to the main resources directory"
     dependsOn(":plotly-kt:plotly-kt-server:jvmProcessResources")
     mustRunAfter(":plotly-kt:plotly-kt-server:jvmTestProcessResources")
     from(project(":plotly-kt:plotly-kt-server").layout.buildDirectory.file("processedResources/jvm/main"))

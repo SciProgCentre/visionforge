@@ -2,7 +2,6 @@ package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import kotlin.properties.ReadOnlyProperty
 
 /**
@@ -38,5 +37,5 @@ public class Color internal constructor(parent: MutableMetaProvider, key: Name) 
 public fun MutableMetaProvider.color(
     key: Name? = null
 ): ReadOnlyProperty<MutableMetaProvider, Color> = ReadOnlyProperty { _, property ->
-    Color(this, key ?: property.name.asName())
+    Color(this, key ?: Name.of(property.name))
 }

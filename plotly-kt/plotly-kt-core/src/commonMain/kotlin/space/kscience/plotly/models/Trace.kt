@@ -7,7 +7,6 @@ import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.Described
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.plotly.*
 import space.kscience.visionforge.AbstractVision
 import kotlin.js.JsName
@@ -115,7 +114,7 @@ public class MarkerLine : Scheme(), Line {
      * Array of numbers greater than or equal to 0. Sets the width (in px)
      * of the lines bounding the marker points.
      */
-    override var widthList: List<Number> by numberList(key = "width".asName())
+    override var widthList: List<Number> by numberList(key = Name.of("width"))
 
     /**
      * Sets themarker.linecolor. It accepts either a specific color
@@ -270,11 +269,11 @@ public class Font : Scheme() {
     /**
      * HTML font family
      */
-    public var familiesList: List<String>? by stringList(key = "family".asName())
+    public var familiesList: List<String>? by stringList(key = Name.of("family"))
 
     public var size: Number by numberGreaterThan(1)
 
-    public var sizesList: List<Number> by numberList(key = "size".asName())
+    public var sizesList: List<Number> by numberList(key = Name.of("size"))
 
     public val color: Color by color()
 
@@ -652,12 +651,12 @@ public class Hoverlabel : Scheme() {
     /**
      * Sets the background color of the hover labels for this trace.
      * */
-    public var bgcolor: Color = Color(this, "bgcolor".asName())
+    public var bgcolor: Color = Color(this, Name.of("bgcolor"))
 
     /**
      * Sets the border color of the hover labels for this trace.
      * */
-    public var bordercolor: Color = Color(this, "bordercolor".asName())
+    public var bordercolor: Color = Color(this, Name.of("bordercolor"))
 
     /**
      * Sets the font used in hover labels.
@@ -670,7 +669,7 @@ public class Hoverlabel : Scheme() {
      *
      * Defaults to `'auto'`.
      * */
-    public var align: TraceValues = TraceValues(this, "align".asName())
+    public var align: TraceValues = TraceValues(this, Name.of("align"))
 
     /**
      * Sets the default length (in number of characters) of the trace name in the hover labels for all traces.
@@ -683,7 +682,7 @@ public class Hoverlabel : Scheme() {
     /**
      * Complementary property to [namelength] to allow passing a list of lengths.
      * */
-    public var namelengths: List<Number> by numberList(-1, key = "namelength".asName())
+    public var namelengths: List<Number> by numberList(-1, key = Name.of("namelength"))
 
     public fun bgcolors(array: Iterable<Any>) {
         bgcolor.value = array.map { Value.of(it) }.asValue()
@@ -720,13 +719,11 @@ public fun <T : Scheme> Trace.scheme(
 
 /**
  * A base class for Plotly traces
- *
- * @param uid a unique identifier for this trace
  */
 @Serializable
 public open class Trace : AbstractVision(), MutableMetaProvider, MetaRepr {
 
-    override fun get(name: Name): MutableMeta? = properties.get(name)
+    override fun get(name: Name): MutableMeta? = properties[name]
 
     override fun set(name: Name, node: Meta?) {
         properties[name] = node
@@ -914,7 +911,7 @@ public open class Trace : AbstractVision(), MutableMetaProvider, MetaRepr {
      * Default: "middle center".
      */
     @UnstablePlotlyAPI
-    public var textpositionsList: List<Value> by listOfValues(key = "textposition".asName())
+    public var textpositionsList: List<Value> by listOfValues(key = Name.of("textposition"))
 
     /**
      * Sets the text font.
@@ -1038,7 +1035,7 @@ public open class Trace : AbstractVision(), MutableMetaProvider, MetaRepr {
         public const val TEXT_AXIS: String = "text"
 
         public val axis: ReadOnlyProperty<Trace, TraceValues> = ReadOnlyProperty { thisRef, property ->
-            TraceValues(thisRef, property.name.asName())
+            TraceValues(thisRef, Name.of(property.name))
         }
 
 

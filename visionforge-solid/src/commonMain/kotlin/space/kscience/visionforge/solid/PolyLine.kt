@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.names.NameToken
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 
 @Serializable
 @SerialName("solid.line")
@@ -19,7 +18,6 @@ public class PolyLine(public val points: List<FloatVector3D>) : SolidBase<PolyLi
     }
 }
 
-@VisionBuilder
 public fun MutableVisionContainer<Solid>.polyline(
     vararg points: FloatVector3D,
     name: String? = null,

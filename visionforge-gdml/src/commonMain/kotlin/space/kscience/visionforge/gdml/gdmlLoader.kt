@@ -6,7 +6,6 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.gdml.*
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.kmath.geometry.euclidean3d.RotationOrder
-import space.kscience.visionforge.VisionBuilder
 import space.kscience.visionforge.html.VisionOutput
 import space.kscience.visionforge.setStyle
 import space.kscience.visionforge.solid.*
@@ -402,7 +401,6 @@ public fun SolidGroup.gdml(gdml: Gdml, key: String? = null, transformer: GdmlLoa
     setVision(SolidGroup.inferNameFor(key, vision), vision)
 }
 
-@VisionBuilder
 @DFExperimental
 public inline fun VisionOutput.gdml(block: Gdml.() -> Unit): SolidGroup {
     requirePlugin(Solids)

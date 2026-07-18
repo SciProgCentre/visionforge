@@ -5,7 +5,7 @@ import space.kscience.dataforge.meta.getValue
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.meta.set
 import space.kscience.dataforge.meta.string
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.visionforge.readProperty
 import space.kscience.visionforge.styles
 import space.kscience.visionforge.updateStyle
@@ -47,7 +47,7 @@ class SolidPropertyTest {
                 box = box(100, 100, 100)
             }
         }
-        assertEquals(22, box?.readProperty("test".asName(), inherited = true)?.int)
+        assertEquals(22, box?.readProperty(Name.of("test"), inherited = true)?.int)
     }
 
     @Test
@@ -99,7 +99,7 @@ class SolidPropertyTest {
                 }
             }
             solidGroup {
-                box = ref("box".asName())
+                box = ref(Name.of("box"))
             }
         }
         assertEquals("#555555", box?.readProperty(SolidMaterial.MATERIAL_COLOR_KEY)?.string)

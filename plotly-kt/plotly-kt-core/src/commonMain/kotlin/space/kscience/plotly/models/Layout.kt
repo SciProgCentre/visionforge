@@ -5,7 +5,7 @@ package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.misc.DFExperimental
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.appendAndAttach
 import space.kscience.plotly.numberGreaterThan
 import space.kscience.plotly.numberInRange
@@ -292,7 +292,7 @@ public class Layout : Scheme() {
      */
     public fun yaxis(index: Int, block: Axis.() -> Unit) {
         require(index >= 2) { "Secondary axis index must be 2 or more" }
-        val axisSpec by scheme(Axis, "yaxis$index".asName())
+        val axisSpec by scheme(Axis, Name.of("yaxis$index"))
         axisSpec.apply(block)
     }
 

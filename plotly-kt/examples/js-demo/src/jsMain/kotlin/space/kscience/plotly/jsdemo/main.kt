@@ -11,11 +11,14 @@ import kotlinx.html.style
 import kotlinx.serialization.json.Json
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
+import space.kscience.dataforge.context.Global
 import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.plotly.*
 import space.kscience.plotly.events.PlotlyEventListenerType
 import space.kscience.plotly.models.ScatterMode
 import space.kscience.plotly.models.TraceType
+import space.kscience.plotly.models.histogram
+import space.kscience.plotly.models.scatter
 import kotlin.random.Random
 
 private fun onDomLoaded(block: (Event) -> Unit) {
@@ -35,7 +38,7 @@ fun main(): Unit = withCanvas {
     div {
         style = "height:50%; width=100%;"
         h1 { +"Histogram demo" }
-        plotDiv {
+        plotDiv(Global) {
             val rnd = Random(222)
             histogram {
                 name = "Random data"
@@ -79,7 +82,7 @@ fun main(): Unit = withCanvas {
     div {
         style = "height:50%; width=100%;"
         h1 { +"Dynamic trace demo" }
-        plotDiv {
+        plotDiv(Global) {
             scatter {
                 x(1, 2, 3, 4)
                 y(10, 15, 13, 17)

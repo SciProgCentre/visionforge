@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import space.kscience.dataforge.names.NameToken
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -52,7 +51,6 @@ public class Sphere(
     }
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.sphere(
     radius: Number,
     name: String? = null,

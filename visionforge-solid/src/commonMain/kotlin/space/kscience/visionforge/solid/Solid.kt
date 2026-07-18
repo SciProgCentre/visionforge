@@ -6,7 +6,6 @@ import space.kscience.dataforge.meta.descriptors.enum
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.kmath.complex.Quaternion
 import space.kscience.kmath.complex.QuaternionAlgebra
@@ -48,23 +47,23 @@ public interface Solid : MutableVision {
 
     public companion object {
         //        val SELECTED_KEY = "selected".asName()
-        public val DETAIL_KEY: Name = "detail".asName()
-        public val LAYER_KEY: Name = "layer".asName()
-        public val IGNORE_KEY: Name = "ignore".asName()
+        public val DETAIL_KEY: Name = Name.of("detail")
+        public val LAYER_KEY: Name = Name.of("layer")
+        public val IGNORE_KEY: Name = Name.of("ignore")
 
-        public val GEOMETRY_KEY: Name = "geometry".asName()
+        public val GEOMETRY_KEY: Name = Name.of("geometry")
 
-        public val X_KEY: Name = "x".asName()
-        public val Y_KEY: Name = "y".asName()
-        public val Z_KEY: Name = "z".asName()
+        public val X_KEY: Name = Name.of("x")
+        public val Y_KEY: Name = Name.of("y")
+        public val Z_KEY: Name = Name.of("z")
 
-        public val POSITION_KEY: Name = "position".asName()
+        public val POSITION_KEY: Name = Name.of("position")
 
         public val X_POSITION_KEY: Name = POSITION_KEY + X_KEY
         public val Y_POSITION_KEY: Name = POSITION_KEY + Y_KEY
         public val Z_POSITION_KEY: Name = POSITION_KEY + Z_KEY
 
-        public val ROTATION_KEY: Name = "rotation".asName()
+        public val ROTATION_KEY: Name = Name.of("rotation")
 
         public val X_ROTATION_KEY: Name = ROTATION_KEY + X_KEY
         public val Y_ROTATION_KEY: Name = ROTATION_KEY + Y_KEY
@@ -72,7 +71,7 @@ public interface Solid : MutableVision {
 
         public val ROTATION_ORDER_KEY: Name = ROTATION_KEY + "order"
 
-        public val SCALE_KEY: Name = "scale".asName()
+        public val SCALE_KEY: Name = Name.of("scale")
 
         public val X_SCALE_KEY: Name = SCALE_KEY + X_KEY
         public val Y_SCALE_KEY: Name = SCALE_KEY + Y_KEY

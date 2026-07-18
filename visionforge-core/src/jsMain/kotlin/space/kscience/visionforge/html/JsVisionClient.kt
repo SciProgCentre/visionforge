@@ -12,7 +12,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.encodeToString
 import org.w3c.dom.*
 import org.w3c.dom.url.URL
 import space.kscience.dataforge.context.*
@@ -21,7 +20,6 @@ import space.kscience.dataforge.meta.MetaSerializer
 import space.kscience.dataforge.meta.get
 import space.kscience.dataforge.meta.int
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
 import space.kscience.visionforge.html.VisionTagConsumer.Companion.OUTPUT_CONNECT_ATTRIBUTE
@@ -273,7 +271,7 @@ public class JsVisionClient : AbstractPlugin(), VisionClient {
             rangeVisionRenderer,
             formVisionRenderer,
             buttonVisionRenderer
-        ).associateBy { it.toString().asName() }
+        ).associateBy { Name.of(it.toString()) }
     } else super<AbstractPlugin>.content(target)
 
     public companion object : PluginFactory<JsVisionClient> {

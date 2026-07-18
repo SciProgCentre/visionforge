@@ -16,17 +16,15 @@ kotlin {
             dependencies {
                 api(projects.visionforgeCore)
                 //need this to placate compose compiler in MPP applications
-                api(compose.runtime)
+                api(libs.compose.runtime)
             }
         }
 
         jsMain {
             dependencies {
-                api("app.softwork:bootstrap-compose:0.3.1")
-                api("app.softwork:bootstrap-compose-icons:0.3.0")
-//                implementation(npm("bootstrap", "5.3.3"))
-//                implementation(npm(" bootstrap-icons", "1.11.3"))
-                api(compose.html.core)
+                api(libs.bootstrap.compose)
+                api(libs.bootstrap.compose.icons)
+                api(libs.compose.html.core)
             }
         }
     }

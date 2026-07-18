@@ -2,10 +2,10 @@ package space.kscience.visionforge.meta
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
-import space.kscience.dataforge.context.Global
+import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.get
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
@@ -21,8 +21,11 @@ private class TestScheme : Scheme() {
 }
 
 internal class VisionPropertyTest {
-
-    private val manager = Global.request(VisionManager)
+    companion object {
+        private val visionManager = Context {
+            plugin(VisionManager)
+        }.request(VisionManager)
+    }
 
     @Test
     fun testPropertyWrite() {
@@ -47,7 +50,7 @@ internal class VisionPropertyTest {
     @Test
     fun testPropertyUpdate() {
         val vision = SimpleVisionGroup()
-        vision.mutableProperty("fff".asName()).updateWith(TestScheme) {
+        vision.mutableProperty(Name.of("fff")).updateWith(TestScheme) {
             ddd = 2
         }
         assertEquals(2, vision.readProperty("fff.ddd")?.int)
@@ -55,7 +58,7 @@ internal class VisionPropertyTest {
 
     @Test
     fun testChildrenPropertyPropagation() = runTest(timeout = 200.milliseconds) {
-        val group = VisionGroup(Global.visionManager) {
+        val group = VisionGroup(visionManager) {
             properties {
                 "test" put 11
             }

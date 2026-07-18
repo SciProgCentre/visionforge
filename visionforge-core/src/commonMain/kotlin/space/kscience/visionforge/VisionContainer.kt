@@ -21,6 +21,7 @@ public fun <V : Vision> VisionContainer<V>.getVision(token: String): V? = getVis
 /**
  * A container interface with write/replace/delete access to its content.
  */
+@VisionBuilder
 public interface MutableVisionContainer<in V : Vision> {
     //TODO add documentation
     public fun setVision(token: NameToken, vision: V?)

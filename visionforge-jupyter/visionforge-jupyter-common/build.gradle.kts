@@ -1,6 +1,6 @@
 plugins {
     id("space.kscience.gradle.mpp")
-    alias(spclibs.plugins.kotlin.jupyter.api)
+    alias(libs.plugins.kotlin.jupyter.api)
 }
 
 description = "Jupyter api artifact including all common modules"

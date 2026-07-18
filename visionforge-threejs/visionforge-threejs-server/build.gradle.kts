@@ -5,8 +5,6 @@ plugins {
     alias(spclibs.plugins.compose.jb)
 }
 
-val ktorVersion: String by rootProject.extra
-
 kscience {
     fullStack(
         bundleName = "js/visionforge-three.js",

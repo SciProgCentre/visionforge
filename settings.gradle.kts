@@ -4,7 +4,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
 
-    val toolsVersion: String by extra
+    val toolsVersion: String = providers.gradleProperty("toolsVersion").get()
 
     repositories {
         mavenLocal()
@@ -23,7 +23,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
 
-    val toolsVersion: String by extra
+    val toolsVersion: String = providers.gradleProperty("toolsVersion").get()
 
     repositories {
         mavenLocal()
@@ -68,5 +68,6 @@ include(
 //    ":plotly:examples:fx-demo",
     ":plotly-kt:examples:compose-demo",
     ":plotly-kt:examples:js-demo",
-    ":plotly-kt:examples:native-demo"
+    ":plotly-kt:examples:native-demo",
+    ":plotly-kt:examples:wasm-demo"
 )

@@ -10,7 +10,6 @@ import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.*
-import space.kscience.visionforge.html.VisionTagConsumer.Companion.DEFAULT_VISION_NAME
 
 /**
  * A placeholder object to attach inline vision builders.
@@ -29,7 +28,7 @@ public class VisionOutput(override val context: Context, public val name: Name) 
         get() = if (requirements.all { req -> context.plugins.find(true) { it.tag == req.tag } != null }) {
             context.visionManager
         } else {
-            val newContext = context.buildContext(NameToken(DEFAULT_VISION_NAME, name.toString()).asName()) {
+            val newContext = context.buildContext("vision[$name]") {
                 plugin(VisionManager)
                 requirements.forEach { plugin(it) }
             }

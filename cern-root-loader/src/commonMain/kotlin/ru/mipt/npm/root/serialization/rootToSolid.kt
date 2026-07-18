@@ -1,7 +1,6 @@
 package ru.mipt.npm.root.serialization
 
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
@@ -12,8 +11,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-private val solidsName = "solids".asName()
-private val volumesName = "volumes".asName()
+private val solidsName = Name.of("solids")
+private val volumesName = Name.of("volumes")
 
 private operator fun Number.times(d: Double) = toDouble() * d
 

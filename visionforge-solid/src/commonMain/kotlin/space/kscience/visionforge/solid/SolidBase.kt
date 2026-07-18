@@ -4,12 +4,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.visionforge.AbstractVision
+import space.kscience.visionforge.VisionBuilder
 
 /**
  * An abstract solid that is both [Solid] and [AbstractVision]
  */
 @Serializable
 @SerialName("solid")
+@VisionBuilder
 public open class SolidBase<T : Solid> : AbstractVision(), Solid {
     override val descriptor: MetaDescriptor get() = Solid.descriptor
 }

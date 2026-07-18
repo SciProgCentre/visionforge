@@ -1,7 +1,7 @@
 package space.kscience.plotly.models
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.numberGreaterThan
 
@@ -13,7 +13,7 @@ public class Fill : Scheme() {
     /**
      * Sets the cell fill color. It accepts a specific color.
      * */
-    public var color: Color = Color(this, "color".asName())
+    public var color: Color = Color(this, Name.of("color"))
 
     /**
      * Sets the cell fill color. It accepts an array of colors.
@@ -33,7 +33,7 @@ public class Header : Scheme() {
      *
      * Each value must be a finite number or a string.
      * */
-    public var values: TraceValues = TraceValues(this, "values".asName())
+    public var values: TraceValues = TraceValues(this, Name.of("values"))
 
     /**
      * The height of cells.
@@ -47,7 +47,7 @@ public class Header : Scheme() {
      *
      * Defaults to `center`.
      * */
-    public var align: TraceValues = TraceValues(this, "align".asName())
+    public var align: TraceValues = TraceValues(this, Name.of("align"))
 
     /**
      * [LayoutLine] type object.
@@ -99,7 +99,7 @@ public class Cells : Scheme() {
      *
      * Each value must be a finite number or a string.
      * */
-    public var values: TraceValues = TraceValues(this, "values".asName())
+    public var values: TraceValues = TraceValues(this, Name.of("values"))
 
     /**
      * The height of cells.
@@ -113,7 +113,7 @@ public class Cells : Scheme() {
      *
      * Defaults to `center`.
      * */
-    public var align: TraceValues = TraceValues(this, "align".asName())
+    public var align: TraceValues = TraceValues(this, Name.of("align"))
 
     /**
      * [LayoutLine] type object.
@@ -178,21 +178,21 @@ public class PlotlyTable : Trace() {
      *
      * Should be an array of strings, not numbers or any other type.
      * */
-    public var ids: TraceValues = TraceValues(this, "ids".asName())
+    public var ids: TraceValues = TraceValues(this, Name.of("ids"))
 
     /**
      * Specifies the rendered order of the data columns; for example, a value `2` at position `0`
      * means that column index `0` in the data will be rendered as the third column,
      * as columns have an index base of zero.
      * */
-    public var columnorder: TraceValues = TraceValues(this, "columnorder".asName())
+    public var columnorder: TraceValues = TraceValues(this, Name.of("columnorder"))
 
 
     /**
      * The width of columns expressed as a ratio. Columns fill the available width
      * in proportion of their specified column widths.
      * */
-    public var columnwidth: TraceValues = TraceValues(this, "columnwidth".asName())
+    public var columnwidth: TraceValues = TraceValues(this, Name.of("columnwidth"))
 
     /**
      * [Header] type object. Used to define the header row.

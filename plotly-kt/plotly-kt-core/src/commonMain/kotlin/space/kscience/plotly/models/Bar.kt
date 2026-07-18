@@ -3,7 +3,7 @@ package space.kscience.plotly.models
 import space.kscience.dataforge.meta.enum
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.meta.numberList
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.numberGreaterThan
 
@@ -37,7 +37,7 @@ public class Bar : Trace(), SelectedPoints {
     /**
      * Array of numbers greater than or equal to 0. Sets the bar width (in position axis units).
      */
-    public var widthList: List<Number> by numberList(key = "width".asName())
+    public var widthList: List<Number> by numberList(key = Name.of("width"))
 
     /**
      * Shifts the position where the bar is drawn (in position axis units). In "group" barmode,
@@ -49,7 +49,7 @@ public class Bar : Trace(), SelectedPoints {
      * Shifts the position where the bar is drawn (in position axis units). In "group" barmode,
      * traces that set "offset" will be excluded and drawn in "overlay" mode instead.
      */
-    public var offsetsList: List<Number> by numberList(key = "offset".asName())
+    public var offsetsList: List<Number> by numberList(key = Name.of("offset"))
 
 
     /**

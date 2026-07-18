@@ -4,7 +4,7 @@ import space.kscience.dataforge.meta.boolean
 import space.kscience.dataforge.meta.enum
 import space.kscience.dataforge.meta.number
 import space.kscience.dataforge.meta.numberList
-import space.kscience.dataforge.names.asName
+import space.kscience.dataforge.names.Name
 import space.kscience.plotly.Plot
 import space.kscience.plotly.numberInRange
 import kotlin.js.JsName
@@ -71,7 +71,7 @@ public class Pie : Trace() {
      * Sets the fraction of larger radius to pull the sectors out from the center.
      * This is an array to highlight one or more slices.
      */
-    public var pullList: List<Number> by numberList(key = "pull".asName())
+    public var pullList: List<Number> by numberList(key = Name.of("pull"))
 
     /**
      * Specifies the direction at which succeeding sectors follow one another.

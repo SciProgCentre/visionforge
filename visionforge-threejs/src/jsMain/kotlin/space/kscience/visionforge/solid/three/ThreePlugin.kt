@@ -31,7 +31,6 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
     public val client: VisionClient by require(JsVisionClient)
 
     private val objectFactories = HashMap<KClass<out Solid>, ThreeFactory<*>>()
-    private val compositeFactory = ThreeCompositeFactory(this)
 
 //    internal val updateScope: CoroutineScope get() = context
 
@@ -133,7 +132,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
             }
         }
 
-        is Composite -> compositeFactory.build(this, vision, observe)
+        is Composite -> ThreeCompositeFactory.build(this, vision, observe)
         else -> {
             //find a specialized factory for this type if it is present
             val factory: ThreeFactory<Solid>? = findObjectFactory(vision::class)
@@ -166,7 +165,7 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
 
     override fun content(target: String): Map<Name, Any> {
         return when (target) {
-            ElementVisionRenderer.TYPE -> mapOf("three".asName() to this)
+            ElementVisionRenderer.TYPE -> mapOf(Name.of("three") to this)
             else -> super.content(target)
         }
     }

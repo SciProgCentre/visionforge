@@ -2,7 +2,6 @@ package space.kscience.visionforge.solid.three
 
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.dataforge.names.plus
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.Vision
@@ -109,9 +108,9 @@ public fun Meta.threeColor(): Color? {
             else -> Color(value.string)
         }
     }
-    val red = getValue(Colors.RED_KEY.asName())?.int
-    val green = getValue(Colors.GREEN_KEY.asName())?.int
-    val blue = getValue(Colors.BLUE_KEY.asName())?.int
+    val red = getValue(Name.of(Colors.RED_KEY))?.int
+    val green = getValue(Name.of(Colors.GREEN_KEY))?.int
+    val blue = getValue(Name.of(Colors.BLUE_KEY))?.int
     return if (red == null && green == null && blue == null) null else Color(red ?: 0, green ?: 0, blue ?: 0)
 }
 

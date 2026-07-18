@@ -8,7 +8,6 @@ import space.kscience.dataforge.context.PluginFactory
 import space.kscience.dataforge.context.PluginTag
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.asName
 import space.kscience.visionforge.Vision
 import space.kscience.visionforge.VisionPlugin
 import space.kscience.visionforge.html.ElementVisionRenderer
@@ -37,7 +36,7 @@ public class PlotlyJsPlugin : VisionPlugin(), ElementVisionRenderer {
     override fun toString(): String = "Plotly"
 
     override fun content(target: String): Map<Name, Any> = when (target) {
-        ElementVisionRenderer.TYPE -> mapOf("plotly".asName() to this)
+        ElementVisionRenderer.TYPE -> mapOf(Name.of("plotly") to this)
         else -> super.content(target)
     }
 

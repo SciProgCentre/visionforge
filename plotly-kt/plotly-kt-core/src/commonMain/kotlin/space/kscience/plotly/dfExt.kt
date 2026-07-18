@@ -19,12 +19,12 @@ internal fun MutableMetaProvider.listOfValues(
     key: Name? = null,
 ): ReadWriteProperty<Any?, List<Value>> = object : ReadWriteProperty<Any?, List<Value>> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): List<Value> {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.list ?: emptyList()
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: List<Value>) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         setValue(name, value.asValue())
     }
 }
@@ -38,12 +38,12 @@ internal fun MutableMetaProvider.doubleInRange(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Double> = object : ReadWriteProperty<Any?, Double> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Double {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.double ?: defaultValue
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Double) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value in range) {
             setValue(name, value.asValue())
         } else {
@@ -60,12 +60,12 @@ internal fun MutableMetaProvider.doubleGreaterThan(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Double> = object : ReadWriteProperty<Any?, Double> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Double {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.double ?: Double.NaN
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Double) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value >= minValue) {
             setValue(name, value.asValue())
         } else {
@@ -83,12 +83,12 @@ internal fun MutableMetaProvider.intGreaterThan(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Int> = object : ReadWriteProperty<Any?, Int> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.int ?: minValue
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value >= minValue) {
             setValue(name, value.asValue())
         } else {
@@ -105,12 +105,12 @@ internal fun MutableMetaProvider.intInRange(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Int> = object : ReadWriteProperty<Any?, Int> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.int ?: 0
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value in range) {
             setValue(name, value.asValue())
         } else {
@@ -128,12 +128,12 @@ public fun MutableMetaProvider.numberGreaterThan(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Number> = object : ReadWriteProperty<Any?, Number> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Number {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.number ?: default
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Number) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value.toDouble() >= minValue.toDouble()) {
             setValue(name, value.asValue())
         } else {
@@ -150,12 +150,12 @@ public fun MutableMetaProvider.numberInRange(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Number> = object : ReadWriteProperty<Any?, Number> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Number {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         return getValue(name)?.int ?: 0
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Number) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value.toDouble() in range) {
             setValue(name, value.asValue())
         } else {
@@ -169,14 +169,14 @@ internal fun MutableMetaProvider.duration(
     key: Name? = null,
 ): ReadWriteProperty<Any?, Duration?> = object : ReadWriteProperty<Any?, Duration?> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): Duration? {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         val value = getValue(name)
         val units = getValue(name + "unit")?.enum() ?: DurationUnit.MILLISECONDS
         return value?.long?.toDuration(units) ?: default
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: Duration?) {
-        val name = key ?: property.name.asName()
+        val name = key ?: Name.of(property.name)
         if (value == null) {
             remove(name)
         } else {

@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
 import space.kscience.visionforge.MutableVisionContainer
-import space.kscience.visionforge.VisionBuilder
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -71,7 +70,6 @@ public class ConeSegment(
     }
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.cylinder(
     r: Number,
     height: Number,
@@ -85,7 +83,6 @@ public inline fun MutableVisionContainer<Solid>.cylinder(
     setVision(SolidGroup.inferNameFor(name, it), it)
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.cone(
     bottomRadius: Number,
     height: Number,

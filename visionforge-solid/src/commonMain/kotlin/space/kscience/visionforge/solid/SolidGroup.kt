@@ -14,7 +14,6 @@ public interface PrototypeHolder {
     /**
      * Build or update the prototype tree
      */
-    @VisionBuilder
     public fun prototypes(builder: SolidGroup.() -> Unit)
 
     /**
@@ -36,6 +35,7 @@ public interface SolidContainer : VisionGroup<Solid>, Solid {
  */
 @Serializable
 @SerialName("group.solid")
+@VisionBuilder
 public class SolidGroup : AbstractVision(), SolidContainer, PrototypeHolder, MutableVisionGroup<Solid> {
 
     private val solids = LinkedHashMap<NameToken, Solid>()
@@ -152,7 +152,6 @@ public fun MutableVisionContainer<Solid>.static(solid: Solid) {
     setVision(SolidGroup.staticNameFor(solid), solid)
 }
 
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.solidGroup(
     token: NameToken? = null,
     builder: SolidGroup.() -> Unit = {},
@@ -164,7 +163,6 @@ public inline fun MutableVisionContainer<Solid>.solidGroup(
 /**
  * Define a group with given [token], attach it to this parent and return it.
  */
-@VisionBuilder
 public inline fun MutableVisionContainer<Solid>.solidGroup(
     token: String,
     action: SolidGroup.() -> Unit = {},

@@ -21,8 +21,8 @@ import space.kscience.visionforge.solid.three.ThreeCanvas
 import space.kscience.visionforge.solid.three.ThreePlugin
 
 class ThreeDemoGrid(element: Element) : VisionLayout<Solid> {
-    private lateinit var navigationElement: HTMLElement
-    private lateinit var contentElement: HTMLDivElement
+    private var navigationElement: HTMLElement
+    private var contentElement: HTMLDivElement
 
     private val outputs: MutableMap<Name, ThreeCanvas> = HashMap()
 

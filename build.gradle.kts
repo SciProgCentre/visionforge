@@ -1,4 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+@file:OptIn(ExperimentalAbiValidation::class)
+
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import space.kscience.gradle.useApache2Licence
 import space.kscience.gradle.useSPCTeam
 
@@ -7,11 +9,9 @@ plugins {
     alias(spclibs.plugins.kotlinx.kover)
 }
 
-val dataforgeVersion by extra("0.10.2")
-
 allprojects {
     group = "space.kscience"
-    version = "0.5.1"
+    version = "0.5.2"
 }
 
 subprojects {
@@ -23,12 +23,6 @@ subprojects {
         mavenCentral()
         maven("https://maven.jzy3d.org/releases")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    }
-
-    tasks.withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.addAll("-Xcontext-parameters")
-        }
     }
 
 //    tasks.withType<KotlinJsCompile>{
@@ -48,12 +42,11 @@ kscienceProject {
     publishToCentral()
 
     abiValidation {
-//        filters{
-//            excluded{
-//                byNames
-//            }
-//        }
-        //ignoredPackages.add("info.laht.threekt")
+        filters{
+            exclude{
+                byNames.add("info.laht.threekt.**")
+            }
+        }
     }
 
     readme.readmeTemplate = file("docs/templates/README-TEMPLATE.md")

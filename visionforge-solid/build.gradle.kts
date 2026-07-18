@@ -8,13 +8,13 @@ kscience {
     jvm()
     js()
     native()
-//    wasm()
+    wasmJs()
     useSerialization {
         json()
     }
     useCoroutines()
     dependencies {
-        api("space.kscience:kmath-geometry:$kmathVersion")
+        api(libs.kmath.geometry)
         api(projects.visionforgeCore)
     }
     dependencies(jvmTest) {
