@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #121418;
+    color: #e2e8f0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.factory-header {
+    background: linear-gradient(135deg, #1e222b 0%, #15181e 100%);
+    border-bottom: 1px solid #2d3341;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+.factory-title-block h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+}
+
+.factory-title-block p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #2a3140;
+    color: #38bdf8;
+    border: 1px solid #3b82f640;
+}
+
+.factory-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-group {
+    display: flex;
+    background: #181b22;
+    border: 1px solid #2d3341;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.btn {
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background: #242a38;
+    color: #f1f5f9;
+}
+
+.btn.active {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.btn-toggle {
+    background: #1e2430;
+    border: 1px solid #333d52;
+    border-radius: 6px;
+    color: #cbd5e1;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-toggle:hover {
+    background: #2b3445;
+}
+
+.btn-toggle.active {
+    background: #059669;
+    border-color: #10b981;
+    color: #ffffff;
+}
+
+.main-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+}
+
+.canvas-container {
+    flex: 1;
+    height: 100%;
+    position: relative;
+}
+
+.legend-panel {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(22, 26, 34, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid #2d3341;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.78rem;
+    max-width: 280px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+}
+
+.legend-title {
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    color: #cbd5e1;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}

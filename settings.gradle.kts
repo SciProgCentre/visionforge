@@ -58,6 +58,7 @@ include(
     ":demo:playground",
     ":demo:js-playground",
     ":demo:compose-desktop-demo",
+    ":demo:factory-demo",
     ":visionforge-jupyter",
     ":visionforge-jupyter:visionforge-jupyter-common",
     ":plotly-kt",

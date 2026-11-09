@@ -1,0 +1,1106 @@
+{
+  "schema": "nmz-mog-3d/1.0",
+  "meta": {
+    "title": "Отделение мокрой очистки газа ЦПиНСК НМЗ — описание 3D-сцены для цифрового двойника",
+    "standard": "OpenUSD (.usda), семантика оборудования по DEXPI 2.0.1, окраска трубопроводов по ГОСТ 14202-69",
+    "lod": "LOD 200: массово-габаритные модели оборудования и условная трассировка основных трубопроводов",
+    "units": "метры",
+    "upAxis": "Z",
+    "axes": "X — по ходу газа, Y — поперёк линий, Z — вверх; начало координат линии — ось входного газохода на отметке пола",
+    "techMap": "ID узлов и потоков совпадают с разделами 4–5 технологической карты",
+    "statusLegend": {"О": "открытые источники", "Т": "типовое значение", "Р": "расчёт по балансу карты", "У": "уточнить по проекту / P&ID / 3D-модели проектировщика"},
+    "layoutStatus": "У",
+    "sources": [
+      "kn51.ru, 22.12.2022: газоход из нержавеющей стали от печей до башни охлаждения, стеклопластик до башни испарительного охлаждения, титановые газоходы до мокрых ЭФ, наибольший элемент 4 м, более 75 т",
+      "vesti.ru: цех производства серной кислоты около 100 × 200 м, контактные аппараты 27 м",
+      "pyDEXPI 2.1.0 (DEXPI Specification 2.0.1): имена классов оборудования и структуры установки",
+      "ГОСТ 14202-69, табл. 1: опознавательные цвета трубопроводов"
+    ]
+  },
+  "layout": {
+    "lineSpacing_m": 42.0,
+    "lines": [1, 2, 3],
+    "slab": {"x": [-12.0, 82.0], "y": [-31.0, 96.0], "thickness": 0.3}
+  },
+  "materials": {
+    "Concrete": {"ru": "Бетон фундаментов", "rgb": [0.6, 0.59, 0.56], "metallic": 0.0, "roughness": 0.9},
+    "LinedSteel": {"ru": "Сталь с кислотоупорной футеровкой, окраска", "rgb": [0.4, 0.44, 0.48], "metallic": 0.2, "roughness": 0.55},
+    "FRP": {"ru": "Стеклопластик", "rgb": [0.83, 0.76, 0.56], "metallic": 0.0, "roughness": 0.45},
+    "Ti": {"ru": "Титан", "rgb": [0.66, 0.67, 0.69], "metallic": 0.55, "roughness": 0.45},
+    "SS": {"ru": "Нержавеющая сталь", "rgb": [0.76, 0.77, 0.79], "metallic": 0.6, "roughness": 0.35},
+    "PaintedSteel": {"ru": "Углеродистая сталь, окраска", "rgb": [0.72, 0.73, 0.72], "metallic": 0.1, "roughness": 0.5},
+    "Steel": {"ru": "Стальные конструкции", "rgb": [0.5, 0.53, 0.57], "metallic": 0.3, "roughness": 0.5},
+    "PumpBlue": {"ru": "Корпус насоса / рама, окраска", "rgb": [0.13, 0.3, 0.55], "metallic": 0.1, "roughness": 0.45},
+    "Motor": {"ru": "Электродвигатель", "rgb": [0.3, 0.33, 0.36], "metallic": 0.2, "roughness": 0.5},
+    "HV": {"ru": "Агрегат питания МЭФ", "rgb": [0.2, 0.22, 0.25], "metallic": 0.1, "roughness": 0.5},
+    "PP": {"ru": "Полипропилен (плиты фильтр-пресса)", "rgb": [0.88, 0.88, 0.85], "metallic": 0.0, "roughness": 0.6},
+    "Neutral": {"ru": "Нейтральный (режим окраски по среде)", "rgb": [0.8, 0.8, 0.8], "metallic": 0.0, "roughness": 0.6}
+  },
+  "gost14202": {
+    "1": {"ru": "Вода", "rgb": [0.13, 0.55, 0.13]},
+    "2": {"ru": "Пар", "rgb": [0.8, 0.1, 0.1]},
+    "3": {"ru": "Воздух", "rgb": [0.12, 0.33, 0.8]},
+    "5": {"ru": "Газы негорючие", "rgb": [0.98, 0.85, 0.15]},
+    "6": {"ru": "Кислоты", "rgb": [0.93, 0.38, 0.04]},
+    "7": {"ru": "Щёлочи", "rgb": [0.5, 0.2, 0.65]},
+    "9": {"ru": "Жидкости негорючие", "rgb": [0.5, 0.3, 0.15]},
+    "0": {"ru": "Прочие вещества", "rgb": [0.55, 0.55, 0.55]}
+  },
+  "states": {
+    "run": {"ru": "В работе", "rgb": [0.2, 0.7, 0.3]},
+    "standby": {"ru": "Резерв", "rgb": [0.6, 0.62, 0.66]},
+    "flush": {"ru": "Промывка", "rgb": [0.2, 0.55, 0.9]},
+    "fault": {"ru": "Отказ", "rgb": [0.9, 0.2, 0.15]},
+    "maintenance": {"ru": "Ремонт / ППР", "rgb": [0.95, 0.65, 0.1]}
+  },
+  "equipment": [
+    {
+      "id": "B-01",
+      "name": "Башня охлаждения 1 ступени",
+      "dexpi": "SprayCooler",
+      "nodeType": "Процесс",
+      "template": "tower",
+      "pos": [8.0, 0.0],
+      "d": 5.0,
+      "skirtTop": 6.0,
+      "shellH": 18.0,
+      "head": "dome",
+      "headH": 1.2,
+      "material": "LinedSteel",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.0, "height_m": 25.2},
+      "signals": ["S-01.T", "S-02.T", "B-01.dP", "L-01.F"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "top", "dn": 2600},
+        {"id": "GasOut", "port": "gasOut", "face": "+x", "z": 8.5, "dn": 2200},
+        {"id": "Spray1", "port": "liquidIn", "face": "-y", "z": 22.0, "t": -1.5, "dn": 250},
+        {"id": "Spray2", "port": "liquidIn", "face": "-y", "z": 19.5, "t": 1.5, "dn": 250},
+        {"id": "LiqOut", "port": "liquidOut", "face": "-y", "z": 6.6, "dn": 500},
+        {"id": "EmWater", "port": "liquidIn", "face": "+y", "z": 22.9, "dn": 150}
+      ]
+    },
+    {
+      "id": "T-04",
+      "name": "Бак аварийной воды",
+      "dexpi": "Tank",
+      "nodeType": "Ёмкость",
+      "template": "elevated_tank",
+      "pos": [8.0, 7.5],
+      "d": 3.5,
+      "h": 3.0,
+      "roofH": 0.4,
+      "base": 22.6,
+      "material": "PaintedSteel",
+      "frameMaterial": "Steel",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"diameter_m": 3.5, "volume_m3": 28.9, "elevation_m": 22.6},
+      "signals": ["T-04.L"],
+      "nozzles": [
+        {"id": "Out", "port": "liquidOut", "face": "-y", "z": 22.9, "dn": 150}
+      ]
+    },
+    {
+      "id": "T-01",
+      "name": "Сборник кислоты 1 ступени",
+      "dexpi": "Tank",
+      "nodeType": "Ёмкость",
+      "template": "tank",
+      "pos": [8.0, -10.5],
+      "d": 5.2,
+      "h": 4.4,
+      "roofH": 0.6,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.2, "volume_m3": 93.4},
+      "signals": ["T-01.L", "T-01.C_H2SO4", "T-01.X_solids"],
+      "nozzles": [
+        {"id": "InTop", "port": "liquidIn", "face": "top", "dn": 500},
+        {"id": "ReturnTop", "port": "liquidIn", "face": "top", "off": [-2.0, 0.0], "dn": 100},
+        {"id": "FiltrateTop", "port": "liquidIn", "face": "top", "off": [0.0, -2.0], "dn": 50},
+        {"id": "MakeupTop", "port": "liquidIn", "face": "top", "off": [2.0, 0.0], "dn": 50},
+        {"id": "OverflowIn", "port": "liquidIn", "face": "+x", "z": 3.2, "dn": 100},
+        {"id": "Bleed", "port": "liquidOut", "face": "+x", "z": 1.6, "t": -1.2, "dn": 50},
+        {"id": "Suction", "port": "liquidOut", "face": "-y", "z": 0.9, "dn": 300},
+        {"id": "SideDraw", "port": "liquidOut", "face": "-x", "z": 1.0, "dn": 100}
+      ]
+    },
+    {
+      "id": "P-01A",
+      "name": "Насос орошения B-01, контур 1, рабочий",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [3.5, -17.0],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"flow_m3h": 400, "head_m": 35, "power_kW": 59},
+      "signals": ["P-01A.state", "P-01A.I"]
+    },
+    {
+      "id": "P-01B",
+      "name": "Насос орошения B-01, контур 1, резервный",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [6.5, -17.0],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"flow_m3h": 400, "head_m": 35, "power_kW": 59},
+      "signals": ["P-01B.state", "P-01B.I"]
+    },
+    {
+      "id": "P-02A",
+      "name": "Насос орошения B-01, контур 2, рабочий",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [9.5, -17.0],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"flow_m3h": 400, "head_m": 35, "power_kW": 59},
+      "signals": ["P-02A.state", "P-02A.I"]
+    },
+    {
+      "id": "P-02B",
+      "name": "Насос орошения B-01, контур 2, резервный",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [12.5, -17.0],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"flow_m3h": 400, "head_m": 35, "power_kW": 59},
+      "signals": ["P-02B.state", "P-02B.I"]
+    },
+    {
+      "id": "B-07",
+      "name": "Сгуститель шлама",
+      "dexpi": "GravitationalSeparator",
+      "nodeType": "Сепаратор Ж/Т",
+      "template": "thickener",
+      "pos": [2.5, -24.0],
+      "d": 6.0,
+      "legsH": 3.0,
+      "wallH": 3.0,
+      "coneH": 1.8,
+      "material": "LinedSteel",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 6.0, "area_m2": 28.3},
+      "signals": ["B-07.L_sludge"],
+      "nozzles": [
+        {"id": "FeedTop", "port": "liquidIn", "face": "top", "off": [1.0, 0.0], "dn": 100},
+        {"id": "Overflow", "port": "liquidOut", "face": "+y", "z": 5.7, "dn": 100},
+        {"id": "Underflow", "port": "liquidOut", "face": "bottom", "dn": 50}
+      ]
+    },
+    {
+      "id": "F-01",
+      "name": "Фильтр-пресс шлама",
+      "dexpi": "LiquidFilter",
+      "nodeType": "Сепаратор, периодический",
+      "template": "filterpress",
+      "pos": [10.5, -24.0],
+      "platformZ": 3.0,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"length_m": 5.4, "cycle_h": "4–8"},
+      "signals": ["F-01.cycle"]
+    },
+    {
+      "id": "B-08",
+      "name": "Колонна отдувки SO2",
+      "dexpi": "ProcessColumn",
+      "nodeType": "Процесс",
+      "template": "tower",
+      "pos": [18.5, -24.0],
+      "d": 0.9,
+      "skirtTop": 1.0,
+      "shellH": 7.0,
+      "head": "dome",
+      "headH": 0.45,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 0.9, "height_m": 8.45},
+      "signals": ["L-09.SO2"],
+      "nozzles": [
+        {"id": "LiqIn", "port": "liquidIn", "face": "-x", "z": 7.4, "dn": 50},
+        {"id": "LiqOut", "port": "liquidOut", "face": "+x", "z": 1.3, "dn": 50},
+        {"id": "AirIn", "port": "gasIn", "face": "-y", "z": 1.8, "dn": 200},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 200}
+      ]
+    },
+    {
+      "id": "V-01",
+      "name": "Вентилятор воздуха отдувки",
+      "dexpi": "RadialFan",
+      "nodeType": "Насос (газ)",
+      "template": "fan",
+      "pos": [18.7, -27.6],
+      "rotZ": 0,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"flow_Nm3h": 1000, "power_kW": 2},
+      "signals": ["V-01.state"]
+    },
+    {
+      "id": "T-02",
+      "name": "Сборник слабой кислоты",
+      "dexpi": "Tank",
+      "nodeType": "Ёмкость",
+      "template": "tank",
+      "pos": [27.0, -24.0],
+      "d": 5.5,
+      "h": 6.0,
+      "roofH": 0.6,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.5, "volume_m3": 142.6},
+      "signals": ["T-02.L"],
+      "nozzles": [
+        {"id": "In", "port": "liquidIn", "face": "-x", "z": 1.3, "dn": 50},
+        {"id": "Out", "port": "liquidOut", "face": "+x", "z": 0.55, "dn": 80}
+      ]
+    },
+    {
+      "id": "P-05A",
+      "name": "Насос выдачи слабой кислоты, рабочий",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "S",
+      "pos": [32.0, -22.5],
+      "rotZ": 0,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"flow_m3h": 10},
+      "signals": ["P-05A.state"]
+    },
+    {
+      "id": "P-05B",
+      "name": "Насос выдачи слабой кислоты, резервный",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "S",
+      "pos": [32.0, -25.5],
+      "rotZ": 0,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"flow_m3h": 10},
+      "signals": ["P-05B.state"]
+    },
+    {
+      "id": "B-02",
+      "name": "Башня испарительного охлаждения (2 ступень)",
+      "dexpi": "ProcessColumn",
+      "nodeType": "Процесс",
+      "template": "tower",
+      "pos": [22.0, 0.0],
+      "d": 6.0,
+      "skirtTop": 6.0,
+      "shellH": 20.0,
+      "head": "dome",
+      "headH": 1.5,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 6.0, "height_m": 27.5},
+      "signals": ["S-03.T", "B-02.dP"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 8.5, "dn": 2200},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 1900},
+        {"id": "LiqIn", "port": "liquidIn", "face": "-y", "z": 24.0, "t": -1.5, "dn": 300},
+        {"id": "LiqOut", "port": "liquidOut", "face": "-y", "z": 6.6, "dn": 400}
+      ]
+    },
+    {
+      "id": "T-03",
+      "name": "Сборник кислоты 2 ступени",
+      "dexpi": "Tank",
+      "nodeType": "Ёмкость",
+      "template": "tank",
+      "pos": [22.0, -10.5],
+      "d": 4.6,
+      "h": 3.8,
+      "roofH": 0.5,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 4.6, "volume_m3": 63.2},
+      "signals": ["T-03.L"],
+      "nozzles": [
+        {"id": "InTop", "port": "liquidIn", "face": "top", "dn": 400},
+        {"id": "DrainIn", "port": "liquidIn", "face": "+x", "z": 3.3, "dn": 100},
+        {"id": "Overflow", "port": "liquidOut", "face": "-x", "z": 3.4, "dn": 100},
+        {"id": "Suction", "port": "liquidOut", "face": "-y", "z": 0.9, "dn": 300}
+      ]
+    },
+    {
+      "id": "P-03A",
+      "name": "Насос орошения B-02, рабочий",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [20.5, -16.5],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"flow_m3h": 530, "head_m": 30},
+      "signals": ["P-03A.state", "P-03A.I"]
+    },
+    {
+      "id": "P-03B",
+      "name": "Насос орошения B-02, резервный",
+      "dexpi": "CentrifugalPump",
+      "nodeType": "Насос",
+      "template": "pump",
+      "size": "L",
+      "pos": [23.5, -16.5],
+      "rotZ": -90,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"flow_m3h": 530, "head_m": 30},
+      "signals": ["P-03B.state", "P-03B.I"]
+    },
+    {
+      "id": "E-01A",
+      "name": "Пластинчатый теплообменник кислоты 2 ступени",
+      "dexpi": "PlateHeatExchanger",
+      "nodeType": "Теплообменник",
+      "template": "phe",
+      "pos": [29.5, -6.0],
+      "L": 3.0,
+      "W": 1.1,
+      "H": 2.4,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"area_m2": 150, "duty_MW": 7.0},
+      "signals": ["L-11.T_out", "E-01A.U"]
+    },
+    {
+      "id": "E-01B",
+      "name": "Пластинчатый теплообменник кислоты 2 ступени",
+      "dexpi": "PlateHeatExchanger",
+      "nodeType": "Теплообменник",
+      "template": "phe",
+      "pos": [29.5, -8.5],
+      "L": 3.0,
+      "W": 1.1,
+      "H": 2.4,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"area_m2": 150, "duty_MW": 7.0},
+      "signals": ["L-11.T_out", "E-01B.U"]
+    },
+    {
+      "id": "E-01C",
+      "name": "Пластинчатый теплообменник кислоты 2 ступени, резерв",
+      "dexpi": "PlateHeatExchanger",
+      "nodeType": "Теплообменник",
+      "template": "phe",
+      "pos": [29.5, -11.0],
+      "L": 3.0,
+      "W": 1.1,
+      "H": 2.4,
+      "material": "PumpBlue",
+      "status": "Т",
+      "state": "standby",
+      "attrs": {"area_m2": 150},
+      "signals": ["E-01C.U"]
+    },
+    {
+      "id": "B-03A",
+      "name": "Мокрый электрофильтр 1 ступени, аппарат А",
+      "dexpi": "ElectricalSeparator",
+      "nodeType": "Сепаратор газ/туман",
+      "template": "wesp",
+      "pos": [38.0, -4.5],
+      "d": 5.5,
+      "legsH": 6.0,
+      "hopperH": 1.4,
+      "inletH": 3.0,
+      "tubeH": 6.5,
+      "hoodH": 2.75,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.5, "height_m": 18.65, "collectingArea_m2": 1375, "tubes": 292, "tubeD_mm": 250, "tubeL_m": 6.0},
+      "signals": ["B-03A.U", "B-03A.I", "B-03A.sparks", "B-03A.T_ins"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 7.5, "dn": 1350},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 1350},
+        {"id": "FlushIn", "port": "liquidIn", "face": "top", "off": [0.0, 1.2], "dn": 80},
+        {"id": "Drain", "port": "liquidOut", "face": "bottom", "dn": 100}
+      ]
+    },
+    {
+      "id": "B-03B",
+      "name": "Мокрый электрофильтр 1 ступени, аппарат Б",
+      "dexpi": "ElectricalSeparator",
+      "nodeType": "Сепаратор газ/туман",
+      "template": "wesp",
+      "pos": [38.0, 4.5],
+      "d": 5.5,
+      "legsH": 6.0,
+      "hopperH": 1.4,
+      "inletH": 3.0,
+      "tubeH": 6.5,
+      "hoodH": 2.75,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.5, "height_m": 18.65, "collectingArea_m2": 1375, "tubes": 292, "tubeD_mm": 250, "tubeL_m": 6.0},
+      "signals": ["B-03B.U", "B-03B.I", "B-03B.sparks", "B-03B.T_ins"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 7.5, "dn": 1350},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 1350},
+        {"id": "FlushIn", "port": "liquidIn", "face": "top", "off": [0.0, -1.2], "dn": 80},
+        {"id": "Drain", "port": "liquidOut", "face": "bottom", "dn": 100}
+      ]
+    },
+    {
+      "id": "B-04A",
+      "name": "Мокрый электрофильтр 2 ступени, аппарат А",
+      "dexpi": "ElectricalSeparator",
+      "nodeType": "Сепаратор газ/туман",
+      "template": "wesp",
+      "pos": [52.0, -4.5],
+      "d": 5.5,
+      "legsH": 6.0,
+      "hopperH": 1.4,
+      "inletH": 3.0,
+      "tubeH": 6.5,
+      "hoodH": 2.75,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.5, "height_m": 18.65, "collectingArea_m2": 1375, "tubes": 292, "tubeD_mm": 250, "tubeL_m": 6.0},
+      "signals": ["B-04A.U", "B-04A.I", "B-04A.sparks", "B-04A.T_ins", "S-05.mist"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 7.5, "dn": 1350},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 1350},
+        {"id": "FlushIn", "port": "liquidIn", "face": "top", "off": [0.0, 1.2], "dn": 80},
+        {"id": "Drain", "port": "liquidOut", "face": "bottom", "dn": 100}
+      ]
+    },
+    {
+      "id": "B-04B",
+      "name": "Мокрый электрофильтр 2 ступени, аппарат Б",
+      "dexpi": "ElectricalSeparator",
+      "nodeType": "Сепаратор газ/туман",
+      "template": "wesp",
+      "pos": [52.0, 4.5],
+      "d": 5.5,
+      "legsH": 6.0,
+      "hopperH": 1.4,
+      "inletH": 3.0,
+      "tubeH": 6.5,
+      "hoodH": 2.75,
+      "material": "FRP",
+      "status": "Т",
+      "state": "run",
+      "attrs": {"diameter_m": 5.5, "height_m": 18.65, "collectingArea_m2": 1375, "tubes": 292, "tubeD_mm": 250, "tubeL_m": 6.0},
+      "signals": ["B-04B.U", "B-04B.I", "B-04B.sparks", "B-04B.T_ins", "S-05.mist"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 7.5, "dn": 1350},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 1350},
+        {"id": "FlushIn", "port": "liquidIn", "face": "top", "off": [0.0, -1.2], "dn": 80},
+        {"id": "Drain", "port": "liquidOut", "face": "bottom", "dn": 100}
+      ]
+    },
+    {
+      "id": "B-05",
+      "name": "Башня смешения",
+      "dexpi": "Mixer",
+      "nodeType": "Смеситель",
+      "template": "tower",
+      "pos": [66.0, 0.0],
+      "d": 4.5,
+      "skirtTop": 4.0,
+      "shellH": 14.0,
+      "head": "dome",
+      "headH": 1.1,
+      "material": "FRP",
+      "status": "У",
+      "state": "run",
+      "attrs": {"diameter_m": 4.5, "height_m": 19.1},
+      "signals": ["S-07.SO2", "S-07.O2_SO2"],
+      "nozzles": [
+        {"id": "GasIn", "port": "gasIn", "face": "-x", "z": 7.0, "dn": 1900},
+        {"id": "AirIn", "port": "gasIn", "face": "-y", "z": 10.0, "dn": 1200},
+        {"id": "GasOut", "port": "gasOut", "face": "top", "dn": 2300}
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "S-01",
+      "name": "Сернистый газ от сухих ЭФ ПВП",
+      "gost": "5",
+      "medium": "Газ SO2 18 %, 330 °C",
+      "material": "SS",
+      "dn": 2600,
+      "status": "О",
+      "flow": "124 100 Нм³/ч влажн.",
+      "boundaryFrom": "SRC-01 Газ от сухих ЭФ ПВП",
+      "segments": [
+        {
+          "from": [-8.0, 0.0, 28.5],
+          "to": "B-01.GasIn",
+          "route": {"z": 28.5}
+        }
+      ]
+    },
+    {
+      "id": "S-02",
+      "name": "Насыщенный газ B-01 → B-02",
+      "gost": "5",
+      "medium": "Газ насыщенный, 62,9 °C",
+      "material": "FRP",
+      "dn": 2200,
+      "status": "О",
+      "flow": "116 400 Нм³/ч сух.",
+      "segments": [
+        {"from": "B-01.GasOut", "to": "B-02.GasIn"}
+      ]
+    },
+    {
+      "id": "S-03",
+      "name": "Охлаждённый газ B-02 → МЭФ 1 ступени",
+      "gost": "5",
+      "medium": "Газ 40 °C с туманом",
+      "material": "Ti",
+      "dn": 1900,
+      "status": "О",
+      "flow": "116 400 Нм³/ч сух.",
+      "segments": [
+        {
+          "from": "B-02.GasOut",
+          "to": [32.0, 0.0, 29.5],
+          "route": {"z": 29.5}
+        },
+        {"from": [32.0, -4.5, 29.5], "to": [32.0, 4.5, 29.5]},
+        {
+          "from": [32.0, -4.5, 29.5],
+          "to": "B-03A.GasIn",
+          "dn": 1350,
+          "route": {"via": [[32.0, -4.5, 7.5]]}
+        },
+        {
+          "from": [32.0, 4.5, 29.5],
+          "to": "B-03B.GasIn",
+          "dn": 1350,
+          "route": {"via": [[32.0, 4.5, 7.5]]}
+        }
+      ]
+    },
+    {
+      "id": "S-04",
+      "name": "Газ МЭФ 1 → МЭФ 2",
+      "gost": "5",
+      "medium": "Газ 40 °C",
+      "material": "Ti",
+      "dn": 1350,
+      "status": "Т",
+      "flow": "116 400 Нм³/ч сух.",
+      "segments": [
+        {
+          "from": "B-03A.GasOut",
+          "to": "B-04A.GasIn",
+          "route": {"via": [[38.0, -4.5, 20.5], [46.0, -4.5, 20.5], [46.0, -4.5, 7.5]]}
+        },
+        {
+          "from": "B-03B.GasOut",
+          "to": "B-04B.GasIn",
+          "route": {"via": [[38.0, 4.5, 20.5], [46.0, 4.5, 20.5], [46.0, 4.5, 7.5]]}
+        },
+        {"from": [42.0, -4.5, 20.5], "to": [42.0, 4.5, 20.5], "dn": 1900}
+      ]
+    },
+    {
+      "id": "S-05",
+      "name": "Очищенный газ МЭФ 2 → B-05",
+      "gost": "5",
+      "medium": "Газ 40 °C, туман ≤ 5 мг/Нм³",
+      "material": "Ti",
+      "dn": 1350,
+      "status": "Т",
+      "flow": "116 400 Нм³/ч сух.",
+      "segments": [
+        {
+          "from": "B-04A.GasOut",
+          "to": [60.0, -4.5, 20.5],
+          "route": {"via": [[52.0, -4.5, 20.5]]}
+        },
+        {
+          "from": "B-04B.GasOut",
+          "to": [60.0, 4.5, 20.5],
+          "route": {"via": [[52.0, 4.5, 20.5]]}
+        },
+        {"from": [60.0, -4.5, 20.5], "to": [60.0, 4.5, 20.5], "dn": 1900},
+        {
+          "from": [60.0, 0.0, 20.5],
+          "to": "B-05.GasIn",
+          "dn": 1900,
+          "route": {"via": [[60.0, 0.0, 7.0]]}
+        }
+      ]
+    },
+    {
+      "id": "S-06",
+      "name": "Воздух разбавления",
+      "gost": "3",
+      "medium": "Воздух",
+      "material": "PaintedSteel",
+      "dn": 1200,
+      "status": "Р",
+      "flow": "58 500 Нм³/ч",
+      "boundaryFrom": "Атмосфера / кислородная станция",
+      "segments": [
+        {"from": [66.0, -14.0, 10.0], "to": "B-05.AirIn"}
+      ]
+    },
+    {
+      "id": "S-07",
+      "name": "Газ на сушку",
+      "gost": "5",
+      "medium": "Газ SO2 12 %",
+      "material": "FRP",
+      "dn": 2300,
+      "status": "Т",
+      "flow": "175 000 Нм³/ч сух.",
+      "boundaryTo": "SNK-01 Сушильная башня",
+      "segments": [
+        {
+          "from": "B-05.GasOut",
+          "to": [78.0, 0.0, 22.5],
+          "route": {"z": 22.5}
+        }
+      ]
+    },
+    {
+      "id": "G-01",
+      "name": "Воздух отдувки",
+      "gost": "3",
+      "medium": "Воздух",
+      "material": "PaintedSteel",
+      "dn": 200,
+      "status": "Т",
+      "flow": "1 000 Нм³/ч",
+      "segments": [
+        {
+          "from": "V-01.Outlet",
+          "to": "B-08.AirIn",
+          "route": {"z": 2.2, "first": "y"}
+        }
+      ]
+    },
+    {
+      "id": "G-02",
+      "name": "Воздух с SO2 из отдувки в газоход S-02",
+      "gost": "3",
+      "medium": "Воздух + SO2",
+      "material": "FRP",
+      "dn": 200,
+      "status": "Т",
+      "flow": "1 000 Нм³/ч + 27 кг/ч SO2",
+      "segments": [
+        {
+          "from": "B-08.GasOut",
+          "to": [15.0, 0.0, 9.6],
+          "route": {"via": [[18.5, -24.0, 10.6], [15.0, -24.0, 10.6], [15.0, 0.0, 10.6]]}
+        }
+      ]
+    },
+    {
+      "id": "L-01",
+      "name": "Орошение B-01 (2 контура) и всас насосов",
+      "gost": "6",
+      "medium": "10 % H2SO4, твёрдое ≤ 5 г/л",
+      "material": "FRP",
+      "dn": 250,
+      "status": "Р",
+      "flow": "2 × 400 м³/ч",
+      "segments": [
+        {"from": "T-01.Suction", "to": [8.0, -14.6, 0.9], "dn": 300},
+        {"from": [3.5, -14.6, 0.9], "to": [12.5, -14.6, 0.9], "dn": 300},
+        {"from": [3.5, -14.6, 0.9], "to": "P-01A.Suction", "dn": 300},
+        {"from": [6.5, -14.6, 0.9], "to": "P-01B.Suction", "dn": 300},
+        {"from": [9.5, -14.6, 0.9], "to": "P-02A.Suction", "dn": 300},
+        {"from": [12.5, -14.6, 0.9], "to": "P-02B.Suction", "dn": 300},
+        {"from": "P-01A.Discharge", "to": [3.5, -16.3, 2.8]},
+        {"from": "P-01B.Discharge", "to": [6.5, -16.3, 2.8]},
+        {
+          "from": [3.5, -16.3, 2.8],
+          "to": "B-01.Spray1",
+          "route": {"via": [[6.5, -16.3, 2.8], [6.5, -16.3, 22.0]]}
+        },
+        {"from": "P-02A.Discharge", "to": [9.5, -16.3, 2.8]},
+        {"from": "P-02B.Discharge", "to": [12.5, -16.3, 2.8]},
+        {
+          "from": [12.5, -16.3, 2.8],
+          "to": "B-01.Spray2",
+          "route": {"via": [[9.5, -16.3, 2.8], [9.5, -16.3, 19.5]]}
+        }
+      ]
+    },
+    {
+      "id": "L-02",
+      "name": "Слив B-01 → T-01",
+      "gost": "6",
+      "medium": "10 % H2SO4",
+      "material": "FRP",
+      "dn": 500,
+      "status": "Р",
+      "flow": "≈ 800 м³/ч",
+      "segments": [
+        {
+          "from": "B-01.LiqOut",
+          "to": "T-01.InTop",
+          "route": {"z": 6.6, "first": "y"}
+        }
+      ]
+    },
+    {
+      "id": "L-03",
+      "name": "Боковой отбор на сгуститель",
+      "gost": "6",
+      "medium": "10 % H2SO4 со шламом",
+      "material": "FRP",
+      "dn": 100,
+      "status": "Т",
+      "flow": "20–40 м³/ч",
+      "segments": [
+        {
+          "from": "T-01.SideDraw",
+          "to": "B-07.FeedTop",
+          "route": {"z": 7.0, "first": "y"}
+        }
+      ]
+    },
+    {
+      "id": "L-04",
+      "name": "Осветлённая кислота B-07 → T-01",
+      "gost": "6",
+      "medium": "10 % H2SO4",
+      "material": "FRP",
+      "dn": 100,
+      "status": "Т",
+      "flow": "20–40 м³/ч",
+      "segments": [
+        {
+          "from": "B-07.Overflow",
+          "to": "T-01.ReturnTop",
+          "route": {"via": [[2.5, -20.3, 5.9], [5.2, -20.3, 5.9], [5.2, -10.5, 5.9], [6.0, -10.5, 5.9]]}
+        }
+      ]
+    },
+    {
+      "id": "L-05",
+      "name": "Сгущённый шлам на фильтр-пресс",
+      "gost": "6",
+      "medium": "Шлам 10–20 % твёрдого",
+      "material": "FRP",
+      "dn": 50,
+      "status": "Т",
+      "flow": "0,1–0,5 м³/ч",
+      "segments": [
+        {
+          "from": "B-07.Underflow",
+          "to": "F-01.Feed",
+          "route": {"z": 0.3}
+        }
+      ]
+    },
+    {
+      "id": "L-06",
+      "name": "Фильтрат F-01 → T-01",
+      "gost": "6",
+      "medium": "10 % H2SO4",
+      "material": "FRP",
+      "dn": 50,
+      "status": "Т",
+      "flow": "≈ L-05",
+      "segments": [
+        {
+          "from": "F-01.Filtrate",
+          "to": "T-01.FiltrateTop",
+          "route": {"z": 6.3, "first": "y"}
+        }
+      ]
+    },
+    {
+      "id": "L-08",
+      "name": "Слабая кислота на отдувку",
+      "gost": "6",
+      "medium": "10 % H2SO4, SO2 4 кг/м³",
+      "material": "FRP",
+      "dn": 50,
+      "status": "Р",
+      "flow": "7,2 м³/ч",
+      "segments": [
+        {
+          "from": "T-01.Bleed",
+          "to": "B-08.LiqIn",
+          "route": {"via": [[11.5, -11.7, 1.6], [11.5, -11.7, 7.4], [16.9, -11.7, 7.4], [16.9, -24.0, 7.4]]}
+        }
+      ]
+    },
+    {
+      "id": "L-09",
+      "name": "Отдутая слабая кислота B-08 → T-02",
+      "gost": "6",
+      "medium": "10 % H2SO4, SO2 ≤ 0,2 кг/м³",
+      "material": "FRP",
+      "dn": 50,
+      "status": "Р",
+      "flow": "7,6 т/ч",
+      "segments": [
+        {"from": "B-08.LiqOut", "to": "T-02.In"}
+      ]
+    },
+    {
+      "id": "L-10",
+      "name": "Слабая кислота на нейтрализацию",
+      "gost": "6",
+      "medium": "10 % H2SO4",
+      "material": "FRP",
+      "dn": 80,
+      "status": "Р",
+      "flow": "7,6 т/ч",
+      "boundaryTo": "SNK-02 Нейтрализация",
+      "segments": [
+        {"from": "T-02.Out", "to": [30.75, -24.0, 0.55]},
+        {"from": [30.75, -22.5, 0.55], "to": [30.75, -25.5, 0.55]},
+        {"from": [30.75, -22.5, 0.55], "to": "P-05A.Suction"},
+        {"from": [30.75, -25.5, 0.55], "to": "P-05B.Suction"},
+        {"from": "P-05A.Discharge", "to": [31.75, -22.5, 2.0]},
+        {"from": "P-05B.Discharge", "to": [31.75, -25.5, 2.0]},
+        {"from": [31.75, -22.5, 2.0], "to": [31.75, -25.5, 2.0]},
+        {"from": [31.75, -24.0, 2.0], "to": [40.0, -24.0, 2.0]}
+      ]
+    },
+    {
+      "id": "L-11",
+      "name": "Орошение B-02 через теплообменники E-01",
+      "gost": "6",
+      "medium": "1–2 % H2SO4",
+      "material": "FRP",
+      "dn": 300,
+      "status": "Р",
+      "flow": "530 м³/ч",
+      "segments": [
+        {"from": "T-03.Suction", "to": [22.0, -14.2, 0.9]},
+        {"from": [20.5, -14.2, 0.9], "to": [23.5, -14.2, 0.9]},
+        {"from": [20.5, -14.2, 0.9], "to": "P-03A.Suction"},
+        {"from": [23.5, -14.2, 0.9], "to": "P-03B.Suction"},
+        {"from": "P-03A.Discharge", "to": [20.5, -15.8, 2.8]},
+        {"from": "P-03B.Discharge", "to": [23.5, -15.8, 2.8]},
+        {
+          "from": [20.5, -15.8, 2.8],
+          "to": [26.6, -5.7, 2.0],
+          "route": {"via": [[26.6, -15.8, 2.8], [26.6, -15.8, 2.0]]}
+        },
+        {"from": [26.6, -5.7, 2.0], "to": "E-01A.HotIn"},
+        {"from": [26.6, -8.2, 2.0], "to": "E-01B.HotIn"},
+        {"from": [26.6, -10.7, 2.0], "to": "E-01C.HotIn"},
+        {"from": "E-01A.HotOut", "to": [26.6, -5.7, 0.7]},
+        {"from": "E-01B.HotOut", "to": [26.6, -8.2, 0.7]},
+        {"from": "E-01C.HotOut", "to": [26.6, -10.7, 0.7]},
+        {
+          "from": [26.6, -10.7, 0.7],
+          "to": "B-02.LiqIn",
+          "route": {"via": [[26.6, -4.2, 0.7], [26.6, -4.2, 24.0], [20.5, -4.2, 24.0]]}
+        }
+      ]
+    },
+    {
+      "id": "L-12",
+      "name": "Слив B-02 → T-03",
+      "gost": "6",
+      "medium": "1–2 % H2SO4 + конденсат",
+      "material": "FRP",
+      "dn": 400,
+      "status": "Р",
+      "flow": "530 м³/ч + 19,3 т/ч",
+      "segments": [
+        {
+          "from": "B-02.LiqOut",
+          "to": "T-03.InTop",
+          "route": {"z": 6.6, "first": "y"}
+        }
+      ]
+    },
+    {
+      "id": "L-13",
+      "name": "Перелив T-03 → T-01",
+      "gost": "6",
+      "medium": "1–2 % H2SO4",
+      "material": "FRP",
+      "dn": 100,
+      "status": "Р",
+      "flow": "22,4 т/ч",
+      "segments": [
+        {
+          "from": "T-03.Overflow",
+          "to": "T-01.OverflowIn",
+          "route": {"z": 3.4}
+        }
+      ]
+    },
+    {
+      "id": "L-14",
+      "name": "Дренаж МЭФ → T-03",
+      "gost": "6",
+      "medium": "Уловленный туман + промывная вода",
+      "material": "FRP",
+      "dn": 100,
+      "status": "Т",
+      "flow": "3,1 т/ч в среднем",
+      "segments": [
+        {
+          "from": "B-03A.Drain",
+          "to": [38.0, -8.5, 3.5],
+          "route": {"via": [[38.0, -4.5, 3.5]]}
+        },
+        {
+          "from": "B-03B.Drain",
+          "to": [38.0, -4.5, 3.5],
+          "route": {"via": [[38.0, 4.5, 3.5]]}
+        },
+        {
+          "from": "B-04A.Drain",
+          "to": [52.0, -8.5, 3.5],
+          "route": {"via": [[52.0, -4.5, 3.5]]}
+        },
+        {
+          "from": "B-04B.Drain",
+          "to": [52.0, -4.5, 3.5],
+          "route": {"via": [[52.0, 4.5, 3.5]]}
+        },
+        {"from": [52.0, -8.5, 3.5], "to": [26.0, -8.5, 3.5]},
+        {
+          "from": [26.0, -8.5, 3.5],
+          "to": "T-03.DrainIn",
+          "route": {"via": [[26.0, -10.5, 3.5]]}
+        }
+      ]
+    },
+    {
+      "id": "W-01",
+      "name": "Подпиточная вода",
+      "gost": "1",
+      "medium": "Техническая вода",
+      "material": "PaintedSteel",
+      "dn": 50,
+      "status": "Р",
+      "flow": "5,9 т/ч",
+      "boundaryFrom": "UT-02 Техническая вода",
+      "segments": [
+        {
+          "from": [13.5, -10.5, 6.0],
+          "to": "T-01.MakeupTop",
+          "route": {"z": 6.0}
+        }
+      ]
+    },
+    {
+      "id": "W-02",
+      "name": "Вода промывки МЭФ",
+      "gost": "1",
+      "medium": "Техническая вода",
+      "material": "PaintedSteel",
+      "dn": 80,
+      "status": "Т",
+      "flow": "3,0 м³/ч в среднем, импульсно",
+      "boundaryFrom": "UT-02 Техническая вода",
+      "segments": [
+        {"from": [34.0, 0.0, 22.2], "to": [52.0, 0.0, 22.2]},
+        {
+          "from": [38.0, 0.0, 22.2],
+          "to": "B-03A.FlushIn",
+          "route": {"via": [[38.0, -3.3, 22.2]]}
+        },
+        {
+          "from": [38.0, 0.0, 22.2],
+          "to": "B-03B.FlushIn",
+          "route": {"via": [[38.0, 3.3, 22.2]]}
+        },
+        {
+          "from": [52.0, 0.0, 22.2],
+          "to": "B-04A.FlushIn",
+          "route": {"via": [[52.0, -3.3, 22.2]]}
+        },
+        {
+          "from": [52.0, 0.0, 22.2],
+          "to": "B-04B.FlushIn",
+          "route": {"via": [[52.0, 3.3, 22.2]]}
+        }
+      ]
+    },
+    {
+      "id": "W-03",
+      "name": "Оборотная вода на E-01",
+      "gost": "1",
+      "medium": "Оборотная вода 25 → 35 °C",
+      "material": "PaintedSteel",
+      "dn": 400,
+      "status": "Р",
+      "flow": "1 200 м³/ч",
+      "boundaryFrom": "UT-01 Оборотная вода",
+      "segments": [
+        {"from": [36.0, -17.5, 0.7], "to": [32.4, -17.5, 0.7]},
+        {"from": [32.4, -17.5, 0.7], "to": [32.4, -6.25, 0.7]},
+        {"from": [32.4, -6.25, 0.7], "to": "E-01A.ColdIn", "dn": 250},
+        {"from": [32.4, -8.75, 0.7], "to": "E-01B.ColdIn", "dn": 250},
+        {"from": [32.4, -11.25, 0.7], "to": "E-01C.ColdIn", "dn": 250},
+        {"from": "E-01A.ColdOut", "to": [32.4, -5.75, 2.0], "dn": 250},
+        {"from": "E-01B.ColdOut", "to": [32.4, -8.25, 2.0], "dn": 250},
+        {"from": "E-01C.ColdOut", "to": [32.4, -10.75, 2.0], "dn": 250},
+        {"from": [32.4, -5.75, 2.0], "to": [32.4, -17.5, 2.0]},
+        {"from": [32.4, -17.5, 2.0], "to": [36.0, -17.5, 2.0]}
+      ],
+      "boundaryTo": "UT-01 Оборотная вода (возврат)"
+    },
+    {
+      "id": "W-04",
+      "name": "Аварийная вода T-04 → B-01",
+      "gost": "1",
+      "medium": "Техническая вода",
+      "material": "PaintedSteel",
+      "dn": 150,
+      "status": "Т",
+      "flow": "50–100 м³/ч на время аварии",
+      "segments": [
+        {"from": "T-04.Out", "to": "B-01.EmWater"}
+      ]
+    }
+  ]
+}
