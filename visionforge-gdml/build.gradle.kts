@@ -11,7 +11,7 @@ kscience {
 //    wasmJs()
     dependencies {
         api(projects.visionforgeSolid)
-        api("space.kscience:gdml:0.5.0")
+        api(libs.gdml)
     }
     dependencies(jvmTest) {
         implementation(spclibs.logback.classic)

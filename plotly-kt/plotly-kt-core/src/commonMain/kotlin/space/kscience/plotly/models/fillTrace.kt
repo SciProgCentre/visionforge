@@ -25,7 +25,8 @@ public fun Trace.appendXY(vararg pairs: Pair<Number, Number>) {
 }
 
 /**
- * Fill trace [x] and [y] with values based on a given integer [xRange] and a numeric [function]. Old values are erased.
+ * Fill traces [Trace.x] and [Trace.y] with values based on a given integer [xRange] and a numeric [function].
+ * Old values are erased.
  */
 @UnstablePlotlyAPI
 public fun Trace.functionXY(xRange: IntRange, function: (Int) -> Number) {
@@ -34,7 +35,8 @@ public fun Trace.functionXY(xRange: IntRange, function: (Int) -> Number) {
 }
 
 /**
- * Fill trace [x] and [y] with values based on given [xs] and a [function] for y values. Old values are erased.
+ * Fill traces [Trace.x] and [Trace.y] with values based on given [xs] and a [function] for y values.
+ * Old values are erased.
  */
 @UnstablePlotlyAPI
 public fun Trace.functionXY(xs: Iterable<Number>, function: (Double) -> Number) {

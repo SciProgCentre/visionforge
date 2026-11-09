@@ -1,8 +1,8 @@
 package space.kscience.visionforge
 
 import kotlinx.coroutines.flow.Flow
+import space.kscience.dataforge.context.debug
 import space.kscience.dataforge.context.logger
-import space.kscience.dataforge.context.warn
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.meta.descriptors.Described
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
@@ -48,7 +48,13 @@ public interface Vision : Described, Provider {
      * Receive and process a generic [VisionEvent].
      */
     public suspend fun receiveEvent(event: VisionEvent) {
-        manager?.logger?.warn { "Undispatched event: $event" }
+        when (event) {
+            is VisionChangedEvent -> {
+                //ignore change notifications
+            }
+
+            else -> manager?.logger?.debug { "Undispatched event: $event" }
+        }
     }
 
     /**
@@ -116,14 +122,18 @@ public interface MutableVision : Vision {
      * Receive and process a generic [VisionEvent].
      */
     override suspend fun receiveEvent(event: VisionEvent) {
-        if (event is VisionChange) {
-            if (event.children?.isNotEmpty() == true) {
-                error("Received vision group change event, but $this Vision does not handle children changes")
+        when (event) {
+            is VisionChange -> {
+                if (event.children?.isNotEmpty() == true) {
+                    error("Received vision group change event, but $this Vision does not handle children changes")
+                }
+                event.properties?.let {
+                    updateProperties(it, Name.EMPTY)
+                }
             }
-            event.properties?.let {
-                updateProperties(it, Name.EMPTY)
-            }
-        } else super.receiveEvent(event)
+
+            else -> super.receiveEvent(event)
+        }
     }
 
     public fun mutableProperty(
@@ -200,7 +210,6 @@ public fun MutableVision.useStyle(styleName: String) {
  */
 public fun Vision.getStyle(name: String): Meta? =
     readProperty(STYLESHEET_KEY + name, inherited = true, useStyles = false)
-//properties[STYLESHEET_KEY + name] ?: parent?.getStyle(name)
 
 /**
  * Resolve a property from all styles

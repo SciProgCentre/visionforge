@@ -33,12 +33,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.html.body
 import kotlinx.html.head
 import kotlinx.html.header
 import kotlinx.html.meta
-import kotlinx.serialization.encodeToString
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.ContextAware
 import space.kscience.dataforge.meta.Configurable
@@ -130,13 +128,11 @@ public fun Application.serveVisionData(
                 }
 
                 try {
-                    withContext(configuration.context.coroutineContext) {
-                        vision.flowChanges(configuration.updateInterval.milliseconds).onEach { event ->
-                            val json = configuration.visionManager.jsonFormat.encodeToString<VisionEvent>(event)
-                            application.log.debug("Sending update for $name: \n$json")
-                            outgoing.send(Frame.Text(json))
-                        }.collect()
-                    }
+                    vision.flowChanges(configuration.updateInterval.milliseconds).onEach { event ->
+                        val json = configuration.visionManager.jsonFormat.encodeToString<VisionEvent>(event)
+                        application.log.debug("Sending update for $name: \n$json")
+                        outgoing.send(Frame.Text(json))
+                    }.collect()
                 } catch (t: Throwable) {
                     this.application.log.info("WebSocket update channel for $name is closed with exception: $t")
                 }

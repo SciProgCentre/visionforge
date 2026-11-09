@@ -3,10 +3,8 @@ package space.kscience.visionforge
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import space.kscience.dataforge.meta.ObservableMutableMeta
@@ -15,11 +13,10 @@ import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 
 @Serializable
 public abstract class AbstractVision(
-    @OptIn(ExperimentalSerializationApi::class)
     @EncodeDefault(EncodeDefault.Mode.NEVER)
     @Serializable(ObservableMutableMetaSerializer::class)
     final override val properties: ObservableMutableMeta = ObservableMutableMeta(),
-) : MutableVision {
+) : MutableVision, AutoCloseable {
 
     @Transient
     private val _eventFlow =
@@ -42,10 +39,6 @@ public abstract class AbstractVision(
         properties.onChange(_eventFlow) { name ->
             emitEvent(VisionPropertyChangedEvent(name, properties[name]))
         }
-
-        _eventFlow.onCompletion {
-            properties.removeListener(_eventFlow)
-        }
     }
 
     @Transient
@@ -61,5 +54,9 @@ public abstract class AbstractVision(
         }
 
     override val descriptor: MetaDescriptor? get() = null
+
+    override fun close() {
+        properties.removeListener(_eventFlow)
+    }
 
 }

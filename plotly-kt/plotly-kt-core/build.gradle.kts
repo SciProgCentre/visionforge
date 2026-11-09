@@ -6,10 +6,6 @@ plugins {
 
 val plotlyVersion = "2.35.3"
 
-//kotlin{
-//    applyDefaultHierarchyTemplate()
-//}
-
 kscience {
     fullStack(bundleName = "js/plotly-kt.js")
     native()

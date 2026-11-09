@@ -31,7 +31,9 @@ public class VisionEventPack(public val events: List<VisionEvent>) : VisionEvent
 @SerialName("forChild")
 public class VisionEventForChild(public val childName: Name, public val event: VisionEvent) : VisionEvent
 
-
+/**
+ * Notification events about changes in [Vision] state
+ */
 public sealed interface VisionChangedEvent : VisionEvent
 
 /**

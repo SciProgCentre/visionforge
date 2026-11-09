@@ -23,10 +23,10 @@ kscience {
         api("io.github.vinceglb:filekit-core:0.14.2")
 //        api(npm("file-saver", "2.0.5"))
 //        api(npm("@types/file-saver", "2.0.7"))
-        implementation(npm("three", "0.173.0"))
-        implementation(npm("@types/three", "0.173.0"))
-        implementation(npm("three-csg-ts", "3.2.0"))
-        implementation(npm("meshline", "3.3.1"))
+        npm("three", "0.173.0")
+        npm("@types/three", "0.173.0")
+        npm("three-csg-ts", "3.2.0")
+        npm("meshline", "3.3.1")
     }
 }
 

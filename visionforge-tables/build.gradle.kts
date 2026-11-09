@@ -29,7 +29,7 @@ kscience {
     }
     jsMain {
         api("org.jetbrains.kotlin-wrappers:kotlin-js")
-        implementation(npm("tabulator-tables", "6.3.1"))
+        npm("tabulator-tables", "6.3.1")
     }
 }
 

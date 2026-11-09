@@ -1,8 +1,8 @@
 package space.kscience.visionforge
 
 import space.kscience.dataforge.meta.*
-import space.kscience.dataforge.meta.descriptors.*
-import space.kscience.dataforge.meta.set
+import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.MetaDescriptorBuilder
 
 private const val INHERITED_DESCRIPTOR_ATTRIBUTE = "inherited"
 private const val STYLE_DESCRIPTOR_ATTRIBUTE = "useStyles"
@@ -26,7 +26,7 @@ public val MetaDescriptor.widget: Meta
     get() = attributes["widget"] ?: Meta.EMPTY
 
 /**
- * Extension property to access the "widget" key of [ValueDescriptor]
+ * Extension property to access the "widget" key of [MetaDescriptor]
  */
 public var MetaDescriptorBuilder.widget: Meta
     get() = attributes["widget"] ?: Meta.EMPTY

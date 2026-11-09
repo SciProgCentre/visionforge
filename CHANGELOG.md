@@ -11,6 +11,8 @@
 ### Removed
 
 ### Fixed
+- Fix the problem with plotly vision errors due to VisionChangedEvent
+- Add dispatch for VisionChangedEvent in default vision processor
 
 ### Security
 
