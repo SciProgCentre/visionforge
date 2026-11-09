@@ -14,6 +14,8 @@ dataforge-tables = { module = "space.kscience:tables-kt", version.ref = "datafor
 
 kmath-geometry = { module = "space.kscience:kmath-geometry", version.ref = "kmath" }
 
+gdml = "space.kscience:gdml:0.5.1"
+
 okio = "com.squareup.okio:okio:3.3.0"
 kotlinx-browser = "org.jetbrains.kotlinx:kotlinx-browser:0.5.0"
 bootstrap-compose = { module = "app.softwork:bootstrap-compose", version.ref = "bootstrap-compose" }

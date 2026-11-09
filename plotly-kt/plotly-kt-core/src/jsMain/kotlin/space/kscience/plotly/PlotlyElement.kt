@@ -13,7 +13,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromDynamic
 import kotlinx.serialization.json.encodeToDynamic
-import org.w3c.dom.*
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.MutationObserver
+import org.w3c.dom.MutationRecord
 import org.w3c.dom.events.MouseEvent
 import space.kscience.dataforge.meta.MetaRepr
 import space.kscience.dataforge.meta.MetaSerializer
@@ -89,7 +92,8 @@ public fun Element.plot(
         if (records.firstOrNull()?.removedNodes?.length != 0) {
             listenJob.cancel()
         }
-    }.observe(this, MutationObserverInit(childList = true, attributes = false))
+    }.observe(this, js("({ childList: true, attributes: false})"))
+    // FIXME workaround for https://youtrack.jetbrains.com/issue/KT-16305
 }
 
 @Deprecated("Change arguments positions", ReplaceWith("plot(plotlyConfig, plot)"))
