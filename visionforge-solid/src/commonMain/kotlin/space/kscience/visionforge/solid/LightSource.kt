@@ -4,6 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
+import space.kscience.dataforge.meta.descriptors.ValueRestriction
 import space.kscience.dataforge.meta.descriptors.node
 import space.kscience.dataforge.meta.descriptors.value
 import space.kscience.dataforge.meta.number
@@ -42,7 +43,18 @@ public abstract class LightSource : MiscSolid() {
                 }
 
                 node(Solid.POSITION_KEY) {
-                    hide()
+                    valueRestriction = ValueRestriction.ABSENT
+                    value(Solid.X_KEY, ValueType.NUMBER){
+                        inherited = false
+                    }
+
+                    value(Solid.Y_KEY, ValueType.NUMBER){
+                        inherited = false
+                    }
+
+                    value(Solid.Z_KEY, ValueType.NUMBER){
+                        inherited = false
+                    }
                 }
             }
         }

@@ -30,7 +30,6 @@ import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.three.threeJsHeader
 import space.kscience.visionforge.visible
-import kotlin.math.PI
 import kotlin.time.Duration.Companion.seconds
 
 public object FactoryServer {
@@ -49,12 +48,11 @@ public object FactoryServer {
         val root = MogSceneBuilder.buildScene(config).apply {
             ambientLight {
                 color(Colors.white)
-                intensity = 1.0
+                intensity = 0.2
             }
-            pointLight(x = 35.0, y = 30.0, z = 60.0) {
+            pointLight(x = 50.0, y = 50.0, z = 100.0, "pointLight") {
                 color(Colors.white)
-                rotationX = - PI/2
-                intensity = 2.0
+                intensity = 20000.0
             }
         }
 
