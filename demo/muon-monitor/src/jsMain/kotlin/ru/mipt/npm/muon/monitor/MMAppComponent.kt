@@ -15,7 +15,6 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
-import org.w3c.fetch.RequestInit
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.meta.invoke
 import space.kscience.dataforge.names.Name
@@ -69,10 +68,7 @@ fun MMApp(context: Context, model: Model, selected: Name? = null) {
                     ButtonGroup({ Layout.width = Width.Full }) {
                         Button("Next") {
                             context.launch {
-                                val event = window.fetch(
-                                    "http://localhost:8080/event",
-                                    RequestInit("GET")
-                                ).then { response ->
+                                val event = window.fetch("http://localhost:8080/event").then { response ->
                                     if (response.ok) {
                                         response.text()
                                     } else {
