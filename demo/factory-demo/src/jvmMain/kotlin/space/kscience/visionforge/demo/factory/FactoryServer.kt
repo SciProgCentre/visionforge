@@ -30,6 +30,7 @@ import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.solid.specifications.Canvas3DOptions
 import space.kscience.visionforge.three.threeJsHeader
 import space.kscience.visionforge.visible
+import kotlin.math.PI
 import kotlin.time.Duration.Companion.seconds
 
 public object FactoryServer {
@@ -48,10 +49,11 @@ public object FactoryServer {
         val root = MogSceneBuilder.buildScene(config).apply {
             ambientLight {
                 color(Colors.white)
-                intensity = 1.8
+                intensity = 1.0
             }
             pointLight(x = 35.0, y = 30.0, z = 60.0) {
                 color(Colors.white)
+                rotationX = - PI/2
                 intensity = 2.0
             }
         }
@@ -94,13 +96,13 @@ public object FactoryServer {
 
             visionPage(
                 solids.visionManager,
-                VisionPage.title("МОГ ЦПиНСК НМЗ — 3D Цифровой Двойник"),
+                VisionPage.title("МОГ — 3D Цифровой Двойник"),
                 VisionPage.threeJsHeader,
-                VisionPage.styleSheetHeader("css/factory.css")
+                VisionPage.styleSheetHeader("css/factory.css"),
             ) {
                 div("factory-header") {
                     div("factory-title-block") {
-                        h1 { +"Отделение мокрой очистки газа (МОГ) ЦПиНСК НМЗ" }
+                        h1 { +"Отделение мокрой очистки газа" }
                         p { +"3D Цифровой двойник — 3 технологические линии, 26 аппаратов, 26 трубопроводов" }
                         div("badges") {
                             span("badge") { +"DEXPI 2.0.1" }

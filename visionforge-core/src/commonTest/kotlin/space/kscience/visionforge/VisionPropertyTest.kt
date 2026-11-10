@@ -57,6 +57,22 @@ internal class VisionPropertyTest {
     }
 
     @Test
+    fun testStyleProperty() {
+        var child: Vision? = null
+        val vision = SimpleVisionGroup().apply {
+            updateStyle("testStyle") {
+                "test" put 22
+            }
+            useStyle("testStyle")
+            child = group("child") {
+                useStyle("testStyle")
+            }
+        }
+        assertEquals(22, vision.readProperty("test")?.int)
+        assertEquals(22, child?.readProperty("test")?.int)
+    }
+
+    @Test
     fun testChildrenPropertyPropagation() = runTest(timeout = 200.milliseconds) {
         val group = VisionGroup(visionManager) {
             properties {

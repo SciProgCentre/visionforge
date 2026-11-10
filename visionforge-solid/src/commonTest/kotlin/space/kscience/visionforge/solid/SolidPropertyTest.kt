@@ -58,8 +58,10 @@ class SolidPropertyTest {
                 "test" put 22
             }
             solidGroup {
-                box = box(100, 100, 100) {
-                    useStyle("testStyle")
+                solidGroup {
+                    box = box(100, 100, 100) {
+                        useStyle("testStyle")
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package space.kscience.visionforge.demo.factory.styles
 
+import space.kscience.dataforge.meta.Meta
 import space.kscience.visionforge.Colors
 import space.kscience.visionforge.demo.factory.model.FactorySceneConfig
 import space.kscience.visionforge.setStyle
@@ -29,7 +30,12 @@ public object MogStyles {
                 opacity = 1.0f
                 type = "phong"
             }
-            root.setStyle(materialStyleName(matName), mat.toMeta())
+            root.setStyle(
+                styleName = materialStyleName(matName),
+                style = Meta {
+                    "material" put mat.toMeta()
+                }
+            )
         }
 
         // GOST 14202 styles
@@ -40,7 +46,12 @@ public object MogStyles {
                 opacity = 1.0f
                 type = "phong"
             }
-            root.setStyle(gostStyleName(gostKey), mat.toMeta())
+            root.setStyle(
+                styleName = gostStyleName(gostKey),
+                style = Meta {
+                    "material" put mat.toMeta()
+                }
+            )
         }
 
         // State styles
@@ -51,7 +62,12 @@ public object MogStyles {
                 opacity = if (stateKey == "flush") 0.85f else 1.0f
                 type = "phong"
             }
-            root.setStyle(stateStyleName(stateKey), mat.toMeta())
+            root.setStyle(
+                styleName = stateStyleName(stateKey),
+                style = Meta {
+                    "material" put mat.toMeta()
+                }
+            )
         }
     }
 }
