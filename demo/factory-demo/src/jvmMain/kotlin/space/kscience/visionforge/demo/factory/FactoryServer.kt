@@ -50,7 +50,7 @@ public object FactoryServer {
                 color(Colors.white)
                 intensity = 0.2
             }
-            pointLight(x = 50.0, y = 50.0, z = 100.0, "pointLight") {
+            pointLight(x = 50.0, y = -50.0, z = 100.0, "pointLight") {
                 color(Colors.white)
                 intensity = 20000.0
             }
