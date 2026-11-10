@@ -1,6 +1,9 @@
 package space.kscience.visionforge.solid.three
 
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.web.dom.DOMScope
@@ -75,6 +78,9 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
                         // disable tracking changes for statics
                         group[name] = object3D
                     } catch (ex: Throwable) {
+                        if (ex is CancellationException) {
+                            currentCoroutineContext().ensureActive()
+                        }
                         logger.error(ex) { "Failed to render vision with token $name and type ${child::class}" }
                     }
                 }
@@ -88,7 +94,9 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
                         when (event) {
                             is VisionPropertyChangedEvent -> {
                                 val propertyName = event.propertyName
-                                console.log("$vision updated $propertyName with ${vision.readProperty(propertyName, inherited = true)}")
+//                                context.logger.debug {
+//                                    "$vision updated $propertyName with ${vision.readProperty(propertyName, inherited = true)}"
+//                                }
                                 if (
                                     propertyName.startsWith(Solid.POSITION_KEY) ||
                                     propertyName.startsWith(Solid.ROTATION_KEY) ||
@@ -118,6 +126,9 @@ public class ThreePlugin : AbstractPlugin(), ComposeHtmlVisionRenderer {
                                         val object3D = buildObject3D(child)
                                         set(childName, object3D)
                                     } catch (ex: Throwable) {
+                                        if (ex is CancellationException) {
+                                            currentCoroutineContext().ensureActive()
+                                        }
                                         logger.error(ex) { "Failed to render vision with name $childName" }
                                     }
                                 }

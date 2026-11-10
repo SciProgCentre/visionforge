@@ -69,7 +69,7 @@ internal val formVisionRenderer: ElementVisionRenderer =
             event.preventDefault()
             val formData = FormData(form).toMeta()
             vision.asyncControlEvent(ControlSubmitEvent(name = name, payload = formData))
-            console.info("Sent form data: ${formData.toMap()}")
+            vision.manager?.logger?.debug { "Sent form data: ${formData.toMap()}" }
             false
         }
     }

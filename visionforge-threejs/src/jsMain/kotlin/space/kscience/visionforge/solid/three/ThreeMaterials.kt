@@ -1,5 +1,7 @@
 package space.kscience.visionforge.solid.three
 
+import space.kscience.dataforge.context.logger
+import space.kscience.dataforge.context.warn
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.plus
@@ -194,7 +196,7 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
                 )?.boolean == true
             }
 
-            else -> console.warn("Unrecognized material property: $propertyName")
+            else -> vision.manager?.logger?.warn { "Unrecognized material property: $propertyName" }
         }
 
         material.needsUpdate = true

@@ -192,6 +192,7 @@ public fun Application.visionPage(
                 else -> ConnectorType(originSchema)
             }
             call.respondHtml {
+                attributes["data-bs-theme"] = "light"
                 head {
                     meta {
                         charset = "utf-8"

@@ -118,6 +118,11 @@ body {
     display: flex;
 }
 
+.visionforge-output {
+    height: 100%;
+    width: 100%;
+}
+
 .canvas-container {
     flex: 1;
     height: 100%;
@@ -127,7 +132,7 @@ body {
 .legend-panel {
     position: absolute;
     bottom: 20px;
-    right: 20px;
+    right: 440px;
     background: rgba(22, 26, 34, 0.88);
     backdrop-filter: blur(8px);
     border: 1px solid #2d3341;

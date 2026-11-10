@@ -1,5 +1,6 @@
 package space.kscience.visionforge.solid.three
 
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
 import space.kscience.visionforge.solid.StlBinarySolid
@@ -9,7 +10,6 @@ import three.core.BufferGeometry
 import three.external.loaders.STLLoader
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 fun ArrayBuffer.toByteArray(): ByteArray = Int8Array(this).unsafeCast<ByteArray>()
 
@@ -23,7 +23,7 @@ public object ThreeStlFactory : ThreeMeshFactory<StlSolid>(StlSolid::class) {
 
     override suspend fun buildGeometry(obj: StlSolid): BufferGeometry = when (obj) {
         is StlBinarySolid -> loader.parse(obj.data)
-        is StlUrlSolid -> suspendCoroutine { continuation ->
+        is StlUrlSolid -> suspendCancellableCoroutine { continuation ->
             loader.load(
                 url = obj.url,
                 onLoad = {

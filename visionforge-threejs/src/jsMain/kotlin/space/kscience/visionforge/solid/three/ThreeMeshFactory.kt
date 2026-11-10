@@ -40,7 +40,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
         if (observe) {
             //add listener to object properties
             vision.onPropertyChange(three.context) { name, _ ->
-                console.log("$mesh updated $name with ${vision.readProperty(name, inherited = true)}")
+//                three.logger.debug { "$mesh updated $name with ${vision.readProperty(name, inherited = true)}" }
                 when {
                     name.startsWith(Solid.GEOMETRY_KEY) -> {
                         val oldGeometry = mesh.geometry
@@ -50,6 +50,7 @@ public abstract class ThreeMeshFactory<in T : Solid>(
                         mesh.applyEdges(vision)
                         newGeometry.dispose()
                     }
+
                     name.startsWith(EDGES_KEY) -> mesh.applyEdges(vision)
                     else -> mesh.updateProperty(vision, name)
                 }
