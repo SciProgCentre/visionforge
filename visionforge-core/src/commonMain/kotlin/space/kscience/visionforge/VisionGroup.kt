@@ -6,6 +6,7 @@ import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.ValueType
 import space.kscience.dataforge.meta.descriptors.MetaDescriptor
 import space.kscience.dataforge.meta.descriptors.value
+import space.kscience.dataforge.meta.remove
 import space.kscience.dataforge.names.Name
 import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.asName
@@ -114,10 +115,24 @@ public class SimpleVisionGroup : AbstractVision(), MutableVisionGroup<Vision> {
             }
         }
 
+        /**
+         * Updates the properties of this vision based on the given meta [item] describing a property change.
+         *
+         * If the value of [item] equals [VisionChange.PROPERTY_NODE_REMOVE_VALUE], the property located at [name]
+         * is removed. Otherwise, the value of [item] is assigned to the property at [name], and all nested
+         * items of [item] are processed recursively, appending their tokens to [name].
+         *
+         * @param item the meta node describing the property change, including possible removal markers and nested child updates.
+         * @param name the name of the property to update, used as a relative path during recursive traversal. Defaults to [Name.EMPTY], which targets the root of the properties.
+         */
         public fun MutableVision.updateProperties(item: Meta, name: Name = Name.EMPTY) {
-            properties.setValue(name, item.value)
-            item.items.forEach { (token, item) ->
-                updateProperties(item, name + token)
+            if(item.value == VisionChange.PROPERTY_NODE_REMOVE_VALUE){
+                properties.remove(name)
+            } else {
+                properties.setValue(name, item.value)
+                item.items.forEach { (token, item) ->
+                    updateProperties(item, name + token)
+                }
             }
         }
 

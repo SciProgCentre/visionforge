@@ -58,7 +58,11 @@ public data class VisionChange(
     public val vision: Vision? = null,
     public val properties: Meta? = null,
     public val children: Map<NameToken, VisionChange>? = null,
-) : VisionEvent
+) : VisionEvent {
+    public companion object {
+        public val PROPERTY_NODE_REMOVE_VALUE: Value = "@remove".asValue()
+    }
+}
 
 public fun VisionChange.isEmpty(): Boolean = vision == null && properties == null && children == null
 
@@ -93,7 +97,7 @@ public class VisionChangeCollector : MutableVisionContainer<Vision> {
         if (propertyName.isEmpty()) {
             properties = item?.toMutableMeta() ?: MutableMeta()
         } else {
-            properties[propertyName] = (item ?: Meta(Null))
+            properties[propertyName] = (item ?: Meta(VisionChange.PROPERTY_NODE_REMOVE_VALUE))
         }
     }
 

@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- Replaced explicit null for removing remote properties with `@remove` marker
 
 ### Deprecated
 

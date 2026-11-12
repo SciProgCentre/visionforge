@@ -131,8 +131,8 @@ body {
 
 .legend-panel {
     position: absolute;
-    bottom: 20px;
-    right: 440px;
+    top: 20px;
+    left: 20px;
     background: rgba(22, 26, 34, 0.88);
     backdrop-filter: blur(8px);
     border: 1px solid #2d3341;
