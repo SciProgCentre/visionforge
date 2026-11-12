@@ -11,6 +11,7 @@
 ### Removed
 
 ### Fixed
+- Fix descendant coloring in factory demo by using a prioritized highlight style reference and changing style definitions dynamically.
 - Fix the problem with plotly vision errors due to VisionChangedEvent
 - Add dispatch for VisionChangedEvent in default vision processor
 

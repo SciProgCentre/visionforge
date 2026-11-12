@@ -5,8 +5,10 @@ import space.kscience.dataforge.names.parseAsName
 import space.kscience.visionforge.demo.factory.model.FactorySceneConfig
 import space.kscience.visionforge.demo.factory.scene.MogEquipmentBuilder
 import space.kscience.visionforge.demo.factory.scene.MogSceneBuilder
-import space.kscience.visionforge.solid.SolidGroup
-import space.kscience.visionforge.solid.getVision
+import space.kscience.visionforge.demo.factory.styles.DisplayMode
+import space.kscience.visionforge.demo.factory.styles.MogStateManager
+import space.kscience.visionforge.demo.factory.styles.MogStyles
+import space.kscience.visionforge.solid.*
 import space.kscience.visionforge.styles
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -104,26 +106,52 @@ class MogSceneTest {
         val g01 = scene.getVision("NMZ.CPNSK.MOG.Line1.Piping.G_01".parseAsName())
         assertNotNull(g01)
 
+        val b01Shell = scene.getVision("NMZ.CPNSK.MOG.Line1.Equipment.B_01.Geom.Shell".parseAsName()) as? Solid
+        assertNotNull(b01Shell)
+
+        val b01Plinth = scene.getVision("NMZ.CPNSK.MOG.Line1.Equipment.B_01.Geom.Plinth".parseAsName()) as? Solid
+        assertNotNull(b01Plinth)
+
+        val g01Seg = scene.getVision("NMZ.CPNSK.MOG.Line1.Piping.G_01.Seg_00".parseAsName()) as? Solid
+        assertNotNull(g01Seg)
+
+        val linedSteelColor = MogStyles.rgbToHex(config.materials["LinedSteel"]!!.rgb)
+        val concreteColor = MogStyles.rgbToHex(config.materials["Concrete"]!!.rgb)
+        val paintedSteelColor = MogStyles.rgbToHex(config.materials["PaintedSteel"]!!.rgb)
+        val neutralColor = MogStyles.rgbToHex(config.materials["Neutral"]!!.rgb)
+        val gost3Color = MogStyles.rgbToHex(config.gost14202["3"]!!.rgb)
+        val stateRunColor = MogStyles.rgbToHex(config.states["run"]!!.rgb)
+
+        // Initial Material mode
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_LinedSteel"), b01.styles)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_PaintedSteel"), g01.styles)
+        assertEquals(linedSteelColor, b01Shell.color.string)
+        assertEquals(concreteColor, b01Plinth.color.string)
+        assertEquals(paintedSteelColor, g01Seg.color.string)
+
         // Switch to GOST 14202 mode
-        space.kscience.visionforge.demo.factory.styles.MogStateManager.applyDisplayMode(
-            scene, config, space.kscience.visionforge.demo.factory.styles.DisplayMode.GOST14202
-        )
-        assertEquals(listOf("material_Neutral"), b01.styles)
-        assertEquals(listOf("gost_3"), g01.styles)
+        MogStateManager.applyDisplayMode(scene, config, DisplayMode.GOST14202)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_LinedSteel"), b01.styles)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_PaintedSteel"), g01.styles)
+        assertEquals(neutralColor, b01Shell.color.string)
+        assertEquals(neutralColor, b01Plinth.color.string)
+        assertEquals(gost3Color, g01Seg.color.string)
 
         // Switch to State mode
-        space.kscience.visionforge.demo.factory.styles.MogStateManager.applyDisplayMode(
-            scene, config, space.kscience.visionforge.demo.factory.styles.DisplayMode.STATE
-        )
-        assertEquals(listOf("state_run"), b01.styles)
-        assertEquals(listOf("state_run"), g01.styles)
+        MogStateManager.applyDisplayMode(scene, config, DisplayMode.STATE)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_LinedSteel"), b01.styles)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_PaintedSteel"), g01.styles)
+        assertEquals(stateRunColor, b01Shell.color.string)
+        assertEquals(stateRunColor, b01Plinth.color.string)
+        assertEquals(stateRunColor, g01Seg.color.string)
 
         // Switch back to Material mode
-        space.kscience.visionforge.demo.factory.styles.MogStateManager.applyDisplayMode(
-            scene, config, space.kscience.visionforge.demo.factory.styles.DisplayMode.MATERIAL
-        )
-        assertEquals(listOf("material_LinedSteel"), b01.styles)
-        assertEquals(listOf("material_PaintedSteel"), g01.styles)
+        MogStateManager.applyDisplayMode(scene, config, DisplayMode.MATERIAL)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_LinedSteel"), b01.styles)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_PaintedSteel"), g01.styles)
+        assertEquals(linedSteelColor, b01Shell.color.string)
+        assertEquals(concreteColor, b01Plinth.color.string)
+        assertEquals(paintedSteelColor, g01Seg.color.string)
     }
 
     @Test
@@ -134,11 +162,21 @@ class MogSceneTest {
         val b03A = scene.getVision("NMZ.CPNSK.MOG.Line2.Equipment.B_03A".parseAsName())
         assertNotNull(b03A)
 
-        space.kscience.visionforge.demo.factory.styles.MogStateManager.setEquipmentState(
-            scene, 2, "B-03A", "flush", space.kscience.visionforge.demo.factory.styles.DisplayMode.STATE
+        val b03AInlet = scene.getVision("NMZ.CPNSK.MOG.Line2.Equipment.B_03A.Geom.InletSection".parseAsName()) as? Solid
+        assertNotNull(b03AInlet)
+
+        val stateRunColor = MogStyles.rgbToHex(config.states["run"]!!.rgb)
+        val stateFlushColor = MogStyles.rgbToHex(config.states["flush"]!!.rgb)
+
+        MogStateManager.applyDisplayMode(scene, config, DisplayMode.STATE)
+        assertEquals(stateRunColor, b03AInlet.color.string)
+
+        MogStateManager.setEquipmentState(
+            scene, 2, "B-03A", "flush", DisplayMode.STATE
         )
 
         assertEquals("flush", b03A.properties.getValue(space.kscience.dataforge.names.Name.of("dt:state"))?.string)
-        assertEquals(listOf("state_flush"), b03A.styles)
+        assertEquals(listOf(MogStyles.HIGHLIGHT_STYLE_NAME, "material_FRP"), b03A.styles)
+        assertEquals(stateFlushColor, b03AInlet.color.string)
     }
 }

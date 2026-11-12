@@ -130,6 +130,7 @@ public object MogPipingBuilder {
                     stream.boundaryFrom?.let { properties.setValue(Name.of("dt:boundaryFrom"), it.asValue()) }
                     stream.boundaryTo?.let { properties.setValue(Name.of("dt:boundaryTo"), it.asValue()) }
 
+                    useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                     useStyle(MogStyles.materialStyleName(stream.material))
 
                     var kSeg = 0
@@ -209,6 +210,7 @@ public object MogPipingBuilder {
                                         rotationY = 0
                                     }
                                 }
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName(stream.material))
                             }
 
@@ -217,6 +219,7 @@ public object MogPipingBuilder {
                                     x = p.x
                                     y = p.y
                                     z = p.z
+                                    useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                     useStyle(MogStyles.materialStyleName(stream.material))
                                 }
                             }
@@ -239,6 +242,7 @@ public object MogPipingBuilder {
                                         rotationY = 0
                                     }
                                 }
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
@@ -260,6 +264,7 @@ public object MogPipingBuilder {
                                         rotationY = 0
                                     }
                                 }
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }

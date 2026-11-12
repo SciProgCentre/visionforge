@@ -1,11 +1,9 @@
 package space.kscience.visionforge.solid
 
-import kotlinx.serialization.Serializable
 import space.kscience.dataforge.meta.Meta
 import space.kscience.dataforge.meta.MetaProvider
 import space.kscience.dataforge.meta.float
 import space.kscience.dataforge.meta.get
-import space.kscience.kmath.geometry.euclidean2d.Float32Space2D
 import space.kscience.kmath.geometry.euclidean2d.Float32Vector2D
 import space.kscience.kmath.geometry.euclidean3d.Float32Space3D
 import space.kscience.kmath.geometry.euclidean3d.Float32Vector3D
@@ -14,8 +12,8 @@ import space.kscience.visionforge.solid.Solid.Companion.Y_KEY
 import space.kscience.visionforge.solid.Solid.Companion.Z_KEY
 import kotlin.math.PI
 
-public typealias FloatVector2D = @Serializable(with = Float32Space2D.VectorSerializer::class) Float32Vector2D
-public typealias FloatVector3D = @Serializable(with = Float32Space3D.VectorSerializer::class) Float32Vector3D
+public typealias FloatVector2D = Float32Vector2D
+public typealias FloatVector3D = Float32Vector3D
 
 public const val PI2: Float = 2 * PI.toFloat()
 

@@ -267,6 +267,7 @@ public object MogEquipmentBuilder {
             properties.setValue(Name.of("dt:dataStatus"), (eq.status ?: "T").asValue())
 
             // Apply default material style
+            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
             useStyle(MogStyles.materialStyleName(eq.material))
 
             val geomGroup = solidGroup("Geom") {
@@ -280,28 +281,34 @@ public object MogEquipmentBuilder {
 
                         cylinder(r = r + 0.3, height = 0.3, name = "Plinth") {
                             z = 0.15
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Concrete"))
                         }
                         cylinder(r = r * 0.98, height = sk - 0.3, name = "Skirt") {
                             z = 0.3 + (sk - 0.3) / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("PaintedSteel"))
                         }
                         cylinder(r = r, height = shellH, name = "Shell") {
                             z = sk + shellH / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         sphere(radius = r, name = "Head") {
                             z = sk + shellH
                             scaleZ = headH / r
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         if (eq.d != null && eq.d >= 3.0) {
                             cylinder(r = r + 0.9, height = 0.12, name = "PlatformTop") {
                                 z = sk + shellH - 0.5
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                             cylinder(r = r + 0.9, height = 0.12, name = "PlatformLow") {
                                 z = sk - 1.2
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
@@ -313,6 +320,7 @@ public object MogEquipmentBuilder {
                         if (eq.template == "tank") {
                             cylinder(r = r + 0.2, height = 0.3, name = "Plinth") {
                                 z = 0.15
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Concrete"))
                             }
                         } else {
@@ -324,32 +332,38 @@ public object MogEquipmentBuilder {
                                     x = sx * a
                                     y = sy * a
                                     z = base / 2.0 - 0.1
+                                    useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                     useStyle(MogStyles.materialStyleName(fm))
                                 }
                             }
                             box(xSize = 2 * a + 0.6, ySize = 2 * a + 0.6, zSize = 0.2, name = "Platform") {
                                 z = base - 0.1
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName(fm))
                             }
                             listOf(base * 0.35, base * 0.7).forEachIndexed { k, zz ->
                                 box(xSize = 2 * a, ySize = 0.2, zSize = 0.25, name = "BeamX_${k + 1}") {
                                     y = a
                                     z = zz
+                                    useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                     useStyle(MogStyles.materialStyleName(fm))
                                 }
                                 box(xSize = 0.2, ySize = 2 * a, zSize = 0.25, name = "BeamY_${k + 1}") {
                                     x = a
                                     z = zz
+                                    useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                     useStyle(MogStyles.materialStyleName(fm))
                                 }
                             }
                         }
                         cylinder(r = r, height = h, name = "Shell") {
                             z = base + h / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cone(bottomRadius = r, height = roofH, upperRadius = 0.0, name = "Roof") {
                             z = base + h + roofH / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                     }
@@ -366,29 +380,35 @@ public object MogEquipmentBuilder {
                                 x = sx * a
                                 y = sy * a
                                 z = lh / 2.0
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
                         cone(bottomRadius = r, height = hh, upperRadius = 0.0, name = "Hopper") {
                             z = lh - hh / 2.0
                             rotationX = PI
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cylinder(r = r, height = ih, name = "InletSection") {
                             z = lh + ih / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cylinder(r = r * 0.99, height = th, name = "TubeSection") {
                             z = lh + ih + th / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         val z0 = lh + ih + th
                         cone(bottomRadius = r, height = hd, upperRadius = 0.0, name = "Hood") {
                             z = z0 + hd / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cylinder(r = r + 0.9, height = 0.12, name = "Platform") {
                             z = z0 - 0.3
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         listOf(45.0, 135.0, 225.0, 315.0).forEachIndexed { i, ang ->
@@ -401,17 +421,20 @@ public object MogEquipmentBuilder {
                                 x = xx
                                 y = yy
                                 z = zc + 0.5
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName(m))
                             }
                         }
                         box(xSize = 1.9, ySize = 1.6, zSize = 0.3, name = "TRBracket") {
                             x = r + 0.75
                             z = z0 - 0.15
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         box(xSize = 1.6, ySize = 1.4, zSize = 1.6, name = "TRSet") {
                             x = r + 0.75
                             z = z0 + 0.8
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("HV"))
                         }
                     }
@@ -426,24 +449,29 @@ public object MogEquipmentBuilder {
                                 x = sx * a
                                 y = sy * a
                                 z = lh / 2.0
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
                         cone(bottomRadius = r, height = ch, upperRadius = 0.0, name = "ConeBottom") {
                             z = lh - ch / 2.0
                             rotationX = PI
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cylinder(r = r, height = wh, name = "Wall") {
                             z = lh + wh / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 0.5, ySize = 2 * r + 0.4, zSize = 0.4, name = "Bridge") {
                             z = lh + wh + 0.2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         box(xSize = 1.0, ySize = 1.0, zSize = 0.8, name = "RakeDrive") {
                             z = lh + wh + 0.8
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Motor"))
                         }
                     }
@@ -462,12 +490,14 @@ public object MogEquipmentBuilder {
 
                         box(xSize = L, ySize = W, zSize = bh, name = "Baseplate") {
                             z = bh / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         cylinder(r = rc, height = wc, name = "Casing") {
                             x = xc
                             z = zs
                             rotationY = PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(
@@ -478,12 +508,14 @@ public object MogEquipmentBuilder {
                         ) {
                             x = (xc + xm - lm / 2.0) / 2.0
                             z = zs - rc * 0.2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         cylinder(r = rm, height = lm, name = "Motor") {
                             x = xm
                             z = zs
                             rotationY = PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Motor"))
                         }
                         box(
@@ -494,6 +526,7 @@ public object MogEquipmentBuilder {
                         ) {
                             x = xm
                             z = (bh + zs - rm) / 2.0 + 0.02
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Motor"))
                         }
                     }
@@ -501,23 +534,27 @@ public object MogEquipmentBuilder {
                         box(xSize = 1.3, ySize = 0.8, zSize = 0.2, name = "Base") {
                             x = 0.05
                             z = 0.1
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         cylinder(r = 0.45, height = 0.35, name = "Volute") {
                             x = -0.2
                             z = 0.75
                             rotationY = PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 0.35, ySize = 0.3, zSize = 0.35, name = "Pedestal") {
                             x = 0.4
                             z = 0.375
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         cylinder(r = 0.2, height = 0.55, name = "Motor") {
                             x = 0.45
                             z = 0.75
                             rotationY = PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Motor"))
                         }
                     }
@@ -529,29 +566,35 @@ public object MogEquipmentBuilder {
                         box(xSize = 0.2, ySize = W, zSize = H, name = "FixedHead") {
                             x = -L / 2.0 + 0.1
                             z = H / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 1.56, ySize = W * 0.9, zSize = H * 0.86, name = "PlatePack") {
                             x = -L / 2.0 + 0.2 + 0.78
                             z = H / 2.0 + 0.05
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("SS"))
                         }
                         box(xSize = 0.15, ySize = W * 0.95, zSize = H * 0.9, name = "PressurePlate") {
                             x = -L / 2.0 + 0.2 + 1.56 + 0.08
                             z = H / 2.0 + 0.05
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 0.16, ySize = 0.35, zSize = H, name = "SupportColumn") {
                             x = L / 2.0 - 0.08
                             z = H / 2.0
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = L, ySize = 0.12, zSize = 0.16, name = "CarryingBar") {
                             z = H + 0.08
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         box(xSize = L, ySize = 0.1, zSize = 0.1, name = "GuideBar") {
                             z = 0.3
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                     }
@@ -563,26 +606,31 @@ public object MogEquipmentBuilder {
                                 x = sx * 2.3
                                 y = sy * 0.95
                                 z = (pz - 0.2) / 2.0
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
                         box(xSize = 5.2, ySize = 2.3, zSize = 0.2, name = "Platform") {
                             z = pz - 0.1
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                         box(xSize = 0.4, ySize = 1.4, zSize = 1.7, name = "FixedHead") {
                             x = -2.0
                             z = pz + 0.85
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 0.4, ySize = 1.4, zSize = 1.7, name = "EndHead") {
                             x = 1.6
                             z = pz + 0.85
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(m))
                         }
                         box(xSize = 2.9, ySize = 1.2, zSize = 1.3, name = "PlatePack") {
                             x = -0.35
                             z = pz + 0.85
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("PP"))
                         }
                         listOf(0.62, -0.62).forEachIndexed { k, yy ->
@@ -590,6 +638,7 @@ public object MogEquipmentBuilder {
                                 x = -0.2
                                 y = yy
                                 z = pz + 1.55
+                                useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                                 useStyle(MogStyles.materialStyleName("Steel"))
                             }
                         }
@@ -597,11 +646,13 @@ public object MogEquipmentBuilder {
                             x = 2.3
                             z = pz + 0.85
                             rotationY = PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Motor"))
                         }
                         box(xSize = 3.0, ySize = 1.6, zSize = 1.2, name = "CakeBin") {
                             x = -0.3
                             z = 0.6
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                     }
@@ -636,6 +687,7 @@ public object MogEquipmentBuilder {
                             z = -noz.normalLocal.z * len / 2.0
                             if (abs(noz.normalLocal.x) > 0.5) rotationY = PI / 2
                             if (abs(noz.normalLocal.y) > 0.5) rotationX = -PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName(stubMat))
                         }
 
@@ -646,6 +698,7 @@ public object MogEquipmentBuilder {
                             z = -noz.normalLocal.z * 0.03
                             if (abs(noz.normalLocal.x) > 0.5) rotationY = PI / 2
                             if (abs(noz.normalLocal.y) > 0.5) rotationX = -PI / 2
+                            useStyle(MogStyles.HIGHLIGHT_STYLE_NAME)
                             useStyle(MogStyles.materialStyleName("Steel"))
                         }
                     }

@@ -29,6 +29,10 @@ compose-material = { module = "org.jetbrains.compose.material:material", version
 
 compose-materialIconsExtended = "org.jetbrains.compose.material:material-icons-extended:1.7.3"
 
+turbine = "app.cash.turbine:turbine:1.2.1"
+
+cache4k = "io.github.reactivecircus.cache4k:cache4k:0.14.0"
+
 [plugins]
 
 kotlin-jupyter-api = { id = "org.jetbrains.kotlin.jupyter.api", version.ref = "kotlin-jupyter" }

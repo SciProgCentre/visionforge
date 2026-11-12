@@ -273,7 +273,7 @@ public class ThreeCanvas(
             return
         }
 
-        if (isMesh(this)) {
+        if (this.isMesh()) {
             val highlightMesh = getObjectByName(edgesName) ?: if (isMeshLineMaterial(material)) {
                 Mesh(
                     MeshLine(EdgesGeometry(geometry)),

@@ -1,17 +1,21 @@
-package space.kscience.visionforge.meta
+package space.kscience.visionforge
 
+import app.cash.turbine.test
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import space.kscience.dataforge.context.Context
 import space.kscience.dataforge.context.request
 import space.kscience.dataforge.meta.*
 import space.kscience.dataforge.names.Name
-import space.kscience.dataforge.names.get
+import space.kscience.dataforge.names.NameToken
 import space.kscience.dataforge.names.parseAsName
-import space.kscience.visionforge.*
+import space.kscience.dataforge.names.plus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 
 private class TestScheme : Scheme() {
@@ -85,7 +89,7 @@ internal class VisionPropertyTest {
             }
         }
 
-        val child = group.visions["child"] as MutableVision
+        val child = group.getVision(NameToken("child")) as MutableVision
 
         val deferred: CompletableDeferred<Value?> = CompletableDeferred()
 
@@ -105,6 +109,60 @@ internal class VisionPropertyTest {
 //        assertEquals(11, deferred.await()?.int)
 //        assertEquals(2, callCounter)
         subscription.cancel()
+    }
+
+    @Test
+    fun testParentStyleChangePropagation() = runTest(timeout = 1.seconds) {
+        val group = SimpleVisionGroup().apply {
+            updateStyle("testStyle") {
+                "test" put 22
+            }
+            group("child") {
+                useStyle("testStyle")
+                group("child") {
+                    useStyle("testStyle")
+                }
+            }
+        }
+
+        val child = group.getVision(NameToken("child")) as VisionGroup<*>
+        val grandchild = child.getVision(NameToken("child"))!!
+
+        assertEquals(22, child.readProperty("test").int)
+
+        launch {
+            child.flowProperty("test").test {
+                assertEquals(22, awaitItem().int)
+                assertEquals(33, awaitItem().int)
+                assertEquals(null, awaitItem().int)
+                assertEquals(null, awaitItem().int)
+                cancel()
+            }
+        }
+
+        launch {
+            grandchild.flowProperty("test").test {
+                assertEquals(22, awaitItem().int)
+                assertEquals(33, awaitItem().int)
+                assertEquals(null, awaitItem().int)
+                assertEquals(null, awaitItem().int)
+                cancel()
+            }
+        }
+
+        advanceUntilIdle()
+
+        group.updateStyle("testStyle") {
+            "test" put 33
+        }
+
+        assertEquals(33, child.readProperty("test").int)
+
+
+        group.properties.remove(Vision.STYLESHEET_KEY + "testStyle")
+
+        assertEquals(null, child.readProperty("test").int)
+
     }
 
 }

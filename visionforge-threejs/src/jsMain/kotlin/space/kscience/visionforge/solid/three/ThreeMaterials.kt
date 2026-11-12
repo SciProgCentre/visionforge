@@ -198,7 +198,5 @@ public fun Mesh.updateMaterialProperty(vision: Vision, propertyName: Name) {
 
             else -> vision.manager?.logger?.warn { "Unrecognized material property: $propertyName" }
         }
-
-        material.needsUpdate = true
     }
 }

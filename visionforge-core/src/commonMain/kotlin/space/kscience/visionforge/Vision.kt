@@ -16,7 +16,6 @@ import space.kscience.dataforge.provider.Provider
 import space.kscience.visionforge.SimpleVisionGroup.Companion.updateProperties
 import space.kscience.visionforge.Vision.Companion.STYLESHEET_KEY
 import space.kscience.visionforge.Vision.Companion.TYPE
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
@@ -93,7 +92,6 @@ public interface Vision : Described, Provider {
 
         public val VISIBLE_KEY: Name = Name.of("visible")
 
-        @OptIn(ExperimentalUuidApi::class)
         public fun randomId(): String = Uuid.random().toHexString()
     }
 }
@@ -217,8 +215,8 @@ public fun Vision.getStyle(name: String): Meta? =
 public fun Vision.getStyleProperty(name: Name): Meta? = styles.firstNotNullOfOrNull { getStyle(it)?.get(name) }
 
 /**
- * Resolve an item in all style layers
+ * Resolve an item in all style layers and return an ordered list of pairs (style name, style item)
  */
-public fun Vision.getStyleNodes(name: Name): List<Meta> = styles.mapNotNull {
-    getStyle(it)?.get(name)
+public fun Vision.getStyleNodes(name: Name): List<Pair<String, Meta>> = styles.mapNotNull { style ->
+    getStyle(style)?.get(name)?.let { style to it }
 }

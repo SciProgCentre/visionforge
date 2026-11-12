@@ -53,7 +53,7 @@ public object ThreeReferenceFactory : ThreeFactory<SolidReference> {
         val object3D: Object3D = cachedObject.clone(true)
         object3D.updatePosition(vision)
 
-        if (isMesh(object3D)) {
+        if (object3D.isMesh()) {
             object3D.applyProperties(vision)
         }
 

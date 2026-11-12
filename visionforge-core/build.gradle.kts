@@ -14,6 +14,10 @@ kscience {
         api(project.dependencies.platform(spclibs.ktor.bom))
         api(spclibs.kotlinx.html)
     }
+
+    commonTest {
+        implementation(libs.turbine)
+    }
     jsMain {
         api("org.jetbrains.kotlin-wrappers:kotlin-js")
     }

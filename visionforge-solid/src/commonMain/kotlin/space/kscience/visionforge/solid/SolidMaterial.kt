@@ -114,10 +114,16 @@ public class SolidMaterial : Scheme() {
 public val Solid.color: ColorAccessor
     get() = ColorAccessor(mutableProperty(MATERIAL_COLOR_KEY, inherited = true))
 
+/**
+ * Read material on given [Solid] including style information
+ */
 public var Solid.material: SolidMaterial?
     get() = readProperty(MATERIAL_KEY)?.let { SolidMaterial.read(it)}
     set(value) = properties.set(MATERIAL_KEY, value?.meta)
 
+/**
+ * Update material on given [Solid]
+ */
 public fun Solid.material(builder: SolidMaterial.() -> Unit) {
     mutableProperty(MATERIAL_KEY, inherited = false, useStyles = false).updateWith(SolidMaterial, builder)
 }

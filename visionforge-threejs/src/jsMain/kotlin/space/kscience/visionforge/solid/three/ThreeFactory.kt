@@ -66,9 +66,18 @@ public fun Object3D.updatePosition(vision: Vision) {
  */
 public fun Object3D.updateProperty(source: Solid, propertyName: Name) {
 //    console.log("${source::class} updated $propertyName with ${source.readProperty(propertyName, inherited = true)}")
-    if (isMesh(this) && propertyName.startsWith(MATERIAL_KEY)) {
-        updateMaterialProperty(source, propertyName)
-    } else if (
+    if (isMesh()) {
+        if (propertyName == MATERIAL_KEY) {
+            setMaterial(source)
+        } else if (propertyName.startsWith(MATERIAL_KEY)) {
+            updateMaterialProperty(source, propertyName)
+        } else if (propertyName == Vision.STYLE_KEY || propertyName.startsWith(Vision.STYLESHEET_KEY)) {
+            // on stile change update material completely
+            setMaterial(source)
+        }
+    }
+
+    if (
         propertyName.startsWith(Solid.POSITION_KEY)
         || propertyName.startsWith(Solid.ROTATION_KEY)
         || propertyName.startsWith(Solid.SCALE_KEY)

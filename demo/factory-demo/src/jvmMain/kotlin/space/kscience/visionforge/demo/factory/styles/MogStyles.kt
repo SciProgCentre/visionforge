@@ -10,6 +10,8 @@ import space.kscience.visionforge.solid.invoke
 
 public object MogStyles {
 
+    public const val HIGHLIGHT_STYLE_NAME: String = "highlight"
+
     public fun rgbToHex(rgb: List<Double>): String {
         val r = (rgb.getOrElse(0) { 0.5 } * 255.0).toInt().coerceIn(0, 255)
         val g = (rgb.getOrElse(1) { 0.5 } * 255.0).toInt().coerceIn(0, 255)
