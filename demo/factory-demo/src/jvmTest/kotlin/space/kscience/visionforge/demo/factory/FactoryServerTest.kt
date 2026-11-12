@@ -37,6 +37,16 @@ class FactoryServerTest {
             assertTrue(html.contains("Отделение мокрой очистки газа"))
             assertTrue(html.contains("DEXPI 2.0.1"))
             assertTrue(html.contains("ГОСТ 14202"))
+            assertTrue(html.contains("fetch('/api/mode')"))
+
+            // Test get mode (initial MATERIAL)
+            val getModeRequest = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:$port/api/mode"))
+                .GET()
+                .build()
+            val getModeResponse = client.send(getModeRequest, HttpResponse.BodyHandlers.ofString())
+            assertEquals(200, getModeResponse.statusCode())
+            assertTrue(getModeResponse.body().contains("MATERIAL"))
 
             // Test switch to GOST14202 mode
             val modeRequest = HttpRequest.newBuilder()
@@ -46,6 +56,11 @@ class FactoryServerTest {
             val modeResponse = client.send(modeRequest, HttpResponse.BodyHandlers.ofString())
             assertEquals(200, modeResponse.statusCode())
             assertTrue(modeResponse.body().contains("GOST14202"))
+
+            // Test get mode after switch
+            val getModeResponse2 = client.send(getModeRequest, HttpResponse.BodyHandlers.ofString())
+            assertEquals(200, getModeResponse2.statusCode())
+            assertTrue(getModeResponse2.body().contains("GOST14202"))
 
             // Test telemetry toggle
             val telemetryRequest = HttpRequest.newBuilder()

@@ -13,7 +13,6 @@ import space.kscience.visionforge.demo.factory.model.FactorySceneConfig
 import space.kscience.visionforge.getStyle
 import space.kscience.visionforge.setStyle
 import space.kscience.visionforge.solid.SolidGroup
-import space.kscience.visionforge.solid.SolidMaterial
 import space.kscience.visionforge.solid.get
 
 public enum class DisplayMode {
@@ -39,7 +38,7 @@ public object MogStateManager {
                     val eqVision = eqGroup[eq.id.replace('-', '_').parseAsName()] as? MutableVision ?: continue
                     when (mode) {
                         DisplayMode.MATERIAL -> {
-                            eqVision.properties.remove(Vision.STYLESHEET_KEY + MogStyles.HIGHLIGHT_STYLE_NAME + SolidMaterial.MATERIAL_KEY)
+                            eqVision.properties.remove(Vision.STYLESHEET_KEY + MogStyles.HIGHLIGHT_STYLE_NAME)
                         }
 
                         DisplayMode.GOST14202 -> {
@@ -64,7 +63,7 @@ public object MogStateManager {
                         pipingGroup[stream.id.replace('-', '_').parseAsName()] as? MutableVision ?: continue
                     when (mode) {
                         DisplayMode.MATERIAL -> {
-                            streamVision.properties.remove(Vision.STYLESHEET_KEY + MogStyles.HIGHLIGHT_STYLE_NAME + SolidMaterial.MATERIAL_KEY)
+                            streamVision.properties.remove(Vision.STYLESHEET_KEY + MogStyles.HIGHLIGHT_STYLE_NAME)
                         }
 
                         DisplayMode.GOST14202 -> {

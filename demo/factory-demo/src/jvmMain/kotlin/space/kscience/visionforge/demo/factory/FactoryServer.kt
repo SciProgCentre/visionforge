@@ -7,6 +7,7 @@ import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.delay
@@ -61,6 +62,10 @@ public object FactoryServer {
         val server = embeddedServer(CIO, port = port) {
             routing {
                 staticResources("", null, null)
+
+                get("/api/mode"){
+                    call.respondText("""{"status":"ok","mode":"${simulator.currentDisplayMode.name}"}""", ContentType.Application.Json)
+                }
 
                 post("/api/mode/{mode}") {
                     val modeParam = call.parameters["mode"]?.uppercase() ?: "MATERIAL"
@@ -182,12 +187,22 @@ public object FactoryServer {
 
                 script {
                     unsafe {
-                        +"""
-                        function setMode(mode, btn) {
+                        +"""                        
+                        function applyMode(mode) {
                             document.querySelectorAll('#btn-mode-mat, #btn-mode-gost, #btn-mode-state').forEach(b => b.classList.remove('active'));
-                            btn.classList.add('active');
-                            fetch('/api/mode/' + mode, { method: 'POST' });
+                            let btn = document.getElementById('btn-mode-mat');
+                            if (mode === 'GOST14202') {
+                                btn = document.getElementById('btn-mode-gost');
+                            } else if (mode === 'STATE') {
+                                btn = document.getElementById('btn-mode-state');
+                            }
+                            if (btn) btn.classList.add('active');
                             updateLegend(mode);
+                        }
+
+                        function setMode(mode, btn) {
+                            applyMode(mode);
+                            fetch('/api/mode/' + mode, { method: 'POST' });
                         }
                         
                         function toggleLine(num, btn) {
@@ -243,6 +258,15 @@ public object FactoryServer {
                                 `;
                             }
                         }
+
+                        fetch('/api/mode')
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data && data.mode) {
+                                    applyMode(data.mode);
+                                }
+                            })
+                            .catch(err => console.error('Failed to fetch initial mode:', err));
                         """.trimIndent()
                     }
                 }
